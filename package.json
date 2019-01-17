@@ -1,0 +1,33 @@
+{
+  "name": "commercetools-adyen-integration",
+  "version": "0.0.1",
+  "description": "Integration between Commercetools and Adyen payment service provider",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "Adyen"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/commercetools/commercetools-adyen-integration.git"
+  },
+  "author": {
+    "name": "Lam Tran",
+    "email": "lam.tran@commercetools.de"
+  },
+  "engines": {
+    "node": ">=10",
+    "npm": ">=5"
+  },
+  "contributors": [],
+  "bugs": {
+    "url": "https://github.com/commercetools/commercetools-adyen-integration/issues"
+  },
+  "homepage": "https://github.com/commercetools/commercetools-adyen-integration#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "bluebird": "3.5.3"
+  }
+}
