@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script type="text/javascript" src="https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.3.3.min.js"></script>
+    </head>
+    <body>
+        <div class="cards-div">
+
+            <div class="js-chckt-pm__pm-holder">
+                <input type="hidden" name="txvariant" value="card" />
+                <label>
+                    <span class="input-field" data-cse="encryptedCardNumber" />
+                </label>
+                <label>
+                    <span class="input-field" data-cse="encryptedExpiryMonth" />
+                </label>
+                <label>
+                    <span class="input-field" data-cse="encryptedExpiryYear" />
+                </label>
+                <label>
+                    <span class="input-field" data-cse="encryptedSecurityCode" />
+                </label>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+          var csfSetupObj = {
+            rootNode: '.cards-div',
+            configObject : {
+              originKey : "pub.v2.8015475599051803.aHR0cDovL2xvY2FsaG9zdDozMDAw.GRZ3wmAZv580-3LBqZ0dzHVzYYRlyhEwGgBE0LL_420"
+            }
+          };
+          var securedFields = csf(csfSetupObj);
+        </script>
+    </body>
+</html>
