@@ -1,0 +1,12 @@
+{
+  "extends": "commercetools",
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "rules": {
+    "nonblock-statement-body-position": "off",
+    "comma-dangle": "off",
+    "class-methods-use-this": "off"
+  }
+}
