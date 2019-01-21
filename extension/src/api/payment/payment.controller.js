@@ -1,20 +1,18 @@
-const httpUtils = require('../../service')
+const httpUtils = require('../../utils')
 
-class PaymentController {
-  handlePayment (request, response) {
-    const paymentObject = this._getPaymentObject(request)
-    const handler = this._getPaymentHandler(paymentObject)
-    handler.execute(paymentObject)
-    return httpUtils.sendResponse(response)
-  }
-
-  _getPaymentObject (request) {
-    const requestData = httpUtils.collectRequestData(request)
-    return requestData
-  }
-
-  _getPaymentHandler (paymentObject) {
-  }
+function handlePayment (request, response) {
+  const paymentObject = this._getPaymentObject(request)
+  const handler = this._getPaymentHandler(paymentObject)
+  handler.execute(paymentObject)
+  return httpUtils.sendResponse(response)
 }
 
-module.exports = new PaymentController()
+function _getPaymentObject (request) {
+  const requestData = httpUtils.collectRequestData(request)
+  return requestData
+}
+
+function _getPaymentHandler (paymentObject) {
+}
+
+module.exports = { handlePayment }

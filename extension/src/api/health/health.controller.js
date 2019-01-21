@@ -1,9 +1,7 @@
-const httpUtils = require('../../service')
+const httpUtils = require('../../utils')
 
-class HealthController {
-  checkHealth (request, response) {
-    httpUtils.sendResponse(response, 200)
-  }
+function checkHealth (request, response) {
+  httpUtils.sendResponse(response, 200)
 }
 
-module.exports = new HealthController()
+module.exports = { checkHealth }

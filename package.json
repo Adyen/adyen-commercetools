@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "start": "node ./extensions/src/server.js"
+    "start": "node ./extensions/src/init.js"
   },
   "keywords": [
     "Adyen"

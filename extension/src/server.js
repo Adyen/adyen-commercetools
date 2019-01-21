@@ -1,8 +1,22 @@
-const server = require('./controller.js')
-require('./config/ctpConfig.js')
+const http = require('http')
+const url = require('url')
+const httpUtils = require('./utils')
+const healthController = require('./api/health/health.controller')
+const paymentController = require('./api/payment/payment.controller')
+require('./config/ctpConfig')
 
-const port = 8080
+const routes = {
+  '/': (request, response) => httpUtils.sendResponse(response),
+  '/health': healthController.checkHealth,
+  '/adyen/payments': paymentController.handlePayment
+}
 
-server.listen(port, () => {
-  console.log(`Server running at http://127.0.0.1:${port}/`)
+module.exports = http.createServer(async (request, response) => {
+  const parts = url.parse(request.url)
+  const route = routes[parts.pathname]
+
+  if (route)
+    route(request, response)
+  else
+    httpUtils.sendResponse(response, 404)
 })
