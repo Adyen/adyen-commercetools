@@ -1,4 +1,5 @@
 const server = require('./controller.js')
+require('./config/ctpConfig.js')
 
 const port = 8080
 
