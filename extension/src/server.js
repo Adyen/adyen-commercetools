@@ -16,7 +16,7 @@ module.exports = http.createServer(async (request, response) => {
   const route = routes[parts.pathname]
 
   if (route)
-    route(request, response)
+    await route(request, response)
   else
     httpUtils.sendResponse(response, 404)
 })

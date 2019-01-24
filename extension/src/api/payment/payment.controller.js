@@ -1,15 +1,14 @@
 const httpUtils = require('../../utils')
 
-function handlePayment (request, response) {
-  const paymentObject = this._getPaymentObject(request)
-  const handler = this._getPaymentHandler(paymentObject)
-  handler.execute(paymentObject)
+async function handlePayment (request, response) {
+  const paymentObject = await _getPaymentObject(request)
+  //const handler = this._getPaymentHandler(paymentObject)
+  //handler.execute(paymentObject)
   return httpUtils.sendResponse(response)
 }
 
-function _getPaymentObject (request) {
-  const requestData = httpUtils.collectRequestData(request)
-  return requestData
+async function _getPaymentObject (request) {
+  return httpUtils.collectRequestData(request)
 }
 
 function _getPaymentHandler (paymentObject) {
