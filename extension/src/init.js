@@ -1,5 +1,5 @@
 const init = require('./server.js')
-require('./config/ctpConfig.js')
+require('./config/config')
 
 const port = 8080
 

@@ -3,7 +3,7 @@ const url = require('url')
 const httpUtils = require('./utils')
 const healthController = require('./api/health/health.controller')
 const paymentController = require('./api/payment/payment.controller')
-require('./config/ctpConfig')
+require('./config/config')
 
 const routes = {
   '/': (request, response) => httpUtils.sendResponse(response),
