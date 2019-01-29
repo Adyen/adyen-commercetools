@@ -5,7 +5,8 @@ const configPath = process.env.CONFIG_PATH
 function getEnvConfig () {
   return {
     port: process.env.PORT,
-    logLevel: process.env.LOG_LEVEL
+    logLevel: process.env.LOG_LEVEL,
+    apiExtensionBaseUrl: process.env.API_EXTENSION_BASE_URL
   }
 }
 
@@ -46,7 +47,7 @@ module.exports.load = () => {
     getFileConfig()
   )
 
-  // raise an exception when there are no C TP credentials
+  // raise an exception when there are no CTP credentials
   if (!config.ctp.projectKey || !config.ctp.clientId || !config.ctp.clientSecret)
     throw new Error('CTP project credentials are missing')
 

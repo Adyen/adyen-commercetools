@@ -7,7 +7,7 @@ async function initPaymentCustomType (ctpClient) {
     try {
       await ctpClient.create(ctpClient.builder.types, type)
     } catch (e) {
-      console.log('Error when creating payment custom type', JSON.stringify(e))
+      console.log('Error when creating payment custom type, skipping...', JSON.stringify(e))
     }
   }, { concurrency: 3 })
 }
