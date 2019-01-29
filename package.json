@@ -6,7 +6,8 @@
   "scripts": {
     "test": "test",
     "start": "node ./extensions/src/init.js",
-    "lint": "./node_modules/.bin/eslint extension"
+    "lint": "./node_modules/.bin/eslint extension",
+    "init": "CTP_PROJECT_KEY=projectKey CTP_CLIENT_ID=clientId CTP_CLIENT_SECRET=clientSecret CTP_API_URL=apiUrl CTP_AUTH_URL=authUrl API_EXTENSION_BASE_URL=extensionUrl node ./extension/scripts/initResources.js"
   },
   "keywords": [
     "Adyen"
