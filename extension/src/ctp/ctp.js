@@ -48,15 +48,18 @@ function setUpClient () {
     get builder () {
       return getRequestBuilder(config.load().ctp.projectKey)
     },
+
     delete (uri, id, version) {
       return ctpClient.execute(this.buildRequestOptions(
         uri.byId(id).withVersion(version).build(),
         'DELETE'
       ))
     },
+
     create (uri, body) {
       return ctpClient.execute(this.buildRequestOptions(uri.build(), 'POST', body))
     },
+
     update (uri, id, version, actions) {
       const body = {
         version,
@@ -66,9 +69,11 @@ function setUpClient () {
         this.buildRequestOptions(uri.byId(id).build(), 'POST', body)
       )
     },
+
     fetch (uri) {
       return ctpClient.execute(this.buildRequestOptions(uri.build()))
     },
+
     buildRequestOptions (uri, method = 'GET', body = undefined) {
       return {
         uri,

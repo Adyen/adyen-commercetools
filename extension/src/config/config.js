@@ -20,6 +20,14 @@ function getCTPEnvCredentials () {
   }
 }
 
+function getAdyenCredentials () {
+  return {
+    merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
+    apiKey: process.env.ADYEN_API_KEY,
+    apiBaseUrl: process.env.ADYEN_API_BASE_URL || 'https://checkout-test.adyen.com/v40'
+  }
+}
+
 function getFileConfig () {
   let fileConfig = {}
   try {
@@ -44,6 +52,7 @@ module.exports.load = () => {
   const config = _.merge(
     getEnvConfig(),
     { ctp: getCTPEnvCredentials() },
+    { adyen: getAdyenCredentials() },
     getFileConfig()
   )
 

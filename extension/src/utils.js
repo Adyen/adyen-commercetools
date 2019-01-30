@@ -14,7 +14,7 @@ function collectRequestData (request) {
 
 function sendResponse (response, statusCode = 200, headers, data) {
   response.writeHead(statusCode, headers)
-  response.end(data)
+  response.end(JSON.stringify(data))
 }
 
 module.exports = {

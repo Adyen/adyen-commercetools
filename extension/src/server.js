@@ -8,7 +8,7 @@ require('./config/config')
 const routes = {
   '/': (request, response) => httpUtils.sendResponse(response),
   '/health': healthController.checkHealth,
-  '/adyen/payments': paymentController.handlePayment
+  '/payments': paymentController.handlePayment
 }
 
 module.exports = http.createServer(async (request, response) => {

@@ -1,0 +1,27 @@
+{
+  "interfaceId": "pspReference",
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 595,
+    "fractionDigits": 2
+  },
+  "paymentMethodInfo": {
+    "paymentInterface": "ctp-adyen-integration",
+    "method": "creditCard"
+  },
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "ctp-adyen-integration-credit-card"
+    },
+    "fields": {
+      "countryCode": "DE"
+    }
+  },
+  "paymentStatus": {},
+  "transactions": [
+  ],
+  "interfaceInteractions": [
+  ]
+}

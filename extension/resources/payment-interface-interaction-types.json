@@ -24,7 +24,7 @@
         "label": {
           "en": "transactionId"
         },
-        "required": true,
+        "required": false,
         "type": {
           "name": "String"
         },
@@ -79,7 +79,7 @@
         "label": {
           "en": "transactionId"
         },
-        "required": true,
+        "required": false,
         "type": {
           "name": "String"
         },
