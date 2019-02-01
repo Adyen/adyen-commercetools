@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 
-const interfaceInteractionTypes = require('../resources/payment-interface-interaction-types.json')
+const interfaceInteractionTypes = require('../../../resources/payment-interface-interaction-types.json')
 
 async function initInterfaceInteractionCustomType (ctpClient) {
   await Promise.map(interfaceInteractionTypes.values(), async (type) => {

@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 
-const apiExtensionDrafts = require('../resources/api-extensions.json')
+const apiExtensionDrafts = require('../../../resources/api-extensions.json')
 
 async function initApiExtensions (ctpClient, ctpAdyenIntegrationBaseUrl) {
   await Promise.map(apiExtensionDrafts.values(), async (uncompiledDraft) => {

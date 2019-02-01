@@ -1,5 +1,6 @@
 const fetch = require('node-fetch')
 const _ = require('lodash')
+const Promise = require('bluebird')
 
 const { createClient } = require('@commercetools/sdk-client')
 const { createAuthMiddlewareForClientCredentialsFlow } = require('@commercetools/sdk-middleware-auth')
@@ -72,6 +73,14 @@ function setUpClient () {
 
     fetch (uri) {
       return ctpClient.execute(this.buildRequestOptions(uri.build()))
+    },
+
+    fetchBatches (uri, cb, opts = { accumulate: false }) {
+      return this.process(
+        this.buildRequestOptions(uri.build()),
+        data => Promise.resolve(cb(data.body.results)),
+        opts
+      )
     },
 
     buildRequestOptions (uri, method = 'GET', body = undefined) {
