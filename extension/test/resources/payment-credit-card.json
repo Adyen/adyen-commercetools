@@ -1,0 +1,31 @@
+{
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 595,
+    "fractionDigits": 2
+  },
+  "paymentMethodInfo": {
+    "paymentInterface": "ctp-adyen-integration",
+    "method": "creditCard"
+  },
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "ctp-adyen-integration-credit-card"
+    },
+    "fields": {
+      "countryCode": "DE",
+      "encryptedCardNumber":"${encryptedCardNumber}",
+      "encryptedExpiryMonth":"${encryptedExpiryMonth}",
+      "encryptedExpiryYear":"${encryptedExpiryYear}",
+      "encryptedSecurityCode":"${encryptedSecurityCode}",
+      "returnUrl":"https://your-company.com/checkout/"
+    }
+  },
+  "paymentStatus": {},
+  "transactions": [
+  ],
+  "interfaceInteractions": [
+  ]
+}
