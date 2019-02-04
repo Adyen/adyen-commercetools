@@ -1,6 +1,8 @@
 const fetch = require('node-fetch')
-const config = require('../config/config')
-const constant = require('../config/constants')
+const configLoader = require('../config/config')
+const c = require('../config/constants')
+
+const config = configLoader.load()
 
 function isSupported (paymentObject) {
   return paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
@@ -13,12 +15,12 @@ async function handlePayment (paymentObject) {
     version: paymentObject.version,
     actions: [{
       action: 'addInterfaceInteraction',
-      type: { key: 'ctp-adyen-integration-interaction-response' },
+      type: { key: c.CTP_INTERFACE_INTERACTION_RESPONSE },
       fields: {
         timestamp: new Date(),
         response: JSON.stringify(result),
         type: 'getPaymentDetails',
-        status: constant.SUCCESS
+        status: c.SUCCESS
       }
     }]
   }
@@ -26,17 +28,17 @@ async function handlePayment (paymentObject) {
 
 async function fetchPaymentMethods (paymentObject) {
   const body = {
-    merchantAccount: config.load().adyen.merchantAccount,
+    merchantAccount: config.adyen.merchantAccount,
     countryCode: paymentObject.custom.fields.countryCode,
     amount: {
       currency: paymentObject.amountPlanned.currencyCode,
       value: paymentObject.amountPlanned.centAmount
     }
   }
-  const resultPromise = await fetch(`${config.load().adyen.apiBaseUrl}/paymentMethods`, {
+  const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/paymentMethods`, {
     method: 'POST',
     body: JSON.stringify(body),
-    headers: { 'x-api-key': config.load().adyen.apiKey, 'Content-Type': 'application/json' }
+    headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
   })
 
   return resultPromise.json()

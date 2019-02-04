@@ -8,7 +8,9 @@ const { createHttpMiddleware } = require('@commercetools/sdk-middleware-http')
 const { createQueueMiddleware } = require('@commercetools/sdk-middleware-queue')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
 
-const config = require('../config/config')
+const configLoader = require('../config/config')
+
+const config = configLoader.load()
 
 function createCtpClient ({
   clientId, clientSecret, projectKey, authUrl, apiUrl, concurrency = 10
@@ -44,10 +46,10 @@ function createCtpClient ({
 }
 
 function setUpClient () {
-  const ctpClient = createCtpClient(config.load().ctp)
+  const ctpClient = createCtpClient(config.ctp)
   const customMethods = {
     get builder () {
-      return getRequestBuilder(config.load().ctp.projectKey)
+      return getRequestBuilder(config.ctp.projectKey)
     },
 
     delete (uri, id, version) {
