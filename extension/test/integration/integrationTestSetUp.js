@@ -25,6 +25,7 @@ async function cleanupResources (ctpClient) {
   await testUtils.deleteAllResources(ctpClient, 'types')
   await testUtils.deleteAllResources(ctpClient, 'extensions')
   server.close()
+  ngrok.disconnect()
 }
 
 module.exports = {
