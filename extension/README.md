@@ -18,4 +18,4 @@ In order to run extension module, create following environmental variables.
 
 1. `CLIENT_ENCRYPTION_PUBLIC_KEY`: Get your key from https://ca-test.adyen.com/ca/ca/config/users.shtml. Select `Web Service` user type account.
 
-After that, execute command `npm run extension`
+After setting all variables, execute command `npm run extension` to run the module.
