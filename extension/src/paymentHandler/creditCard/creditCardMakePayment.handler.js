@@ -4,6 +4,16 @@ const c = require('../../config/constants')
 
 const config = configLoader.load()
 
+const paymentAdyenStateToCtpState = {
+  redirectShopper: 'Pending',
+  received: 'Pending',
+  pending: 'Pending',
+  authorised: 'Success',
+  refused: 'Failure',
+  cancelled: 'Failure',
+  error: 'Failure'
+}
+
 function isSupported (paymentObject) {
   return paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
     && paymentObject.paymentMethodInfo.method === 'creditCard'
@@ -11,24 +21,40 @@ function isSupported (paymentObject) {
 
 async function handlePayment (paymentObject) {
   const result = await makePayment(paymentObject)
+  // for statusCodes, see https://docs.adyen.com/developers/development-resources/response-handling
+  const interfaceInteractionStatus = result.status === 200 ? c.SUCCESS : c.FAILURE
+  const actions = [
+    {
+      action: 'addInterfaceInteraction',
+      type: { key: c.CTP_INTERFACE_INTERACTION_RESPONSE },
+      fields: {
+        timestamp: new Date(),
+        response: JSON.stringify(result),
+        type: 'makePayment',
+        status: interfaceInteractionStatus
+      }
+    }
+  ]
+  if (result.pspReference)
+    actions.push({
+      action: 'setInterfaceId',
+      interfaceId: result.pspReference
+    })
+  if (result.resultCode)
+    actions.push({
+      action: 'addTransaction',
+      transaction: {
+        type: 'Charge',
+        amount: {
+          currencyCode: paymentObject.amountPlanned.currencyCode,
+          centAmount: paymentObject.amountPlanned.centAmount
+        },
+        state: paymentAdyenStateToCtpState[result.resultCode.toLowerCase()]
+      }
+    })
   return {
     version: paymentObject.version,
-    actions: [
-      {
-        action: 'setInterfaceId',
-        interfaceId: result.pspReference
-      },
-      {
-        action: 'addInterfaceInteraction',
-        type: { key: c.CTP_INTERFACE_INTERACTION_RESPONSE },
-        fields: {
-          timestamp: new Date(),
-          response: JSON.stringify(result),
-          type: 'makePayment',
-          status: c.SUCCESS
-        }
-      }
-    ]
+    actions
   }
 }
 
