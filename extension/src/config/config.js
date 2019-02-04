@@ -15,8 +15,8 @@ function getCTPEnvCredentials () {
     projectKey: process.env.CTP_PROJECT_KEY,
     clientId: process.env.CTP_CLIENT_ID,
     clientSecret: process.env.CTP_CLIENT_SECRET,
-    apiUrl: process.env.CTP_API_URL,
-    authUrl: process.env.CTP_AUTH_URL
+    apiUrl: 'https://api.sphere.io',
+    authUrl: 'https://auth.sphere.io'
   }
 }
 
