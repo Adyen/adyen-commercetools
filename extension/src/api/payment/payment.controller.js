@@ -1,5 +1,5 @@
 const httpUtils = require('../../utils')
-const creditCardHandler = require('../../paymentHandler/creditCard/creditCard.handler')
+const creditCardHandler = require('../../paymentHandler/creditCard/creditCardMakePayment.handler')
 const commonHandler = require('../../paymentHandler/fetchPaymentMethod.handler')
 
 const paymentHandlers = [creditCardHandler, commonHandler]
