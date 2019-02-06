@@ -4,6 +4,8 @@ const c = require('../../config/constants')
 
 const config = configLoader.load()
 
+// see https://docs.adyen.com/developers/payments-basics/payments-lifecycle
+// and https://docs.adyen.com/developers/checkout/payment-result-codes
 const paymentAdyenStateToCtpState = {
   redirectShopper: 'Pending',
   received: 'Pending',
@@ -15,32 +17,36 @@ const paymentAdyenStateToCtpState = {
 }
 
 function isSupported (paymentObject) {
-  return paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
+  const hasMakePaymentInteraction = paymentObject.interfaceInteractions
+    .some(i => i.fields.type === 'makePayment')
+  return !hasMakePaymentInteraction
+    && paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
     && paymentObject.paymentMethodInfo.method === 'creditCard'
 }
 
 async function handlePayment (paymentObject) {
-  const result = await makePayment(paymentObject)
+  const response = await makePayment(paymentObject)
   // for statusCodes, see https://docs.adyen.com/developers/development-resources/response-handling
-  const interfaceInteractionStatus = result.status === 200 ? c.SUCCESS : c.FAILURE
+  const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
+  const body = await response.json()
   const actions = [
     {
       action: 'addInterfaceInteraction',
       type: { key: c.CTP_INTERFACE_INTERACTION_RESPONSE },
       fields: {
         timestamp: new Date(),
-        response: JSON.stringify(result),
+        response: JSON.stringify(body),
         type: 'makePayment',
         status: interfaceInteractionStatus
       }
     }
   ]
-  if (result.pspReference)
+  if (body.pspReference)
     actions.push({
       action: 'setInterfaceId',
-      interfaceId: result.pspReference
+      interfaceId: body.pspReference
     })
-  if (result.resultCode)
+  if (body.resultCode)
     actions.push({
       action: 'addTransaction',
       transaction: {
@@ -49,7 +55,7 @@ async function handlePayment (paymentObject) {
           currencyCode: paymentObject.amountPlanned.currencyCode,
           centAmount: paymentObject.amountPlanned.centAmount
         },
-        state: paymentAdyenStateToCtpState[result.resultCode.toLowerCase()]
+        state: paymentAdyenStateToCtpState[body.resultCode.toLowerCase()]
       }
     })
   return {
@@ -75,13 +81,23 @@ async function makePayment (paymentObject) {
     returnUrl: paymentObject.custom.fields.returnUrl,
     merchantAccount: config.adyen.merchantAccount
   }
-  const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/payments`, {
+  if (paymentObject.custom.fields.holderName)
+    body.holderName = paymentObject.custom.fields.holderName
+  if (paymentObject.custom.fields.executeThreeD)
+    body.additionalData = {
+      executeThreeD: paymentObject.custom.fields.executeThreeD.toString()
+    }
+  if (paymentObject.custom.fields.browserInfo) {
+    const browserInfo = JSON.parse(paymentObject.custom.fields.browserInfo)
+    body.browserInfo = browserInfo
+  }
+  const response = await fetch(`${config.adyen.apiBaseUrl}/payments`, {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
   })
 
-  return resultPromise.json()
+  return response
 }
 
 module.exports = { isSupported, handlePayment }

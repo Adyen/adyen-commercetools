@@ -95,6 +95,38 @@
         },
         "required": false,
         "inputHint": "SingleLine"
+      },
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "browserInfo",
+        "label": {
+          "en": "browserInfo"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
+      },
+      {
+        "type": {
+          "name": "Boolean"
+        },
+        "name": "executeThreeD",
+        "label": {
+          "en": "executeThreeD"
+        },
+        "required": false
+      },
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "holderName",
+        "label": {
+          "en": "holderName"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
       }
     ]
   }
