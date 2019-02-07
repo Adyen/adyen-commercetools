@@ -46,7 +46,28 @@ async function handlePayment (paymentObject) {
       action: 'setInterfaceId',
       interfaceId: body.pspReference
     })
-  if (body.resultCode)
+  if (body.resultCode) {
+    const resultCode = body.resultCode.toLowerCase()
+    if (resultCode === c.REDIRECT_SHOPPER.toLowerCase()) {
+      const { MD } = body.redirect.data
+      actions.push({
+        action: 'setCustomField',
+        name: 'MD',
+        value: MD
+      })
+      const { PaReq } = body.redirect.data
+      actions.push({
+        action: 'setCustomField',
+        name: 'PaReq',
+        value: PaReq
+      })
+      const { paymentData } = body
+      actions.push({
+        action: 'setCustomField',
+        name: 'paymentData',
+        value: paymentData
+      })
+    }
     actions.push({
       action: 'addTransaction',
       transaction: {
@@ -58,6 +79,7 @@ async function handlePayment (paymentObject) {
         state: paymentAdyenStateToCtpState[body.resultCode.toLowerCase()]
       }
     })
+  }
   return {
     version: paymentObject.version,
     actions
