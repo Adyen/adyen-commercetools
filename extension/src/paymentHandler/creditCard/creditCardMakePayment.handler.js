@@ -19,11 +19,13 @@ function isSupported (paymentObject) {
   const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
   const isCreditCard = paymentObject.paymentMethodInfo.method === 'creditCard'
   const hasReferenceField = !_.isNil(paymentObject.custom.fields.reference)
-  return isAdyen && isCreditCard && hasReferenceField
+  const transaction = _getTransaction(paymentObject)
+  const hasTransaction = _.isObject(transaction)
+  return isAdyen && isCreditCard && hasReferenceField && hasTransaction
 }
 
 async function handlePayment (paymentObject) {
-  const result = await makePayment(paymentObject)
+  const result = await _makePayment(paymentObject)
   // for statusCodes, see https://docs.adyen.com/developers/development-resources/response-handling
   const interfaceInteractionStatus = result.status === 200 ? c.SUCCESS : c.FAILURE
   const actions = [
@@ -43,25 +45,26 @@ async function handlePayment (paymentObject) {
       action: 'setInterfaceId',
       interfaceId: result.pspReference
     })
-  if (result.resultCode)
+  if (result.resultCode) {
+    const transaction = _getTransaction(paymentObject)
     actions.push({
-      action: 'addTransaction',
-      transaction: {
-        type: 'Charge',
-        amount: {
-          currencyCode: paymentObject.amountPlanned.currencyCode,
-          centAmount: paymentObject.amountPlanned.centAmount
-        },
-        state: paymentAdyenStateToCtpState[result.resultCode.toLowerCase()]
-      }
+      action: 'changeTransactionState',
+      transactionId: transaction.id,
+      state: _.capitalize(paymentAdyenStateToCtpState[result.resultCode.toLowerCase()])
     })
+  }
   return {
     version: paymentObject.version,
     actions
   }
 }
 
-async function makePayment (paymentObject) {
+function _getTransaction (paymentObject) {
+  return paymentObject.transactions.find(t => t.type.toLowerCase() === 'charge'
+    && (t.state.toLowerCase() === 'initial' || t.state.toLowerCase() === 'pending'))
+}
+
+async function _makePayment (paymentObject) {
   const body = {
     amount: {
       currency: paymentObject.amountPlanned.currencyCode,
@@ -78,6 +81,13 @@ async function makePayment (paymentObject) {
     returnUrl: paymentObject.custom.fields.returnUrl,
     merchantAccount: config.adyen.merchantAccount
   }
+  const transaction = _getTransaction(paymentObject)
+  if (transaction)
+    body.amount = {
+      currency: transaction.amount.currencyCode,
+      value: transaction.amount.centAmount
+    }
+
   const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/payments`, {
     method: 'POST',
     body: JSON.stringify(body),

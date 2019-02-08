@@ -26,6 +26,16 @@
   },
   "paymentStatus": {},
   "transactions": [
+    {
+      "type": "Charge",
+      "amount": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 495,
+        "fractionDigits": 2
+      },
+      "state": "Initial"
+    }
   ],
   "interfaceInteractions": [
   ]
