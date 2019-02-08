@@ -1,24 +1,17 @@
 <!DOCTYPE html>
 <html>
     <body>
-
-        <h2>The method Attribute</h2>
-        <p>This form will be submitted using the POST method:</p>
-
         <form action="https://test.adyen.com/hpp/3d/validate.shtml" method="POST">
-            First name:<br>
+            PaReq:<br>
             <input type="text" id="PaReq" name="PaReq" value="">
             <br>
-            Last name:<br>
+            TermUrl:<br>
             <input type="text" id="TermUrl" name="TermUrl" value="">
             <br>
-            Last name:<br>
+            MD:<br>
             <input type="text" id="MD" name="MD" value="">
             <br><br>
             <input type="submit" id="submit" value="Submit">
         </form>
-
-        <p>After you submit, notice that, unlike the GET method, the form values is NOT visible in the address bar of the new browser tab.</p>
-
     </body>
 </html>
