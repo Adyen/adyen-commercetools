@@ -20,7 +20,8 @@
       "encryptedExpiryMonth":"${encryptedExpiryMonth}",
       "encryptedExpiryYear":"${encryptedExpiryYear}",
       "encryptedSecurityCode":"${encryptedSecurityCode}",
-      "returnUrl":"https://your-company.com/checkout/"
+      "returnUrl":"https://your-company.com/checkout/",
+      "reference":"paymentReferenceId"
     }
   },
   "paymentStatus": {},

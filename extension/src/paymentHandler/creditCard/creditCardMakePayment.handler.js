@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const _ = require('lodash')
 const configLoader = require('../../config/config')
 const c = require('../../config/constants')
 
@@ -15,8 +16,10 @@ const paymentAdyenStateToCtpState = {
 }
 
 function isSupported (paymentObject) {
-  return paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
-    && paymentObject.paymentMethodInfo.method === 'creditCard'
+  const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
+  const isCreditCard = paymentObject.paymentMethodInfo.method === 'creditCard'
+  const hasReferenceField = !_.isNil(paymentObject.custom.fields.reference)
+  return isAdyen && isCreditCard && hasReferenceField
 }
 
 async function handlePayment (paymentObject) {
@@ -64,7 +67,7 @@ async function makePayment (paymentObject) {
       currency: paymentObject.amountPlanned.currencyCode,
       value: paymentObject.amountPlanned.centAmount
     },
-    reference: paymentObject.id,
+    reference: paymentObject.custom.fields.reference,
     paymentMethod: {
       type: 'scheme',
       encryptedCardNumber: paymentObject.custom.fields.encryptedCardNumber,
