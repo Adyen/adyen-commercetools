@@ -22,8 +22,6 @@ module.exports = async (on, config) => {
   process.env.CTP_PROJECT_KEY = config.env.CTP_PROJECT_KEY
   process.env.CTP_CLIENT_ID = config.env.CTP_CLIENT_ID
   process.env.CTP_CLIENT_SECRET = config.env.CTP_CLIENT_SECRET
-  process.env.CTP_API_URL = config.env.CTP_API_URL
-  process.env.CTP_AUTH_URL = config.env.CTP_AUTH_URL
   process.env.ADYEN_API_KEY = config.env.ADYEN_API_KEY
   process.env.ADYEN_MERCHANT_ACCOUNT = config.env.ADYEN_MERCHANT_ACCOUNT
   process.env.CLIENT_ENCRYPTION_PUBLIC_KEY = config.env.CLIENT_ENCRYPTION_PUBLIC_KEY
