@@ -4,7 +4,7 @@ const _ = require('lodash')
 const apiExtensionDrafts = require('../../../resources/api-extensions.json')
 
 async function initApiExtensions (ctpClient, ctpAdyenIntegrationBaseUrl) {
-  await Promise.map(apiExtensionDrafts.values(), async (uncompiledDraft) => {
+  await Promise.map(apiExtensionDrafts, async (uncompiledDraft) => {
     try {
       const extension = _.template(JSON.stringify(uncompiledDraft))({ ctpAdyenIntegrationBaseUrl })
       await ctpClient.create(ctpClient.builder.extensions, extension)

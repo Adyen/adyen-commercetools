@@ -1,5 +1,5 @@
 const ngrok = require('ngrok')   // eslint-disable-line
-const server = require('../../src/server')
+const server = require('../../src/server').setupServer()
 
 const { initResources } = require('../../src/config/init/initResources')
 const testUtils = require('../test-utils')
@@ -20,10 +20,7 @@ async function initServerAndExtension (ctpClient, testServerPort = 8000) {
   }))
 }
 
-async function cleanupResources (ctpClient) {
-  await testUtils.deleteAllResources(ctpClient, 'payments')
-  await testUtils.deleteAllResources(ctpClient, 'types')
-  await testUtils.deleteAllResources(ctpClient, 'extensions')
+async function cleanupResources () {
   server.close()
   await ngrok.kill()
 }

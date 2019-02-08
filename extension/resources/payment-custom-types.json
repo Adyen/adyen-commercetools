@@ -160,6 +160,17 @@
         },
         "required": false,
         "inputHint": "SingleLine"
+      },
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "PaRes",
+        "label": {
+          "en": "PaRes"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
       }
     ]
   }

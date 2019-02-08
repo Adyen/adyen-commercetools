@@ -3,7 +3,7 @@ const Promise = require('bluebird')
 const interfaceInteractionTypes = require('../../../resources/payment-interface-interaction-types.json')
 
 async function initInterfaceInteractionCustomType (ctpClient) {
-  await Promise.map(interfaceInteractionTypes.values(), async (type) => {
+  await Promise.map(interfaceInteractionTypes, async (type) => {
     try {
       await ctpClient.create(ctpClient.builder.types, type)
     } catch (e) {

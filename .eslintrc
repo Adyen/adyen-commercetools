@@ -2,14 +2,24 @@
   "extends": "commercetools",
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "cypress/globals": true
   },
+  "plugins": [
+    "cypress"
+  ],
   "rules": {
     "nonblock-statement-body-position": "off",
     "comma-dangle": "off",
     "class-methods-use-this": "off",
-    "max-len": [2, 120],
-    "no-restricted-syntax": ["error", "WithStatement"],
+    "max-len": [
+      2,
+      120
+    ],
+    "no-restricted-syntax": [
+      "error",
+      "WithStatement"
+    ],
     "no-param-reassign": 0,
     "no-unused-expressions": "off"
   }

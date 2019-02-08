@@ -7,7 +7,7 @@ const config = configLoader.load()
 // see https://docs.adyen.com/developers/payments-basics/payments-lifecycle
 // and https://docs.adyen.com/developers/checkout/payment-result-codes
 const paymentAdyenStateToCtpState = {
-  redirectShopper: 'Pending',
+  redirectshopper: 'Pending',
   received: 'Pending',
   pending: 'Pending',
   authorised: 'Success',
