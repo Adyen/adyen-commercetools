@@ -10,7 +10,7 @@ function isSupported (paymentObject) {
 }
 
 async function handlePayment (paymentObject) {
-  const result = await fetchPaymentMethods(paymentObject)
+  const result = await _fetchPaymentMethods(paymentObject)
   return {
     version: paymentObject.version,
     actions: [{
@@ -26,7 +26,12 @@ async function handlePayment (paymentObject) {
   }
 }
 
-async function fetchPaymentMethods (paymentObject) {
+function _getTransaction (paymentObject) {
+  return paymentObject.transactions.find(t => t.type.toLowerCase() === 'charge'
+    && (t.state.toLowerCase() === 'initial' || t.state.toLowerCase() === 'pending'))
+}
+
+async function _fetchPaymentMethods (paymentObject) {
   const body = {
     merchantAccount: config.adyen.merchantAccount,
     countryCode: paymentObject.custom.fields.countryCode,
@@ -35,6 +40,12 @@ async function fetchPaymentMethods (paymentObject) {
       value: paymentObject.amountPlanned.centAmount
     }
   }
+  const transaction = _getTransaction(paymentObject)
+  if (transaction)
+    body.amount = {
+      currency: transaction.amount.currencyCode,
+      value: transaction.amount.centAmount
+    }
   const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/paymentMethods`, {
     method: 'POST',
     body: JSON.stringify(body),
