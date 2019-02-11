@@ -33,17 +33,18 @@ function isSupported (paymentObject) {
 }
 
 async function handlePayment (paymentObject) {
-  const response = await _makePayment(paymentObject)
+  const { request, response } = await _makePayment(paymentObject)
   // for statusCodes, see https://docs.adyen.com/developers/development-resources/response-handling
   const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
   const body = await response.json()
   const actions = [
     {
       action: 'addInterfaceInteraction',
-      type: { key: c.CTP_INTERFACE_INTERACTION_RESPONSE },
+      type: { key: c.CTP_INTERFACE_INTERACTION },
       fields: {
         timestamp: new Date(),
         response: JSON.stringify(body),
+        request: JSON.stringify(request),
         type: 'makePayment',
         status: interfaceInteractionStatus
       }
@@ -122,13 +123,14 @@ async function _makePayment (paymentObject) {
     const browserInfo = JSON.parse(paymentObject.custom.fields.browserInfo)
     body.browserInfo = browserInfo
   }
-  const response = await fetch(`${config.adyen.apiBaseUrl}/payments`, {
+  const request = {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
-  })
+  }
+  const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/payments`, request)
 
-  return response
+  return { response: await resultPromise, request }
 }
 
 module.exports = { isSupported, handlePayment }

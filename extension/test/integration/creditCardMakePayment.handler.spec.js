@@ -55,8 +55,22 @@ describe('credit card payment', () => {
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
     expect(response.statusCode).to.equal(201)
     expect(response.body.interfaceId).to.match(/^[0-9]*$/)
-    const interfaceInteraction = response.body.interfaceInteractions[0].fields
-    const adyenResponse = JSON.parse(interfaceInteraction.response)
+    const adyenRequest = JSON.parse(response.body.interfaceInteractions[0].fields.request)
+    expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
+
+    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
+    expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.custom.fields.reference)
+    expect(adyenRequestBody.returnUrl).to.be.equal(paymentTemplate.custom.fields.returnUrl)
+    expect(adyenRequestBody.amount.currency).to.be.equal(paymentTemplate.transactions[0].amount.currencyCode)
+    expect(adyenRequestBody.amount.value).to.be.equal(paymentTemplate.transactions[0].amount.centAmount)
+    expect(adyenRequestBody.paymentMethod.type).to.be.equal('scheme')
+    expect(adyenRequestBody.paymentMethod.encryptedExpiryYear).to.have.string('adyenjs_')
+    expect(adyenRequestBody.paymentMethod.encryptedCardNumber).to.have.string('adyenjs_')
+    expect(adyenRequestBody.paymentMethod.encryptedExpiryMonth).to.have.string('adyenjs_')
+    expect(adyenRequestBody.paymentMethod.encryptedSecurityCode).to.have.string('adyenjs_')
+
+    const adyenResponse = JSON.parse(response.body.interfaceInteractions[0].fields.response)
     expect(adyenResponse.resultCode).to.be.equal('Authorised')
     expect(interfaceInteraction.status).to.equal('SUCCESS')
     expect(interfaceInteraction.type).to.equal('makePayment')
@@ -110,6 +124,7 @@ describe('credit card payment', () => {
 
     const cseInstance = adyenEncrypt.createEncryption(key, {})
 
+    // fake card number, encryption will return false
     const encryptedCardNumber = cseInstance.encrypt({
       number: '0123456789123456',
       generationtime: new Date().toISOString()
@@ -137,6 +152,22 @@ describe('credit card payment', () => {
     expect(response.statusCode).to.equal(201)
     expect(response.body.interfaceId).to.be.undefined
     expect(response.body.interfaceInteractions[0].fields.status).to.equal(c.FAILURE)
+
+    const adyenRequest = JSON.parse(response.body.interfaceInteractions[0].fields.request)
+    expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
+
+    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
+    expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.custom.fields.reference)
+    expect(adyenRequestBody.returnUrl).to.be.equal(paymentTemplate.custom.fields.returnUrl)
+    expect(adyenRequestBody.amount.currency).to.be.equal(paymentTemplate.transactions[0].amount.currencyCode)
+    expect(adyenRequestBody.amount.value).to.be.equal(paymentTemplate.transactions[0].amount.centAmount)
+    expect(adyenRequestBody.paymentMethod.type).to.be.equal('scheme')
+    expect(adyenRequestBody.paymentMethod.encryptedExpiryYear).to.have.string('adyenjs_')
+    expect(adyenRequestBody.paymentMethod.encryptedCardNumber).to.have.string(false)
+    expect(adyenRequestBody.paymentMethod.encryptedExpiryMonth).to.have.string('adyenjs_')
+    expect(adyenRequestBody.paymentMethod.encryptedSecurityCode).to.have.string('adyenjs_')
+
     const adyenResponse = JSON.parse(response.body.interfaceInteractions[0].fields.response)
     expect(adyenResponse.errorCode).to.match(/^[0-9]*$/)
     expect(adyenResponse.errorType).to.equal('validation')
