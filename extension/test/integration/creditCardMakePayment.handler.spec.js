@@ -72,8 +72,7 @@ describe('credit card payment', () => {
 
     const adyenResponse = JSON.parse(response.body.interfaceInteractions[0].fields.response)
     expect(adyenResponse.resultCode).to.be.equal('Authorised')
-    expect(interfaceInteraction.status).to.equal('SUCCESS')
-    expect(interfaceInteraction.type).to.equal('makePayment')
+
     const { transactions } = response.body
     expect(transactions).to.have.lengthOf(1)
     expect(transactions[0].type).to.equal('Charge')
@@ -110,6 +109,23 @@ describe('credit card payment', () => {
       returnUrl: `${ngrokUrl}/test-return-url`
     })
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
+    const adyenRequest = JSON.parse(response.body.interfaceInteractions[0].fields.request)
+    expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
+
+    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
+    expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.custom.fields.reference)
+    expect(adyenRequestBody.returnUrl).to.be.equal(`${process.env.API_EXTENSION_BASE_URL}/test-return-url`)
+    expect(adyenRequestBody.amount.currency).to.be.equal(paymentTemplate.transactions[0].amount.currencyCode)
+    expect(adyenRequestBody.amount.value).to.be.equal(paymentTemplate.transactions[0].amount.centAmount)
+    expect(adyenRequestBody.paymentMethod.type).to.be.equal('scheme')
+    expect(adyenRequestBody.paymentMethod.encryptedExpiryYear).to.have.string('adyenjs_')
+    expect(adyenRequestBody.paymentMethod.encryptedCardNumber).to.have.string('adyenjs_')
+    expect(adyenRequestBody.paymentMethod.encryptedExpiryMonth).to.have.string('adyenjs_')
+    expect(adyenRequestBody.paymentMethod.encryptedSecurityCode).to.have.string('adyenjs_')
+    expect(adyenRequestBody.additionalData.executeThreeD).to.be.equal('true')
+    expect(adyenRequestBody.browserInfo).to.be.eql(JSON.parse(payment3dTemplate.custom.fields.browserInfo))
+
     expect(response.statusCode).to.equal(201)
     const adyenResponse = JSON.parse(response.body.interfaceInteractions[0].fields.response)
     expect(adyenResponse.redirect.data.PaReq).to.exist
