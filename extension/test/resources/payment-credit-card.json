@@ -20,11 +20,22 @@
       "encryptedExpiryMonth":"${encryptedExpiryMonth}",
       "encryptedExpiryYear":"${encryptedExpiryYear}",
       "encryptedSecurityCode":"${encryptedSecurityCode}",
-      "returnUrl":"https://your-company.com/checkout/"
+      "returnUrl":"https://your-company.com/checkout/",
+      "reference":"paymentReferenceId"
     }
   },
   "paymentStatus": {},
   "transactions": [
+    {
+      "type": "Charge",
+      "amount": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 495,
+        "fractionDigits": 2
+      },
+      "state": "Initial"
+    }
   ],
   "interfaceInteractions": [
   ]

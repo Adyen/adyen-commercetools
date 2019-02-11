@@ -141,6 +141,9 @@ describe('credit card payment', () => {
     expect(adyenResponse.errorCode).to.match(/^[0-9]*$/)
     expect(adyenResponse.errorType).to.equal('validation')
     const { transactions } = response.body
-    expect(transactions).to.have.lengthOf(0)
+    expect(transactions).to.have.lengthOf(1)
+    const transaction = transactions[0]
+    expect(transaction.type).to.equal('Charge')
+    expect(transaction.state).to.equal('Initial')
   })
 })

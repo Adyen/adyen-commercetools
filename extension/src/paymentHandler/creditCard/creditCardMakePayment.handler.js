@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const _ = require('lodash')
 const configLoader = require('../../config/config')
 const c = require('../../config/constants')
 
@@ -17,15 +18,22 @@ const paymentAdyenStateToCtpState = {
 }
 
 function isSupported (paymentObject) {
+  const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
+  const isCreditCard = paymentObject.paymentMethodInfo.method === 'creditCard'
+  const hasReferenceField = !_.isNil(paymentObject.custom.fields.reference)
+  const transaction = _getTransaction(paymentObject)
+  const hasTransaction = _.isObject(transaction)
   const hasMakePaymentInteraction = paymentObject.interfaceInteractions
     .some(i => i.fields.type === 'makePayment')
   return !hasMakePaymentInteraction
-    && paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
-    && paymentObject.paymentMethodInfo.method === 'creditCard'
+    && isAdyen
+    && isCreditCard
+    && hasReferenceField
+    && hasTransaction
 }
 
 async function handlePayment (paymentObject) {
-  const response = await makePayment(paymentObject)
+  const response = await _makePayment(paymentObject)
   // for statusCodes, see https://docs.adyen.com/developers/development-resources/response-handling
   const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
   const body = await response.json()
@@ -68,16 +76,11 @@ async function handlePayment (paymentObject) {
         value: paymentData
       })
     }
+    const transaction = _getTransaction(paymentObject)
     actions.push({
-      action: 'addTransaction',
-      transaction: {
-        type: 'Charge',
-        amount: {
-          currencyCode: paymentObject.amountPlanned.currencyCode,
-          centAmount: paymentObject.amountPlanned.centAmount
-        },
-        state: paymentAdyenStateToCtpState[body.resultCode.toLowerCase()]
-      }
+      action: 'changeTransactionState',
+      transactionId: transaction.id,
+      state: _.capitalize(paymentAdyenStateToCtpState[body.resultCode.toLowerCase()])
     })
   }
   return {
@@ -86,13 +89,19 @@ async function handlePayment (paymentObject) {
   }
 }
 
-async function makePayment (paymentObject) {
+function _getTransaction (paymentObject) {
+  return paymentObject.transactions.find(t => t.type.toLowerCase() === 'charge'
+    && (t.state.toLowerCase() === 'initial' || t.state.toLowerCase() === 'pending'))
+}
+
+async function _makePayment (paymentObject) {
+  const transaction = _getTransaction(paymentObject)
   const body = {
     amount: {
-      currency: paymentObject.amountPlanned.currencyCode,
-      value: paymentObject.amountPlanned.centAmount
+      currency: transaction.amount.currencyCode,
+      value: transaction.amount.centAmount
     },
-    reference: paymentObject.id,
+    reference: paymentObject.custom.fields.reference,
     paymentMethod: {
       type: 'scheme',
       encryptedCardNumber: paymentObject.custom.fields.encryptedCardNumber,
