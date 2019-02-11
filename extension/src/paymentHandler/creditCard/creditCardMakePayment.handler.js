@@ -25,32 +25,33 @@ function isSupported (paymentObject) {
 }
 
 async function handlePayment (paymentObject) {
-  const result = await _makePayment(paymentObject)
+  const { request, response } = await _makePayment(paymentObject)
   // for statusCodes, see https://docs.adyen.com/developers/development-resources/response-handling
-  const interfaceInteractionStatus = result.status === 200 ? c.SUCCESS : c.FAILURE
+  const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
   const actions = [
     {
       action: 'addInterfaceInteraction',
-      type: { key: c.CTP_INTERFACE_INTERACTION_RESPONSE },
+      type: { key: c.CTP_INTERFACE_INTERACTION },
       fields: {
         timestamp: new Date(),
-        response: JSON.stringify(result),
+        response: JSON.stringify(response),
+        request: JSON.stringify(request),
         type: 'makePayment',
         status: interfaceInteractionStatus
       }
     }
   ]
-  if (result.pspReference)
+  if (response.pspReference)
     actions.push({
       action: 'setInterfaceId',
-      interfaceId: result.pspReference
+      interfaceId: response.pspReference
     })
-  if (result.resultCode) {
+  if (response.resultCode) {
     const transaction = _getTransaction(paymentObject)
     actions.push({
       action: 'changeTransactionState',
       transactionId: transaction.id,
-      state: _.capitalize(paymentAdyenStateToCtpState[result.resultCode.toLowerCase()])
+      state: _.capitalize(paymentAdyenStateToCtpState[response.resultCode.toLowerCase()])
     })
   }
   return {
@@ -88,13 +89,14 @@ async function _makePayment (paymentObject) {
       value: transaction.amount.centAmount
     }
 
-  const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/payments`, {
+  const request = {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
-  })
+  }
+  const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/payments`, request)
 
-  return resultPromise.json()
+  return { response: await resultPromise.json(), request }
 }
 
 module.exports = { isSupported, handlePayment }
