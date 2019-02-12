@@ -7,6 +7,7 @@ const config = configLoader.load()
 function isSupported (paymentObject) {
   return paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
     && !paymentObject.paymentMethodInfo.method
+    && paymentObject.custom.fields.countryCode
 }
 
 async function handlePayment (paymentObject) {
