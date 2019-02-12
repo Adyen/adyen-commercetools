@@ -171,6 +171,28 @@
         },
         "required": false,
         "inputHint": "SingleLine"
+      },
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "redirectUrl",
+        "label": {
+          "en": "redirectUrl"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
+      },
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "redirectMethod",
+        "label": {
+          "en": "redirectMethod"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
       }
     ]
   }

@@ -21,11 +21,21 @@ function isSupported (paymentObject) {
   const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
   const isCreditCard = paymentObject.paymentMethodInfo.method === 'creditCard'
   const hasReferenceField = !_.isNil(paymentObject.custom.fields.reference)
-  const transaction = _getTransaction(paymentObject)
+  const hasEncryptedCardNumber = !_.isNil(paymentObject.custom.fields.encryptedCardNumber)
+  const hasEncryptedExpiryMonth = !_.isNil(paymentObject.custom.fields.encryptedExpiryMonth)
+  const hasEncryptedExpiryYear = !_.isNil(paymentObject.custom.fields.encryptedExpiryYear)
+  const hasEncryptedSecurityCode = !_.isNil(paymentObject.custom.fields.encryptedSecurityCode)
+  const hasReturnUrl = !_.isNil(paymentObject.custom.fields.returnUrl)
+  const transaction = _getChargeTransactionInitOrPending(paymentObject)
   const hasTransaction = _.isObject(transaction)
   const hasMakePaymentInteraction = paymentObject.interfaceInteractions
     .some(i => i.fields.type === 'makePayment')
   return !hasMakePaymentInteraction
+    && hasEncryptedCardNumber
+    && hasEncryptedExpiryMonth
+    && hasEncryptedExpiryYear
+    && hasEncryptedSecurityCode
+    && hasReturnUrl
     && isAdyen
     && isCreditCard
     && hasReferenceField
@@ -76,8 +86,20 @@ async function handlePayment (paymentObject) {
         name: 'paymentData',
         value: paymentData
       })
+      const redirectUrl = body.redirect.url
+      actions.push({
+        action: 'setCustomField',
+        name: 'redirectUrl',
+        value: redirectUrl
+      })
+      const redirectMethod = body.redirect.method
+      actions.push({
+        action: 'setCustomField',
+        name: 'redirectMethod',
+        value: redirectMethod
+      })
     }
-    const transaction = _getTransaction(paymentObject)
+    const transaction = _getChargeTransactionInitOrPending(paymentObject)
     actions.push({
       action: 'changeTransactionState',
       transactionId: transaction.id,
@@ -90,13 +112,13 @@ async function handlePayment (paymentObject) {
   }
 }
 
-function _getTransaction (paymentObject) {
+function _getChargeTransactionInitOrPending (paymentObject) {
   return paymentObject.transactions.find(t => t.type.toLowerCase() === 'charge'
     && (t.state.toLowerCase() === 'initial' || t.state.toLowerCase() === 'pending'))
 }
 
 async function _makePayment (paymentObject) {
-  const transaction = _getTransaction(paymentObject)
+  const transaction = _getChargeTransactionInitOrPending(paymentObject)
   const body = {
     amount: {
       currency: transaction.amount.currencyCode,

@@ -12,12 +12,54 @@ are already resources with same key in the CTP project.
 Adyen documentation: https://docs.adyen.com/developers/checkout/api-integration#step1getavailablepaymentmethods
 
 1. Backend creates a payment with following criteria
-    * `payment.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'`
-    * `paymentMethodInfo.method == null`   
+    * `payment.paymentMethodInfo.paymentInterface = 'ctp-adyen-integration'`
+    * `paymentMethodInfo.method = null`   
     * `paymentMethodInfo.countryCode != null`   
 1. Adyen-integration will call Adyen on create and save the response to interface interaction 
-with `type='ctp-adyen-integration-interaction'` and `fields.type='getPaymentDetails'`  
+with `type='ctp-adyen-integration-interaction'` and `fields.type='getPaymentDetails'`
 
+## Credit card payment
+Adyen documentation: https://docs.adyen.com/developers/payment-methods/cards (notice: Recurring card payments not supported, manual capture is not supported)
+
+1. Backend creates a payment with following criteria
+    * `payment.paymentMethodInfo.paymentInterface = 'ctp-adyen-integration'`
+    * `payment.paymentMethodInfo.method = 'creditCard'`
+    * `payment.custom.fields.reference != null`
+    * `payment.transactions` contains a transaction with `type='Charge' and (state='Initial' or state='Pending')`
+    * `payment.interfaceInteractions` doesn't contain an interaction with `type='makePayment'`
+1. Adyen-integration will make a payment request and save following information to the payment object:
+    * `pspReference` will be saved in `payment.interfaceId`
+    * request and response with Adyen will be saved in `payment.interfaceInteractions`
+    * `payment.transactions` with a transaction `type='Charge' and (state='Initial' or state='Pending')` will be changed to `state='Charge'`
+    
+## Credit card payment with 3D Secure
+Adyen documentation: https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure (notice: SecurePlus authentication not supported)
+
+1. Backend creates a payment with following criteria
+    * `payment.paymentMethodInfo.paymentInterface = 'ctp-adyen-integration'`
+    * `payment.paymentMethodInfo.method = 'creditCard'`
+    * `payment.custom.fields.encryptedCardNumber != null`
+    * `payment.custom.fields.encryptedExpiryMonth != null`
+    * `payment.custom.fields.encryptedExpiryYear != null`
+    * `payment.custom.fields.encryptedSecurityCode != null`
+    * `payment.custom.fields.returnUrl != null`
+    * `payment.custom.fields.reference != null`
+    * `paymentObject.custom.fields.executeThreeD = true`
+    * `payment.transactions` contains a transaction with `type='Charge' and (state='Initial' or state='Pending')`
+    * `payment.interfaceInteractions` doesn't contain an interaction with `type='makePayment'`
+1. Adyen-integration will make a payment request and save following information to the payment object:
+    * request and response with Adyen will be saved in `payment.interfaceInteractions`
+    * `payment.custom.fields.MD` will be set
+    * `payment.custom.fields.PaReq` will be set
+    * `payment.custom.fields.paymentData` will be set
+    * `payment.custom.fields.redirectUrl` will be set
+    * `payment.custom.fields.redirectMethod` will be set
+1. Frontend creates a redirect URL using the custom fields above and redirect user to 3D Secure verification
+1. After verification, Adyen redirects user back to the shop. Shop collects request parameter `PaRes` and save it to a payment as `payment.custom.fields.PaRes`
+1. Adyen-integration will complete the payment and sae following information to the payment object:
+    * request and response with Adyen will be saved in `payment.interfaceInteractions`
+    * `pspReference` will be saved in `payment.interfaceId`
+    
 # Set up extensions module
 
 In order to run extension module, create following environmental variables.
