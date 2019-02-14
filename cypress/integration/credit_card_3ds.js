@@ -1,7 +1,7 @@
 describe('Credit card 3DS 1.0', () => {
   let ctpPaymentCreditCard3DS
 
-  before(() => {
+  beforeEach(() => {
     cy.task('ngrokInit', 8000)
       .then(() => cy.task('paymentResources'))
       .then(() => cy.task('createCreditCard3DS'))
@@ -10,7 +10,7 @@ describe('Credit card 3DS 1.0', () => {
       })
   })
 
-  after(() => {
+  beforeEach(() => {
     cy.task('ngrokDestroy')
   })
 

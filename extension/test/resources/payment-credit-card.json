@@ -1,4 +1,5 @@
 {
+  "interfaceId":"paymentReferenceId",
   "amountPlanned": {
     "type": "centPrecision",
     "currencyCode": "EUR",
@@ -20,8 +21,7 @@
       "encryptedExpiryMonth":"${encryptedExpiryMonth}",
       "encryptedExpiryYear":"${encryptedExpiryYear}",
       "encryptedSecurityCode":"${encryptedSecurityCode}",
-      "returnUrl":"https://your-company.com/checkout/",
-      "reference":"paymentReferenceId"
+      "returnUrl":"https://your-company.com/checkout/"
     }
   },
   "paymentStatus": {},

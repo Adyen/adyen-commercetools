@@ -9,7 +9,7 @@ const config = configLoader.load()
 function isSupported (paymentObject) {
   const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
   const isCreditCard = paymentObject.paymentMethodInfo.method === 'creditCard'
-  const hasReferenceField = !_.isNil(paymentObject.custom.fields.reference)
+  const hasReferenceField = !_.isNil(paymentObject.interfaceId)
   const hasEncryptedCardNumber = !_.isNil(paymentObject.custom.fields.encryptedCardNumber)
   const hasEncryptedExpiryMonth = !_.isNil(paymentObject.custom.fields.encryptedExpiryMonth)
   const hasEncryptedExpiryYear = !_.isNil(paymentObject.custom.fields.encryptedExpiryYear)
@@ -117,7 +117,7 @@ async function _makePayment (paymentObject) {
       currency: transaction.amount.currencyCode,
       value: transaction.amount.centAmount
     },
-    reference: paymentObject.custom.fields.reference,
+    reference: paymentObject.interfaceId,
     paymentMethod: {
       type: 'scheme',
       encryptedCardNumber: paymentObject.custom.fields.encryptedCardNumber,
