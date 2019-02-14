@@ -2,20 +2,9 @@ const fetch = require('node-fetch')
 const _ = require('lodash')
 const configLoader = require('../../config/config')
 const c = require('../../config/constants')
+const pU = require('../payment-utils')
 
 const config = configLoader.load()
-
-// see https://docs.adyen.com/developers/payments-basics/payments-lifecycle
-// and https://docs.adyen.com/developers/checkout/payment-result-codes
-const paymentAdyenStateToCtpState = {
-  redirectshopper: 'Pending',
-  received: 'Pending',
-  pending: 'Pending',
-  authorised: 'Success',
-  refused: 'Failure',
-  cancelled: 'Failure',
-  error: 'Failure'
-}
 
 function isSupported (paymentObject) {
   const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
@@ -26,7 +15,7 @@ function isSupported (paymentObject) {
   const hasEncryptedExpiryYear = !_.isNil(paymentObject.custom.fields.encryptedExpiryYear)
   const hasEncryptedSecurityCode = !_.isNil(paymentObject.custom.fields.encryptedSecurityCode)
   const hasReturnUrl = !_.isNil(paymentObject.custom.fields.returnUrl)
-  const transaction = _getChargeTransactionInitOrPending(paymentObject)
+  const transaction = pU.getChargeTransactionInitOrPending(paymentObject)
   const hasTransaction = _.isObject(transaction)
   const hasMakePaymentInteraction = paymentObject.interfaceInteractions
     .some(i => i.fields.type === 'makePayment')
@@ -99,11 +88,11 @@ async function handlePayment (paymentObject) {
         value: redirectMethod
       })
     }
-    const transaction = _getChargeTransactionInitOrPending(paymentObject)
+    const transaction = pU.getChargeTransactionInitOrPending(paymentObject)
     actions.push({
       action: 'changeTransactionState',
       transactionId: transaction.id,
-      state: _.capitalize(paymentAdyenStateToCtpState[body.resultCode.toLowerCase()])
+      state: _.capitalize(pU.getMatchingCtpState(body.resultCode.toLowerCase()))
     })
   }
   return {
@@ -112,13 +101,8 @@ async function handlePayment (paymentObject) {
   }
 }
 
-function _getChargeTransactionInitOrPending (paymentObject) {
-  return paymentObject.transactions.find(t => t.type.toLowerCase() === 'charge'
-    && (t.state.toLowerCase() === 'initial' || t.state.toLowerCase() === 'pending'))
-}
-
 async function _makePayment (paymentObject) {
-  const transaction = _getChargeTransactionInitOrPending(paymentObject)
+  const transaction = pU.getChargeTransactionInitOrPending(paymentObject)
   const body = {
     amount: {
       currency: transaction.amount.currencyCode,

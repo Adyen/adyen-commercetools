@@ -1,7 +1,9 @@
 const fetch = require('node-fetch')
+const _ = require('lodash')
 
 const configLoader = require('../../config/config')
 const c = require('../../config/constants')
+const pU = require('../payment-utils')
 
 const config = configLoader.load()
 
@@ -38,6 +40,14 @@ async function handlePayment (paymentObject) {
       action: 'setInterfaceId',
       interfaceId: body.pspReference
     })
+  if (body.resultCode) {
+    const transaction = pU.getChargeTransactionInitOrPending(paymentObject)
+    actions.push({
+      action: 'changeTransactionState',
+      transactionId: transaction.id,
+      state: _.capitalize(pU.getMatchingCtpState(body.resultCode.toLowerCase()))
+    })
+  }
   return {
     version: paymentObject.version,
     actions

@@ -24,9 +24,10 @@ describe('Credit card 3DS 1.0', () => {
     cy.get('#username').type('user')
     cy.get('#password').type('password')
     cy.get('input[type="submit"]').click()
-    cy.get('#interfaceId')
+    cy.get('#paymentObject')
       .should(($div) => {
-        expect($div.text().trim()).match(/^[0-9]*$/)
+        const paymentObject = JSON.parse($div.text())
+        expect(paymentObject.body.interfaceId).match(/^[0-9]*$/)
       })
   })
 })

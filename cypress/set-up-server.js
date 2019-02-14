@@ -25,7 +25,7 @@ async function addTestRoutes () {
     const { body: { results: [paymentObject] } } = await ctpClient.fetch(ctpClient.builder.payments.where(query))
     const updateResponse = await ctpClient.update(uri, paymentObject.id, paymentObject.version, actions)
     response.writeHead(200, { 'Content-Type': 'text/html' })
-    response.end(`<div id="interfaceId">${updateResponse.body.interfaceId}</div>`)
+    response.end(`<div id="paymentObject">${JSON.stringify(updateResponse)}</div>`)
   }
 }
 
