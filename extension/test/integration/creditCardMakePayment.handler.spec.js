@@ -54,7 +54,6 @@ describe('credit card payment', () => {
 
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
     expect(response.statusCode).to.equal(201)
-    expect(response.body.interfaceId).to.match(/^[0-9]*$/)
     const adyenRequest = JSON.parse(response.body.interfaceInteractions[0].fields.request)
     expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
 
@@ -77,6 +76,7 @@ describe('credit card payment', () => {
     expect(transactions).to.have.lengthOf(1)
     expect(transactions[0].type).to.equal('Charge')
     expect(transactions[0].state).to.equal('Success')
+    expect(transactions[0].interactionId).to.match(/^[0-9]*$/)
   })
 
   it('should create 3ds redirect', async () => {

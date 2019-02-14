@@ -15,7 +15,7 @@ function isSupported (paymentObject) {
   const hasEncryptedExpiryYear = !_.isNil(paymentObject.custom.fields.encryptedExpiryYear)
   const hasEncryptedSecurityCode = !_.isNil(paymentObject.custom.fields.encryptedSecurityCode)
   const hasReturnUrl = !_.isNil(paymentObject.custom.fields.returnUrl)
-  const transaction = pU.getChargeTransactionInitOrPending(paymentObject)
+  const transaction = pU.getChargeTransactionInit(paymentObject)
   const hasTransaction = _.isObject(transaction)
   const hasMakePaymentInteraction = paymentObject.interfaceInteractions
     .some(i => i.fields.type === 'makePayment')
@@ -49,12 +49,8 @@ async function handlePayment (paymentObject) {
       }
     }
   ]
-  if (body.pspReference)
-    actions.push({
-      action: 'setInterfaceId',
-      interfaceId: body.pspReference
-    })
   if (body.resultCode) {
+    const transaction = pU.getChargeTransactionInit(paymentObject)
     const resultCode = body.resultCode.toLowerCase()
     if (resultCode === c.REDIRECT_SHOPPER.toLowerCase()) {
       const { MD } = body.redirect.data
@@ -87,13 +83,26 @@ async function handlePayment (paymentObject) {
         name: 'redirectMethod',
         value: redirectMethod
       })
+      actions.push({
+        action: 'changeTransactionState',
+        transactionId: transaction.id,
+        state: 'Pending'
+      })
+    } else {
+      const newTxnState = _.capitalize(pU.getMatchingCtpState(body.resultCode.toLowerCase()))
+      if (newTxnState !== transaction.state)
+        actions.push({
+          action: 'changeTransactionState',
+          transactionId: transaction.id,
+          state: newTxnState
+        })
+      if (body.pspReference)
+        actions.push({
+          action: 'changeTransactionInteractionId',
+          transactionId: transaction.id,
+          interactionId: body.pspReference
+        })
     }
-    const transaction = pU.getChargeTransactionInitOrPending(paymentObject)
-    actions.push({
-      action: 'changeTransactionState',
-      transactionId: transaction.id,
-      state: _.capitalize(pU.getMatchingCtpState(body.resultCode.toLowerCase()))
-    })
   }
   return {
     version: paymentObject.version,

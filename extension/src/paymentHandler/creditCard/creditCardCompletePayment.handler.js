@@ -10,8 +10,7 @@ const config = configLoader.load()
 function isSupported (paymentObject) {
   const hasMakePaymentInteraction = paymentObject.interfaceInteractions
     .some(i => i.fields.type === 'makePayment' && i.fields.status === c.SUCCESS)
-  const hasPendingTransaction = paymentObject.transactions
-    .some(t => t.type === 'Charge' && t.state === 'Pending')
+  const hasPendingTransaction = pU.getChargeTransactionPending(paymentObject)
   return hasMakePaymentInteraction
     && hasPendingTransaction
     && paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
@@ -35,18 +34,19 @@ async function handlePayment (paymentObject) {
       }
     }
   ]
-  if (body.pspReference)
-    actions.push({
-      action: 'setInterfaceId',
-      interfaceId: body.pspReference
-    })
   if (body.resultCode) {
-    const transaction = pU.getChargeTransactionInitOrPending(paymentObject)
+    const transaction = pU.getChargeTransactionPending(paymentObject)
     actions.push({
       action: 'changeTransactionState',
       transactionId: transaction.id,
       state: _.capitalize(pU.getMatchingCtpState(body.resultCode.toLowerCase()))
     })
+    if (body.pspReference)
+      actions.push({
+        action: 'changeTransactionInteractionId',
+        transactionId: transaction.id,
+        interactionId: body.pspReference
+      })
   }
   return {
     version: paymentObject.version,

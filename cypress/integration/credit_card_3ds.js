@@ -27,7 +27,7 @@ describe('Credit card 3DS 1.0', () => {
     cy.get('#paymentObject')
       .should(($div) => {
         const paymentObject = JSON.parse($div.text())
-        expect(paymentObject.body.interfaceId).match(/^[0-9]*$/)
+        expect(paymentObject.body.transactions[0].interactionId).match(/^[0-9]*$/)
       })
   })
 })
