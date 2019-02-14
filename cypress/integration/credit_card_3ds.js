@@ -21,8 +21,8 @@ describe('Credit card 3DS 1.0', () => {
     cy.get('#TermUrl').type(adyenResponse.redirect.data.TermUrl)
     cy.get('#MD').type(adyenResponse.redirect.data.MD)
     cy.get('#submit').click()
-    cy.get('#username').type('username')
-    cy.get('#password').type('username')
+    cy.get('#username').type('user')
+    cy.get('#password').type('password')
     cy.get('input[type="submit"]').click()
     cy.get('#interfaceId')
       .should(($div) => {
