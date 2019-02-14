@@ -24,7 +24,7 @@ Adyen documentation: https://docs.adyen.com/developers/payment-methods/cards (no
 1. Backend creates a payment with following criteria
     * `payment.paymentMethodInfo.paymentInterface = 'ctp-adyen-integration'`
     * `payment.paymentMethodInfo.method = 'creditCard'`
-    * `payment.custom.fields.reference != null`
+    * `payment.interfaceId != null`
     * `payment.transactions` contains a transaction with `type='Charge' and (state='Initial' or state='Pending')`
     * `payment.interfaceInteractions` doesn't contain an interaction with `type='makePayment'`
 1. Adyen-integration will make a payment request and save following information to the payment object:
@@ -43,7 +43,7 @@ Adyen documentation: https://docs.adyen.com/developers/payment-methods/cards-wit
     * `payment.custom.fields.encryptedExpiryYear != null`
     * `payment.custom.fields.encryptedSecurityCode != null`
     * `payment.custom.fields.returnUrl != null`
-    * `payment.custom.fields.reference != null`
+    * `payment.interfaceId != null`
     * `paymentObject.custom.fields.executeThreeD = true`
     * `payment.transactions` contains a transaction with `type='Charge' and (state='Initial' or state='Pending')`
     * `payment.interfaceInteractions` doesn't contain an interaction with `type='makePayment'`
