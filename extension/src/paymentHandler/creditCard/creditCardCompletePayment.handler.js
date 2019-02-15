@@ -8,13 +8,15 @@ const pU = require('../payment-utils')
 const config = configLoader.load()
 
 function isSupported (paymentObject) {
+  const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
+  const isCreditCard = paymentObject.paymentMethodInfo.method === 'creditCard'
   const hasMakePaymentInteraction = paymentObject.interfaceInteractions
     .some(i => i.fields.type === 'makePayment' && i.fields.status === c.SUCCESS)
   const hasPendingTransaction = pU.getChargeTransactionPending(paymentObject)
   return hasMakePaymentInteraction
+    && isAdyen
+    && isCreditCard
     && hasPendingTransaction
-    && paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
-    && paymentObject.paymentMethodInfo.method === 'creditCard'
 }
 
 async function handlePayment (paymentObject) {
