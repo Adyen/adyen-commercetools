@@ -2,6 +2,8 @@ const _ = require('lodash')
 
 const configPath = process.env.CONFIG_PATH
 
+let config
+
 function getEnvConfig () {
   return {
     logLevel: process.env.LOG_LEVEL
@@ -36,16 +38,16 @@ module.exports.load = () => {
    * - ctp config
    * - env config
    */
-
-  const config = _.merge(
-    getEnvConfig(),
-    { ctp: getCTPEnvCredentials() },
-    getFileConfig()
-  )
-
-  // raise an exception when there are no CTP credentials
-  if (!config.ctp.projectKey || !config.ctp.clientId || !config.ctp.clientSecret)
-    throw new Error('CTP project credentials are missing')
+  if (config === undefined) {
+    config = _.merge(
+      getEnvConfig(),
+      { ctp: getCTPEnvCredentials() },
+      getFileConfig()
+    )
+    // raise an exception when there are no CTP credentials
+    if (!config.ctp.projectKey || !config.ctp.clientId || !config.ctp.clientSecret)
+      throw new Error('CTP project credentials are missing')
+  }
 
   return config
 }

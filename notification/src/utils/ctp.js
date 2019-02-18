@@ -1,22 +1,17 @@
+const Promise = require('bluebird')
 const fetch = require('node-fetch')
 const _ = require('lodash')
-const Promise = require('bluebird')
-
 const { createClient } = require('@commercetools/sdk-client')
 const { createAuthMiddlewareForClientCredentialsFlow } = require('@commercetools/sdk-middleware-auth')
 const { createHttpMiddleware } = require('@commercetools/sdk-middleware-http')
 const { createQueueMiddleware } = require('@commercetools/sdk-middleware-queue')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
 
-const configLoader = require('../config/config')
-
-const config = configLoader.load()
-
-function createCtpClient ({
-                            clientId, clientSecret, projectKey, concurrency = 10
-                          }) {
+function createCtpClient ({ clientId, clientSecret, projectKey, concurrency = 10 }) {
+  const AUTH_HOST = 'https://auth.commercetools.com'
+  const API_HOST = 'https://api.commercetools.com'
   const authMiddleware = createAuthMiddlewareForClientCredentialsFlow({
-    host: 'https://auth.commercetools.com',
+    host: AUTH_HOST,
     projectKey,
     credentials: {
       clientId,
@@ -27,7 +22,7 @@ function createCtpClient ({
 
   const httpMiddleware = createHttpMiddleware({
     maskSensitiveHeaderData: true,
-    host: 'https://api.commercetools.com',
+    host: API_HOST,
     enableRetry: true,
     fetch
   })
@@ -45,7 +40,7 @@ function createCtpClient ({
   })
 }
 
-function setUpClient () {
+function setUpClient (config) {
   const ctpClient = createCtpClient(config.ctp)
   const customMethods = {
     get builder () {
@@ -104,6 +99,30 @@ function getRequestBuilder (projectKey) {
   return createRequestBuilder({ projectKey })
 }
 
+/**
+ * Compares transaction states
+ * @param currentState state of the transaction from the platform
+ * @param newState state of the transaction from the Adyen notification
+ * */
+function compareTransactionStates (currentState, newState) {
+  const transactionStateFlow = {
+    "Initial": 0,
+    "Pending": 1,
+    "Success": 2,
+    "Failure": 2
+  }
+  if(!transactionStateFlow.hasOwnProperty(currentState) || !transactionStateFlow.hasOwnProperty(newState))
+    throw Error('Wrong transaction state passed. ' +
+    `currentState: ${currentState}, newState: ${newState}`)
+  if (transactionStateFlow[currentState] < transactionStateFlow[newState])
+    return 1
+  if (transactionStateFlow[currentState] > transactionStateFlow[newState])
+    return -1
+  return 0
+}
+
+
 module.exports = {
-  get: () => setUpClient()
+  get: (config) => setUpClient(config),
+  compareTransactionStates
 }
