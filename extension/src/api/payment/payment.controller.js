@@ -1,12 +1,12 @@
 const httpUtils = require('../../utils')
 const creditCardMakePayment = require('../../paymentHandler/creditCard/creditCardMakePayment.handler')
 const creditCardCompletePayment = require('../../paymentHandler/creditCard/creditCardCompletePayment.handler')
-const paypalRedirectShopper = require('../../paymentHandler/paypal/paypalRedirectShopper.handler')
+const paypalMakePayment = require('../../paymentHandler/paypal/paypalMakePayment.handler')
 const paypalCompletePayment = require('../../paymentHandler/paypal/paypalCompletePayment.handler')
 const commonHandler = require('../../paymentHandler/fetchPaymentMethod.handler')
 
 const paymentHandlers = [creditCardMakePayment, creditCardCompletePayment, commonHandler,
-  paypalRedirectShopper, paypalCompletePayment]
+  paypalMakePayment, paypalCompletePayment]
 
 async function handlePayment (request, response) {
   const paymentObject = await _getPaymentObject(request)
