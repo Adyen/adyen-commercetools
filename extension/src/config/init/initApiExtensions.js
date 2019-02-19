@@ -1,6 +1,6 @@
 const _ = require('lodash')
 
-const apiExtensionDraft = require('../../../resources/api-extensions.json')
+const apiExtensionDraft = require('../../../resources/api-extension.json')
 
 async function initApiExtensions (ctpClient, ctpAdyenIntegrationBaseUrl) {
   try {
