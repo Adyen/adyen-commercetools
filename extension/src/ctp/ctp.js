@@ -1,6 +1,5 @@
 const fetch = require('node-fetch')
 const _ = require('lodash')
-const Promise = require('bluebird')
 
 const { createClient } = require('@commercetools/sdk-client')
 const { createAuthMiddlewareForClientCredentialsFlow } = require('@commercetools/sdk-middleware-auth')
