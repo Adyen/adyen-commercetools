@@ -3,7 +3,7 @@ require('./config/config')
 
 const { initResources } = require('./config/init/initResources')
 
-const port = 8080
+const port = parseInt(process.env.EXTENSION_PORT || 8080, 10)
 
 init.listen(port, async () => {
   await initResources()

@@ -13,10 +13,10 @@ const configLoader = require('../config/config')
 const config = configLoader.load()
 
 function createCtpClient ({
-  clientId, clientSecret, projectKey, authUrl, apiUrl, concurrency = 10
+  clientId, clientSecret, projectKey, concurrency = 10
 }) {
   const authMiddleware = createAuthMiddlewareForClientCredentialsFlow({
-    host: authUrl,
+    host: 'https://auth.sphere.io',
     projectKey,
     credentials: {
       clientId,
@@ -27,7 +27,7 @@ function createCtpClient ({
 
   const httpMiddleware = createHttpMiddleware({
     maskSensitiveHeaderData: true,
-    host: apiUrl,
+    host: 'https://api.sphere.io',
     enableRetry: true,
     fetch
   })
