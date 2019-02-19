@@ -1,7 +1,5 @@
 const _ = require('lodash')
 
-const configPath = process.env.CONFIG_PATH
-
 function getEnvConfig () {
   return {
     port: process.env.PORT,
@@ -28,17 +26,6 @@ function getAdyenCredentials () {
   }
 }
 
-function getFileConfig () {
-  let fileConfig = {}
-  try {
-    fileConfig = require(configPath) // eslint-disable-line
-  } catch (e) {
-    // config file was not provided
-  }
-
-  return fileConfig
-}
-
 module.exports.load = () => {
   /**
    * Load configuration from several sources in this order (last has highest priority):
@@ -52,8 +39,7 @@ module.exports.load = () => {
   const config = _.merge(
     getEnvConfig(),
     { ctp: getCTPEnvCredentials() },
-    { adyen: getAdyenCredentials() },
-    getFileConfig()
+    { adyen: getAdyenCredentials() }
   )
 
   // raise an exception when there are no CTP credentials
