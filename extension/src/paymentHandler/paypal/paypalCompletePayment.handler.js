@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const fetch = require('node-fetch')
 
 const pU = require('../payment-utils')
 const c = require('../../config/constants')
@@ -35,6 +36,20 @@ async function handlePayment (paymentObject) {
       }
     }
   ]
+  if (responseBody.resultCode) {
+    const transaction = pU.getChargeTransactionPending(paymentObject)
+    actions.push({
+      action: 'changeTransactionState',
+      transactionId: transaction.id,
+      state: _.capitalize(pU.getMatchingCtpState(responseBody.resultCode.toLowerCase()))
+    })
+    if (responseBody.pspReference)
+      actions.push({
+        action: 'changeTransactionInteractionId',
+        transactionId: transaction.id,
+        interactionId: responseBody.pspReference
+      })
+  }
   return {
     version: paymentObject.version,
     actions
@@ -53,7 +68,7 @@ async function _callAdyen (paymentObject) {
     body: JSON.stringify(body),
     headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
   }
-  const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/payments`, request)
+  const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/payments/details`, request)
 
   return { response: await resultPromise, request }
 }
