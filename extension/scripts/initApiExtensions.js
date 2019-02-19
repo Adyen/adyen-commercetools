@@ -9,7 +9,7 @@ async function initApiExtensions (ctpClient, ctpAdyenIntegrationBaseUrl) {
       const extension = _.template(JSON.stringify(uncompiledDraft))({ ctpAdyenIntegrationBaseUrl })
       await ctpClient.create(ctpClient.builder.extensions, extension)
     } catch (e) {
-      console.log('Error when creating interface interaction custom type, skipping...', JSON.stringify(e))
+      console.error('Error when creating interface interaction custom type, skipping...', JSON.stringify(e))
     }
   }, { concurrency: 3 })
 }
