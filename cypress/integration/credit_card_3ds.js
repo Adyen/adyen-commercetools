@@ -10,7 +10,7 @@ describe('Credit card 3DS 1.0', () => {
       })
   })
 
-  beforeEach(() => {
+  afterEach(() => {
     cy.task('ngrokDestroy')
   })
 
