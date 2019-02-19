@@ -5,8 +5,7 @@ const iTSetUp = require('./integrationTestSetUp')
 const ctpClientBuilder = require('../../src/ctp/ctp')
 const paymentTemplate = require('../resources/payment-paypal.json')
 
-describe('Adyen Paypal payment', () => {
-
+describe('Paypal payment', () => {
   let ctpClient
 
   beforeEach(async () => {
