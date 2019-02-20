@@ -8,8 +8,9 @@ const ctpClientBuilder = require('../../extension/src/ctp/ctp')
 async function init () {
   const ctpClient = ctpClientBuilder.get()
   await testUtils.deleteAllResources(ctpClient, 'payments')
-  await testUtils.deleteAllResources(ctpClient, 'types')
-  await testUtils.deleteAllResources(ctpClient, 'extensions')
+  await Promise.all([
+    testUtils.deleteAllResources(ctpClient, 'types'), testUtils.deleteAllResources(ctpClient, 'extensions')
+  ])
   await initResources()
 }
 
