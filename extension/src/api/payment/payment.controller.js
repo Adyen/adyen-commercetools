@@ -3,10 +3,11 @@ const creditCardMakePayment = require('../../paymentHandler/creditCard/creditCar
 const creditCardCompletePayment = require('../../paymentHandler/creditCard/creditCardCompletePayment.handler')
 const paypalMakePayment = require('../../paymentHandler/paypal/paypalMakePayment.handler')
 const paypalCompletePayment = require('../../paymentHandler/paypal/paypalCompletePayment.handler')
+const kcpMakePayment = require('../../paymentHandler/kcp/kcpMakePayment.handler')
 const commonHandler = require('../../paymentHandler/fetchPaymentMethod.handler')
 
 const paymentHandlers = [creditCardMakePayment, creditCardCompletePayment, commonHandler,
-  paypalMakePayment, paypalCompletePayment]
+  paypalMakePayment, paypalCompletePayment, kcpMakePayment]
 
 async function handlePayment (request, response) {
   const paymentObject = await _getPaymentObject(request)
