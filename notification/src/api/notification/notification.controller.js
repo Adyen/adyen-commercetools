@@ -1,21 +1,25 @@
-const httpUtils = require('../../utils/commons')
 const _ = require('lodash')
+const Promise = require('bluebird')
+const httpUtils = require('../../utils/commons')
 const config = require('../../config/config').load()
 const ctp = require('../../utils/ctp')
 const ctpClient = ctp.get(config)
 
 const adyenEvents = require('../../../resources/adyenEvents')
 
-// TODO: add JSON schema validation
+// TODO: add JSON schema validation:
+// https://github.com/commercetools/commercetools-adyen-integration/issues/9
 async function handleNotification (request, response, logger) {
   const body = await httpUtils.collectRequestData(request, response)
   try {
-    await processNotifications(request, logger)
+    await processNotifications(JSON.parse(body), logger)
     response.statusCode = 200
-  } catch (e) {
+    return response.end("{ notificationResponse : '[accepted]' }")
+  } catch(e) {
+    logger.error(e, 'Ooops')
     response.statusCode = 500
+    return response.end()
   }
-  return response.end({ status: response.statusCode })
 }
 
 // TODO: proper naming
@@ -27,12 +31,13 @@ async function processNotifications (request, logger) {
 // TODO: proper naming
 async function processNotification (notification, logger) {
   const merchantReference = _.get(notification, 'NotificationRequestItem.merchantReference', null)
-  let updateActions
-  let payment
   if (merchantReference === null) {
     logger.error(`Can't extract merchantReference from the notification: ${JSON.stringify(notification)}`)
     return null
   }
+
+  let updateActions
+  let payment
   try {
     payment = await getPaymentByMerchantReference(merchantReference)
     updateActions = calculateUpdateActionsForPayment(payment, notification)
@@ -52,8 +57,12 @@ function calculateUpdateActionsForPayment (payment, notification) {
   const notificationEventCode = notification.eventCode
   const notificationSuccess = notification.success
   const updateActions = []
-  // TODO: check interfaceInteraction existence before pushing a new one
-  updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
+  const stringifiedNotification = JSON.stringify(notification)
+  // check if interfaceInteraction already on payment or not
+  const isInterfaceInteractionOnPayment =
+    payment.interfaceInteractions.some(interaction => interaction.fields.response === stringifiedNotification)
+  if (isInterfaceInteractionOnPayment === false)
+    updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
 
   const { transactionType, transactionState } = getTransactionTypeAndStateUpdateAction(notificationEventCode, notificationSuccess)
   if (transactionType !== null) {
@@ -61,16 +70,14 @@ function calculateUpdateActionsForPayment (payment, notification) {
     // otherwise create a transaction with type `transactionType` and state `transactionState`
     const oldTransaction = _.find(payment.transactions, (transaction) => transaction.type === transactionType)
     if (_.isEmpty(oldTransaction)) {
-      if (ctp.compareTransactionStates(oldTransaction.state, transactionState)) {
-        updateActions.push(getChangeTransactionStateUpdateAction(transaction.id, transactionState))
-      }
-    } else {
       updateActions.push(getAddTransactionUpdateAction(
         transactionType,
         transactionState,
         notification.amount.value,
         notification.amount.currency)
       )
+    } else if (ctp.compareTransactionStates(oldTransaction.state, transactionState)) {
+      updateActions.push(getChangeTransactionStateUpdateAction(oldTransaction.id, transactionState))
     }
   }
   return updateActions
@@ -119,7 +126,8 @@ function getAddTransactionUpdateAction (type, state, amount, currency) {
 }
 
 async function getPaymentByMerchantReference (merchantReference) {
-  return ctpClient.fetch(ctpClient.builder.payments.where(`interfaceId="${merchantReference}"`))
+  const result = await ctpClient.fetch(ctpClient.builder.payments.where(`interfaceId="${merchantReference}"`))
+  return _.get(result, 'body.results[0]', null)
 }
 
 module.exports = { handleNotification }
