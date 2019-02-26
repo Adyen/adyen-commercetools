@@ -10,6 +10,7 @@ const config = configLoader.load()
 function isSupported (paymentObject) {
   const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
   const isCreditCard = paymentObject.paymentMethodInfo.method === 'creditCard'
+    || paymentObject.paymentMethodInfo.method === 'creditCard_3d'
   const hasMakePaymentInteraction = paymentObject.interfaceInteractions
     .some(i => i.fields.type === 'makePayment' && i.fields.status === c.SUCCESS)
   const hasPendingTransaction = pU.getChargeTransactionPending(paymentObject)
