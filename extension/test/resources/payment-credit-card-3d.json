@@ -13,7 +13,7 @@
   "custom": {
     "type": {
       "typeId": "type",
-      "key": "ctp-adyen-integration-credit-card"
+      "key": "ctp-adyen-integration-payment-custom-type"
     },
     "fields": {
       "countryCode": "DE",

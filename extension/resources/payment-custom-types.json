@@ -1,319 +1,186 @@
-[
-  {
-    "key": "ctp-adyen-integration-credit-card",
-    "name": {
-      "en": "CTP Adyen integration credit card payment"
-    },
-    "resourceTypeIds": [
-      "payment"
-    ],
-    "fieldDefinitions": [
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "payload",
-        "label": {
-          "en": "payload"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "countryCode",
-        "label": {
-          "en": "countryCode"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "reference",
-        "label": {
-          "en": "reference"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "encryptedCardNumber",
-        "label": {
-          "en": "encryptedCardNumber"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "encryptedExpiryMonth",
-        "label": {
-          "en": "encryptedExpiryMonth"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "encryptedExpiryYear",
-        "label": {
-          "en": "encryptedExpiryYear"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "encryptedSecurityCode",
-        "label": {
-          "en": "encryptedSecurityCode"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "returnUrl",
-        "label": {
-          "en": "returnUrl"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "browserInfo",
-        "label": {
-          "en": "browserInfo"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "Boolean"
-        },
-        "name": "executeThreeD",
-        "label": {
-          "en": "executeThreeD"
-        },
-        "required": false
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "holderName",
-        "label": {
-          "en": "holderName"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "PaReq",
-        "label": {
-          "en": "PaReq"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "MD",
-        "label": {
-          "en": "MD"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "paymentData",
-        "label": {
-          "en": "paymentData"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "PaRes",
-        "label": {
-          "en": "PaRes"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "redirectUrl",
-        "label": {
-          "en": "redirectUrl"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "redirectMethod",
-        "label": {
-          "en": "redirectMethod"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      }
-    ]
+{
+  "key": "ctp-adyen-integration-payment-custom-type",
+  "name": {
+    "en": "CTP Adyen integration payment custom type"
   },
-  {
-    "key": "ctp-adyen-integration-paypal",
-    "name": {
-      "en": "CTP Adyen integration Paypal payment"
+  "resourceTypeIds": [
+    "payment"
+  ],
+  "fieldDefinitions": [
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "payload",
+      "label": {
+        "en": "payload"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
     },
-    "resourceTypeIds": [
-      "payment"
-    ],
-    "fieldDefinitions": [
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "payload",
-        "label": {
-          "en": "payload"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
+    {
+      "type": {
+        "name": "String"
       },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "returnUrl",
-        "label": {
-          "en": "returnUrl"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
+      "name": "returnUrl",
+      "label": {
+        "en": "returnUrl"
       },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "redirectUrl",
-        "label": {
-          "en": "redirectUrl"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "redirectMethod",
-        "label": {
-          "en": "redirectMethod"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      }
-    ]
-  },
-  {
-    "key": "ctp-adyen-integration-payment-custom-type",
-    "name": {
-      "en": "CTP Adyen integration payment custom type"
+      "required": false,
+      "inputHint": "SingleLine"
     },
-    "resourceTypeIds": [
-      "payment"
-    ],
-    "fieldDefinitions": [
-      {
-        "type": {
-          "name": "Enum",
-          "values": [
-            {
-              "key": "kcp_creditcard",
-              "label": "KCP credit card"
-            },
-            {
-              "key": "kcp_banktransfer",
-              "label": "KCP bank transfer"
-            }
-          ]
-        },
-        "name": "kcpPaymentMethodType",
-        "label": {
-          "en": "kcpPaymentMethodType"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
+    {
+      "type": {
+        "name": "String"
       },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "returnUrl",
-        "label": {
-          "en": "returnUrl"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
+      "name": "redirectUrl",
+      "label": {
+        "en": "redirectUrl"
       },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "redirectUrl",
-        "label": {
-          "en": "redirectUrl"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
       },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "redirectMethod",
-        "label": {
-          "en": "redirectMethod"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      }
-    ]
-  }
-]
+      "name": "redirectMethod",
+      "label": {
+        "en": "redirectMethod"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "countryCode",
+      "label": {
+        "en": "countryCode"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "encryptedCardNumber",
+      "label": {
+        "en": "encryptedCardNumber"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "encryptedExpiryMonth",
+      "label": {
+        "en": "encryptedExpiryMonth"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "encryptedExpiryYear",
+      "label": {
+        "en": "encryptedExpiryYear"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "encryptedSecurityCode",
+      "label": {
+        "en": "encryptedSecurityCode"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "browserInfo",
+      "label": {
+        "en": "browserInfo"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "holderName",
+      "label": {
+        "en": "holderName"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "PaReq",
+      "label": {
+        "en": "PaReq"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "MD",
+      "label": {
+        "en": "MD"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "paymentData",
+      "label": {
+        "en": "paymentData"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "PaRes",
+      "label": {
+        "en": "PaRes"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "Boolean"
+      },
+      "name": "executeThreeD",
+      "label": {
+        "en": "executeThreeD"
+      },
+      "required": false
+    }
+  ]
+}
