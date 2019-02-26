@@ -81,6 +81,20 @@ Adyen documentation: https://docs.adyen.com/developers/payment-methods/paypal
     * `Charge` transaction state will be updated to `Success` or `Pending` according to returned `resultCode` from Adyen.
     * `psReference` will be saved in `Charge` transaction as `interactionId`
     
+## KCP payment
+1. Backend creates a payment with following criteria
+    * `payment.paymentMethodInfo.paymentInterface = 'ctp-adyen-integration'`
+    * `payment.paymentMethodInfo.method = 'kcp_creditcard' OR payment.paymentMethodInfo.method = 'kcp_banktransfer'`
+    * `payment.custom.fields.returnUrl != null`
+    * `payment.interfaceId != null`
+    * `payment.transactions` contains a transaction with `type='Charge'` and `state='Initial'`
+1. Adyen-integration will make a `Redirect shopper` request and save following information to the payment object:
+    * request and response with Adyen will be saved in `payment.interfaceInteractions`
+    * `payment.custom.fields.redirectUrl` will be set
+    * `payment.custom.fields.redirectMethod` will be set
+    * `Charge` transaction state will be updated to `Pending`
+1. Frontend redirects user to KCP using the custom fields above
+    
 # Set up extensions module
 
 In order to run extension module, create following environmental variables.
