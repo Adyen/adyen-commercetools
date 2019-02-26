@@ -8,7 +8,7 @@
   },
   "paymentMethodInfo": {
     "paymentInterface": "ctp-adyen-integration",
-    "method": "creditCard"
+    "method": "creditCard_3d"
   },
   "custom": {
     "type": {
@@ -23,7 +23,6 @@
       "encryptedSecurityCode":"${encryptedSecurityCode}",
       "returnUrl":"${returnUrl}",
       "holderName": "John Smith",
-      "executeThreeD": true,
       "browserInfo": "{\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36\",\"acceptHeader\":\"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\"}"
     }
   },

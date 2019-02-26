@@ -107,80 +107,70 @@
       "inputHint": "SingleLine"
     },
     {
-      "type": {
-        "name": "String"
+        "type": {
+          "name": "String"
+        },
+        "name": "browserInfo",
+        "label": {
+          "en": "browserInfo"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
       },
-      "name": "browserInfo",
-      "label": {
-        "en": "browserInfo"
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "holderName",
+        "label": {
+          "en": "holderName"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
       },
-      "required": false,
-      "inputHint": "SingleLine"
-    },
-    {
-      "type": {
-        "name": "String"
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "PaReq",
+        "label": {
+          "en": "PaReq"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
       },
-      "name": "holderName",
-      "label": {
-        "en": "holderName"
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "MD",
+        "label": {
+          "en": "MD"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
       },
-      "required": false,
-      "inputHint": "SingleLine"
-    },
-    {
-      "type": {
-        "name": "String"
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "paymentData",
+        "label": {
+          "en": "paymentData"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
       },
-      "name": "PaReq",
-      "label": {
-        "en": "PaReq"
-      },
-      "required": false,
-      "inputHint": "SingleLine"
-    },
-    {
-      "type": {
-        "name": "String"
-      },
-      "name": "MD",
-      "label": {
-        "en": "MD"
-      },
-      "required": false,
-      "inputHint": "SingleLine"
-    },
-    {
-      "type": {
-        "name": "String"
-      },
-      "name": "paymentData",
-      "label": {
-        "en": "paymentData"
-      },
-      "required": false,
-      "inputHint": "SingleLine"
-    },
-    {
-      "type": {
-        "name": "String"
-      },
-      "name": "PaRes",
-      "label": {
-        "en": "PaRes"
-      },
-      "required": false,
-      "inputHint": "SingleLine"
-    },
-    {
-      "type": {
-        "name": "Boolean"
-      },
-      "name": "executeThreeD",
-      "label": {
-        "en": "executeThreeD"
-      },
-      "required": false
-    }
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "PaRes",
+        "label": {
+          "en": "PaRes"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
+      }
   ]
 }
