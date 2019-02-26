@@ -9,7 +9,8 @@ const config = configLoader.load()
 
 function isSupported (paymentObject) {
   const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
-  const isKcp = paymentObject.paymentMethodInfo.method === 'kcp'
+  const isKcp = paymentObject.paymentMethodInfo.method === 'kcp_banktransfer'
+    || paymentObject.paymentMethodInfo.method === 'kcp_creditcard'
   const transaction = pU.getChargeTransactionInit(paymentObject)
   const hasTransaction = _.isObject(transaction)
   const hasReturnUrl = !_.isNil(paymentObject.custom.fields.returnUrl)
@@ -66,7 +67,7 @@ async function handlePayment (paymentObject) {
 
 async function _callAdyen (paymentObject) {
   const transaction = pU.getChargeTransactionInit(paymentObject)
-  const paymentMethodType = paymentObject.custom.fields.kcpPaymentMethodType
+  const paymentMethodType = paymentObject.paymentMethodInfo.method
   const requestBody = {
     amount: {
       currency: transaction.amount.currencyCode,

@@ -8,7 +8,7 @@
   },
   "paymentMethodInfo": {
     "paymentInterface": "ctp-adyen-integration",
-    "method": "kcp"
+    "method": "kcp_creditcard"
   },
   "custom": {
     "type": {
@@ -16,7 +16,6 @@
       "key": "ctp-adyen-integration-payment-custom-type"
     },
     "fields": {
-      "kcpPaymentMethodType": "kcp_creditcard",
       "returnUrl":"https://your-company.com/checkout/"
     }
   },
