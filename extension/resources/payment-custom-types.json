@@ -109,16 +109,6 @@
       },
       {
         "type": {
-          "name": "Boolean"
-        },
-        "name": "executeThreeD",
-        "label": {
-          "en": "executeThreeD"
-        },
-        "required": false
-      },
-      {
-        "type": {
           "name": "String"
         },
         "name": "holderName",

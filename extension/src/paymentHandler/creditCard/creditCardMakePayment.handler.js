@@ -9,6 +9,7 @@ const config = configLoader.load()
 function isSupported (paymentObject) {
   const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
   const isCreditCard = paymentObject.paymentMethodInfo.method === 'creditCard'
+    || paymentObject.paymentMethodInfo.method === 'creditCard_3d'
   const hasReferenceField = !_.isNil(paymentObject.interfaceId)
   const hasEncryptedCardNumber = !_.isNil(paymentObject.custom.fields.encryptedCardNumber)
   const hasEncryptedExpiryMonth = !_.isNil(paymentObject.custom.fields.encryptedExpiryMonth)
@@ -130,9 +131,9 @@ async function _makePayment (paymentObject) {
   }
   if (paymentObject.custom.fields.holderName)
     body.holderName = paymentObject.custom.fields.holderName
-  if (paymentObject.custom.fields.executeThreeD)
+  if (paymentObject.paymentMethodInfo.method === 'creditCard_3d')
     body.additionalData = {
-      executeThreeD: paymentObject.custom.fields.executeThreeD.toString()
+      executeThreeD: 'true'
     }
   if (paymentObject.custom.fields.browserInfo) {
     const browserInfo = JSON.parse(paymentObject.custom.fields.browserInfo)

@@ -1,9 +1,7 @@
 const ngrok = require('ngrok')   // eslint-disable-line
 
 async function init (port) {
-  const ngrokUrl = await ngrok.connect(port)
-  process.env.API_EXTENSION_BASE_URL = ngrokUrl
-  return ngrokUrl
+  process.env.API_EXTENSION_BASE_URL = await ngrok.connect(port)
 }
 
 async function destroy () {
