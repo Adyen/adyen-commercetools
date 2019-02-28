@@ -4,8 +4,8 @@ const httpUtils = require('./utils')
 
 const routes = {
   '/': (request, response) => httpUtils.sendResponse(response),
-  '/health': healthController.checkHealth,
-  '/payments': paymentController.handlePayment
+  '/health': healthController.processRequest,
+  '/payments': paymentController.processRequest
 }
 
 module.exports = { routes }
