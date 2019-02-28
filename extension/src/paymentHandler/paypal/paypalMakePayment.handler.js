@@ -4,24 +4,15 @@ const fetch = require('node-fetch')
 const c = require('../../config/constants')
 const configLoader = require('../../config/config')
 const pU = require('../payment-utils')
+const Validator = require('../../validator/validator')
 
 const config = configLoader.load()
 
-function isSupported (paymentObject) {
-  const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
-  const isPaypal = paymentObject.paymentMethodInfo.method === 'paypal'
-  const transaction = pU.getChargeTransactionInit(paymentObject)
-  const hasTransaction = _.isObject(transaction)
-  const hasReturnUrl = !_.isNil(paymentObject.custom.fields.returnUrl)
-  const hasReferenceField = !_.isNil(paymentObject.interfaceId)
-  return isAdyen
-    && isPaypal
-    && hasTransaction
-    && hasReturnUrl
-    && hasReferenceField
-}
-
 async function handlePayment (paymentObject) {
+  const validator = _validatePayment(paymentObject)
+  if (validator.hasErrors())
+    return validator.buildCtpErrorResponse()
+
   const { response, request } = await _callAdyen(paymentObject)
   const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
   const responseBody = await response.json()
@@ -64,6 +55,11 @@ async function handlePayment (paymentObject) {
   }
 }
 
+function _validatePayment (paymentObject) {
+  return Validator.validate(paymentObject)
+    .validateReturnUrlField()
+}
+
 async function _callAdyen (paymentObject) {
   const transaction = pU.getChargeTransactionInit(paymentObject)
   const body = {
@@ -89,4 +85,4 @@ async function _callAdyen (paymentObject) {
   return { response: await resultPromise, request }
 }
 
-module.exports = { handlePayment, isSupported }
+module.exports = { handlePayment }

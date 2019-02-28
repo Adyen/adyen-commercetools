@@ -3,36 +3,15 @@ const _ = require('lodash')
 const configLoader = require('../../config/config')
 const c = require('../../config/constants')
 const pU = require('../payment-utils')
+const Validator = require('../../validator/validator')
 
 const config = configLoader.load()
 
-function isSupported (paymentObject) {
-  const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
-  const isCreditCard = paymentObject.paymentMethodInfo.method === 'creditCard'
-    || paymentObject.paymentMethodInfo.method === 'creditCard_3d'
-  const hasReferenceField = !_.isNil(paymentObject.interfaceId)
-  const hasEncryptedCardNumber = !_.isNil(paymentObject.custom.fields.encryptedCardNumber)
-  const hasEncryptedExpiryMonth = !_.isNil(paymentObject.custom.fields.encryptedExpiryMonth)
-  const hasEncryptedExpiryYear = !_.isNil(paymentObject.custom.fields.encryptedExpiryYear)
-  const hasEncryptedSecurityCode = !_.isNil(paymentObject.custom.fields.encryptedSecurityCode)
-  const hasReturnUrl = !_.isNil(paymentObject.custom.fields.returnUrl)
-  const transaction = pU.getChargeTransactionInit(paymentObject)
-  const hasTransaction = _.isObject(transaction)
-  const hasMakePaymentInteraction = paymentObject.interfaceInteractions
-    .some(i => i.fields.type === 'makePayment')
-  return !hasMakePaymentInteraction
-    && hasEncryptedCardNumber
-    && hasEncryptedExpiryMonth
-    && hasEncryptedExpiryYear
-    && hasEncryptedSecurityCode
-    && hasReturnUrl
-    && isAdyen
-    && isCreditCard
-    && hasReferenceField
-    && hasTransaction
-}
-
 async function handlePayment (paymentObject) {
+  const validator = _validatePayment(paymentObject)
+  if (validator.hasErrors())
+    return validator.buildCtpErrorResponse()
+
   const { request, response } = await _makePayment(paymentObject)
   // for statusCodes, see https://docs.adyen.com/developers/development-resources/response-handling
   const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
@@ -111,6 +90,15 @@ async function handlePayment (paymentObject) {
   }
 }
 
+function _validatePayment (paymentObject) {
+  return Validator.validate(paymentObject)
+    .validateEncryptedCardNumberField()
+    .validateEncryptedExpiryMonthField()
+    .validateEncryptedExpiryYearField()
+    .validateEncryptedSecurityCodeField()
+    .validateReturnUrlField()
+}
+
 async function _makePayment (paymentObject) {
   const transaction = pU.getChargeTransactionInitOrPending(paymentObject)
   const body = {
@@ -149,4 +137,4 @@ async function _makePayment (paymentObject) {
   return { response: await resultPromise, request }
 }
 
-module.exports = { isSupported, handlePayment }
+module.exports = { handlePayment }

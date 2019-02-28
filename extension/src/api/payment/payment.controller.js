@@ -1,19 +1,27 @@
 const httpUtils = require('../../utils')
-const creditCardMakePayment = require('../../paymentHandler/creditCard/creditCardMakePayment.handler')
-const creditCardCompletePayment = require('../../paymentHandler/creditCard/creditCardCompletePayment.handler')
-const paypalMakePayment = require('../../paymentHandler/paypal/paypalMakePayment.handler')
-const paypalCompletePayment = require('../../paymentHandler/paypal/paypalCompletePayment.handler')
-const kcpMakePayment = require('../../paymentHandler/kcp/kcpMakePayment.handler')
+const creditCardPayment = require('../../paymentHandler/creditCard/creditCard.handler')
+const paypalPayment = require('../../paymentHandler/paypal/paypal.handler')
+const kcpPayment = require('../../paymentHandler/kcp/kcpPayment.handler')
 const commonHandler = require('../../paymentHandler/fetchPaymentMethod.handler')
+const Validator = require('../../validator/validator')
 
-const paymentHandlers = [creditCardMakePayment, creditCardCompletePayment, commonHandler,
-  paypalMakePayment, paypalCompletePayment, kcpMakePayment]
+const paymentHandlers = {
+  creditCardPayment,
+  commonHandler,
+  paypalPayment,
+  kcpPayment
+}
 
-async function handlePayment (request, response) {
+async function processRequest (request, response) {
   const paymentObject = await _getPaymentObject(request)
+  const validator = _verifyPayment(paymentObject)
+  if (validator.hasErrors())
+    // if it's not adyen payment, ignore the payment
+    return httpUtils.sendResponse(response)
   const handler = _getPaymentHandler(paymentObject)
-
   const handlerResponse = await handler.handlePayment(paymentObject)
+  if (handlerResponse.errors)
+    return httpUtils.sendResponse(response, 400, undefined, handlerResponse)
   return httpUtils.sendResponse(response, undefined, undefined, handlerResponse)
 }
 
@@ -23,10 +31,20 @@ async function _getPaymentObject (request) {
 }
 
 function _getPaymentHandler (paymentObject) {
-  for (const paymentHandler of paymentHandlers)
-    if (paymentHandler.isSupported(paymentObject))
-      return paymentHandler
-  throw new Error('Payment is not supported.')
+  const paymentValidator = Validator.validate(paymentObject)
+  if (paymentValidator.isPaypal())
+    return paymentHandlers.paypalPayment
+  if (paymentValidator.isCreditCard())
+    return paymentHandlers.creditCardPayment
+  if (paymentValidator.isKcp())
+    return paymentHandlers.kcpPayment
+  return paymentHandlers.commonHandler
 }
 
-module.exports = { handlePayment }
+function _verifyPayment (paymentObject) {
+  return Validator.validate(paymentObject)
+    .validateAdyen()
+    .validateInterfaceIdField()
+}
+
+module.exports = { processRequest }

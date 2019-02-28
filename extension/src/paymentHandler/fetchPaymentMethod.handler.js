@@ -4,12 +4,6 @@ const c = require('../config/constants')
 
 const config = configLoader.load()
 
-function isSupported (paymentObject) {
-  return paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
-    && !paymentObject.paymentMethodInfo.method
-    && paymentObject.custom.fields.countryCode
-}
-
 async function handlePayment (paymentObject) {
   const { request, response } = await _fetchPaymentMethods(paymentObject)
   const responseBody = await response.json()
@@ -58,4 +52,4 @@ async function _fetchPaymentMethods (paymentObject) {
   return { response, request }
 }
 
-module.exports = { isSupported, handlePayment }
+module.exports = { handlePayment }
