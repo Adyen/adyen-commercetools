@@ -36,8 +36,10 @@
     "@commercetools/sync-actions": "3.0.0",
     "bluebird": "3.5.3",
     "bunyan": "^1.8.8",
-    "lodash": "4.17.11",
-    "node-fetch": "2.3.0"
+    "lodash": "^4.17.11",
+    "node-fetch": "^2.3.0",
+    "mocha": "^5.2.0",
+    "serialize-error": "^3.0.0"
   },
   "devDependencies": {
     "babel-eslint": "10.0.1",
