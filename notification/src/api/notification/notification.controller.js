@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
+const serializeError = require('serialize-error')
 const httpUtils = require('../../utils/commons')
 const config = require('../../config/config').load()
 const ctp = require('../../utils/ctp')
@@ -15,8 +16,8 @@ async function handleNotification (request, response, logger) {
     await processNotifications(JSON.parse(body), logger)
     response.statusCode = 200
     return response.end("{ notificationResponse : '[accepted]' }")
-  } catch(e) {
-    logger.error(e, 'Ooops')
+  } catch(err) {
+    logger.error(err, 'Ooops')
     response.statusCode = 500
     return response.end()
   }
@@ -36,20 +37,44 @@ async function processNotification (notification, logger) {
     return null
   }
 
-  let updateActions
-  let payment
   try {
-    payment = await getPaymentByMerchantReference(merchantReference)
-    updateActions = calculateUpdateActionsForPayment(payment, notification)
-  } catch (e) {
-    logger.warn(e, `Error while trying to fetch the payment for merchantReference: ${merchantReference}`)
+    const payment = await getPaymentByMerchantReference(merchantReference)
+    await updatePaymentWithRepeater(payment, notification)
+  } catch (err) {
+    logger.error(err)
     return null
   }
+}
 
-  try {
-    await ctpClient.update(ctpClient.builder.payments, payment.id, payment.version, updateActions)
-  } catch (e) {
-    logger.error(e, `Error while updating the payment with id: ${payment.id}`)
+async function updatePaymentWithRepeater(payment, notification) {
+  const maxRetry = 20
+  let currentPayment = payment
+  let currentVersion = payment.version
+  let retryCount = 0
+  let retryMessage
+  let updateActions
+  while (true) {
+    updateActions = calculateUpdateActionsForPayment(currentPayment, notification)
+    try {
+      await ctpClient.update(ctpClient.builder.payments, payment.id, currentVersion, updateActions)
+      break
+    } catch (err) {
+      if (err.body.statusCode !== 409)
+        throw new Error(`Unexpected error during updating a payment with ID: ${paymentId}. Exiting. `
+          + `Error: ${JSON.stringify(serializeError(err))}`)
+      retryCount++
+      if (retryCount >= maxRetry) {
+        retryMessage = `Got a concurrent modification error`
+          + ` when updating payment with id "${paymentId}".`
+          + ` Version tried "${currentVersion}",`
+          + ` currentVersion: "${err.body.errors[0].currentVersion}".`
+        throw new Error(`${retryMessage} Won't retry again`
+          + ` because of a reached limit ${maxRetry}`
+          + ` max retries. Error: ${JSON.stringify(serializeError(err))}`)
+      }
+      currentPayment = await ctpClient.fetchById(ctpClient.builder.payments, currentPayment.id)
+      currentVersion = currentPayment.version
+    }
   }
 }
 
@@ -126,8 +151,13 @@ function getAddTransactionUpdateAction (type, state, amount, currency) {
 }
 
 async function getPaymentByMerchantReference (merchantReference) {
-  const result = await ctpClient.fetch(ctpClient.builder.payments.where(`interfaceId="${merchantReference}"`))
-  return _.get(result, 'body.results[0]', null)
+  try {
+    const result = await ctpClient.fetch(ctpClient.builder.payments.where(`interfaceId="${merchantReference}"`))
+    return _.get(result, 'body.results[0]', null)
+  } catch (err) {
+    throw Error(`Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
+    `Error: ${JSON.stringify(serializeError(err))}`)
+  }
 }
 
 module.exports = { handleNotification }
