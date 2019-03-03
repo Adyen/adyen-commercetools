@@ -3,7 +3,7 @@ const creditCardPayment = require('../../paymentHandler/creditCard/creditCard.ha
 const paypalPayment = require('../../paymentHandler/paypal/paypal.handler')
 const kcpPayment = require('../../paymentHandler/kcp/kcpPayment.handler')
 const commonHandler = require('../../paymentHandler/fetchPaymentMethod.handler')
-const Validator = require('../../validator/validator')
+const ValidatorBuilder = require('../../validator/validatorBuilder')
 
 const paymentHandlers = {
   creditCardPayment,
@@ -14,10 +14,16 @@ const paymentHandlers = {
 
 async function processRequest (request, response) {
   const paymentObject = await _getPaymentObject(request)
-  const validator = _verifyPayment(paymentObject)
-  if (validator.hasErrors())
+  const adyenValidator = ValidatorBuilder.withPayment(paymentObject)
+    .validateAdyen()
+  if (adyenValidator.hasErrors())
     // if it's not adyen payment, ignore the payment
     return httpUtils.sendResponse(response)
+  const interfaceIdValidator = ValidatorBuilder.withPayment(paymentObject)
+    .validateInterfaceIdField()
+  if (interfaceIdValidator.hasErrors())
+    return httpUtils.sendResponse(response, 400, undefined,
+      interfaceIdValidator.buildCtpErrorResponse())
   const handler = _getPaymentHandler(paymentObject)
   const handlerResponse = await handler.handlePayment(paymentObject)
   if (handlerResponse.errors)
@@ -31,7 +37,7 @@ async function _getPaymentObject (request) {
 }
 
 function _getPaymentHandler (paymentObject) {
-  const paymentValidator = Validator.validate(paymentObject)
+  const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
   if (paymentValidator.isPaypal())
     return paymentHandlers.paypalPayment
   if (paymentValidator.isCreditCard())
@@ -39,12 +45,6 @@ function _getPaymentHandler (paymentObject) {
   if (paymentValidator.isKcp())
     return paymentHandlers.kcpPayment
   return paymentHandlers.commonHandler
-}
-
-function _verifyPayment (paymentObject) {
-  return Validator.validate(paymentObject)
-    .validateAdyen()
-    .validateInterfaceIdField()
 }
 
 module.exports = { processRequest }

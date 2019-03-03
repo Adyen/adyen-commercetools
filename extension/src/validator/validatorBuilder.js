@@ -1,15 +1,16 @@
 const _ = require('lodash')
 
 const pU = require('../paymentHandler/payment-utils')
+const errorMessages = require('./errorMessages')
 
-function validate (paymentObject) {
+function withPayment (paymentObject) {
   const errors = {}
 
   return {
     validateAdyen () {
       const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
       if (!isAdyen)
-        errors.isAdyen = 'Set paymentMethodInfo.paymentInterface = \'ctp-adyen-integration\''
+        errors.isAdyen = errorMessages.MISSING_PAYMENT_INTERFACE
       return this
     },
     isPaypal () {
@@ -27,14 +28,14 @@ function validate (paymentObject) {
       const transaction = pU.getChargeTransactionPending(paymentObject)
       const hasChargeTransactionPending = _.isObject(transaction)
       if (!hasChargeTransactionPending)
-        errors.hasChargeTransactionPending = 'Have one transaction with type=\'Charge\' AND state=\'Pending\''
+        errors.hasChargeTransactionPending = errorMessages.MISSING_TXN_CHARGE_PENDING
       return this
     },
     validateChargeTransactionInit () {
       const transaction = pU.getChargeTransactionInit(paymentObject)
       const hasChargeTransactionInit = _.isObject(transaction)
       if (!hasChargeTransactionInit)
-        errors.hasChargeTransactionInit = 'Have one transaction with type=\'Charge\' AND state=\'Initial\''
+        errors.hasChargeTransactionInit = errorMessages.MISSING_TXN_CHARGE_INIT
       return this
     },
     validateEncryptedCardNumberField () {
@@ -42,7 +43,7 @@ function validate (paymentObject) {
         && _.isObject(paymentObject.custom.fields)
         && !_.isEmpty(paymentObject.custom.fields.encryptedCardNumber)
       if (!hasEncryptedCardNumber)
-        errors.hasEncryptedCardNumber = 'Set custom.fields.encryptedCardNumber'
+        errors.hasEncryptedCardNumber = errorMessages.MISSING_CARD_NUMBER
       return this
     },
     validateEncryptedExpiryMonthField () {
@@ -50,7 +51,7 @@ function validate (paymentObject) {
         && _.isObject(paymentObject.custom.fields)
         && !_.isEmpty(paymentObject.custom.fields.encryptedExpiryMonth)
       if (!hasEncryptedExpiryMonth)
-        errors.hasEncryptedExpiryMonth = 'Set custom.fields.encryptedExpiryMonth'
+        errors.hasEncryptedExpiryMonth = errorMessages.MISSING_EXPIRY_MONTH
       return this
     },
     validateEncryptedExpiryYearField () {
@@ -58,7 +59,7 @@ function validate (paymentObject) {
         && _.isObject(paymentObject.custom.fields)
         && !_.isEmpty(paymentObject.custom.fields.encryptedExpiryYear)
       if (!hasEncryptedExpiryYear)
-        errors.hasEncryptedExpiryYear = 'Set custom.fields.encryptedExpiryYear'
+        errors.hasEncryptedExpiryYear = errorMessages.MISSING_EXPIRY_YEAR
       return this
     },
     validateEncryptedSecurityCodeField () {
@@ -66,7 +67,7 @@ function validate (paymentObject) {
         && _.isObject(paymentObject.custom.fields)
         && !_.isEmpty(paymentObject.custom.fields.encryptedSecurityCode)
       if (!hasEncryptedSecurityCode)
-        errors.hasEncryptedSecurityCode = 'Set custom.fields.encryptedSecurityCode'
+        errors.hasEncryptedSecurityCode = errorMessages.MISSING_SECURITY_CODE
       return this
     },
     validateReturnUrlField () {
@@ -74,13 +75,13 @@ function validate (paymentObject) {
         && _.isObject(paymentObject.custom.fields)
         && !_.isEmpty(paymentObject.custom.fields.returnUrl)
       if (!hasReturnUrl)
-        errors.hasReturnUrl = 'Set custom.fields.returnUrl'
+        errors.hasReturnUrl = errorMessages.MISSING_RETURN_URL
       return this
     },
     validateInterfaceIdField () {
       const hasInterfaceId = !_.isEmpty(paymentObject.interfaceId)
       if (!hasInterfaceId)
-        errors.hasInterfaceId = 'Set interfaceId'
+        errors.hasInterfaceId = errorMessages.MISSING_INTERFACE_ID
       return this
     },
     validatePayloadField () {
@@ -88,7 +89,7 @@ function validate (paymentObject) {
         && _.isObject(paymentObject.custom.fields)
         && !_.isEmpty(paymentObject.custom.fields.payload)
       if (!hasPayload)
-        errors.hasPayload = 'Set custom.fields.payload'
+        errors.hasPayload = errorMessages.MISSING_PAYLOAD
       return this
     },
     validatePaymentDataField () {
@@ -96,7 +97,7 @@ function validate (paymentObject) {
         && _.isObject(paymentObject.custom.fields)
         && !_.isEmpty(paymentObject.custom.fields.paymentData)
       if (!hasPaymentData)
-        errors.hasPaymentData = 'Set custom.fields.paymentData'
+        errors.hasPaymentData = errorMessages.MISSING_PAYMENT_DATA
       return this
     },
     validatePaResField () {
@@ -104,7 +105,7 @@ function validate (paymentObject) {
         && _.isObject(paymentObject.custom.fields)
         && !_.isEmpty(paymentObject.custom.fields.PaRes)
       if (!hasPaRes)
-        errors.hasPaRes = 'Set custom.fields.PaRes'
+        errors.hasPaRes = errorMessages.MISSING_PARES
       return this
     },
     validateMdField () {
@@ -112,7 +113,7 @@ function validate (paymentObject) {
         && _.isObject(paymentObject.custom.fields)
         && !_.isEmpty(paymentObject.custom.fields.MD)
       if (!hasMD)
-        errors.hasMD = 'Set custom.fields.MD'
+        errors.hasMD = errorMessages.MISSING_MD
       return this
     },
     hasErrors () {
@@ -131,4 +132,4 @@ function validate (paymentObject) {
   }
 }
 
-module.exports = { validate }
+module.exports = { withPayment }
