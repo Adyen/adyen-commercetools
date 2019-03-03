@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 const configLoader = require('../../config/config')
 const pU = require('../payment-utils')
 const c = require('../../config/constants')
-const Validator = require('../../validator/validatorBuilder')
+const ValidatorBuilder = require('../../validator/validatorBuilder')
 
 const config = configLoader.load()
 
@@ -56,7 +56,7 @@ async function handlePayment (paymentObject) {
 }
 
 function _validatePayment (paymentObject) {
-  return Validator.withPayment(paymentObject)
+  return ValidatorBuilder.withPayment(paymentObject)
     .validateReturnUrlField()
 }
 
