@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 
-const paymentCustomTypes = require('../resources/payment-custom-types.json')
+const paymentCustomTypes = require('../../../resources/payment-custom-types.json')
 
 async function initPaymentCustomType (ctpClient) {
   await Promise.map(paymentCustomTypes.values(), async (type) => {

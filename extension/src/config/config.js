@@ -13,8 +13,16 @@ function getCTPEnvCredentials () {
     projectKey: process.env.CTP_PROJECT_KEY,
     clientId: process.env.CTP_CLIENT_ID,
     clientSecret: process.env.CTP_CLIENT_SECRET,
-    apiUrl: process.env.CTP_API_URL,
-    authUrl: process.env.CTP_AUTH_URL
+    apiUrl: 'https://api.sphere.io',
+    authUrl: 'https://auth.sphere.io'
+  }
+}
+
+function getAdyenCredentials () {
+  return {
+    merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
+    apiKey: process.env.ADYEN_API_KEY,
+    apiBaseUrl: process.env.ADYEN_API_BASE_URL || 'https://checkout-test.adyen.com/v40'
   }
 }
 
@@ -30,7 +38,8 @@ module.exports.load = () => {
 
   const config = _.merge(
     getEnvConfig(),
-    { ctp: getCTPEnvCredentials() }
+    { ctp: getCTPEnvCredentials() },
+    { adyen: getAdyenCredentials() }
   )
 
   // raise an exception when there are no CTP credentials

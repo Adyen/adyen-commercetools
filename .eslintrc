@@ -8,6 +8,8 @@
     "nonblock-statement-body-position": "off",
     "comma-dangle": "off",
     "class-methods-use-this": "off",
-    "max-len": [2, 120]
+    "max-len": [2, 120],
+    "no-restricted-syntax": ["error", "WithStatement"],
+    "no-param-reassign": 0
   }
 }

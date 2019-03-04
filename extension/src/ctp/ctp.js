@@ -7,13 +7,15 @@ const { createHttpMiddleware } = require('@commercetools/sdk-middleware-http')
 const { createQueueMiddleware } = require('@commercetools/sdk-middleware-queue')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
 
-const config = require('../config/config')
+const configLoader = require('../config/config')
+
+const config = configLoader.load()
 
 function createCtpClient ({
-  clientId, clientSecret, projectKey, authUrl, apiUrl, concurrency = 10
+  clientId, clientSecret, projectKey, concurrency = 10
 }) {
   const authMiddleware = createAuthMiddlewareForClientCredentialsFlow({
-    host: authUrl,
+    host: 'https://auth.sphere.io',
     projectKey,
     credentials: {
       clientId,
@@ -24,7 +26,7 @@ function createCtpClient ({
 
   const httpMiddleware = createHttpMiddleware({
     maskSensitiveHeaderData: true,
-    host: apiUrl,
+    host: 'https://api.sphere.io',
     enableRetry: true,
     fetch
   })
@@ -43,20 +45,23 @@ function createCtpClient ({
 }
 
 function setUpClient () {
-  const ctpClient = createCtpClient(config.load().ctp)
+  const ctpClient = createCtpClient(config.ctp)
   const customMethods = {
     get builder () {
-      return getRequestBuilder(config.load().ctp.projectKey)
+      return getRequestBuilder(config.ctp.projectKey)
     },
+
     delete (uri, id, version) {
       return ctpClient.execute(this.buildRequestOptions(
         uri.byId(id).withVersion(version).build(),
         'DELETE'
       ))
     },
+
     create (uri, body) {
       return ctpClient.execute(this.buildRequestOptions(uri.build(), 'POST', body))
     },
+
     update (uri, id, version, actions) {
       const body = {
         version,
@@ -66,9 +71,19 @@ function setUpClient () {
         this.buildRequestOptions(uri.byId(id).build(), 'POST', body)
       )
     },
+
     fetch (uri) {
       return ctpClient.execute(this.buildRequestOptions(uri.build()))
     },
+
+    fetchBatches (uri, callback, opts = { accumulate: false }) {
+      return this.process(
+        this.buildRequestOptions(uri.build()),
+        data => Promise.resolve(callback(data.body.results)),
+        opts
+      )
+    },
+
     buildRequestOptions (uri, method = 'GET', body = undefined) {
       return {
         uri,
