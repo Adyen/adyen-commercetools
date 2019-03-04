@@ -3,8 +3,13 @@ const configLoader = require('../config/config')
 const c = require('../config/constants')
 
 const config = configLoader.load()
+const ValidatorBuilder = require('../validator/validatorBuilder')
 
 async function handlePayment (paymentObject) {
+  const validator = ValidatorBuilder.withPayment(paymentObject)
+    .validatePaymentMethod()
+  if (validator.hasErrors())
+    return validator.buildCtpErrorResponse()
   const { request, response } = await _fetchPaymentMethods(paymentObject)
   const responseBody = await response.json()
   return {

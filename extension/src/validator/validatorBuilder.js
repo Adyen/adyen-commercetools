@@ -13,6 +13,13 @@ function withPayment (paymentObject) {
         errors.isAdyen = errorMessages.MISSING_PAYMENT_INTERFACE
       return this
     },
+    validatePaymentMethod () {
+      const isValidMethod = this.isPaypal() || this.isKcp()
+        || this.isCreditCard() || !paymentObject.paymentMethodInfo.method
+      if (!isValidMethod)
+        errors.isValidPaymentMethod = errorMessages.INVALID_PAYMENT_METHOD
+      return this
+    },
     isPaypal () {
       return paymentObject.paymentMethodInfo.method === 'paypal'
     },

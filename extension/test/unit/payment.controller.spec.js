@@ -42,7 +42,23 @@ describe('Payment controller', () => {
       await paymentController.processRequest()
     })
 
-    it('on wrong payment method should throw error', () => {
+    it('on wrong payment method should throw error', async () => {
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields = {}
+      ctpPaymentClone.paymentMethodInfo.method = 'wrong method'
+
+      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
+      utilsStub.sendResponse = (response, statusCode, headers, data) => {
+        expect(statusCode).to.equal(400)
+        expect(data).to.deep.equal({
+          errors: [{
+            code: 'InvalidField',
+            message: errorMessages.INVALID_PAYMENT_METHOD
+          }]
+        })
+      }
+
+      await paymentController.processRequest()
     })
 
     it('on missing params for make paypal payment should throw error', async () => {
@@ -50,7 +66,6 @@ describe('Payment controller', () => {
       ctpPaymentClone.custom.fields = {}
       ctpPaymentClone.paymentMethodInfo.method = 'paypal'
       ctpPaymentClone.transactions[0].state = 'Initial'
-
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
       utilsStub.sendResponse = (response, statusCode, headers, data) => {

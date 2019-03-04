@@ -2,12 +2,12 @@ const httpUtils = require('../../utils')
 const creditCardPayment = require('../../paymentHandler/creditCard/creditCard.handler')
 const paypalPayment = require('../../paymentHandler/paypal/paypal.handler')
 const kcpPayment = require('../../paymentHandler/kcp/kcpPayment.handler')
-const commonHandler = require('../../paymentHandler/fetchPaymentMethod.handler')
+const fetchPaymentMethods = require('../../paymentHandler/fetchPaymentMethod.handler')
 const ValidatorBuilder = require('../../validator/validatorBuilder')
 
 const paymentHandlers = {
   creditCardPayment,
-  commonHandler,
+  fetchPaymentMethods,
   paypalPayment,
   kcpPayment
 }
@@ -44,7 +44,7 @@ function _getPaymentHandler (paymentObject) {
     return paymentHandlers.creditCardPayment
   if (paymentValidator.isKcp())
     return paymentHandlers.kcpPayment
-  return paymentHandlers.commonHandler
+  return paymentHandlers.fetchPaymentMethods
 }
 
 module.exports = { processRequest }
