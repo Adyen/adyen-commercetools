@@ -1,40 +1,20 @@
-const ngrok = require('ngrok')
 const { expect } = require('chai')
 const _ = require('lodash')
 
-const testUtils = require('../test-utils')
-const server = require('../../src/server')
 const ctpClientBuilder = require('../../src/ctp/ctp')
 const paymentTemplate = require('../resources/payment-no-method.json')
-const { initResources } = require('../../src/config/init/initResources')
+const iTSetUp = require('./integrationTestSetUp')
 
 describe('fetch payment', () => {
-  const testServerPort = 8000
-  let ngrokUrl
   let ctpClient
 
   before(async () => {
     ctpClient = ctpClientBuilder.get()
-    ngrokUrl = await ngrok.connect(testServerPort)
-    process.env.API_EXTENSION_BASE_URL = ngrokUrl
-
-    await testUtils.deleteAllResources(ctpClient, 'payments')
-    await testUtils.deleteAllResources(ctpClient, 'types')
-    await testUtils.deleteAllResources(ctpClient, 'extensions')
-    return new Promise(((resolve) => {
-      server.listen(testServerPort, async () => {
-        await initResources()
-        console.log(`Server running at http://127.0.0.1:${testServerPort}/`)
-        resolve()
-      })
-    }))
+    await iTSetUp.initServerAndExtension(ctpClient)
   })
 
   after(async () => {
-    await testUtils.deleteAllResources(ctpClient, 'payments')
-    await testUtils.deleteAllResources(ctpClient, 'types')
-    await testUtils.deleteAllResources(ctpClient, 'extensions')
-    server.close()
+    await iTSetUp.cleanupResources(ctpClient)
   })
 
   it('should fetch payment methods when no method set', async () => {

@@ -1,4 +1,4 @@
-const init = require('./server.js')
+const init = require('./server.js').setupServer()
 require('./config/config')
 
 const { initResources } = require('./config/init/initResources')

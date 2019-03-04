@@ -1,4 +1,6 @@
 module.exports = {
   SUCCESS: 'SUCCESS',
-  CTP_INTERFACE_INTERACTION: 'ctp-adyen-integration-interaction'
+  FAILURE: 'FAILURE',
+  CTP_INTERFACE_INTERACTION: 'ctp-adyen-integration-interaction',
+  REDIRECT_SHOPPER: 'RedirectShopper'
 }

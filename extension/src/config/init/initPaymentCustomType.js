@@ -3,7 +3,7 @@ const Promise = require('bluebird')
 const paymentCustomTypes = require('../../../resources/payment-custom-types.json')
 
 async function initPaymentCustomType (ctpClient) {
-  await Promise.map(paymentCustomTypes.values(), async (type) => {
+  await Promise.map(paymentCustomTypes, async (type) => {
     try {
       await ctpClient.create(ctpClient.builder.types, type)
     } catch (e) {

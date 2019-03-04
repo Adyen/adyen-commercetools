@@ -5,9 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --exit --timeout 30000 --full-trace extension/test/**/*.spec.js",
-    "extension": "ADYEN_API_KEY=https://ca-test.adyen.com/ca/ca/config/users.shtml ADYEN_MERCHANT_ACCOUNT=https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount ADYEN_API_BASE_URL=https://checkout-test.adyen.com/v40 node ./extensions/src/init.js",
+    "extension": "node ./extensions/src/init.js",
     "lint": "./node_modules/.bin/eslint extension",
-    "init": "CTP_PROJECT_KEY=projectKey CTP_CLIENT_ID=clientId CTP_CLIENT_SECRET=clientSecret API_EXTENSION_BASE_URL=extensionUrl node ./extension/scripts/initResources.js"
+    "init": "CTP_PROJECT_KEY=projectKey CTP_CLIENT_ID=clientId CTP_CLIENT_SECRET=clientSecret API_EXTENSION_BASE_URL=extensionUrl node ./extension/scripts/initResources.js",
+    "cypress:run": "cypress run",
+    "cypress:open": "cypress open",
+    "cypress": "start-server-and-test cypress-setup http://localhost:8000 cypress:run",
+    "cypress-ui": "start-server-and-test cypress-setup http://localhost:8000 cypress:open",
+    "cypress-setup": "node ./cypress/set-up-server.js"
   },
   "keywords": [
     "Adyen"
@@ -30,14 +35,18 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration#readme",
   "devDependencies": {
+    "adyen-cse-js": "^git+https://github.com/Adyen/adyen-cse-web.git#0_1_23",
     "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
+    "cypress": "^3.1.5",
     "eslint": "^5.12.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-commercetools": "^6.0.0",
+    "eslint-plugin-cypress": "^2.2.0",
     "eslint-plugin-import": "^2.14.0",
     "mocha": "^5.2.0",
-    "ngrok": "^3.1.0"
+    "ngrok": "^3.1.0",
+    "start-server-and-test": "^1.7.11"
   },
   "dependencies": {
     "@commercetools/api-request-builder": "^5.0.0",
