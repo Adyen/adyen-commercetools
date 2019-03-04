@@ -185,5 +185,60 @@
         "inputHint": "SingleLine"
       }
     ]
+  },
+  {
+    "key": "ctp-adyen-integration-paypal",
+    "name": {
+      "en": "CTP Adyen integration Paypal payment"
+    },
+    "resourceTypeIds": [
+      "payment"
+    ],
+    "fieldDefinitions": [
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "payload",
+        "label": {
+          "en": "payload"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
+      },
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "returnUrl",
+        "label": {
+          "en": "returnUrl"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
+      },
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "redirectUrl",
+        "label": {
+          "en": "redirectUrl"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
+      },
+      {
+        "type": {
+          "name": "String"
+        },
+        "name": "redirectMethod",
+        "label": {
+          "en": "redirectMethod"
+        },
+        "required": false,
+        "inputHint": "SingleLine"
+      }
+    ]
   }
 ]

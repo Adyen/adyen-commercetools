@@ -54,10 +54,31 @@ Adyen documentation: https://docs.adyen.com/developers/payment-methods/cards-wit
     * `payment.custom.fields.redirectUrl` will be set
     * `payment.custom.fields.redirectMethod` will be set
 1. Frontend creates a redirect URL using the custom fields above and redirect user to 3D Secure verification
-1. After verification, Adyen redirects user back to the shop. Shop collects request parameter `PaRes` and save it to a payment as `payment.custom.fields.PaRes`
+1. After verification, Adyen redirects user back to the shop. Backend collects request parameter `PaRes` and save it to a payment as `payment.custom.fields.PaRes`
 1. Adyen-integration will complete the payment and sae following information to the payment object:
     * request and response with Adyen will be saved in `payment.interfaceInteractions`
     * `pspReference` will be saved in `payment.interfaceId`
+    
+## Paypal payment
+Adyen documentation: https://docs.adyen.com/developers/payment-methods/paypal
+
+1. Backend creates a payment with following criteria
+    * `payment.paymentMethodInfo.paymentInterface = 'ctp-adyen-integration'`
+    * `payment.paymentMethodInfo.method = 'paypal'`
+    * `payment.custom.fields.returnUrl != null`
+    * `payment.interfaceId != null`
+    * `payment.transactions` contains a transaction with `type='Charge'` and `state='Initial'`
+1. Adyen-integration will make a `Redirect shopper` request and save following information to the payment object:
+    * request and response with Adyen will be saved in `payment.interfaceInteractions`
+    * `payment.custom.fields.redirectUrl` will be set
+    * `payment.custom.fields.redirectMethod` will be set
+    * `Charge` transaction state will be updated to `Pending`
+1. Frontend redirects user to Paypal using the custom fields above
+1. After user comes back to the shop from Paypal, backend collects request parameter `payload` (decoded) and save it to a payment as `payment.custom.fields.payload`
+1. Adyen-integration will complete the payment and sae following information to the payment object:
+    * request and response with Adyen will be saved in `payment.interfaceInteractions`
+    * `Charge` transaction state will be updated to `Success` or `Pending` according to returned `resultCode` from Adyen.
+    * `psReference` will be saved in `Charge` transaction as `interactionId`
     
 # Set up extensions module
 
