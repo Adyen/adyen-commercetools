@@ -4,24 +4,15 @@ const _ = require('lodash')
 const configLoader = require('../../config/config')
 const c = require('../../config/constants')
 const pU = require('../payment-utils')
+const ValidatorBuilder = require('../../validator/validatorBuilder')
 
 const config = configLoader.load()
 
-function isSupported (paymentObject) {
-  const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
-  const isCreditCard = paymentObject.paymentMethodInfo.method === 'creditCard'
-    || paymentObject.paymentMethodInfo.method === 'creditCard_3d'
-  const hasMakePaymentInteraction = paymentObject.interfaceInteractions
-    .some(i => i.fields.type === 'makePayment' && i.fields.status === c.SUCCESS)
-  const hasPendingTransaction = pU.getChargeTransactionPending(paymentObject)
-  return hasMakePaymentInteraction
-    && isAdyen
-    && isCreditCard
-    && hasPendingTransaction
-}
-
 async function handlePayment (paymentObject) {
-  const { response, request } = await completePayment(paymentObject)
+  const validator = _validatePayment(paymentObject)
+  if (validator.hasErrors())
+    return validator.buildCtpErrorResponse()
+  const { response, request } = await _completePayment(paymentObject)
   const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
   const body = await response.json()
   const actions = [
@@ -57,7 +48,14 @@ async function handlePayment (paymentObject) {
   }
 }
 
-async function completePayment (paymentObject) {
+function _validatePayment (paymentObject) {
+  return ValidatorBuilder.withPayment(paymentObject)
+    .validatePaymentDataField()
+    .validateMdField()
+    .validatePaResField()
+}
+
+async function _completePayment (paymentObject) {
   const body = {
     paymentData: paymentObject.custom.fields.paymentData,
     details: {
@@ -75,4 +73,4 @@ async function completePayment (paymentObject) {
   return { request, response }
 }
 
-module.exports = { isSupported, handlePayment }
+module.exports = { handlePayment }

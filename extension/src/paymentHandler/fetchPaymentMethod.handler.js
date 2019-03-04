@@ -3,14 +3,13 @@ const configLoader = require('../config/config')
 const c = require('../config/constants')
 
 const config = configLoader.load()
-
-function isSupported (paymentObject) {
-  return paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
-    && !paymentObject.paymentMethodInfo.method
-    && paymentObject.custom.fields.countryCode
-}
+const ValidatorBuilder = require('../validator/validatorBuilder')
 
 async function handlePayment (paymentObject) {
+  const validator = ValidatorBuilder.withPayment(paymentObject)
+    .validatePaymentMethod()
+  if (validator.hasErrors())
+    return validator.buildCtpErrorResponse()
   const { request, response } = await _fetchPaymentMethods(paymentObject)
   const responseBody = await response.json()
   return {
@@ -58,4 +57,4 @@ async function _fetchPaymentMethods (paymentObject) {
   return { response, request }
 }
 
-module.exports = { isSupported, handlePayment }
+module.exports = { handlePayment }

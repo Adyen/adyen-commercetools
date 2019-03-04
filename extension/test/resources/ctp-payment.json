@@ -1,0 +1,89 @@
+{
+  "id": "82b3ad27-0bc4-446f-9a69-d17ca856716e",
+  "version": 12,
+  "lastMessageSequenceNumber": 5,
+  "createdAt": "2019-02-28T22:16:04.355Z",
+  "lastModifiedAt": "2019-02-28T22:16:19.166Z",
+  "lastModifiedBy": {
+    "clientId": "GfjD1YgZgpe0K6wEdUEpwTmx"
+  },
+  "createdBy": {
+    "clientId": "GfjD1YgZgpe0K6wEdUEpwTmx"
+  },
+  "interfaceId": "paymentReferenceId",
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 795,
+    "fractionDigits": 2
+  },
+  "paymentMethodInfo": {
+    "paymentInterface": "ctp-adyen-integration",
+    "method": "creditCard_3d"
+  },
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "id": "3bb94fa2-6254-4a31-83e8-a2a882c15173"
+    },
+    "fields": {
+      "redirectUrl": "redirectUrl",
+      "redirectMethod": "redirectMethod",
+      "returnUrl": "returnUrl",
+      "PaReq": "PaReq",
+      "holderName": "holderName",
+      "MD": "MD",
+      "encryptedCardNumber": "encryptedCardNumber",
+      "countryCode": "countryCode",
+      "PaRes": "PaRes",
+      "paymentData": "paymentData",
+      "encryptedExpiryMonth": "encryptedExpiryMonth",
+      "encryptedSecurityCode": "encryptedSecurityCode",
+      "browserInfo": "browserInfo",
+      "encryptedExpiryYear": "encryptedExpiryYear"
+    }
+  },
+  "paymentStatus": {},
+  "transactions": [
+    {
+      "id": "6b1d4c68-8e31-4528-9af8-dc09ad653d91",
+      "type": "Charge",
+      "amount": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 495,
+        "fractionDigits": 2
+      },
+      "interactionId": "8835513921644842",
+      "state": "Success"
+    }
+  ],
+  "interfaceInteractions": [
+    {
+      "type": {
+        "typeId": "type",
+        "id": "d95b6857-5e84-4650-8cbb-2826f917774c"
+      },
+      "fields": {
+        "request": "request",
+        "timestamp": "2019-02-28T22:16:04.246Z",
+        "response": "response=",
+        "status": "SUCCESS",
+        "type": "makePayment"
+      }
+    },
+    {
+      "type": {
+        "typeId": "type",
+        "id": "d95b6857-5e84-4650-8cbb-2826f917774c"
+      },
+      "fields": {
+        "request": "request",
+        "timestamp": "2019-02-28T22:16:19.086Z",
+        "response": "response",
+        "status": "SUCCESS",
+        "type": "completePayment"
+      }
+    }
+  ]
+}

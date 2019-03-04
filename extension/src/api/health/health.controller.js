@@ -1,7 +1,7 @@
 const httpUtils = require('../../utils')
 
-function checkHealth (request, response) {
+function processRequest (request, response) {
   httpUtils.sendResponse(response, 200)
 }
 
-module.exports = { checkHealth }
+module.exports = { processRequest }

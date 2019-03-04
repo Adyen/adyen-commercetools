@@ -4,22 +4,15 @@ const fetch = require('node-fetch')
 const pU = require('../payment-utils')
 const c = require('../../config/constants')
 const configLoader = require('../../config/config')
+const ValidatorBuilder = require('../../validator/validatorBuilder')
 
 const config = configLoader.load()
 
-function isSupported (paymentObject) {
-  const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
-  const isPaypal = paymentObject.paymentMethodInfo.method === 'paypal'
-  const transaction = pU.getChargeTransactionPending(paymentObject)
-  const hasTransaction = _.isObject(transaction)
-  const hasPayload = !_.isNil(paymentObject.custom.fields.payload)
-  return isAdyen
-    && isPaypal
-    && hasTransaction
-    && hasPayload
-}
-
 async function handlePayment (paymentObject) {
+  const validator = _validatePayment(paymentObject)
+  if (validator.hasErrors())
+    return validator.buildCtpErrorResponse()
+
   const { response, request } = await _callAdyen(paymentObject)
   const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
   const responseBody = await response.json()
@@ -56,6 +49,11 @@ async function handlePayment (paymentObject) {
   }
 }
 
+function _validatePayment (paymentObject) {
+  return ValidatorBuilder.withPayment(paymentObject)
+    .validatePayloadField()
+}
+
 async function _callAdyen (paymentObject) {
   const body = {
     details: {
@@ -73,4 +71,4 @@ async function _callAdyen (paymentObject) {
   return { response: await resultPromise, request }
 }
 
-module.exports = { handlePayment, isSupported }
+module.exports = { handlePayment }
