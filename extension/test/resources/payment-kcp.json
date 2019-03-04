@@ -8,7 +8,7 @@
   },
   "paymentMethodInfo": {
     "paymentInterface": "ctp-adyen-integration",
-    "method": "creditCard"
+    "method": "kcp_creditcard"
   },
   "custom": {
     "type": {
@@ -16,11 +16,6 @@
       "key": "ctp-adyen-integration-payment-custom-type"
     },
     "fields": {
-      "countryCode": "DE",
-      "encryptedCardNumber":"${encryptedCardNumber}",
-      "encryptedExpiryMonth":"${encryptedExpiryMonth}",
-      "encryptedExpiryYear":"${encryptedExpiryYear}",
-      "encryptedSecurityCode":"${encryptedSecurityCode}",
       "returnUrl":"https://your-company.com/checkout/"
     }
   },

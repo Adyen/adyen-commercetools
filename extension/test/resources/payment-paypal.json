@@ -13,7 +13,7 @@
   "custom": {
     "type": {
       "typeId": "type",
-      "key": "ctp-adyen-integration-paypal"
+      "key": "ctp-adyen-integration-payment-custom-type"
     },
     "fields": {
       "returnUrl":"https://your-company.com/checkout/"
