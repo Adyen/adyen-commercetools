@@ -15,8 +15,8 @@
     "url": "git+https://github.com/commercetools/commercetools-adyen-integration.git"
   },
   "author": {
-    "name": "Lam Tran",
-    "email": "lam.tran@commercetools.de"
+    "name": "commercetools Professional Services",
+    "email": "ps-dev@commercetools.de"
   },
   "engines": {
     "node": ">=10",
