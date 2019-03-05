@@ -47,6 +47,8 @@
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-commercetools": "^6.0.0",
     "eslint-plugin-import": "^2.14.0",
-    "ngrok": "^3.1.0"
+    "ngrok": "^3.1.0",
+    "sinon": "^7.2.6",
+    "chai": "^4.2.0"
   }
 }
