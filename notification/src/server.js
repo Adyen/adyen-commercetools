@@ -3,7 +3,7 @@ const url = require('url')
 const httpUtils = require('./utils/commons')
 const notificationController = require('./api/notification/notification.controller')
 const config = require('./config/config').load()
-const logger = require('./utils/logger').getLogger(config)
+const logger = require('./utils/logger').getLogger(config.logLevel)
 const routes = {
   '/': notificationController.handleNotification,
 }
