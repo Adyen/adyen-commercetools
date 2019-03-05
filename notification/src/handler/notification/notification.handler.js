@@ -17,7 +17,12 @@ async function processNotification (notification, logger, ctpClient) {
 
   try {
     const payment = await getPaymentByMerchantReference(merchantReference, ctpClient)
-    await updatePaymentWithRepeater(payment, notification, ctpClient)
+    if (payment !== null)
+      await updatePaymentWithRepeater(payment, notification, ctpClient)
+    else {
+      logger.error(`Payment with merchantReference: ${merchantReference} was not found`)
+      return null
+    }
   } catch (err) {
     logger.error(err)
     return null
