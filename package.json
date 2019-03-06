@@ -11,7 +11,7 @@
     "cypress:run": "cypress run",
     "cypress:open": "cypress open",
     "cypress": "server-test cypress-setup 8000 cypress:run",
-    "cypress-ui": "start-server-and-test cypress-setup http://localhost:8000 cypress:open",
+    "cypress-ui": "server-test cypress-setup 8000 cypress:open",
     "cypress-setup": "node ./cypress/set-up-server.js"
   },
   "keywords": [
