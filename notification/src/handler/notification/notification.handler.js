@@ -11,7 +11,7 @@ async function processNotifications (notifications, logger, ctpClient) {
 }
 
 async function processNotification (notification, logger, ctpClient) {
-  const merchantReference = _.get(notification, 'NotificationRequestItem.merchantReference', null)
+  const merchantReference = _.get(notification, 'merchantReference', null)
   if (merchantReference === null) {
     logger.error(`Can't extract merchantReference from the notification: ${JSON.stringify(notification)}`)
     return null
