@@ -3,7 +3,7 @@ const _ = require('lodash')
 
 const iTSetUp = require('./integrationTestSetUp')
 const ctpClientBuilder = require('../../src/ctp/ctpClient')
-const paymentTemplate = require('../resources/payment-paypal.json')
+const paymentTemplate = require('../fixtures/payment-paypal.json')
 
 describe('Paypal payment', () => {
   let ctpClient

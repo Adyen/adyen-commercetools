@@ -7,8 +7,8 @@ const { expect } = require('chai')
 const _ = require('lodash')
 
 const ctpClientBuilder = require('../../src/ctp/ctpClient')
-const paymentTemplate = require('../resources/payment-credit-card.json')
-const payment3dTemplate = require('../resources/payment-credit-card-3d.json')
+const paymentTemplate = require('../fixtures/payment-credit-card.json')
+const payment3dTemplate = require('../fixtures/payment-credit-card-3d.json')
 const iTSetUp = require('./integrationTestSetUp')
 const c = require('../../src/config/constants')
 

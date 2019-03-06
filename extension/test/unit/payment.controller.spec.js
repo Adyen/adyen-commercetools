@@ -2,7 +2,7 @@ const _ = require('lodash')
 const proxyquire = require('proxyquire')
 const { expect } = require('chai')
 
-const ctpPayment = require('../resources/ctp-payment')
+const ctpPayment = require('../fixtures/ctp-payment')
 const errorMessages = require('../../src/validator/errorMessages')
 
 const utilsStub = {}

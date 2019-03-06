@@ -3,7 +3,7 @@ const _ = require('lodash')
 
 const ctpClientBuilder = require('../../src/ctp/ctpClient')
 const iTSetUp = require('./integrationTestSetUp')
-const paymentTemplate = require('../resources/payment-kcp.json')
+const paymentTemplate = require('../fixtures/payment-kcp.json')
 
 describe('kcp make payment', () => {
   let ctpClient
