@@ -5,7 +5,9 @@ const ctp = require('../../utils/ctp')
 const adyenEvents = require('../../../resources/adyenEvents')
 
 async function processNotifications (notifications, logger, ctpClient) {
-  await Promise.map(notifications, notification => processNotification(notification, logger, ctpClient))
+  await Promise.map(notifications,
+      notification => processNotification(notification.NotificationRequestItem, logger, ctpClient),
+    { concurrency: 10 })
 }
 
 async function processNotification (notification, logger, ctpClient) {
