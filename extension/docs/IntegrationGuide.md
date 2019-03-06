@@ -1,0 +1,51 @@
+# Integration of payment into checkout process
+## Glossary
+In this process, there are 3 parties involved:
+
+**Frontend** - the browser part of the shop. This is what the shopper interacts with.  
+**Backend** - the shop server which supplies front end with data.  
+**Adyen-integration** - hosted service (this repository) that interacts over [API extensions](https://docs.commercetools.com/http-api-projects-api-extensions).
+**Shopper** - a person that's using the shop
+
+# Checkout steps
+1. On each checkout step [validate cart state](#validate-cart-state)
+1. Before starting payment process make sure there is no valid payments already:
+    * [Recalculate cart](#recalculate-cart)
+    * [Validate payment](#validate-payment)
+    * [Validate payment transaction](#validate-payment-transaction)
+
+If all above validations are passed then order can be created right away and order confirmation page shown.
+Otherwise shopper might continue with further payment steps.
+
+1. **Get available payment methods**  
+    1. In order to [get which payment methods are available to the current shopper](https://docs.adyen.com/developers/checkout/api-integration#step1getavailablepaymentmethods),
+    you have to create/update a CTP Payment with following properties:
+        - `Payment.paymentMethodInfo.method = empty or undefined`   
+        - `Payment.paymentMethodInfo.countryCode != null` - set the country of a shopper. Please consult with Adyen for the right format.  
+    1. Adyen-integration will make a [request](https://docs.adyen.com/developers/checkout/api-integration#step1getavailablepaymentmethods) to Adyen API.
+    1. The response will be saved in interface interaction with `type='ctp-adyen-integration-interaction'` and `fields.type='getPaymentDetails'` as stringfied JSON.
+    1. Before presenting all the methods, please check Adyen-integration documentation for supported payment methods.
+1. **Continue with one of the following supported payment methods:**
+    1. [Credit card payment](./CreditCardIntegration.md)  
+    1. [Paypal payment](./PaypalIntegration.md)  
+
+# Validations
+### Validate cart state
+Check if current cart has been ordered already (`Cart.cartState = Ordered`).
+In this case load order by ordered cart ID and show oder confirmation page.
+This might happen if cart has been already ordered in a different tab 
+or by asynchronous process like [commercetools-payment-to-order-processor job](https://github.com/commercetools/commercetools-payment-to-order-processor).
+
+### Recalculate cart
+To ensure cart totals are always up-to-date execute cart recalculate.
+Time limited discounts are not removed/invalidated from cart automatically. 
+They are validated on recalculate and order creation only.
+
+### Validate payment
+There must be at least one CTP payment object of type Adyen
+(`Payment.paymentMethodInfo.paymentInterface = ctp-adyen-integration`).
+
+### Validate payment transaction
+Cart's payment counts as successful if there is at least one payment object
+with only successful (`Payment.Transaction.state=Success`)
+payment transactions of type `Charge`.
