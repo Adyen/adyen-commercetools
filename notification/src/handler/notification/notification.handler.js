@@ -6,12 +6,12 @@ const adyenEvents = require('../../../resources/adyenEvents')
 
 async function processNotifications (notifications, logger, ctpClient) {
   await Promise.map(notifications,
-      notification => processNotification(notification.NotificationRequestItem, logger, ctpClient),
+      notification => processNotification(notification, logger, ctpClient),
     { concurrency: 10 })
 }
 
 async function processNotification (notification, logger, ctpClient) {
-  const merchantReference = _.get(notification, 'merchantReference', null)
+  const merchantReference = _.get(notification, 'NotificationRequestItem.merchantReference', null)
   if (merchantReference === null) {
     logger.error(`Can't extract merchantReference from the notification: ${JSON.stringify(notification)}`)
     return null
@@ -65,8 +65,9 @@ async function updatePaymentWithRepeater(payment, notification, ctpClient) {
 
 function calculateUpdateActionsForPayment (payment, notification) {
   const updateActions = []
-  const notificationEventCode = notification.eventCode
-  const notificationSuccess = notification.success
+  const notificationRequestItem = notification.NotificationRequestItem
+  const notificationEventCode = notificationRequestItem.eventCode
+  const notificationSuccess = notificationRequestItem.success
   const stringifiedNotification = JSON.stringify(notification)
   // check if interfaceInteraction is already on payment or not
   const isInterfaceInteractionOnPayment =
@@ -83,8 +84,8 @@ function calculateUpdateActionsForPayment (payment, notification) {
       updateActions.push(getAddTransactionUpdateAction(
         transactionType,
         transactionState,
-        notification.amount.value,
-        notification.amount.currency)
+        notificationRequestItem.amount.value,
+        notificationRequestItem.amount.currency)
       )
     } else if (ctp.compareTransactionStates(oldTransaction.state, transactionState)) {
       updateActions.push(getChangeTransactionStateUpdateAction(oldTransaction.id, transactionState))
@@ -101,7 +102,7 @@ function getAddInterfaceInteractionUpdateAction (notification) {
       typeId: 'type'
     },
     fields: {
-      status: notification.eventCode,
+      status: notification.NotificationRequestItem.eventCode,
       type: 'notification',
       response: JSON.stringify(notification)
     }
