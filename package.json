@@ -10,7 +10,7 @@
     "init": "CTP_PROJECT_KEY=projectKey CTP_CLIENT_ID=clientId CTP_CLIENT_SECRET=clientSecret API_EXTENSION_BASE_URL=extensionUrl node ./extension/scripts/initResources.js",
     "cypress:run": "cypress run",
     "cypress:open": "cypress open",
-    "cypress": "start-server-and-test cypress-setup http://localhost:8000 cypress:run",
+    "cypress": "server-test cypress-setup 8000 cypress:run",
     "cypress-ui": "start-server-and-test cypress-setup http://localhost:8000 cypress:open",
     "cypress-setup": "node ./cypress/set-up-server.js"
   },
