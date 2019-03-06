@@ -74,7 +74,7 @@ function calculateUpdateActionsForPayment (payment, notification) {
   if (isInterfaceInteractionOnPayment === false)
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
 
-  const { transactionType, transactionState } = getTransactionTypeAndStateUpdateAction(notificationEventCode, notificationSuccess)
+  const { transactionType, transactionState } = getTransactionTypeAndState(notificationEventCode, notificationSuccess)
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
@@ -116,7 +116,7 @@ function getChangeTransactionStateUpdateAction (transactionId, newTransactionSta
   }
 }
 
-function getTransactionTypeAndStateUpdateAction (adyenEventCode, adyenEventSuccess) {
+function getTransactionTypeAndState (adyenEventCode, adyenEventSuccess) {
   return _.find(adyenEvents, (adyenEvent) =>
     adyenEvent.eventCode === adyenEventCode && adyenEvent.success === adyenEventSuccess)
 }
