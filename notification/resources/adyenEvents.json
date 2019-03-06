@@ -1,175 +1,175 @@
 [
   {
     "eventCode": "AUTHORISATION",
-    "success": false,
+    "success": "false",
     "transactionType": "Authorization",
     "transactionState": "Pending"
   },
   {
     "eventCode": "AUTHORISATION",
-    "success": true,
+    "success": "true",
     "transactionType": "Authorization",
     "transactionState": "Success"
   },
   {
     "eventCode": "AUTHORISATION_ADJUSTMENT",
-    "success": false,
+    "success": "false",
     "transactionType": "Authorization",
     "transactionState": "Pending"
   },
   {
     "eventCode": "CANCELLATION",
-    "success": false,
+    "success": "false",
     "transactionType": "CancelAuthorization",
     "transactionState": "Failure"
   },
   {
     "eventCode": "CAPTURE",
-    "success": false,
+    "success": "false",
     "transactionType": "Charge",
     "transactionState": "Success"
   },
   {
     "eventCode": "CAPTURE_FAILED",
-    "success": true,
+    "success": "true",
     "transactionType": "Charge",
     "transactionState": "Failure"
   },
   {
     "eventCode": "PAIDOUT_REVERSED",
-    "success": true,
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "REFUND",
-    "success": false,
+    "success": "false",
     "transactionType": "Refund",
     "transactionState": "Success"
   },
   {
     "eventCode": "REFUND_FAILED",
-    "success": true,
+    "success": "true",
     "transactionType": "Refund",
     "transactionState": "Failure"
   },
   {
     "eventCode": "REFUNDED_REVERSED",
-    "success": true,
+    "success": "true",
     "transactionType": "Refund",
     "transactionState": "Failure"
   },
   {
     "eventCode": "DEACTIVATE_RECURRING",
-    "success": false,
+    "success": "false",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "CHARGEBACK",
-    "success": true,
+    "success": "true",
     "transactionType": "Chargeback",
     "transactionState": "Success"
   },
   {
     "eventCode": "SECOND_CHARGEBACK",
-    "success": false,
+    "success": "false",
     "transactionType": "Chargeback",
     "transactionState": "Success"
   },
   {
     "eventCode": "CHARGEBACK_REVERSED",
-    "success": true,
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "NOTIFICATION_OF_CHARGEBACK",
-    "success": true,
+    "success": "true",
     "transactionType": "Chargeback",
     "transactionState": "Pending"
   },
   {
     "eventCode": "NOTIFICATION_OF_FRAUD",
-    "success": true,
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "PREARBITRATION_WON",
-    "success": false,
+    "success": "false",
     "transactionType": "Chargeback",
     "transactionState": "Pending"
   },
   {
     "eventCode": "PREARBITRATION_LOST",
-    "success": false,
+    "success": "false",
     "transactionType": "Chargeback",
     "transactionState": "Pending"
   },
   {
     "eventCode": "REQUEST_FOR_INFORMATION",
-    "success": true,
+    "success": "true",
     "transactionType": "Chargeback",
     "transactionState": "Pending"
   },
   {
     "eventCode": "PAYOUT_EXPIRE",
-    "success": true,
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "PAYOUT_DECLINE",
-    "success": true,
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "PAYOUT_THIRDPARTY",
-    "success": false,
+    "success": "false",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "REFUND_WITH_DATA",
-    "success": false,
+    "success": "false",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "HANDLED_EXTERNALLY",
-    "success": true,
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "ORDER_OPENED",
-    "success": true,
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "ORDER_CLOSED",
-    "success": true,
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "PENDING",
-    "success": true,
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "PROCESS_RETRY",
-    "success": true,
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   },
   {
     "eventCode": "REPORT_AVAILABLE",
-    "success": true,
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   }
