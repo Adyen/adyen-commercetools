@@ -2,7 +2,6 @@
   "name": "commercetools-adyen-integration",
   "version": "0.0.1",
   "description": "Integration between Commercetools and Adyen payment service provider",
-  "main": "index.js",
   "scripts": {
     "test": "mocha --exit --timeout 30000 --full-trace extension/test/**/*.spec.js",
     "extension": "node ./extensions/src/init.js",
