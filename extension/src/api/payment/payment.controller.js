@@ -28,7 +28,7 @@ async function processRequest (request, response) {
   const handlerResponse = await handler.handlePayment(paymentObject)
   if (handlerResponse.errors)
     return httpUtils.sendResponse(response, 400, undefined, handlerResponse)
-  return httpUtils.sendResponse(response, undefined, undefined, handlerResponse)
+  return httpUtils.sendResponse(response, 200, undefined, handlerResponse)
 }
 
 async function _getPaymentObject (request) {
