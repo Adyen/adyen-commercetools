@@ -81,9 +81,9 @@ async function _callAdyen (paymentObject) {
     body: JSON.stringify(requestBody),
     headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
   }
-  const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/payments`, request)
+  const response = await fetch(`${config.adyen.apiBaseUrl}/payments`, request)
 
-  return { response: await resultPromise, request }
+  return { response, request }
 }
 
 module.exports = { handlePayment }

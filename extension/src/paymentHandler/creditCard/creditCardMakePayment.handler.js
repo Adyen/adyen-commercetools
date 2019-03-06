@@ -132,9 +132,9 @@ async function _makePayment (paymentObject) {
     body: JSON.stringify(body),
     headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
   }
-  const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/payments`, request)
+  const response = await fetch(`${config.adyen.apiBaseUrl}/payments`, request)
 
-  return { response: await resultPromise, request }
+  return { response, request }
 }
 
 module.exports = { handlePayment }
