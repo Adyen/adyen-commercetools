@@ -32,7 +32,7 @@ function createCtpClient ({
   })
 
   const queueMiddleware = createQueueMiddleware({
-    concurrency,
+    concurrency
   })
 
   return createClient({
