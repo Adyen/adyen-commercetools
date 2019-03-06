@@ -3,7 +3,7 @@
 
 const { initResources } = require('../../extension/src/config/init/initResources')
 const testUtils = require('../../extension/test/test-utils')
-const ctpClientBuilder = require('../../extension/src/ctp/ctp')
+const ctpClientBuilder = require('../../extension/src/ctp/ctpClient')
 
 async function init () {
   const ctpClient = ctpClientBuilder.get()

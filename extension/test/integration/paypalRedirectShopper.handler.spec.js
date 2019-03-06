@@ -2,7 +2,7 @@ const { expect } = require('chai')
 const _ = require('lodash')
 
 const iTSetUp = require('./integrationTestSetUp')
-const ctpClientBuilder = require('../../src/ctp/ctp')
+const ctpClientBuilder = require('../../src/ctp/ctpClient')
 const paymentTemplate = require('../resources/payment-paypal.json')
 
 describe('Paypal payment', () => {

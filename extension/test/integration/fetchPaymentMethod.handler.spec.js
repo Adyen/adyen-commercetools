@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const _ = require('lodash')
 
-const ctpClientBuilder = require('../../src/ctp/ctp')
+const ctpClientBuilder = require('../../src/ctp/ctpClient')
 const paymentTemplate = require('../resources/payment-no-method.json')
 const iTSetUp = require('./integrationTestSetUp')
 

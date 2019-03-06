@@ -1,7 +1,7 @@
 const { initPaymentCustomType } = require('./initPaymentCustomType')
 const { initInterfaceInteractionCustomType } = require('./initInterfaceInteractionCustomType')
 const { initApiExtensions } = require('./initApiExtensions')
-const ctpClientBuilder = require('../../ctp/ctp')
+const ctpClientBuilder = require('../../ctp/ctpClient')
 const config = require('../../config/config')
 
 
