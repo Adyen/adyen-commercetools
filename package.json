@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration#readme",
   "devDependencies": {
-    "adyen-cse-js": "git+https://github.com/Adyen/adyen-cse-web.git#0_1_23",
+    "adyen-cse-js": "Adyen/adyen-cse-web#0_1_23",
     "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
     "cypress": "^3.1.5",
