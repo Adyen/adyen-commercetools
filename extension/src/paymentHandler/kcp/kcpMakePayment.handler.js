@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const fetch = require('node-fetch')
 
 const configLoader = require('../../config/config')
