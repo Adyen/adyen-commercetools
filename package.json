@@ -14,7 +14,11 @@
     "cypress-setup": "node ./cypress/set-up-server.js"
   },
   "keywords": [
-    "Adyen"
+    "Adyen",
+    "commercetools",
+    "payment",
+    "payment integration",
+    "payment provider"
   ],
   "repository": {
     "type": "git",
