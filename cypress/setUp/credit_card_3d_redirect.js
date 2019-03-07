@@ -7,7 +7,7 @@ global.navigator = {}
 const adyenEncrypt = require('adyen-cse-js')
 const _ = require('lodash')
 const ctpClientBuilder = require('../../extension/src/ctp/ctpClient')
-const payment3dTemplate = require('../../extension/test/resources/payment-credit-card-3d.json')
+const payment3dTemplate = require('../../extension/test/fixtures/payment-credit-card-3d.json')
 
 const key = process.env.CLIENT_ENCRYPTION_PUBLIC_KEY
 
