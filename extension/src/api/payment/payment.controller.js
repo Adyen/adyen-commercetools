@@ -1,9 +1,9 @@
 const httpUtils = require('../../utils')
-const creditCardPayment = require('../../paymentHandler/creditCard/creditCard.handler')
+const creditCardPayment = require('../../paymentHandler/creditCard/credit-card.handler')
 const paypalPayment = require('../../paymentHandler/paypal/paypal.handler')
-const kcpPayment = require('../../paymentHandler/kcp/kcpPayment.handler')
-const fetchPaymentMethods = require('../../paymentHandler/fetchPaymentMethod.handler')
-const ValidatorBuilder = require('../../validator/validatorBuilder')
+const kcpPayment = require('../../paymentHandler/kcp/kcp-payment.handler')
+const fetchPaymentMethods = require('../../paymentHandler/fetch-payment-method.handler')
+const ValidatorBuilder = require('../../validator/validator-builder')
 
 const paymentHandlers = {
   creditCardPayment,

@@ -3,7 +3,7 @@ const configLoader = require('../config/config')
 const c = require('../config/constants')
 
 const config = configLoader.load()
-const ValidatorBuilder = require('../validator/validatorBuilder')
+const ValidatorBuilder = require('../validator/validator-builder')
 
 async function handlePayment (paymentObject) {
   const validator = ValidatorBuilder.withPayment(paymentObject)

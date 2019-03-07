@@ -1,7 +1,7 @@
 const init = require('./server.js').setupServer()
 require('./config/config')
 
-const { initResources } = require('./config/init/initResources')
+const { initResources } = require('./config/init/init-resources')
 
 const port = parseInt(process.env.EXTENSION_PORT || 8080, 10)
 

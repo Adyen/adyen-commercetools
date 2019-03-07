@@ -1,9 +1,9 @@
 const fetch = require('node-fetch')
 
+const c = require('../../config/constants')
 const configLoader = require('../../config/config')
 const pU = require('../payment-utils')
-const c = require('../../config/constants')
-const ValidatorBuilder = require('../../validator/validatorBuilder')
+const ValidatorBuilder = require('../../validator/validator-builder')
 
 const config = configLoader.load()
 
@@ -61,23 +61,22 @@ function _validatePayment (paymentObject) {
 
 async function _callAdyen (paymentObject) {
   const transaction = pU.getChargeTransactionInit(paymentObject)
-  const paymentMethodType = paymentObject.paymentMethodInfo.method
-  const requestBody = {
+  const body = {
+    merchantAccount: config.adyen.merchantAccount,
     amount: {
       currency: transaction.amount.currencyCode,
       value: transaction.amount.centAmount
     },
     reference: paymentObject.interfaceId,
     paymentMethod: {
-      type: paymentMethodType
+      type: 'paypal'
     },
-    returnUrl: paymentObject.custom.fields.returnUrl,
-    merchantAccount: config.adyen.merchantAccount
+    returnUrl: paymentObject.custom.fields.returnUrl
   }
 
   const request = {
     method: 'POST',
-    body: JSON.stringify(requestBody),
+    body: JSON.stringify(body),
     headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
   }
   const response = await fetch(`${config.adyen.apiBaseUrl}/payments`, request)

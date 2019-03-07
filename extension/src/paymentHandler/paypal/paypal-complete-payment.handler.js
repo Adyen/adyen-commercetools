@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 const pU = require('../payment-utils')
 const c = require('../../config/constants')
 const configLoader = require('../../config/config')
-const ValidatorBuilder = require('../../validator/validatorBuilder')
+const ValidatorBuilder = require('../../validator/validator-builder')
 
 const config = configLoader.load()
 

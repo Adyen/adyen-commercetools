@@ -6,10 +6,10 @@ const adyenEncrypt = require('adyen-cse-js')
 const { expect } = require('chai')
 const _ = require('lodash')
 
-const ctpClientBuilder = require('../../src/ctp/ctpClient')
+const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const paymentTemplate = require('../fixtures/payment-credit-card.json')
 const payment3dTemplate = require('../fixtures/payment-credit-card-3d.json')
-const iTSetUp = require('./integrationTestSetUp')
+const iTSetUp = require('./integration-test-set-up')
 const c = require('../../src/config/constants')
 
 describe('credit card payment', () => {

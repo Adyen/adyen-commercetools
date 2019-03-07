@@ -3,7 +3,7 @@ const _ = require('lodash')
 const configLoader = require('../../config/config')
 const c = require('../../config/constants')
 const pU = require('../payment-utils')
-const ValidatorBuilder = require('../../validator/validatorBuilder')
+const ValidatorBuilder = require('../../validator/validator-builder')
 
 const config = configLoader.load()
 

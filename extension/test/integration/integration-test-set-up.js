@@ -1,7 +1,7 @@
 const ngrok = require('ngrok')   // eslint-disable-line
 const server = require('../../src/server').setupServer()
 
-const { initResources } = require('../../src/config/init/initResources')
+const { initResources } = require('../../src/config/init/init-resources')
 const testUtils = require('../test-utils')
 
 async function initServerAndExtension (ctpClient, testServerPort = 8000) {

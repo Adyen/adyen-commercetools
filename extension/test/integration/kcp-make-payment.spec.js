@@ -1,8 +1,8 @@
 const { expect } = require('chai')
 const _ = require('lodash')
 
-const ctpClientBuilder = require('../../src/ctp/ctpClient')
-const iTSetUp = require('./integrationTestSetUp')
+const ctpClientBuilder = require('../../src/ctp/ctp-client')
+const iTSetUp = require('./integration-test-set-up')
 const paymentTemplate = require('../fixtures/payment-kcp.json')
 
 describe('kcp make payment', () => {
