@@ -8,7 +8,12 @@
     "coverage": "nyc report"
   },
   "keywords": [
-    "Adyen"
+    "adyen",
+    "payment",
+    "integration",
+    "commercetools",
+    "ctp",
+    "notifications"
   ],
   "repository": {
     "type": "git",
