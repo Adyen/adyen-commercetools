@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const _ = require('lodash')
 const { createClient } = require('@commercetools/sdk-client')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
@@ -24,31 +23,31 @@ function setUpClient (config) {
       return getRequestBuilder(config.ctp.projectKey)
     },
 
-    delete (uri, id, version) {
+    delete () {
       return this
     },
 
-    create (uri, body) {
+    create () {
       return this
     },
 
-    update (uri, id, version, actions) {
+    update () {
       return this
     },
 
-    fetch (uri) {
+    fetch () {
       return this
     },
 
-    fetchById (uri, id) {
+    fetchById () {
       return this
     },
 
-    fetchBatches (uri, cb, opts = { accumulate: false }) {
+    fetchBatches () {
       return this
     },
 
-    buildRequestOptions (uri, method = 'GET', body = undefined) {
+    buildRequestOptions () {
       return this
     }
   }

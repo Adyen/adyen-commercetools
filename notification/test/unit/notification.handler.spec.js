@@ -21,7 +21,9 @@ describe('notification module', () => {
 
   afterEach(() => sandbox.restore())
 
-  it('should update payment with a new InterfaceInteraction and payment status', async () => {
+  it('should update payment with a new InterfaceInteraction and payment status '
+    + 'when current payment does not have the interfaceInteraction and the transaction'
+    + 'which are going to be set', async () => {
 
     const ctpClient = ctpClientMock.get(config)
     sandbox.stub(ctpClient, 'fetch').callsFake(() => {
@@ -62,7 +64,9 @@ describe('notification module', () => {
     expect(ctpClientUpdateSpy.args[0][3]).to.deep.equal(expectedUpdateActions)
   })
 
-  it('should update payment with a new InterfaceInteraction but not payment status', async () => {
+  it('should update payment with a new InterfaceInteraction but not payment status '
+    + 'when current payment does not have the interfaceInteraction which is going to be set'
+    + 'but has a transaction with the correct status', async () => {
     const modifiedPaymentMock = cloneDeep(paymentMock)
     modifiedPaymentMock.transactions.push({
       "type": "Authorization",
@@ -102,17 +106,21 @@ describe('notification module', () => {
     expect(ctpClientUpdateSpy.args[0][3]).to.deep.equal(expectedUpdateActions)
   })
 
-  it('should update payment with a payment status but not InterfaceInteraction', async () => {
+  it('should update payment with a payment status but not new InterfaceInteraction '
+    + 'when current payment does not have the transaction which is going to be set'
+    + 'but has the interfaceInteraction', async () => {
     const modifiedPaymentMock = cloneDeep(paymentMock)
     modifiedPaymentMock.interfaceInteractions.push({
-      "type": "Authorization",
-      "amount": {
-        "type": "centPrecision",
-        "currencyCode": "EUR",
-        "centAmount": 495,
-        "fractionDigits": 2
+      type: {
+        typeId: 'type',
+        id: '3fd15a04-b460-4a88-a911-0472c4c080b3'
       },
-      "state": "Success"
+      fields: {
+        timestamp: '2019-02-05T12:29:36.028Z',
+        response: JSON.stringify(notificationsMock[0]),
+        type: 'makePayment',
+        status: 'SUCCESS'
+      }
     })
     const ctpClient = ctpClientMock.get(config)
     sandbox.stub(ctpClient, 'fetch').callsFake(() => {
