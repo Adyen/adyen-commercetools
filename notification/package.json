@@ -2,10 +2,10 @@
   "name": "commercetools-adyen-integration",
   "version": "0.0.1",
   "description": "Integration between commercetools and Adyen payment service provider",
-  "main": "index.js",
   "scripts": {
-    "test": "test",
-    "start": "node ./src/init.js"
+    "test": "nyc mocha --check-leaks --full-trace --recursive \"./test/**/*.spec.js\"",
+    "start": "node ./src/init.js",
+    "coverage": "nyc report"
   },
   "keywords": [
     "Adyen"
@@ -38,7 +38,6 @@
     "bunyan": "^1.8.8",
     "lodash": "^4.17.11",
     "node-fetch": "^2.3.0",
-    "mocha": "^5.2.0",
     "serialize-error": "^3.0.0"
   },
   "devDependencies": {
@@ -49,6 +48,8 @@
     "eslint-plugin-import": "^2.14.0",
     "ngrok": "^3.1.0",
     "sinon": "^7.2.6",
-    "chai": "^4.2.0"
+    "mocha": "^5.2.0",
+    "chai": "^4.2.0",
+    "nyc": "^13.3.0"
   }
 }
