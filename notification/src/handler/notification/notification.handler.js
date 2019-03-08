@@ -69,7 +69,7 @@ function calculateUpdateActionsForPayment (payment, notification) {
   const notificationEventCode = notificationRequestItem.eventCode
   const notificationSuccess = notificationRequestItem.success
   const stringifiedNotification = JSON.stringify(notification)
-  // check if interfaceInteraction is already on payment or not
+  // check if the interfaceInteraction is already on payment or not
   const isNotificationInInterfaceInteraction =
     payment.interfaceInteractions.some(interaction => interaction.fields.response === stringifiedNotification)
   if (isNotificationInInterfaceInteraction === false)
