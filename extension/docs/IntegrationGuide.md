@@ -1,4 +1,20 @@
 # Integration of payment into checkout process
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Contents**
+
+  - [Glossary](#glossary)
+- [Checkout steps](#checkout-steps)
+- [Validations](#validations)
+    - [Validate cart state](#validate-cart-state)
+    - [Recalculate cart](#recalculate-cart)
+    - [Validate payment](#validate-payment)
+    - [Validate payment transaction](#validate-payment-transaction)
+    - [Mapping from Adyen result codes to CTP transaction state](#mapping-from-adyen-result-codes-to-ctp-transaction-state)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Glossary
 In this process, there are 3 parties involved:
 
@@ -25,7 +41,7 @@ Otherwise shopper might continue with further payment steps.
     1. Adyen-integration will make a [request](https://docs.adyen.com/developers/checkout/api-integration#step1getavailablepaymentmethods) to Adyen API.
     1. The response will be saved in interface interaction with `type='ctp-adyen-integration-interaction'` and `fields.type='getPaymentDetails'` as stringfied JSON.
     1. Before presenting all the methods, please check Adyen-integration documentation for supported payment methods.
-1. **Continue with one of the following supported payment methods:**
+1. **Continue with one of the supported payment methods:**
     1. [Credit card payment](./CreditCardIntegration.md)  
     1. [Paypal payment](./PaypalIntegration.md)  
 
@@ -49,3 +65,14 @@ There must be at least one CTP payment object of type Adyen
 Cart's payment counts as successful if there is at least one payment object
 with only successful (`Payment.Transaction.state=Success`)
 payment transactions of type `Charge`.
+
+### Mapping from Adyen result codes to CTP transaction state
+|Adyen result code| CTP transaction state
+| --- | --- |
+| redirectshopper| Pending|
+| received| Pending|
+| pending| Pending|
+| authorised| Success|
+| refused| Failure|
+| cancelled| Failure|
+| error| Failure|

@@ -3,15 +3,16 @@
   "version": "0.0.1",
   "description": "Integration between Commercetools and Adyen payment service provider",
   "scripts": {
-    "test": "mocha --exit --timeout 30000 --full-trace extension/test/**/*.spec.js",
-    "extension": "node ./extensions/src/init.js",
+    "test": "mocha --exit --timeout 30000 --full-trace ./test/**/*.spec.js",
+    "extension": "node ./src/init.js",
     "lint": "eslint extension",
-    "init": "CTP_PROJECT_KEY=projectKey CTP_CLIENT_ID=clientId CTP_CLIENT_SECRET=clientSecret API_EXTENSION_BASE_URL=extensionUrl node ./extension/scripts/initResources.js",
+    "init": "CTP_PROJECT_KEY=projectKey CTP_CLIENT_ID=clientId CTP_CLIENT_SECRET=clientSecret API_EXTENSION_BASE_URL=extensionUrl node ./scripts/initResources.js",
     "cypress:run": "cypress run",
     "cypress:open": "cypress open",
     "cypress": "server-test cypress-setup 8000 cypress:run",
     "cypress-ui": "server-test cypress-setup 8000 cypress:open",
-    "cypress-setup": "node ./cypress/set-up-server.js"
+    "cypress-setup": "node ../cypress/set-up-server.js",
+    "toc": "doctoc docs --title '**Contents**'"
   },
   "keywords": [
     "Adyen",
@@ -42,6 +43,7 @@
     "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
     "cypress": "^3.1.5",
+    "doctoc": "^1.4.0",
     "eslint": "^5.12.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-commercetools": "^6.0.0",
