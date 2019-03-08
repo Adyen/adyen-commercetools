@@ -87,7 +87,7 @@ function calculateUpdateActionsForPayment (payment, notification) {
         notificationRequestItem.amount.value,
         notificationRequestItem.amount.currency)
       )
-    } else if (ctp.compareTransactionStates(oldTransaction.state, transactionState)) {
+    } else if (ctp.compareTransactionStates(oldTransaction.state, transactionState) === 1) {
       updateActions.push(getChangeTransactionStateUpdateAction(oldTransaction.id, transactionState))
     }
   }
