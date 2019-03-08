@@ -105,7 +105,7 @@ function getRequestBuilder (projectKey) {
 
 /**
  * Compares transaction states
- * @param currentState state of the transaction from the platform
+ * @param currentState state of the transaction from the CT platform
  * @param newState state of the transaction from the Adyen notification
  * @return number 1 if newState can appear after currentState
  * -1 if newState cannot appear after currentState
@@ -120,13 +120,10 @@ function compareTransactionStates (currentState, newState) {
     "Failure": 2
   }
   if(!transactionStateFlow.hasOwnProperty(currentState) || !transactionStateFlow.hasOwnProperty(newState))
-    throw Error('Wrong transaction state passed. ' +
+    return transactionStateFlow[newState] - transactionStateFlow[currentState]
+
+  throw Error('Wrong transaction state passed. ' +
     `currentState: ${currentState}, newState: ${newState}`)
-  if (transactionStateFlow[currentState] < transactionStateFlow[newState])
-    return 1
-  if (transactionStateFlow[currentState] > transactionStateFlow[newState])
-    return -1
-  return 0
 }
 
 
