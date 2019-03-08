@@ -13,12 +13,13 @@ async function handleNotification (request, response, logger) {
   try {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
     await processNotifications(notifications, logger, ctpClient)
-    response.writeHead(200, { "Content-Type": "application/json" })
-    return response.end("{ notificationResponse : '[accepted]' }")
+    return httpUtils.sendResponse(response,
+      200,
+      { 'Content-Type': 'application/json' },
+      { notificationResponse : '[accepted]' })
   } catch (err) {
     logger.error(err, 'Ooops')
-    response.statusCode = 500
-    return response.end()
+    return httpUtils.sendResponse(response, 500)
   }
 }
 
