@@ -2,28 +2,31 @@
   "name": "commercetools-adyen-integration",
   "version": "0.0.1",
   "description": "Integration between Commercetools and Adyen payment service provider",
-  "main": "index.js",
   "scripts": {
     "test": "mocha --exit --timeout 30000 --full-trace extension/test/**/*.spec.js",
     "extension": "node ./extensions/src/init.js",
-    "lint": "./node_modules/.bin/eslint extension",
+    "lint": "eslint extension",
     "init": "CTP_PROJECT_KEY=projectKey CTP_CLIENT_ID=clientId CTP_CLIENT_SECRET=clientSecret API_EXTENSION_BASE_URL=extensionUrl node ./extension/scripts/initResources.js",
     "cypress:run": "cypress run",
     "cypress:open": "cypress open",
-    "cypress": "start-server-and-test cypress-setup http://localhost:8000 cypress:run",
-    "cypress-ui": "start-server-and-test cypress-setup http://localhost:8000 cypress:open",
+    "cypress": "server-test cypress-setup 8000 cypress:run",
+    "cypress-ui": "server-test cypress-setup 8000 cypress:open",
     "cypress-setup": "node ./cypress/set-up-server.js"
   },
   "keywords": [
-    "Adyen"
+    "Adyen",
+    "commercetools",
+    "payment",
+    "payment integration",
+    "payment provider"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/commercetools/commercetools-adyen-integration.git"
   },
   "author": {
-    "name": "Lam Tran",
-    "email": "lam.tran@commercetools.de"
+    "name": "commercetools Professional Services",
+    "email": "ps-dev@commercetools.de"
   },
   "engines": {
     "node": ">=10",
@@ -35,7 +38,7 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration#readme",
   "devDependencies": {
-    "adyen-cse-js": "git+https://github.com/Adyen/adyen-cse-web.git#0_1_23",
+    "adyen-cse-js": "Adyen/adyen-cse-web#0_1_23",
     "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
     "cypress": "^3.1.5",

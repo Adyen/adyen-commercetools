@@ -1,9 +1,9 @@
 const _ = require('lodash')
 
 const pU = require('../payment-utils')
-const errorMessages = require('../../validator/errorMessages')
-const paypalMakePayment = require('./paypalMakePayment.handler')
-const paypalCompletePayment = require('./paypalCompletePayment.handler')
+const errorMessages = require('../../validator/error-messages')
+const paypalMakePayment = require('./paypal-make-payment.handler')
+const paypalCompletePayment = require('./paypal-complete-payment.handler')
 
 async function handlePayment (paymentObject) {
   const hasPendingTransaction = _.isObject(pU.getChargeTransactionPending(paymentObject))

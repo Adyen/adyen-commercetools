@@ -1,11 +1,11 @@
 const { expect } = require('chai')
 const _ = require('lodash')
 
-const ctpClientBuilder = require('../../src/ctp/ctp')
-const iTSetUp = require('./integrationTestSetUp')
-const paymentTemplate = require('../resources/payment-kcp.json')
+const iTSetUp = require('./integration-test-set-up')
+const ctpClientBuilder = require('../../src/ctp/ctp-client')
+const paymentTemplate = require('../fixtures/payment-paypal.json')
 
-describe('kcp make payment', () => {
+describe('Paypal payment', () => {
   let ctpClient
 
   beforeEach(async () => {
@@ -17,7 +17,7 @@ describe('kcp make payment', () => {
     await iTSetUp.cleanupResources(ctpClient)
   })
 
-  it('should create kcp redirect', async () => {
+  it('should create paypal redirect', async () => {
     const paymentDraft = _.cloneDeep(paymentTemplate)
     const response = await ctpClient.create(ctpClient.builder.payments, paymentDraft)
 

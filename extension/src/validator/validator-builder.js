@@ -1,7 +1,7 @@
 const _ = require('lodash')
 
 const pU = require('../paymentHandler/payment-utils')
-const errorMessages = require('./errorMessages')
+const errorMessages = require('./error-messages')
 
 function withPayment (paymentObject) {
   const errors = {}

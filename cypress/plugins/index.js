@@ -27,9 +27,7 @@ module.exports = async (on, config) => {
   process.env.CLIENT_ENCRYPTION_PUBLIC_KEY = config.env.CLIENT_ENCRYPTION_PUBLIC_KEY
 
   on('task', {
-    createCreditCard3DS: (ngrokUrl) => {
-      return creditCard3ds.init(ngrokUrl)
-    },
+    createCreditCard3DS: ngrokUrl => creditCard3ds.init(ngrokUrl),
     ngrokInit: async (port) => {
       await ngrok.init(port)
       return null

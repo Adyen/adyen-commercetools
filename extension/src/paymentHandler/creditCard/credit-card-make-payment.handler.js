@@ -3,7 +3,7 @@ const _ = require('lodash')
 const configLoader = require('../../config/config')
 const c = require('../../config/constants')
 const pU = require('../payment-utils')
-const ValidatorBuilder = require('../../validator/validatorBuilder')
+const ValidatorBuilder = require('../../validator/validator-builder')
 
 const config = configLoader.load()
 
@@ -132,9 +132,9 @@ async function _makePayment (paymentObject) {
     body: JSON.stringify(body),
     headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
   }
-  const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/payments`, request)
+  const response = await fetch(`${config.adyen.apiBaseUrl}/payments`, request)
 
-  return { response: await resultPromise, request }
+  return { response, request }
 }
 
 module.exports = { handlePayment }

@@ -1,10 +1,10 @@
-const _ = require('lodash')
 const fetch = require('node-fetch')
+const _ = require('lodash')
 
-const pU = require('../payment-utils')
-const c = require('../../config/constants')
 const configLoader = require('../../config/config')
-const ValidatorBuilder = require('../../validator/validatorBuilder')
+const c = require('../../config/constants')
+const pU = require('../payment-utils')
+const ValidatorBuilder = require('../../validator/validator-builder')
 
 const config = configLoader.load()
 
@@ -12,35 +12,34 @@ async function handlePayment (paymentObject) {
   const validator = _validatePayment(paymentObject)
   if (validator.hasErrors())
     return validator.buildCtpErrorResponse()
-
-  const { response, request } = await _callAdyen(paymentObject)
+  const { response, request } = await _completePayment(paymentObject)
   const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
-  const responseBody = await response.json()
+  const body = await response.json()
   const actions = [
     {
       action: 'addInterfaceInteraction',
       type: { key: c.CTP_INTERFACE_INTERACTION },
       fields: {
         timestamp: new Date(),
-        response: JSON.stringify(responseBody),
+        response: JSON.stringify(body),
         request: JSON.stringify(request),
-        type: 'makePayment',
+        type: 'completePayment',
         status: interfaceInteractionStatus
       }
     }
   ]
-  if (responseBody.resultCode) {
+  if (body.resultCode) {
     const transaction = pU.getChargeTransactionPending(paymentObject)
     actions.push({
       action: 'changeTransactionState',
       transactionId: transaction.id,
-      state: _.capitalize(pU.getMatchingCtpState(responseBody.resultCode.toLowerCase()))
+      state: _.capitalize(pU.getMatchingCtpState(body.resultCode.toLowerCase()))
     })
-    if (responseBody.pspReference)
+    if (body.pspReference)
       actions.push({
         action: 'changeTransactionInteractionId',
         transactionId: transaction.id,
-        interactionId: responseBody.pspReference
+        interactionId: body.pspReference
       })
   }
   return {
@@ -51,24 +50,27 @@ async function handlePayment (paymentObject) {
 
 function _validatePayment (paymentObject) {
   return ValidatorBuilder.withPayment(paymentObject)
-    .validatePayloadField()
+    .validatePaymentDataField()
+    .validateMdField()
+    .validatePaResField()
 }
 
-async function _callAdyen (paymentObject) {
+async function _completePayment (paymentObject) {
   const body = {
+    paymentData: paymentObject.custom.fields.paymentData,
     details: {
-      payload: paymentObject.custom.fields.payload
+      MD: paymentObject.custom.fields.MD,
+      PaRes: paymentObject.custom.fields.PaRes
     }
   }
-
   const request = {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
   }
-  const resultPromise = await fetch(`${config.adyen.apiBaseUrl}/payments/details`, request)
+  const response = await fetch(`${config.adyen.apiBaseUrl}/payments/details`, request)
 
-  return { response: await resultPromise, request }
+  return { request, response }
 }
 
 module.exports = { handlePayment }

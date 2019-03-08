@@ -1,8 +1,8 @@
 const _ = require('lodash')
 
 const pU = require('../payment-utils')
-const kcpMakePayment = require('./kcpMakePayment.handler')
-const errorMessages = require('../../validator/errorMessages')
+const kcpMakePayment = require('./kcp-make-payment.handler')
+const errorMessages = require('../../validator/error-messages')
 
 async function handlePayment (paymentObject) {
   const hasInitTransaction = _.isObject(pU.getChargeTransactionInit(paymentObject))
