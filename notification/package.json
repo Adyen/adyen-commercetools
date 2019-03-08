@@ -1,7 +1,7 @@
 {
   "name": "commercetools-adyen-integration",
   "version": "0.0.1",
-  "description": "Integration between commercetools and Adyen payment service provider",
+  "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "scripts": {
     "test": "nyc mocha --check-leaks --full-trace --recursive \"./test/**/*.spec.js\"",
     "start": "node ./src/init.js",
