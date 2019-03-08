@@ -2,7 +2,7 @@ const url = require('url')
 
 const serverFn = require('../extension/src/server')
 const httpUtils = require('../extension/src/utils')
-const ctpClientBuilder = require('../extension/src/ctp/ctpClient')
+const ctpClientBuilder = require('../extension/src/ctp/ctp-client')
 const { routes } = require('../extension/src/routes')
 
 async function addTestRoutes () {
