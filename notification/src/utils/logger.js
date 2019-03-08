@@ -1,7 +1,7 @@
 const bunyan = require('bunyan')
 
 function getLogger (logLevel) {
-  const NOTIFICATION_MODULE_NAME = 'adyen-ct-connector-notifications'
+  const NOTIFICATION_MODULE_NAME = 'ctp-adyen-integration-notifications'
   return bunyan.createLogger({
     name: NOTIFICATION_MODULE_NAME,
     stream: process.stderr,
