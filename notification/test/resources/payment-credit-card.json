@@ -1,4 +1,6 @@
 {
+  "id": "123212321",
+  "version": "2",
   "interfaceId":"paymentReferenceId",
   "amountPlanned": {
     "type": "centPrecision",

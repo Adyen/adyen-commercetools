@@ -4,6 +4,7 @@ const { cloneDeep } = require('lodash')
 const logger = require('../../src/utils/logger').getLogger()
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const notificationsMock = require('../resources/notification').notificationItems
+const concurrentModificationError = require('../resources/concurrentModificationException')
 const ctpClientMock = require('./ctpClientMock')
 const paymentMock = require('../resources/payment-credit-card')
 
@@ -147,5 +148,42 @@ describe('notification module', () => {
     ]
 
     expect(ctpClientUpdateSpy.args[0][3]).to.deep.equal(expectedUpdateActions)
+  })
+
+  it('should repeat on concurrent modification errors ', async () => {
+    const modifiedPaymentMock = cloneDeep(paymentMock)
+    modifiedPaymentMock.interfaceInteractions.push({
+      type: {
+        typeId: 'type',
+        id: '3fd15a04-b460-4a88-a911-0472c4c080b3'
+      },
+      fields: {
+        timestamp: '2019-02-05T12:29:36.028Z',
+        response: JSON.stringify(notificationsMock[0]),
+        type: 'makePayment',
+        status: 'SUCCESS'
+      }
+    })
+    const ctpClient = ctpClientMock.get(config)
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
+      return {
+        body: {
+          results: [modifiedPaymentMock]
+        }
+      }
+    })
+    sandbox.stub(ctpClient, 'fetchById').callsFake(() => {
+      return {
+        body: {
+          results: [modifiedPaymentMock]
+        }
+      }
+    })
+    const ctpClientUpdateSpy = sandbox.stub(ctpClient, 'update').callsFake(() => {
+      throw concurrentModificationError
+    })
+    await notificationHandler.processNotifications(notificationsMock, logger, ctpClient)
+
+    expect(ctpClientUpdateSpy.callCount).to.deep.equal(21)
   })
 })
