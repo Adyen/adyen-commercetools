@@ -41,16 +41,16 @@ async function updatePaymentWithRepeater(payment, notification, ctpClient) {
   while (true) {
     updateActions = calculateUpdateActionsForPayment(currentPayment, notification)
     try {
-      await ctpClient.update(ctpClient.builder.payments, payment.id, currentVersion, updateActions)
+      await ctpClient.update(ctpClient.builder.payments, currentPayment.id, currentVersion, updateActions)
       break
     } catch (err) {
       if (err.body.statusCode !== 409)
-        throw new Error(`Unexpected error during updating a payment with ID: ${paymentId}. Exiting. `
+        throw new Error(`Unexpected error during updating a payment with ID: ${currentPayment.id}. Exiting. `
           + `Error: ${JSON.stringify(serializeError(err))}`)
       retryCount++
-      if (retryCount >= maxRetry) {
+      if (retryCount > maxRetry) {
         retryMessage = `Got a concurrent modification error`
-          + ` when updating payment with id "${paymentId}".`
+          + ` when updating payment with id "${currentPayment.id}".`
           + ` Version tried "${currentVersion}",`
           + ` currentVersion: "${err.body.errors[0].currentVersion}".`
         throw new Error(`${retryMessage} Won't retry again`
@@ -58,6 +58,7 @@ async function updatePaymentWithRepeater(payment, notification, ctpClient) {
           + ` max retries. Error: ${JSON.stringify(serializeError(err))}`)
       }
       currentPayment = await ctpClient.fetchById(ctpClient.builder.payments, currentPayment.id)
+      currentPayment = currentPayment.body.results[0]
       currentVersion = currentPayment.version
     }
   }
