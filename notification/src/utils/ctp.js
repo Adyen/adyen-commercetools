@@ -120,10 +120,10 @@ function compareTransactionStates (currentState, newState) {
     "Failure": 2
   }
   if(!transactionStateFlow.hasOwnProperty(currentState) || !transactionStateFlow.hasOwnProperty(newState))
-    return transactionStateFlow[newState] - transactionStateFlow[currentState]
-
-  throw Error('Wrong transaction state passed. ' +
+    throw Error('Wrong transaction state passed. ' +
     `currentState: ${currentState}, newState: ${newState}`)
+
+  return transactionStateFlow[newState] - transactionStateFlow[currentState]
 }
 
 
