@@ -14,7 +14,7 @@ async function processNotification (notification, logger, ctpClient) {
   const merchantReference = _.get(notification, 'NotificationRequestItem.merchantReference', null)
   if (merchantReference === null) {
     logger.error(`Can't extract merchantReference from the notification: ${JSON.stringify(notification)}`)
-    return null
+    return
   }
 
   try {
@@ -23,11 +23,9 @@ async function processNotification (notification, logger, ctpClient) {
       await updatePaymentWithRepeater(payment, notification, ctpClient)
     else {
       logger.error(`Payment with merchantReference: ${merchantReference} was not found`)
-      return null
     }
   } catch (err) {
     logger.error(err)
-    return null
   }
 }
 
