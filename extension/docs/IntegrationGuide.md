@@ -5,6 +5,8 @@
 **Contents**
 
   - [Glossary](#glossary)
+  - [Requirements for CTP project:](#requirements-for-ctp-project)
+  - [Required parameters](#required-parameters)
 - [Checkout steps](#checkout-steps)
 - [Validations](#validations)
     - [Validate cart state](#validate-cart-state)
