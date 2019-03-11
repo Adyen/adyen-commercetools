@@ -29,6 +29,7 @@
   "paymentStatus": {},
   "transactions": [
     {
+      "id": "9ca92d05-ba63-47dc-8f83-95b08d539646",
       "type": "Charge",
       "amount": {
         "type": "centPrecision",

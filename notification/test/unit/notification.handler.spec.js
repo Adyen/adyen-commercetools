@@ -150,6 +150,46 @@ describe('notification module', () => {
     expect(ctpClientUpdateSpy.args[0][3]).to.deep.equal(expectedUpdateActions)
   })
 
+  it('should update transaction with a new state', async () => {
+    const modifiedPaymentMock = cloneDeep(paymentMock)
+    const notificationsMockClone = cloneDeep(notificationsMock)
+    notificationsMockClone[0].NotificationRequestItem.eventCode = "CAPTURE"
+    notificationsMockClone[0].NotificationRequestItem.success = "false"
+    modifiedPaymentMock.interfaceInteractions.push({
+      type: {
+        typeId: 'type',
+        id: '3fd15a04-b460-4a88-a911-0472c4c080b3'
+      },
+      fields: {
+        timestamp: '2019-02-05T12:29:36.028Z',
+        response: JSON.stringify(notificationsMockClone[0]),
+        type: 'makePayment',
+        status: 'SUCCESS'
+      }
+    })
+    const ctpClient = ctpClientMock.get(config)
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
+      return {
+        body: {
+          results: [modifiedPaymentMock]
+        }
+      }
+    })
+    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+
+
+    await notificationHandler.processNotifications(notificationsMockClone, logger, ctpClient)
+    const expectedUpdateActions = [
+      {
+        action: 'changeTransactionState',
+        state: 'Success',
+        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646'
+      }
+    ]
+
+    expect(ctpClientUpdateSpy.args[0][3]).to.deep.equal(expectedUpdateActions)
+  })
+
   it('should repeat on concurrent modification errors ', async () => {
     const modifiedPaymentMock = cloneDeep(paymentMock)
     modifiedPaymentMock.interfaceInteractions.push({
