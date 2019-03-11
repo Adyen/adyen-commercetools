@@ -18,7 +18,7 @@ async function handleNotification (request, response, logger) {
       { 'Content-Type': 'application/json' },
       { notificationResponse : '[accepted]' })
   } catch (err) {
-    logger.error(err, 'Ooops')
+    logger.error(err, 'Unexpected exception occurred')
     return httpUtils.sendResponse(response, 500)
   }
 }
