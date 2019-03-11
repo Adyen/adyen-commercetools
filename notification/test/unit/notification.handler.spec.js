@@ -224,6 +224,18 @@ describe('notification module', () => {
     })
     await notificationHandler.processNotifications(notificationsMock, logger, ctpClient)
 
-    expect(ctpClientUpdateSpy.callCount).to.deep.equal(21)
+    expect(ctpClientUpdateSpy.callCount).to.equal(21)
+  })
+
+  it('do not make any requests when merchantReference cannot be extracted from notification', async () => {
+    const ctpClient = ctpClientMock.get(config)
+    const ctpClientFetchSpy = sandbox.spy(ctpClient, 'fetch')
+    const ctpClientFetchByIdSpy = sandbox.spy(ctpClient, 'fetchById')
+    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    await notificationHandler.processNotifications([{ name: 'some wrong notification' }], logger, ctpClient)
+
+    expect(ctpClientFetchSpy.callCount).to.equal(0)
+    expect(ctpClientFetchByIdSpy.callCount).to.equal(0)
+    expect(ctpClientUpdateSpy.callCount).to.equal(0)
   })
 })
