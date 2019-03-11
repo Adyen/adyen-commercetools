@@ -1,7 +1,6 @@
 const sinon = require('sinon')
 const { expect } = require('chai')
 const { cloneDeep } = require('lodash')
-const logger = require('../../src/utils/logger').getLogger()
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const notificationsMock = require('../resources/notification').notificationItems
 const concurrentModificationError = require('../resources/concurrentModificationException')
@@ -35,7 +34,7 @@ describe('notification module', () => {
       }
     })
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
-    await notificationHandler.processNotifications(notificationsMock, logger, ctpClient)
+    await notificationHandler.processNotifications(notificationsMock, ctpClient)
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -88,7 +87,7 @@ describe('notification module', () => {
       }
     })
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
-    await notificationHandler.processNotifications(notificationsMock, logger, ctpClient)
+    await notificationHandler.processNotifications(notificationsMock, ctpClient)
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -132,7 +131,7 @@ describe('notification module', () => {
       }
     })
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
-    await notificationHandler.processNotifications(notificationsMock, logger, ctpClient)
+    await notificationHandler.processNotifications(notificationsMock, ctpClient)
     const expectedUpdateActions = [
       {
         action: 'addTransaction',
@@ -178,7 +177,7 @@ describe('notification module', () => {
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
 
 
-    await notificationHandler.processNotifications(notificationsMockClone, logger, ctpClient)
+    await notificationHandler.processNotifications(notificationsMockClone, ctpClient)
     const expectedUpdateActions = [
       {
         action: 'changeTransactionState',
@@ -222,7 +221,7 @@ describe('notification module', () => {
     const ctpClientUpdateSpy = sandbox.stub(ctpClient, 'update').callsFake(() => {
       throw concurrentModificationError
     })
-    await notificationHandler.processNotifications(notificationsMock, logger, ctpClient)
+    await notificationHandler.processNotifications(notificationsMock, ctpClient)
 
     expect(ctpClientUpdateSpy.callCount).to.equal(21)
   })
@@ -232,7 +231,7 @@ describe('notification module', () => {
     const ctpClientFetchSpy = sandbox.spy(ctpClient, 'fetch')
     const ctpClientFetchByIdSpy = sandbox.spy(ctpClient, 'fetchById')
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
-    await notificationHandler.processNotifications([{ name: 'some wrong notification' }], logger, ctpClient)
+    await notificationHandler.processNotifications([{ name: 'some wrong notification' }], ctpClient)
 
     expect(ctpClientFetchSpy.callCount).to.equal(0)
     expect(ctpClientFetchByIdSpy.callCount).to.equal(0)

@@ -3,16 +3,16 @@ const httpUtils = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
 const { processNotifications } = require('../../handler/notification/notification.handler')
 const config = require('../../config/config').load()
-
+const logger = require('../../utils/logger').getLogger()
 const ctpClient = ctp.get(config)
 
 // TODO: add JSON schema validation:
 // https://github.com/commercetools/commercetools-adyen-integration/issues/9
-async function handleNotification (request, response, logger) {
+async function handleNotification (request, response) {
   const body = await httpUtils.collectRequestData(request, response)
   try {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
-    await processNotifications(notifications, logger, ctpClient)
+    await processNotifications(notifications, ctpClient)
     return httpUtils.sendResponse(response,
       200,
       { 'Content-Type': 'application/json' },

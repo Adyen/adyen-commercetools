@@ -3,14 +3,15 @@ const Promise = require('bluebird')
 const serializeError = require('serialize-error')
 const ctp = require('../../utils/ctp')
 const adyenEvents = require('../../../resources/adyenEvents')
+const logger = require('../../utils/logger').getLogger()
 
-async function processNotifications (notifications, logger, ctpClient) {
+async function processNotifications (notifications, ctpClient) {
   await Promise.map(notifications,
-    notification => processNotification(notification, logger, ctpClient),
+    notification => processNotification(notification, ctpClient),
     { concurrency: 10 })
 }
 
-async function processNotification (notification, logger, ctpClient) {
+async function processNotification (notification, ctpClient) {
   const merchantReference = _.get(notification, 'NotificationRequestItem.merchantReference', null)
   if (merchantReference === null) {
     logger.error(`Can't extract merchantReference from the notification: ${JSON.stringify(notification)}`)
