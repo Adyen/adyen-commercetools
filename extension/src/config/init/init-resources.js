@@ -7,6 +7,7 @@ const config = require('../../config/config')
 
 function initResources () {
   const ctpClient = ctpClientBuilder.get()
+  // todo: make ensure instead of init
   return Promise.all([
     initPaymentCustomType(ctpClient),
     initInterfaceInteractionCustomType(ctpClient),

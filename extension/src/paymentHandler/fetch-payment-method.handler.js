@@ -21,7 +21,7 @@ async function handlePayment (paymentObject) {
         timestamp: new Date(),
         response: JSON.stringify(responseBody),
         request: JSON.stringify(request),
-        type: 'getPaymentDetails'
+        type: 'getPaymentDetails' // todo: change name to more descriptive
       }
     }]
   }

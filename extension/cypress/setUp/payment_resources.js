@@ -1,9 +1,9 @@
 // Prepare all CTP resources that are needed to execute Adyen payments
 // like custom types, API integration
 
-const { initResources } = require('../../extension/src/config/init/init-resources')
-const testUtils = require('../../extension/test/test-utils')
-const ctpClientBuilder = require('../../extension/src/ctp/ctp-client')
+const { initResources } = require('../../src/config/init/init-resources')
+const testUtils = require('../../test/test-utils')
+const ctpClientBuilder = require('../../src/ctp/ctp-client')
 
 async function init () {
   const ctpClient = ctpClientBuilder.get()
