@@ -20,8 +20,22 @@ In this process, there are 3 parties involved:
 
 **Frontend** - the browser part of the shop. This is what the shopper interacts with.  
 **Backend** - the shop server which supplies front end with data.  
-**Adyen-integration** - hosted service (this repository) that interacts over [API extensions](https://docs.commercetools.com/http-api-projects-api-extensions).
+**Adyen-integration** - hosted service (this repository) that interacts over [API extensions](https://docs.commercetools.com/http-api-projects-api-extensions).  
 **Shopper** - a person that's using the shop
+
+## Requirements for CTP project:
+All the requirements below should be automatically created by the Adyen-integration. It will not create if there
+are already resources with same key in the CTP project. In this case, you have to synchronize by yourself.
+1. [API Extension subscription to Adyen-integration endpoints](../resources/api-extensions.json)
+1. [Custom types for payments](../resources/payment-custom-types.json)
+1. [Custom types for interface interactions](../resources/payment-interface-interaction-types.json)
+
+## Required parameters
+In order to make the extension module working, following parameters have to be provided to the Adyen-integration.
+- `CTP_PROJECT_KEY`, `CTP_CLIENT_ID`, `CTP_CLIENT_SECRET` - CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`
+- `API_EXTENSION_BASE_URL` - URL of the Adyen-integration. This URL will be called by CTP Extension endpoint.
+- `ADYEN_API_KEY` - Go to [Account/Users](https://ca-test.adyen.com/ca/ca/config/users.shtml) - Select a user with `Web Service` User type - Generate New API Key   
+- `ADYEN_MERCHANT_ACCOUNT` - Go to [Account/Merchant accounts](https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount)
 
 # Checkout steps
 1. On each checkout step [validate cart state](#validate-cart-state)
