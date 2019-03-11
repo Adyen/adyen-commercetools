@@ -9,14 +9,14 @@ const ctpClient = ctp.get(config)
 // TODO: add JSON schema validation:
 // https://github.com/commercetools/commercetools-adyen-integration/issues/9
 async function handleNotification (request, response) {
-  const body = await httpUtils.collectRequestData(request, response)
+  const body = await httpUtils.collectRequestData(request)
   try {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
     await processNotifications(notifications, ctpClient)
     return httpUtils.sendResponse(response,
       200,
       { 'Content-Type': 'application/json' },
-      { notificationResponse: '[accepted]' })
+      JSON.stringify({ notificationResponse: '[accepted]' }))
   } catch (err) {
     logger.error(err, 'Unexpected exception occurred')
     return httpUtils.sendResponse(response, 500)

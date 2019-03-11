@@ -6,7 +6,7 @@ const config = require('./config/config').load()
 require('./utils/logger').getLogger(config.logLevel)
 
 const routes = {
-  '/': notificationController.handleNotification,
+  '/': notificationController.handleNotification
 }
 
 module.exports = http.createServer(async (request, response) => {
