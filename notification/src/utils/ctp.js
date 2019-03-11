@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const fetch = require('node-fetch')
-const _ = require('lodash')
+const { merge } = require('lodash')
 const { createClient } = require('@commercetools/sdk-client')
 const { createAuthMiddlewareForClientCredentialsFlow } = require('@commercetools/sdk-middleware-auth')
 const { createHttpMiddleware } = require('@commercetools/sdk-middleware-http')
@@ -96,7 +96,7 @@ function setUpClient (config) {
       }
     }
   }
-  return _.merge(customMethods, ctpClient)
+  return merge(customMethods, ctpClient)
 }
 
 function getRequestBuilder (projectKey) {

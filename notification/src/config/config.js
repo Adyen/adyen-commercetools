@@ -1,4 +1,4 @@
-const _ = require('lodash')
+const { merge } = require('lodash')
 
 const configPath = process.env.CONFIG_PATH
 
@@ -39,7 +39,7 @@ module.exports.load = () => {
    * - env config
    */
   if (config === undefined) {
-    config = _.merge(
+    config = merge(
       getEnvConfig(),
       { ctp: getCTPEnvCredentials() },
       getFileConfig()

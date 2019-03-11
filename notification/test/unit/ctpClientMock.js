@@ -1,4 +1,4 @@
-const _ = require('lodash')
+const { merge } = require('lodash')
 const { createClient } = require('@commercetools/sdk-client')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
 
@@ -51,7 +51,7 @@ function setUpClient (config) {
       return this
     }
   }
-  return _.merge(customMethods, ctpClient)
+  return merge(customMethods, ctpClient)
 }
 
 function getRequestBuilder (projectKey) {
