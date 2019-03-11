@@ -7,7 +7,9 @@ const { createHttpMiddleware } = require('@commercetools/sdk-middleware-http')
 const { createQueueMiddleware } = require('@commercetools/sdk-middleware-queue')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
 
-function createCtpClient ({ clientId, clientSecret, projectKey, concurrency = 10 }) {
+function createCtpClient ({
+  clientId, clientSecret, projectKey, concurrency = 10
+}) {
   const AUTH_HOST = 'https://auth.commercetools.com'
   const API_HOST = 'https://api.commercetools.com'
   const authMiddleware = createAuthMiddlewareForClientCredentialsFlow({
@@ -114,20 +116,20 @@ function getRequestBuilder (projectKey) {
  * */
 function compareTransactionStates (currentState, newState) {
   const transactionStateFlow = {
-    "Initial": 0,
-    "Pending": 1,
-    "Success": 2,
-    "Failure": 2
+    Initial: 0,
+    Pending: 1,
+    Success: 2,
+    Failure: 2
   }
-  if(!transactionStateFlow.hasOwnProperty(currentState) || !transactionStateFlow.hasOwnProperty(newState))
-    throw Error('Wrong transaction state passed. ' +
-    `currentState: ${currentState}, newState: ${newState}`)
+  if (!transactionStateFlow.hasOwnProperty(currentState) || !transactionStateFlow.hasOwnProperty(newState))
+    throw Error('Wrong transaction state passed. '
+      + `currentState: ${currentState}, newState: ${newState}`)
 
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
 }
 
 
 module.exports = {
-  get: (config) => setUpClient(config),
+  get: config => setUpClient(config),
   compareTransactionStates
 }

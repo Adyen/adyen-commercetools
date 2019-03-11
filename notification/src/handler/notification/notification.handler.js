@@ -6,7 +6,7 @@ const adyenEvents = require('../../../resources/adyenEvents')
 
 async function processNotifications (notifications, logger, ctpClient) {
   await Promise.map(notifications,
-      notification => processNotification(notification, logger, ctpClient),
+    notification => processNotification(notification, logger, ctpClient),
     { concurrency: 10 })
 }
 
@@ -21,15 +21,14 @@ async function processNotification (notification, logger, ctpClient) {
     const payment = await getPaymentByMerchantReference(merchantReference, ctpClient)
     if (payment !== null)
       await updatePaymentWithRepeater(payment, notification, ctpClient)
-    else {
+    else
       logger.error(`Payment with merchantReference: ${merchantReference} was not found`)
-    }
   } catch (err) {
     logger.error(err)
   }
 }
 
-async function updatePaymentWithRepeater(payment, notification, ctpClient) {
+async function updatePaymentWithRepeater (payment, notification, ctpClient) {
   const maxRetry = 20
   let currentPayment = payment
   let currentVersion = payment.version
@@ -39,15 +38,16 @@ async function updatePaymentWithRepeater(payment, notification, ctpClient) {
   while (true) {
     updateActions = calculateUpdateActionsForPayment(currentPayment, notification)
     try {
+      /* eslint-disable-next-line no-await-in-loop */
       await ctpClient.update(ctpClient.builder.payments, currentPayment.id, currentVersion, updateActions)
       break
     } catch (err) {
       if (err.body.statusCode !== 409)
         throw new Error(`Unexpected error during updating a payment with ID: ${currentPayment.id}. Exiting. `
           + `Error: ${JSON.stringify(serializeError(err))}`)
-      retryCount++
+      retryCount += 1
       if (retryCount > maxRetry) {
-        retryMessage = `Got a concurrent modification error`
+        retryMessage = 'Got a concurrent modification error'
           + ` when updating payment with id "${currentPayment.id}".`
           + ` Version tried "${currentVersion}",`
           + ` currentVersion: "${err.body.errors[0].currentVersion}".`
@@ -55,8 +55,9 @@ async function updatePaymentWithRepeater(payment, notification, ctpClient) {
           + ` because of a reached limit ${maxRetry}`
           + ` max retries. Error: ${JSON.stringify(serializeError(err))}`)
       }
+      /* eslint-disable-next-line no-await-in-loop */
       currentPayment = await ctpClient.fetchById(ctpClient.builder.payments, currentPayment.id)
-      currentPayment = currentPayment.body.results[0]
+      currentPayment = currentPayment.body.results[0] // eslint-disable-line prefer-destructuring
       currentVersion = currentPayment.version
     }
   }
@@ -69,8 +70,9 @@ function calculateUpdateActionsForPayment (payment, notification) {
   const notificationSuccess = notificationRequestItem.success
   const stringifiedNotification = JSON.stringify(notification)
   // check if the interfaceInteraction is already on payment or not
-  const isNotificationInInterfaceInteraction =
-    payment.interfaceInteractions.some(interaction => interaction.fields.response === stringifiedNotification)
+  const isNotificationInInterfaceInteraction = payment.interfaceInteractions.some(
+    interaction => interaction.fields.response === stringifiedNotification
+  )
   if (isNotificationInInterfaceInteraction === false)
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
 
@@ -78,17 +80,16 @@ function calculateUpdateActionsForPayment (payment, notification) {
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
-    const oldTransaction = _.find(payment.transactions, (transaction) => transaction.type === transactionType)
-    if (_.isEmpty(oldTransaction)) {
+    const oldTransaction = _.find(payment.transactions, transaction => transaction.type === transactionType)
+    if (_.isEmpty(oldTransaction))
       updateActions.push(getAddTransactionUpdateAction(
         transactionType,
         transactionState,
         notificationRequestItem.amount.value,
-        notificationRequestItem.amount.currency)
-      )
-    } else if (ctp.compareTransactionStates(oldTransaction.state, transactionState) > 0) {
+        notificationRequestItem.amount.currency
+      ))
+    else if (ctp.compareTransactionStates(oldTransaction.state, transactionState) > 0)
       updateActions.push(getChangeTransactionStateUpdateAction(oldTransaction.id, transactionState))
-    }
   }
   return updateActions
 }
@@ -111,26 +112,26 @@ function getAddInterfaceInteractionUpdateAction (notification) {
 function getChangeTransactionStateUpdateAction (transactionId, newTransactionState) {
   return {
     action: 'changeTransactionState',
-    transactionId: transactionId,
+    transactionId,
     state: newTransactionState
   }
 }
 
 function getTransactionTypeAndState (adyenEventCode, adyenEventSuccess) {
-  return _.find(adyenEvents, (adyenEvent) =>
-    adyenEvent.eventCode === adyenEventCode && adyenEvent.success === adyenEventSuccess)
+  return _.find(adyenEvents,
+    adyenEvent => adyenEvent.eventCode === adyenEventCode && adyenEvent.success === adyenEventSuccess)
 }
 
 function getAddTransactionUpdateAction (type, state, amount, currency) {
   return {
     action: 'addTransaction',
     transaction: {
-      type: type,
+      type,
       amount: {
         currencyCode: currency,
         centAmount: amount
       },
-      state: state
+      state
     }
   }
 }
@@ -140,8 +141,8 @@ async function getPaymentByMerchantReference (merchantReference, ctpClient) {
     const result = await ctpClient.fetch(ctpClient.builder.payments.where(`interfaceId="${merchantReference}"`))
     return _.get(result, 'body.results[0]', null)
   } catch (err) {
-    throw Error(`Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
-    `Error: ${JSON.stringify(serializeError(err))}`)
+    throw Error(`Failed to fetch a payment with merchantReference: ${merchantReference}. `
+    + `Error: ${JSON.stringify(serializeError(err))}`)
   }
 }
 

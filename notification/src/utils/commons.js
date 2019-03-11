@@ -1,4 +1,4 @@
-function collectRequestData (request, response) {
+function collectRequestData (request) {
   return new Promise((resolve) => {
     const data = []
 
