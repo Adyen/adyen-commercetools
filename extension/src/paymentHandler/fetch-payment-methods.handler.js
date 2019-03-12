@@ -1,14 +1,9 @@
 const fetch = require('node-fetch')
 const configLoader = require('../config/config')
 const c = require('../config/constants')
-const ValidatorBuilder = require('../validator/validator-builder')
 
 const config = configLoader.load()
 async function handlePayment (paymentObject) {
-  const validator = ValidatorBuilder.withPayment(paymentObject)
-    .validatePaymentMethod()
-  if (validator.hasErrors())
-    return validator.buildCtpErrorResponse()
   const { request, response } = await _fetchPaymentMethods(paymentObject)
   const responseBody = await response.json()
   return {

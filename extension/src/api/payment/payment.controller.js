@@ -16,16 +16,21 @@ async function processRequest (request, response) {
   if (request.method !== 'POST')
     return httpUtils.sendResponse(response)
   const paymentObject = await _getPaymentObject(request)
-  const adyenValidator = ValidatorBuilder.withPayment(paymentObject)
+  const validatorBuilder = ValidatorBuilder.withPayment(paymentObject)
+  const adyenValidator = validatorBuilder
     .validateAdyen()
   if (adyenValidator.hasErrors())
     // if it's not adyen payment, ignore the payment
     return httpUtils.sendResponse(response)
-  const interfaceIdValidator = ValidatorBuilder.withPayment(paymentObject)
+  const interfaceIdValidator = validatorBuilder
     .validateInterfaceIdField()
   if (interfaceIdValidator.hasErrors())
     return httpUtils.sendResponse(response, 400, undefined,
       interfaceIdValidator.buildCtpErrorResponse())
+  const paymentMethodValidator = validatorBuilder.validatePaymentMethod()
+  if (paymentMethodValidator.hasErrors())
+    return httpUtils.sendResponse(response, 400, undefined,
+      paymentMethodValidator.buildCtpErrorResponse())
   const handler = _getPaymentHandler(paymentObject)
   const handlerResponse = await handler.handlePayment(paymentObject)
   if (handlerResponse.errors)
