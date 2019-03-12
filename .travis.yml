@@ -1,10 +1,12 @@
 language: node_js
 node_js:
   - '10'
+env:
+  - TEST_DIR=extension
 before_install:
   - npm i -g npm@^6.4.1
-before_script:
-  - npm prune
 script:
+  - cd $TEST_DIR
+  - npm i
   - npm run test
   - npm run cypress
