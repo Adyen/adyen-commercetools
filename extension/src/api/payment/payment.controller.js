@@ -13,6 +13,8 @@ const paymentHandlers = {
 }
 
 async function processRequest (request, response) {
+  if (request.method !== 'POST')
+    return httpUtils.sendResponse(response)
   const paymentObject = await _getPaymentObject(request)
   const adyenValidator = ValidatorBuilder.withPayment(paymentObject)
     .validateAdyen()
