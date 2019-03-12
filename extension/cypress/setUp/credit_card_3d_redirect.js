@@ -4,6 +4,7 @@
 global.window = {}
 global.navigator = {}
 
+/* eslint-disable-next-line import/no-extraneous-dependencies */
 const adyenEncrypt = require('adyen-cse-js')
 const _ = require('lodash')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
