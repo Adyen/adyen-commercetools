@@ -12,5 +12,6 @@
         "Update"
       ]
     }
-  ]
+  ],
+  "timeoutInMs": 10000
 }
