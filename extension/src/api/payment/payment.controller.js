@@ -1,15 +1,15 @@
 const httpUtils = require('../../utils')
-const creditCardPayment = require('../../paymentHandler/creditCard/credit-card.handler')
-const paypalPayment = require('../../paymentHandler/paypal/paypal.handler')
-const kcpPayment = require('../../paymentHandler/kcp/kcp-payment.handler')
-const fetchPaymentMethods = require('../../paymentHandler/fetch-payment-method.handler')
+const creditCardHandler = require('../../paymentHandler/creditCard/credit-card.handler')
+const paypalHandler = require('../../paymentHandler/paypal/paypal.handler')
+const kcpHandler = require('../../paymentHandler/kcp/kcp-payment.handler')
+const fetchPaymentMethodsHandler = require('../../paymentHandler/fetch-payment-methods.handler')
 const ValidatorBuilder = require('../../validator/validator-builder')
 
 const paymentHandlers = {
-  creditCardPayment,
-  fetchPaymentMethods,
-  paypalPayment,
-  kcpPayment
+  creditCardHandler,
+  fetchPaymentMethodsHandler,
+  paypalHandler,
+  kcpHandler
 }
 
 async function processRequest (request, response) {
@@ -39,12 +39,12 @@ async function _getPaymentObject (request) {
 function _getPaymentHandler (paymentObject) {
   const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
   if (paymentValidator.isPaypal())
-    return paymentHandlers.paypalPayment
+    return paymentHandlers.paypalHandler
   if (paymentValidator.isCreditCard())
-    return paymentHandlers.creditCardPayment
+    return paymentHandlers.creditCardHandler
   if (paymentValidator.isKcp())
-    return paymentHandlers.kcpPayment
-  return paymentHandlers.fetchPaymentMethods
+    return paymentHandlers.kcpHandler
+  return paymentHandlers.fetchPaymentMethodsHandler
 }
 
 module.exports = { processRequest }
