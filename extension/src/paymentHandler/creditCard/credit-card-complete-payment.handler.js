@@ -13,33 +13,25 @@ async function handlePayment (paymentObject) {
   if (validator.hasErrors())
     return validator.buildCtpErrorResponse()
   const { response, request } = await _completePayment(paymentObject)
-  const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
-  const body = await response.json()
+  const status = response.status === 200 ? c.SUCCESS : c.FAILURE
+  const responseBody = await response.json()
   const actions = [
-    {
-      action: 'addInterfaceInteraction',
-      type: { key: c.CTP_INTERFACE_INTERACTION },
-      fields: {
-        timestamp: new Date(),
-        response: JSON.stringify(body),
-        request: JSON.stringify(request),
-        type: 'completePayment',
-        status: interfaceInteractionStatus
-      }
-    }
+    pU.createAddInterfaceInteractionAction({
+      request, response: responseBody, type: 'completePayment', status
+    })
   ]
-  if (body.resultCode) {
+  if (responseBody.resultCode) {
     const transaction = pU.getChargeTransactionPending(paymentObject)
     actions.push({
       action: 'changeTransactionState',
       transactionId: transaction.id,
-      state: _.capitalize(pU.getMatchingCtpState(body.resultCode.toLowerCase()))
+      state: _.capitalize(pU.getMatchingCtpState(responseBody.resultCode.toLowerCase()))
     })
-    if (body.pspReference)
+    if (responseBody.pspReference)
       actions.push({
         action: 'changeTransactionInteractionId',
         transactionId: transaction.id,
-        interactionId: body.pspReference
+        interactionId: responseBody.pspReference
       })
   }
   return {

@@ -14,50 +14,42 @@ async function handlePayment (paymentObject) {
 
   const { request, response } = await _makePayment(paymentObject)
   // for statusCodes, see https://docs.adyen.com/developers/development-resources/response-handling
-  const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
-  const body = await response.json()
+  const status = response.status === 200 ? c.SUCCESS : c.FAILURE
+  const responseBody = await response.json()
   const actions = [
-    {
-      action: 'addInterfaceInteraction',
-      type: { key: c.CTP_INTERFACE_INTERACTION },
-      fields: {
-        timestamp: new Date(),
-        response: JSON.stringify(body),
-        request: JSON.stringify(request),
-        type: 'makePayment',
-        status: interfaceInteractionStatus
-      }
-    }
+    pU.createAddInterfaceInteractionAction({
+      request, response: responseBody, type: 'makePayment', status
+    })
   ]
-  if (body.resultCode) {
+  if (responseBody.resultCode) {
     const transaction = pU.getChargeTransactionInit(paymentObject)
-    const resultCode = body.resultCode.toLowerCase()
+    const resultCode = responseBody.resultCode.toLowerCase()
     if (resultCode === c.REDIRECT_SHOPPER.toLowerCase()) {
-      const { MD } = body.redirect.data
+      const { MD } = responseBody.redirect.data
       actions.push({
         action: 'setCustomField',
         name: 'MD',
         value: MD
       })
-      const { PaReq } = body.redirect.data
+      const { PaReq } = responseBody.redirect.data
       actions.push({
         action: 'setCustomField',
         name: 'PaReq',
         value: PaReq
       })
-      const { paymentData } = body
+      const { paymentData } = responseBody
       actions.push({
         action: 'setCustomField',
         name: 'paymentData',
         value: paymentData
       })
-      const redirectUrl = body.redirect.url
+      const redirectUrl = responseBody.redirect.url
       actions.push({
         action: 'setCustomField',
         name: 'redirectUrl',
         value: redirectUrl
       })
-      const redirectMethod = body.redirect.method
+      const redirectMethod = responseBody.redirect.method
       actions.push({
         action: 'setCustomField',
         name: 'redirectMethod',
@@ -69,19 +61,19 @@ async function handlePayment (paymentObject) {
         state: 'Pending'
       })
     } else {
-      const newTxnState = _.capitalize(pU.getMatchingCtpState(body.resultCode.toLowerCase()))
+      const newTxnState = _.capitalize(pU.getMatchingCtpState(responseBody.resultCode.toLowerCase()))
       if (newTxnState !== transaction.state)
         actions.push({
           action: 'changeTransactionState',
           transactionId: transaction.id,
           state: newTxnState
         })
-      if (body.pspReference)
-        // in some cases (e.g. error response from Adyen), the body will not contain `pspReference`
+      if (responseBody.pspReference)
+      // in some cases (e.g. error response from Adyen), the body will not contain `pspReference`
         actions.push({
           action: 'changeTransactionInteractionId',
           transactionId: transaction.id,
-          interactionId: body.pspReference
+          interactionId: responseBody.pspReference
         })
     }
   }

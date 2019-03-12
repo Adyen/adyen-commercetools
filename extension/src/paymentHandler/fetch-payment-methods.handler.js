@@ -1,23 +1,19 @@
 const fetch = require('node-fetch')
 const configLoader = require('../config/config')
-const c = require('../config/constants')
+const pU = require('./payment-utils')
 
 const config = configLoader.load()
+
 async function handlePayment (paymentObject) {
   const { request, response } = await _fetchPaymentMethods(paymentObject)
   const responseBody = await response.json()
   return {
     version: paymentObject.version,
-    actions: [{
-      action: 'addInterfaceInteraction',
-      type: { key: c.CTP_INTERFACE_INTERACTION },
-      fields: {
-        timestamp: new Date(),
-        response: JSON.stringify(responseBody),
-        request: JSON.stringify(request),
-        type: 'getAvailablePaymentMethods'
-      }
-    }]
+    actions: [
+      pU.createAddInterfaceInteractionAction({
+        request, response: responseBody, type: 'getAvailablePaymentMethods'
+      })
+    ]
   }
 }
 

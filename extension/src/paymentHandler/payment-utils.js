@@ -1,3 +1,5 @@
+const c = require('../config/constants')
+
 function getChargeTransactionInitOrPending (paymentObject) {
   return getTransactionWithTypesAndStates(paymentObject,
     ['Charge'],
@@ -36,9 +38,26 @@ function getMatchingCtpState (adyenState) {
   return paymentAdyenStateToCtpState[adyenState]
 }
 
+function createAddInterfaceInteractionAction ({
+  request, response, type, status
+}) {
+  return {
+    action: 'addInterfaceInteraction',
+    type: { key: c.CTP_INTERFACE_INTERACTION },
+    fields: {
+      timestamp: new Date(),
+      response: JSON.stringify(response),
+      request: JSON.stringify(request),
+      type,
+      status
+    }
+  }
+}
+
 module.exports = {
   getChargeTransactionInitOrPending,
   getChargeTransactionPending,
   getChargeTransactionInit,
-  getMatchingCtpState
+  getMatchingCtpState,
+  createAddInterfaceInteractionAction
 }
