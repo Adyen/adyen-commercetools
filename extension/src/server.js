@@ -12,7 +12,7 @@ function setupServer (routes = defaultRoutes) {
     if (route)
       await route(request, response)
     else
-      httpUtils.sendResponse(response, 404)
+      httpUtils.sendResponse({ response, statusCode: 404 })
   })
 }
 

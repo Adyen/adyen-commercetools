@@ -17,7 +17,7 @@ describe('Payment controller', () => {
       ctpPaymentClone.paymentMethodInfo.paymentInterface = ''
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = (response, statusCode, headers, data) => {
+      utilsStub.sendResponse = ({ statusCode, headers, data }) => {
         expect(statusCode).to.not.exist
         expect(headers).to.not.exist
         expect(data).to.not.exist
@@ -31,7 +31,7 @@ describe('Payment controller', () => {
       ctpPaymentClone.interfaceId = ''
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = (response, statusCode, headers, data) => {
+      utilsStub.sendResponse = ({ statusCode, data }) => {
         expect(statusCode).to.equal(400)
         expect(data).to.deep.equal({
           errors: [{
@@ -50,7 +50,7 @@ describe('Payment controller', () => {
       ctpPaymentClone.paymentMethodInfo.method = 'wrong method'
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = (response, statusCode, headers, data) => {
+      utilsStub.sendResponse = ({ statusCode, data }) => {
         expect(statusCode).to.equal(400)
         expect(data).to.deep.equal({
           errors: [{
@@ -70,7 +70,7 @@ describe('Payment controller', () => {
       ctpPaymentClone.transactions[0].state = 'Initial'
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = (response, statusCode, headers, data) => {
+      utilsStub.sendResponse = ({ statusCode, data }) => {
         expect(statusCode).to.equal(400)
         expect(data).to.deep.equal({
           errors: [{
@@ -90,7 +90,7 @@ describe('Payment controller', () => {
       ctpPaymentClone.transactions[0].state = 'Pending'
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = (response, statusCode, headers, data) => {
+      utilsStub.sendResponse = ({ statusCode, data }) => {
         expect(statusCode).to.equal(400)
         expect(data).to.deep.equal({
           errors: [{
@@ -110,7 +110,7 @@ describe('Payment controller', () => {
       ctpPaymentClone.transactions[0].state = 'Initial'
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = (response, statusCode, headers, data) => {
+      utilsStub.sendResponse = ({ statusCode, data }) => {
         expect(statusCode).to.equal(400)
         expect(data).to.deep.equal({
           errors: [
@@ -147,7 +147,7 @@ describe('Payment controller', () => {
       ctpPaymentClone.transactions[0].state = 'Initial'
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = (response, statusCode, headers, data) => {
+      utilsStub.sendResponse = ({ statusCode, data }) => {
         expect(statusCode).to.equal(400)
         expect(data).to.deep.equal({
           errors: [
@@ -184,7 +184,7 @@ describe('Payment controller', () => {
       ctpPaymentClone.transactions[0].state = 'Pending'
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = (response, statusCode, headers, data) => {
+      utilsStub.sendResponse = ({ statusCode, data }) => {
         expect(statusCode).to.equal(400)
         expect(data).to.deep.equal({
           errors: [

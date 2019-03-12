@@ -12,7 +12,9 @@ function collectRequestData (request) {
   })
 }
 
-function sendResponse (response, statusCode = 200, headers, data) {
+function sendResponse ({
+  response, statusCode = 200, headers, data
+}) {
   response.writeHead(statusCode, headers)
   response.end(JSON.stringify(data))
 }
