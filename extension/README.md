@@ -16,7 +16,7 @@ Adyen documentation: https://docs.adyen.com/developers/checkout/api-integration#
     * `paymentMethodInfo.method = null`   
     * `paymentMethodInfo.countryCode != null`   
 1. Adyen-integration will call Adyen on create and save the response to interface interaction 
-with `type='ctp-adyen-integration-interaction'` and `fields.type='getPaymentDetails'`
+with `type='ctp-adyen-integration-interaction'` and `fields.type='getAvailablePaymentMethods'`
 
 ## Credit card payment
 Adyen documentation: https://docs.adyen.com/developers/payment-methods/cards (notice: Recurring card payments not supported, manual capture is not supported)

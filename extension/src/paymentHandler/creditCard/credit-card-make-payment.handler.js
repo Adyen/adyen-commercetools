@@ -77,6 +77,7 @@ async function handlePayment (paymentObject) {
           state: newTxnState
         })
       if (body.pspReference)
+        // in some cases (e.g. error response from Adyen), the body will not contain `pspReference`
         actions.push({
           action: 'changeTransactionInteractionId',
           transactionId: transaction.id,

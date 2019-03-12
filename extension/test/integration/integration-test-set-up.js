@@ -1,7 +1,7 @@
 const ngrok = require('ngrok')   // eslint-disable-line
 const server = require('../../src/server').setupServer()
 
-const { initResources } = require('../../src/config/init/init-resources')
+const { ensureResources } = require('../../src/config/init/ensure-resources')
 const testUtils = require('../test-utils')
 
 async function initServerAndExtension (ctpClient, testServerPort = 8000) {
@@ -13,7 +13,7 @@ async function initServerAndExtension (ctpClient, testServerPort = 8000) {
   await testUtils.deleteAllResources(ctpClient, 'extensions')
   return new Promise(((resolve) => {
     server.listen(testServerPort, async () => {
-      await initResources()
+      await ensureResources()
       console.log(`Server running at http://127.0.0.1:${testServerPort}/`)
       resolve()
     })

@@ -1,10 +1,9 @@
 const fetch = require('node-fetch')
 const configLoader = require('../config/config')
 const c = require('../config/constants')
-
-const config = configLoader.load()
 const ValidatorBuilder = require('../validator/validator-builder')
 
+const config = configLoader.load()
 async function handlePayment (paymentObject) {
   const validator = ValidatorBuilder.withPayment(paymentObject)
     .validatePaymentMethod()
@@ -21,7 +20,7 @@ async function handlePayment (paymentObject) {
         timestamp: new Date(),
         response: JSON.stringify(responseBody),
         request: JSON.stringify(request),
-        type: 'getPaymentDetails'
+        type: 'getAvailablePaymentMethods'
       }
     }]
   }

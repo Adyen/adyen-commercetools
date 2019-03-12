@@ -2,7 +2,7 @@
   "key": "ctp-adyen-integration-payment-extension",
   "destination": {
     "type": "HTTP",
-    "url": "${ctpAdyenIntegrationBaseUrl}/payments"
+    "url": "${ctpAdyenIntegrationBaseUrl}"
   },
   "triggers": [
     {
@@ -12,5 +12,6 @@
         "Update"
       ]
     }
-  ]
+  ],
+  "timeoutInMs": 10000
 }

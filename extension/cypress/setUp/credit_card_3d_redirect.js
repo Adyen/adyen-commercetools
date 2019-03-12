@@ -4,10 +4,11 @@
 global.window = {}
 global.navigator = {}
 
+/* eslint-disable-next-line import/no-extraneous-dependencies */
 const adyenEncrypt = require('adyen-cse-js')
 const _ = require('lodash')
-const ctpClientBuilder = require('../../extension/src/ctp/ctp-client')
-const payment3dTemplate = require('../../extension/test/fixtures/payment-credit-card-3d.json')
+const ctpClientBuilder = require('../../src/ctp/ctp-client')
+const payment3dTemplate = require('../../test/fixtures/payment-credit-card-3d.json')
 
 const key = process.env.CLIENT_ENCRYPTION_PUBLIC_KEY
 

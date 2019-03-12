@@ -10,6 +10,8 @@ const paymentController = proxyquire('../../src/api/payment/payment.controller',
 
 describe('Payment controller', () => {
   describe('Validation', () => {
+    const mockRequest = { method: 'POST' }
+
     it('on missing adyen payment interface should skip processing', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.paymentMethodInfo.paymentInterface = ''
@@ -21,7 +23,7 @@ describe('Payment controller', () => {
         expect(data).to.not.exist
       }
 
-      await paymentController.processRequest()
+      await paymentController.processRequest(mockRequest)
     })
 
     it('on missing interface id should throw error', async () => {
@@ -39,7 +41,7 @@ describe('Payment controller', () => {
         })
       }
 
-      await paymentController.processRequest()
+      await paymentController.processRequest(mockRequest)
     })
 
     it('on wrong payment method should throw error', async () => {
@@ -58,7 +60,7 @@ describe('Payment controller', () => {
         })
       }
 
-      await paymentController.processRequest()
+      await paymentController.processRequest(mockRequest)
     })
 
     it('on missing params for make paypal payment should throw error', async () => {
@@ -78,7 +80,7 @@ describe('Payment controller', () => {
         })
       }
 
-      await paymentController.processRequest()
+      await paymentController.processRequest(mockRequest)
     })
 
     it('on missing params for complete paypal payment should throw error', async () => {
@@ -98,7 +100,7 @@ describe('Payment controller', () => {
         })
       }
 
-      await paymentController.processRequest()
+      await paymentController.processRequest(mockRequest)
     })
 
     it('on missing params for make credit card payment should throw error', async () => {
@@ -135,7 +137,7 @@ describe('Payment controller', () => {
           ]
         })
       }
-      await paymentController.processRequest()
+      await paymentController.processRequest(mockRequest)
     })
 
     it('on missing params for make 3ds payment should throw error', async () => {
@@ -172,7 +174,7 @@ describe('Payment controller', () => {
           ]
         })
       }
-      await paymentController.processRequest()
+      await paymentController.processRequest(mockRequest)
     })
 
     it('on missing params for complete credit card payment should throw error', async () => {
@@ -201,7 +203,7 @@ describe('Payment controller', () => {
           ]
         })
       }
-      await paymentController.processRequest()
+      await paymentController.processRequest(mockRequest)
     })
   })
 })
