@@ -1,3 +1,7 @@
+const bunyan = require('bunyan')
+
+let logger
+
 function collectRequestData (request) {
   return new Promise((resolve) => {
     const data = []
@@ -19,7 +23,18 @@ function sendResponse ({
   response.end(JSON.stringify(data))
 }
 
+function getLogger (logLevel) {
+  if (!logger)
+    logger = bunyan.createLogger({
+      name: 'ctp-adyen-integration-extension',
+      stream: process.stderr,
+      level: logLevel || bunyan.ERROR
+    })
+  return logger
+}
+
 module.exports = {
   collectRequestData,
-  sendResponse
+  sendResponse,
+  getLogger
 }
