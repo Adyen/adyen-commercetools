@@ -29,7 +29,7 @@ function getFileConfig () {
   return fileConfig
 }
 
-module.exports.load = () => {
+module.exports = function load() {
   /**
    * Load configuration from several sources in this order (last has highest priority):
    * - default config
