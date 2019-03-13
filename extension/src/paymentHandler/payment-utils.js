@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const c = require('../config/constants')
 
 function getChargeTransactionInitOrPending (paymentObject) {
@@ -27,20 +28,22 @@ function getTransactionWithTypesAndStates (paymentObject, types, states) {
 // and https://docs.adyen.com/developers/checkout/payment-result-codes
 function getMatchingCtpState (adyenState) {
   const paymentAdyenStateToCtpState = {
-    redirectshopper: 'Pending',
-    received: 'Pending',
-    pending: 'Pending',
-    authorised: 'Success',
-    refused: 'Failure',
-    cancelled: 'Failure',
-    error: 'Failure'
+    redirectshopper: c.CTP_TXN_STATE_PENDING,
+    received: c.CTP_TXN_STATE_PENDING,
+    pending: c.CTP_TXN_STATE_PENDING,
+    authorised: c.CTP_TXN_STATE_SUCCESS,
+    refused: c.CTP_TXN_STATE_FAILURE,
+    cancelled: c.CTP_TXN_STATE_FAILURE,
+    error: c.CTP_TXN_STATE_FAILURE
   }
   return paymentAdyenStateToCtpState[adyenState]
 }
 
-function createAddInterfaceInteractionAction ({
-  request, response, type, status
-}) {
+function createAddInterfaceInteractionAction (
+  {
+    request, response, type, status
+  }
+) {
   return {
     action: 'addInterfaceInteraction',
     type: { key: c.CTP_INTERFACE_INTERACTION },
@@ -54,10 +57,37 @@ function createAddInterfaceInteractionAction ({
   }
 }
 
+function createChangeTransactionStateAction (transactionId, transactionState) {
+  return {
+    action: 'changeTransactionState',
+    transactionId,
+    state: _.capitalize(transactionState)
+  }
+}
+
+function createSetCustomFieldAction (name, value) {
+  return {
+    action: 'setCustomField',
+    name,
+    value
+  }
+}
+
+function createChangeTransactionInteractionId (transactionId, interactionId) {
+  return {
+    action: 'changeTransactionInteractionId',
+    transactionId,
+    interactionId
+  }
+}
+
 module.exports = {
   getChargeTransactionInitOrPending,
   getChargeTransactionPending,
   getChargeTransactionInit,
   getMatchingCtpState,
-  createAddInterfaceInteractionAction
+  createAddInterfaceInteractionAction,
+  createChangeTransactionStateAction,
+  createSetCustomFieldAction,
+  createChangeTransactionInteractionId
 }

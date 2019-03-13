@@ -26,55 +26,39 @@ async function handlePayment (paymentObject) {
     const resultCode = responseBody.resultCode.toLowerCase()
     if (resultCode === c.REDIRECT_SHOPPER.toLowerCase()) {
       const { MD } = responseBody.redirect.data
-      actions.push({
-        action: 'setCustomField',
-        name: 'MD',
-        value: MD
-      })
+      actions.push(
+        pU.createSetCustomFieldAction('MD', MD)
+      )
       const { PaReq } = responseBody.redirect.data
-      actions.push({
-        action: 'setCustomField',
-        name: 'PaReq',
-        value: PaReq
-      })
+      actions.push(
+        pU.createSetCustomFieldAction('PaReq', PaReq)
+      )
       const { paymentData } = responseBody
-      actions.push({
-        action: 'setCustomField',
-        name: 'paymentData',
-        value: paymentData
-      })
+      actions.push(
+        pU.createSetCustomFieldAction('paymentData', paymentData)
+      )
       const redirectUrl = responseBody.redirect.url
-      actions.push({
-        action: 'setCustomField',
-        name: 'redirectUrl',
-        value: redirectUrl
-      })
+      actions.push(
+        pU.createSetCustomFieldAction('redirectUrl', redirectUrl)
+      )
       const redirectMethod = responseBody.redirect.method
-      actions.push({
-        action: 'setCustomField',
-        name: 'redirectMethod',
-        value: redirectMethod
-      })
-      actions.push({
-        action: 'changeTransactionState',
-        transactionId: transaction.id,
-        state: 'Pending'
-      })
+      actions.push(
+        pU.createSetCustomFieldAction('redirectMethod', redirectMethod)
+      )
+      actions.push(
+        pU.createChangeTransactionStateAction(transaction.id, c.CTP_TXN_STATE_PENDING)
+      )
     } else {
       const newTxnState = _.capitalize(pU.getMatchingCtpState(responseBody.resultCode.toLowerCase()))
       if (newTxnState !== transaction.state)
-        actions.push({
-          action: 'changeTransactionState',
-          transactionId: transaction.id,
-          state: newTxnState
-        })
+        actions.push(
+          pU.createChangeTransactionStateAction(transaction.id, newTxnState)
+        )
       if (responseBody.pspReference)
       // in some cases (e.g. error response from Adyen), the body will not contain `pspReference`
-        actions.push({
-          action: 'changeTransactionInteractionId',
-          transactionId: transaction.id,
-          interactionId: responseBody.pspReference
-        })
+        actions.push(
+          pU.createChangeTransactionInteractionId(transaction.id, responseBody.pspReference)
+        )
     }
   }
   return {

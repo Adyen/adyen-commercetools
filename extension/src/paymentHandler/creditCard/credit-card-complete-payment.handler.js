@@ -22,17 +22,14 @@ async function handlePayment (paymentObject) {
   ]
   if (responseBody.resultCode) {
     const transaction = pU.getChargeTransactionPending(paymentObject)
-    actions.push({
-      action: 'changeTransactionState',
-      transactionId: transaction.id,
-      state: _.capitalize(pU.getMatchingCtpState(responseBody.resultCode.toLowerCase()))
-    })
+    const transactionState = pU.getMatchingCtpState(responseBody.resultCode.toLowerCase())
+    actions.push(
+      pU.createChangeTransactionStateAction(transaction.id, transactionState)
+    )
     if (responseBody.pspReference)
-      actions.push({
-        action: 'changeTransactionInteractionId',
-        transactionId: transaction.id,
-        interactionId: responseBody.pspReference
-      })
+      actions.push(
+        pU.createChangeTransactionInteractionId(transaction.id, responseBody.pspReference)
+      )
   }
   return {
     version: paymentObject.version,

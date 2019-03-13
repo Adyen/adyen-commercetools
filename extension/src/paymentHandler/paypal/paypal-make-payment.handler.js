@@ -23,22 +23,16 @@ async function handlePayment (paymentObject) {
   if (responseBody.resultCode === c.REDIRECT_SHOPPER) {
     const transaction = pU.getChargeTransactionInit(paymentObject)
     const redirectUrl = responseBody.redirect.url
-    actions.push({
-      action: 'setCustomField',
-      name: 'redirectUrl',
-      value: redirectUrl
-    })
+    actions.push(
+      pU.createSetCustomFieldAction('redirectUrl', redirectUrl)
+    )
     const redirectMethod = responseBody.redirect.method
-    actions.push({
-      action: 'setCustomField',
-      name: 'redirectMethod',
-      value: redirectMethod
-    })
-    actions.push({
-      action: 'changeTransactionState',
-      transactionId: transaction.id,
-      state: 'Pending'
-    })
+    actions.push(
+      pU.createSetCustomFieldAction('redirectMethod', redirectMethod)
+    )
+    actions.push(
+      pU.createChangeTransactionStateAction(transaction.id, c.CTP_TXN_STATE_PENDING)
+    )
   }
   return {
     version: paymentObject.version,
