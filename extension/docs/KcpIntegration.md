@@ -4,8 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Contents**
 
-- [Credit card](#credit-card)
-- [Credit card with 3D Secure](#credit-card-with-3d-secure)
+- [KCP](#kcp)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
