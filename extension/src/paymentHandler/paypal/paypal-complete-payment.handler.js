@@ -14,34 +14,23 @@ async function handlePayment (paymentObject) {
     return validator.buildCtpErrorResponse()
 
   const { response, request } = await _callAdyen(paymentObject)
-  const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
+  const status = response.status === 200 ? c.SUCCESS : c.FAILURE
   const responseBody = await response.json()
   const actions = [
-    {
-      action: 'addInterfaceInteraction',
-      type: { key: c.CTP_INTERFACE_INTERACTION },
-      fields: {
-        timestamp: new Date(),
-        response: JSON.stringify(responseBody),
-        request: JSON.stringify(request),
-        type: 'makePayment',
-        status: interfaceInteractionStatus
-      }
-    }
+    pU.createAddInterfaceInteractionAction({
+      request, response: responseBody, type: 'completePayment', status
+    })
   ]
   if (responseBody.resultCode) {
     const transaction = pU.getChargeTransactionPending(paymentObject)
-    actions.push({
-      action: 'changeTransactionState',
-      transactionId: transaction.id,
-      state: _.capitalize(pU.getMatchingCtpState(responseBody.resultCode.toLowerCase()))
-    })
+    const transactionState = pU.getMatchingCtpState(responseBody.resultCode.toLowerCase())
+    actions.push(
+      pU.createChangeTransactionStateAction(transaction.id, transactionState)
+    )
     if (responseBody.pspReference)
-      actions.push({
-        action: 'changeTransactionInteractionId',
-        transactionId: transaction.id,
-        interactionId: responseBody.pspReference
-      })
+      actions.push(
+        pU.createChangeTransactionInteractionId(transaction.id, responseBody.pspReference)
+      )
   }
   return {
     version: paymentObject.version,

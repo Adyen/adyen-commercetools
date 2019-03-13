@@ -1,8 +1,10 @@
 const http = require('http')
 const url = require('url')
-const httpUtils = require('./utils')
+const utils = require('./utils')
 const { routes: defaultRoutes } = require('./routes')
 require('./config/config')
+
+const logger = utils.getLogger()
 
 function setupServer (routes = defaultRoutes) {
   return http.createServer(async (request, response) => {
@@ -10,9 +12,14 @@ function setupServer (routes = defaultRoutes) {
     const route = routes[parts.pathname]
 
     if (route)
-      await route(request, response)
+      try {
+        await route(request, response)
+      } catch (e) {
+        logger.error(e, `Unexpected error when processing URL ${JSON.stringify(parts)}`)
+        utils.sendResponse({ response, statusCode: 500 })
+      }
     else
-      httpUtils.sendResponse(response, 404)
+      utils.sendResponse({ response, statusCode: 404 })
   })
 }
 

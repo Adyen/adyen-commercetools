@@ -13,40 +13,26 @@ async function handlePayment (paymentObject) {
     return validator.buildCtpErrorResponse()
 
   const { response, request } = await _callAdyen(paymentObject)
-  const interfaceInteractionStatus = response.status === 200 ? c.SUCCESS : c.FAILURE
+  const status = response.status === 200 ? c.SUCCESS : c.FAILURE
   const responseBody = await response.json()
   const actions = [
-    {
-      action: 'addInterfaceInteraction',
-      type: { key: c.CTP_INTERFACE_INTERACTION },
-      fields: {
-        timestamp: new Date(),
-        response: JSON.stringify(responseBody),
-        request: JSON.stringify(request),
-        type: 'makePayment',
-        status: interfaceInteractionStatus
-      }
-    }
+    pU.createAddInterfaceInteractionAction({
+      request, response: responseBody, type: 'makePayment', status
+    })
   ]
   if (responseBody.resultCode === c.REDIRECT_SHOPPER) {
     const transaction = pU.getChargeTransactionInit(paymentObject)
     const redirectUrl = responseBody.redirect.url
-    actions.push({
-      action: 'setCustomField',
-      name: 'redirectUrl',
-      value: redirectUrl
-    })
+    actions.push(
+      pU.createSetCustomFieldAction('redirectUrl', redirectUrl)
+    )
     const redirectMethod = responseBody.redirect.method
-    actions.push({
-      action: 'setCustomField',
-      name: 'redirectMethod',
-      value: redirectMethod
-    })
-    actions.push({
-      action: 'changeTransactionState',
-      transactionId: transaction.id,
-      state: 'Pending'
-    })
+    actions.push(
+      pU.createSetCustomFieldAction('redirectMethod', redirectMethod)
+    )
+    actions.push(
+      pU.createChangeTransactionStateAction(transaction.id, c.CTP_TXN_STATE_PENDING)
+    )
   }
   return {
     version: paymentObject.version,
