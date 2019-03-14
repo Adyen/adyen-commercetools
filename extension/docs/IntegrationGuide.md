@@ -59,7 +59,22 @@ Otherwise shopper might continue with further payment steps.
     1. Before presenting all the methods, please check Adyen-integration documentation for supported payment methods.
 1. **Continue with one of the supported payment methods:**
     1. [Credit card payment](./CreditCardIntegration.md)  
-    1. [Paypal payment](./PaypalIntegration.md)  
+    1. [Paypal payment](./PaypalIntegration.md)
+
+# Error cases
+1. **Adyen returns HTTP code other than 200**  
+Request and response from Adyen are always stored in `Payment.interfaceInteractions` as strigified JSON.
+1. **Shopper successfully paid but `redirectUrl` was not reached**  
+In some payment redirect cases there might be a valid payment but no order as shopper did not reach frontend's `redirectUrl`.
+For example after successfully issued payment shopper loses internet connection or accidentally closes the tab.
+In this case [Notification module](../../notification) will receive later a notification with successful content, process it and update the payment.
+Usage of scheduled [commercetools-payment-to-order-processor](https://github.com/commercetools/commercetools-payment-to-order-processor) job ensures that for every successful payment
+an order can still be asynchronously created.
+1. **Shopper tries to pay different amount than the actual order amount**   
+For redirect payments payment amount is bound to `redirectUrl`.
+After redirect and before actual finalisation of the payment at provider's page, shopper is still able to change the cart's amount within the second tab.
+If shopper decides to change cart's amount within the second tab and finalise payment within the first tab, then according to payment amount validation an error
+will be shown and order creation declined.
 
 # Validations
 ### Validate cart state
@@ -92,3 +107,6 @@ payment transactions of type `Charge`.
 | refused| Failure|
 | cancelled| Failure|
 | error| Failure|
+
+# Bad practice
+- Never delete or un-assign created payment objects during checkout from the cart. If required — clean up unused/obsolete payment objects by another asynchronous process instead.
