@@ -57,6 +57,24 @@ function createAddInterfaceInteractionAction (
   }
 }
 
+function ensureAddInterfaceInteractionAction (
+  {
+    paymentObject, request, response, type, status
+  }
+) {
+  const interactions = paymentObject.interfaceInteractions
+
+  const matchedInteraction = _.find(interactions,
+    interaction => interaction.fields.request === JSON.stringify(request)
+        || interaction.fields.response === JSON.stringify(response))
+
+  if (!matchedInteraction)
+    return createAddInterfaceInteractionAction({
+      request, response, type, status
+    })
+  return null
+}
+
 function createChangeTransactionStateAction (transactionId, transactionState) {
   return {
     action: 'changeTransactionState',
@@ -87,6 +105,7 @@ module.exports = {
   getChargeTransactionInit,
   getMatchingCtpState,
   createAddInterfaceInteractionAction,
+  ensureAddInterfaceInteractionAction,
   createChangeTransactionStateAction,
   createSetCustomFieldAction,
   createChangeTransactionInteractionId

@@ -15,9 +15,9 @@ async function handlePayment (paymentObject) {
   const { response, request } = await _completePayment(paymentObject)
   const status = response.status === 200 ? c.SUCCESS : c.FAILURE
   const responseBody = await response.json()
-  const actions = [
-    pU.createAddInterfaceInteractionAction({
-      request, response: responseBody, type: 'completePayment', status
+  let actions = [
+    pU.ensureAddInterfaceInteractionAction({
+      paymentObject, request, response: responseBody, type: 'completePayment', status
     })
   ]
   if (responseBody.resultCode) {
@@ -31,6 +31,9 @@ async function handlePayment (paymentObject) {
         pU.createChangeTransactionInteractionId(transaction.id, responseBody.pspReference)
       )
   }
+
+  actions = _.compact(actions)
+
   return {
     version: paymentObject.version,
     actions

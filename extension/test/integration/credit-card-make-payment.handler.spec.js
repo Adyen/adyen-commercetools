@@ -166,9 +166,10 @@ describe('credit card payment', () => {
 
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
     expect(response.statusCode).to.equal(201)
-    expect(response.body.interfaceInteractions[0].fields.status).to.equal(c.FAILURE)
+    const ctpPayment = response.body
+    expect(ctpPayment.interfaceInteractions[0].fields.status).to.equal(c.FAILURE)
 
-    const adyenRequest = JSON.parse(response.body.interfaceInteractions[0].fields.request)
+    const adyenRequest = JSON.parse(ctpPayment.interfaceInteractions[0].fields.request)
     expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
 
     const adyenRequestBody = JSON.parse(adyenRequest.body)
@@ -182,14 +183,25 @@ describe('credit card payment', () => {
     expect(adyenRequestBody.paymentMethod.encryptedExpiryMonth).to.have.string('adyenjs_')
     expect(adyenRequestBody.paymentMethod.encryptedSecurityCode).to.have.string('adyenjs_')
 
-    const adyenResponse = JSON.parse(response.body.interfaceInteractions[0].fields.response)
+    const adyenResponse = JSON.parse(ctpPayment.interfaceInteractions[0].fields.response)
     expect(adyenResponse.errorCode).to.match(/^[0-9]*$/)
     expect(adyenResponse.errorType).to.equal('validation')
-    const { transactions } = response.body
+    const { transactions } = ctpPayment
     expect(transactions).to.have.lengthOf(1)
     const transaction = transactions[0]
     expect(transaction.interactionId).to.be.undefined
     expect(transaction.type).to.equal('Charge')
     expect(transaction.state).to.equal('Initial')
+
+    const response2 = await ctpClient.update(ctpClient.builder.payments,
+      ctpPayment.id, ctpPayment.version, [
+        {
+          action: 'setCustomField',
+          name: 'encryptedSecurityCode',
+          value: ctpPayment.custom.fields.encryptedSecurityCode
+        }
+      ])
+    expect(response2.statusCode).to.equal(200)
+    expect(response2.body.interfaceInteractions).to.have.lengthOf(1)
   })
 })

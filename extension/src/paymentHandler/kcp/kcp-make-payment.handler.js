@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const _ = require('lodash')
 
 const configLoader = require('../../config/config')
 const pU = require('../payment-utils')
@@ -15,9 +16,9 @@ async function handlePayment (paymentObject) {
   const { response, request } = await _callAdyen(paymentObject)
   const status = response.status === 200 ? c.SUCCESS : c.FAILURE
   const responseBody = await response.json()
-  const actions = [
-    pU.createAddInterfaceInteractionAction({
-      request, response: responseBody, type: 'makePayment', status
+  let actions = [
+    pU.ensureAddInterfaceInteractionAction({
+      paymentObject, request, response: responseBody, type: 'makePayment', status
     })
   ]
   if (responseBody.resultCode === c.REDIRECT_SHOPPER) {
@@ -34,6 +35,9 @@ async function handlePayment (paymentObject) {
       pU.createChangeTransactionStateAction(transaction.id, c.CTP_TXN_STATE_PENDING)
     )
   }
+
+  actions = _.compact(actions)
+
   return {
     version: paymentObject.version,
     actions

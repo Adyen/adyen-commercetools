@@ -16,9 +16,9 @@ async function handlePayment (paymentObject) {
   // for statusCodes, see https://docs.adyen.com/developers/development-resources/response-handling
   const status = response.status === 200 ? c.SUCCESS : c.FAILURE
   const responseBody = await response.json()
-  const actions = [
-    pU.createAddInterfaceInteractionAction({
-      request, response: responseBody, type: 'makePayment', status
+  let actions = [
+    pU.ensureAddInterfaceInteractionAction({
+      paymentObject, request, response: responseBody, type: 'makePayment', status
     })
   ]
   if (responseBody.resultCode) {
@@ -61,6 +61,9 @@ async function handlePayment (paymentObject) {
         )
     }
   }
+
+  actions = _.compact(actions)
+
   return {
     version: paymentObject.version,
     actions
