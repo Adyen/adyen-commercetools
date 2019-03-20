@@ -9,7 +9,7 @@ const routes = {
   '/': notificationController.handleNotification
 }
 
-module.exports = http.createServer(async (request, response) => {
+module.exports = http.createServer((request, response) => {
   const parts = url.parse(request.url)
   const route = routes[parts.pathname]
   if (route)
