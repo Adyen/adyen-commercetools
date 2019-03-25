@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 const { cloneDeep } = require('lodash')
-const os = require('os')
+const { address } = require('ip')
 const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const iTSetUp = require('./integration-test-set-up')
@@ -9,8 +9,7 @@ const notifications = require('../resources/notification')
 
 // node-fetch package doesn't support requests to localhost, therefore
 // we need to provide the IP behind localhost
-const networkInterfaces = os.networkInterfaces()
-const localhostIp = networkInterfaces.lo0[0].address
+const localhostIp = address()
 
 describe('notification module', () => {
   let ctpClient = ctpClientBuilder.get(config)
