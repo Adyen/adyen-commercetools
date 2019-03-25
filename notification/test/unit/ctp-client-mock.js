@@ -62,7 +62,7 @@ function getRequestBuilder (projectKey) {
  * Compares transaction states
  * @param currentState state of the transaction from the platform
  * @param newState state of the transaction from the Adyen notification
- * @return 1 if newState can appear after currentState
+ * @return number 1 if newState can appear after currentState
  * -1 if newState cannot appear after currentState
  * 0 if newState is the same as currentState
  * @throws Error when newState and/or currentState is a wrong transaction state
