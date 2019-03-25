@@ -4,7 +4,7 @@ node_js:
 env:
   - NOTIFICATION_MODULE_TEST_DIR=notification
 before_install:
-  - npm i -g npm@^6.4.1
+  - npm i -g npm@^6.9.0
 script:
   - cd $NOTIFICATION_MODULE_TEST_DIR
   - npm i
