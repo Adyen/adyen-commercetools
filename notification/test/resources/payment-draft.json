@@ -1,0 +1,23 @@
+{
+  "key": "test-payment",
+  "interfaceId": "8313842560770001",
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 795,
+    "fractionDigits": 2
+  },
+  "transactions": [
+    {
+      "type": "Authorization",
+      "amount": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 495,
+        "fractionDigits": 2
+      },
+      "interactionId": "8835526703686369",
+      "state": "Initial"
+    }
+  ]
+}

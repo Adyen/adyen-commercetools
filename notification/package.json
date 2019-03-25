@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "scripts": {
-    "test": "nyc mocha --check-leaks --full-trace --recursive \"./test/**/*.spec.js\"",
+    "test": "nyc mocha --check-leaks --timeout 30000 --full-trace --recursive \"./test/**/*.spec.js\"",
     "start": "node ./src/init.js",
     "coverage": "nyc report"
   },

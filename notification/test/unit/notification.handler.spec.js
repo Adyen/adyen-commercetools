@@ -39,13 +39,12 @@ describe('notification module', () => {
       {
         action: 'addInterfaceInteraction',
         type: {
-          key: 'ctp-adyen-integration-interaction-response',
+          key: 'ctp-adyen-integration-interaction-notification',
           typeId: 'type'
         },
         fields: {
           status: 'AUTHORISATION',
-          type: 'notification',
-          response: JSON.stringify(notificationsMock[0])
+          notification: JSON.stringify(notificationsMock[0])
         }
       },
       {
@@ -92,13 +91,13 @@ describe('notification module', () => {
       {
         action: 'addInterfaceInteraction',
         type: {
-          key: 'ctp-adyen-integration-interaction-response',
+          key: 'ctp-adyen-integration-interaction-notification',
           typeId: 'type'
         },
         fields: {
           status: 'AUTHORISATION',
           type: 'notification',
-          response: JSON.stringify(notificationsMock[0])
+          notification: JSON.stringify(notificationsMock[0])
         }
       }
     ]
@@ -117,7 +116,7 @@ describe('notification module', () => {
       },
       fields: {
         timestamp: '2019-02-05T12:29:36.028Z',
-        response: JSON.stringify(notificationsMock[0]),
+        notification: JSON.stringify(notificationsMock[0]),
         type: 'makePayment',
         status: 'SUCCESS'
       }
@@ -161,8 +160,7 @@ describe('notification module', () => {
       },
       fields: {
         timestamp: '2019-02-05T12:29:36.028Z',
-        response: JSON.stringify(notificationsMockClone[0]),
-        type: 'makePayment',
+        notification: JSON.stringify(notificationsMockClone[0]),
         status: 'SUCCESS'
       }
     })
@@ -198,8 +196,7 @@ describe('notification module', () => {
       },
       fields: {
         timestamp: '2019-02-05T12:29:36.028Z',
-        response: JSON.stringify(notificationsMock[0]),
-        type: 'makePayment',
+        notification: JSON.stringify(notificationsMock[0]),
         status: 'SUCCESS'
       }
     })

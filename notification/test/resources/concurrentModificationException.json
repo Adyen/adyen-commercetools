@@ -12,7 +12,7 @@
         {
           "action": "addInterfaceInteraction",
           "type": {
-            "key": "ctp-adyen-integration-interaction-response",
+            "key": "ctp-adyen-integration-interaction-notification",
             "typeId": "type"
           },
           "fields": {
