@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const fetch = require('node-fetch')
 const { merge } = require('lodash')
 const { createClient } = require('@commercetools/sdk-client')
@@ -81,7 +80,7 @@ function setUpClient (config) {
     fetchBatches (uri, callback, opts = { accumulate: false }) {
       return this.process(
         this.buildRequestOptions(uri.build()),
-        data => Promise.resolve(callback(data.body.results)),
+        data => callback(data.body.results),
         opts
       )
     },
