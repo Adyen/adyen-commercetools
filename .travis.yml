@@ -7,5 +7,5 @@ before_install:
   - npm i -g npm@^6.9.0
 script:
   - cd $NOTIFICATION_MODULE_TEST_DIR
-  - npm i
+  - npm ci
   - npm run test
