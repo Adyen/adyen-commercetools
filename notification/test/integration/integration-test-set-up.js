@@ -1,6 +1,6 @@
 const server = require('../../src/server').setupServer()
 
-const { ensureResources } = require('./init/initResources')
+const { ensureResources } = require('./init/init-resources')
 const testUtils = require('../test-utils')
 
 async function prepareProject (ctpClient) {

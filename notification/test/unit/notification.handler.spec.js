@@ -3,8 +3,8 @@ const { expect } = require('chai')
 const { cloneDeep } = require('lodash')
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const notificationsMock = require('../resources/notification').notificationItems
-const concurrentModificationError = require('../resources/concurrentModificationException')
-const ctpClientMock = require('./ctpClientMock')
+const concurrentModificationError = require('../resources/concurrent-modification-exception')
+const ctpClientMock = require('./ctp-client-mock')
 const paymentMock = require('../resources/payment-credit-card')
 
 const sandbox = sinon.createSandbox()
