@@ -1,18 +1,26 @@
 const http = require('http')
 const url = require('url')
-const httpUtils = require('./utils/commons')
-const notificationController = require('./api/notification/notification.controller')
-const config = require('./config/config').load()
-require('./utils/logger').getLogger(config.logLevel)
+const utils = require('./utils/commons')
+const logger = require('./utils/logger').getLogger()
+const { routes: defaultRoutes } = require('./routes')
+require('./config/config')
 
-const routes = {
-  '/': notificationController.handleNotification
+
+function setupServer (routes = defaultRoutes) {
+  return http.createServer(async (request, response) => {
+    const parts = url.parse(request.url)
+    const route = routes[parts.pathname]
+
+    if (route)
+      try {
+        await route(request, response)
+      } catch (e) {
+        logger.error(e, `Unexpected error when processing URL ${JSON.stringify(parts)}`)
+        utils.sendResponse({ response, statusCode: 500 })
+      }
+    else
+      utils.sendResponse({ response, statusCode: 404 })
+  })
 }
 
-module.exports = http.createServer((request, response) => {
-  const parts = url.parse(request.url)
-  const route = routes[parts.pathname]
-  if (route)
-    return route(request, response)
-  return httpUtils.sendResponse(response, 404)
-})
+module.exports = { setupServer }

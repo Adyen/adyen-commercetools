@@ -78,10 +78,10 @@ function setUpClient (config) {
       return ctpClient.execute(this.buildRequestOptions(uri.byId(id).build()))
     },
 
-    fetchBatches (uri, cb, opts = { accumulate: false }) {
+    fetchBatches (uri, callback, opts = { accumulate: false }) {
       return this.process(
         this.buildRequestOptions(uri.build()),
-        data => Promise.resolve(cb(data.body.results)),
+        data => Promise.resolve(callback(data.body.results)),
         opts
       )
     },

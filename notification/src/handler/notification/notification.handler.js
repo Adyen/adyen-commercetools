@@ -2,7 +2,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const serializeError = require('serialize-error')
 const ctp = require('../../utils/ctp')
-const adyenEvents = require('../../../resources/adyenEvents')
+const adyenEvents = require('../../../resources/adyen-events')
 const logger = require('../../utils/logger').getLogger()
 
 async function processNotifications (notifications, ctpClient) {
@@ -95,14 +95,13 @@ function getAddInterfaceInteractionUpdateAction (notification) {
   return {
     action: 'addInterfaceInteraction',
     type: {
-      key: 'ctp-adyen-integration-interaction-response',
+      key: 'ctp-adyen-integration-interaction-notification',
       typeId: 'type'
     },
     fields: {
       timestamp: new Date(),
       status: notification.NotificationRequestItem.eventCode,
-      type: 'notification',
-      response: JSON.stringify(notification)
+      notification: JSON.stringify(notification)
     }
   }
 }
