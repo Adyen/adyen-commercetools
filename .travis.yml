@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - '10'
+env:
+  - NOTIFICATION_MODULE_TEST_DIR=notification
+before_install:
+  - npm i -g npm@^6.4.1
+script:
+  - cd $TEST_DIR
+  - npm i
+  - npm run test
