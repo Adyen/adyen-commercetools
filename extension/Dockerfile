@@ -10,3 +10,4 @@ RUN apk --update add git
 COPY . /app
 
 RUN npm ci --only=prod
+ENTRYPOINT ["npm", "run", "start"]

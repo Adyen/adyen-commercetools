@@ -1,0 +1,38 @@
+fullnameOverride: 'ctp-adyen-integration-service-extension'
+
+image:
+  repository: 'commercetoolsps/commercetools-adyen-integration-extension'
+  tag: 'v1.0.0'
+
+service:
+  type: 'NodePort'
+
+# More on resources:
+# https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/resource-qos.md
+# https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+# https://cloud.google.com/compute/docs/machine-types
+
+# When the pod is scheduled, the container is guaranteed the amount of resources requested 2GiB RAM and 300m CPU time and it is not allowed to exceed 2GB RAM and 300m of CPU time.
+# This classifies the pod as "Guaranteed"
+resources:
+  requests:
+    cpu: '300m' #30% of CPU time on 1 GCP Core
+    memory: '1Gi' #equivalent to 2GiB
+  limits:
+    cpu: '300m' #30% of CPU time on 1 GCP Core
+    memory: '1Gi' #equivalent to 2GB
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: 'gce'
+    kubernetes.io/ingress.allow-http: 'false'
+
+livenessProbe:
+  httpGet:
+    path: ''
+
+
+readinessProbe:
+  httpGet:
+    path: ''
