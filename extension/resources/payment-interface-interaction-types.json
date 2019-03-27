@@ -1,8 +1,8 @@
 [
   {
-    "key": "ctp-adyen-integration-interaction-request",
+    "key": "ctp-adyen-integration-interaction",
     "name": {
-      "en": "ctp-adyen-integration-interaction-request"
+      "en": "ctp-adyen-integration-interaction"
     },
     "resourceTypeIds": [
       "payment-interface-interaction"
@@ -24,7 +24,7 @@
         "label": {
           "en": "transactionId"
         },
-        "required": true,
+        "required": false,
         "type": {
           "name": "String"
         },
@@ -40,50 +40,6 @@
           "name": "String"
         },
         "inputHint": "MultiLine"
-      },
-      {
-        "name": "type",
-        "label": {
-          "en": "type"
-        },
-        "required": true,
-        "type": {
-          "name": "String"
-        },
-        "inputHint": "SingleLine"
-      }
-    ]
-  },
-  {
-    "key": "ctp-adyen-integration-interaction-response",
-    "name": {
-      "en": "ctp-adyen-integration-interaction-response"
-    },
-    "resourceTypeIds": [
-      "payment-interface-interaction"
-    ],
-    "fieldDefinitions": [
-      {
-        "name": "timestamp",
-        "label": {
-          "en": "timestamp"
-        },
-        "required": true,
-        "type": {
-          "name": "String"
-        },
-        "inputHint": "SingleLine"
-      },
-      {
-        "name": "transactionId",
-        "label": {
-          "en": "transactionId"
-        },
-        "required": true,
-        "type": {
-          "name": "String"
-        },
-        "inputHint": "SingleLine"
       },
       {
         "name": "response",
@@ -112,7 +68,7 @@
         "label": {
           "en": "status"
         },
-        "required": true,
+        "required": false,
         "type": {
           "name": "String"
         },

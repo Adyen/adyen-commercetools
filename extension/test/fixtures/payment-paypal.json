@@ -1,0 +1,37 @@
+{
+  "interfaceId":"paymentReferenceId",
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 595,
+    "fractionDigits": 2
+  },
+  "paymentMethodInfo": {
+    "paymentInterface": "ctp-adyen-integration",
+    "method": "paypal"
+  },
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "ctp-adyen-integration-payment-custom-type"
+    },
+    "fields": {
+      "returnUrl":"https://your-company.com/checkout/"
+    }
+  },
+  "paymentStatus": {},
+  "transactions": [
+    {
+      "type": "Charge",
+      "amount": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 495,
+        "fractionDigits": 2
+      },
+      "state": "Initial"
+    }
+  ],
+  "interfaceInteractions": [
+  ]
+}

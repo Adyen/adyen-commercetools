@@ -1,20 +1,118 @@
-[
-  {
-    "key": "ctp-adyen-integration-credit-card",
-    "name": {
-      "en": "CTP Adyen integration credit card payment"
+{
+  "key": "ctp-adyen-integration-payment-custom-type",
+  "name": {
+    "en": "CTP Adyen integration payment custom type"
+  },
+  "resourceTypeIds": [
+    "payment"
+  ],
+  "fieldDefinitions": [
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "payload",
+      "label": {
+        "en": "payload"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
     },
-    "resourceTypeIds": [
-      "payment"
-    ],
-    "fieldDefinitions": [
-      {
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "returnUrl",
+      "label": {
+        "en": "returnUrl"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "redirectUrl",
+      "label": {
+        "en": "redirectUrl"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "redirectMethod",
+      "label": {
+        "en": "redirectMethod"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "countryCode",
+      "label": {
+        "en": "countryCode"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "encryptedCardNumber",
+      "label": {
+        "en": "encryptedCardNumber"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "encryptedExpiryMonth",
+      "label": {
+        "en": "encryptedExpiryMonth"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "encryptedExpiryYear",
+      "label": {
+        "en": "encryptedExpiryYear"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "encryptedSecurityCode",
+      "label": {
+        "en": "encryptedSecurityCode"
+      },
+      "required": false,
+      "inputHint": "SingleLine"
+    },
+    {
         "type": {
           "name": "String"
         },
-        "name": "payload",
+        "name": "browserInfo",
         "label": {
-          "en": "payload"
+          "en": "browserInfo"
         },
         "required": false,
         "inputHint": "SingleLine"
@@ -23,9 +121,9 @@
         "type": {
           "name": "String"
         },
-        "name": "countryCode",
+        "name": "holderName",
         "label": {
-          "en": "countryCode"
+          "en": "holderName"
         },
         "required": false,
         "inputHint": "SingleLine"
@@ -34,9 +132,9 @@
         "type": {
           "name": "String"
         },
-        "name": "reference",
+        "name": "PaReq",
         "label": {
-          "en": "reference"
+          "en": "PaReq"
         },
         "required": false,
         "inputHint": "SingleLine"
@@ -45,9 +143,9 @@
         "type": {
           "name": "String"
         },
-        "name": "encryptedCardNumber",
+        "name": "MD",
         "label": {
-          "en": "encryptedCardNumber"
+          "en": "MD"
         },
         "required": false,
         "inputHint": "SingleLine"
@@ -56,9 +154,9 @@
         "type": {
           "name": "String"
         },
-        "name": "encryptedExpiryMonth",
+        "name": "paymentData",
         "label": {
-          "en": "encryptedExpiryMonth"
+          "en": "paymentData"
         },
         "required": false,
         "inputHint": "SingleLine"
@@ -67,35 +165,12 @@
         "type": {
           "name": "String"
         },
-        "name": "encryptedExpiryYear",
+        "name": "PaRes",
         "label": {
-          "en": "encryptedExpiryYear"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "encryptedSecurityCode",
-        "label": {
-          "en": "encryptedSecurityCode"
-        },
-        "required": false,
-        "inputHint": "SingleLine"
-      },
-      {
-        "type": {
-          "name": "String"
-        },
-        "name": "returnUrl",
-        "label": {
-          "en": "returnUrl"
+          "en": "PaRes"
         },
         "required": false,
         "inputHint": "SingleLine"
       }
-    ]
-  }
-]
+  ]
+}

@@ -1,7 +1,8 @@
 const httpUtils = require('../../utils')
 
-function checkHealth (request, response) {
-  httpUtils.sendResponse(response, 200)
+// todo: implement proper health
+function processRequest (request, response) {
+  httpUtils.sendResponse({ response, statusCode: 200 })
 }
 
-module.exports = { checkHealth }
+module.exports = { processRequest }
