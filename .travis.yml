@@ -2,15 +2,12 @@ language: node_js
 node_js:
   - '10'
 env:
-  - NOTIFICATION_MODULE_TEST_DIR=notification
-  - EXTENTION_MODULE_TEST_DIR=extension
+  - TEST_DIR=notification
+  - TEST_DIR=extension
 before_install:
   - npm i -g npm@^6.9.0
 script:
   - cd $NOTIFICATION_MODULE_TEST_DIR
   - npm ci
   - npm run test
-  - cd ../$EXTENTION_MODULE_TEST_DIR
-  - npm ci
-  - npm run test
-  - npm run cypress
+  - if [ "$TEST_DIR" = "extension" ]; then npm run cypress;
