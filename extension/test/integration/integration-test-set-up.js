@@ -20,7 +20,7 @@ async function initServerAndExtension (ctpClient, testServerPort = 8000) {
   }))
 }
 
-async function cleanupResources () {
+async function cleanupResources (ctpClient) {
   server.close()
   await ngrok.kill()
 }

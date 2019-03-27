@@ -1,0 +1,45 @@
+{
+  "id": "123212321",
+  "version": "2",
+  "interfaceId":"paymentReferenceId",
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 595,
+    "fractionDigits": 2
+  },
+  "paymentMethodInfo": {
+    "paymentInterface": "ctp-adyen-integration",
+    "method": "creditCard"
+  },
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "ctp-adyen-integration-payment-custom-type"
+    },
+    "fields": {
+      "countryCode": "DE",
+      "encryptedCardNumber":"${encryptedCardNumber}",
+      "encryptedExpiryMonth":"${encryptedExpiryMonth}",
+      "encryptedExpiryYear":"${encryptedExpiryYear}",
+      "encryptedSecurityCode":"${encryptedSecurityCode}",
+      "returnUrl":"https://your-company.com/checkout/"
+    }
+  },
+  "paymentStatus": {},
+  "transactions": [
+    {
+      "id": "9ca92d05-ba63-47dc-8f83-95b08d539646",
+      "type": "Charge",
+      "amount": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 495,
+        "fractionDigits": 2
+      },
+      "state": "Initial"
+    }
+  ],
+  "interfaceInteractions": [
+  ]
+}
