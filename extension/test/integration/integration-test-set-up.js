@@ -23,7 +23,6 @@ async function initServerAndExtension (ctpClient, testServerPort = 8000) {
 async function cleanupResources (ctpClient) {
   server.close()
   await ngrok.kill()
-  await testUtils.deleteAllResources(ctpClient, 'extensions')
 }
 
 module.exports = {

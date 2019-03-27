@@ -24,6 +24,7 @@ function stopServer () {
 async function cleanupProject (ctpClient) {
   await testUtils.deleteAllResources(ctpClient, 'payments')
   await testUtils.deleteAllResources(ctpClient, 'types')
+  await testUtils.deleteAllResources(ctpClient, 'extensions')
 }
 
 module.exports = {
