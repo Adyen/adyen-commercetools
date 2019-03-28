@@ -6,7 +6,7 @@ nonSensitiveEnvs:
 
 ingress:
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: 'paypal-plus-prod-global-ip'
+    kubernetes.io/ingress.global-static-ip-name: 'ctp-adyen-integration-demo-extension-global-ip'
     ingress.gcp.kubernetes.io/pre-shared-cert: 'ct-app'
   hosts:
     - 'adyen-payment-demo.ct-app.com'
