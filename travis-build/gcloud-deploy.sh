@@ -1,6 +1,6 @@
 #! /bin/bash
 
-set -e
+set -x
 
 ENVIRONMENT_NAME="$1"
 SCRIPT_DIR="$(dirname "$0")"
@@ -13,7 +13,7 @@ verifyMandatoryValues GCLOUD_ZONE GCLOUD_CLUSTER_NAME_PREFIX PROJECT_NAME ENVIRO
 # 1. Set environment variables needed for deployment scripts
 printf "\n- Building environment variable [%s]..\n" "GCLOUD_CLUSTER_NAME"
 case "$ENVIRONMENT_NAME" in
-    staging|production)
+    staging|production|demo)
         GCLOUD_CLUSTER_NAME="${GCLOUD_CLUSTER_NAME_PREFIX}-${ENVIRONMENT_NAME}"
         ;;
     *)
@@ -26,7 +26,7 @@ printf "\n- Connecting to the gcloud cluster with name: [%s] in [%s]..\n" "$GCLO
 gcloud container clusters get-credentials "$GCLOUD_CLUSTER_NAME" --zone="$GCLOUD_ZONE"
 
 # 3. Decrypt secrets
-. "${SCRIPT_DIR}/decrypt.sh"
+. "./extension/k8s/crypt/decrypt.sh"
 
 # 4. Deploy all the helm charts of the repo
 $HELM_UPGRADE_SCRIPT "$PROJECT_NAME" "$ENVIRONMENT_NAME" "$HELM_CHART_TEMPLATE_NAME" "$HELM_VALUES_DIR" "$DOCKER_TAG"

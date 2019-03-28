@@ -11,7 +11,7 @@ set -e
 echo "Gcloud Push Image Script"
 
 # verify mandatory values
-verifyMandatoryValues GCLOUD_PROJECT_ID PROJECT_NAME DOCKER_TAG REGISTRY_NAME
+verifyMandatoryValues PROJECT_NAME DOCKER_TAG GCLOUD_PROJECT_ID REGISTRY_NAME
 
 IMAGE_NAME_LATEST="${PROJECT_NAME}:latest" # local built image name, must already exist
 IMAGE_NAME_COMMIT="${PROJECT_NAME}:${DOCKER_TAG}" # image with git tag to push to the registry

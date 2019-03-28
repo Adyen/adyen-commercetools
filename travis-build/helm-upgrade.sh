@@ -8,7 +8,7 @@ HELM_CHART_TEMPLATE_NAME="$3"
 HELM_VALUES_DIR="$4"
 IMAGE_TAG="$5"
 SCRIPT_DIR="$(dirname "$0")"
-CHARTS_DIR="${SCRIPT_DIR}/../../../charts"
+CHARTS_DIR="${SCRIPT_DIR}/../../chart-templates/charts"
 
 printf "\n- Verifying mandatory envs: [APPLICATION_NAME, ENVIRONMENT_NAME, HELM_CHART_TEMPLATE_NAME, HELM_VALUES_DIR, IMAGE_TAG]..\n"
 . "${SCRIPT_DIR}/common.sh"
