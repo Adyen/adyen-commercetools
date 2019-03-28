@@ -1,6 +1,6 @@
 #! /bin/bash
 
-set -x
+set -e
 
 ENVIRONMENT_NAME="$1"
 SCRIPT_DIR="$(dirname "$0")"

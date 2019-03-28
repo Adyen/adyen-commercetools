@@ -16,10 +16,10 @@ function setupServer (routes = defaultRoutes) {
         await route(request, response)
       } catch (e) {
         logger.error(e, `Unexpected error when processing URL ${JSON.stringify(parts)}`)
-        utils.sendResponse({ response, statusCode: 500 })
+        utils.sendResponse(response, 500)
       }
     else
-      utils.sendResponse({ response, statusCode: 404 })
+      utils.sendResponse(response, 404)
   })
 }
 
