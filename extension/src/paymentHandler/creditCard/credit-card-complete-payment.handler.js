@@ -11,7 +11,7 @@ const config = configLoader.load()
 async function handlePayment (paymentObject) {
   const validator = _validatePayment(paymentObject)
   if (validator.hasErrors())
-    return validator.buildCtpErrorResponse()
+    return {}
   const { response, request } = await _completePayment(paymentObject)
   const status = response.status === 200 ? c.SUCCESS : c.FAILURE
   const responseBody = await response.json()
