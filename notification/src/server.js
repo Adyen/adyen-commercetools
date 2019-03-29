@@ -1,9 +1,9 @@
 const http = require('http')
 const url = require('url')
 const utils = require('./utils/commons')
-const logger = require('./utils/logger').getLogger()
 const { routes: defaultRoutes } = require('./routes')
 require('./config/config')
+const logger = require('./utils/logger').getLogger()
 
 
 function setupServer (routes = defaultRoutes) {
