@@ -2,7 +2,6 @@ const http = require('http')
 const url = require('url')
 const utils = require('./utils')
 const { routes: defaultRoutes } = require('./routes')
-require('./config/config')
 
 const logger = utils.getLogger()
 
