@@ -1,12 +1,13 @@
 const bunyan = require('bunyan')
+const { logLevel } = require('../config/config')()
 let obj
 
-function getLogger (logLevel) {
+function getLogger () {
   if( obj === undefined ) {
     const NOTIFICATION_MODULE_NAME = 'ctp-adyen-integration-notifications'
     obj = bunyan.createLogger({
       name: NOTIFICATION_MODULE_NAME,
-      stream: process.stderr,
+      stream: process.stdout,
       level: logLevel || bunyan.ERROR
     })
   }
