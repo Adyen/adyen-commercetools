@@ -4,7 +4,7 @@ set -e
 declare -a ACTIONS=("encrypt" "decrypt")
 declare -a ENVIRONMENTS=("demo")
 # Google Cloud project
-PROJECT_NAME="ctp-adyen-integration-notification"
+PROJECT_NAME="ctp-adyen-integration"
 GCLOUD_PROJECT_ID="professionalserviceslabs"
 SELECTED_APPLICATION="ctp-adyen-integration-notification"
 

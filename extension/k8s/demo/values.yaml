@@ -1,6 +1,6 @@
 nonSensitiveEnvs:
-  CTP_PROJECT_KEY: adyen-integration-test
-  API_EXTENSION_BASE_URL: https://adyen-payment-demo.ct-app.com
+  CTP_PROJECT_KEY: adyen-integration-demo
+  API_EXTENSION_BASE_URL: https://adyen-payment-demo-extension.ct-app.com
   ADYEN_MERCHANT_ACCOUNT: CommercetoolsGmbHDE775
   ADYEN_API_BASE_URL: https://checkout-test.adyen.com/v40
 
