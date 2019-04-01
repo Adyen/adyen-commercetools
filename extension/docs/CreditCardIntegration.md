@@ -53,7 +53,7 @@ and sends these information to Backend.
     * `Payment.custom.fields.redirectUrl`  
     * `Payment.custom.fields.redirectMethod`
 1. Frontend [redirects shopper](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step3redirectshopper) to verify credit card payment.
-1. After shopper verifies, she got redirected back to the shop. Backend gets from the query string a parameter `PaRes` and saves the parameter into the Payment custom field `Payment.custom.fields.PaRes`
+1. After shopper verifies, she got redirected back to the shop. Backend gets from the form data a parameter `PaRes` and saves the parameter into the Payment custom field `Payment.custom.fields.PaRes`
 1. Adyen-integration makes a [payment request](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step4completepayment) and save following information to the payment object:
     * `Payment.interfaceInteractions` contains request and response with Adyen 
     * `Payment.transactions` with a transaction `type='Charge' and state='Pending'` will be changed to a new state according to [the returned result code](IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
