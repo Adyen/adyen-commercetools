@@ -1,11 +1,11 @@
 language: node_js
 node_js:
-  - '10'
+  - '8'
 env:
   - TEST_DIR=notification
   - TEST_DIR=extension
 before_install:
-  - npm i -g npm@^6.9.0
+  - npm i -g npm@^6.4.1
 before_cache:
   # because travis makes cache before calling "after_success" section we must install gcloud SDK here
   - $CI_SCRIPTS/gcloud-install-sdk.sh || travis_terminate 1
