@@ -2,7 +2,7 @@ fullnameOverride: 'ctp-adyen-integration-service-extension'
 
 image:
   repository: 'eu.gcr.io/professionalserviceslabs/ctp-adyen-integration-extension'
-  tag: '1.0'
+  tag: '1.3'
 
 service:
   type: 'NodePort'
