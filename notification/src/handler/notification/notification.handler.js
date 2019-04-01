@@ -37,6 +37,8 @@ async function updatePaymentWithRepeater (payment, notification, ctpClient) {
     try {
       /* eslint-disable-next-line no-await-in-loop */
       await ctpClient.update(ctpClient.builder.payments, currentPayment.id, currentVersion, updateActions)
+      logger.debug(`Payment with interfaceId ${currentPayment.interfaceId}` +
+        'was successfully updated')
       break
     } catch (err) {
       if (err.body.statusCode !== 409)
