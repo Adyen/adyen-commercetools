@@ -228,7 +228,7 @@ describe('notification module', () => {
     })
     try {
       await notificationHandler.processNotifications(notificationsMock, ctpClient)
-    } catch {
+    } catch (e) {
 
     }
     expect(ctpClientUpdateSpy.callCount).to.equal(21)

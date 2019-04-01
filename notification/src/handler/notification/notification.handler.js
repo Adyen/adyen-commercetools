@@ -40,7 +40,7 @@ async function updatePaymentWithRepeater (payment, notification, ctpClient) {
       logger.debug(`Payment with interfaceId ${currentPayment.interfaceId}` +
         'was successfully updated')
       break
-    } catch (err) {
+    } catch (e) {
       if (err.body.statusCode !== 409)
         throw new Error(`Unexpected error during updating a payment with ID: ${currentPayment.id}. Exiting. `
           + `Error: ${JSON.stringify(serializeError(err))}`)
@@ -145,7 +145,7 @@ async function getPaymentByMerchantReference (merchantReference, ctpClient) {
   try {
     const result = await ctpClient.fetch(ctpClient.builder.payments.where(`interfaceId="${merchantReference}"`))
     return _.get(result, 'body.results[0]', null)
-  } catch (err) {
+  } catch (e) {
     throw Error(`Failed to fetch a payment with merchantReference: ${merchantReference}. `
     + `Error: ${JSON.stringify(serializeError(err))}`)
   }
