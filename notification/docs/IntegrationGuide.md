@@ -40,6 +40,8 @@ CTP_CLIENT_SECRET | commercetools client secret (you can get in the commercetool
 LOG_LEVEL | bunyan log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)| NO | `info`
 PORT | port on which the application will run | NO | 443
 
+Check out the deployment [Best Practices documentation](../../docs/BEST_PRACTICES.md)
+
 # After deployment
 
 After deploying the module and getting a static public endpoint address
@@ -55,6 +57,10 @@ you have to register it in the Adyen Customer Area in order to receive notificat
  which exposes the notification module
  1. Select the **Active** checkbox under the same section
  1. Click on **Save Configuration** button below to complete subscription
+ 
+Adyen documentation on how to set up notifications: [https://docs.adyen.com/developers/development-resources/notifications/set-up-notifications](Set up notifications)
+
+https://docs.adyen.com/developers/development-resources/notifications
 
 ## Note
 - If you accidentally created a subscription you can edit it and uncheck the **Active** checkbox so Adyen doesn't
