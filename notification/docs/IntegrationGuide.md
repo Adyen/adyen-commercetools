@@ -58,9 +58,7 @@ you have to register it in the Adyen Customer Area in order to receive notificat
  1. Select the **Active** checkbox under the same section
  1. Click on **Save Configuration** button below to complete subscription
  
-Adyen documentation on how to set up notifications: [https://docs.adyen.com/developers/development-resources/notifications/set-up-notifications](Set up notifications)
-
-https://docs.adyen.com/developers/development-resources/notifications
+Adyen documentation on how to set up notifications: [Set up notifications](https://docs.adyen.com/developers/development-resources/notifications/set-up-notifications)
 
 ## Note
 - If you accidentally created a subscription you can edit it and uncheck the **Active** checkbox so Adyen doesn't
