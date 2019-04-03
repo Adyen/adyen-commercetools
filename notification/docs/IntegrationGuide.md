@@ -5,15 +5,13 @@
 **Contents**
 
   - [Glossary](#glossary)
-  - [Requirements for CTP project:](#requirements-for-ctp-project)
-  - [Required parameters](#required-parameters)
-- [Checkout steps](#checkout-steps)
-- [Validations](#validations)
-    - [Validate cart state](#validate-cart-state)
-    - [Recalculate cart](#recalculate-cart)
-    - [Validate payment](#validate-payment)
-    - [Validate payment transaction](#validate-payment-transaction)
-    - [Mapping from Adyen result codes to CTP transaction state](#mapping-from-adyen-result-codes-to-ctp-transaction-state)
+  - [Requirements](#requirements)
+      - [for CTP project:](#for-ctp-project)
+      - [for the Node.js:](#for-the-nodejs)
+  - [Environment variables to configure the module:](#environment-variables-to-configure-the-module)
+- [After deployment](#after-deployment)
+  - [Register the endpoint](#register-the-endpoint)
+  - [Note](#note)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
