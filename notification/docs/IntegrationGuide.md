@@ -4,30 +4,32 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Contents**
 
+- [Deployment](#deployment)
   - [Glossary](#glossary)
   - [Requirements](#requirements)
-      - [for the Node.js:](#for-the-nodejs)
-  - [Environment variables to configure the module:](#environment-variables-to-configure-the-module)
-- [After deployment](#after-deployment)
-  - [Register the endpoint](#register-the-endpoint)
-  - [Note](#note)
+- [Configuration](#configuration)
+      - [Environment variables to configure the notification module:](#environment-variables-to-configure-the-notification-module)
+  - [After deployment](#after-deployment)
+    - [Register the endpoint](#register-the-endpoint)
+- [Note](#note)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Glossary
+## Deployment
+
+### Glossary
 In this process, there are 2 parties involved:
 
 **Adyen** - the payment provider which will send notifications
 **Notification module** - hosted service that receives notifications from Adyen,
 processes and stores them on a commercetools platform project.
 
-## Requirements 
-
-#### for the Node.js:
+### Requirements 
 Node.js version LTS 8 or higher is supported.
 
+## Configuration
 
-## Environment variables to configure the notification module:
+##### Environment variables to configure the notification module:
 Name | Content | Required | Default value
 ------------ | ------------- | ------------- | -------------
 CTP_PROJECT_KEY | commercetools project key (you can get in the commercetools Merchant Center) | **YES** |
@@ -38,12 +40,12 @@ PORT | port on which the application will run | NO | 443
 
 Check out the deployment [Best Practices documentation](../../docs/BEST_PRACTICES.md)
 
-# After deployment
+### After deployment
 
 After deployment and getting a static URL to notification module
 you have to register it in the Adyen Customer Area in order to receive notifications.
 
-## Register the endpoint
+#### Register the endpoint
  1. Go to your [Adyen Customer Area](https://ca-live.adyen.com/ca/ca/login.shtml).
  1. Hover **Account** in the menu and select **Server communication**
 ![image](https://user-images.githubusercontent.com/9251453/55414133-e5b13100-556a-11e9-89ac-a9ebbf72bfdf.png)
@@ -54,7 +56,7 @@ you have to register it in the Adyen Customer Area in order to receive notificat
  1. Select the **Active** checkbox under the same section
  1. Click on **Save Configuration** button below to complete subscription
  
-Adyen documentation on how to set up notifications: [Set up notifications](https://docs.adyen.com/developers/development-resources/notifications/set-up-notifications)
+Check out the Adyen documentation on how to set up notifications for more information: [Set up notifications](https://docs.adyen.com/developers/development-resources/notifications/set-up-notifications)
 
 ## Note
 - If you accidentally created a subscription you can edit it and uncheck the **Active** checkbox so Adyen doesn't
