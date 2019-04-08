@@ -19,8 +19,8 @@
 In this process, there are 2 parties involved:
 
 **Adyen** - the payment provider which will send notifications
-**Notification module** - hosted service that accepts notifications from Adyen,
-processes and stores on a commercetools platform project.  
+**Notification module** - hosted service that receives notifications from Adyen,
+processes and stores them on a commercetools platform project.
 
 ## Requirements 
 
@@ -28,10 +28,10 @@ processes and stores on a commercetools platform project.
 [An `interfaceInteractions` custom type](../resources/payment-interface-interaction-types.json) should be ensured on the Notification module start
 
 #### for the Node.js:
-The application supports all versions of Node.js starting the LTS version 8.
+Node.js version LTS 8 or higher is supported.
 
 
-## Environment variables to configure the module:
+## Environment variables to configure the notification module:
 Name | Content | Required | Default value
 ------------ | ------------- | ------------- | -------------
 CTP_PROJECT_KEY | commercetools project key (you can get in the commercetools Merchant Center) | **YES** |
@@ -44,7 +44,7 @@ Check out the deployment [Best Practices documentation](../../docs/BEST_PRACTICE
 
 # After deployment
 
-After deploying the module and getting a static public endpoint address
+After deployment and getting a static URL to notification module
 you have to register it in the Adyen Customer Area in order to receive notifications.
 
 ## Register the endpoint
