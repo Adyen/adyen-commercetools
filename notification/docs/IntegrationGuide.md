@@ -6,7 +6,6 @@
 
   - [Glossary](#glossary)
   - [Requirements](#requirements)
-      - [for CTP project:](#for-ctp-project)
       - [for the Node.js:](#for-the-nodejs)
   - [Environment variables to configure the module:](#environment-variables-to-configure-the-module)
 - [After deployment](#after-deployment)
@@ -23,9 +22,6 @@ In this process, there are 2 parties involved:
 processes and stores them on a commercetools platform project.
 
 ## Requirements 
-
-#### for CTP project:
-[An `interfaceInteractions` custom type](../resources/payment-interface-interaction-types.json) should be ensured on the Notification module start
 
 #### for the Node.js:
 Node.js version LTS 8 or higher is supported.
