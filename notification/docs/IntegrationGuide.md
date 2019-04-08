@@ -44,7 +44,7 @@ After deployment and getting a static URL to notification module
 you have to register it in the Adyen Customer Area in order to receive notifications.
 
 ## Register the endpoint
- 1. Go to your Adyen Customer Area.
+ 1. Go to your [Adyen Customer Area](https://ca-live.adyen.com/ca/ca/login.shtml).
  1. Hover **Account** in the menu and select **Server communication**
 ![image](https://user-images.githubusercontent.com/9251453/55414133-e5b13100-556a-11e9-89ac-a9ebbf72bfdf.png)
  1. You will see the list of available notifications. Click on **add** button of the
