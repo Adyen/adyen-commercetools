@@ -18,21 +18,17 @@ const config = {
 }
 
 describe('notification module', () => {
-
   afterEach(() => sandbox.restore())
 
   it('should update payment with a new InterfaceInteraction and payment status '
     + 'when current payment does not have the interfaceInteraction and the transaction'
     + 'which are going to be set', async () => {
-
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
-      return {
-        body: {
-          results: [paymentMock]
-        }
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [paymentMock]
       }
-    })
+    }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     await notificationHandler.processNotifications(notificationsMock, ctpClient)
     const expectedUpdateActions = [
@@ -73,23 +69,21 @@ describe('notification module', () => {
     + 'but has a transaction with the correct status', async () => {
     const modifiedPaymentMock = cloneDeep(paymentMock)
     modifiedPaymentMock.transactions.push({
-      "type": "Authorization",
-      "amount": {
-        "type": "centPrecision",
-        "currencyCode": "EUR",
-        "centAmount": 495,
-        "fractionDigits": 2
+      type: 'Authorization',
+      amount: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 495,
+        fractionDigits: 2
       },
-      "state": "Success"
+      state: 'Success'
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
-      return {
-        body: {
-          results: [modifiedPaymentMock]
-        }
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [modifiedPaymentMock]
       }
-    })
+    }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     await notificationHandler.processNotifications(notificationsMock, ctpClient)
     const expectedUpdateActions = [
@@ -130,13 +124,11 @@ describe('notification module', () => {
       }
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
-      return {
-        body: {
-          results: [modifiedPaymentMock]
-        }
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [modifiedPaymentMock]
       }
-    })
+    }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     await notificationHandler.processNotifications(notificationsMock, ctpClient)
     const expectedUpdateActions = [
@@ -159,8 +151,8 @@ describe('notification module', () => {
   it('should update transaction with a new state', async () => {
     const modifiedPaymentMock = cloneDeep(paymentMock)
     const notificationsMockClone = cloneDeep(notificationsMock)
-    notificationsMockClone[0].NotificationRequestItem.eventCode = "CAPTURE"
-    notificationsMockClone[0].NotificationRequestItem.success = "false"
+    notificationsMockClone[0].NotificationRequestItem.eventCode = 'CAPTURE'
+    notificationsMockClone[0].NotificationRequestItem.success = 'false'
     modifiedPaymentMock.interfaceInteractions.push({
       type: {
         typeId: 'type',
@@ -173,13 +165,11 @@ describe('notification module', () => {
       }
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
-      return {
-        body: {
-          results: [modifiedPaymentMock]
-        }
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [modifiedPaymentMock]
       }
-    })
+    }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
 
 
@@ -209,27 +199,23 @@ describe('notification module', () => {
       }
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
-      return {
-        body: {
-          results: [modifiedPaymentMock]
-        }
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [modifiedPaymentMock]
       }
-    })
-    sandbox.stub(ctpClient, 'fetchById').callsFake(() => {
-      return {
-        body: {
-          results: [modifiedPaymentMock]
-        }
+    }))
+    sandbox.stub(ctpClient, 'fetchById').callsFake(() => ({
+      body: {
+        results: [modifiedPaymentMock]
       }
-    })
+    }))
     const ctpClientUpdateSpy = sandbox.stub(ctpClient, 'update').callsFake(() => {
       throw concurrentModificationError
     })
     try {
       await notificationHandler.processNotifications(notificationsMock, ctpClient)
+      // eslint-disable-next-line no-empty
     } catch (e) {
-
     }
     expect(ctpClientUpdateSpy.callCount).to.equal(21)
   })

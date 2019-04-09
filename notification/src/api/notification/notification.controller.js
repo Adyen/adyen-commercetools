@@ -4,6 +4,7 @@ const ctp = require('../../utils/ctp')
 const { processNotifications } = require('../../handler/notification/notification.handler')
 const config = require('../../config/config')()
 const logger = require('../../utils/logger').getLogger()
+
 const ctpClient = ctp.get(config)
 
 // TODO: add JSON schema validation:

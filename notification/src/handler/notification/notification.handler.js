@@ -37,22 +37,22 @@ async function updatePaymentWithRepeater (payment, notification, ctpClient) {
     try {
       /* eslint-disable-next-line no-await-in-loop */
       await ctpClient.update(ctpClient.builder.payments, currentPayment.id, currentVersion, updateActions)
-      logger.debug(`Payment with interfaceId ${currentPayment.interfaceId}` +
-        'was successfully updated')
+      logger.debug(`Payment with interfaceId ${currentPayment.interfaceId}`
+        + 'was successfully updated')
       break
     } catch (e) {
-      if (err.body.statusCode !== 409)
+      if (e.body.statusCode !== 409)
         throw new Error(`Unexpected error during updating a payment with ID: ${currentPayment.id}. Exiting. `
-          + `Error: ${JSON.stringify(serializeError(err))}`)
+          + `Error: ${JSON.stringify(serializeError(e))}`)
       retryCount += 1
       if (retryCount > maxRetry) {
         retryMessage = 'Got a concurrent modification error'
           + ` when updating payment with id "${currentPayment.id}".`
           + ` Version tried "${currentVersion}",`
-          + ` currentVersion: "${err.body.errors[0].currentVersion}".`
+          + ` currentVersion: "${e.body.errors[0].currentVersion}".`
         throw new Error(`${retryMessage} Won't retry again`
           + ` because of a reached limit ${maxRetry}`
-          + ` max retries. Error: ${JSON.stringify(serializeError(err))}`)
+          + ` max retries. Error: ${JSON.stringify(serializeError(e))}`)
       }
       /* eslint-disable-next-line no-await-in-loop */
       currentPayment = await ctpClient.fetchById(ctpClient.builder.payments, currentPayment.id)
@@ -75,7 +75,10 @@ function calculateUpdateActionsForPayment (payment, notification) {
   if (isNotificationInInterfaceInteraction === false)
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
 
-  const { transactionType, transactionState } = getTransactionTypeAndStateOrNull(notificationEventCode, notificationSuccess)
+  const {
+    transactionType,
+    transactionState
+  } = getTransactionTypeAndStateOrNull(notificationEventCode, notificationSuccess)
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
@@ -117,8 +120,8 @@ function getChangeTransactionStateUpdateAction (transactionId, newTransactionSta
 }
 
 function getTransactionTypeAndStateOrNull (adyenEventCode, adyenEventSuccess) {
-  return _.find(adyenEvents,
-      adyenEvent => adyenEvent.eventCode === adyenEventCode && adyenEvent.success === adyenEventSuccess)
+  // eslint-disable-next-line max-len
+  return _.find(adyenEvents, adyenEvent => adyenEvent.eventCode === adyenEventCode && adyenEvent.success === adyenEventSuccess)
     || {
       eventCode: adyenEventCode,
       success: adyenEventSuccess,
@@ -147,7 +150,7 @@ async function getPaymentByMerchantReference (merchantReference, ctpClient) {
     return _.get(result, 'body.results[0]', null)
   } catch (e) {
     throw Error(`Failed to fetch a payment with merchantReference: ${merchantReference}. `
-    + `Error: ${JSON.stringify(serializeError(err))}`)
+    + `Error: ${JSON.stringify(serializeError(e))}`)
   }
 }
 

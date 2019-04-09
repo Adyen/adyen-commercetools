@@ -3,7 +3,6 @@ const { createClient } = require('@commercetools/sdk-client')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
 
 function createCtpClient () {
-
   const httpMockSuccessMiddleware = next => (request, response) => {
     next(request, { ...response, body: { foo: 'bar' } })
   }
@@ -69,14 +68,14 @@ function getRequestBuilder (projectKey) {
  * */
 function compareTransactionStates (currentState, newState) {
   const transactionStateFlow = {
-    "Initial": 0,
-    "Pending": 1,
-    "Success": 2,
-    "Failure": 2
+    Initial: 0,
+    Pending: 1,
+    Success: 2,
+    Failure: 2
   }
-  if(!transactionStateFlow.hasOwnProperty(currentState) || !transactionStateFlow.hasOwnProperty(newState))
-    throw Error('Wrong transaction state passed. ' +
-      `currentState: ${currentState}, newState: ${newState}`)
+  if (!transactionStateFlow.hasOwnProperty(currentState) || !transactionStateFlow.hasOwnProperty(newState))
+    throw Error('Wrong transaction state passed. '
+      + `currentState: ${currentState}, newState: ${newState}`)
   if (transactionStateFlow[currentState] < transactionStateFlow[newState])
     return 1
   if (transactionStateFlow[currentState] > transactionStateFlow[newState])
@@ -86,6 +85,6 @@ function compareTransactionStates (currentState, newState) {
 
 
 module.exports = {
-  get: (config) => setUpClient(config),
+  get: config => setUpClient(config),
   compareTransactionStates
 }

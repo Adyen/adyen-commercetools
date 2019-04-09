@@ -3,6 +3,7 @@ const { ensureInterfaceInteractionCustomType } = require('./config/init/ensure-i
 const ctp = require('./utils/ctp')
 const logger = require('./utils/logger').getLogger()
 const config = require('./config/config')()
+
 const ctpClient = ctp.get(config)
 
 const PORT = process.env.PORT || 443
