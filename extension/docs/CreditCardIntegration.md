@@ -31,6 +31,8 @@ and sends these information to Backend.
     * `pspReference` will be saved in a matching transaction from the previous point in a field `transactionInteractionId`
 1. Frontend presents the results to the shopper.
 
+![Credit card flow](./credit-card-flow.png)
+
 ### Credit card with 3D Secure
 1. Frontend collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step1collectshopperdetails)
 and sends these information to Backend.

@@ -35,3 +35,5 @@ Adyen documentation: https://docs.adyen.com/developers/payment-methods/paypal
 *Notice*: the last step of Adyen-integration is mandatory but it doesn't play any significant role for Adyen.
 Funds has already been reserved/transferred after the shopper confirms payment on Paypal. Nevertheless, it's important
 to follow all the steps as it's the only way to get `pspReference` from Adyen.  
+
+![Paypal flow](./paypal-flow.png)
