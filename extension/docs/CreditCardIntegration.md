@@ -61,3 +61,5 @@ and sends these information to Backend.
 1. Frontend presents the results to the shopper.
 
 **Important:** Adyen will send request to the issuing bank and the bank will authorize the payment or hold money ONLY after [Complete payment step](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step4completepayment) is done. In this documentation, it means all steps above have to be done successfully. 
+
+![3D Secure flow](./3ds-flow.png)
