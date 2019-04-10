@@ -26,13 +26,14 @@ CTP_CLIENT_SECRET | commercetools client secret (you can get in the [commercetoo
 LOG_LEVEL | bunyan log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)| NO | `info`
 PORT | port on which the application will run | NO | 443
 
+Don't forget to provide all required environment variables
 After setting all variables, execute command `npm run start` to run the module.
 
 ## Run Tests
 
-There are 2 different types of tests. Don't forget to provide all required environmental variables:
-1. [Unit tests](../test/unit) - these tests are mocking all external communications.
-1. [Integration tests](../test/integration) - these tests interacts with real 3rd party systems.
+1. Execute `npm run unit-test` to run [Unit tests](../test/unit)
+1. Execute `npm run integration-test` to run [Integration tests](../test/integration) (all required environment variables must be set)
+1. Execute `npm run test` to run all tests
 
 To run all tests execute 
 
