@@ -20,9 +20,9 @@ In order to run the notification module, you have to provide following environme
 
 Name | Content | Required | Default value
 ------------ | ------------- | ------------- | -------------
-CTP_PROJECT_KEY | commercetools project key (you can get in the commercetools Merchant Center) | **YES** |
-CTP_CLIENT_ID | commercetools client ID (you can get in the commercetools Merchant Center) | **YES** |
-CTP_CLIENT_SECRET | commercetools client secret (you can get in the commercetools Merchant Center) | **YES** |
+CTP_PROJECT_KEY | commercetools project key (you can get in the [commercetools Merchant Center](https://mc.commercetools.com)) | **YES** |
+CTP_CLIENT_ID | commercetools client ID (you can get in the [commercetools Merchant Center](https://mc.commercetools.com)) | **YES** |
+CTP_CLIENT_SECRET | commercetools client secret (you can get in the [commercetools Merchant Center](https://mc.commercetools.com)) | **YES** |
 LOG_LEVEL | bunyan log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)| NO | `info`
 PORT | port on which the application will run | NO | 443
 
