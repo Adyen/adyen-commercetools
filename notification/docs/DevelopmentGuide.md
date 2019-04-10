@@ -16,7 +16,7 @@
 1. Run `npm сi`
 
 ## Run Module
-In order to run notification module, you have to provide following environmental variables:
+In order to run the notification module, you have to provide following environmental variables:
 
 Name | Content | Required | Default value
 ------------ | ------------- | ------------- | -------------
