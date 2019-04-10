@@ -31,7 +31,7 @@ and sends these information to Backend.
     * `pspReference` will be saved in a matching transaction from the previous point in a field `transactionInteractionId`
 1. Frontend presents the results to the shopper.
 
-![Credit card flow](./credit-card-flow.png)
+![Credit card flow](https://user-images.githubusercontent.com/803826/55894199-fb050b80-5bb9-11e9-88e9-7efbe62c55bb.png)
 
 ### Credit card with 3D Secure
 1. Frontend collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step1collectshopperdetails)
@@ -64,4 +64,4 @@ and sends these information to Backend.
 
 **Important:** Adyen will send request to the issuing bank and the bank will authorize the payment or hold money ONLY after [Complete payment step](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step4completepayment) is done. In this documentation, it means all steps above have to be done successfully. 
 
-![3D Secure flow](./3ds-flow.png)
+![3D Secure flow](https://user-images.githubusercontent.com/803826/55894047-b0838f00-5bb9-11e9-9377-c7db2a0c40f7.png)

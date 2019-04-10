@@ -36,4 +36,4 @@ Adyen documentation: https://docs.adyen.com/developers/payment-methods/paypal
 Funds has already been reserved/transferred after the shopper confirms payment on Paypal. Nevertheless, it's important
 to follow all the steps as it's the only way to get `pspReference` from Adyen.  
 
-![Paypal flow](./paypal-flow.png)
+![Paypal flow](https://user-images.githubusercontent.com/803826/55894234-0d7f4500-5bba-11e9-90d4-e4c03f1c452f.png)

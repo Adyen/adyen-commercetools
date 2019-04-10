@@ -34,10 +34,15 @@ are already resources with same key in the CTP project. In this case, you have t
 
 ## Required parameters
 In order to make the extension module working, following parameters have to be provided to the Adyen-integration.
-- `CTP_PROJECT_KEY`, `CTP_CLIENT_ID`, `CTP_CLIENT_SECRET` - CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is manage_project.
-- `API_EXTENSION_BASE_URL` - URL of the Adyen-integration. This URL will be called by CTP Extension endpoint.
-- `ADYEN_API_KEY` - Go to [Account/Users](https://ca-test.adyen.com/ca/ca/config/users.shtml) - Select a user with `Web Service` User type - Generate New API Key (notice: in case you get `403 Forbidden` error from Adyen, try to regenerate the key)   
-- `ADYEN_MERCHANT_ACCOUNT` - Go to [Account/Merchant accounts](https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount)
+
+| Name | Description | Default value |
+| --- | --- | --- |
+| `CTP_PROJECT_KEY` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is manage_project. | |
+| `CTP_CLIENT_ID` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is manage_project. | |
+| `CTP_CLIENT_SECRET` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is manage_project. | |
+| `API_EXTENSION_BASE_URL` | URL of the Adyen-integration. This URL will be called by CTP Extension endpoint. | |
+| `ADYEN_API_KEY` | Go to [Account/Users](https://ca-test.adyen.com/ca/ca/config/users.shtml) - Select a user with `Web Service` User type - Generate New API Key (notice: in case you get `403 Forbidden` error from Adyen, try to regenerate the key). | |
+| `ADYEN_MERCHANT_ACCOUNT` | Go to [Account/Merchant accounts](https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount). | |
 
 # Checkout steps
 1. On each checkout step [validate cart state](#validate-cart-state)
