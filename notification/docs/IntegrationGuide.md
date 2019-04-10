@@ -20,8 +20,8 @@
 ### Glossary
 In this process, there are 2 parties involved:
 
-**Adyen** - the payment provider which will send notifications
-**Notification module** - hosted service that receives notifications from Adyen,
+ - **Adyen** - the payment provider which will send notifications
+ - **Notification module** - hosted service that receives notifications from Adyen,
 processes and stores them on a commercetools platform project.
 
 ### Requirements 
