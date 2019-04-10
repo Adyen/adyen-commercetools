@@ -11,7 +11,7 @@
       - [Environment variables to configure the notification module:](#environment-variables-to-configure-the-notification-module)
   - [After deployment](#after-deployment)
     - [Register the endpoint](#register-the-endpoint)
-- [Note](#note)
+- [Notes](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -58,7 +58,7 @@ you have to register it in the Adyen Customer Area in order to receive notificat
  
 Check out the Adyen documentation on how to set up notifications for more information: [Set up notifications](https://docs.adyen.com/developers/development-resources/notifications/set-up-notifications)
 
-## Note
+## Notes
 - If you accidentally created a subscription you can edit it and uncheck the **Active** checkbox so Adyen doesn't
 send there notifications. Then you can contact the Adyen support and ask them to remove the subscription.
 - Adyen will queue notifications when the notification service was not reachable or it didn't return a success message
