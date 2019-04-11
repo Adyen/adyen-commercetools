@@ -4,7 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Contents**
 
-- [Prerequisites](#prerequisites)
+- [Requirements](#requirements)
 - [Run Module](#run-module)
 - [Run Tests](#run-tests)
 

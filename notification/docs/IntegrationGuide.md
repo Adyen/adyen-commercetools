@@ -9,9 +9,10 @@
   - [Requirements](#requirements)
 - [Configuration](#configuration)
       - [Environment variables to configure the notification module:](#environment-variables-to-configure-the-notification-module)
+  - [Deployment](#deployment-1)
   - [After deployment](#after-deployment)
     - [Register the endpoint](#register-the-endpoint)
-- [Notes](#notes)
+- [FAQ](#faq)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -40,17 +41,23 @@ PORT | port on which the application will run | NO | 443
 
 Check out the deployment [Best Practices documentation](../../docs/BEST_PRACTICES.md)
 
+
+### Deployment
+For easy deployment you can use the [Notification module docker image](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-notification/tags).
+
+
+
+
 ### After deployment
 
-After deployment and getting a static URL to notification module
-you have to register it in the Adyen Customer Area in order to receive notifications.
+After deployment you have to register the Notification module public URL in the Adyen Customer Area in order to receive notifications.
 
 #### Register the endpoint
- 1. Go to your [Adyen Customer Area](https://ca-live.adyen.com/ca/ca/login.shtml).
+ 1. Go to your [Adyen Customer Area](https://ca-live.adyen.com/ca/ca/login.shtml)
  1. Hover **Account** in the menu and select **Server communication**
 ![image](https://user-images.githubusercontent.com/9251453/55414133-e5b13100-556a-11e9-89ac-a9ebbf72bfdf.png)
  1. You will see the list of available notifications. Click on **add** button of the
-"Standard notification".
+"Standard notification"
  1. In the opened form change the **URL** under the **Transport** section to the one
  which exposes the notification module
  1. Select the **Active** checkbox under the same section
@@ -58,8 +65,13 @@ you have to register it in the Adyen Customer Area in order to receive notificat
  
 Check out the Adyen documentation on how to set up notifications for more information: [Set up notifications](https://docs.adyen.com/developers/development-resources/notifications/set-up-notifications)
 
-## Notes
+## FAQ
+
+Can I remove a subscription I created?
+
 - If you accidentally created a subscription you can edit it and uncheck the **Active** checkbox so Adyen doesn't
-send there notifications. Then you can contact the Adyen support and ask them to remove the subscription.
+send there notifications. Then you can contact the Adyen support and ask them to remove the subscription
+
+Will we lose a notification if it was not processed for some reason?
 - Adyen will queue notifications when the notification service was not reachable or it didn't return a success message
-  and will try to send it later.
+  and will try to send it later
