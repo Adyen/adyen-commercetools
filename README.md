@@ -1,6 +1,10 @@
 # commercetools-adyen-integration
 This repository provides integration between Commercetools and Adyen payment service provider.
 
+#### Supported payment methods
+- Credit card payment  
+- Paypal payment
+
 It contains two standalone modules that connects the two platforms.
 In order to make the integration run properly, both modules have to run.
 
