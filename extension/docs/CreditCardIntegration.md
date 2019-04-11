@@ -31,7 +31,7 @@ The following features are not supported:
     * `Payment.interfaceInteractions.type='makePayment'` contains request and response with Adyen 
     * `Payment.transactions` with a transaction `type='Charge' and state='Initial'` will be changed to a new state according to [the returned result code](./IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
     * `pspReference` will be saved in a matching transaction from the previous point in a field `Payment.transactions.interactionId`
-1. Shop presents the results to the shopper.
+1. Shop validate the payment and presents the results to the shopper.
 
 ![Credit card flow](https://user-images.githubusercontent.com/803826/55894199-fb050b80-5bb9-11e9-88e9-7efbe62c55bb.png)
 
@@ -60,7 +60,7 @@ The following features are not supported:
     * `Payment.interfaceInteractions.type='completePayment'` contains request and response with Adyen 
     * `Payment.transactions` with a transaction `type='Charge' and state='Pending'` will be changed to a new state according to [the returned result code](IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
     * `pspReference` will be saved in a matching transaction from the previous point in a field `Payment.transactions.interactionId`
-1. Shop presents the results to the shopper.
+1. Shop validate the payment and presents the results to the shopper.
 
 **Important:** Adyen will send request to the issuing bank and the bank will authorize the payment or hold money ONLY after [Complete payment step](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step4completepayment) is done. In this documentation, it means all steps above have to be done successfully. 
 

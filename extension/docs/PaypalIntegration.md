@@ -14,10 +14,10 @@
 1. Shop [redirects shopper](https://docs.adyen.com/developers/payment-methods/paypal#step2redirectshopper) to Paypal.
 1. After shopper finishes the payment, she got redirected back to the shop. Shop gets from the query string a parameter `details.payload` and saves the parameter into the Payment custom field `Payment.custom.fields.payload`
 1. Extension module make a [payment request](https://docs.adyen.com/developers/payment-methods/paypal#step4presentpaymentresult) and save following information to the payment object:
-    * `Payment.interfaceInteractions` contains request and response with Adyen 
+    * `Payment.interfaceInteractions.type='completePayment'` contains request and response with Adyen 
     * `Payment.transactions` with a transaction `type='Charge' and state='Pending'` will be changed to a new state according to [the returned result code](IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
     * `pspReference` will be saved in a matching transaction from the previous point in a field `transactionInteractionId`
-1. Shop presents the results to the shopper.
+1. Shop validate the payment and presents the results to the shopper.
      
 *Notice*: the last step of Extension module is mandatory but it doesn't play any significant role for Adyen.
 Funds has already been reserved/transferred after the shopper confirms payment on Paypal. Nevertheless, it's important
