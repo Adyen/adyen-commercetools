@@ -60,7 +60,7 @@ Otherwise shopper might continue with further payment steps.
         - `Payment.paymentMethodInfo.method = empty or undefined`   
         - `Payment.custom.fields.countryCode != null` - set the country of a shopper. Please [consult with Adyen](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/v41/paymentMethods) for the right format.  
     1. Extension module will make a [request](https://docs.adyen.com/developers/checkout/api-integration#step1getavailablepaymentmethods) to Adyen API and the response will be saved in interface interaction with `type='ctp-adyen-integration-interaction'` and `fields.type='getAvailablePaymentMethods'` as stringified JSON.
-    1. Before presenting all the methods, please check Extension module documentation for supported payment methods.
+    1. Before presenting the payment methods in the response from Adyen, please check Extension module documentation for supported payment methods.
 1. **Continue with one of the supported payment methods**
     - [Credit card payment](./CreditCardIntegration.md)  
     - [Paypal payment](./PaypalIntegration.md)
