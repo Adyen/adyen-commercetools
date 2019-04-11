@@ -44,7 +44,7 @@ The following features are not supported:
     * `Payment.custom.fields.encryptedExpiryYear` contains expiry year encrypted in the previous step.
     * `Payment.custom.fields.encryptedSecurityCode` contains security code encrypted in the previous step.
     * `Payment.custom.fields.returnUrl` contains return URL to which the shopper will be redirected after completion.
-    * `Payment.custom.fields.browserInfo` contains **JSON stringfied** browser info gathered from the previous step.
+    * `Payment.custom.fields.browserInfo` contains **JSON stringfied** browser info. See [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step2makeapayment) for more information. 
     * *Optional*: `paymentObject.custom.fields.holderName`
 1. Extension module makes a payment request and save following information to the payment object (for explanation of each field, see [Adyen's documentations](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step2makeapayment)):
     * `Payment.interfaceInteractions.type='makePayment'` contains request and response with Adyen
