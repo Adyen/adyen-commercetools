@@ -28,9 +28,9 @@ The following features are not supported:
     * `Payment.custom.fields.returnUrl` contains URL to which the shopper will be redirected when shopper completes or abandons the payment process.
     * *Optional*: `paymentObject.custom.fields.holderName`
 1. Extension module makes a payment request and save following information to the payment object:
-    * `Payment.interfaceInteractions` contains request and response with Adyen 
+    * `Payment.interfaceInteractions.type='makePayment'` contains request and response with Adyen 
     * `Payment.transactions` with a transaction `type='Charge' and state='Initial'` will be changed to a new state according to [the returned result code](./IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
-    * `pspReference` will be saved in a matching transaction from the previous point in a field `transactionInteractionId`
+    * `pspReference` will be saved in a matching transaction from the previous point in a field `Payment.transactions.interactionId`
 1. Shop presents the results to the shopper.
 
 ![Credit card flow](https://user-images.githubusercontent.com/803826/55894199-fb050b80-5bb9-11e9-88e9-7efbe62c55bb.png)
@@ -47,7 +47,7 @@ The following features are not supported:
     * `Payment.custom.fields.browserInfo` contains **JSON stringfied** browser info gathered from the previous step.
     * *Optional*: `paymentObject.custom.fields.holderName`
 1. Extension module makes a payment request and save following information to the payment object (for explanation of each field, see [Adyen's documentations](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step2makeapayment)):
-    * `Payment.interfaceInteractions` contains request and response with Adyen
+    * `Payment.interfaceInteractions.type='makePayment'` contains request and response with Adyen
     * `Payment.transactions` with a transaction `type='Charge' and state='Initial'` will be changed to `state='Pending'`.
     * `Payment.custom.fields.MD`
     * `Payment.custom.fields.PaReq`  
@@ -55,11 +55,11 @@ The following features are not supported:
     * `Payment.custom.fields.redirectUrl`  
     * `Payment.custom.fields.redirectMethod`
 1. Shop [redirects shopper](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step3redirectshopper) to verify credit card payment.
-1. After shopper verifies, shopper got redirected back to the shop. Backend gets from the form data a parameter `PaRes` and saves the parameter into the Payment custom field `Payment.custom.fields.PaRes`
+1. After shopper verifies, shopper got redirected back to the shop. Shop gets from the form data a parameter `PaRes` and saves the parameter into the Payment custom field `Payment.custom.fields.PaRes`
 1. Extension module makes a [payment request](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step4completepayment) and save following information to the payment object:
-    * `Payment.interfaceInteractions` contains request and response with Adyen 
+    * `Payment.interfaceInteractions.type='completePayment'` contains request and response with Adyen 
     * `Payment.transactions` with a transaction `type='Charge' and state='Pending'` will be changed to a new state according to [the returned result code](IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
-    * `pspReference` will be saved in a matching transaction from the previous point in a field `transactionInteractionId`
+    * `pspReference` will be saved in a matching transaction from the previous point in a field `Payment.transactions.interactionId`
 1. Shop presents the results to the shopper.
 
 **Important:** Adyen will send request to the issuing bank and the bank will authorize the payment or hold money ONLY after [Complete payment step](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step4completepayment) is done. In this documentation, it means all steps above have to be done successfully. 

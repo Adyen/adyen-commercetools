@@ -2,12 +2,12 @@
 
 ## KCP payment
 1. Contact Adyen to enable KCP
-1. Backend creates a payment with following criteria:
+1. Shop creates a payment with following criteria:
     * `Payment.paymentMethodInfo.method = 'kcp_creditcard' OR payment.paymentMethodInfo.method = 'kcp_banktransfer'`
     * `Payment.transactions` contains a transaction with `type='Charge' and state='Initial'`
     * `Payment.custom.fields.returnUrl` contains return URL to which the shopper will be redirected after completion.
 1. Extension module makes a `Redirect shopper` request and saves following information to the payment object:
-    * `payment.interfaceInteractions` contains request and response with Adyen 
+    * `Payment.interfaceInteractions.type='makePayment'` contains request and response with Adyen 
     * `payment.custom.fields.redirectUrl`
     * `payment.custom.fields.redirectMethod`
     * `Charge` transaction state will be updated to `Pending`
