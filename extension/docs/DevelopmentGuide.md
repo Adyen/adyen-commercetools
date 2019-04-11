@@ -27,9 +27,9 @@ In order to run extension module, you have to provide following environmental va
 |`CTP_PROJECT_KEY` | Get CTP credentials from `https://mc.commercetools.com/${your CTP project ID}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is `manage_project`. |  |
 |`CTP_CLIENT_ID` | Get CTP credentials from `https://mc.commercetools.com/${your CTP project ID}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is `manage_project`. |  |
 |`CTP_CLIENT_SECRET` | Get CTP credentials from `https://mc.commercetools.com/${your CTP project ID}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is `manage_project`. |  |
-|`API_EXTENSION_BASE_URL` | URL of the Adyen-integration server. In case of any payment changes, [CTP API extension](https://docs.commercetools.com/http-api-projects-api-extensions) will call this URL and pass the payment object in body. | https://checkout-test.adyen.com/v40 |
+|`API_EXTENSION_BASE_URL` | URL of the Extension module server. In case of any payment changes, [CTP API extension](https://docs.commercetools.com/http-api-projects-api-extensions) will call this URL and pass the payment object in body. | https://checkout-test.adyen.com/v40 |
 
-After setting all variables, execute command `npm run extension` to run the module.
+After setting all environmental variables, execute command `npm run extension` to run the module.
 ##### Notice:
 Sometimes it's necessary to regenerate the API Key in Adyen, otherwise you'll get `403 Forbidden` error from Adyen.
 

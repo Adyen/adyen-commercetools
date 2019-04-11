@@ -20,31 +20,32 @@
 ## Glossary
 In this process, there are 3 parties involved:
 
-**Frontend** - the browser part of the shop. This is what the shopper interacts with.  
-**Backend** - the shop server which supplies front end with data.  
-**Adyen-integration** - hosted service (this repository) that interacts over [API extensions](https://docs.commercetools.com/http-api-projects-api-extensions).  
+**Shop** - the application that the shopper interacts with. It contains of a frontend part and a backend part.
+**Extension module** - hosted service (this repository) that interacts over [API extensions](https://docs.commercetools.com/http-api-projects-api-extensions).  
 **Shopper** - a person that's using the shop
 
-## Requirements for CTP project:
-All the requirements below should be automatically created by the Adyen-integration. It will not create if there
-are already resources with same key in the CTP project. In this case, you have to synchronize by yourself.
-1. [API Extension subscription to Adyen-integration endpoints](../resources/api-extensions.json)
+## Requirements for CTP project
+All the requirements below are automatically created by the Extension module.
+1. [API Extension subscription to Extension module endpoints](../resources/api-extension.json)
 1. [Custom types for payments](../resources/payment-custom-types.json)
 1. [Custom types for interface interactions](../resources/payment-interface-interaction-types.json)
 
+**Note**: Extension module will not create if there are already resources with same key in the CTP project. In this case, you have to synchronize by yourself.
+
 ## Required parameters
-In order to make the extension module working, following parameters have to be provided to the Adyen-integration.
+In order to make the extension module working, following parameters have to be provided to the Extension module.
 
 | Name | Description | Default value |
 | --- | --- | --- |
 | `CTP_PROJECT_KEY` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is manage_project. | |
 | `CTP_CLIENT_ID` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is manage_project. | |
 | `CTP_CLIENT_SECRET` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is manage_project. | |
-| `API_EXTENSION_BASE_URL` | URL of the Adyen-integration. This URL will be called by CTP Extension endpoint. | |
+| `API_EXTENSION_BASE_URL` | URL of the Extension module. This URL will be called by CTP Extension endpoint. | |
 | `ADYEN_API_KEY` | Go to [Account/Users](https://ca-test.adyen.com/ca/ca/config/users.shtml) - Select a user with `Web Service` User type - Generate New API Key (notice: in case you get `403 Forbidden` error from Adyen, try to regenerate the key). | |
 | `ADYEN_MERCHANT_ACCOUNT` | Go to [Account/Merchant accounts](https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount). | |
 
 # Checkout steps
+In your shop application, ensure the steps below are done:
 1. On each checkout step [validate cart state](#validate-cart-state)
 1. Before starting payment process make sure there is no valid payments already:
     * [Recalculate cart](#recalculate-cart)
@@ -55,13 +56,12 @@ If all above validations are passed then order can be created right away and ord
 Otherwise shopper might continue with further payment steps.
 
 1. **Get available payment methods**  
-    1. In order to [get which payment methods are available to the current shopper](https://docs.adyen.com/developers/checkout/api-integration#step1getavailablepaymentmethods),
-    you have to create/update a CTP Payment with following properties:
+    [Create/update a CTP Payment](https://docs.commercetools.com/http-api-projects-payments) with following properties:
         - `Payment.paymentMethodInfo.method = empty or undefined`   
-        - `Payment.paymentMethodInfo.countryCode != null` - set the country of a shopper. Please consult with Adyen for the right format.  
-    1. Adyen-integration will make a [request](https://docs.adyen.com/developers/checkout/api-integration#step1getavailablepaymentmethods) to Adyen API.
+        - `Payment.custom.fields.countryCode != null` - set the country of a shopper. Please [consult with Adyen](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/v41/paymentMethods) for the right format.  
+    1. Extension module will make a [request](https://docs.adyen.com/developers/checkout/api-integration#step1getavailablepaymentmethods) to Adyen API.
     1. The response will be saved in interface interaction with `type='ctp-adyen-integration-interaction'` and `fields.type='getPaymentDetails'` as stringified JSON.
-    1. Before presenting all the methods, please check Adyen-integration documentation for supported payment methods.
+    1. Before presenting all the methods, please check Extension module documentation for supported payment methods.
 1. **Continue with one of the supported payment methods:**
     1. [Credit card payment](./CreditCardIntegration.md)  
     1. [Paypal payment](./PaypalIntegration.md)
@@ -70,7 +70,7 @@ Otherwise shopper might continue with further payment steps.
 1. **Adyen returns HTTP code other than 200**  
 Request and response from Adyen are always stored in `Payment.interfaceInteractions` as strigified JSON.
 1. **Shopper successfully paid but `redirectUrl` was not reached**  
-In some payment redirect cases there might be a valid payment but no order as shopper did not reach frontend's `redirectUrl`.
+In some payment redirect cases there might be a valid payment but no order as shopper did not reach the shop's `redirectUrl`.
 For example after successfully issued payment shopper loses internet connection or accidentally closes the tab.
 In this case [Notification module](../../notification) will receive later a notification with successful content, process it and update the payment.
 Usage of scheduled [commercetools-payment-to-order-processor](https://github.com/commercetools/commercetools-payment-to-order-processor) job ensures that for every successful payment
@@ -83,15 +83,15 @@ will be shown and order creation declined.
 
 # Validations
 ### Validate cart state
-Check if current cart has been ordered already (`Cart.cartState = Ordered`).
-In this case load order by ordered cart ID and show oder confirmation page.
+Check if [current cart has been ordered already](https://docs.commercetools.com/http-api-projects-carts#cartstate) (`Cart.cartState = Ordered`).
+In this case load order by ordered cart ID and show order confirmation page.
 This might happen if cart has been already ordered in a different tab 
 or by asynchronous process like [commercetools-payment-to-order-processor job](https://github.com/commercetools/commercetools-payment-to-order-processor).
 
 ### Recalculate cart
-To ensure cart totals are always up-to-date execute cart recalculate.
-Time limited discounts are not removed/invalidated from cart automatically. 
-They are validated on recalculate and order creation only.
+[Execute cart recalculate](https://docs.commercetools.com/http-api-projects-carts#recalculate) to ensure:
+ - Cart totals are always up-to-date 
+ - Time limited discounts are not removed/invalidated from cart automatically. They are validated on recalculate and order creation only.
 
 ### Validate payment
 There must be at least one CTP payment object of type Adyen
