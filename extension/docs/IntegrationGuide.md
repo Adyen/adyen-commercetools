@@ -20,9 +20,9 @@
 ## Glossary
 In this process, there are 3 parties involved:
 
-**Shop** - the application that the shopper interacts with. It contains of a frontend part and a backend part.
-**Extension module** - hosted service (this repository) that interacts over [API extensions](https://docs.commercetools.com/http-api-projects-api-extensions).  
-**Shopper** - a person that's using the shop
+- **Shop** - the application that the shopper interacts with. It contains of a frontend part and a backend part.  
+- **Extension module** - hosted service (this repository) that interacts over [API extensions](https://docs.commercetools.com/http-api-projects-api-extensions).  
+- **Shopper** - a person that's using the shop
 
 ## Requirements for CTP project
 All the requirements below are automatically created by the Extension module.
@@ -35,17 +35,17 @@ All the requirements below are automatically created by the Extension module.
 ## Required parameters
 In order to make the extension module working, following parameters have to be provided to the Extension module.
 
-| Name | Description | Default value |
-| --- | --- | --- |
-| `CTP_PROJECT_KEY` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is manage_project. | |
-| `CTP_CLIENT_ID` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is manage_project. | |
-| `CTP_CLIENT_SECRET` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is manage_project. | |
-| `API_EXTENSION_BASE_URL` | URL of the Extension module. This URL will be called by CTP Extension endpoint. | |
-| `ADYEN_API_KEY` | Go to [Account/Users](https://ca-test.adyen.com/ca/ca/config/users.shtml) - Select a user with `Web Service` User type - Generate New API Key (notice: in case you get `403 Forbidden` error from Adyen, try to regenerate the key). | |
-| `ADYEN_MERCHANT_ACCOUNT` | Go to [Account/Merchant accounts](https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount). | |
+| Name | Description |
+| --- | --- |
+| `CTP_PROJECT_KEY` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended template is `Admin Client`. |
+| `CTP_CLIENT_ID` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended template is `Admin Client`. |
+| `CTP_CLIENT_SECRET` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended template is `Admin Client`. |
+| `API_EXTENSION_BASE_URL` | URL of the Extension module. This URL will be called by CTP Extension endpoint. |
+| `ADYEN_API_KEY` | Go to [Account/Users](https://ca-test.adyen.com/ca/ca/config/users.shtml) - Select a user with `Web Service` User type - Generate New API Key (notice: in case you get `403 Forbidden` error from Adyen, try to regenerate the key). |
+| `ADYEN_MERCHANT_ACCOUNT` | Go to [Account/Merchant accounts](https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount) and get the name in Acccount code. | |
 
 # Checkout steps
-In your shop application, ensure the steps below are done:
+In your shop, ensure the steps below are done:
 1. On each checkout step [validate cart state](#validate-cart-state)
 1. Before starting payment process make sure there is no valid payments already:
     * [Recalculate cart](#recalculate-cart)
@@ -56,15 +56,15 @@ If all above validations are passed then order can be created right away and ord
 Otherwise shopper might continue with further payment steps.
 
 1. **Get available payment methods**  
-    [Create/update a CTP Payment](https://docs.commercetools.com/http-api-projects-payments) with following properties:
+    1. [Create/update a CTP Payment](https://docs.commercetools.com/http-api-projects-payments) with following properties:
         - `Payment.paymentMethodInfo.method = empty or undefined`   
         - `Payment.custom.fields.countryCode != null` - set the country of a shopper. Please [consult with Adyen](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/v41/paymentMethods) for the right format.  
     1. Extension module will make a [request](https://docs.adyen.com/developers/checkout/api-integration#step1getavailablepaymentmethods) to Adyen API.
     1. The response will be saved in interface interaction with `type='ctp-adyen-integration-interaction'` and `fields.type='getPaymentDetails'` as stringified JSON.
     1. Before presenting all the methods, please check Extension module documentation for supported payment methods.
-1. **Continue with one of the supported payment methods:**
-    1. [Credit card payment](./CreditCardIntegration.md)  
-    1. [Paypal payment](./PaypalIntegration.md)
+1. **Continue with one of the supported payment methods**
+    - [Credit card payment](./CreditCardIntegration.md)  
+    - [Paypal payment](./PaypalIntegration.md)
 
 # Error cases
 1. **Adyen returns HTTP code other than 200**  
