@@ -10,12 +10,12 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Prerequisites
-1. Install Node.js >=8
-1. Install npm >=6
-1. Run `npm сi`
+## Requirements
+Node.js version 8 LTS or higher is supported.
 
 ## Run Module
+Execute `npm сi` to download all dependencies.
+
 In order to run the notification module, you have to provide following environmental variables:
 
 Name | Content | Required | Default value

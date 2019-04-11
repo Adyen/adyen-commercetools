@@ -25,7 +25,7 @@ In this process, there are 2 parties involved:
 processes and stores them on a commercetools platform project.
 
 ### Requirements 
-Node.js version LTS 8 or higher is supported.
+Node.js version 8 LTS or higher is supported.
 
 ## Configuration
 
