@@ -17,7 +17,7 @@
     * `Payment.interfaceInteractions.type='completePayment'` contains request and response with Adyen 
     * `Payment.transactions` with a transaction `type='Charge' and state='Pending'` will be changed to a new state according to [the returned result code](IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
     * `pspReference` will be saved in a matching transaction from the previous point in a field `transactionInteractionId`
-1. Shop validate the payment and presents the results to the shopper.
+1. Shop validates the payment and presents the payment result to the shopper.
      
 *Notice*: the last step of Extension module is mandatory but it doesn't play any significant role for Adyen.
 Funds has already been reserved/transferred after the shopper confirms payment on Paypal. Nevertheless, it's important
