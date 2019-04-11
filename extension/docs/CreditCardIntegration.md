@@ -18,9 +18,7 @@ The following features are not supported:
 * Manual capture
 
 ### Credit card
-1. Shop collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards#step1collectshopperdetails)
-and sends these information to Backend.
-1. Backend creates a CTP Payment with following properties
+1. Shop collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step1collectshopperdetails) and creates a payment with following criteria:
     * `Payment.paymentMethodInfo.method = 'creditCard'`
     * `Payment.transactions` contains a transaction with `type='Charge' and state='Initial'`
     * `Payment.custom.fields.encryptedCardNumber` contains credit card number encrypted in the previous step.
@@ -38,7 +36,7 @@ and sends these information to Backend.
 ![Credit card flow](https://user-images.githubusercontent.com/803826/55894199-fb050b80-5bb9-11e9-88e9-7efbe62c55bb.png)
 
 ### Credit card with 3D Secure
-1. Shop collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step1collectshopperdetails) and creates a payment with following criteria
+1. Shop collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step1collectshopperdetails) and creates a payment with following criteria:
     * `Payment.paymentMethodInfo.method = 'creditCard_3d'`
     * `Payment.transactions` contains a transaction with `type='Charge' and state='Initial'`
     * `Payment.custom.fields.encryptedCardNumber` contains credit card number encrypted in the previous step.
