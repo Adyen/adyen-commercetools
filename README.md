@@ -10,12 +10,12 @@ In order to make the integration run properly, both modules have to run.
 
 ## Overview
 ![Overview diagram](https://user-images.githubusercontent.com/9251453/56045959-86110d80-5d42-11e9-9c0f-21ce651594e3.png)
-1. Shop communicates only with commercetools platform.
-1. commercetools platform communicates with the Extension module.
-1. Extension module communicates with Adyen payment provider.
-1. After Adyen returns a payment result, commercetools payment resource will be updated and the shop verifies and presents the result.
-1. When Adyen cannot fulfill the payment requirement right away, it will later send a notification as a response.
-1. The Notification module will process the notification and update the matching commercetools payment accordingly.    
+- Shop communicates only with commercetools platform.
+- commercetools platform communicates with the Extension module.
+- Extension module communicates with Adyen payment provider.
+- After Adyen returns a payment result, commercetools payment resource will be updated and the shop verifies and presents the result.
+- When Adyen cannot fulfill the payment requirement right away, it will later send a notification as a response.
+- The Notification module will process the notification and update the matching commercetools payment accordingly.    
 
 ## Extension module
 Extension module is a public service. When CTP Payments change, It receives calls from 
