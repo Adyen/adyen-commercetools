@@ -13,7 +13,7 @@ In order to make the integration run properly, both modules have to run.
 - Shop communicates only with commercetools platform.
 - commercetools platform communicates with the Extension module.
 - Extension module communicates with Adyen payment provider.
-- After Adyen returns a payment result, commercetools payment resource will be updated and the shop verifies and presents the result.
+- After Adyen returns a payment result, commercetools payment will be updated and the shop verifies and presents the result.
 - When Adyen cannot fulfill the payment requirement right away, it will later send a notification as a response.
 - The Notification module will process the notification and update the matching commercetools payment accordingly.    
 
