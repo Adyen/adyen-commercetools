@@ -13,6 +13,8 @@
 
 Please consult [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards) for additional information.
 
+**Note**:
+
 The following features are not supported:
 * Recurring card payments
 * Manual capture
