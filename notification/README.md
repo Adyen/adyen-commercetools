@@ -4,7 +4,7 @@ Notification module is a part of the commercetools Adyen integration
 which is responsible for receiving notifications from Adyen payment service provider,
 processing and storing them on a commercetools platform project.
 
-
+![image](https://user-images.githubusercontent.com/9251453/56136433-12b20a80-5f93-11e9-9d25-d49398ed16b1.png)
 ### Processing notifications
 Adyen sends notifications which look like this:
 
