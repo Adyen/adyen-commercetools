@@ -51,8 +51,10 @@ docker pull commercetools/commercetools-adyen-integration-notification:X.X.X
 (replace X.X.X with a image tag)
 
 ##### Run the container
+
+Replace all `XXX` values and execute:
 ```
-docker run ...
+docker run -e CTP_PROJECT_KEY=XXX -e CTP_CLIENT_ID=XXX -e CTP_CLIENT_SECRET=XXX ctp-adyen-integration-notification:XXX
 ```
 
 ## Configuration
