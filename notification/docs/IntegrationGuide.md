@@ -26,7 +26,7 @@ processes and stores them on a commercetools platform project.
 ### Requirements 
 Node.js version 8 LTS or higher is supported.
 
-## Configuration
+## Deployment
 
 ##### Environment variables to configure the notification module:
 Name | Content | Required | Default value
@@ -54,7 +54,7 @@ docker pull commercetools/commercetools-adyen-integration-notification:X.X.X
 docker run ...
 ```
 
-### After deployment
+## Configuration
 
 After deployment you have to register the Notification module public URL in the Adyen Customer Area in order to receive notifications.
 
