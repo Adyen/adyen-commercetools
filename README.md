@@ -6,7 +6,7 @@ This repository provides integration between Commercetools and Adyen payment ser
 - Paypal payment
 
 This repository contains two standalone modules that interact with CTP and Adyen.
-In order to make the integration run properly, both modules have to run.
+Complete integration requires running both of the modules.
 
 ## Overview
 ![Overview diagram](https://user-images.githubusercontent.com/9251453/56047499-ce7dfa80-5d45-11e9-9443-aaef9da31eab.png)
