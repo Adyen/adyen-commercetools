@@ -23,4 +23,7 @@ Extension module is a public service. When CTP Payments change, It receives call
 maps and sends the request to Adyen and then returns update actions back to commercetools platform.
 For more info, go to the [Extension module](./extension/README.md).
 
-## Notification module  
+## Notification module
+Notification module is a public service which receives notifications sent by Adyen,
+processes them and saves on a commercetools project.
+For more info, go to the [Notification module](./notification/README.md).
