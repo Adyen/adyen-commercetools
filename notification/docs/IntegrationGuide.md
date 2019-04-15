@@ -8,7 +8,7 @@
   - [Requirements](#requirements)
 - [Deployment](#deployment)
       - [Environment variables to configure the notification module:](#environment-variables-to-configure-the-notification-module)
-  - [Deployment](#deployment-1)
+  - [Deployment using Docker image](#deployment-using-docker-image)
       - [Pull the image](#pull-the-image)
       - [Run the container](#run-the-container)
 - [Configuration](#configuration)
@@ -41,7 +41,7 @@ PORT | port on which the application will run | NO | 443
 Check out the deployment [Best Practices documentation](../../docs/BEST_PRACTICES.md)
 
 
-### Deployment
+### Deployment using Docker image
 For easy deployment you can use the [Notification module docker image](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-notification/tags).
 
 ##### Pull the image 
