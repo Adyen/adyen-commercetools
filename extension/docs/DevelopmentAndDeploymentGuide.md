@@ -17,7 +17,7 @@
 ## Prerequisites
 1. Install Node.js >=10
 1. Install npm >=5
-1. Run `npm i`
+1. Run `npm ci`
 
 ## Run Module
 In order to run extension module, you have to provide following environmental variables:
