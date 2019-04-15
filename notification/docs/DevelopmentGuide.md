@@ -31,8 +31,8 @@ After setting all variables, execute command `npm run start` to run the module.
 
 ## Run Tests
 
-1. Execute `npm run unit-test` to run [Unit tests](../test/unit)
-1. Execute `npm run integration-test` to run [Integration tests](../test/integration) (all required environment variables must be set)
+- Execute `npm run unit-test` to run [Unit tests](../test/unit)
+- Execute `npm run integration-test` to run [Integration tests](../test/integration) (all required environment variables must be set)
 
 Execute `npm run test` to run all tests
 
