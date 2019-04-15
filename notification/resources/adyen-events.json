@@ -18,14 +18,44 @@
     "transactionState": "Pending"
   },
   {
+    "eventCode": "AUTHORISATION_ADJUSTMENT",
+    "success": "true",
+    "transactionType": "Authorization",
+    "transactionState": "Pending"
+  },
+  {
     "eventCode": "CANCELLATION",
     "success": "false",
     "transactionType": "CancelAuthorization",
     "transactionState": "Failure"
   },
   {
+    "eventCode": "CANCELLATION",
+    "success": "true",
+    "transactionType": "CancelAuthorization",
+    "transactionState": "Success"
+  },
+  {
+    "eventCode": "CANCEL_OR_REFUND",
+    "success": "false",
+    "transactionType": "Refund",
+    "transactionState": "Failure"
+  },
+  {
+    "eventCode": "CANCEL_OR_REFUND",
+    "success": "true",
+    "transactionType": "Refund",
+    "transactionState": "Success"
+  },
+  {
     "eventCode": "CAPTURE",
     "success": "false",
+    "transactionType": "Charge",
+    "transactionState": "Failure"
+  },
+  {
+    "eventCode": "CAPTURE",
+    "success": "true",
     "transactionType": "Charge",
     "transactionState": "Success"
   },
@@ -44,6 +74,12 @@
   {
     "eventCode": "REFUND",
     "success": "false",
+    "transactionType": "Refund",
+    "transactionState": "Failure"
+  },
+  {
+    "eventCode": "REFUND",
+    "success": "true",
     "transactionType": "Refund",
     "transactionState": "Success"
   },
@@ -75,6 +111,12 @@
     "eventCode": "SECOND_CHARGEBACK",
     "success": "false",
     "transactionType": "Chargeback",
+    "transactionState": "Failure"
+  },
+  {
+    "eventCode": "SECOND_CHARGEBACK",
+    "success": "true",
+    "transactionType": "Chargeback",
     "transactionState": "Success"
   },
   {
@@ -102,8 +144,20 @@
     "transactionState": "Pending"
   },
   {
+    "eventCode": "PREARBITRATION_WON",
+    "success": "true",
+    "transactionType": "Chargeback",
+    "transactionState": "Pending"
+  },
+  {
     "eventCode": "PREARBITRATION_LOST",
     "success": "false",
+    "transactionType": "Chargeback",
+    "transactionState": "Pending"
+  },
+  {
+    "eventCode": "PREARBITRATION_LOST",
+    "success": "true",
     "transactionType": "Chargeback",
     "transactionState": "Pending"
   },
@@ -132,8 +186,20 @@
     "transactionState": null
   },
   {
+    "eventCode": "PAYOUT_THIRDPARTY",
+    "success": "true",
+    "transactionType": null,
+    "transactionState": null
+  },
+  {
     "eventCode": "REFUND_WITH_DATA",
     "success": "false",
+    "transactionType": null,
+    "transactionState": null
+  },
+  {
+    "eventCode": "REFUND_WITH_DATA",
+    "success": "true",
     "transactionType": null,
     "transactionState": null
   },
