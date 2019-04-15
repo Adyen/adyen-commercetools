@@ -15,8 +15,8 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Prerequisites
-1. Install Node.js >=10
-1. Install npm >=5
+1. Install Node.js >=8
+1. Install npm >=6
 1. Run `npm ci`
 
 ## Run Module
