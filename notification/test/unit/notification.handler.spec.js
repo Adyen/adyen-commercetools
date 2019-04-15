@@ -187,7 +187,7 @@ describe('notification module', () => {
     const expectedUpdateActions = [
       {
         action: 'changeTransactionState',
-        state: 'Success',
+        state: 'Failure',
         transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646'
       }
     ]
