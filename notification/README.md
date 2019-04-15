@@ -6,6 +6,10 @@ processing and storing them on a commercetools platform project.
 
 ![image](https://user-images.githubusercontent.com/9251453/56137277-bbad3500-5f94-11e9-8559-7d46113dbbf6.png)
 
+Check out the [Integration Guide](./docs/IntegrationGuide.md) for more information on how to deploy and configure the notification module
+
+Check out the [Development Guide](./docs/DevelopmentGuide.md) for more information on how to install dependencies and run tests
+
 ### Processing notifications
 Adyen sends notifications which look like this:
 
@@ -66,6 +70,3 @@ Received notification will be stored on the [interfaceInteraction](https://docs.
 If mapping for the received notification was not found then payment will be updated only with a new `interfaceInteraction`.
 
 If payment was not found then the notification will be skipped from processing.
-
-Check out the [Integration Guide](./docs/IntegrationGuide.md) for more information on how to deploy and configure the notification module
-Check out the [Development Guide](./docs/DevelopmentGuide.md) for more information on how to install dependencies and run tests
