@@ -1,3 +1,11 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Contents**
+
+- [KCP payment](#kcp-payment)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 **Please see [Integration Guide](IntegrationGuide.md) first before continuing with this document.**
 
 ## KCP payment

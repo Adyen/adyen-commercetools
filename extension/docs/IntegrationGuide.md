@@ -8,12 +8,14 @@
   - [Requirements for CTP project](#requirements-for-ctp-project)
   - [Required parameters](#required-parameters)
 - [Checkout steps](#checkout-steps)
+- [Error cases](#error-cases)
 - [Validations](#validations)
     - [Validate cart state](#validate-cart-state)
     - [Recalculate cart](#recalculate-cart)
     - [Validate payment](#validate-payment)
     - [Validate payment transaction](#validate-payment-transaction)
     - [Mapping from Adyen result codes to CTP transaction state](#mapping-from-adyen-result-codes-to-ctp-transaction-state)
+- [Bad practice](#bad-practice)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

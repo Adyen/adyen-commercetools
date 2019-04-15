@@ -8,6 +8,9 @@
 - [Run Module](#run-module)
       - [Notice:](#notice)
 - [Run Tests](#run-tests)
+- [Deployment](#deployment)
+  - [Pull the image](#pull-the-image)
+  - [Run the container](#run-the-container)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -42,3 +45,19 @@ There are 3 different types of tests. Don't forget to provide all required envir
 1. [Integration tests](../test/integration) - these tests interacts with real 3rd party systems.
 1. [Web tests](../../cypress/integration) - for some payment methods, it's not possible to test without interacting
 with the UI (e.g. credit card 3ds). In such cases, we use Cypress.io. Run `npm run cypress-ui` to test.
+
+## Deployment
+For easy deployment you can use the [Extension module docker image](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension/tags).
+
+### Pull the image 
+```
+docker pull commercetools/commercetools-adyen-integration-extension:X.X.X
+```
+(replace X.X.X with a image tag)
+
+### Run the container
+
+Replace all `XXX` values and execute:
+```
+docker run -e ADYEN_API_BASE_URL=XXX -e ADYEN_MERCHANT_ACCOUNT=XXX -e API_EXTENSION_BASE_URL=XXX -e CTP_PROJECT_KEY=XXX -e ADYEN_API_KEY=XXX -e CTP_CLIENT_ID=XXX -e CTP_CLIENT_SECRET=XXX ctp-adyen-integration-extension:XXX
+```
