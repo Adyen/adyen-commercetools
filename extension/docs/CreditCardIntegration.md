@@ -19,7 +19,7 @@ The following features are not supported:
 * Manual capture
 
 ### Credit card
-1. Shop collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step1collectshopperdetails) and creates a payment with following criteria:
+1. Shop collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step1collectshopperdetails) and creates a payment with following criteria ([Example payment](../test/fixtures/payment-credit-card.json)):
     * `Payment.paymentMethodInfo.method = 'creditCard'`
     * `Payment.transactions` contains a transaction with `type='Charge' and state='Initial'`
     * `Payment.custom.fields.encryptedCardNumber` contains credit card number encrypted in the previous step.
@@ -34,10 +34,10 @@ The following features are not supported:
     * `pspReference` will be saved in a matching transaction from the previous point in a field `Payment.transactions.interactionId`
 1. Shop validates the payment and presents the payment result to the shopper.
 
-![Credit card flow](https://user-images.githubusercontent.com/803826/55894199-fb050b80-5bb9-11e9-88e9-7efbe62c55bb.png)
+![Credit card flow](https://user-images.githubusercontent.com/803826/56141218-adfbad80-5f9c-11e9-846b-58d0bb6d6491.png)
 
 ### Credit card with 3D Secure
-1. Shop collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step1collectshopperdetails) and creates a payment with following criteria:
+1. Shop collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step1collectshopperdetails) and creates a payment with following criteria ([Example payment](../test/fixtures/payment-credit-card-3d.json)):
     * `Payment.paymentMethodInfo.method = 'creditCard_3d'`
     * `Payment.transactions` contains a transaction with `type='Charge' and state='Initial'`
     * `Payment.custom.fields.encryptedCardNumber` contains credit card number encrypted in the previous step.
@@ -57,6 +57,16 @@ The following features are not supported:
     * `Payment.custom.fields.redirectMethod`
 1. Shop [redirects shopper](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step3redirectshopper) to verify credit card payment.
 1. After shopper verifies, shopper got redirected back to the shop. Shop gets from the form data a parameter `PaRes` and saves the parameter into the Payment custom field `Payment.custom.fields.PaRes`
+    ```json
+    {
+      "version": 1,
+      "actions": [{
+        "action": "setCustomField",
+        "name": "PaRes",
+        "value": "yourPaRes"
+      }]
+    }
+    ```
 1. Extension module makes a [payment request](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step4completepayment) and save following information to the payment object:
     * `Payment.interfaceInteractions.type='completePayment'` contains request and response with Adyen 
     * `Payment.transactions` with a transaction `type='Charge' and state='Pending'` will be changed to a new state according to [the returned result code](IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
@@ -65,7 +75,7 @@ The following features are not supported:
 
 **Important:** Adyen will send request to the issuing bank and the bank will authorize the payment or hold money ONLY after [Complete payment step](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step4completepayment) is done. In this documentation, it means all steps above have to be done successfully. 
 
-![3D Secure flow](https://user-images.githubusercontent.com/803826/55894047-b0838f00-5bb9-11e9-9377-c7db2a0c40f7.png)
+![3D Secure flow](https://user-images.githubusercontent.com/803826/56141166-93c1cf80-5f9c-11e9-88f4-95a694ad4227.png)
 
 ### Other
 Please consult [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards) for additional information.
