@@ -36,4 +36,4 @@ After setting all variables, execute command `npm run start` to run the module.
 
 Execute `npm run test` to run all tests
 
-In the end a code coverage report will be printed.
+In the end, a code coverage report will be printed.
