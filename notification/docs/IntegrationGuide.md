@@ -4,13 +4,14 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Contents**
 
-- [Deployment](#deployment)
   - [Glossary](#glossary)
   - [Requirements](#requirements)
-- [Configuration](#configuration)
+- [Deployment](#deployment)
       - [Environment variables to configure the notification module:](#environment-variables-to-configure-the-notification-module)
   - [Deployment](#deployment-1)
-  - [After deployment](#after-deployment)
+      - [Pull the image](#pull-the-image)
+      - [Run the container](#run-the-container)
+- [Configuration](#configuration)
     - [Register the endpoint](#register-the-endpoint)
 - [FAQ](#faq)
 
