@@ -66,3 +66,5 @@ If mapping for the received notification was not found then payment will be upda
 
 If payment was not found then the notification will be skipped from processing.
 
+Check out the [Integration Guide](./docs/IntegrationGuide.md) for more information on how to deploy and configure the notification module
+Check out the [Development Guide](./docs/DevelopmentGuide.md) for more information on how to install dependencies and run tests
