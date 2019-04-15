@@ -16,8 +16,6 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Deployment
-
 ### Glossary
 In this process, there are 2 parties involved:
 
@@ -45,8 +43,16 @@ Check out the deployment [Best Practices documentation](../../docs/BEST_PRACTICE
 ### Deployment
 For easy deployment you can use the [Notification module docker image](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-notification/tags).
 
+##### Pull the image 
+```
+docker pull commercetools/commercetools-adyen-integration-notification:X.X.X
+```
+(replace X.X.X with a image tag)
 
-
+##### Run the container
+```
+docker run ...
+```
 
 ### After deployment
 
