@@ -2,14 +2,12 @@
 
 set -e
 
-export REPO=$1
-export DOCKER_TAG=`if [ "$TRAVIS_BRANCH" == "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then echo "latest"; else echo "wip-${TRAVIS_BRANCH//\//-}" ; fi`
+REPO=$1
+DOCKER_REPOSITORY="commercetools/commercetools-adyen-integration-${REPO}"
 
-echo "Building Docker image using tag 'commercetools/commercetools-adyen-integration-${REPO}:${COMMIT}'."
 cd ./$REPO/
-docker build -t "commercetools/commercetools-adyen-integration-${REPO}:${COMMIT}" .
+echo "Building Docker image using tag '${DOCKER_REPOSITORY}:${TRAVIS_TAG}'."
+docker build -t "${DOCKER_REPOSITORY}:${TRAVIS_TAG}" .
 
-echo "Adding additional tag '${REPO}:${TRAVIS_TAG}' to already built Docker image '${REPO}:${COMMIT}'."
-docker tag $REPO:$COMMIT $REPO:${TRAVIS_TAG};
-echo "Pushing Docker images to repository '${REPO}' (all local tags are pushed)."
-docker push $REPO
+echo "Pushing Docker images to repository '${DOCKER_REPOSITORY}'."
+docker push "${DOCKER_REPOSITORY}:${TRAVIS_TAG}"
