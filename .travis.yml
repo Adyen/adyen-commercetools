@@ -13,10 +13,17 @@ script:
   - npm ci
   - npm run test
   - if [ "$TEST_DIR" = "extension" ]; then npm run cypress; fi
+  - cd $TRAVIS_BUILD_DIR
+
+before_deploy:
+  - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
+
+after_deploy:
+  - docker logout
 
 deploy:
   - provider: script
-    script: bash ./travis-build.sh
+    script: bash ./travis-build.sh "$TEST_DIR"
     on:
       tags: true
       condition: $TRAVIS_TAG =~ ^v[0-9]+.[0-9]+.[0-9]+
