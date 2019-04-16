@@ -14,7 +14,7 @@ async function ensureInterfaceInteractionCustomType (ctpClient) {
         logger.info('Successfully created an interfaceInteraction type')
       }
     } catch (e) {
-      logger.error('Error when creating interface interaction custom type, skipping...', JSON.stringify(e))
+      logger.error(e, 'Error when creating interface interaction custom type, skipping...')
     }
   }, { concurrency: 3 })
 }

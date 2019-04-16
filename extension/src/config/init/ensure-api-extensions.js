@@ -13,7 +13,7 @@ async function ensureApiExtensions (ctpClient, ctpAdyenIntegrationBaseUrl) {
       logger.info('Successfully created api extension')
     }
   } catch (e) {
-    logger.error('Error when creating api extension, skipping...', JSON.stringify(e))
+    logger.error(e, 'Error when creating api extension, skipping...')
   }
 }
 

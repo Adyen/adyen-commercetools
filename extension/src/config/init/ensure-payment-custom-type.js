@@ -12,7 +12,7 @@ async function ensurePaymentCustomType (ctpClient) {
       logger.info('Successfully created payment custom type')
     }
   } catch (e) {
-    logger.error('Error when creating payment custom type, skipping...', JSON.stringify(e))
+    logger.error(e, 'Error when creating payment custom type, skipping...')
   }
 }
 
