@@ -216,6 +216,8 @@ describe('notification module', () => {
       await notificationHandler.processNotifications(notificationsMock, ctpClient)
       // eslint-disable-next-line no-empty
     } catch (e) {
+      // we check retry logic here and it should throw after certain amount
+      // of retries. So the error is expected
     }
     expect(ctpClientUpdateSpy.callCount).to.equal(21)
   })
