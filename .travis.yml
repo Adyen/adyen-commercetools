@@ -6,9 +6,6 @@ env:
   - TEST_DIR=extension
 before_install:
   - npm i -g npm@^6.4.1
-before_cache:
-  # because travis makes cache before calling "after_success" section we must install gcloud SDK here
-  - $CI_SCRIPTS/gcloud-install-sdk.sh || travis_terminate 1
 services:
   - docker
 script:
@@ -16,3 +13,10 @@ script:
   - npm ci
   - npm run test
   - if [ "$TEST_DIR" = "extension" ]; then npm run cypress; fi
+
+deploy:
+  - provider: script
+    script: bash ./travis-build.sh
+    on:
+      tags: true
+      condition: $TRAVIS_TAG =~ ^v[0-9]+.[0-9]+.[0-9]+
