@@ -11,7 +11,8 @@
     "cypress:open": "cypress open",
     "cypress": "server-test cypress-setup 8000 cypress:run",
     "cypress-ui": "server-test cypress-setup 8000 cypress:open",
-    "cypress-setup": "node ./cypress/set-up-server.js"
+    "cypress-setup": "node ./cypress/set-up-server.js",
+    "toc": "doctoc docs --title '**Contents**'"
   },
   "keywords": [
     "Adyen",
@@ -29,8 +30,8 @@
     "email": "ps-dev@commercetools.de"
   },
   "engines": {
-    "node": ">=10",
-    "npm": ">=5"
+    "node": ">=8",
+    "npm": ">=6"
   },
   "contributors": [],
   "bugs": {
@@ -42,6 +43,7 @@
     "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
     "cypress": "^3.1.5",
+    "doctoc": "^1.4.0",
     "eslint": "^5.12.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-commercetools": "^6.0.0",
