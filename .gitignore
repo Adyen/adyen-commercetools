@@ -1,5 +1,3 @@
-# Created by .ignore support plugin (hsz.mobi)
-### Node template
 # Logs
 logs
 *.log
@@ -20,3 +18,8 @@ node_modules/
 # IntelliJ
 .idea
 *.iml
+
+secrets.yaml
+
+# NYC test coverage
+.nyc_output/

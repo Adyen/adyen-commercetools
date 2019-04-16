@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "test": "mocha --exit --timeout 30000 --full-trace test/**/*.spec.js",
-    "start": "node ./src/index.js",
+    "start": "node ./src/init.js",
     "lint": "eslint .",
     "cypress:run": "cypress run",
     "cypress:open": "cypress open",

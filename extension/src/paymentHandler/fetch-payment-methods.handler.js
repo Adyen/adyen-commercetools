@@ -8,7 +8,6 @@ async function handlePayment (paymentObject) {
   const { request, response } = await _fetchPaymentMethods(paymentObject)
   const responseBody = await response.json()
   return {
-    version: paymentObject.version,
     actions: [
       pU.createAddInterfaceInteractionAction({
         request, response: responseBody, type: 'getAvailablePaymentMethods'

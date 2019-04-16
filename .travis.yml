@@ -1,13 +1,29 @@
 language: node_js
 node_js:
-  - '10'
+  - '8'
 env:
   - TEST_DIR=notification
   - TEST_DIR=extension
 before_install:
-  - npm i -g npm@^6.9.0
+  - npm i -g npm@^6.4.1
+services:
+  - docker
 script:
   - cd $TEST_DIR
   - npm ci
   - npm run test
   - if [ "$TEST_DIR" = "extension" ]; then npm run cypress; fi
+  - cd $TRAVIS_BUILD_DIR
+
+before_deploy:
+  - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
+
+after_deploy:
+  - docker logout
+
+deploy:
+  - provider: script
+    script: bash ./travis-build.sh "$TEST_DIR"
+    on:
+      tags: true
+      condition: $TRAVIS_TAG =~ ^v[0-9]+.[0-9]+.[0-9]+

@@ -37,7 +37,7 @@ function createCtpClient ({
       authMiddleware,
       httpMiddleware,
       queueMiddleware
-    ],
+    ]
   })
 }
 

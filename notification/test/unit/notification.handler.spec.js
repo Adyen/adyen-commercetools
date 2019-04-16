@@ -18,21 +18,17 @@ const config = {
 }
 
 describe('notification module', () => {
-
   afterEach(() => sandbox.restore())
 
   it('should update payment with a new InterfaceInteraction and payment status '
     + 'when current payment does not have the interfaceInteraction and the transaction'
     + 'which are going to be set', async () => {
-
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
-      return {
-        body: {
-          results: [paymentMock]
-        }
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [paymentMock]
       }
-    })
+    }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     await notificationHandler.processNotifications(notificationsMock, ctpClient)
     const expectedUpdateActions = [
@@ -60,12 +56,12 @@ describe('notification module', () => {
       }
     ]
 
-    // Timestamp is set to the current date during the update action calculation
+    // createdAt is set to the current date during the update action calculation
     // We can't know what is set there
-    expect(ctpClientUpdateSpy.args[0][3][0].fields.timestamp).to.exist
-    const actualUpdateActionsWithoutTimestamp = ctpClientUpdateSpy.args[0][3]
-    delete actualUpdateActionsWithoutTimestamp[0].fields.timestamp
-    expect(actualUpdateActionsWithoutTimestamp).to.deep.equal(expectedUpdateActions)
+    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
   })
 
   it('should update payment with a new InterfaceInteraction but not payment status '
@@ -73,23 +69,21 @@ describe('notification module', () => {
     + 'but has a transaction with the correct status', async () => {
     const modifiedPaymentMock = cloneDeep(paymentMock)
     modifiedPaymentMock.transactions.push({
-      "type": "Authorization",
-      "amount": {
-        "type": "centPrecision",
-        "currencyCode": "EUR",
-        "centAmount": 495,
-        "fractionDigits": 2
+      type: 'Authorization',
+      amount: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 495,
+        fractionDigits: 2
       },
-      "state": "Success"
+      state: 'Success'
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
-      return {
-        body: {
-          results: [modifiedPaymentMock]
-        }
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [modifiedPaymentMock]
       }
-    })
+    }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     await notificationHandler.processNotifications(notificationsMock, ctpClient)
     const expectedUpdateActions = [
@@ -106,12 +100,12 @@ describe('notification module', () => {
       }
     ]
 
-    // Timestamp is set to the current date during the update action calculation
+    // createdAt is set to the current date during the update action calculation
     // We can't know what is set there
-    expect(ctpClientUpdateSpy.args[0][3][0].fields.timestamp).to.exist
-    const actualUpdateActionsWithoutTimestamp = ctpClientUpdateSpy.args[0][3]
-    delete actualUpdateActionsWithoutTimestamp[0].fields.timestamp
-    expect(actualUpdateActionsWithoutTimestamp).to.deep.equal(expectedUpdateActions)
+    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
   })
 
   it('should update payment with a payment status but not new InterfaceInteraction '
@@ -126,17 +120,15 @@ describe('notification module', () => {
       fields: {
         notification: JSON.stringify(notificationsMock[0]),
         status: 'SUCCESS',
-        timestamp: '2019-02-05T12:29:36.028Z'
+        createdAt: '2019-02-05T12:29:36.028Z'
       }
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
-      return {
-        body: {
-          results: [modifiedPaymentMock]
-        }
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [modifiedPaymentMock]
       }
-    })
+    }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     await notificationHandler.processNotifications(notificationsMock, ctpClient)
     const expectedUpdateActions = [
@@ -159,27 +151,25 @@ describe('notification module', () => {
   it('should update transaction with a new state', async () => {
     const modifiedPaymentMock = cloneDeep(paymentMock)
     const notificationsMockClone = cloneDeep(notificationsMock)
-    notificationsMockClone[0].NotificationRequestItem.eventCode = "CAPTURE"
-    notificationsMockClone[0].NotificationRequestItem.success = "false"
+    notificationsMockClone[0].NotificationRequestItem.eventCode = 'CAPTURE'
+    notificationsMockClone[0].NotificationRequestItem.success = 'false'
     modifiedPaymentMock.interfaceInteractions.push({
       type: {
         typeId: 'type',
         id: '3fd15a04-b460-4a88-a911-0472c4c080b3'
       },
       fields: {
-        timestamp: '2019-02-05T12:29:36.028Z',
+        createdAt: '2019-02-05T12:29:36.028Z',
         notification: JSON.stringify(notificationsMockClone[0]),
         status: 'SUCCESS'
       }
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
-      return {
-        body: {
-          results: [modifiedPaymentMock]
-        }
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [modifiedPaymentMock]
       }
-    })
+    }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
 
 
@@ -203,33 +193,31 @@ describe('notification module', () => {
         id: '3fd15a04-b460-4a88-a911-0472c4c080b3'
       },
       fields: {
-        timestamp: '2019-02-05T12:29:36.028Z',
+        createdAt: '2019-02-05T12:29:36.028Z',
         notification: JSON.stringify(notificationsMock[0]),
         status: 'SUCCESS'
       }
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => {
-      return {
-        body: {
-          results: [modifiedPaymentMock]
-        }
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [modifiedPaymentMock]
       }
-    })
-    sandbox.stub(ctpClient, 'fetchById').callsFake(() => {
-      return {
-        body: {
-          results: [modifiedPaymentMock]
-        }
+    }))
+    sandbox.stub(ctpClient, 'fetchById').callsFake(() => ({
+      body: {
+        results: [modifiedPaymentMock]
       }
-    })
+    }))
     const ctpClientUpdateSpy = sandbox.stub(ctpClient, 'update').callsFake(() => {
       throw concurrentModificationError
     })
     try {
       await notificationHandler.processNotifications(notificationsMock, ctpClient)
-    } catch {
-
+      // eslint-disable-next-line no-empty
+    } catch (e) {
+      // we check retry logic here and it should throw after certain amount
+      // of retries. So the error is expected
     }
     expect(ctpClientUpdateSpy.callCount).to.equal(21)
   })

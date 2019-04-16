@@ -11,7 +11,6 @@ async function prepareProject (ctpClient) {
 async function startServer (testServerPort = 8000) {
   return new Promise(((resolve) => {
     server.listen(testServerPort, async () => {
-      console.log(`Server running at http://127.0.0.1:${testServerPort}/`)
       resolve()
     })
   }))

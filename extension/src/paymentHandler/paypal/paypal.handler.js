@@ -1,7 +1,6 @@
 const _ = require('lodash')
 
 const pU = require('../payment-utils')
-const errorMessages = require('../../validator/error-messages')
 const paypalMakePayment = require('./paypal-make-payment.handler')
 const paypalCompletePayment = require('./paypal-complete-payment.handler')
 
@@ -14,10 +13,7 @@ async function handlePayment (paymentObject) {
     return paypalMakePayment.handlePayment(paymentObject)
 
   return {
-    errors: [{
-      code: 'InvalidField',
-      message: errorMessages.MISSING_TXN_CHARGE_INIT_PENDING
-    }]
+    actions: []
   }
 }
 

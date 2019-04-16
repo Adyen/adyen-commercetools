@@ -65,7 +65,6 @@ async function handlePayment (paymentObject) {
   actions = _.compact(actions)
 
   return {
-    version: paymentObject.version,
     actions
   }
 }

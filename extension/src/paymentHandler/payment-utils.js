@@ -48,7 +48,7 @@ function createAddInterfaceInteractionAction (
     action: 'addInterfaceInteraction',
     type: { key: c.CTP_INTERFACE_INTERACTION },
     fields: {
-      timestamp: new Date(),
+      createdAt: new Date(),
       response: JSON.stringify(response),
       request: JSON.stringify(request),
       type,

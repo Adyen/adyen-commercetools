@@ -91,13 +91,8 @@ describe('Payment controller', () => {
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
       utilsStub.sendResponse = ({ statusCode, data }) => {
-        expect(statusCode).to.equal(400)
-        expect(data).to.deep.equal({
-          errors: [{
-            code: 'InvalidField',
-            message: errorMessages.MISSING_PAYLOAD
-          }]
-        })
+        expect(statusCode).to.equal(200)
+        expect(data).to.deep.equal({ actions: [] })
       }
 
       await paymentController.processRequest(mockRequest)
@@ -185,23 +180,8 @@ describe('Payment controller', () => {
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
       utilsStub.sendResponse = ({ statusCode, data }) => {
-        expect(statusCode).to.equal(400)
-        expect(data).to.deep.equal({
-          errors: [
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_PAYMENT_DATA
-            },
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_MD
-            },
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_PARES
-            }
-          ]
-        })
+        expect(statusCode).to.equal(200)
+        expect(data).to.deep.equal({ actions: [] })
       }
       await paymentController.processRequest(mockRequest)
     })

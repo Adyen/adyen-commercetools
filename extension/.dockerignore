@@ -1,0 +1,7 @@
+.gitignore
+.git
+test
+cypress
+cypress.
+node_modules
+json

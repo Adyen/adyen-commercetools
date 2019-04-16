@@ -1,17 +1,19 @@
-const Promise = require('bluebird')
+const logger = require('../../utils/logger').getLogger()
 
-const interfaceInteractionTypes = require('../../../test/resources/payment-interface-interaction-types.json')
+const interfaceInteractionType = require('../../../resources/payment-interface-interaction-type.json')
 
 async function ensureInterfaceInteractionCustomType (ctpClient) {
-  await Promise.map(interfaceInteractionTypes, async (type) => {
-    try {
-      const { body } = await ctpClient.fetch(ctpClient.builder.types.where(`key="${type.key}"`))
-      if (body.results.length === 0)
-        await ctpClient.create(ctpClient.builder.types, type)
-    } catch (e) {
-      console.error('Error when creating interface interaction custom type, skipping...', JSON.stringify(e))
+  try {
+    logger.debug('Ensuring interfaceInteraction')
+    const { body } = await ctpClient.fetch(ctpClient.builder.types.where(`key="${interfaceInteractionType.key}"`))
+    if (body.results.length === 0) {
+      logger.debug('Creating interface interaction')
+      await ctpClient.create(ctpClient.builder.types, interfaceInteractionType)
+      logger.info('Successfully created an interfaceInteraction type')
     }
-  }, { concurrency: 3 })
+  } catch (e) {
+    logger.error(e, 'Error when creating interface interaction custom type, skipping...')
+  }
 }
 
 module.exports = {
