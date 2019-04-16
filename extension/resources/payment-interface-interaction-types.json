@@ -9,13 +9,13 @@
     ],
     "fieldDefinitions": [
       {
-        "name": "timestamp",
+        "name": "createdAt",
         "label": {
-          "en": "timestamp"
+          "en": "createdAt"
         },
         "required": true,
         "type": {
-          "name": "String"
+          "name": "DateTime"
         },
         "inputHint": "SingleLine"
       },

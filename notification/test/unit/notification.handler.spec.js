@@ -56,12 +56,12 @@ describe('notification module', () => {
       }
     ]
 
-    // Timestamp is set to the current date during the update action calculation
+    // createdAt is set to the current date during the update action calculation
     // We can't know what is set there
-    expect(ctpClientUpdateSpy.args[0][3][0].fields.timestamp).to.exist
-    const actualUpdateActionsWithoutTimestamp = ctpClientUpdateSpy.args[0][3]
-    delete actualUpdateActionsWithoutTimestamp[0].fields.timestamp
-    expect(actualUpdateActionsWithoutTimestamp).to.deep.equal(expectedUpdateActions)
+    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
   })
 
   it('should update payment with a new InterfaceInteraction but not payment status '
@@ -100,12 +100,12 @@ describe('notification module', () => {
       }
     ]
 
-    // Timestamp is set to the current date during the update action calculation
+    // createdAt is set to the current date during the update action calculation
     // We can't know what is set there
-    expect(ctpClientUpdateSpy.args[0][3][0].fields.timestamp).to.exist
-    const actualUpdateActionsWithoutTimestamp = ctpClientUpdateSpy.args[0][3]
-    delete actualUpdateActionsWithoutTimestamp[0].fields.timestamp
-    expect(actualUpdateActionsWithoutTimestamp).to.deep.equal(expectedUpdateActions)
+    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
   })
 
   it('should update payment with a payment status but not new InterfaceInteraction '
@@ -120,7 +120,7 @@ describe('notification module', () => {
       fields: {
         notification: JSON.stringify(notificationsMock[0]),
         status: 'SUCCESS',
-        timestamp: '2019-02-05T12:29:36.028Z'
+        createdAt: '2019-02-05T12:29:36.028Z'
       }
     })
     const ctpClient = ctpClientMock.get(config)
@@ -159,7 +159,7 @@ describe('notification module', () => {
         id: '3fd15a04-b460-4a88-a911-0472c4c080b3'
       },
       fields: {
-        timestamp: '2019-02-05T12:29:36.028Z',
+        createdAt: '2019-02-05T12:29:36.028Z',
         notification: JSON.stringify(notificationsMockClone[0]),
         status: 'SUCCESS'
       }
@@ -193,7 +193,7 @@ describe('notification module', () => {
         id: '3fd15a04-b460-4a88-a911-0472c4c080b3'
       },
       fields: {
-        timestamp: '2019-02-05T12:29:36.028Z',
+        createdAt: '2019-02-05T12:29:36.028Z',
         notification: JSON.stringify(notificationsMock[0]),
         status: 'SUCCESS'
       }

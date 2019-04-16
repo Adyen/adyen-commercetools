@@ -104,7 +104,7 @@ function getAddInterfaceInteractionUpdateAction (notification) {
       typeId: 'type'
     },
     fields: {
-      timestamp: new Date().toISOString(),
+      createdAt: new Date(),
       status: notification.NotificationRequestItem.eventCode,
       notification: JSON.stringify(notification)
     }
