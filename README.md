@@ -20,9 +20,11 @@ Complete integration requires running both of the modules.
 ## Extension module
 Extension module is a public service. When a commercetools payment object changes, the [API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) send a request to the extension module.
 Then the extension module maps and sends a request to Adyen and responds with update actions back to the commercetools platform.
+
 For more info, go to the [Extension module](./extension/README.md).
 
 ## Notification module
 Notification module is a public service which receives notifications sent by Adyen,
 processes them and saves on a commercetools project.
+
 For more info, go to the [Notification module](./notification/README.md).
