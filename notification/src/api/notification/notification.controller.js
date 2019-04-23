@@ -21,7 +21,8 @@ async function handleNotification (request, response) {
       { 'Content-Type': 'application/json' },
       JSON.stringify({ notificationResponse: '[accepted]' }))
   } catch (e) {
-    logger.error(e, 'Unexpected exception occurred')
+    logger.error(e,
+      `Unexpected exception occurred. Received payload from Adyen: ${body}`)
     return httpUtils.sendResponse(response, 500)
   }
 }
