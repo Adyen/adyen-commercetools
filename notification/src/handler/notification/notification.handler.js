@@ -40,19 +40,19 @@ async function updatePaymentWithRepeater (payment, notification, ctpClient) {
       logger.debug(`Payment with interfaceId ${currentPayment.interfaceId}`
         + 'was successfully updated')
       break
-    } catch (e) {
-      if (e.body.statusCode !== 409)
+    } catch (err) {
+      if (err.body.statusCode !== 409)
         throw new Error(`Unexpected error during updating a payment with ID: ${currentPayment.id}. Exiting. `
-          + `Error: ${JSON.stringify(serializeError(e))}`)
+          + `Error: ${JSON.stringify(serializeError(err))}`)
       retryCount += 1
       if (retryCount > maxRetry) {
         retryMessage = 'Got a concurrent modification error'
           + ` when updating payment with id "${currentPayment.id}".`
           + ` Version tried "${currentVersion}",`
-          + ` currentVersion: "${e.body.errors[0].currentVersion}".`
+          + ` currentVersion: "${err.body.errors[0].currentVersion}".`
         throw new Error(`${retryMessage} Won't retry again`
           + ` because of a reached limit ${maxRetry}`
-          + ` max retries. Error: ${JSON.stringify(serializeError(e))}`)
+          + ` max retries. Error: ${JSON.stringify(serializeError(err))}`)
       }
       /* eslint-disable-next-line no-await-in-loop */
       currentPayment = await ctpClient.fetchById(ctpClient.builder.payments, currentPayment.id)
@@ -148,9 +148,9 @@ async function getPaymentByMerchantReference (merchantReference, ctpClient) {
   try {
     const result = await ctpClient.fetch(ctpClient.builder.payments.where(`interfaceId="${merchantReference}"`))
     return _.get(result, 'body.results[0]', null)
-  } catch (e) {
+  } catch (err) {
     throw Error(`Failed to fetch a payment with merchantReference: ${merchantReference}. `
-    + `Error: ${JSON.stringify(serializeError(e))}`)
+    + `Error: ${JSON.stringify(serializeError(err))}`)
   }
 }
 

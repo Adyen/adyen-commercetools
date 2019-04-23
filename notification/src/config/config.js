@@ -22,7 +22,7 @@ function getFileConfig () {
   let fileConfig = {}
   try {
     fileConfig = require(configPath) // eslint-disable-line
-  } catch (e) {
+  } catch (err) {
     // config file was not provided
   }
 

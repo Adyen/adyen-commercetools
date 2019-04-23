@@ -9,7 +9,8 @@ function getLogger () {
     obj = bunyan.createLogger({
       name: NOTIFICATION_MODULE_NAME,
       stream: process.stdout,
-      level: logLevel || bunyan.INFO
+      level: logLevel || bunyan.INFO,
+      serializers: bunyan.stdSerializers
     })
   }
   return obj
