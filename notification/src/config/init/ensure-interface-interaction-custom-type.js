@@ -11,8 +11,8 @@ async function ensureInterfaceInteractionCustomType (ctpClient) {
       await ctpClient.create(ctpClient.builder.types, interfaceInteractionType)
       logger.info('Successfully created an interfaceInteraction type')
     }
-  } catch (e) {
-    logger.error(e, 'Error when creating interface interaction custom type, skipping...')
+  } catch (err) {
+    logger.error(err, 'Error when creating interface interaction custom type, skipping...')
   }
 }
 
