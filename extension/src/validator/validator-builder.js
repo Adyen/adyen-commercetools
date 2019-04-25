@@ -20,6 +20,11 @@ function withPayment (paymentObject) {
         errors.isValidPaymentMethod = errorMessages.INVALID_PAYMENT_METHOD
       return this
     },
+    isCancelOrRefund () {
+      return _.isObject(pU.getChargeTransactionSuccess(paymentObject))
+        && (_.isObject(pU.getCancelAuthorizationTransactionInit(paymentObject))
+        || _.isObject(pU.getRefundTransactionInit(paymentObject)))
+    },
     isPaypal () {
       return paymentObject.paymentMethodInfo.method === 'paypal'
     },

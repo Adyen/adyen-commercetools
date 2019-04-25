@@ -13,6 +13,24 @@ function getChargeTransactionPending (paymentObject) {
     ['Pending'])
 }
 
+function getChargeTransactionSuccess (paymentObject) {
+  return getTransactionWithTypesAndStates(paymentObject,
+    ['Charge'],
+    ['Success'])
+}
+
+function getCancelAuthorizationTransactionInit (paymentObject) {
+  return getTransactionWithTypesAndStates(paymentObject,
+    ['CancelAuthorization'],
+    ['Initial'])
+}
+
+function getRefundTransactionInit (paymentObject) {
+  return getTransactionWithTypesAndStates(paymentObject,
+    ['Refund'],
+    ['Initial'])
+}
+
 function getChargeTransactionInit (paymentObject) {
   return getTransactionWithTypesAndStates(paymentObject,
     ['Charge'],
@@ -103,6 +121,9 @@ module.exports = {
   getChargeTransactionInitOrPending,
   getChargeTransactionPending,
   getChargeTransactionInit,
+  getChargeTransactionSuccess,
+  getCancelAuthorizationTransactionInit,
+  getRefundTransactionInit,
   getMatchingCtpState,
   createAddInterfaceInteractionAction,
   ensureAddInterfaceInteractionAction,
