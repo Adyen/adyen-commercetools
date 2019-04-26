@@ -26,7 +26,8 @@ In order to run extension module, you have to provide following environmental va
 | --- | --- | --- |
 |`ADYEN_API_KEY` | Get your key from https://ca-test.adyen.com/ca/ca/config/users.shtml. Select `Web Service` user type account and `Generate New API Key`. |  |
 |`ADYEN_MERCHANT_ACCOUNT` | See https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount |  |
-|`ADYEN_API_BASE_URL` | Base URL for all Adyen requests, e.g. for testing we're using `https://checkout-test.adyen.com/v40` |  |
+|`ADYEN_API_BASE_URL` | Base URL for Adyen requests | `https://checkout-test.adyen.com/v40` |
+|`ADYEN_LEGACY_API_BASE_URL` | Base legacy URL for Adyen requests. Adyen is in the migration process of API URLs and for some actions, the legacy URL has to be used (e.g. refund). | `https://pal-test.adyen.com/pal/servlet/Payment/v40` |
 |`CTP_PROJECT_KEY` | Get CTP credentials from `https://mc.commercetools.com/${your CTP project ID}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is `manage_project`. |  |
 |`CTP_CLIENT_ID` | Get CTP credentials from `https://mc.commercetools.com/${your CTP project ID}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is `manage_project`. |  |
 |`CTP_CLIENT_SECRET` | Get CTP credentials from `https://mc.commercetools.com/${your CTP project ID}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is `manage_project`. |  |

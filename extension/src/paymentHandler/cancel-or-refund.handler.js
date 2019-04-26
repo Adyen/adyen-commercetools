@@ -11,7 +11,7 @@ async function handlePayment (paymentObject) {
   const responseBody = await response.json()
   const actions = [
     pU.ensureAddInterfaceInteractionAction({
-      paymentObject, request, response: responseBody, type: 'makePayment', status
+      paymentObject, request, response: responseBody, type: 'cancelOrRefund', status
     })
   ]
   if (status === c.SUCCESS) {

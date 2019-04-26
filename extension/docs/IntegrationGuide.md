@@ -26,6 +26,10 @@ In this process, there are 3 parties involved:
 - **Extension module** - hosted service (this repository) that interacts over [API extensions](https://docs.commercetools.com/http-api-projects-api-extensions).  
 - **Shopper** - a person that's using the shop
 
+Other used terms in the documentation:
+- **Cancel** - cancel the authorisation on an uncaptured payment.
+- **Refund** - refund a payment back to the shopper.
+
 ## Requirements for CTP project
 All the requirements below are automatically created by the Extension module.
 1. [API Extension subscription to Extension module endpoints](../resources/api-extension.json)
