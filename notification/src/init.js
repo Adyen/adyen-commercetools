@@ -8,6 +8,8 @@ const ctpClient = ctp.get(config)
 
 const PORT = process.env.PORT || 443
 
+if (config.keepAliveTimeout !== undefined)
+  server.keepAliveTimeout = config.keepAliveTimeout
 server.listen(PORT, async () => {
   await ensureInterfaceInteractionCustomType(ctpClient)
   logger.info(`Server started on ${PORT} port`)

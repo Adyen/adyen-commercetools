@@ -6,7 +6,9 @@ let config
 
 function getEnvConfig () {
   return {
-    logLevel: process.env.LOG_LEVEL
+    logLevel: process.env.LOG_LEVEL,
+    keepAliveTimeout: !Number.isNaN(process.env.KEEP_ALIVE_TIMEOUT) ? parseFloat(process.env.KEEP_ALIVE_TIMEOUT, 10)
+      : undefined
   }
 }
 
