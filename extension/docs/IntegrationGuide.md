@@ -45,6 +45,7 @@ In order to make the extension module working, following parameters have to be p
 | `API_EXTENSION_BASE_URL` | URL of the Extension module. This URL will be called by CTP Extension endpoint. |
 | `ADYEN_API_KEY` | Go to [Account/Users](https://ca-test.adyen.com/ca/ca/config/users.shtml) - Select a user with `Web Service` User type - Generate New API Key (notice: in case you get `403 Forbidden` error from Adyen, try to regenerate the key). |
 | `ADYEN_MERCHANT_ACCOUNT` | Go to [Account/Merchant accounts](https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount) and get the name in Acccount code. | |
+| `KEEP_ALIVE_TIMEOUT` | milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_server_keepalivetimeout)) |
 
 # Checkout steps
 In your shop, ensure the steps below are done:
