@@ -2,14 +2,13 @@
 global.window = {}
 global.navigator = {}
 
-const adyenEncrypt = require('adyen-cse-js')
 const { expect } = require('chai')
-const _ = require('lodash')
 
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const paymentTemplate = require('../fixtures/payment-credit-card.json')
 const payment3dTemplate = require('../fixtures/payment-credit-card-3d.json')
 const iTSetUp = require('./integration-test-set-up')
+const testUtils = require('../test-utils')
 const c = require('../../src/config/constants')
 
 describe('credit card payment', () => {
@@ -25,31 +24,11 @@ describe('credit card payment', () => {
   })
 
   it('should create success payment', async () => {
-    const key = process.env.CLIENT_ENCRYPTION_PUBLIC_KEY
-
-    const cseInstance = adyenEncrypt.createEncryption(key, {})
-
-    const encryptedCardNumber = cseInstance.encrypt({
-      number: '4111111145551142',
-      generationtime: new Date().toISOString()
-    })
-    const encryptedSecurityCode = cseInstance.encrypt({
+    const paymentDraft = testUtils.createCreditCardPaymentDraft({
+      cardNumber: '4111111145551142',
       cvc: '737',
-      generationtime: new Date().toISOString()
-    })
-    const encryptedExpiryMonth = cseInstance.encrypt({
       expiryMonth: '10',
-      generationtime: new Date().toISOString()
-    })
-    const encryptedExpiryYear = cseInstance.encrypt({
-      expiryYear: '2020',
-      generationtime: new Date().toISOString()
-    })
-    const paymentDraft = _.template(JSON.stringify(paymentTemplate))({
-      encryptedCardNumber,
-      encryptedSecurityCode,
-      encryptedExpiryMonth,
-      encryptedExpiryYear
+      expiryYear: '2020'
     })
 
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
@@ -80,34 +59,16 @@ describe('credit card payment', () => {
   })
 
   it('should create 3ds redirect', async () => {
-    const key = process.env.CLIENT_ENCRYPTION_PUBLIC_KEY
     const ngrokUrl = process.env.API_EXTENSION_BASE_URL
 
-    const cseInstance = adyenEncrypt.createEncryption(key, {})
-
-    const encryptedCardNumber = cseInstance.encrypt({
-      number: '5212345678901234',
-      generationtime: new Date().toISOString()
-    })
-    const encryptedSecurityCode = cseInstance.encrypt({
+    const paymentDraft = testUtils.createCreditCard3DSPaymentDraft({
+      cardNumber: '5212345678901234',
       cvc: '737',
-      generationtime: new Date().toISOString()
-    })
-    const encryptedExpiryMonth = cseInstance.encrypt({
       expiryMonth: '10',
-      generationtime: new Date().toISOString()
-    })
-    const encryptedExpiryYear = cseInstance.encrypt({
       expiryYear: '2020',
-      generationtime: new Date().toISOString()
-    })
-    const paymentDraft = _.template(JSON.stringify(payment3dTemplate))({
-      encryptedCardNumber,
-      encryptedSecurityCode,
-      encryptedExpiryMonth,
-      encryptedExpiryYear,
       returnUrl: `${ngrokUrl}/test-return-url`
     })
+
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
     const adyenRequest = JSON.parse(response.body.interfaceInteractions[0].fields.request)
     expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
@@ -136,32 +97,11 @@ describe('credit card payment', () => {
   })
 
   it('on wrong credit card number, should log error to interface interaction', async () => {
-    const key = process.env.CLIENT_ENCRYPTION_PUBLIC_KEY
-
-    const cseInstance = adyenEncrypt.createEncryption(key, {})
-
-    // fake card number, encryption will return false
-    const encryptedCardNumber = cseInstance.encrypt({
-      number: '0123456789123456',
-      generationtime: new Date().toISOString()
-    })
-    const encryptedSecurityCode = cseInstance.encrypt({
+    const paymentDraft = testUtils.createCreditCardPaymentDraft({
+      cardNumber: '0123456789123456',
       cvc: '737',
-      generationtime: new Date().toISOString()
-    })
-    const encryptedExpiryMonth = cseInstance.encrypt({
       expiryMonth: '10',
-      generationtime: new Date().toISOString()
-    })
-    const encryptedExpiryYear = cseInstance.encrypt({
-      expiryYear: '2020',
-      generationtime: new Date().toISOString()
-    })
-    const paymentDraft = _.template(JSON.stringify(paymentTemplate))({
-      encryptedCardNumber,
-      encryptedSecurityCode,
-      encryptedExpiryMonth,
-      encryptedExpiryYear
+      expiryYear: '2020'
     })
 
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
