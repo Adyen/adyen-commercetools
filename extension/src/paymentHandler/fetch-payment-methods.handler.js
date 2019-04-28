@@ -1,6 +1,7 @@
 const fetch = require('node-fetch')
 const configLoader = require('../config/config')
 const pU = require('./payment-utils')
+const c = require('../config/constants')
 
 const config = configLoader.load()
 
@@ -10,7 +11,7 @@ async function handlePayment (paymentObject) {
   return {
     actions: [
       pU.createAddInterfaceInteractionAction({
-        request, response: responseBody, type: 'getAvailablePaymentMethods'
+        request, response: responseBody, type: c.CTP_INTERACTION_TYPE_FETCH_METHODS
       })
     ]
   }
