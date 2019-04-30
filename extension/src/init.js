@@ -1,9 +1,12 @@
 const init = require('./server.js').setupServer()
 const utils = require('./utils')
+const configLoader = require('./config/config')
+
+const config = configLoader.load()
 
 const { ensureResources } = require('./config/init/ensure-resources')
 
-const port = parseInt(process.env.EXTENSION_PORT || 8080, 10)
+const port = parseInt(config.port || 8080, 10)
 const logger = utils.getLogger()
 
 init.listen(port, async () => {
