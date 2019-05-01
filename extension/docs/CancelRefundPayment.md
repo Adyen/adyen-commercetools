@@ -45,7 +45,7 @@
     If the transaction is not authorized yet, Adyen will try to cancel.
     If the transaction is already charged, Adyen will do refund.
 1. Extension module finds the first `Payment.transactions` with a transaction `type='Charge' and state='Success'`. 
-Extension module takes `amount` and `transactionId` from this transaction and makes a Cancel or refund request.  
+Extension module takes `amount` and `transactionId` from this transaction and makes a Cancel or Refund request.  
 1. Extension module saves following information to the payment object:
     * `Payment.interfaceInteractions.type='cancelOrRefund'` contains request and response with Adyen
     * `Payment.transactions` with a transaction `type='Refund' and state='Initial'` will be changed to `state='Pending'`.
