@@ -41,7 +41,7 @@
           ]
         }
         ```
-    Both transaction types works the same, because Adyen will always pick the right action for the current transaction.
+    Both transaction types work the same, because Adyen will always pick the right action for the current transaction.
     If the transaction is not authorized yet, Adyen will try to cancel.
     If the transaction is already charged, Adyen will do refund.
 1. Extension module finds the first `Payment.transactions` with a transaction `type='Charge' and state='Success'`. 
