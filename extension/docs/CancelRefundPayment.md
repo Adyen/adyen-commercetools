@@ -13,7 +13,7 @@
               "transaction": {
                 "type": "Refund",
                 "amount": {
-                  "currencyCode": "§{currencyCode}",
+                  "currencyCode": "${currencyCode}",
                   "centAmount": ${centAmount}
                 },
                 "state": "Initial"
