@@ -32,7 +32,7 @@
               "transaction": {
                 "type": "CancelAuthorization",
                 "amount": {
-                  "currencyCode": "§{currencyCode}",
+                  "currencyCode": "${currencyCode}",
                   "centAmount": ${centAmount}
                 },
                 "state": "Initial"
