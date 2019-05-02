@@ -20,7 +20,7 @@
 1. Run `npm ci`
 
 ## Run Module
-In order to run extension module, you have to provide following environmental variables:
+Environment variables to configure the notification module:
 
 | Name | Content | Required | Default value |
 | --- | --- | --- | --- |
