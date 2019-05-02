@@ -29,7 +29,7 @@ The following features are not supported:
     * `Payment.custom.fields.returnUrl` contains URL to which the shopper will be redirected when shopper completes or abandons the payment process.
     * *Optional*: `paymentObject.custom.fields.holderName`
 1. Extension module makes a payment request and save following information to the payment object:
-    * `Payment.interfaceInteractions.type='makePayment'` contains request and response with Adyen 
+    * `Payment.interfaceInteractions` with `type='makePayment'` that contains request and response with Adyen 
     * `Payment.transactions` with a transaction `type='Charge' and state='Initial'` will be changed to a new state according to [the returned result code](./IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
     * `pspReference` will be saved in a matching transaction from the previous point in a field `Payment.transactions.interactionId`
 1. Shop validates the payment and presents the payment result to the shopper.
@@ -48,7 +48,7 @@ The following features are not supported:
     * `Payment.custom.fields.browserInfo` contains **JSON stringfied** browser info. See [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step2makeapayment) for more information. 
     * *Optional*: `paymentObject.custom.fields.holderName`
 1. Extension module makes a payment request and save following information to the payment object (for explanation of each field, see [Adyen's documentations](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step2makeapayment)):
-    * `Payment.interfaceInteractions.type='makePayment'` contains request and response with Adyen
+    * `Payment.interfaceInteractions` with `type='makePayment'` that contains request and response with Adyen
     * `Payment.transactions` with a transaction `type='Charge' and state='Initial'` will be changed to `state='Pending'`.
     * `Payment.custom.fields.MD`
     * `Payment.custom.fields.PaReq`  
@@ -68,7 +68,7 @@ The following features are not supported:
     }
     ```
 1. Extension module makes a [payment request](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step4completepayment) and save following information to the payment object:
-    * `Payment.interfaceInteractions.type='completePayment'` contains request and response with Adyen 
+    * `Payment.interfaceInteractions` with `type='completePayment'` that contains request and response with Adyen 
     * `Payment.transactions` with a transaction `type='Charge' and state='Pending'` will be changed to a new state according to [the returned result code](IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
     * `pspReference` will be saved in a matching transaction from the previous point in a field `Payment.transactions.interactionId`
 1. Shop validates the payment and presents the payment result to the shopper.
