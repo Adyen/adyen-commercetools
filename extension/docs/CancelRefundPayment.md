@@ -44,7 +44,7 @@
     Both transaction types work the same, because Adyen will always pick the right action for the current transaction.
     If the transaction is not authorized yet, Adyen will try to cancel.
     If the transaction is already charged, Adyen will do refund.
-1. Extension module finds the first `Payment.transactions` with a transaction `type='Charge' and state='Success'`. 
+1. In `Payment.transactions`, extension module finds the first transaction with `type='Charge' and state='Success'`. 
 Extension module takes `amount` and `transactionId` from this transaction and makes a 'Cancel or refund' request.  
 1. Extension module saves following information to the payment object:
     * `Payment.interfaceInteractions` with `type='cancelOrRefund'` that contains request and response with Adyen
