@@ -66,6 +66,7 @@
     "bluebird": "^3.5.3",
     "bunyan": "^1.8.12",
     "lodash": "^4.17.11",
-    "node-fetch": "^2.3.0"
+    "node-fetch": "^2.3.0",
+    "serialize-error": "^3.0.0"
   }
 }
