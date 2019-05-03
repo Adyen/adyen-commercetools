@@ -1,3 +1,4 @@
+const serializeError = require('serialize-error')
 const httpUtils = require('../../utils')
 const creditCardHandler = require('../../paymentHandler/creditCard/credit-card.handler')
 const paypalHandler = require('../../paymentHandler/paypal/paypal.handler')
@@ -47,8 +48,14 @@ async function processRequest (request, response) {
 }
 
 async function _getPaymentObject (request) {
-  const requestBody = JSON.parse(await httpUtils.collectRequestData(request))
-  return requestBody.resource.obj
+  const body = await httpUtils.collectRequestData(request)
+  try {
+    const requestBody = JSON.parse(body)
+    return requestBody.resource.obj
+  } catch (err) {
+    throw new Error(`Error during parsing CTP request: '${body}'. Ending the process. `
+      + `Error: ${JSON.stringify(serializeError(err))}`)
+  }
 }
 
 function _getPaymentHandler (paymentObject) {
