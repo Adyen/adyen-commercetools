@@ -1,5 +1,6 @@
 const bunyan = require('bunyan')
 const configLoader = require('./config/config')
+
 const config = configLoader.load()
 
 let logger
