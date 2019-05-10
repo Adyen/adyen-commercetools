@@ -1,12 +1,15 @@
 const server = require('./server.js').setupServer()
 const utils = require('./utils')
+const configLoader = require('./config/config')
+
+const config = configLoader.load()
 
 const { ensureResources } = require('./config/init/ensure-resources')
 const configLoader = require('./config/config')
 
 const config = configLoader.load()
 
-const port = parseInt(process.env.EXTENSION_PORT || 8080, 10)
+const port = parseInt(config.port || 8080, 10)
 const logger = utils.getLogger()
 
 if (config.keepAliveTimeout !== undefined)

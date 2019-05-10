@@ -18,7 +18,7 @@ async function handlePayment (paymentObject) {
   const responseBody = await response.json()
   let actions = [
     pU.ensureAddInterfaceInteractionAction({
-      paymentObject, request, response: responseBody, type: 'makePayment', status
+      paymentObject, request, response: responseBody, type: c.CTP_INTERACTION_TYPE_MAKE_PAYMENT, status
     })
   ]
   if (responseBody.resultCode === c.REDIRECT_SHOPPER) {

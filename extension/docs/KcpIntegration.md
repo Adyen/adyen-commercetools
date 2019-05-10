@@ -15,7 +15,7 @@
     * `Payment.transactions` contains a transaction with `type='Charge' and state='Initial'`
     * `Payment.custom.fields.returnUrl` contains return URL to which the shopper will be redirected after completion.
 1. Extension module makes a `Redirect shopper` request and saves following information to the payment object:
-    * `Payment.interfaceInteractions.type='makePayment'` contains request and response with Adyen 
+    * `Payment.interfaceInteractions` with `type='makePayment'` that contains request and response with Adyen 
     * `payment.custom.fields.redirectUrl`
     * `payment.custom.fields.redirectMethod`
     * `Charge` transaction state will be updated to `Pending`

@@ -3,6 +3,7 @@ const httpUtils = require('../../utils')
 const creditCardHandler = require('../../paymentHandler/creditCard/credit-card.handler')
 const paypalHandler = require('../../paymentHandler/paypal/paypal.handler')
 const kcpHandler = require('../../paymentHandler/kcp/kcp-payment.handler')
+const refundHandler = require('../../paymentHandler/cancel-or-refund.handler')
 const fetchPaymentMethodsHandler = require('../../paymentHandler/fetch-payment-methods.handler')
 const ValidatorBuilder = require('../../validator/validator-builder')
 
@@ -10,7 +11,8 @@ const paymentHandlers = {
   creditCardHandler,
   fetchPaymentMethodsHandler,
   paypalHandler,
-  kcpHandler
+  kcpHandler,
+  refundHandler
 }
 
 async function processRequest (request, response) {
@@ -60,6 +62,8 @@ async function _getPaymentObject (request) {
 
 function _getPaymentHandler (paymentObject) {
   const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
+  if (paymentValidator.isCancelOrRefund())
+    return paymentHandlers.refundHandler
   if (paymentValidator.isPaypal())
     return paymentHandlers.paypalHandler
   if (paymentValidator.isCreditCard())

@@ -19,7 +19,7 @@ async function handlePayment (paymentObject) {
   const responseBody = await response.json()
   let actions = [
     pU.ensureAddInterfaceInteractionAction({
-      paymentObject, request, response: responseBody, type: 'completePayment', status
+      paymentObject, request, response: responseBody, type: c.CTP_INTERACTION_TYPE_COMPLETE_PAYMENT, status
     })
   ]
   if (responseBody.resultCode) {
