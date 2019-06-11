@@ -11,6 +11,17 @@
       "type": {
         "name": "String"
       },
+      "name": "interfaceId",
+      "label": {
+        "en": "interfaceId"
+      },
+      "required": true,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
       "name": "payload",
       "label": {
         "en": "payload"

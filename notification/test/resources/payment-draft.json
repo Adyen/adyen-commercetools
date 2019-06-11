@@ -1,11 +1,18 @@
 {
   "key": "test-payment",
-  "interfaceId": "8313842560770001",
   "amountPlanned": {
     "type": "centPrecision",
     "currencyCode": "EUR",
     "centAmount": 795,
     "fractionDigits": 2
+  },
+  "custom": {
+    "type": {
+      "key": "ctp-adyen-integration-payment-custom-type"
+    },
+    "fields": {
+      "interfaceId": "8313842560770001"
+    }
   },
   "transactions": [
     {
