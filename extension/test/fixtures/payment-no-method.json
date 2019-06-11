@@ -14,7 +14,7 @@
       "key": "ctp-adyen-integration-payment-custom-type"
     },
     "fields": {
-      "merchantReference": "pspReference",
+      "merchantReference": "paymentReferenceId",
       "countryCode": "DE"
     }
   },
