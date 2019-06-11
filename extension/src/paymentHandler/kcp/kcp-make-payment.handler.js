@@ -56,7 +56,7 @@ async function _callAdyen (paymentObject) {
       currency: transaction.amount.currencyCode,
       value: transaction.amount.centAmount
     },
-    reference: paymentObject.custom.fields.interfaceId,
+    reference: paymentObject.custom.fields.merchantReference,
     paymentMethod: {
       type: paymentMethodType
     },

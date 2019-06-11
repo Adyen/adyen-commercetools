@@ -18,7 +18,7 @@
     },
     "fields": {
       "countryCode": "DE",
-      "interfaceId":"paymentReferenceId",
+      "merchantReference":"paymentReferenceId",
       "encryptedCardNumber":"${encryptedCardNumber}",
       "encryptedExpiryMonth":"${encryptedExpiryMonth}",
       "encryptedExpiryYear":"${encryptedExpiryYear}",

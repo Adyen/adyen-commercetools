@@ -90,10 +90,10 @@ function withPayment (paymentObject) {
         errors.hasReturnUrl = errorMessages.MISSING_RETURN_URL
       return this
     },
-    validateInterfaceIdField () {
-      const hasInterfaceId = !_.isEmpty(paymentObject.custom.fields.interfaceId)
-      if (!hasInterfaceId)
-        errors.hasInterfaceId = errorMessages.MISSING_INTERFACE_ID
+    validateMerchantReferenceField () {
+      const hasMerchantReference = !_.isEmpty(paymentObject.custom.fields.merchantReference)
+      if (!hasMerchantReference)
+        errors.hasMerchantReference = errorMessages.MISSING_MERCHANT_REFERENCE
       return this
     },
     validatePayloadField () {

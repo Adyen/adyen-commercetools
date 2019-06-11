@@ -11,7 +11,7 @@
       "key": "ctp-adyen-integration-payment-custom-type"
     },
     "fields": {
-      "interfaceId": "8313842560770001"
+      "merchantReference": "8313842560770001"
     }
   },
   "transactions": [

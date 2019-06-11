@@ -27,13 +27,13 @@ async function processRequest (request, response) {
   if (adyenValidator.hasErrors())
   // if it's not adyen payment, ignore the payment
     return httpUtils.sendResponse({ response })
-  const interfaceIdValidator = validatorBuilder
-    .validateInterfaceIdField()
-  if (interfaceIdValidator.hasErrors())
+  const merchantReferenceValidator = validatorBuilder
+    .validateMerchantReferenceField()
+  if (merchantReferenceValidator.hasErrors())
     return httpUtils.sendResponse({
       response,
       statusCode: 400,
-      data: interfaceIdValidator.buildCtpErrorResponse()
+      data: merchantReferenceValidator.buildCtpErrorResponse()
     })
   const paymentMethodValidator = validatorBuilder.validatePaymentMethod()
   if (paymentMethodValidator.hasErrors())

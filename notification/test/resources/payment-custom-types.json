@@ -11,9 +11,9 @@
       "type": {
         "name": "String"
       },
-      "name": "interfaceId",
+      "name": "merchantReference",
       "label": {
-        "en": "interfaceId"
+        "en": "merchantReference"
       },
       "required": true,
       "inputHint": "SingleLine"

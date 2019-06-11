@@ -15,7 +15,7 @@
       "key": "ctp-adyen-integration-payment-custom-type"
     },
     "fields": {
-      "interfaceId": "paymentReferenceId",
+      "merchantReference": "paymentReferenceId",
       "countryCode": "DE",
       "encryptedCardNumber":"${encryptedCardNumber}",
       "encryptedExpiryMonth":"${encryptedExpiryMonth}",

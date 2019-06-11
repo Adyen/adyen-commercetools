@@ -85,7 +85,7 @@ async function _makePayment (paymentObject) {
       currency: transaction.amount.currencyCode,
       value: transaction.amount.centAmount
     },
-    reference: paymentObject.custom.fields.interfaceId,
+    reference: paymentObject.custom.fields.merchantReference,
     paymentMethod: {
       type: 'scheme',
       encryptedCardNumber: paymentObject.custom.fields.encryptedCardNumber,

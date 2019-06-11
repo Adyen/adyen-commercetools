@@ -102,7 +102,7 @@ or by asynchronous process like [commercetools-payment-to-order-processor job](h
 ### Validate payment
 There must be at least one CTP payment object of type Adyen
 (`Payment.paymentMethodInfo.paymentInterface = ctp-adyen-integration`)
-AND this CTP payment must have `Payment.custom.fields.interfaceId`.
+AND this CTP payment must have `Payment.custom.fields.merchantReference`.
 
 ### Validate payment transaction
 Cart's payment counts as successful if there is at least one payment object
