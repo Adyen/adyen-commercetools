@@ -34,7 +34,7 @@ async function _cancelOrRefundPayment (paymentObject) {
   const body = {
     merchantAccount: config.adyen.merchantAccount,
     originalReference: transaction.interactionId,
-    reference: paymentObject.interfaceId
+    reference: paymentObject.custom.fields.interfaceId
   }
 
   const request = {

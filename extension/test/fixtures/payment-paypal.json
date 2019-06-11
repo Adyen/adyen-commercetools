@@ -1,5 +1,4 @@
 {
-  "interfaceId":"paymentReferenceId",
   "amountPlanned": {
     "type": "centPrecision",
     "currencyCode": "EUR",
@@ -16,6 +15,7 @@
       "key": "ctp-adyen-integration-payment-custom-type"
     },
     "fields": {
+      "interfaceId":"paymentReferenceId",
       "returnUrl":"https://your-company.com/checkout/"
     }
   },

@@ -91,7 +91,7 @@ function withPayment (paymentObject) {
       return this
     },
     validateInterfaceIdField () {
-      const hasInterfaceId = !_.isEmpty(paymentObject.interfaceId)
+      const hasInterfaceId = !_.isEmpty(paymentObject.custom.fields.interfaceId)
       if (!hasInterfaceId)
         errors.hasInterfaceId = errorMessages.MISSING_INTERFACE_ID
       return this

@@ -10,7 +10,6 @@
   "createdBy": {
     "clientId": "GfjD1YgZgpe0K6wEdUEpwTmx"
   },
-  "interfaceId": "paymentReferenceId",
   "amountPlanned": {
     "type": "centPrecision",
     "currencyCode": "EUR",
@@ -27,6 +26,7 @@
       "id": "3bb94fa2-6254-4a31-83e8-a2a882c15173"
     },
     "fields": {
+      "interfaceId": "paymentReferenceId",
       "redirectUrl": "redirectUrl",
       "redirectMethod": "redirectMethod",
       "returnUrl": "returnUrl",

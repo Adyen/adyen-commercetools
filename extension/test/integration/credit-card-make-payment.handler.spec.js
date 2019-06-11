@@ -38,7 +38,7 @@ describe('credit card payment', () => {
 
     const adyenRequestBody = JSON.parse(adyenRequest.body)
     expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
-    expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.interfaceId)
+    expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.custom.fields.interfaceId)
     expect(adyenRequestBody.returnUrl).to.be.equal(paymentTemplate.custom.fields.returnUrl)
     expect(adyenRequestBody.amount.currency).to.be.equal(paymentTemplate.transactions[0].amount.currencyCode)
     expect(adyenRequestBody.amount.value).to.be.equal(paymentTemplate.transactions[0].amount.centAmount)
@@ -75,7 +75,7 @@ describe('credit card payment', () => {
 
     const adyenRequestBody = JSON.parse(adyenRequest.body)
     expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
-    expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.interfaceId)
+    expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.custom.fields.interfaceId)
     expect(adyenRequestBody.returnUrl).to.be.equal(`${process.env.API_EXTENSION_BASE_URL}/test-return-url`)
     expect(adyenRequestBody.amount.currency).to.be.equal(paymentTemplate.transactions[0].amount.currencyCode)
     expect(adyenRequestBody.amount.value).to.be.equal(paymentTemplate.transactions[0].amount.centAmount)
