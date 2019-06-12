@@ -18,7 +18,7 @@ describe('Payment controller', () => {
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
       utilsStub.sendResponse = ({ statusCode, headers, data }) => {
-        expect(statusCode).to.not.exist
+        expect(statusCode).to.equal(200)
         expect(headers).to.not.exist
         expect(data).to.not.exist
       }

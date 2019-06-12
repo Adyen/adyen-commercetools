@@ -20,33 +20,42 @@ async function processRequest (request, response) {
   // API extensions always calls this endpoint with POST, so if we got GET, we don't process further
   // https://docs.commercetools.com/http-api-projects-api-extensions#input
     return httpUtils.sendResponse({ response })
+
   const paymentObject = await _getPaymentObject(request)
+  const paymentResult = await processPayment(paymentObject)
+
+  return httpUtils.sendResponse({
+    response,
+    statusCode: paymentResult.success ? 200 : 400,
+    data: paymentResult.data
+  })
+}
+
+async function processPayment (paymentObject) {
   const validatorBuilder = ValidatorBuilder.withPayment(paymentObject)
   const adyenValidator = validatorBuilder
     .validateAdyen()
   if (adyenValidator.hasErrors())
   // if it's not adyen payment, ignore the payment
-    return httpUtils.sendResponse({ response })
+    return { success: true, data: null }
   const interfaceIdValidator = validatorBuilder
     .validateInterfaceIdField()
   if (interfaceIdValidator.hasErrors())
-    return httpUtils.sendResponse({
-      response,
-      statusCode: 400,
+    return {
+      success: false,
       data: interfaceIdValidator.buildCtpErrorResponse()
-    })
+    }
   const paymentMethodValidator = validatorBuilder.validatePaymentMethod()
   if (paymentMethodValidator.hasErrors())
-    return httpUtils.sendResponse({
-      response,
-      statusCode: 400,
+    return {
+      success: false,
       data: paymentMethodValidator.buildCtpErrorResponse()
-    })
+    }
   const handler = _getPaymentHandler(paymentObject)
   const handlerResponse = await handler.handlePayment(paymentObject)
   if (handlerResponse.errors)
-    return httpUtils.sendResponse({ response, statusCode: 400, data: handlerResponse })
-  return httpUtils.sendResponse({ response, statusCode: 200, data: handlerResponse })
+    return { success: false, data: handlerResponse }
+  return { success: true, data: handlerResponse }
 }
 
 async function _getPaymentObject (request) {
