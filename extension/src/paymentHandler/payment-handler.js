@@ -38,8 +38,7 @@ async function handlePayment (paymentObject) {
     if (handlerResponse.errors)
       return { success: false, data: handlerResponse }
     return { success: true, data: handlerResponse }
-  }
-  
+  }  
 
 function _getPaymentHandler (paymentObject) {
     const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
