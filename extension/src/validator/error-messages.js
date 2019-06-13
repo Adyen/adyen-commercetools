@@ -9,7 +9,7 @@ module.exports = {
   MISSING_EXPIRY_YEAR: 'Set custom.fields.encryptedExpiryYear',
   MISSING_SECURITY_CODE: 'Set custom.fields.encryptedSecurityCode',
   MISSING_RETURN_URL: 'Set custom.fields.returnUrl',
-  MISSING_INTERFACE_ID: 'Set interfaceId',
+  MISSING_MERCHANT_REFERENCE: 'Set custom merchantReference',
   MISSING_PAYLOAD: 'Set custom.fields.payload',
   MISSING_PAYMENT_DATA: 'Set custom.fields.paymentData',
   MISSING_PARES: 'Set custom.fields.PaRes',

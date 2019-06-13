@@ -1,5 +1,4 @@
 {
-  "interfaceId": "pspReference",
   "amountPlanned": {
     "type": "centPrecision",
     "currencyCode": "EUR",
@@ -15,6 +14,7 @@
       "key": "ctp-adyen-integration-payment-custom-type"
     },
     "fields": {
+      "merchantReference": "paymentReferenceId",
       "countryCode": "DE"
     }
   },

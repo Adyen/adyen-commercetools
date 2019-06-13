@@ -37,7 +37,7 @@ async function updatePaymentWithRepeater (payment, notification, ctpClient) {
     try {
       /* eslint-disable-next-line no-await-in-loop */
       await ctpClient.update(ctpClient.builder.payments, currentPayment.id, currentVersion, updateActions)
-      logger.debug(`Payment with interfaceId ${currentPayment.interfaceId}`
+      logger.debug(`Payment with merchantReference ${currentPayment.custom.fields.merchantReference}`
         + 'was successfully updated')
       break
     } catch (err) {
@@ -146,7 +146,7 @@ function getAddTransactionUpdateAction (type, state, amount, currency) {
 
 async function getPaymentByMerchantReference (merchantReference, ctpClient) {
   try {
-    const result = await ctpClient.fetch(ctpClient.builder.payments.where(`interfaceId="${merchantReference}"`))
+    const result = await ctpClient.fetch(ctpClient.builder.payments.where(`custom(fields(merchantReference="${merchantReference}"))`))
     return _.get(result, 'body.results[0]', null)
   } catch (err) {
     throw Error(`Failed to fetch a payment with merchantReference: ${merchantReference}. `

@@ -1,7 +1,6 @@
 {
   "id": "123212321",
   "version": "2",
-  "interfaceId":"paymentReferenceId",
   "amountPlanned": {
     "type": "centPrecision",
     "currencyCode": "EUR",
@@ -19,6 +18,7 @@
     },
     "fields": {
       "countryCode": "DE",
+      "merchantReference":"paymentReferenceId",
       "encryptedCardNumber":"${encryptedCardNumber}",
       "encryptedExpiryMonth":"${encryptedExpiryMonth}",
       "encryptedExpiryYear":"${encryptedExpiryYear}",
