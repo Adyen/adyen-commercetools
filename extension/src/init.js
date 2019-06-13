@@ -5,9 +5,6 @@ const configLoader = require('./config/config')
 const config = configLoader.load()
 
 const { ensureResources } = require('./config/init/ensure-resources')
-const configLoader = require('./config/config')
-
-const config = configLoader.load()
 
 const port = parseInt(config.port || 8080, 10)
 const logger = utils.getLogger()
