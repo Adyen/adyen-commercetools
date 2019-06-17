@@ -1,4 +1,7 @@
 # commercetools-adyen-integration
+[![Build Status](https://travis-ci.org/commercetools/commercetools-adyen-integration.svg?branch=master)](https://travis-ci.org/commercetools/commercetools-adyen-integration)
+
+
 This repository provides integration between commercetools and Adyen payment service provider.
 
 #### Supported payment methods

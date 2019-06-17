@@ -20,12 +20,12 @@ async function handlePayment (paymentObject) {
     if (adyenValidator.hasErrors())
     // if it's not adyen payment, ignore the payment
       return { success: true, data: null }
-    const interfaceIdValidator = validatorBuilder
-      .validateInterfaceIdField()
-    if (interfaceIdValidator.hasErrors())
+    const merchantReferenceValidator = validatorBuilder
+      .validateMerchantReferenceField()
+    if (merchantReferenceValidator.hasErrors())
       return {
         success: false,
-        data: interfaceIdValidator.buildCtpErrorResponse()
+        data: merchantReferenceValidator.buildCtpErrorResponse()
       }
     const paymentMethodValidator = validatorBuilder.validatePaymentMethod()
     if (paymentMethodValidator.hasErrors())

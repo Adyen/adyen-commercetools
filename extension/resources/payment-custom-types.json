@@ -11,6 +11,17 @@
       "type": {
         "name": "String"
       },
+      "name": "merchantReference",
+      "label": {
+        "en": "merchantReference"
+      },
+      "required": true,
+      "inputHint": "SingleLine"
+    },
+    {
+      "type": {
+        "name": "String"
+      },
       "name": "payload",
       "label": {
         "en": "payload"
