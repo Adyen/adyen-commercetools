@@ -1,33 +1,26 @@
-const serializeError = require('serialize-error')
 const utils = require('./utils')
 const paymentHandler = require('../src/paymentHandler/payment-handler')
 
 const { ensureResources } = require('./config/init/ensure-resources')
 
 const logger = utils.getLogger()
-const init = false;
+let init = false;
 
-exports.handler =  async function(event) {
-  try {
+exports.handler = async function(event) {
+  try {  
 
     init = init || await ensureResources();
+    
+    const paymentResult = await paymentHandler.handlePayment(event.resource.obj)
 
-    const paymentObject = _getPaymentObject(event);
-    const paymentResult = await paymentHandler.handlePayment(paymentObject)
-
-    return paymentResult.data
+    return {
+      responseType: paymentResult.success ? "UpdateRequest" : "FailedValidation",
+      errors: paymentResult.data.errors,
+      actions: paymentResult.data.actions
+    }
   }
   catch (e) {
     logger.error(e, `Unexpected error when processing event ${JSON.stringify(event)}`)
-  }
-}
-
-function _getPaymentObject(event) {  
-  try {
-    const requestBody = JSON.parse(event)
-    return requestBody.resource.obj
-  } catch (err) {
-    throw new Error(`Error during parsing CTP request: '${event}'. Ending the process. `
-      + `Error: ${JSON.stringify(serializeError(err))}`)
+    throw e;
   }
 }
