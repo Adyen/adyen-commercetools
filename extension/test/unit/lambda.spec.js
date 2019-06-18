@@ -13,7 +13,7 @@ describe('Lambda handler', () => {
   let ensureResourcesStub
 
   beforeEach(() => {
-    ensureResourcesStub = sinon.stub(setup, 'ensureCustomTypes').returns(true)
+    ensureResourcesStub = sinon.stub(setup, 'ensureCustomTypes').returns(undefined)
   })
   afterEach(() => {
     setup.ensureCustomTypes.restore()
