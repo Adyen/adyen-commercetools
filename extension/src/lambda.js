@@ -1,20 +1,19 @@
 const utils = require('./utils')
 const paymentHandler = require('../src/paymentHandler/payment-handler')
-
-const { ensureResources } = require('./config/init/ensure-resources')
+const setup = require('./config/init/ensure-resources')
 
 const logger = utils.getLogger()
 let init = false;
 
 exports.handler = async function(event) {
-  try {  
+  try {
 
-    init = init || await ensureResources();
+    init = init || await setup.ensureResources();
     
     const paymentResult = await paymentHandler.handlePayment(event.resource.obj)
 
     return {
-      responseType: paymentResult.success ? "UpdateRequest" : "FailedValidation",
+      responseType: paymentResult.success ? `UpdateRequest` : `FailedValidation`,
       errors: paymentResult.data.errors,
       actions: paymentResult.data.actions
     }
