@@ -4,6 +4,7 @@ const { handler } = require('../../src/lambda')
 const paymentHandler = require('../../src/paymentHandler/payment-handler')
 const setup = require('../../src/config/init/ensure-resources')
 const utils = require('../../src/utils')
+
 const { expect, assert } = chai
 
 chai.use(require('chai-as-promised'))
@@ -29,6 +30,7 @@ describe('Lambda handler', () => {
 
     await handler(event)
     await handler(event)
+
     expect(ensureResourcesStub.calledOnce).to.equal(true)
   })
 
@@ -55,10 +57,11 @@ describe('Lambda handler', () => {
   it('logs and throws unhandled exceptions', async () => {
     const logSpy = sinon.spy()
     utils.getLogger().error = logSpy
+
     const error = new Error('some error')
     sinon.stub(paymentHandler, 'handlePayment').throws(error)
 
-    const call = async () => await handler(event)
+    const call = async () => handler(event)
 
     await expect(call()).to.be.rejectedWith(error)
     assert(logSpy.calledWith(error, `Unexpected error when processing event ${JSON.stringify(event)}`))

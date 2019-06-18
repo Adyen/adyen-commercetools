@@ -51,15 +51,21 @@ There are 3 different types of tests. Don't forget to provide all required envir
 with the UI (e.g. credit card 3ds). In such cases, we use Cypress.io. Run `npm run cypress-ui` to test.
 
 ## Deployment
+
+### AWS Lambda
+
+For deployment to lambda zip the extensions folder and specify the src/lambda.handler as the entry point for the function
+
+### Docker
 For easy deployment you can use the [Extension module docker image](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension/tags).
 
-### Pull the image 
+#### Pull the image 
 ```
 docker pull commercetools/commercetools-adyen-integration-extension:X.X.X
 ```
 (replace X.X.X with a image tag)
 
-### Run the container
+#### Run the container
 
 Replace all `XXX` values and execute:
 ```
