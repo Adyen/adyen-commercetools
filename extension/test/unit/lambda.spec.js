@@ -13,10 +13,10 @@ describe('Lambda handler', () => {
   let ensureResourcesStub
 
   beforeEach(() => {
-    ensureResourcesStub = sinon.stub(setup, 'ensureResources').returns(true)
+    ensureResourcesStub = sinon.stub(setup, 'ensureCustomTypes').returns(true)
   })
   afterEach(() => {
-    setup.ensureResources.restore()
+    setup.ensureCustomTypes.restore()
     paymentHandler.handlePayment.restore()
   })
 

@@ -4,16 +4,23 @@ const { ensureApiExtensions } = require('./ensure-api-extensions')
 const ctpClientBuilder = require('../../ctp/ctp-client')
 const config = require('../../config/config')
 
+const ctpClient = ctpClientBuilder.get()
 
-function ensureResources () {
-  const ctpClient = ctpClientBuilder.get()
+function ensureCustomTypes () {
   return Promise.all([
     ensurePaymentCustomType(ctpClient),
-    ensureInterfaceInteractionCustomType(ctpClient),
+    ensureInterfaceInteractionCustomType(ctpClient)
+  ])
+}
+
+function ensureResources () {
+  return Promise.all([
+    ensureCustomTypes(),
     ensureApiExtensions(ctpClient, config.load().apiExtensionBaseUrl)
   ])
 }
 
 module.exports = {
-  ensureResources
+  ensureResources,
+  ensureCustomTypes
 }

@@ -3,12 +3,12 @@ const paymentHandler = require('../src/paymentHandler/payment-handler')
 const setup = require('./config/init/ensure-resources')
 
 const logger = utils.getLogger()
-let init = false;
+let init = false
 
 exports.handler = async function(event) {
   try {
 
-    init = init || await setup.ensureResources();
+    init = init || await setup.ensureCustomTypes()
     
     const paymentResult = await paymentHandler.handlePayment(event.resource.obj)
 
