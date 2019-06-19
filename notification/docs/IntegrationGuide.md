@@ -58,6 +58,14 @@ Replace all `XXX` values and execute:
 docker run -e CTP_PROJECT_KEY=XXX -e CTP_CLIENT_ID=XXX -e CTP_CLIENT_SECRET=XXX ctp-adyen-integration-notification:XXX
 ```
 
+### Deployment using AWS Lambda
+
+##### Deploying the Lambda Code
+For deployment to lambda, zip the notification folder and specify the src/lambda.handler as the entry point for the function
+
+##### Deploying the API Gateway
+In order for Adyen to call the lambda, an API Gateway will need to be created which accepts the notifications from Adyen and invokes the lambda.
+
 ## Configuration
 
 After deployment you have to register the Notification module public URL in the Adyen Customer Area in order to receive notifications.
