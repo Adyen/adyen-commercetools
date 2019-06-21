@@ -3,7 +3,7 @@ const chai = require('chai')
 const { handler } = require('../../src/lambda')
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const setup = require('../../src/config/init/ensure-interface-interaction-custom-type')
-const logger = require('../../src/utils/logger');
+const logger = require('../../src/utils/logger')
 
 const { expect, assert } = chai
 
@@ -21,7 +21,7 @@ describe('Lambda handler', () => {
   })
 
   const event = {
-    notificationItems:[]
+    notificationItems: []
   }
 
   it('only calls ensureResources once', async () => {
@@ -39,7 +39,7 @@ describe('Lambda handler', () => {
 
     const result = await handler(event)
 
-    expect(result).to.eql({notificationResponse: '[accepted]'})
+    expect(result).to.eql({ notificationResponse: '[accepted]' })
   })
 
   it('logs and throws unhandled exceptions', async () => {
