@@ -12,7 +12,8 @@
     "cypress": "server-test cypress-setup 8000 cypress:run",
     "cypress-ui": "server-test cypress-setup 8000 cypress:open",
     "cypress-setup": "node ./cypress/set-up-server.js",
-    "toc": "doctoc docs --title '**Contents**'"
+    "toc": "doctoc docs --title '**Contents**'",
+    "create-custom-types": "node -e 'require(\"./src/config/init/ensure-resources.js\").ensureCustomTypes()'"
   },
   "keywords": [
     "Adyen",

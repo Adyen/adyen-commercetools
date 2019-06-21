@@ -56,6 +56,9 @@ with the UI (e.g. credit card 3ds). In such cases, we use Cypress.io. Run `npm r
 
 For deployment to lambda zip the extensions folder and specify `src/lambda.handler` as the entry point for the function
 
+When deploying the lambda, it will not create the custom types for you. These are required for the extension to operate correctly.
+You can create these by running the command `npm run create-custom-types` and providing the `CTP_PROJECT_KEY`, `CTP_CLIENT_ID` and `CTP_CLIENT_SECRET` environment variables.
+
 ### Docker
 For easy deployment you can use the [Extension module docker image](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension/tags).
 
