@@ -2,7 +2,6 @@ const sinon = require('sinon')
 const chai = require('chai')
 const { handler } = require('../../src/lambda')
 const paymentHandler = require('../../src/paymentHandler/payment-handler')
-const setup = require('../../src/config/init/ensure-resources')
 const utils = require('../../src/utils')
 
 const { expect, assert } = chai
@@ -10,13 +9,7 @@ const { expect, assert } = chai
 chai.use(require('chai-as-promised'))
 
 describe('Lambda handler', () => {
-  let ensureResourcesStub
-
-  beforeEach(() => {
-    ensureResourcesStub = sinon.stub(setup, 'ensureCustomTypes').returns(undefined)
-  })
   afterEach(() => {
-    setup.ensureCustomTypes.restore()
     paymentHandler.handlePayment.restore()
   })
 
@@ -24,15 +17,6 @@ describe('Lambda handler', () => {
     resource:
       { obj: {} }
   }
-
-  it('only calls ensureResources once', async () => {
-    sinon.stub(paymentHandler, 'handlePayment').returns({ success: true, data: {} })
-
-    await handler(event)
-    await handler(event)
-
-    expect(ensureResourcesStub.calledOnce).to.equal(true)
-  })
 
   it('returns correct success response', async () => {
     const actions = [ { some: 'action' }]
