@@ -59,6 +59,8 @@ For deployment to lambda zip the extensions folder and specify `src/lambda.handl
 When deploying the lambda, it will not create the custom types for you. These are required for the extension to operate correctly.
 You can create these by running the command `npm run create-custom-types` and providing the `CTP_PROJECT_KEY`, `CTP_CLIENT_ID` and `CTP_CLIENT_SECRET` environment variables.
 
+Example command (bash): `CTP_PROJECT_KEY="project_key" CTP_CLIENT_ID="client_id" CTP_CLIENT_SECRET="client_secret" npm run create-custom-types`
+
 ### Docker
 For easy deployment you can use the [Extension module docker image](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension/tags).
 
