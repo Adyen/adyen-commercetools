@@ -45,9 +45,5 @@ module.exports.load = () => {
     { adyen: getAdyenCredentials() }
   )
 
-  // raise an exception when there are no CTP credentials
-  if (!config.ctp.projectKey || !config.ctp.clientId || !config.ctp.clientSecret)
-    throw new Error('CTP project credentials are missing')
-
   return config
 }
