@@ -46,7 +46,7 @@ describe('Payment controller', () => {
 
     it('on wrong payment method should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = {"merchantReference": "paymentReferenceId"}
+      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'wrong method'
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
@@ -65,7 +65,7 @@ describe('Payment controller', () => {
 
     it('on missing params for make paypal payment should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = {"merchantReference": "paymentReferenceId"}
+      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'paypal'
       ctpPaymentClone.transactions[0].state = 'Initial'
 
@@ -85,7 +85,7 @@ describe('Payment controller', () => {
 
     it('on missing params for complete paypal payment should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = {"merchantReference": "paymentReferenceId"}
+      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'paypal'
       ctpPaymentClone.transactions[0].state = 'Pending'
 
@@ -100,7 +100,7 @@ describe('Payment controller', () => {
 
     it('on missing params for make credit card payment should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = {"merchantReference": "paymentReferenceId"}
+      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'creditCard'
       ctpPaymentClone.transactions[0].state = 'Initial'
 
@@ -137,7 +137,7 @@ describe('Payment controller', () => {
 
     it('on missing params for make 3ds payment should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = {"merchantReference": "paymentReferenceId"}
+      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'creditCard_3d'
       ctpPaymentClone.transactions[0].state = 'Initial'
 
@@ -174,7 +174,7 @@ describe('Payment controller', () => {
 
     it('on missing params for complete credit card payment should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = {"merchantReference": "paymentReferenceId"}
+      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'creditCard_3d'
       ctpPaymentClone.transactions[0].state = 'Pending'
 

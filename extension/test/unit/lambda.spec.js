@@ -21,12 +21,12 @@ describe('Lambda handler', () => {
   })
 
   const event = {
-    resource :
-      { obj : {} }
+    resource:
+      { obj: {} }
   }
 
   it('only calls ensureResources once', async () => {
-    sinon.stub(paymentHandler, 'handlePayment').returns({ success: true, data: {}})
+    sinon.stub(paymentHandler, 'handlePayment').returns({ success: true, data: {} })
 
     await handler(event)
     await handler(event)
@@ -35,22 +35,22 @@ describe('Lambda handler', () => {
   })
 
   it('returns correct success response', async () => {
-    const actions = [ { some: "action" }]
-    sinon.stub(paymentHandler, 'handlePayment').returns({ success: true, data: { actions: actions}})
+    const actions = [ { some: 'action' }]
+    sinon.stub(paymentHandler, 'handlePayment').returns({ success: true, data: { actions } })
 
     const result = await handler(event)
 
-    expect(result.responseType).equals(`UpdateRequest`)
+    expect(result.responseType).equals('UpdateRequest')
     expect(result.actions).equals(actions)
   })
 
   it('returns correct failed response', async () => {
-    const errors = [ { some: "error" }]
-    sinon.stub(paymentHandler, 'handlePayment').returns({ success: false, data: { errors: errors}})
+    const errors = [ { some: 'error' }]
+    sinon.stub(paymentHandler, 'handlePayment').returns({ success: false, data: { errors } })
 
     const result = await handler(event)
 
-    expect(result.responseType).equals(`FailedValidation`)
+    expect(result.responseType).equals('FailedValidation')
     expect(result.errors).equals(errors)
   })
 
