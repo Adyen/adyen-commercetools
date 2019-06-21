@@ -42,6 +42,7 @@ describe('Lambda handler', () => {
 
     expect(result.responseType).equals('UpdateRequest')
     expect(result.actions).equals(actions)
+    expect(result.errors).to.equal(undefined)
   })
 
   it('returns correct failed response', async () => {
@@ -52,6 +53,7 @@ describe('Lambda handler', () => {
 
     expect(result.responseType).equals('FailedValidation')
     expect(result.errors).equals(errors)
+    expect(result.actions).to.equal(undefined)
   })
 
   it('logs and throws unhandled exceptions', async () => {
