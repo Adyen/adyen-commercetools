@@ -61,7 +61,7 @@ You can create these by running the command `npm run create-custom-types` and pr
 
 Example command (bash): `CTP_PROJECT_KEY="project_key" CTP_CLIENT_ID="client_id" CTP_CLIENT_SECRET="client_secret" npm run create-custom-types`
 
-You will also need to setup the API extension manually as detailed [here](https://docs.commercetools.com/http-api-projects-api-extensions) for resourceTypeId `order` and actions `Create and Update`
+You will also need to setup the API extension manually as detailed [here](https://docs.commercetools.com/http-api-projects-api-extensions) for resourceTypeId `payment` and actions `Create and Update`
 
 ### Docker
 For easy deployment you can use the [Extension module docker image](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension/tags).
