@@ -6,16 +6,16 @@ const logger = require('./utils/logger').getLogger()
 const setup = require('./config/init/ensure-interface-interaction-custom-type')
 const ctpClient = ctp.get(config)
 
-let init = false;
+let initialised = false;
 
 // TODO: add JSON schema validation:
 // https://github.com/commercetools/commercetools-adyen-integration/issues/9
 exports.handler = async function(event) {
   try {
 
-    if(!init) {
+    if(!initialised) {
       await setup.ensureInterfaceInteractionCustomType(ctpClient)
-      init = true
+      initialised = true
     }
 
     await handler.processNotifications(event.notificationItems, ctpClient)
