@@ -91,7 +91,9 @@ function withPayment (paymentObject) {
       return this
     },
     validateMerchantReferenceField () {
-      const hasMerchantReference = !_.isEmpty(paymentObject.custom.fields.merchantReference)
+      const hasMerchantReference = _.isObject(paymentObject.custom)
+        && _.isObject(paymentObject.custom.fields)
+        && !_.isEmpty(paymentObject.custom.fields.merchantReference)
       if (!hasMerchantReference)
         errors.hasMerchantReference = errorMessages.MISSING_MERCHANT_REFERENCE
       return this
