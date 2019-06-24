@@ -9,8 +9,10 @@
       - [Notice:](#notice)
 - [Run Tests](#run-tests)
 - [Deployment](#deployment)
-  - [Pull the image](#pull-the-image)
-  - [Run the container](#run-the-container)
+  - [AWS Lambda](#aws-lambda)
+  - [Docker](#docker)
+    - [Pull the image](#pull-the-image)
+    - [Run the container](#run-the-container)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
