@@ -15,6 +15,7 @@ describe('Lambda handler', () => {
   beforeEach(() => {
     ensureResourcesStub = sinon.stub(setup, 'ensureInterfaceInteractionCustomType').returns(undefined)
   })
+
   afterEach(() => {
     setup.ensureInterfaceInteractionCustomType.restore()
     notificationHandler.processNotifications.restore()
@@ -30,7 +31,6 @@ describe('Lambda handler', () => {
     await handler(event)
     await handler(event)
 
-    console.log(ensureResourcesStub.called)
     expect(ensureResourcesStub.calledOnce).to.equal(true)
   })
 
