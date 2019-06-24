@@ -36,6 +36,7 @@ Environment variables to configure the notification module:
 |`API_EXTENSION_BASE_URL` | URL of the Extension module server. In case of any payment changes, [CTP API extension](https://docs.commercetools.com/http-api-projects-api-extensions) will call this URL and pass the payment object in body. | YES | |
 |`LOG_LEVEL` | bunyan log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)| NO | `info`
 |`PORT` | port on which the application will run | NO | 8080
+|`DISABLE_ENSURE_RESOURCES` | disables the creation of resources in commercetools (e.g. custom types) | NO | `false`
 
 
 After setting all environmental variables, execute command `npm run extension` to run the module.

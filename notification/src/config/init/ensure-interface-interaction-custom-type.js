@@ -1,9 +1,11 @@
 const logger = require('../../utils/logger').getLogger()
 
 const interfaceInteractionType = require('../../../resources/payment-interface-interaction-type.json')
+const config = require('../../config/config')()
 
 async function ensureInterfaceInteractionCustomType (ctpClient) {
   try {
+    if(config.disableEnsureResources) return
     logger.debug('Ensuring interfaceInteraction')
     const { body } = await ctpClient.fetch(ctpClient.builder.types.where(`key="${interfaceInteractionType.key}"`))
     if (body.results.length === 0) {
