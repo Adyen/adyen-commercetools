@@ -15,7 +15,7 @@ function ensureCustomTypes () {
 }
 
 function ensureResources () {
-  if(config.disableEnsureResources) return Promise.resolve()
+  if (config.disableEnsureResources) return Promise.resolve()
   return Promise.all([
     ensureCustomTypes(),
     ensureApiExtensions(ctpClient, config.apiExtensionBaseUrl)

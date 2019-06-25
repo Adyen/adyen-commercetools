@@ -9,7 +9,7 @@ function getEnvConfig () {
     logLevel: process.env.LOG_LEVEL,
     keepAliveTimeout: !Number.isNaN(process.env.KEEP_ALIVE_TIMEOUT) ? parseFloat(process.env.KEEP_ALIVE_TIMEOUT, 10)
       : undefined,
-    disableEnsureResources: process.env.DISABLE_ENSURE_RESOURCES === "true" || false
+    disableEnsureResources: process.env.DISABLE_ENSURE_RESOURCES === 'true' || false
   }
 }
 
