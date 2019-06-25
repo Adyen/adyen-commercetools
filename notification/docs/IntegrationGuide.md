@@ -68,6 +68,7 @@ For deployment to lambda, zip the notification folder and specify `src/lambda.ha
 
 ##### Deploying the API Gateway
 In order for Adyen to call the lambda, an API Gateway will need to be created which accepts the notifications from Adyen and invokes the lambda.
+API Gateway Documentation can be found [here](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html).
 
 ## Configuration
 
