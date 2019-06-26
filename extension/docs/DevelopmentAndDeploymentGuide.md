@@ -9,8 +9,10 @@
       - [Notice:](#notice)
 - [Run Tests](#run-tests)
 - [Deployment](#deployment)
-  - [Pull the image](#pull-the-image)
-  - [Run the container](#run-the-container)
+  - [AWS Lambda](#aws-lambda)
+  - [Docker](#docker)
+    - [Pull the image](#pull-the-image)
+    - [Run the container](#run-the-container)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -51,15 +53,28 @@ There are 3 different types of tests. Don't forget to provide all required envir
 with the UI (e.g. credit card 3ds). In such cases, we use Cypress.io. Run `npm run cypress-ui` to test.
 
 ## Deployment
+
+### AWS Lambda
+
+For deployment to lambda zip the extensions folder and specify `src/lambda.handler` as the entry point for the function
+
+When deploying the lambda, it will NOT create the custom types for you. These are required for the extension to operate correctly. Please add [payment custom types](../resources/payment-custom-types.json) and [payment interface interaction types](../resources/payment-interface-interaction-types.json) manually.
+You can create these by running the command `npm run create-custom-types` and providing the `CTP_PROJECT_KEY`, `CTP_CLIENT_ID` and `CTP_CLIENT_SECRET` environment variables.
+
+Example command (bash): `CTP_PROJECT_KEY="project_key" CTP_CLIENT_ID="client_id" CTP_CLIENT_SECRET="client_secret" npm run create-custom-types`
+
+You will also need to setup the API extension manually as detailed [here](https://docs.commercetools.com/http-api-projects-api-extensions) for resourceTypeId `payment` and actions `Create and Update`
+
+### Docker
 For easy deployment you can use the [Extension module docker image](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension/tags).
 
-### Pull the image 
+#### Pull the image 
 ```
 docker pull commercetools/commercetools-adyen-integration-extension:X.X.X
 ```
 (replace X.X.X with a image tag)
 
-### Run the container
+#### Run the container
 
 Replace all `XXX` values and execute:
 ```
