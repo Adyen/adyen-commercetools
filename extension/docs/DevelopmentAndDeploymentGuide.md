@@ -58,7 +58,7 @@ with the UI (e.g. credit card 3ds). In such cases, we use Cypress.io. Run `npm r
 
 For deployment to lambda zip the extensions folder and specify `src/lambda.handler` as the entry point for the function
 
-When deploying the lambda, it will not create the custom types for you. These are required for the extension to operate correctly.
+When deploying the lambda, it will NOT create the custom types for you. These are required for the extension to operate correctly. Please add [payment custom types](../resources/payment-custom-types.json) and [payment interface interaction types](../resources/payment-interface-interaction-types.json) manually.
 You can create these by running the command `npm run create-custom-types` and providing the `CTP_PROJECT_KEY`, `CTP_CLIENT_ID` and `CTP_CLIENT_SECRET` environment variables.
 
 Example command (bash): `CTP_PROJECT_KEY="project_key" CTP_CLIENT_ID="client_id" CTP_CLIENT_SECRET="client_secret" npm run create-custom-types`
