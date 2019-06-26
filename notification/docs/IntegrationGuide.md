@@ -11,6 +11,9 @@
   - [Deployment using Docker image](#deployment-using-docker-image)
       - [Pull the image](#pull-the-image)
       - [Run the container](#run-the-container)
+  - [Deployment using AWS Lambda](#deployment-using-aws-lambda)
+      - [Deploying the Lambda Code](#deploying-the-lambda-code)
+      - [Deploying the API Gateway](#deploying-the-api-gateway)
 - [Configuration](#configuration)
     - [Register the endpoint](#register-the-endpoint)
 - [FAQ](#faq)
@@ -57,6 +60,15 @@ Replace all `XXX` values and execute:
 ```
 docker run -e CTP_PROJECT_KEY=XXX -e CTP_CLIENT_ID=XXX -e CTP_CLIENT_SECRET=XXX ctp-adyen-integration-notification:XXX
 ```
+
+### Deployment using AWS Lambda
+
+##### Deploying the Lambda Code
+For deployment to lambda, zip the notification folder and specify `src/lambda.handler` as the entry point for the function
+
+##### Deploying the API Gateway
+In order for Adyen to call the lambda, an API Gateway will need to be created which accepts the notifications from Adyen and invokes the lambda.
+API Gateway Documentation can be found [here](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html).
 
 ## Configuration
 
