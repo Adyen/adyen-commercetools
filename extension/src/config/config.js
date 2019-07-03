@@ -7,7 +7,7 @@ function getEnvConfig () {
     apiExtensionBaseUrl: process.env.API_EXTENSION_BASE_URL,
     keepAliveTimeout: !Number.isNaN(process.env.KEEP_ALIVE_TIMEOUT) ? parseFloat(process.env.KEEP_ALIVE_TIMEOUT, 10)
       : undefined,
-    disableEnsureResources: process.env.DISABLE_ENSURE_RESOURCES === 'true' || false
+    ensureResources: process.env.ENSURE_RESOURCES !== 'false'
   }
 }
 

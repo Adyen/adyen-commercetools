@@ -4,7 +4,6 @@ const { ensureApiExtensions } = require('./ensure-api-extensions')
 const ctpClientBuilder = require('../../ctp/ctp-client')
 const configLoader = require('../../config/config')
 
-const config = configLoader.load()
 const ctpClient = ctpClientBuilder.get()
 
 function ensureCustomTypes () {
@@ -15,7 +14,8 @@ function ensureCustomTypes () {
 }
 
 function ensureResources () {
-  if (config.disableEnsureResources) return Promise.resolve()
+  let config = configLoader.load()
+  if (!config.ensureResources) return Promise.resolve()
   return Promise.all([
     ensureCustomTypes(),
     ensureApiExtensions(ctpClient, config.apiExtensionBaseUrl)

@@ -5,7 +5,7 @@ const config = require('../../config/config')()
 
 async function ensureInterfaceInteractionCustomType (ctpClient) {
   try {
-    if (config.disableEnsureResources) return
+    if (!config.ensureResources) return
     logger.debug('Ensuring interfaceInteraction')
     const { body } = await ctpClient.fetch(ctpClient.builder.types.where(`key="${interfaceInteractionType.key}"`))
     if (body.results.length === 0) {
