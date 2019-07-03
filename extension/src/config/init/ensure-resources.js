@@ -2,7 +2,7 @@ const { ensurePaymentCustomType } = require('./ensure-payment-custom-type')
 const { ensureInterfaceInteractionCustomType } = require('./ensure-interface-interaction-custom-type')
 const { ensureApiExtensions } = require('./ensure-api-extensions')
 const ctpClientBuilder = require('../../ctp/ctp-client')
-const config = require('../../config/config')
+const configLoader = require('../../config/config')
 
 const ctpClient = ctpClientBuilder.get()
 
@@ -14,9 +14,11 @@ function ensureCustomTypes () {
 }
 
 function ensureResources () {
+  let config = configLoader.load()
+  if (!config.ensureResources) return Promise.resolve()
   return Promise.all([
     ensureCustomTypes(),
-    ensureApiExtensions(ctpClient, config.load().apiExtensionBaseUrl)
+    ensureApiExtensions(ctpClient, config.apiExtensionBaseUrl)
   ])
 }
 

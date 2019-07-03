@@ -6,7 +6,8 @@ function getEnvConfig () {
     logLevel: process.env.LOG_LEVEL,
     apiExtensionBaseUrl: process.env.API_EXTENSION_BASE_URL,
     keepAliveTimeout: !Number.isNaN(process.env.KEEP_ALIVE_TIMEOUT) ? parseFloat(process.env.KEEP_ALIVE_TIMEOUT, 10)
-      : undefined
+      : undefined,
+    ensureResources: process.env.ENSURE_RESOURCES !== 'false'
   }
 }
 

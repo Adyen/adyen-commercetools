@@ -26,6 +26,7 @@ CTP_CLIENT_SECRET | commercetools client secret (you can get in the [commercetoo
 LOG_LEVEL | bunyan log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)| NO | `info`
 PORT | port on which the application will run | NO | 443
 KEEP_ALIVE_TIMEOUT | milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_server_keepalivetimeout)) | NO | Node.js default
+ENSURE_RESOURCES | Set to `false` to disable the creation of resources in commercetools (e.g. custom types) | NO | `true`
 
 Don't forget to provide all required environment variables
 After setting all variables, execute command `npm run start` to run the module.
