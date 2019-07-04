@@ -55,7 +55,7 @@ describe('credit card payment', () => {
     expect(transactions).to.have.lengthOf(1)
     expect(transactions[0].type).to.equal('Charge')
     expect(transactions[0].state).to.equal('Success')
-    expect(transactions[0].interactionId).to.match(/^[0-9]*$/)
+    expect(transactions[0].interactionId).to.match(/^[0-9a-zA-Z]*$/)
   })
 
   it('should create 3ds redirect', async () => {
@@ -124,7 +124,7 @@ describe('credit card payment', () => {
     expect(adyenRequestBody.paymentMethod.encryptedSecurityCode).to.have.string('adyenjs_')
 
     const adyenResponse = JSON.parse(ctpPayment.interfaceInteractions[0].fields.response)
-    expect(adyenResponse.errorCode).to.match(/^[0-9]*$/)
+    expect(adyenResponse.errorCode).to.match(/^[0-9a-zA-Z]*$/)
     expect(adyenResponse.errorType).to.equal('validation')
     const { transactions } = ctpPayment
     expect(transactions).to.have.lengthOf(1)
