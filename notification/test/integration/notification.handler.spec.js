@@ -12,7 +12,7 @@ const notifications = require('../resources/notification')
 const localhostIp = address()
 
 describe('notification module', () => {
-  const ctpClient = ctpClientBuilder.get(config)
+  const ctpClient = ctpClientBuilder.get(config, ['manage_extensions:'.concat(config.ctp.projectKey)])
 
   before(async () => {
     await iTSetUp.startServer()

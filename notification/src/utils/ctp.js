@@ -5,12 +5,20 @@ const { createAuthMiddlewareForClientCredentialsFlow } = require('@commercetools
 const { createHttpMiddleware } = require('@commercetools/sdk-middleware-http')
 const { createQueueMiddleware } = require('@commercetools/sdk-middleware-queue')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
+const { scopes } = require('@commercetools/sdk-middleware-auth')
 
-function createCtpClient ({
-  clientId, clientSecret, projectKey, concurrency = 10
-}) {
+function createCtpClient (config, extraScopes) {
   const AUTH_HOST = 'https://auth.commercetools.com'
   const API_HOST = 'https://api.commercetools.com'
+  const clientId = config.ctp.clientId
+  const clientSecret = config.ctp.clientSecret
+  const projectKey = config.ctp.projectKey
+  const concurrency = 10
+
+  let scopeBuilder = [scopes.MANAGE_PAYMENTS.concat(':').concat(projectKey)]
+  if (config.ensureResources) scopeBuilder = scopeBuilder.concat(scopes.MANAGE_TYPES.concat(':').concat(projectKey))
+  if (extraScopes) scopeBuilder = scopeBuilder.concat('manage_extensions:'.concat(projectKey))
+
   const authMiddleware = createAuthMiddlewareForClientCredentialsFlow({
     host: AUTH_HOST,
     projectKey,
@@ -18,6 +26,7 @@ function createCtpClient ({
       clientId,
       clientSecret
     },
+    scopes: scopeBuilder,
     fetch
   })
 
@@ -41,8 +50,8 @@ function createCtpClient ({
   })
 }
 
-function setUpClient (config) {
-  const ctpClient = createCtpClient(config.ctp)
+function setUpClient (config, extraScopes) {
+  const ctpClient = createCtpClient(config, extraScopes)
   const customMethods = {
     get builder () {
       return getRequestBuilder(config.ctp.projectKey)
@@ -129,6 +138,6 @@ function compareTransactionStates (currentState, newState) {
 
 
 module.exports = {
-  get: config => setUpClient(config),
+  get: (config, extraScopes) => setUpClient(config, extraScopes),
   compareTransactionStates
 }
