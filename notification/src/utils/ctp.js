@@ -17,7 +17,7 @@ function createCtpClient (config, extraScopes) {
 
   let scopeBuilder = [scopes.MANAGE_PAYMENTS.concat(':').concat(projectKey)]
   if (config.ensureResources) scopeBuilder = scopeBuilder.concat(scopes.MANAGE_TYPES.concat(':').concat(projectKey))
-  if (extraScopes) scopeBuilder = scopeBuilder.concat('manage_extensions:'.concat(projectKey))
+  if (extraScopes) scopeBuilder = scopeBuilder.concat(extraScopes)
 
   const authMiddleware = createAuthMiddlewareForClientCredentialsFlow({
     host: AUTH_HOST,
