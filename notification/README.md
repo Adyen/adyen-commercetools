@@ -1,4 +1,5 @@
 # Notification Module
+![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-notification)
 
 Notification module is a part of the commercetools Adyen integration
 which is responsible for receiving notifications from Adyen payment service provider,
