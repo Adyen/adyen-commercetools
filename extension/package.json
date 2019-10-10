@@ -4,7 +4,9 @@
   "description": "Integration between Commercetools and Adyen payment service provider",
   "license": "MIT",
   "scripts": {
-    "test": "mocha --exit --timeout 30000 --full-trace test/**/*.spec.js",
+    "test": "npm run unit && npm run integration",
+    "unit": "nyc mocha --exit --timeout 30000 --full-trace test/unit/**/*.spec.js",
+    "integration": "mocha --exit --timeout 30000 --full-trace test/integration/**/*.spec.js",
     "start": "node ./src/init.js",
     "lint": "eslint .",
     "cypress:run": "cypress run",
@@ -55,6 +57,7 @@
     "eslint-plugin-react": "^7.12.4",
     "mocha": "^6.2.0",
     "ngrok": "^3.2.4",
+    "nyc": "^14.1.1",
     "proxyquire": "^2.1.2",
     "sinon": "^7.4.1",
     "start-server-and-test": "^1.10.0"
