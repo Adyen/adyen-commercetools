@@ -34,9 +34,8 @@ describe('credit card payment', () => {
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
     expect(response.statusCode).to.equal(201)
     const adyenRequest = JSON.parse(response.body.interfaceInteractions[0].fields.request)
-    expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
 
-    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    const adyenRequestBody = JSON.parse(adyenRequest)
     expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
     expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.custom.fields.merchantReference)
     expect(adyenRequestBody.returnUrl).to.be.equal(paymentTemplate.custom.fields.returnUrl)
@@ -71,9 +70,8 @@ describe('credit card payment', () => {
 
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
     const adyenRequest = JSON.parse(response.body.interfaceInteractions[0].fields.request)
-    expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
 
-    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    const adyenRequestBody = JSON.parse(adyenRequest)
     expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
     expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.custom.fields.merchantReference)
     expect(adyenRequestBody.returnUrl).to.be.equal(`${process.env.API_EXTENSION_BASE_URL}/test-return-url`)
@@ -110,9 +108,8 @@ describe('credit card payment', () => {
     expect(ctpPayment.interfaceInteractions[0].fields.status).to.equal(c.FAILURE)
 
     const adyenRequest = JSON.parse(ctpPayment.interfaceInteractions[0].fields.request)
-    expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
 
-    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    const adyenRequestBody = JSON.parse(adyenRequest)
     expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
     expect(adyenRequestBody.returnUrl).to.be.equal(paymentTemplate.custom.fields.returnUrl)
     expect(adyenRequestBody.amount.currency).to.be.equal(paymentTemplate.transactions[0].amount.currencyCode)

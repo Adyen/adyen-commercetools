@@ -52,7 +52,7 @@ describe('Cancel or refund', () => {
 
     const interfaceInteractionFields = updatedPayment.interfaceInteractions[1].fields
     const adyenRequest = JSON.parse(interfaceInteractionFields.request)
-    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    const adyenRequestBody = JSON.parse(adyenRequest)
     expect(adyenRequestBody.originalReference).to.equal(chargeTransaction.interactionId)
 
     const adyenResponse = JSON.parse(interfaceInteractionFields.response)

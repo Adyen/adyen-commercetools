@@ -25,9 +25,8 @@ describe('fetch payment', () => {
     const interfaceInteractionFields = response.body.interfaceInteractions[0].fields
     expect(interfaceInteractionFields.type).to.be.equal('getAvailablePaymentMethods')
     const adyenRequest = JSON.parse(interfaceInteractionFields.request)
-    expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
 
-    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    const adyenRequestBody = JSON.parse(adyenRequest)
     expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
     expect(adyenRequestBody.countryCode).to.be.equal(paymentTemplate.custom.fields.countryCode)
     expect(adyenRequestBody.amount.currency).to.be.equal(paymentTemplate.amountPlanned.currencyCode)
