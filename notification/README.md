@@ -20,15 +20,6 @@ Adyen sends notifications which look like this:
   "notificationItems": [
     {
       "NotificationRequestItem": {
-        "additionalData": {
-          "expiryDate": "12\/2012",
-          " NAME1 ": "VALUE1",
-          "authCode": "1234",
-          "cardSummary": "7777",
-          "totalFraudScore": "10",
-          "NAME2": "  VALUE2  ",
-          "fraudCheck-6-ShopperIpUsage": "10"
-        },
         "amount": {
           "currency": "EUR",
           "value": 10100
@@ -44,7 +35,6 @@ Adyen sends notifications which look like this:
         ],
         "paymentMethod": "visa",
         "pspReference": "test_AUTHORISATION_1",
-        "reason": "1234:7777:12\/2012",
         "success": "true"
       }
     }

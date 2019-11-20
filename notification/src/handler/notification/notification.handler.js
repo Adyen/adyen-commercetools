@@ -97,6 +97,9 @@ function calculateUpdateActionsForPayment (payment, notification) {
 }
 
 function getAddInterfaceInteractionUpdateAction (notification) {
+  delete notification.additionalData
+  delete notification.reason
+
   return {
     action: 'addInterfaceInteraction',
     type: {
