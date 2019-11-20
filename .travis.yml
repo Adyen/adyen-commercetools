@@ -21,6 +21,11 @@ before_deploy:
 after_deploy:
   - docker logout
 
+addons:
+  apt:
+    packages:
+    - libgconf-2-4
+
 deploy:
   - provider: script
     script: bash ./travis-build.sh "$TEST_DIR"
