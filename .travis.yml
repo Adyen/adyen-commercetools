@@ -21,6 +21,8 @@ before_deploy:
 after_deploy:
   - docker logout
 
+# cypress test fails without libgconf-2-4 package
+# see https://github.com/cypress-io/cypress/issues/4069
 addons:
   apt:
     packages:
