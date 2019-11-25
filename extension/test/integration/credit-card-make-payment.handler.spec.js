@@ -69,9 +69,8 @@ describe('credit card payment', () => {
     })
 
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
-    const adyenRequest = JSON.parse(response.body.interfaceInteractions[0].fields.request)
 
-    const adyenRequestBody = JSON.parse(adyenRequest)
+    const adyenRequestBody = JSON.parse(JSON.parse(response.body.interfaceInteractions[0].fields.request))
     expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
     expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.custom.fields.merchantReference)
     expect(adyenRequestBody.returnUrl).to.be.equal(`${process.env.API_EXTENSION_BASE_URL}/test-return-url`)
