@@ -68,7 +68,7 @@ function createAddInterfaceInteractionAction (
     fields: {
       createdAt: new Date(),
       response: JSON.stringify(response),
-      request: JSON.stringify(request),
+      request: JSON.stringify(request.body),
       type,
       status
     }

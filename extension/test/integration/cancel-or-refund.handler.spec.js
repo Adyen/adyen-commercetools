@@ -51,8 +51,8 @@ describe('Cancel or refund', () => {
     expect(refundTransaction.state).to.equal('Pending')
 
     const interfaceInteractionFields = updatedPayment.interfaceInteractions[1].fields
-    const adyenRequest = JSON.parse(interfaceInteractionFields.request)
-    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    //interfaceInteractionFields.request is a stringify json
+    const adyenRequestBody = JSON.parse(JSON.parse(interfaceInteractionFields.request))
     expect(adyenRequestBody.originalReference).to.equal(chargeTransaction.interactionId)
 
     const adyenResponse = JSON.parse(interfaceInteractionFields.response)

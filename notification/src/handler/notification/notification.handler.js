@@ -97,6 +97,10 @@ function calculateUpdateActionsForPayment (payment, notification) {
 }
 
 function getAddInterfaceInteractionUpdateAction (notification) {
+  // strip away sensitive data
+  delete notification.additionalData
+  delete notification.reason
+
   return {
     action: 'addInterfaceInteraction',
     type: {
