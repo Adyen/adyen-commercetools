@@ -30,7 +30,7 @@ async function handlePayment (paymentObject) {
 }
 
 async function _cancelOrRefundPayment (paymentObject) {
-  const transaction = pU.getChargeTransactionSuccess(paymentObject)
+  const transaction = pU.getAuthorizationTransactionSuccess(paymentObject)
   const body = {
     merchantAccount: config.adyen.merchantAccount,
     originalReference: transaction.interactionId,

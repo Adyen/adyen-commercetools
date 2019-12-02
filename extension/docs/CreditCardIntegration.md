@@ -21,7 +21,7 @@ The following features are not supported:
 ### Credit card
 1. Shop collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step1collectshopperdetails) and creates a payment with following criteria ([Example payment](../test/fixtures/payment-credit-card.json)):
     * `Payment.paymentMethodInfo.method = 'creditCard'`
-    * `Payment.transactions` contains a transaction with `type='Charge' and state='Initial'`
+    * `Payment.transactions` contains a transaction with `type='Authorization' and state='Initial'`
     * `Payment.custom.fields.encryptedCardNumber` contains credit card number encrypted in the previous step.
     * `Payment.custom.fields.encryptedExpiryMonth` contains expiry month encrypted in the previous step.
     * `Payment.custom.fields.encryptedExpiryYear` contains expiry year encrypted in the previous step.
@@ -30,7 +30,7 @@ The following features are not supported:
     * *Optional*: `paymentObject.custom.fields.holderName`
 1. Extension module makes a payment request and save following information to the payment object:
     * `Payment.interfaceInteractions` with `type='makePayment'` that contains request and response with Adyen 
-    * `Payment.transactions` with a transaction `type='Charge' and state='Initial'` will be changed to a new state according to [the returned result code](./IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
+    * `Payment.transactions` with a transaction `type='Authorization' and state='Initial'` will be changed to a new state according to [the returned result code](./IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
     * `pspReference` will be saved in a matching transaction from the previous point in a field `Payment.transactions.interactionId`
 1. Shop validates the payment and presents the payment result to the shopper.
 
@@ -39,7 +39,7 @@ The following features are not supported:
 ### Credit card with 3D Secure
 1. Shop collects shopper details according to the [Adyen documentation](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step1collectshopperdetails) and creates a payment with following criteria ([Example payment](../test/fixtures/payment-credit-card-3d.json)):
     * `Payment.paymentMethodInfo.method = 'creditCard_3d'`
-    * `Payment.transactions` contains a transaction with `type='Charge' and state='Initial'`
+    * `Payment.transactions` contains a transaction with `type='Authorization' and state='Initial'`
     * `Payment.custom.fields.encryptedCardNumber` contains credit card number encrypted in the previous step.
     * `Payment.custom.fields.encryptedExpiryMonth` contains expiry month encrypted in the previous step.
     * `Payment.custom.fields.encryptedExpiryYear` contains expiry year encrypted in the previous step.
@@ -49,7 +49,7 @@ The following features are not supported:
     * *Optional*: `paymentObject.custom.fields.holderName`
 1. Extension module makes a payment request and save following information to the payment object (for explanation of each field, see [Adyen's documentations](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step2makeapayment)):
     * `Payment.interfaceInteractions` with `type='makePayment'` that contains request and response with Adyen
-    * `Payment.transactions` with a transaction `type='Charge' and state='Initial'` will be changed to `state='Pending'`.
+    * `Payment.transactions` with a transaction `type='Authorization' and state='Initial'` will be changed to `state='Pending'`.
     * `Payment.custom.fields.MD`
     * `Payment.custom.fields.PaReq`  
     * `Payment.custom.fields.paymentData`  
@@ -69,7 +69,7 @@ The following features are not supported:
     ```
 1. Extension module makes a [payment request](https://docs.adyen.com/developers/payment-methods/cards-with-3d-secure#step4completepayment) and save following information to the payment object:
     * `Payment.interfaceInteractions` with `type='completePayment'` that contains request and response with Adyen 
-    * `Payment.transactions` with a transaction `type='Charge' and state='Pending'` will be changed to a new state according to [the returned result code](IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
+    * `Payment.transactions` with a transaction `type='Authorization' and state='Pending'` will be changed to a new state according to [the returned result code](IntegrationGuide.md#mapping-from-adyen-result-codes-to-ctp-transaction-state).
     * `pspReference` will be saved in a matching transaction from the previous point in a field `Payment.transactions.interactionId`
 1. Shop validates the payment and presents the payment result to the shopper.
 

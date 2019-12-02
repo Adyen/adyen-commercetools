@@ -20,72 +20,52 @@ const config = {
 describe('notification module', () => {
   afterEach(() => sandbox.restore())
 
-  it('should update payment with a new InterfaceInteraction and payment status '
-    + 'when current payment does not have the interfaceInteraction and the transaction'
-    + 'which are going to be set', async () => {
-    const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
-      body: {
-        results: [paymentMock]
-      }
-    }))
-    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
-    await notificationHandler.processNotifications(notificationsMock, ctpClient)
-    const expectedUpdateActions = [
-      {
-        action: 'addInterfaceInteraction',
-        type: {
-          key: 'ctp-adyen-integration-interaction-notification',
-          typeId: 'type'
+  it(`given that ADYEN sends an AUTHORISATION is success notification
+      when payment has an pending authorization transaction 
+      then notification module should add notification to the interface interaction 
+      and should update pending authorization state to the success`, async () => {
+    // prepare data
+    const notifications = [{
+      NotificationRequestItem: {
+        amount: {
+          currency: "EUR",
+          value: 10100
         },
-        fields: {
-          status: 'AUTHORISATION',
-          notification: JSON.stringify(notificationsMock[0])
-        }
-      },
-      {
-        action: 'addTransaction',
-        transaction: {
-          type: 'Authorization',
-          amount: {
-            currencyCode: 'EUR',
-            centAmount: 10100
-          },
-          state: 'Success'
-        }
+        eventCode: "AUTHORISATION",
+        eventDate: "2019-01-30T18:16:22+01:00",
+        merchantAccountCode: "CommercetoolsGmbHDE775",
+        merchantReference: "8313842560770001",
+        operations: [
+          "CANCEL",
+          "CAPTURE",
+          "REFUND"
+        ],
+        paymentMethod: "visa",
+        pspReference: "test_AUTHORISATION_1",
+        success: "true"
       }
-    ]
-
-    // createdAt is set to the current date during the update action calculation
-    // We can't know what is set there
-    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
-    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
-    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
-    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
-  })
-
-  it('should update payment with a new InterfaceInteraction but not payment status '
-    + 'when current payment does not have the interfaceInteraction which is going to be set'
-    + 'but has a transaction with the correct status', async () => {
-    const modifiedPaymentMock = cloneDeep(paymentMock)
-    modifiedPaymentMock.transactions.push({
-      type: 'Authorization',
+    }]
+    const payment = cloneDeep(paymentMock)
+    payment.transactions.push({
+      id: "9ca92d05-ba63-47dc-8f83-95b08d539646",
+      type: "Authorization",
       amount: {
-        type: 'centPrecision',
-        currencyCode: 'EUR',
+        type: "centPrecision",
+        currencyCode: "EUR",
         centAmount: 495,
         fractionDigits: 2
       },
-      state: 'Success'
+      state: "Initial"
     })
     const ctpClient = ctpClientMock.get(config)
     sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
       body: {
-        results: [modifiedPaymentMock]
+        results: [payment]
       }
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
-    await notificationHandler.processNotifications(notificationsMock, ctpClient)
+    // process
+    await notificationHandler.processNotifications(notifications, ctpClient)
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -95,11 +75,17 @@ describe('notification module', () => {
         },
         fields: {
           status: 'AUTHORISATION',
-          notification: JSON.stringify(notificationsMock[0])
+          notification: JSON.stringify(notifications[0])
         }
+      },
+      {
+        action: "changeTransactionState",
+        state: "Success",
+        transactionId: "9ca92d05-ba63-47dc-8f83-95b08d539646"
       }
     ]
 
+    //assert update actions
     // createdAt is set to the current date during the update action calculation
     // We can't know what is set there
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
@@ -108,17 +94,119 @@ describe('notification module', () => {
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
   })
 
-  it('should update payment with a payment status but not new InterfaceInteraction '
-    + 'when current payment does not have the transaction which is going to be set'
-    + 'but has the interfaceInteraction', async () => {
-    const modifiedPaymentMock = cloneDeep(paymentMock)
-    modifiedPaymentMock.interfaceInteractions.push({
+  it(`given that ADYEN sends an AUTHORISATION is not successful notification
+      when payment has an pending authorization transaction 
+      then notification module should add notification to the interface interaction 
+      and should not update the pending transaction `, async () => {
+    // prepare data
+    const notifications = [{
+      NotificationRequestItem: {
+        amount: {
+          currency: "EUR",
+          value: 10100
+        },
+        eventCode: "AUTHORISATION",
+        eventDate: "2019-01-30T18:16:22+01:00",
+        merchantAccountCode: "CommercetoolsGmbHDE775",
+        merchantReference: "8313842560770001",
+        operations: [
+          "CANCEL",
+          "CAPTURE",
+          "REFUND"
+        ],
+        paymentMethod: "visa",
+        pspReference: "test_AUTHORISATION_1",
+        success: "false"
+      }
+    }]
+    const payment = cloneDeep(paymentMock)
+    payment.transactions.push({
+      id: "9ca92d05-ba63-47dc-8f83-95b08d539646",
+      type: "Authorization",
+      amount: {
+        type: "centPrecision",
+        currencyCode: "EUR",
+        centAmount: 495,
+        fractionDigits: 2
+      },
+      state: "Pending"
+    })
+    const ctpClient = ctpClientMock.get(config)
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [payment]
+      }
+    }))
+    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    // process
+    await notificationHandler.processNotifications(notifications, ctpClient)
+    const expectedUpdateActions = [
+      {
+        action: 'addInterfaceInteraction',
+        type: {
+          key: 'ctp-adyen-integration-interaction-notification',
+          typeId: 'type'
+        },
+        fields: {
+          status: 'AUTHORISATION',
+          notification: JSON.stringify(notifications[0])
+        }
+      }
+    ]
+
+    //assert update actions
+    // createdAt is set to the current date during the update action calculation
+    // We can't know what is set there
+    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
+  })
+
+  it(`given that ADYEN sends an AUTHORISATION is success notification
+      when payment has an success authorization transaction 
+      and has already has the same notification saved in interface interaction
+      then should not update interface interaction and transaction`, async () => {
+    // prepare data
+    const notifications = [{
+      NotificationRequestItem: {
+        amount: {
+          currency: "EUR",
+          value: 10100
+        },
+        eventCode: "AUTHORISATION",
+        eventDate: "2019-01-30T18:16:22+01:00",
+        merchantAccountCode: "CommercetoolsGmbHDE775",
+        merchantReference: "8313842560770001",
+        operations: [
+          "CANCEL",
+          "CAPTURE",
+          "REFUND"
+        ],
+        paymentMethod: "visa",
+        pspReference: "test_AUTHORISATION_1",
+        success: "true"
+      }
+    }]
+    const payment = cloneDeep(paymentMock)
+    payment.transactions.push({
+      id: "9ca92d05-ba63-47dc-8f83-95b08d539646",
+      type: "Authorization",
+      amount: {
+        type: "centPrecision",
+        currencyCode: "EUR",
+        centAmount: 495,
+        fractionDigits: 2
+      },
+      state: "Success"
+    })
+    payment.interfaceInteractions.push({
       type: {
         typeId: 'type',
         id: '3fd15a04-b460-4a88-a911-0472c4c080b3'
       },
       fields: {
-        notification: JSON.stringify(notificationsMock[0]),
+        notification: JSON.stringify(notifications[0]),
         status: 'SUCCESS',
         createdAt: '2019-02-05T12:29:36.028Z'
       }
@@ -126,29 +214,97 @@ describe('notification module', () => {
     const ctpClient = ctpClientMock.get(config)
     sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
       body: {
-        results: [modifiedPaymentMock]
+        results: [payment]
       }
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
-    await notificationHandler.processNotifications(notificationsMock, ctpClient)
+    // process
+    await notificationHandler.processNotifications(notifications, ctpClient)
+    // assert
+    expect(ctpClientUpdateSpy.args[0][3]).to.have.lengthOf(0)
+  })
+
+  it(`given that ADYEN sends a CANCELLATION notification
+      when payment has an pending authorization transaction 
+      then notification module should add notification to the interface interaction 
+      and should add additional CancelAuthorization transaction`, async () => {
+    // prepare data
+    const notifications = [{
+      NotificationRequestItem: {
+        amount: {
+          currency: "EUR",
+          value: 10100
+        },
+        eventCode: "CANCELLATION",
+        eventDate: "2019-01-30T18:16:22+01:00",
+        merchantAccountCode: "CommercetoolsGmbHDE775",
+        merchantReference: "8313842560770001",
+        operations: [
+          "CANCEL",
+          "CAPTURE",
+          "REFUND"
+        ],
+        paymentMethod: "visa",
+        pspReference: "test_AUTHORISATION_1",
+        success: "true"
+      }
+    }]
+    const payment = cloneDeep(paymentMock)
+    payment.transactions.push({
+      id: "9ca92d05-ba63-47dc-8f83-95b08d539646",
+      type: "Authorization",
+      amount: {
+        type: "centPrecision",
+        currencyCode: "EUR",
+        centAmount: 495,
+        fractionDigits: 2
+      },
+      state: "Pending"
+    })
+    const ctpClient = ctpClientMock.get(config)
+    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
+      body: {
+        results: [payment]
+      }
+    }))
+    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    // process
+    await notificationHandler.processNotifications(notifications, ctpClient)
     const expectedUpdateActions = [
       {
-        action: 'addTransaction',
+        action: 'addInterfaceInteraction',
+        type: {
+          key: 'ctp-adyen-integration-interaction-notification',
+          typeId: 'type'
+        },
+        fields: {
+          status: 'CANCELLATION',
+          notification: JSON.stringify(notifications[0])
+        }
+      },
+      {
+        action: "addTransaction",
         transaction: {
-          type: 'Authorization',
           amount: {
-            currencyCode: 'EUR',
-            centAmount: 10100
+            centAmount: 10100,
+            currencyCode: "EUR"
           },
-          state: 'Success'
+          state: "Success",
+          type: "CancelAuthorization"
         }
       }
     ]
 
-    expect(ctpClientUpdateSpy.args[0][3]).to.deep.equal(expectedUpdateActions)
+    //assert update actions
+    // createdAt is set to the current date during the update action calculation
+    // We can't know what is set there
+    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
   })
 
-  it('should update transaction with a new state', async () => {
+  xit('should update transaction with a new state', async () => {
     const modifiedPaymentMock = cloneDeep(paymentMock)
     const notificationsMockClone = cloneDeep(notificationsMock)
     notificationsMockClone[0].NotificationRequestItem.eventCode = 'CAPTURE'
@@ -164,6 +320,7 @@ describe('notification module', () => {
         status: 'SUCCESS'
       }
     })
+    modifiedPaymentMock.transactions[0].state = 'Success'
     const ctpClient = ctpClientMock.get(config)
     sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
       body: {
@@ -176,9 +333,15 @@ describe('notification module', () => {
     await notificationHandler.processNotifications(notificationsMockClone, ctpClient)
     const expectedUpdateActions = [
       {
-        action: 'changeTransactionState',
-        state: 'Failure',
-        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646'
+        action: "addTransaction",
+        transaction: {
+          amount: {
+            centAmount: 10100,
+            currencyCode: "EUR"
+          },
+          state: "Failure",
+          type: "Charge"
+        }
       }
     ]
 

@@ -47,7 +47,7 @@
   "transactions": [
     {
       "id": "6b1d4c68-8e31-4528-9af8-dc09ad653d91",
-      "type": "Charge",
+      "type": "Authorization",
       "amount": {
         "type": "centPrecision",
         "currencyCode": "EUR",

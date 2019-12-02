@@ -27,7 +27,7 @@ describe('Cancel or refund', () => {
     const payment = response.body
     const paymentId = payment.id
     const paymentVersion = payment.version
-    const chargeTransaction = payment.transactions[0]
+    const transaction = payment.transactions[0]
 
     const response2 = await ctpClient.update(ctpClient.builder.payments,
       paymentId, paymentVersion, [
@@ -36,8 +36,8 @@ describe('Cancel or refund', () => {
           transaction: {
             type: 'Refund',
             amount: {
-              currencyCode: chargeTransaction.amount.currencyCode,
-              centAmount: chargeTransaction.amount.centAmount
+              currencyCode: transaction.amount.currencyCode,
+              centAmount: transaction.amount.centAmount
             },
             state: 'Initial'
           }
@@ -53,7 +53,7 @@ describe('Cancel or refund', () => {
     const interfaceInteractionFields = updatedPayment.interfaceInteractions[1].fields
     //interfaceInteractionFields.request is a stringify json
     const adyenRequestBody = JSON.parse(JSON.parse(interfaceInteractionFields.request))
-    expect(adyenRequestBody.originalReference).to.equal(chargeTransaction.interactionId)
+    expect(adyenRequestBody.originalReference).to.equal(transaction.interactionId)
 
     const adyenResponse = JSON.parse(interfaceInteractionFields.response)
     expect(adyenResponse.response).to.equal('[cancelOrRefund-received]')

@@ -110,7 +110,7 @@ The combination of `Payment.custom.fields.merchantReference` and `Payment.paymen
 ### Validate payment transaction
 Cart's payment counts as successful if there is at least one payment object
 with only successful (`Payment.Transaction.state=Success`)
-payment transactions of type `Charge`.
+payment transactions of type `Authorization`.
 
 ### Mapping from Adyen result codes to CTP transaction state
 |Adyen result code| CTP transaction state
