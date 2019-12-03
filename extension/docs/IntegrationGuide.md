@@ -27,8 +27,9 @@ In this process, there are 3 parties involved:
 - **Shopper** - a person that's using the shop
 
 Other used terms in the documentation:
-- **Cancel** - cancel the authorisation on an uncaptured payment.
-- **Refund** - refund a payment back to the shopper.
+- [**Cancel**](CancelRefundPayment.md#cancel-or-refund-a-payment) - cancel the authorisation on an uncaptured payment.
+- [**Refund**](CancelRefundPayment.md#cancel-or-refund-a-payment) - refund a payment back to the shopper.
+
 
 ## Requirements for CTP project
 All the requirements below are automatically created by the Extension module.
