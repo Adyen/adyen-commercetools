@@ -63,7 +63,7 @@ If all above validations are passed then order can be created right away and ord
 Otherwise shopper might continue with further payment steps.
 
 1. **Get available payment methods**  
-    > First part of the payment, the shopper needs to view the list of available payment methods before entering the payment details, please follow the steps below for getting available payment methods:
+    > First part of the payment, the shopper needs to view the list of available payment methods before entering the payment details. Please follow the steps below for getting available payment methods:
     1. [Create/update a CTP Payment](https://docs.commercetools.com/http-api-projects-payments) with following properties:
         - `Payment.paymentMethodInfo.method = empty or undefined`   
         - `Payment.custom.fields.countryCode != null` - set the country of a shopper. Please [consult with Adyen](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/v41/paymentMethods) for the right format.  
