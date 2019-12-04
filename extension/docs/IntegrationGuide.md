@@ -71,7 +71,7 @@ Otherwise shopper might continue with further payment steps.
     1. Extension module will make a [request](https://docs.adyen.com/checkout/api-integration/#step-1-get-available-payment-methods) to Adyen API and the response will be saved in interface interaction with `type='ctp-adyen-integration-interaction'` and `fields.type='getAvailablePaymentMethods'` as stringified JSON.
     1. Before presenting the payment methods in the response from Adyen, please check Extension module documentation for supported payment methods.
 1. **Continue with one of the supported payment methods**
-    > As a second part, after getting the list of available payment methods, the shopper will select a payment method and make a payment. Please follow the steps below for processing the payment with the extension module:
+    > Below guides describe how to handle different type of payment methods selected by the user:
     - [Credit card payment](./CreditCardIntegration.md)  
     - [Paypal payment](./PaypalIntegration.md)
 
