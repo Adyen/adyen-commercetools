@@ -22,7 +22,7 @@ async function handlePayment (paymentObject) {
     })
   ]
   if (responseBody.resultCode) {
-    const transaction = pU.getChargeTransactionInit(paymentObject)
+    const transaction = pU.getAuthorizationTransactionInit(paymentObject)
     const resultCode = responseBody.resultCode.toLowerCase()
     if (resultCode === c.REDIRECT_SHOPPER.toLowerCase()) {
       const { MD } = responseBody.redirect.data
@@ -79,7 +79,7 @@ function _validatePayment (paymentObject) {
 }
 
 async function _makePayment (paymentObject) {
-  const transaction = pU.getChargeTransactionInitOrPending(paymentObject)
+  const transaction = pU.getAuthorizationTransactionInitOrPending(paymentObject)
   const body = {
     amount: {
       currency: transaction.amount.currencyCode,

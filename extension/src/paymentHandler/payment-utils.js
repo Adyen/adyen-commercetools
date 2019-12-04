@@ -1,21 +1,21 @@
 const _ = require('lodash')
 const c = require('../config/constants')
 
-function getChargeTransactionInitOrPending (paymentObject) {
+function getAuthorizationTransactionInitOrPending (paymentObject) {
   return getTransactionWithTypesAndStates(paymentObject,
-    ['Charge'],
+    ['Authorization'],
     ['Initial', 'Pending'])
 }
 
-function getChargeTransactionPending (paymentObject) {
+function getAuthorizationTransactionPending (paymentObject) {
   return getTransactionWithTypesAndStates(paymentObject,
-    ['Charge'],
+    ['Authorization'],
     ['Pending'])
 }
 
-function getChargeTransactionSuccess (paymentObject) {
+function getAuthorizationTransactionSuccess (paymentObject) {
   return getTransactionWithTypesAndStates(paymentObject,
-    ['Charge'],
+    ['Authorization'],
     ['Success'])
 }
 
@@ -31,9 +31,9 @@ function getRefundTransactionInit (paymentObject) {
     ['Initial'])
 }
 
-function getChargeTransactionInit (paymentObject) {
+function getAuthorizationTransactionInit (paymentObject) {
   return getTransactionWithTypesAndStates(paymentObject,
-    ['Charge'],
+    ['Authorization'],
     ['Initial'])
 }
 
@@ -68,7 +68,7 @@ function createAddInterfaceInteractionAction (
     fields: {
       createdAt: new Date(),
       response: JSON.stringify(response),
-      request: JSON.stringify(request),
+      request: JSON.stringify(request.body),
       type,
       status
     }
@@ -118,10 +118,10 @@ function createChangeTransactionInteractionId (transactionId, interactionId) {
 }
 
 module.exports = {
-  getChargeTransactionInitOrPending,
-  getChargeTransactionPending,
-  getChargeTransactionInit,
-  getChargeTransactionSuccess,
+  getAuthorizationTransactionInitOrPending,
+  getAuthorizationTransactionPending,
+  getAuthorizationTransactionInit,
+  getAuthorizationTransactionSuccess,
   getCancelAuthorizationTransactionInit,
   getRefundTransactionInit,
   getMatchingCtpState,

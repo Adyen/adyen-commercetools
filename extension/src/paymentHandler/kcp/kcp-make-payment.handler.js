@@ -22,7 +22,7 @@ async function handlePayment (paymentObject) {
     })
   ]
   if (responseBody.resultCode === c.REDIRECT_SHOPPER) {
-    const transaction = pU.getChargeTransactionInit(paymentObject)
+    const transaction = pU.getAuthorizationTransactionInit(paymentObject)
     const redirectUrl = responseBody.redirect.url
     actions.push(
       pU.createSetCustomFieldAction('redirectUrl', redirectUrl)
@@ -49,7 +49,7 @@ function _validatePayment (paymentObject) {
 }
 
 async function _callAdyen (paymentObject) {
-  const transaction = pU.getChargeTransactionInit(paymentObject)
+  const transaction = pU.getAuthorizationTransactionInit(paymentObject)
   const paymentMethodType = paymentObject.paymentMethodInfo.method
   const requestBody = {
     amount: {

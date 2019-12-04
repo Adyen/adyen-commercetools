@@ -22,7 +22,7 @@
   "paymentStatus": {},
   "transactions": [
     {
-      "type": "Charge",
+      "type": "Authorization",
       "amount": {
         "type": "centPrecision",
         "currencyCode": "EUR",

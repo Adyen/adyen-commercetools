@@ -23,7 +23,7 @@ async function handlePayment (paymentObject) {
     })
   ]
   if (responseBody.resultCode) {
-    const transaction = pU.getChargeTransactionPending(paymentObject)
+    const transaction = pU.getAuthorizationTransactionPending(paymentObject)
     const transactionState = pU.getMatchingCtpState(responseBody.resultCode.toLowerCase())
     actions.push(
       pU.createChangeTransactionStateAction(transaction.id, transactionState)

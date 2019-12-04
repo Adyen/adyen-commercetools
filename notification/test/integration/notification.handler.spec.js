@@ -30,11 +30,12 @@ describe('notification module', () => {
     await iTSetUp.cleanupProject(ctpClient)
   })
 
-  it('should update the transaction state when receives a correct notification', async () => {
+  it('should update the pending authorization transaction state to success state ' +
+    'when receives a successful AUTHORIZATION notification', async () => {
     const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
-    expect(paymentBefore.transactions[0].state).to.equal('Initial')
+    expect(paymentBefore.transactions[0].state).to.equal('Pending')
     expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
 
     // Simulating a notification from Adyen
@@ -58,12 +59,60 @@ describe('notification module', () => {
     expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(JSON.stringify(notification))
   })
 
+  it('should add a charge transaction when receives a successful manual CAPTURE notification', async () => {
+    const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
+    expect(paymentBefore.transactions).to.have.lengthOf(1)
+    expect(paymentBefore.transactions[0].type).to.equal('Authorization')
+    expect(paymentBefore.transactions[0].state).to.equal('Pending')
+    expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
+
+    //update payment transaction
+    const actions = [{
+      action: "changeTransactionState",
+      state: "Success",
+      transactionId: paymentBefore.transactions[0].id
+    }]
+
+    const { body: updatedPayment } =
+      await ctpClient.update(ctpClient.builder.payments, paymentBefore.id, paymentBefore.version, actions)
+
+    expect(updatedPayment.transactions).to.have.lengthOf(1)
+    expect(updatedPayment.transactions[0].type).to.equal('Authorization')
+    expect(updatedPayment.transactions[0].state).to.equal('Success')
+
+    const modifiedNotification = cloneDeep(notifications)
+    modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode = 'CAPTURE'
+
+    // Simulating a notification from Adyen
+    const response = await fetch(`http://${localhostIp}:8000`, {
+      method: 'post',
+      body: JSON.stringify(modifiedNotification),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    const { status } = response
+    const responseBody = await response.json()
+
+    expect(responseBody).to.deep.equal({ notificationResponse: '[accepted]' })
+    expect(status).to.equal(200)
+
+    const { body: { results: [ paymentAfter ] } } = await ctpClient.fetch(ctpClient.builder.payments)
+    expect(paymentAfter.transactions).to.have.lengthOf(2)
+    expect(paymentAfter.transactions[0].type).to.equal('Authorization')
+    expect(paymentAfter.transactions[0].state).to.equal('Success')
+    expect(paymentAfter.transactions[1].type).to.equal('Charge')
+    expect(paymentAfter.transactions[1].state).to.equal('Success')
+
+    expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
+    const notification = modifiedNotification.notificationItems[0]
+    expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(JSON.stringify(notification))
+  })
+
   it('should not update transaction when the notification event '
     + 'is not mapped to any CTP payment state', async () => {
     const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
-    expect(paymentBefore.transactions[0].state).to.equal('Initial')
+    expect(paymentBefore.transactions[0].state).to.equal('Pending')
     expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
 
     const modifiedNotification = cloneDeep(notifications)
@@ -83,7 +132,7 @@ describe('notification module', () => {
     const { body: { results: [ paymentAfter ] } } = await ctpClient.fetch(ctpClient.builder.payments)
     expect(paymentAfter.transactions).to.have.lengthOf(1)
     expect(paymentAfter.transactions[0].type).to.equal('Authorization')
-    expect(paymentAfter.transactions[0].state).to.equal('Initial')
+    expect(paymentAfter.transactions[0].state).to.equal('Pending')
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
     const notification = modifiedNotification.notificationItems[0]
     expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(JSON.stringify(notification))
@@ -93,7 +142,7 @@ describe('notification module', () => {
     const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
-    expect(paymentBefore.transactions[0].state).to.equal('Initial')
+    expect(paymentBefore.transactions[0].state).to.equal('Pending')
     expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
 
     const modifiedNotification = cloneDeep(notifications)
@@ -113,7 +162,7 @@ describe('notification module', () => {
     const { body: { results: [ paymentAfter ] } } = await ctpClient.fetch(ctpClient.builder.payments)
     expect(paymentAfter.transactions).to.have.lengthOf(1)
     expect(paymentAfter.transactions[0].type).to.equal('Authorization')
-    expect(paymentAfter.transactions[0].state).to.equal('Initial')
+    expect(paymentAfter.transactions[0].state).to.equal('Pending')
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(0)
   })
 })

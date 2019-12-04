@@ -34,9 +34,8 @@ describe('credit card payment', () => {
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
     expect(response.statusCode).to.equal(201)
     const adyenRequest = JSON.parse(response.body.interfaceInteractions[0].fields.request)
-    expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
 
-    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    const adyenRequestBody = JSON.parse(adyenRequest)
     expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
     expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.custom.fields.merchantReference)
     expect(adyenRequestBody.returnUrl).to.be.equal(paymentTemplate.custom.fields.returnUrl)
@@ -53,7 +52,7 @@ describe('credit card payment', () => {
 
     const { transactions } = response.body
     expect(transactions).to.have.lengthOf(1)
-    expect(transactions[0].type).to.equal('Charge')
+    expect(transactions[0].type).to.equal('Authorization')
     expect(transactions[0].state).to.equal('Success')
     expect(transactions[0].interactionId).to.match(/^[0-9a-zA-Z]*$/)
   })
@@ -70,10 +69,8 @@ describe('credit card payment', () => {
     })
 
     const response = await ctpClient.create(ctpClient.builder.payments, JSON.parse(paymentDraft))
-    const adyenRequest = JSON.parse(response.body.interfaceInteractions[0].fields.request)
-    expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
 
-    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    const adyenRequestBody = JSON.parse(JSON.parse(response.body.interfaceInteractions[0].fields.request))
     expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
     expect(adyenRequestBody.reference).to.be.equal(paymentTemplate.custom.fields.merchantReference)
     expect(adyenRequestBody.returnUrl).to.be.equal(`${process.env.API_EXTENSION_BASE_URL}/test-return-url`)
@@ -110,9 +107,8 @@ describe('credit card payment', () => {
     expect(ctpPayment.interfaceInteractions[0].fields.status).to.equal(c.FAILURE)
 
     const adyenRequest = JSON.parse(ctpPayment.interfaceInteractions[0].fields.request)
-    expect(adyenRequest.headers['x-api-key']).to.be.equal(process.env.ADYEN_API_KEY)
 
-    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    const adyenRequestBody = JSON.parse(adyenRequest)
     expect(adyenRequestBody.merchantAccount).to.be.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
     expect(adyenRequestBody.returnUrl).to.be.equal(paymentTemplate.custom.fields.returnUrl)
     expect(adyenRequestBody.amount.currency).to.be.equal(paymentTemplate.transactions[0].amount.currencyCode)
@@ -130,7 +126,7 @@ describe('credit card payment', () => {
     expect(transactions).to.have.lengthOf(1)
     const transaction = transactions[0]
     expect(transaction.interactionId).to.be.undefined
-    expect(transaction.type).to.equal('Charge')
+    expect(transaction.type).to.equal('Authorization')
     expect(transaction.state).to.equal('Initial')
 
     const response2 = await ctpClient.update(ctpClient.builder.payments,
