@@ -20,7 +20,7 @@ const config = {
 describe('notification module', () => {
   afterEach(() => sandbox.restore())
 
-  it(`given that ADYEN sends an AUTHORISATION is successful notification
+  it(`given that ADYEN sends an "AUTHORISATION is successful" notification
       when payment has a pending authorization transaction 
       then notification module should add notification to the interface interaction 
       and should update pending authorization state to the success`, async () => {
