@@ -94,7 +94,7 @@ describe('notification module', () => {
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
   })
 
-  it(`given that ADYEN sends an AUTHORISATION is not successful notification
+  it(`given that ADYEN sends an "AUTHORISATION is not successful" notification
       when payment has a pending authorization transaction 
       then notification module should add notification to the interface interaction 
       and should not update the pending transaction `, async () => {
@@ -163,7 +163,7 @@ describe('notification module', () => {
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
   })
 
-  it(`given that ADYEN sends an AUTHORISATION is successful notification
+  it(`given that ADYEN sends an "AUTHORISATION is successful" notification
       when payment has a success authorization transaction 
       and has already has the same notification saved in interface interaction
       then should not update interface interaction and transaction`, async () => {
@@ -224,7 +224,7 @@ describe('notification module', () => {
     expect(ctpClientUpdateSpy.args[0][3]).to.have.lengthOf(0)
   })
 
-  it(`given that ADYEN sends a CANCELLATION is successful notification
+  it(`given that ADYEN sends a "CANCELLATION is successful" notification
       when payment has a pending authorization transaction 
       then notification module should add notification to the interface interaction 
       and should add additional CancelAuthorization transaction`, async () => {
@@ -304,7 +304,7 @@ describe('notification module', () => {
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
   })
 
-  it(`given that ADYEN sends a CAPTURE is successful notification
+  it(`given that ADYEN sends a "CAPTURE is successful" notification
       when payment has a successful authorization transaction 
       then notification module should add notification to the interface interaction 
       and should add a success Charge transaction`, async () => {
@@ -384,7 +384,7 @@ describe('notification module', () => {
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(expectedUpdateActions)
   })
 
-  it(`given that ADYEN sends a CAPTURE_FAILED notification
+  it(`given that ADYEN sends a "CAPTURE_FAILED notification"
       when payment has a successful authorization transaction 
       then notification module should add notification to the interface interaction 
       and should add a failed Charge transaction`, async () => {
