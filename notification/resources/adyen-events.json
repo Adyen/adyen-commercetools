@@ -38,13 +38,13 @@
   {
     "eventCode": "CANCEL_OR_REFUND",
     "success": "false",
-    "transactionType": "Refund",
+    "transactionType": null,
     "transactionState": "Failure"
   },
   {
     "eventCode": "CANCEL_OR_REFUND",
     "success": "true",
-    "transactionType": "Refund",
+    "transactionType": null,
     "transactionState": "Success"
   },
   {

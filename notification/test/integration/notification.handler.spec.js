@@ -165,4 +165,131 @@ describe('notification module', () => {
     expect(paymentAfter.transactions[0].state).to.equal('Pending')
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(0)
   })
+
+  it('should udpate the pending Refund transaction state to success state ' +
+    'when receives a successful CANCEL_OR_REFUND notification with refund action', async () => {
+    const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
+    expect(paymentBefore.transactions).to.have.lengthOf(1)
+    expect(paymentBefore.transactions[0].type).to.equal('Authorization')
+    expect(paymentBefore.transactions[0].state).to.equal('Pending')
+    expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
+
+    const actions = [
+      {
+        action: "changeTransactionState",
+        state: "Success",
+        transactionId: paymentBefore.transactions[0].id
+      },
+      {
+        action: 'addTransaction',
+        transaction: {
+          type: 'Refund',
+          amount: {
+            currencyCode: paymentBefore.transactions[0].amount.currencyCode,
+            centAmount: paymentBefore.transactions[0].amount.centAmount
+          },
+          state: 'Pending'
+        }
+      }
+    ]
+
+    const { body: updatedPayment } =
+      await ctpClient.update(ctpClient.builder.payments, paymentBefore.id, paymentBefore.version, actions)
+
+    expect(updatedPayment.transactions).to.have.lengthOf(2)
+    expect(updatedPayment.transactions[0].type).to.equal('Authorization')
+    expect(updatedPayment.transactions[0].state).to.equal('Success')
+    expect(updatedPayment.transactions[1].type).to.equal('Refund')
+    expect(updatedPayment.transactions[1].state).to.equal('Pending')
+
+    const modifiedNotification = cloneDeep(notifications)
+    modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode = 'CANCEL_OR_REFUND'
+    modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
+        "modification.action": "refund"
+    }
+
+    // Simulating a notification from Adyen
+    const response = await fetch(`http://${localhostIp}:8000`, {
+      method: 'post',
+      body: JSON.stringify(modifiedNotification),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    const { status } = response
+    const responseBody = await response.json()
+
+    expect(responseBody).to.deep.equal({ notificationResponse: '[accepted]' })
+    expect(status).to.equal(200)
+
+    const { body: { results: [ paymentAfter ] } } = await ctpClient.fetch(ctpClient.builder.payments)
+    expect(paymentAfter.transactions).to.have.lengthOf(2)
+    expect(paymentAfter.transactions[0].type).to.equal('Authorization')
+    expect(paymentAfter.transactions[0].state).to.equal('Success')
+    expect(paymentAfter.transactions[1].type).to.equal('Refund')
+    expect(paymentAfter.transactions[1].state).to.equal('Success')
+
+    expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
+    const notification = modifiedNotification.notificationItems[0]
+    expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(JSON.stringify(notification))
+  })
+
+  it('should udpate the pending CancelAuthorization transaction state to success state ' +
+    'when receives a successful CANCEL_OR_REFUND notification with cancel action', async () => {
+    const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
+    expect(paymentBefore.transactions).to.have.lengthOf(1)
+    expect(paymentBefore.transactions[0].type).to.equal('Authorization')
+    expect(paymentBefore.transactions[0].state).to.equal('Pending')
+    expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
+
+    const actions = [
+      {
+        action: 'addTransaction',
+        transaction: {
+          type: 'CancelAuthorization',
+          amount: {
+            currencyCode: paymentBefore.transactions[0].amount.currencyCode,
+            centAmount: paymentBefore.transactions[0].amount.centAmount
+          },
+          state: 'Pending'
+        }
+      }
+    ]
+
+    const { body: updatedPayment } =
+      await ctpClient.update(ctpClient.builder.payments, paymentBefore.id, paymentBefore.version, actions)
+
+    expect(updatedPayment.transactions).to.have.lengthOf(2)
+    expect(updatedPayment.transactions[0].type).to.equal('Authorization')
+    expect(updatedPayment.transactions[0].state).to.equal('Pending')
+    expect(updatedPayment.transactions[1].type).to.equal('CancelAuthorization')
+    expect(updatedPayment.transactions[1].state).to.equal('Pending')
+
+    const modifiedNotification = cloneDeep(notifications)
+    modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode = 'CANCEL_OR_REFUND'
+    modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
+      "modification.action": "cancel"
+    }
+
+    // Simulating a notification from Adyen
+    const response = await fetch(`http://${localhostIp}:8000`, {
+      method: 'post',
+      body: JSON.stringify(modifiedNotification),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    const { status } = response
+    const responseBody = await response.json()
+
+    expect(responseBody).to.deep.equal({ notificationResponse: '[accepted]' })
+    expect(status).to.equal(200)
+
+    const { body: { results: [ paymentAfter ] } } = await ctpClient.fetch(ctpClient.builder.payments)
+    expect(paymentAfter.transactions).to.have.lengthOf(2)
+    expect(paymentAfter.transactions[0].type).to.equal('Authorization')
+    expect(paymentAfter.transactions[0].state).to.equal('Pending')
+    expect(paymentAfter.transactions[1].type).to.equal('CancelAuthorization')
+    expect(paymentAfter.transactions[1].state).to.equal('Success')
+
+    expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
+    const notification = modifiedNotification.notificationItems[0]
+    expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(JSON.stringify(notification))
+  })
 })
