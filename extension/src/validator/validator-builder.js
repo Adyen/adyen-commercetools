@@ -21,7 +21,7 @@ function withPayment (paymentObject) {
       return this
     },
     isCancelOrRefund () {
-      return _.isObject(pU.getChargeTransactionSuccess(paymentObject))
+      return _.isObject(pU.getAuthorizationTransactionSuccess(paymentObject))
         && (_.isObject(pU.getCancelAuthorizationTransactionInit(paymentObject))
         || _.isObject(pU.getRefundTransactionInit(paymentObject)))
     },
@@ -36,18 +36,18 @@ function withPayment (paymentObject) {
       return paymentObject.paymentMethodInfo.method === 'creditCard'
         || paymentObject.paymentMethodInfo.method === 'creditCard_3d'
     },
-    validateChargeTransactionPending () {
-      const transaction = pU.getChargeTransactionPending(paymentObject)
-      const hasChargeTransactionPending = _.isObject(transaction)
-      if (!hasChargeTransactionPending)
-        errors.hasChargeTransactionPending = errorMessages.MISSING_TXN_CHARGE_PENDING
+    validateAuthorizationTransactionPending () {
+      const transaction = pU.getAuthorizationTransactionPending(paymentObject)
+      const hasAuthorizationTransactionPending = _.isObject(transaction)
+      if (!hasAuthorizationTransactionPending)
+        errors.hasAuthorizationTransactionPending = errorMessages.MISSING_TXN_AUTHORIZATION_PENDING
       return this
     },
-    validateChargeTransactionInit () {
-      const transaction = pU.getChargeTransactionInit(paymentObject)
-      const hasChargeTransactionInit = _.isObject(transaction)
-      if (!hasChargeTransactionInit)
-        errors.hasChargeTransactionInit = errorMessages.MISSING_TXN_CHARGE_INIT
+    validateAuthorizationTransactionInit () {
+      const transaction = pU.getAuthorizationTransactionInit(paymentObject)
+      const hasAuthorizationTransactionInit = _.isObject(transaction)
+      if (!hasAuthorizationTransactionInit)
+        errors.hasAuthorizationTransactionInit = errorMessages.MISSING_TXN_AUTHORIZATION_INIT
       return this
     },
     validateEncryptedCardNumberField () {

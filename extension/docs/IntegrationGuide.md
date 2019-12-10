@@ -27,8 +27,9 @@ In this process, there are 3 parties involved:
 - **Shopper** - a person that's using the shop
 
 Other used terms in the documentation:
-- **Cancel** - cancel the authorisation on an uncaptured payment.
-- **Refund** - refund a payment back to the shopper.
+- [**Cancel**](CancelRefundPayment.md#cancel-or-refund-a-payment) - cancel the authorisation on an uncaptured payment.
+- [**Refund**](CancelRefundPayment.md#cancel-or-refund-a-payment) - refund a payment back to the shopper.
+
 
 ## Requirements for CTP project
 All the requirements below are automatically created by the Extension module.
@@ -63,12 +64,14 @@ If all above validations are passed then order can be created right away and ord
 Otherwise shopper might continue with further payment steps.
 
 1. **Get available payment methods**  
+    > Before user can proceed with particular payment method below steps describes how to get and present the list of available payment methods:
     1. [Create/update a CTP Payment](https://docs.commercetools.com/http-api-projects-payments) with following properties:
         - `Payment.paymentMethodInfo.method = empty or undefined`   
         - `Payment.custom.fields.countryCode != null` - set the country of a shopper. Please [consult with Adyen](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/v41/paymentMethods) for the right format.  
     1. Extension module will make a [request](https://docs.adyen.com/checkout/api-integration/#step-1-get-available-payment-methods) to Adyen API and the response will be saved in interface interaction with `type='ctp-adyen-integration-interaction'` and `fields.type='getAvailablePaymentMethods'` as stringified JSON.
     1. Before presenting the payment methods in the response from Adyen, please check Extension module documentation for supported payment methods.
 1. **Continue with one of the supported payment methods**
+    > Below guides describe how to handle different type of payment methods selected by the user:
     - [Credit card payment](./CreditCardIntegration.md)  
     - [Paypal payment](./PaypalIntegration.md)
 
@@ -107,8 +110,8 @@ The combination of `Payment.custom.fields.merchantReference` and `Payment.paymen
 
 ### Validate payment transaction
 Cart's payment counts as successful if there is at least one payment object
-with only successful (`Payment.Transaction.state=Success`)
-payment transactions of type `Charge`.
+with successful transaction state (`Payment.Transaction.state=Success`) 
+and transactions type `Authorization` or `Charge`.
 
 ### Mapping from Adyen result codes to CTP transaction state
 |Adyen result code| CTP transaction state

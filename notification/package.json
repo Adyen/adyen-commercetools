@@ -1,9 +1,11 @@
 {
   "name": "commercetools-adyen-integration",
-  "version": "0.0.1",
+  "version": "3.0.0",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "scripts": {
-    "test": "nyc mocha --check-leaks --timeout 30000 --full-trace --recursive \"./test/**/*.spec.js\"",
+    "test": "npm run unit && npm run integration",
+    "unit": "nyc mocha --check-leaks --timeout 30000 --full-trace --recursive \"./test/unit/**/*.spec.js\"",
+    "integration": "nyc mocha --check-leaks --timeout 30000 --full-trace --recursive \"./test/integration/**/*.spec.js\"",
     "start": "node ./src/init.js",
     "coverage": "nyc report"
   },

@@ -30,7 +30,9 @@ async function handlePayment (paymentObject) {
 }
 
 async function _cancelOrRefundPayment (paymentObject) {
-  const transaction = pU.getChargeTransactionSuccess(paymentObject)
+  const transaction = pU.getAuthorizationTransactionSuccess(paymentObject)
+  // "originalReference: The original pspReference of the payment that you want to cancel or refund.
+  // This reference is returned in the response to your payment request, and in the AUTHORISATION notification."
   const body = {
     merchantAccount: config.adyen.merchantAccount,
     originalReference: transaction.interactionId,

@@ -18,7 +18,7 @@ async function handlePayment (paymentObject) {
 }
 
 function _getTransaction (paymentObject) {
-  return paymentObject.transactions.find(t => t.type.toLowerCase() === 'charge'
+  return paymentObject.transactions.find(t => t.type.toLowerCase() === 'authorization'
     && (t.state.toLowerCase() === 'initial' || t.state.toLowerCase() === 'pending'))
 }
 

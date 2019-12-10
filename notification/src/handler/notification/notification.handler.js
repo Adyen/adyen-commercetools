@@ -65,8 +65,6 @@ async function updatePaymentWithRepeater (payment, notification, ctpClient) {
 function calculateUpdateActionsForPayment (payment, notification) {
   const updateActions = []
   const notificationRequestItem = notification.NotificationRequestItem
-  const notificationEventCode = notificationRequestItem.eventCode
-  const notificationSuccess = notificationRequestItem.success
   const stringifiedNotification = JSON.stringify(notification)
   // check if the interfaceInteraction is already on payment or not
   const isNotificationInInterfaceInteraction = payment.interfaceInteractions.some(
@@ -78,7 +76,7 @@ function calculateUpdateActionsForPayment (payment, notification) {
   const {
     transactionType,
     transactionState
-  } = getTransactionTypeAndStateOrNull(notificationEventCode, notificationSuccess)
+  } = getTransactionTypeAndStateOrNull(notificationRequestItem)
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
@@ -123,10 +121,30 @@ function getChangeTransactionStateUpdateAction (transactionId, newTransactionSta
   }
 }
 
-function getTransactionTypeAndStateOrNull (adyenEventCode, adyenEventSuccess) {
+function getTransactionTypeAndStateOrNull (notificationRequestItem) {
+  const adyenEventCode = notificationRequestItem.eventCode
+  const adyenEventSuccess = notificationRequestItem.success
+
   // eslint-disable-next-line max-len
-  return _.find(adyenEvents, adyenEvent => adyenEvent.eventCode === adyenEventCode && adyenEvent.success === adyenEventSuccess)
-    || {
+  const adyenEvent = _.find(adyenEvents, adyenEvent => adyenEvent.eventCode === adyenEventCode && adyenEvent.success === adyenEventSuccess)
+  if (adyenEvent && adyenEventCode === 'CANCEL_OR_REFUND') {
+    /* we need to get correct action from the additional data, for example:
+     "NotificationRequestItem":{
+        "additionalData":{
+           "modification.action":"refund"
+        }
+        ...
+      }
+     */
+    const modificationAction = notificationRequestItem.additionalData ?
+      notificationRequestItem.additionalData['modification.action'] : null;
+    if (modificationAction === 'refund') {
+      adyenEvent.transactionType = 'Refund'
+    } else if (modificationAction === 'cancel') {
+      adyenEvent.transactionType = 'CancelAuthorization'
+    }
+  }
+  return adyenEvent || {
       eventCode: adyenEventCode,
       success: adyenEventSuccess,
       transactionType: null,
