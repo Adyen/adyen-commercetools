@@ -62,6 +62,9 @@ function createAddInterfaceInteractionAction (
     request, response, type, status
   }
 ) {
+  // strip away sensitive data
+  delete response.additionalData
+
   return {
     action: 'addInterfaceInteraction',
     type: { key: c.CTP_INTERFACE_INTERACTION },

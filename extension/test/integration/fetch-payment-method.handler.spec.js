@@ -34,5 +34,6 @@ describe('fetch payment', () => {
     const adyenResponse = JSON.parse(interfaceInteractionFields.response)
     expect(adyenResponse.groups).to.be.an.instanceof(Array)
     expect(adyenResponse.paymentMethods).to.be.an.instanceof(Array)
+    expect(adyenResponse.additionalData).to.not.exist
   })
 })

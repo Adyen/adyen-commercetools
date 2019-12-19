@@ -49,6 +49,7 @@ describe('credit card payment', () => {
 
     const adyenResponse = JSON.parse(response.body.interfaceInteractions[0].fields.response)
     expect(adyenResponse.resultCode).to.be.equal('Authorised')
+    expect(adyenResponse.additionalData).to.not.exist
 
     const { transactions } = response.body
     expect(transactions).to.have.lengthOf(1)
@@ -91,6 +92,7 @@ describe('credit card payment', () => {
     expect(adyenResponse.redirect.data.MD).to.exist
     expect(adyenResponse.redirect.method).to.exist
     expect(adyenResponse.redirect.url).to.exist
+    expect(adyenResponse.additionalData).to.not.exist
   })
 
   it('on wrong credit card number, should log error to interface interaction', async () => {
@@ -128,6 +130,7 @@ describe('credit card payment', () => {
     expect(transaction.interactionId).to.be.undefined
     expect(transaction.type).to.equal('Authorization')
     expect(transaction.state).to.equal('Initial')
+    expect(adyenResponse.additionalData).to.not.exist
 
     const response2 = await ctpClient.update(ctpClient.builder.payments,
       ctpPayment.id, ctpPayment.version, [

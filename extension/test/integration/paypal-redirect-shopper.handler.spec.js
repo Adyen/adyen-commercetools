@@ -24,5 +24,10 @@ describe('Paypal payment', () => {
     expect(response.statusCode).to.equal(201)
     expect(response.body.custom.fields.redirectMethod).to.equal('GET')
     expect(response.body.custom.fields.redirectUrl).to.exist
+
+    const adyenResponse = JSON.parse(response.body.interfaceInteractions[0].fields.response)
+    expect(adyenResponse.redirect.method).to.exist
+    expect(adyenResponse.redirect.url).to.exist
+    expect(adyenResponse.additionalData).to.not.exist
   })
 })

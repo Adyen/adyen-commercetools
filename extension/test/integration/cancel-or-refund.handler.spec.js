@@ -57,5 +57,6 @@ describe('Cancel or refund', () => {
 
     const adyenResponse = JSON.parse(interfaceInteractionFields.response)
     expect(adyenResponse.response).to.equal('[cancelOrRefund-received]')
+    expect(adyenResponse.additionalData).to.not.exist
   })
 })
