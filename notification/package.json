@@ -45,7 +45,7 @@
     "bunyan": "^1.8.12",
     "lodash": "^4.17.15",
     "node-fetch": "^2.6.0",
-    "serialize-error": "^4.1.0"
+    "serialize-error": "^5.0.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
