@@ -49,7 +49,7 @@
     "cypress": "^3.8.2",
     "doctoc": "^1.4.0",
     "eslint": "^5.16.0",
-    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-airbnb": "^17.1.1",
     "eslint-config-commercetools": "^6.0.0",
     "eslint-plugin-cypress": "^2.8.1",
     "eslint-plugin-import": "^2.20.0",
