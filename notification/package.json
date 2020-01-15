@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration#readme",
   "dependencies": {
-    "@commercetools/api-request-builder": "^5.4.0",
+    "@commercetools/api-request-builder": "^5.4.1",
     "@commercetools/sdk-client": "^2.1.1",
     "@commercetools/sdk-middleware-auth": "^6.0.3",
     "@commercetools/sdk-middleware-http": "^5.2.1",
