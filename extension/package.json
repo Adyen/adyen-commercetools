@@ -65,7 +65,7 @@
   "dependencies": {
     "@commercetools/api-request-builder": "^5.4.1",
     "@commercetools/sdk-client": "^2.1.1",
-    "@commercetools/sdk-middleware-auth": "^6.0.3",
+    "@commercetools/sdk-middleware-auth": "^6.0.4",
     "@commercetools/sdk-middleware-http": "^5.2.1",
     "@commercetools/sdk-middleware-queue": "^2.1.1",
     "@commercetools/sync-actions": "^4.2.0",
