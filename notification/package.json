@@ -57,7 +57,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.18.3",
     "ip": "^1.1.5",
-    "mocha": "^7.0.1",
+    "mocha": "^7.1.0",
     "nyc": "^15.0.0",
     "sinon": "^9.0.0"
   }
