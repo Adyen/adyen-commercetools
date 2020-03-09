@@ -11,7 +11,7 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Requirements
-Node.js version 8 LTS or higher is supported.
+Node.js version 12 LTS or higher is supported.
 
 ## Run Module
 Execute `npm сi` to download all dependencies.
