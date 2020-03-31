@@ -10,41 +10,21 @@ async function handlePayment (paymentObject) {
   const responseBody = await response.json()
   return {
     actions: [
+      // todo(ahmet): potential change in here as both of them is persisting request, response.
       pU.createAddInterfaceInteractionAction({
-        request, response: responseBody, type: c.CTP_INTERACTION_TYPE_FETCH_METHODS // todo: type could be changed ?
-      })
-      //, pU.createSetCustomFieldAction(c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE, responseBody)
+        request, response: responseBody, type: c.CTP_INTERACTION_TYPE_FETCH_METHODS // todo(ahmet): type could be changed ?
+      }),
+      pU.createSetCustomFieldAction(c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE, JSON.stringify(responseBody))
     ]
   }
 }
 
-function _getTransaction (paymentObject) {
-  return paymentObject.transactions.find(t => t.type.toLowerCase() === 'authorization'
-    && (t.state.toLowerCase() === 'initial' || t.state.toLowerCase() === 'pending'))
-}
-
 async function _fetchPaymentMethods (paymentObject) {
-  // todo: use paymentObject.custom.fields.getPaymentMethodsRequest
-  const getPaymentMethodsRequest = {
-    countryCode: 'DE',
-    amount: {
-      currency: paymentObject.amountPlanned.currencyCode,
-      value: paymentObject.amountPlanned.centAmount
-    }
-  }
   const body = {
     merchantAccount: config.adyen.merchantAccount,
-    ...getPaymentMethodsRequest
+    ...JSON.parse(paymentObject.custom.fields.getPaymentMethodsRequest)
   }
-  // todo: is this possible now ?
-  const transaction = _getTransaction(paymentObject)
-  if (transaction)
-    body.amount = {
-      currency: transaction.amount.currencyCode,
-      value: transaction.amount.centAmount
-    }
-
-  // todo: use a common util for that part which is shared in multiple places
+  // todo(ahmet): use a common util for that part which is shared in multiple places
   const request = {
     method: 'POST',
     body: JSON.stringify(body),

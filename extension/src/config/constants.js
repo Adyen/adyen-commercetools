@@ -1,7 +1,9 @@
 module.exports = {
   SUCCESS: 'SUCCESS',
   FAILURE: 'FAILURE',
-  CTP_INTERFACE_INTERACTION: 'ctp-adyen-integration-interaction',
+  CTP_ADYEN_INTEGRATION: 'ctp-adyen-integration',
+  CTP_INTERFACE_INTERACTION_TYPE_KEY: 'ctp-adyen-integration-interaction',
+  CTP_WEB_COMPONENTS_PAYMENT_TYPE_KEY: 'ctp-adyen-integration-web-components-payment-type',
   REDIRECT_SHOPPER: 'RedirectShopper',
   CTP_TXN_STATE_INITIAL: 'Initial',
   CTP_TXN_STATE_PENDING: 'Pending',
