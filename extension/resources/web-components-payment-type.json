@@ -1,0 +1,99 @@
+{
+  "key": "ctp-adyen-integration-web-components-payment-type",
+  "name": {
+    "en": "CTP Adyen integration payment custom type based on web components"
+  },
+  "resourceTypeIds": [
+    "payment"
+  ],
+  "fieldDefinitions": [
+    {
+      "name": "getOriginKeyRequest",
+      "label": {
+        "en": "getOriginKeyRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "getOriginKeyResponse",
+      "label": {
+        "en": "getOriginKeyResponse"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "getPaymentMethodsRequest",
+      "label": {
+        "en": "getPaymentMethodsRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "getPaymentMethodsResponse",
+      "label": {
+        "en": "getPaymentMethodsRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "makePaymentRequest",
+      "label": {
+        "en": "makePaymentRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "makePaymentResponse",
+      "label": {
+        "en": "makePaymentResponse"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "submitAdditionalPaymentDetailsRequest",
+      "label": {
+        "en": "submitAdditionalPaymentDetailsRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "submitAdditionalPaymentDetailsResponse",
+      "label": {
+        "en": "submitAdditionalPaymentDetailsResponse"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    }
+  ]
+}
