@@ -11,8 +11,9 @@ async function handlePayment (paymentObject) {
   return {
     actions: [
       pU.createAddInterfaceInteractionAction({
-        request, response: responseBody, type: c.CTP_INTERACTION_TYPE_FETCH_METHODS
+        request, response: responseBody, type: c.CTP_INTERACTION_TYPE_FETCH_METHODS // todo: type could be changed ?
       })
+      //, pU.createSetCustomFieldAction(c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE, responseBody)
     ]
   }
 }
@@ -23,20 +24,27 @@ function _getTransaction (paymentObject) {
 }
 
 async function _fetchPaymentMethods (paymentObject) {
-  const body = {
-    merchantAccount: config.adyen.merchantAccount,
-    countryCode: paymentObject.custom.fields.countryCode,
+  // todo: use paymentObject.custom.fields.getPaymentMethodsRequest
+  const getPaymentMethodsRequest = {
+    countryCode: 'DE',
     amount: {
       currency: paymentObject.amountPlanned.currencyCode,
       value: paymentObject.amountPlanned.centAmount
     }
   }
+  const body = {
+    merchantAccount: config.adyen.merchantAccount,
+    ...getPaymentMethodsRequest
+  }
+  // todo: is this possible now ?
   const transaction = _getTransaction(paymentObject)
   if (transaction)
     body.amount = {
       currency: transaction.amount.currencyCode,
       value: transaction.amount.centAmount
     }
+
+  // todo: use a common util for that part which is shared in multiple places
   const request = {
     method: 'POST',
     body: JSON.stringify(body),

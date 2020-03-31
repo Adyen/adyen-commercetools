@@ -10,5 +10,7 @@ module.exports = {
   CTP_INTERACTION_TYPE_COMPLETE_PAYMENT: 'completePayment',
   CTP_INTERACTION_TYPE_MAKE_PAYMENT: 'makePayment',
   CTP_INTERACTION_TYPE_CANCEL_REFUND: 'cancelOrRefund',
-  CTP_INTERACTION_TYPE_FETCH_METHODS: 'getAvailablePaymentMethods'
+  CTP_INTERACTION_TYPE_FETCH_METHODS: 'getAvailablePaymentMethods',
+  CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_REQUEST: 'getPaymentMethodsRequest',
+  CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE: 'getPaymentMethodsResponse'
 }
