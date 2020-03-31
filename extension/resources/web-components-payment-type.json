@@ -8,9 +8,9 @@
   ],
   "fieldDefinitions": [
     {
-      "name": "getOriginKeyRequest",
+      "name": "getOriginKeysRequest",
       "label": {
-        "en": "getOriginKeyRequest"
+        "en": "getOriginKeysRequest"
       },
       "type": {
         "name": "String"
@@ -19,9 +19,9 @@
       "required": false
     },
     {
-      "name": "getOriginKeyResponse",
+      "name": "getOriginKeysResponse",
       "label": {
-        "en": "getOriginKeyResponse"
+        "en": "getOriginKeysResponse"
       },
       "type": {
         "name": "String"
