@@ -40,7 +40,7 @@
     "@commercetools/sdk-middleware-auth": "^6.0.5",
     "@commercetools/sdk-middleware-http": "^6.0.5",
     "@commercetools/sdk-middleware-queue": "^2.1.1",
-    "@commercetools/sync-actions": "^4.3.0",
+    "@commercetools/sync-actions": "^4.4.0",
     "bluebird": "^3.7.2",
     "bunyan": "^1.8.12",
     "lodash": "^4.17.15",
