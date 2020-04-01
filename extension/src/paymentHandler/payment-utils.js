@@ -71,7 +71,7 @@ function createAddInterfaceInteractionAction (
     fields: {
       createdAt: new Date(),
       response: JSON.stringify(response),
-      request: JSON.stringify(request.body),
+      request: request.body,
       type,
       status
     }
@@ -104,11 +104,11 @@ function createChangeTransactionStateAction (transactionId, transactionState) {
   }
 }
 
-function createSetCustomFieldAction (name, value) {
+function createSetCustomFieldAction (name, response) {
   return {
     action: 'setCustomField',
     name,
-    value
+    value: JSON.stringify(response)
   }
 }
 

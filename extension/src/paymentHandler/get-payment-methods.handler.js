@@ -7,14 +7,13 @@ const config = configLoader.load()
 
 async function handlePayment (paymentObject) {
   const { request, response } = await _fetchPaymentMethods(paymentObject)
-  const responseBody = await response.json()
   return {
     actions: [
       // todo(ahmet): potential change in here as both of them is persisting request, response.
       pU.createAddInterfaceInteractionAction({
-        request, response: responseBody, type: c.CTP_INTERACTION_TYPE_FETCH_METHODS // todo(ahmet): type could be changed ?
+        request, response, type: c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS
       }),
-      pU.createSetCustomFieldAction(c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE, JSON.stringify(responseBody))
+      pU.createSetCustomFieldAction(c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE, response)
     ]
   }
 }
@@ -22,7 +21,7 @@ async function handlePayment (paymentObject) {
 async function _fetchPaymentMethods (paymentObject) {
   const body = {
     merchantAccount: config.adyen.merchantAccount,
-    ...JSON.parse(paymentObject.custom.fields.getPaymentMethodsRequest)
+    ...JSON.parse(paymentObject.custom.fields.getPaymentMethodsRequest) // todo: those parts will be duplicated for each.
   }
   // todo(ahmet): use a common util for that part which is shared in multiple places
   const request = {
@@ -31,6 +30,7 @@ async function _fetchPaymentMethods (paymentObject) {
     headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
   }
   const response = await fetch(`${config.adyen.apiBaseUrl}/paymentMethods`, request)
+    .then(response => response.json())
 
   return { response, request }
 }
