@@ -9,10 +9,12 @@ async function ensureInterfaceInteractionCustomType (ctpClient) {
     const { body } = await ctpClient.fetch(ctpClient.builder.types.where(`key="${interfaceInteractionType.key}"`))
     if (body.results.length === 0) {
       await ctpClient.create(ctpClient.builder.types, interfaceInteractionType)
-      logger.info('Successfully created an interfaceInteraction type')
+      logger.info('Successfully created a payment interface interaction'
+        + `type (key=${interfaceInteractionType.key})`)
     }
   } catch (e) {
-    logger.error(e, 'Error when creating interface interaction custom type, skipping...')
+    logger.error(e, `Error when creating payment interface interaction type (key=${interfaceInteractionType.key}), `
+     + 'skipping the creation...')
   }
 }
 
