@@ -31,7 +31,7 @@ describe('Ensure resources', () => {
     sinon.restore()
   })
 
-  it('should ensure payment type, interface interaction and api extension are created', async () => {
+  it('should ensure payment type, interface interaction type and API extension are created', async () => {
     sinon.stub(mockClient, 'fetch').returns({ body: { results: [] } })
     const createStub = sinon.stub(mockClient, 'create').returns({ body: { results: [] } })
 
