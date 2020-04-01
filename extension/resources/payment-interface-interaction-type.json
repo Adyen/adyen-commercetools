@@ -61,17 +61,6 @@
         "name": "String"
       },
       "inputHint": "SingleLine"
-    },
-    {
-      "name": "status",
-      "label": {
-        "en": "status"
-      },
-      "required": false,
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "SingleLine"
     }
   ]
 }

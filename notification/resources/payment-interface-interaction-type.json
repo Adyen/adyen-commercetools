@@ -50,6 +50,17 @@
         "name": "String"
       },
       "inputHint": "SingleLine"
+    },
+    {
+      "name": "type",
+      "label": {
+        "en": "type"
+      },
+      "required": false,
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine"
     }
   ]
 }
