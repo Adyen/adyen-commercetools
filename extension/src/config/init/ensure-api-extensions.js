@@ -10,10 +10,11 @@ async function ensureApiExtensions (ctpClient, ctpAdyenIntegrationBaseUrl) {
     const { body } = await ctpClient.fetch(ctpClient.builder.extensions.where(`key="${apiExtensionTemplate.key}"`))
     if (body.results.length === 0) {
       await ctpClient.create(ctpClient.builder.extensions, JSON.parse(extensionDraft))
-      logger.info('Successfully created api extension')
+      logger.info(`API extension (key=${apiExtensionTemplate.key}) was successfully created for payment resource type`)
     }
   } catch (e) {
-    logger.error(e, 'Error when creating api extension, skipping...')
+    logger.error(e, `Error when creating API extension (key=${apiExtensionTemplate.key}) `
+      + 'for payment resource type, skipping...')
   }
 }
 
