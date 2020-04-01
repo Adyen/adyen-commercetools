@@ -1,16 +1,10 @@
 const ValidatorBuilder = require('../validator/validator-builder')
-const creditCardHandler = require('../paymentHandler/creditCard/credit-card.handler')
-const paypalHandler = require('../paymentHandler/paypal/paypal.handler')
-const kcpHandler = require('../paymentHandler/kcp/kcp-payment.handler')
-const refundHandler = require('../paymentHandler/cancel-or-refund.handler')
 const getPaymentMethodsHandler = require('../paymentHandler/get-payment-methods.handler')
+const getOriginKeysHandler = require('../paymentHandler/get-origin-keys.handler')
 
 const paymentHandlers = {
-  creditCardHandler,
   getPaymentMethodsHandler,
-  paypalHandler,
-  kcpHandler,
-  refundHandler
+  getOriginKeysHandler
 }
 
 async function handlePayment (paymentObject) {
@@ -19,41 +13,34 @@ async function handlePayment (paymentObject) {
   if (adyenValidator.hasErrors())
     // if it's not adyen payment, ignore the payment
     return { success: true, data: null }
-  // todo(ahmet): validations will be removed.
-  // const merchantReferenceValidator = validatorBuilder
-  //   .validateMerchantReferenceField()
-  // if (merchantReferenceValidator.hasErrors())
-  //   return {
-  //     success: false,
-  //     data: merchantReferenceValidator.buildCtpErrorResponse()
-  //   }
-  // const paymentMethodValidator = validatorBuilder.validatePaymentMethod()
-  // if (paymentMethodValidator.hasErrors())
-  //   return {
-  //     success: false,
-  //     data: paymentMethodValidator.buildCtpErrorResponse()
-  //   }
-  const handler = _getPaymentHandler(paymentObject)
-  const handlerResponse = await handler.handlePayment(paymentObject)
-  if (handlerResponse.errors)
-    return { success: false, data: handlerResponse }
+
+  // todo(ahmet): we should find a better structure than this, as its not easy to understand.
+  const handlers = _getPaymentHandlers(paymentObject)
+  const handlerResponses = await Promise.all(
+    handlers.map(handler => handler.handlePayment(paymentObject)))
+  const handlerResponse = {
+    actions: handlerResponses.flatMap(result => result.actions)
+  }
+
+  // const errors = handlerResponses.flatMap(result => result.errors)
+  // if (handlerResponses.errors)
+  //   return { success: false, data: handlerResponse }
   return { success: true, data: handlerResponse }
 }
 
 //todo(ahmet) handle needs to be changed
-function _getPaymentHandler (paymentObject) {
-  const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
-  // todo(ahmet): how the new custom type will be handled ?
-  // if (paymentValidator.isCancelOrRefund())
-  //   return paymentHandlers.refundHandler
-  // todo(ahmet): will be removed.
-  // if (paymentValidator.isPaypal())
-  //   return paymentHandlers.paypalHandler
-  // if (paymentValidator.isCreditCard())
-  //   return paymentHandlers.creditCardHandler
-  // if (paymentValidator.isKcp())
-  //   return paymentHandlers.kcpHandler
-  return paymentHandlers.getPaymentMethodsHandler
+function _getPaymentHandlers (paymentObject) {
+  const result = []
+
+  if (paymentObject.custom.fields.getOriginKeysRequest &&
+    !paymentObject.custom.fields.getOriginKeysResponse)
+    result.push(paymentHandlers.getOriginKeysHandler)
+
+  if (paymentObject.custom.fields.getPaymentMethodsRequest &&
+    !paymentObject.custom.fields.getPaymentMethodsResponse)
+    result.push(paymentHandlers.getPaymentMethodsHandler)
+
+  return result
 }
 
 
