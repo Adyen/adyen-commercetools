@@ -1,6 +1,7 @@
 const server = require('./server.js').setupServer()
 const utils = require('./utils')
 const configLoader = require('./config/config')
+const ctpClientBuilder = require('./ctp/ctp-client')
 
 const config = configLoader.load()
 
@@ -16,6 +17,6 @@ if (!config.ctp.projectKey || !config.ctp.clientId || !config.ctp.clientSecret)
 if (config.keepAliveTimeout !== undefined)
   server.keepAliveTimeout = config.keepAliveTimeout
 server.listen(port, async () => {
-  await ensureResources()
+  await ensureResources(ctpClientBuilder.get())
   logger.info(`Server running at http://127.0.0.1:${port}/`)
 })

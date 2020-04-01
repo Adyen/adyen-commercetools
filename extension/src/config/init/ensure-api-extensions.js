@@ -9,7 +9,7 @@ async function ensureApiExtensions (ctpClient, ctpAdyenIntegrationBaseUrl) {
     const extensionDraft = _.template(JSON.stringify(apiExtensionTemplate))({ ctpAdyenIntegrationBaseUrl })
     const { body } = await ctpClient.fetch(ctpClient.builder.extensions.where(`key="${apiExtensionTemplate.key}"`))
     if (body.results.length === 0) {
-      await ctpClient.create(ctpClient.builder.extensions, extensionDraft)
+      await ctpClient.create(ctpClient.builder.extensions, JSON.parse(extensionDraft))
       logger.info('Successfully created api extension')
     }
   } catch (e) {
