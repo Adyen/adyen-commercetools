@@ -9,10 +9,11 @@ async function ensurePaymentCustomType (ctpClient) {
     const { body } = await ctpClient.fetch(ctpClient.builder.types.where(`key="${paymentCustomType.key}"`))
     if (body.results.length === 0) {
       await ctpClient.create(ctpClient.builder.types, paymentCustomType)
-      logger.info('Successfully created payment custom type')
+      logger.info(`Successfully created a payment type (key=${paymentCustomType.key})`)
     }
   } catch (e) {
-    logger.error(e, 'Error when creating payment custom type, skipping...')
+    logger.error(e, `Error when creating payment type (key=${paymentCustomType.key}),  `
+      + 'skipping...')
   }
 }
 

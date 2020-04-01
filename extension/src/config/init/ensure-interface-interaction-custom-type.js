@@ -14,7 +14,7 @@ async function ensureInterfaceInteractionCustomType (ctpClient) {
     }
   } catch (e) {
     logger.error(e, `Error when creating payment interface interaction type (key=${interfaceInteractionType.key}), `
-     + 'skipping the creation...')
+     + 'skipping...')
   }
 }
 
