@@ -43,7 +43,7 @@
     {
       "name": "getPaymentMethodsResponse",
       "label": {
-        "en": "getPaymentMethodsRequest"
+        "en": "getPaymentMethodsResponse"
       },
       "type": {
         "name": "String"
