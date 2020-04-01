@@ -1,7 +1,7 @@
 {
   "key": "ctp-adyen-integration-interaction",
   "name": {
-    "en": "ctp-adyen-integration-interaction"
+    "en": "commercetools Adyen integration payment interface interaction type"
   },
   "resourceTypeIds": [
     "payment-interface-interaction"

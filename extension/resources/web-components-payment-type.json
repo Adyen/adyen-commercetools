@@ -1,7 +1,7 @@
 {
   "key": "ctp-adyen-integration-web-components-payment-type",
   "name": {
-    "en": "CTP Adyen integration payment custom type based on web components"
+    "en": "commercetools Adyen integration payment custom type based on web components"
   },
   "resourceTypeIds": [
     "payment"
