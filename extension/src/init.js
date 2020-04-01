@@ -18,5 +18,5 @@ if (config.keepAliveTimeout !== undefined)
   server.keepAliveTimeout = config.keepAliveTimeout
 server.listen(port, async () => {
   await ensureResources(ctpClientBuilder.get())
-  logger.info(`Server running at http://127.0.0.1:${port}/`)
+  logger.info(`Extension module is running at http://localhost:${port}/`)
 })
