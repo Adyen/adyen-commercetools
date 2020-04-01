@@ -53,7 +53,7 @@ describe('Ensure resources', () => {
     expect(createdInterfaceInteractionType).to.deep.equal(interfaceInteractionType)
   })
 
-  it('should not create resources when they already exist', async () => {
+  it('should skip creating resources when they already exist', async () => {
     sinon.stub(mockClient, 'fetch').returns({ body: { results: [{ id: 'testId' }] } })
     const createStub = sinon.stub(mockClient, 'create').returns({ body: { results: [] } })
 
