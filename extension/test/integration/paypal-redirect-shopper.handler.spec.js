@@ -5,7 +5,7 @@ const iTSetUp = require('./integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const paymentTemplate = require('../fixtures/payment-paypal.json')
 
-describe.skip('Paypal payment', () => {
+describe('Paypal payment', () => {
   let ctpClient
 
   beforeEach(async () => {

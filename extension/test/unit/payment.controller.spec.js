@@ -26,7 +26,7 @@ describe('Payment controller', () => {
       await paymentController.processRequest(mockRequest)
     })
 
-    it.skip('on missing merchant reference should throw error', async () => {
+    it('on missing merchant reference should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.merchantReference = ''
 
@@ -44,7 +44,7 @@ describe('Payment controller', () => {
       await paymentController.processRequest(mockRequest)
     })
 
-    it.skip('on wrong payment method should throw error', async () => {
+    it('on wrong payment method should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'wrong method'
@@ -63,7 +63,7 @@ describe('Payment controller', () => {
       await paymentController.processRequest(mockRequest)
     })
 
-    it.skip('on missing params for make paypal payment should throw error', async () => {
+    it('on missing params for make paypal payment should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'paypal'
@@ -83,7 +83,7 @@ describe('Payment controller', () => {
       await paymentController.processRequest(mockRequest)
     })
 
-    it.skip('on missing params for complete paypal payment should throw error', async () => {
+    it('on missing params for complete paypal payment should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'paypal'
@@ -98,7 +98,7 @@ describe('Payment controller', () => {
       await paymentController.processRequest(mockRequest)
     })
 
-    it.skip('on missing params for make credit card payment should throw error', async () => {
+    it('on missing params for make credit card payment should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'creditCard'
@@ -135,7 +135,7 @@ describe('Payment controller', () => {
       await paymentController.processRequest(mockRequest)
     })
 
-    it.skip('on missing params for make 3ds payment should throw error', async () => {
+    it('on missing params for make 3ds payment should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'creditCard_3d'
@@ -172,7 +172,7 @@ describe('Payment controller', () => {
       await paymentController.processRequest(mockRequest)
     })
 
-    it.skip('on missing params for complete credit card payment should throw error', async () => {
+    it('on missing params for complete credit card payment should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
       ctpPaymentClone.paymentMethodInfo.method = 'creditCard_3d'

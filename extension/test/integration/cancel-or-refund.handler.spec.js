@@ -4,7 +4,7 @@ const testUtils = require('../test-utils')
 const iTSetUp = require('./integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 
-describe.skip('Cancel or refund', () => {
+describe('Cancel or refund', () => {
   let ctpClient
 
   beforeEach(async () => {
