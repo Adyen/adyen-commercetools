@@ -1,7 +1,7 @@
 {
-  "key": "ctp-adyen-integration-interaction-notification",
+  "key": "ctp-adyen-integration-interaction-payment-type",
   "name": {
-    "en": "ctp-adyen-integration-interaction-notification"
+    "en": "commercetools Adyen integration payment interface interaction type"
   },
   "resourceTypeIds": [
     "payment-interface-interaction"
@@ -30,9 +30,9 @@
       "inputHint": "SingleLine"
     },
     {
-      "name": "notification",
+      "name": "request",
       "label": {
-        "en": "notification"
+        "en": "request"
       },
       "required": true,
       "type": {
@@ -41,22 +41,22 @@
       "inputHint": "MultiLine"
     },
     {
-      "name": "status",
+      "name": "response",
       "label": {
-        "en": "status"
+        "en": "response"
       },
-      "required": false,
+      "required": true,
       "type": {
         "name": "String"
       },
-      "inputHint": "SingleLine"
+      "inputHint": "MultiLine"
     },
     {
       "name": "type",
       "label": {
         "en": "type"
       },
-      "required": false,
+      "required": true,
       "type": {
         "name": "String"
       },

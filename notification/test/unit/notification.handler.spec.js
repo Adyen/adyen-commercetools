@@ -74,7 +74,8 @@ describe('notification module', () => {
           typeId: 'type'
         },
         fields: {
-          status: 'AUTHORISATION',
+          status: 'authorisation',
+          type: 'notification',
           notification: JSON.stringify(notifications[0])
         }
       },
@@ -148,7 +149,8 @@ describe('notification module', () => {
           typeId: 'type'
         },
         fields: {
-          status: 'AUTHORISATION',
+          status: 'authorisation',
+          type: 'notification',
           notification: JSON.stringify(notifications[0])
         }
       }
@@ -278,7 +280,8 @@ describe('notification module', () => {
           typeId: 'type'
         },
         fields: {
-          status: 'CANCELLATION',
+          status: 'cancellation',
+          type: 'notification',
           notification: JSON.stringify(notifications[0])
         }
       },
@@ -358,7 +361,8 @@ describe('notification module', () => {
           typeId: 'type'
         },
         fields: {
-          status: 'CAPTURE',
+          status: 'capture',
+          type: 'notification',
           notification: JSON.stringify(notifications[0])
         }
       },
@@ -438,7 +442,8 @@ describe('notification module', () => {
           typeId: 'type'
         },
         fields: {
-          status: 'CAPTURE_FAILED',
+          status: 'capture_failed',
+          type: 'notification',
           notification: JSON.stringify(notifications[0])
         }
       },
