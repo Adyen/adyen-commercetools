@@ -1,4 +1,4 @@
-const paymentCustomType = require('../../../resources/web-components-payment-type')
+const paymentCustomType = require('../../../resources/web-components-payment-type.json')
 
 const utils = require('../../utils')
 
