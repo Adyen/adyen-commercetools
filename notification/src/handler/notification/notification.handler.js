@@ -99,6 +99,9 @@ function getAddInterfaceInteractionUpdateAction (notification) {
   delete notification.additionalData
   delete notification.reason
 
+  const eventCode = _.isNil(notification.NotificationRequestItem.eventCode)
+    ? '' : notification.NotificationRequestItem.eventCode.toLowerCase()
+
   return {
     action: 'addInterfaceInteraction',
     type: {
@@ -107,7 +110,8 @@ function getAddInterfaceInteractionUpdateAction (notification) {
     },
     fields: {
       createdAt: new Date(),
-      status: notification.NotificationRequestItem.eventCode,
+      status: eventCode,
+      type: 'notification',
       notification: JSON.stringify(notification)
     }
   }
