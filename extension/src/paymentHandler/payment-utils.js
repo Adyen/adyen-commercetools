@@ -69,7 +69,7 @@ function createAddInterfaceInteractionAction (
     action: 'addInterfaceInteraction',
     type: { key: c.CTP_INTERFACE_INTERACTION_TYPE_KEY },
     fields: {
-      createdAt: new Date(), //todo(ahmet): maybe its better to use iso date.
+      createdAt: new Date().toISOString(),
       response: JSON.stringify(response),
       request: request.body,
       type,
