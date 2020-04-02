@@ -61,4 +61,17 @@ describe('Ensure resources', () => {
 
     expect(createStub.callCount).to.equal(0)
   })
+
+  it('should fail when there is error on resource creation', async () => {
+    sinon.stub(mockClient, 'fetch').returns({ body: { results: [] } })
+    sinon.stub(mockClient, 'create').throws('test error')
+
+    try {
+      await ensureResources(mockClient)
+    } catch (e) {
+      expect(e.name).to.equal('test error')
+      return
+    }
+    throw new Error('ensureResources should throw an error but did not')
+  })
 })
