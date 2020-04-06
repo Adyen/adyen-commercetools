@@ -5,7 +5,7 @@ const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const iTSetUp = require('./integration-test-set-up')
 const paymentTemplate = require('../fixtures/payment-kcp.json')
 
-describe.skip('kcp make payment', () => {
+describe('kcp make payment', () => {
   let ctpClient
 
   beforeEach(async () => {
