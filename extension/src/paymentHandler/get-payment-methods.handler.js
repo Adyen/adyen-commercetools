@@ -3,7 +3,6 @@ const c = require('../config/constants')
 const { getPaymentMethods } = require('./web-component-service')
 
 async function handlePayment (paymentObject) {
-  // todo(ahmet): validate
   const { request, response } = await getPaymentMethods(paymentObject)
   return {
     actions: [

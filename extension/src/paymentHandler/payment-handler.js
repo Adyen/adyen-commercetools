@@ -7,6 +7,13 @@ const paymentHandlers = {
   getOriginKeysHandler
 }
 
+/*
+todo(ahmet)
+- refactor the validation logic, most of the logic will be removed from validator builder.
+- find a better structure for promise handler, mapping an promise array does not seem easy to understand.
+- maybe step based validations could be done in handlePayments.
+- what if handlePayment needs to return an error result rather than update actions ?
+*/
 async function handlePayment (paymentObject) {
   const validatorBuilder = ValidatorBuilder.withPayment(paymentObject)
   const adyenValidator = validatorBuilder.validateAdyen()
@@ -14,32 +21,21 @@ async function handlePayment (paymentObject) {
     // if it's not adyen payment, ignore the payment
     return { success: true, data: null }
 
-  // todo(ahmet): we should find a better structure than this, as its not easy to understand.
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(
     handlers.map(handler => handler.handlePayment(paymentObject)))
   const handlerResponse = {
     actions: handlerResponses.flatMap(result => result.actions)
   }
-
-  // const errors = handlerResponses.flatMap(result => result.errors)
-  // if (handlerResponses.errors)
-  //   return { success: false, data: handlerResponse }
   return { success: true, data: handlerResponse }
 }
 
-//todo(ahmet) handle needs to be changed
 function _getPaymentHandlers (paymentObject) {
   const result = []
-
-  if (paymentObject.custom.fields.getOriginKeysRequest &&
-    !paymentObject.custom.fields.getOriginKeysResponse)
+  if (paymentObject.custom.fields.getOriginKeysRequest && !paymentObject.custom.fields.getOriginKeysResponse)
     result.push(paymentHandlers.getOriginKeysHandler)
-
-  if (paymentObject.custom.fields.getPaymentMethodsRequest &&
-    !paymentObject.custom.fields.getPaymentMethodsResponse)
+  if (paymentObject.custom.fields.getPaymentMethodsRequest && !paymentObject.custom.fields.getPaymentMethodsResponse)
     result.push(paymentHandlers.getPaymentMethodsHandler)
-
   return result
 }
 
