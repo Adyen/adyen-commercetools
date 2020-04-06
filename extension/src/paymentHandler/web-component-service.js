@@ -1,4 +1,6 @@
 const fetch = require('node-fetch')
+const { serializeError } = require('serialize-error')
+
 const configLoader = require('../config/config')
 const config = configLoader.load()
 
@@ -14,11 +16,18 @@ async function getPaymentMethods (paymentObject) {
 }
 
 async function callAdyen(endpoint, requestString) {
-  // todo(ahmet): no error handling or logs, it also need to serialise and persist the error as a response.
   const request = buildRequest(requestString)
-  const result = await fetch(`${config.adyen.apiBaseUrl}/${endpoint}`, request)
-  const response = await result.json()
+  const response = await fetchAsync(endpoint, request)
   return { request, response }
+}
+
+async function fetchAsync (endpoint, request) {
+  try {
+    const response = await fetch(`${config.adyen.apiBaseUrl}/${endpoint}`, request)
+    return await response.json();
+  } catch (err) {
+    return serializeError(err);
+  }
 }
 
 function buildRequest (requestString) {

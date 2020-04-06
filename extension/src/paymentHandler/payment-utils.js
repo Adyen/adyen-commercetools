@@ -59,7 +59,7 @@ function getMatchingCtpState (adyenState) {
 
 function createAddInterfaceInteractionAction (
   {
-    request, response, type, status
+    request, response, type
   }
 ) {
   // strip away sensitive data
@@ -67,17 +67,17 @@ function createAddInterfaceInteractionAction (
 
   return {
     action: 'addInterfaceInteraction',
-    type: { key: c.CTP_INTERFACE_INTERACTION_TYPE_KEY },
+    type: { key: c.CTP_INTERFACE_INTERACTION_PAYMENT_TYPE_KEY },
     fields: {
       createdAt: new Date().toISOString(),
       response: JSON.stringify(response),
       request: request.body,
-      type,
-      status
+      type
     }
   }
 }
 
+//todo (ahmet) status needs to be removed, and other parts needs to be refactored.
 function ensureAddInterfaceInteractionAction (
   {
     paymentObject, request, response, type, status
@@ -91,7 +91,7 @@ function ensureAddInterfaceInteractionAction (
 
   if (!matchedInteraction)
     return createAddInterfaceInteractionAction({
-      request, response, type, status
+      request, response, type
     })
   return null
 }
