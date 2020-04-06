@@ -1,7 +1,6 @@
 const ngrok = require('ngrok')   // eslint-disable-line
 const server = require('../../src/server').setupServer()
 
-const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const { ensureResources } = require('../../src/config/init/ensure-resources')
 const testUtils = require('../test-utils')
 
@@ -14,7 +13,7 @@ async function initServerAndExtension (ctpClient, testServerPort = 8000) {
   await testUtils.deleteAllResources(ctpClient, 'extensions')
   return new Promise(((resolve) => {
     server.listen(testServerPort, async () => {
-      await ensureResources(ctpClientBuilder.get())
+      await ensureResources(ctpClient)
       console.log(`Extension module is running at http://localhost:${testServerPort}/`)
       resolve()
     })

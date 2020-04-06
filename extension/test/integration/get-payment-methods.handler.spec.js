@@ -70,6 +70,70 @@ describe('::getPaymentMethods::', () => {
     expect(interfaceInteractionResponse.additionalData).to.not.exist
   })
 
+  it('given an existing payment' +
+    'when getPaymentMethodsRequest custom field is reset and custom field getPaymentMethodsResponse is unset' +
+    'then should set custom field getPaymentMethodsResponse ' +
+    'and interface interaction with type getPaymentMethods ' +
+    'but should not override old interface interactions', async () => {
+    const getPaymentMethodsRequestDraft = {
+      countryCode: "DE",
+      shopperLocale: "de-DE",
+      amount: {
+        currency: "EUR",
+        value: 1000
+      }
+    }
+    const paymentDraft = {
+      amountPlanned: {
+        currencyCode: 'EUR',
+        centAmount: 1000,
+      },
+      paymentMethodInfo: {
+        paymentInterface: c.CTP_ADYEN_INTEGRATION
+      },
+      interfaceInteractions: [
+        {
+          type: {
+            typeId: "type",
+            key: c.CTP_INTERFACE_INTERACTION_PAYMENT_TYPE_KEY,
+          },
+          fields: {
+            type: "getPaymentMethods",
+            request: "{\"merchantAccount\":\"CommercetoolsGmbHDE775\",\"countryCode\":\"DE\",\"shopperLocale\":\"de-DE\",\"amount\":{\"currency\":\"EUR\",\"value\":1000}}",
+            response: "{\"message\":\"invalid json response body at https://checkout-test.adyen.com/v53/paymentMethods reason: Unexpected token S in JSON at position 4\",\"type\":\"invalid-json\",\"name\":\"FetchError\",\"stack\":\"FetchError: invalid json response body at https://checkout-test.adyen.com/v53/paymentMethods reason: Unexpected token S in JSON at position 4\\n    at /Users/aoz/projects/ambsoft/commercetools-adyen-integration/extension/node_modules/node-fetch/lib/index.js:272:32\\n    at processTicksAndRejections (internal/process/task_queues.js:85:5)\\n    at async fetchAsync (/Users/aoz/projects/ambsoft/commercetools-adyen-integration/extension/src/paymentHandler/web-component-service.js:27:12)\\n    at async callAdyen (/Users/aoz/projects/ambsoft/commercetools-adyen-integration/extension/src/paymentHandler/web-component-service.js:20:20)\"}",
+            createdAt: "2020-04-06T09:17:19.829Z"
+          }
+        }
+      ],
+      custom: {
+        type: {
+          typeId: "type",
+          key: c.CTP_WEB_COMPONENTS_PAYMENT_TYPE_KEY
+        },
+        fields: {
+          getPaymentMethodsRequest: JSON.stringify(getPaymentMethodsRequestDraft)
+          // getPaymentMethodsResponse is removed
+        }
+      }
+    }
+
+    const { statusCode, body: payment } = await ctpClient.create(ctpClient.builder.payments, paymentDraft)
+    expect(statusCode).to.equal(201)
+
+    const { getPaymentMethodsRequest, getPaymentMethodsResponse } = payment.custom.fields
+    expect(getPaymentMethodsRequest).to.be.deep.equal(JSON.stringify(getPaymentMethodsRequestDraft))
+
+    const interfaceInteractions = payment.interfaceInteractions
+      .filter(interaction => interaction.fields.type === c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS)
+    expect(interfaceInteractions.length).to.equal(2)
+    expect(interfaceInteractions[0].fields.response).to.includes('invalid json response body')
+
+    const interfaceInteractionResponse = JSON.parse(interfaceInteractions[1].fields.response)
+    expect(interfaceInteractionResponse.groups).to.be.an.instanceof(Array)
+    expect(interfaceInteractionResponse.paymentMethods).to.be.an.instanceof(Array)
+    expect(interfaceInteractionResponse.additionalData).to.not.exist
+  })
+
   it('given a payment ' +
     'when getOriginKeysRequest and getPaymentMethodsRequest custom fields are set and responses are not ' +
     'then should set custom fields getOriginKeysResponse and getPaymentMethodsResponse ' +
