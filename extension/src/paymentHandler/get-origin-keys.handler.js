@@ -3,7 +3,8 @@ const c = require('../config/constants')
 const { getOriginKeys } = require('./web-component-service')
 
 async function handlePayment (paymentObject) {
-  const { request, response } = await getOriginKeys(paymentObject)
+  const getOriginKeysRequest = paymentObject.custom.fields.getOriginKeysRequest
+  const { request, response } = await getOriginKeys(getOriginKeysRequest)
   return {
     actions: [
       pU.createAddInterfaceInteractionAction({

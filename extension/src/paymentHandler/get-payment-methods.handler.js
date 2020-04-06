@@ -3,7 +3,8 @@ const c = require('../config/constants')
 const { getPaymentMethods } = require('./web-component-service')
 
 async function handlePayment (paymentObject) {
-  const { request, response } = await getPaymentMethods(paymentObject)
+  const getPaymentMethodsRequest = paymentObject.custom.fields.getPaymentMethodsRequest
+  const { request, response } = await getPaymentMethods(getPaymentMethodsRequest)
   return {
     actions: [
       pU.createAddInterfaceInteractionAction({

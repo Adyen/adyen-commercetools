@@ -4,30 +4,23 @@ const { serializeError } = require('serialize-error')
 const configLoader = require('../config/config')
 const config = configLoader.load()
 
-//todo(ahmet): add integration tests for those methods, both success and failed cases.
-function getOriginKeys (paymentObject) {
-  const getOriginKeysRequest = paymentObject.custom.fields.getOriginKeysRequest
+function getOriginKeys (getOriginKeysRequest) {
   return callAdyen('originKeys', getOriginKeysRequest)
 }
 
-async function getPaymentMethods (paymentObject) {
-  const getOriginKeysRequest = paymentObject.custom.fields.getPaymentMethodsRequest
-  return callAdyen('paymentMethods', getOriginKeysRequest)
+async function getPaymentMethods (getPaymentMethodsRequest) {
+  return callAdyen('paymentMethods', getPaymentMethodsRequest)
 }
 
 async function callAdyen(endpoint, requestString) {
-  const request = buildRequest(requestString)
-  const response = await fetchAsync(endpoint, request)
-  return { request, response }
-}
-
-async function fetchAsync (endpoint, request) {
+  let request, response
   try {
-    const response = await fetch(`${config.adyen.apiBaseUrl}/${endpoint}`, request)
-    return await response.json();
+    request = buildRequest(requestString)
+    response = await fetchAsync(endpoint, request)
   } catch (err) {
-    return serializeError(err);
+    response = serializeError(err)
   }
+  return { request, response }
 }
 
 function buildRequest (requestString) {
@@ -44,6 +37,11 @@ function buildRequest (requestString) {
       'X-Api-Key': config.adyen.apiKey
     }
   }
+}
+
+async function fetchAsync (endpoint, request) {
+  const response = await fetch(`${config.adyen.apiBaseUrl}/${endpoint}`, request)
+  return await response.json();
 }
 
 module.exports = {
