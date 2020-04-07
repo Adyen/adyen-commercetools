@@ -31,12 +31,12 @@ async function handlePayment (paymentObject) {
 }
 
 function _getPaymentHandlers (paymentObject) {
-  const result = []
+  const handlers = []
   if (paymentObject.custom.fields.getOriginKeysRequest && !paymentObject.custom.fields.getOriginKeysResponse)
-    result.push(paymentHandlers.getOriginKeysHandler)
+    handlers.push(paymentHandlers.getOriginKeysHandler)
   if (paymentObject.custom.fields.getPaymentMethodsRequest && !paymentObject.custom.fields.getPaymentMethodsResponse)
-    result.push(paymentHandlers.getPaymentMethodsHandler)
-  return result
+    handlers.push(paymentHandlers.getPaymentMethodsHandler)
+  return handlers
 }
 
 module.exports = { handlePayment }
