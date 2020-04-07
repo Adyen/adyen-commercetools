@@ -13,9 +13,9 @@ function getPaymentMethods (getPaymentMethodsRequest) {
 }
 
 async function callAdyen(endpoint, requestString) {
-  let request, response
+  let request = buildRequest(requestString)
+  let response
   try {
-    request = buildRequest(requestString)
     response = await fetchAsync(endpoint, request)
   } catch (err) {
     response = serializeError(err)
