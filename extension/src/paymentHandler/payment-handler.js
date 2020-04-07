@@ -39,5 +39,4 @@ function _getPaymentHandlers (paymentObject) {
   return result
 }
 
-
 module.exports = { handlePayment }
