@@ -8,7 +8,7 @@ function getOriginKeys (getOriginKeysRequest) {
   return callAdyen('originKeys', getOriginKeysRequest)
 }
 
-async function getPaymentMethods (getPaymentMethodsRequest) {
+function getPaymentMethods (getPaymentMethodsRequest) {
   return callAdyen('paymentMethods', getPaymentMethodsRequest)
 }
 
