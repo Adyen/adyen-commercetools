@@ -1,5 +1,4 @@
 const { expect } = require('chai')
-const _ = require('lodash')
 
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const iTSetUp = require('./integration-test-set-up')
