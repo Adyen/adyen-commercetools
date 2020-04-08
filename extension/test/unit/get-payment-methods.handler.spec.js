@@ -35,6 +35,10 @@ describe('get-payment-methods::handlePayment::', () => {
     }
   }
 
+  afterEach(() => {
+    sinon.restore();
+  });
+
   it('handlePayment should return the right actions', async () => {
     const adyenGetPaymentResponse = {
       "groups": [
@@ -54,8 +58,8 @@ describe('get-payment-methods::handlePayment::', () => {
         }
       ]
     }
-    const fetchStub = sinon.stub(fetch, 'Promise')
-      .resolves({ json: () => (adyenGetPaymentResponse)})
+
+    sinon.stub(fetch, 'Promise').resolves({ json: () => (adyenGetPaymentResponse)})
 
     const result = await handlePayment(paymentObject)
 
@@ -67,13 +71,12 @@ describe('get-payment-methods::handlePayment::', () => {
     expect(result.actions[0].fields.response).to.be.deep.equal(result.actions[1].value)
     expect(result.actions[0].fields.type).to.equal(c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS)
     expect(result.actions[1].name).to.equal(c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE)
-    fetchStub.restore()
   })
 
   it('when adyen request fails ' +
     'then handlePayment should return the right actions with failed responses', async () => {
     const errorMsg = "unexpected exception"
-    const fetchStub = sinon.stub(fetch, 'Promise').rejects(errorMsg)
+    sinon.stub(fetch, 'Promise').rejects(errorMsg)
 
     const result = await handlePayment(paymentObject)
 
@@ -84,7 +87,6 @@ describe('get-payment-methods::handlePayment::', () => {
     expect(result.actions[0].fields.response).to.be.includes(errorMsg)
     expect(result.actions[0].fields.type).to.equal(c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS)
     expect(result.actions[1].name).to.equal(c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE)
-    fetchStub.restore()
   })
 
   //todo(ahmet): could not decide where to put those checks, looks it should not be part of the handlePayment.
