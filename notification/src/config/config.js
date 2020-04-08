@@ -18,8 +18,8 @@ function getCTPEnvCredentials () {
     projectKey: process.env.CTP_PROJECT_KEY,
     clientId: process.env.CTP_CLIENT_ID,
     clientSecret: process.env.CTP_CLIENT_SECRET,
-    apiUrl: process.env.CTP_HOST || 'https://api.eu-central-1.aws.commercetools.com/',
-    authUrl: process.env.CTP_AUTH_URL || 'https://api.eu-central-1.aws.commercetools.com/'
+    apiUrl: process.env.CTP_HOST || 'https://api.europe-west1.gcp.commercetools.com',
+    authUrl: process.env.CTP_AUTH_URL || 'https://auth.europe-west1.gcp.commercetools.com'
   }
 }
 
