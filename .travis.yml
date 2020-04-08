@@ -12,7 +12,7 @@ script:
   - cd $TEST_DIR
   - npm ci
   - npm run test
-  - if [ "$TEST_DIR" = "extension" ]; then npm run cypress; fi
+  #- if [ "$TEST_DIR" = "extension" ]; then npm run cypress; fi
   - cd $TRAVIS_BUILD_DIR
 
 before_deploy:

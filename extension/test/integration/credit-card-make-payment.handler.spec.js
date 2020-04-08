@@ -11,7 +11,7 @@ const iTSetUp = require('./integration-test-set-up')
 const testUtils = require('../test-utils')
 const c = require('../../src/config/constants')
 
-describe('credit card payment', () => {
+describe.skip('credit card payment', () => {
   let ctpClient
 
   beforeEach(async () => {
