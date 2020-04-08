@@ -16,8 +16,8 @@ function getCTPEnvCredentials () {
     projectKey: process.env.CTP_PROJECT_KEY,
     clientId: process.env.CTP_CLIENT_ID,
     clientSecret: process.env.CTP_CLIENT_SECRET,
-    apiUrl: process.env.CTP_HOST || 'https://api.sphere.io',
-    authUrl: process.env.CTP_AUTH_URL || 'https://auth.sphere.io'
+    apiUrl: process.env.CTP_HOST || 'https://api.eu-central-1.aws.commercetools.com/',
+    authUrl: process.env.CTP_AUTH_URL || 'https://api.eu-central-1.aws.commercetools.com/'
   }
 }
 
