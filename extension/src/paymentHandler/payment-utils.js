@@ -108,6 +108,7 @@ function createSetCustomFieldAction (name, response) {
   return {
     action: 'setCustomField',
     name,
+    // todo (ahmet): Don't stringify here. Sometimes you want to pass JSON object, e.g. for LocalizedEnum.
     value: JSON.stringify(response)
   }
 }
