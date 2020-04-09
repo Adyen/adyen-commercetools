@@ -20,7 +20,7 @@ describe.skip('credit card payment', () => {
   })
 
   afterEach(async () => {
-    await iTSetUp.cleanupResources(ctpClient)
+    await iTSetUp.cleanupResources()
   })
 
   it('should create success payment', async () => {

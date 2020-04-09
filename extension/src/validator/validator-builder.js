@@ -13,15 +13,13 @@ function withPayment (paymentObject) {
         errors.isAdyen = errorMessages.MISSING_PAYMENT_INTERFACE
       return this
     },
-    validateRequestFields() {
+    validateRequestFields () {
       if (!paymentObject.custom)
         return this
-      if (invalidJSON(paymentObject.custom.fields.getOriginKeysRequest)) {
+      if (invalidJSON(paymentObject.custom.fields.getOriginKeysRequest))
         errors.getOriginKeysRequest = errorMessages.GET_ORIGIN_KEYS_REQUEST_INVALID_JSON
-      }
-      if (invalidJSON(paymentObject.custom.fields.getPaymentMethodsRequest)) {
+      if (invalidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
         errors.getPaymentMethodsRequest = errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
-      }
       return this
     },
     isCancelOrRefund () {
@@ -131,16 +129,16 @@ function withPayment (paymentObject) {
   }
 }
 
-function invalidJSON(requestString) {
-  if (typeof requestString == 'undefined')
+function invalidJSON (requestString) {
+  if (typeof requestString === 'undefined')
     return false
   try {
     const o = JSON.parse(requestString)
-    if (o && typeof o === 'object') {
+    if (o && typeof o === 'object')
       return false
-    }
+  } catch (e) {
+    // continue regardless of error
   }
-  catch (ignore) { }
   return true
 }
 

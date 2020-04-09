@@ -2,13 +2,13 @@ global.window = {}
 global.navigator = {}
 
 const Promise = require('bluebird')
-const adyenEncrypt = require('adyen-cse-js')
 const _ = require('lodash')
 
 const creditCardTpl = require('./fixtures/payment-credit-card.json')
 const creditCard3dTpl = require('./fixtures/payment-credit-card-3d.json')
 
 process.on('unhandledRejection', (reason) => {
+  /* eslint-disable no-console */
   console.error('Unhandled Rejection:', reason)
   process.exit(1)
 })
@@ -46,8 +46,8 @@ function createCreditCardPaymentDraft ({
   cardNumber, cvc, expiryMonth, expiryYear,
   returnUrl, paymentTemplate = creditCardTpl
 }) {
+  /* todo: adyen-cse-js is deprecated
   const key = process.env.CLIENT_ENCRYPTION_PUBLIC_KEY
-
   const cseInstance = adyenEncrypt.createEncryption(key, {})
 
   const encryptedCardNumber = cseInstance.encrypt({
@@ -66,11 +66,12 @@ function createCreditCardPaymentDraft ({
     expiryYear,
     generationtime: new Date().toISOString()
   })
+   */
   return _.template(JSON.stringify(paymentTemplate))({
-    encryptedCardNumber,
-    encryptedSecurityCode,
-    encryptedExpiryMonth,
-    encryptedExpiryYear,
+    cardNumber,
+    cvc,
+    expiryMonth,
+    expiryYear,
     returnUrl
   })
 }

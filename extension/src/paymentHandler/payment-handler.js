@@ -18,7 +18,8 @@ async function handlePayment (paymentObject) {
 
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(
-    handlers.map(handler => handler.execute(paymentObject)))
+    handlers.map(handler => handler.execute(paymentObject))
+  )
   const handlerResponse = {
     actions: handlerResponses.flatMap(result => result.actions)
   }
