@@ -88,17 +88,4 @@ describe('get-payment-methods::handlePayment::', () => {
     expect(result.actions[0].fields.type).to.equal(c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS)
     expect(result.actions[1].name).to.equal(c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE)
   })
-
-  //todo(ahmet): could not decide where to put those checks, looks it should not be part of the handlePayment.
-  it.skip('when getPaymentMethodsRequest custom field is not a valid json object ' +
-    'then handlePayment should return the right actions with failed responses', async () => {
-    const _paymentObject = _.cloneDeep(paymentObject)
-    _paymentObject.custom.fields.getPaymentMethodsRequest= "{"
-
-    const result = await execute(_paymentObject)
-    expect(result.actions.length).to.equal(2)
-    expect(result.actions[0].action).to.equal('addInterfaceInteraction')
-    expect(result.actions[1].action).to.equal('setCustomField')
-    expect(result.actions[0].fields.request).to.be.includes('Unexpected end of JSON input')
-  })
 })
