@@ -16,9 +16,9 @@ function withPayment (paymentObject) {
     validateRequestFields () {
       if (!paymentObject.custom)
         return this
-      if (invalidJSON(paymentObject.custom.fields.getOriginKeysRequest))
+      if (!isValidJSON(paymentObject.custom.fields.getOriginKeysRequest))
         errors.getOriginKeysRequest = errorMessages.GET_ORIGIN_KEYS_REQUEST_INVALID_JSON
-      if (invalidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
+      if (!isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
         errors.getPaymentMethodsRequest = errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
       return this
     },
@@ -129,17 +129,17 @@ function withPayment (paymentObject) {
   }
 }
 
-function invalidJSON (requestString) {
+function isValidJSON (requestString) {
   if (typeof requestString === 'undefined')
-    return false
+    return true
   try {
     const o = JSON.parse(requestString)
     if (o && typeof o === 'object')
-      return false
+      return true
   } catch (e) {
     // continue regardless of error
   }
-  return true
+  return false
 }
 
 module.exports = { withPayment }
