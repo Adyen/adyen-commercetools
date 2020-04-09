@@ -62,16 +62,13 @@ function createAddInterfaceInteractionAction (
     request, response, type
   }
 ) {
-  // strip away sensitive data
-  delete response.additionalData
-
   return {
     action: 'addInterfaceInteraction',
     type: { key: c.CTP_PAYMENT_INTERACTION_CUSTOM_TYPE_KEY },
     fields: {
       createdAt: new Date().toISOString(),
       response: JSON.stringify(response),
-      request: request.body,
+      request: JSON.stringify(request),
       type
     }
   }
@@ -108,7 +105,6 @@ function createSetCustomFieldAction (name, response) {
   return {
     action: 'setCustomField',
     name,
-    // todo (ahmet): Don't stringify here. Sometimes you want to pass JSON object, e.g. for LocalizedEnum.
     value: JSON.stringify(response)
   }
 }
