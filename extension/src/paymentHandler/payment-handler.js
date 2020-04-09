@@ -1,19 +1,7 @@
 const ValidatorBuilder = require('../validator/validator-builder')
-const getPaymentMethodsHandler = require('../paymentHandler/get-payment-methods.handler')
-const getOriginKeysHandler = require('../paymentHandler/get-origin-keys.handler')
+const getPaymentMethodsHandler = require('./get-payment-methods.handler')
+const getOriginKeysHandler = require('./get-origin-keys.handler')
 
-const paymentHandlers = {
-  getPaymentMethodsHandler,
-  getOriginKeysHandler
-}
-
-/*
-todo(ahmet)
-- refactor the validation logic, most of the logic will be removed from validator builder.
-- find a better structure for promise handler, mapping an promise array does not seem easy to understand.
-- maybe step based validations could be done in handlePayments.
-- what if handlePayment needs to return an error result rather than update actions ?
-*/
 async function handlePayment (paymentObject) {
   const validatorBuilder = ValidatorBuilder.withPayment(paymentObject)
   const adyenValidator = validatorBuilder.validateAdyen()
@@ -23,7 +11,7 @@ async function handlePayment (paymentObject) {
 
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(
-    handlers.map(handler => handler.handlePayment(paymentObject)))
+    handlers.map(handler => handler.execute(paymentObject)))
   const handlerResponse = {
     actions: handlerResponses.flatMap(result => result.actions)
   }
@@ -31,11 +19,15 @@ async function handlePayment (paymentObject) {
 }
 
 function _getPaymentHandlers (paymentObject) {
+  // custom field on payment is not a mandatory field.
+  if (!paymentObject.custom)
+    return []
+
   const handlers = []
   if (paymentObject.custom.fields.getOriginKeysRequest && !paymentObject.custom.fields.getOriginKeysResponse)
-    handlers.push(paymentHandlers.getOriginKeysHandler)
+    handlers.push(getOriginKeysHandler)
   if (paymentObject.custom.fields.getPaymentMethodsRequest && !paymentObject.custom.fields.getPaymentMethodsResponse)
-    handlers.push(paymentHandlers.getPaymentMethodsHandler)
+    handlers.push(getPaymentMethodsHandler)
   return handlers
 }
 

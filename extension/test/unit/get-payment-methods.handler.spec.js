@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 const _ = require('lodash')
 
 const c = require('../../src/config/constants')
-const { handlePayment } = require('../../src/paymentHandler/get-payment-methods.handler')
+const { execute } = require('../../src/paymentHandler/get-payment-methods.handler')
 
 describe('get-payment-methods::handlePayment::', () => {
   const getPaymentMethodsRequest = {
@@ -27,7 +27,7 @@ describe('get-payment-methods::handlePayment::', () => {
     custom: {
       type: {
         typeId: "type",
-        key: c.CTP_WEB_COMPONENTS_PAYMENT_TYPE_KEY
+        key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
       },
       fields: {
         getPaymentMethodsRequest: JSON.stringify(getPaymentMethodsRequest)
@@ -61,7 +61,7 @@ describe('get-payment-methods::handlePayment::', () => {
 
     sinon.stub(fetch, 'Promise').resolves({ json: () => (adyenGetPaymentResponse)})
 
-    const result = await handlePayment(paymentObject)
+    const result = await execute(paymentObject)
 
     expect(result.actions.length).to.equal(2)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
@@ -78,7 +78,7 @@ describe('get-payment-methods::handlePayment::', () => {
     const errorMsg = "unexpected exception"
     sinon.stub(fetch, 'Promise').rejects(errorMsg)
 
-    const result = await handlePayment(paymentObject)
+    const result = await execute(paymentObject)
 
     expect(result.actions.length).to.equal(2)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
@@ -95,7 +95,7 @@ describe('get-payment-methods::handlePayment::', () => {
     const _paymentObject = _.cloneDeep(paymentObject)
     _paymentObject.custom.fields.getPaymentMethodsRequest= "{"
 
-    const result = await handlePayment(_paymentObject)
+    const result = await execute(_paymentObject)
     expect(result.actions.length).to.equal(2)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
     expect(result.actions[1].action).to.equal('setCustomField')
