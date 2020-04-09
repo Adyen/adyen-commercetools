@@ -24,28 +24,10 @@ function withPayment (paymentObject) {
       }
       return this
     },
-    validatePaymentMethod () {
-      const isValidMethod = this.isPaypal() || this.isKcp()
-        || this.isCreditCard() || !paymentObject.paymentMethodInfo.method
-      if (!isValidMethod)
-        errors.isValidPaymentMethod = errorMessages.INVALID_PAYMENT_METHOD
-      return this
-    },
     isCancelOrRefund () {
       return _.isObject(pU.getAuthorizationTransactionSuccess(paymentObject))
         && (_.isObject(pU.getCancelAuthorizationTransactionInit(paymentObject))
         || _.isObject(pU.getRefundTransactionInit(paymentObject)))
-    },
-    isPaypal () {
-      return paymentObject.paymentMethodInfo.method === 'paypal'
-    },
-    isKcp () {
-      return paymentObject.paymentMethodInfo.method === 'kcp_banktransfer'
-        || paymentObject.paymentMethodInfo.method === 'kcp_creditcard'
-    },
-    isCreditCard () {
-      return paymentObject.paymentMethodInfo.method === 'creditCard'
-        || paymentObject.paymentMethodInfo.method === 'creditCard_3d'
     },
     validateAuthorizationTransactionPending () {
       const transaction = pU.getAuthorizationTransactionPending(paymentObject)
@@ -99,14 +81,6 @@ function withPayment (paymentObject) {
         && !_.isEmpty(paymentObject.custom.fields.returnUrl)
       if (!hasReturnUrl)
         errors.hasReturnUrl = errorMessages.MISSING_RETURN_URL
-      return this
-    },
-    validateMerchantReferenceField () {
-      const hasMerchantReference = _.isObject(paymentObject.custom)
-        && _.isObject(paymentObject.custom.fields)
-        && !_.isEmpty(paymentObject.custom.fields.merchantReference)
-      if (!hasMerchantReference)
-        errors.hasMerchantReference = errorMessages.MISSING_MERCHANT_REFERENCE
       return this
     },
     validatePayloadField () {

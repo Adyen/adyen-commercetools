@@ -45,43 +45,6 @@ describe('Payment controller', () => {
       await paymentController.processRequest(mockRequest)
     })
 
-    it.skip('on missing merchant reference should throw error', async () => {
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.merchantReference = ''
-
-      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
-        expect(statusCode).to.equal(400)
-        expect(data).to.deep.equal({
-          errors: [{
-            code: 'InvalidField',
-            message: errorMessages.MISSING_MERCHANT_REFERENCE
-          }]
-        })
-      }
-
-      await paymentController.processRequest(mockRequest)
-    })
-
-    it.skip('on wrong payment method should throw error', async () => {
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
-      ctpPaymentClone.paymentMethodInfo.method = 'wrong method'
-
-      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
-        expect(statusCode).to.equal(400)
-        expect(data).to.deep.equal({
-          errors: [{
-            code: 'InvalidField',
-            message: errorMessages.INVALID_PAYMENT_METHOD
-          }]
-        })
-      }
-
-      await paymentController.processRequest(mockRequest)
-    })
-
     it.skip('on missing params for make paypal payment should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
