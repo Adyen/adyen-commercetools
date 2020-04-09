@@ -1,5 +1,5 @@
 const _ = require('lodash')
-
+const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 const pU = require('../paymentHandler/payment-utils')
 const errorMessages = require('./error-messages')
 
@@ -8,9 +8,20 @@ function withPayment (paymentObject) {
 
   return {
     validateAdyen () {
-      const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
+      const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === CTP_ADYEN_INTEGRATION
       if (!isAdyen)
         errors.isAdyen = errorMessages.MISSING_PAYMENT_INTERFACE
+      return this
+    },
+    validateRequestFields() {
+      if (!paymentObject.custom)
+        return this
+      if (invalidJSON(paymentObject.custom.fields.getOriginKeysRequest)) {
+        errors.getOriginKeysRequest = errorMessages.GET_ORIGIN_KEYS_REQUEST_INVALID_JSON
+      }
+      if (invalidJSON(paymentObject.custom.fields.getPaymentMethodsRequest)) {
+        errors.getPaymentMethodsRequest = errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
+      }
       return this
     },
     validatePaymentMethod () {
@@ -144,6 +155,19 @@ function withPayment (paymentObject) {
       return { errors: errorArray }
     }
   }
+}
+
+function invalidJSON(requestString) {
+  if (typeof requestString == 'undefined')
+    return false
+  try {
+    const o = JSON.parse(requestString)
+    if (o && typeof o === 'object') {
+      return false
+    }
+  }
+  catch (ignore) { }
+  return true
 }
 
 module.exports = { withPayment }

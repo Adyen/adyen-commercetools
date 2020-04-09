@@ -26,6 +26,25 @@ describe('Payment controller', () => {
       await paymentController.processRequest(mockRequest)
     })
 
+    it('on invalid web component request should throw error', async () => {
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.getOriginKeysRequest = '{'  // invalid
+      ctpPaymentClone.custom.fields.getPaymentMethodsRequest = '{}' // valid
+
+      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
+      utilsStub.sendResponse = ({ statusCode, data }) => {
+        expect(statusCode).to.equal(400)
+        expect(data).to.deep.equal({
+          errors: [{
+            code: 'InvalidField',
+            message: errorMessages.GET_ORIGIN_KEYS_REQUEST_INVALID_JSON
+          }]
+        })
+      }
+
+      await paymentController.processRequest(mockRequest)
+    })
+
     it.skip('on missing merchant reference should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.merchantReference = ''

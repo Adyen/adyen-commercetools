@@ -9,6 +9,13 @@ async function handlePayment (paymentObject) {
     // if it's not adyen payment, ignore the payment
     return { success: true, data: null }
 
+  const requestValidator = validatorBuilder.validateRequestFields()
+  if (requestValidator.hasErrors())
+    return {
+      success: false,
+      data: requestValidator.buildCtpErrorResponse()
+    }
+
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(
     handlers.map(handler => handler.execute(paymentObject)))

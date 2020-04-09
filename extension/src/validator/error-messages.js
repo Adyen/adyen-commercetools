@@ -14,5 +14,7 @@ module.exports = {
   MISSING_PAYMENT_DATA: 'Set custom.fields.paymentData',
   MISSING_PARES: 'Set custom.fields.PaRes',
   MISSING_MD: 'Set custom.fields.MD',
-  MISSING_TXN_AUTHORIZATION_INIT_PENDING: 'Have one Authorization transaction in state=\'Initial\' or state=\'Pending\''
+  MISSING_TXN_AUTHORIZATION_INIT_PENDING: 'Have one Authorization transaction in state=\'Initial\' or state=\'Pending\'',
+  GET_ORIGIN_KEYS_REQUEST_INVALID_JSON: 'getOriginKeysRequest does not contain valid JSON.',
+  GET_PAYMENT_METHODS_REQUEST_INVALID_JSON: 'getOriginKeysRequest does not contain valid JSON.'
 }
