@@ -1,57 +1,42 @@
 const ValidatorBuilder = require('../validator/validator-builder')
-const creditCardHandler = require('../paymentHandler/creditCard/credit-card.handler')
-const paypalHandler = require('../paymentHandler/paypal/paypal.handler')
-const kcpHandler = require('../paymentHandler/kcp/kcp-payment.handler')
-const refundHandler = require('../paymentHandler/cancel-or-refund.handler')
-const fetchPaymentMethodsHandler = require('../paymentHandler/fetch-payment-methods.handler')
-
-const paymentHandlers = {
-  creditCardHandler,
-  fetchPaymentMethodsHandler,
-  paypalHandler,
-  kcpHandler,
-  refundHandler
-}
+const getPaymentMethodsHandler = require('./get-payment-methods.handler')
+const getOriginKeysHandler = require('./get-origin-keys.handler')
 
 async function handlePayment (paymentObject) {
   const validatorBuilder = ValidatorBuilder.withPayment(paymentObject)
-  const adyenValidator = validatorBuilder
-    .validateAdyen()
+  const adyenValidator = validatorBuilder.validateAdyen()
   if (adyenValidator.hasErrors())
     // if it's not adyen payment, ignore the payment
     return { success: true, data: null }
-  const merchantReferenceValidator = validatorBuilder
-    .validateMerchantReferenceField()
-  if (merchantReferenceValidator.hasErrors())
+
+  const requestValidator = validatorBuilder.validateRequestFields()
+  if (requestValidator.hasErrors())
     return {
       success: false,
-      data: merchantReferenceValidator.buildCtpErrorResponse()
+      data: requestValidator.buildCtpErrorResponse()
     }
-  const paymentMethodValidator = validatorBuilder.validatePaymentMethod()
-  if (paymentMethodValidator.hasErrors())
-    return {
-      success: false,
-      data: paymentMethodValidator.buildCtpErrorResponse()
-    }
-  const handler = _getPaymentHandler(paymentObject)
-  const handlerResponse = await handler.handlePayment(paymentObject)
-  if (handlerResponse.errors)
-    return { success: false, data: handlerResponse }
+
+  const handlers = _getPaymentHandlers(paymentObject)
+  const handlerResponses = await Promise.all(
+    handlers.map(handler => handler.execute(paymentObject))
+  )
+  const handlerResponse = {
+    actions: handlerResponses.flatMap(result => result.actions)
+  }
   return { success: true, data: handlerResponse }
 }
 
-function _getPaymentHandler (paymentObject) {
-  const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
-  if (paymentValidator.isCancelOrRefund())
-    return paymentHandlers.refundHandler
-  if (paymentValidator.isPaypal())
-    return paymentHandlers.paypalHandler
-  if (paymentValidator.isCreditCard())
-    return paymentHandlers.creditCardHandler
-  if (paymentValidator.isKcp())
-    return paymentHandlers.kcpHandler
-  return paymentHandlers.fetchPaymentMethodsHandler
-}
+function _getPaymentHandlers (paymentObject) {
+  // custom field on payment is not a mandatory field.
+  if (!paymentObject.custom)
+    return []
 
+  const handlers = []
+  if (paymentObject.custom.fields.getOriginKeysRequest && !paymentObject.custom.fields.getOriginKeysResponse)
+    handlers.push(getOriginKeysHandler)
+  if (paymentObject.custom.fields.getPaymentMethodsRequest && !paymentObject.custom.fields.getPaymentMethodsResponse)
+    handlers.push(getPaymentMethodsHandler)
+  return handlers
+}
 
 module.exports = { handlePayment }

@@ -4,7 +4,7 @@ const testUtils = require('../test-utils')
 const iTSetUp = require('./integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 
-describe('Cancel or refund', () => {
+describe.skip('Cancel or refund', () => {
   let ctpClient
 
   beforeEach(async () => {
@@ -13,7 +13,7 @@ describe('Cancel or refund', () => {
   })
 
   afterEach(async () => {
-    await iTSetUp.cleanupResources(ctpClient)
+    await iTSetUp.cleanupResources()
   })
 
   it('should process a refund request', async () => {
@@ -51,7 +51,7 @@ describe('Cancel or refund', () => {
     expect(refundTransaction.state).to.equal('Pending')
 
     const interfaceInteractionFields = updatedPayment.interfaceInteractions[1].fields
-    //interfaceInteractionFields.request is a stringify json
+    // interfaceInteractionFields.request is a stringify json
     const adyenRequestBody = JSON.parse(JSON.parse(interfaceInteractionFields.request))
     expect(adyenRequestBody.originalReference).to.equal(transaction.interactionId)
 

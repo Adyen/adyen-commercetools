@@ -15,7 +15,7 @@ function createCtpClient ({
   clientId, clientSecret, projectKey, concurrency = 10
 }) {
   const authMiddleware = createAuthMiddlewareForClientCredentialsFlow({
-    host: 'https://auth.sphere.io',
+    host: config.ctp.authUrl,
     projectKey,
     credentials: {
       clientId,
@@ -26,7 +26,7 @@ function createCtpClient ({
 
   const httpMiddleware = createHttpMiddleware({
     maskSensitiveHeaderData: true,
-    host: 'https://api.sphere.io',
+    host: config.ctp.apiUrl,
     enableRetry: true,
     fetch
   })

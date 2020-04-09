@@ -8,7 +8,7 @@
     "unit": "nyc mocha --exit --timeout 30000 --full-trace test/unit/**/*.spec.js",
     "integration": "nyc mocha --exit --timeout 30000 --full-trace test/integration/**/*.spec.js",
     "start": "node ./src/init.js",
-    "lint": "eslint .",
+    "lint": "eslint ./src ./test",
     "cypress:run": "cypress run",
     "cypress:open": "cypress open",
     "cypress": "server-test cypress-setup 8000 cypress:run",
@@ -17,6 +17,9 @@
     "toc": "doctoc docs --title '**Contents**'",
     "create-custom-types": "node -e 'require(\"./src/config/init/ensure-resources.js\").ensureCustomTypes()'"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "keywords": [
     "Adyen",
     "commercetools",
@@ -73,6 +76,7 @@
     "bunyan": "^1.8.12",
     "lodash": "^4.17.15",
     "node-fetch": "^2.6.0",
-    "serialize-error": "^6.0.0"
+    "serialize-error": "^6.0.0",
+    "async": "^3.2.0"
   }
 }

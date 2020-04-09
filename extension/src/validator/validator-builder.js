@@ -1,5 +1,5 @@
 const _ = require('lodash')
-
+const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 const pU = require('../paymentHandler/payment-utils')
 const errorMessages = require('./error-messages')
 
@@ -8,33 +8,24 @@ function withPayment (paymentObject) {
 
   return {
     validateAdyen () {
-      const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === 'ctp-adyen-integration'
+      const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === CTP_ADYEN_INTEGRATION
       if (!isAdyen)
         errors.isAdyen = errorMessages.MISSING_PAYMENT_INTERFACE
       return this
     },
-    validatePaymentMethod () {
-      const isValidMethod = this.isPaypal() || this.isKcp()
-        || this.isCreditCard() || !paymentObject.paymentMethodInfo.method
-      if (!isValidMethod)
-        errors.isValidPaymentMethod = errorMessages.INVALID_PAYMENT_METHOD
+    validateRequestFields () {
+      if (!paymentObject.custom)
+        return this
+      if (!isValidJSON(paymentObject.custom.fields.getOriginKeysRequest))
+        errors.getOriginKeysRequest = errorMessages.GET_ORIGIN_KEYS_REQUEST_INVALID_JSON
+      if (!isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
+        errors.getPaymentMethodsRequest = errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
       return this
     },
     isCancelOrRefund () {
       return _.isObject(pU.getAuthorizationTransactionSuccess(paymentObject))
         && (_.isObject(pU.getCancelAuthorizationTransactionInit(paymentObject))
         || _.isObject(pU.getRefundTransactionInit(paymentObject)))
-    },
-    isPaypal () {
-      return paymentObject.paymentMethodInfo.method === 'paypal'
-    },
-    isKcp () {
-      return paymentObject.paymentMethodInfo.method === 'kcp_banktransfer'
-        || paymentObject.paymentMethodInfo.method === 'kcp_creditcard'
-    },
-    isCreditCard () {
-      return paymentObject.paymentMethodInfo.method === 'creditCard'
-        || paymentObject.paymentMethodInfo.method === 'creditCard_3d'
     },
     validateAuthorizationTransactionPending () {
       const transaction = pU.getAuthorizationTransactionPending(paymentObject)
@@ -90,14 +81,6 @@ function withPayment (paymentObject) {
         errors.hasReturnUrl = errorMessages.MISSING_RETURN_URL
       return this
     },
-    validateMerchantReferenceField () {
-      const hasMerchantReference = _.isObject(paymentObject.custom)
-        && _.isObject(paymentObject.custom.fields)
-        && !_.isEmpty(paymentObject.custom.fields.merchantReference)
-      if (!hasMerchantReference)
-        errors.hasMerchantReference = errorMessages.MISSING_MERCHANT_REFERENCE
-      return this
-    },
     validatePayloadField () {
       const hasPayload = _.isObject(paymentObject.custom)
         && _.isObject(paymentObject.custom.fields)
@@ -144,6 +127,19 @@ function withPayment (paymentObject) {
       return { errors: errorArray }
     }
   }
+}
+
+function isValidJSON (requestString) {
+  if (typeof requestString === 'undefined')
+    return true
+  try {
+    const o = JSON.parse(requestString)
+    if (o && typeof o === 'object')
+      return true
+  } catch (e) {
+    // continue regardless of error
+  }
+  return false
 }
 
 module.exports = { withPayment }

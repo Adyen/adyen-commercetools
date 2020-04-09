@@ -1,7 +1,9 @@
 module.exports = {
   SUCCESS: 'SUCCESS',
   FAILURE: 'FAILURE',
-  CTP_INTERFACE_INTERACTION: 'ctp-adyen-integration-interaction',
+  CTP_ADYEN_INTEGRATION: 'ctp-adyen-integration',
+  CTP_PAYMENT_INTERACTION_CUSTOM_TYPE_KEY: 'ctp-adyen-integration-interaction-payment-type',
+  CTP_PAYMENT_CUSTOM_TYPE_KEY: 'ctp-adyen-integration-web-components-payment-type',
   REDIRECT_SHOPPER: 'RedirectShopper',
   CTP_TXN_STATE_INITIAL: 'Initial',
   CTP_TXN_STATE_PENDING: 'Pending',
@@ -10,5 +12,10 @@ module.exports = {
   CTP_INTERACTION_TYPE_COMPLETE_PAYMENT: 'completePayment',
   CTP_INTERACTION_TYPE_MAKE_PAYMENT: 'makePayment',
   CTP_INTERACTION_TYPE_CANCEL_REFUND: 'cancelOrRefund',
-  CTP_INTERACTION_TYPE_FETCH_METHODS: 'getAvailablePaymentMethods'
+  CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS: 'getPaymentMethods',
+  CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_REQUEST: 'getPaymentMethodsRequest',
+  CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE: 'getPaymentMethodsResponse',
+  CTP_INTERACTION_TYPE_GET_ORIGIN_KEYS: 'getOriginKeys',
+  CTP_CUSTOM_FIELD_GET_ORIGIN_KEYS_REQUEST: 'getOriginKeysRequest',
+  CTP_CUSTOM_FIELD_GET_ORIGIN_KEYS_RESPONSE: 'getOriginKeysResponse'
 }

@@ -11,7 +11,7 @@ const iTSetUp = require('./integration-test-set-up')
 const testUtils = require('../test-utils')
 const c = require('../../src/config/constants')
 
-describe('credit card payment', () => {
+describe.skip('credit card payment', () => {
   let ctpClient
 
   beforeEach(async () => {
@@ -20,7 +20,7 @@ describe('credit card payment', () => {
   })
 
   afterEach(async () => {
-    await iTSetUp.cleanupResources(ctpClient)
+    await iTSetUp.cleanupResources()
   })
 
   it('should create success payment', async () => {

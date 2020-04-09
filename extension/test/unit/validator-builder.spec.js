@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const { expect } = require('chai')
 const async = require('async')
 
@@ -13,7 +12,6 @@ describe('Validator builder', () => {
       vb.validateEncryptedExpiryYearField,
       vb.validateEncryptedSecurityCodeField,
       vb.validateReturnUrlField,
-      vb.validateMerchantReferenceField,
       vb.validatePayloadField,
       vb.validatePaymentDataField,
       vb.validatePaResField,

@@ -59,28 +59,24 @@ function getMatchingCtpState (adyenState) {
 
 function createAddInterfaceInteractionAction (
   {
-    request, response, type, status
+    request, response, type
   }
 ) {
-  // strip away sensitive data
-  delete response.additionalData
-
   return {
     action: 'addInterfaceInteraction',
-    type: { key: c.CTP_INTERFACE_INTERACTION },
+    type: { key: c.CTP_PAYMENT_INTERACTION_CUSTOM_TYPE_KEY },
     fields: {
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
       response: JSON.stringify(response),
-      request: JSON.stringify(request.body),
-      type,
-      status
+      request: JSON.stringify(request),
+      type
     }
   }
 }
 
 function ensureAddInterfaceInteractionAction (
   {
-    paymentObject, request, response, type, status
+    paymentObject, request, response, type
   }
 ) {
   const interactions = paymentObject.interfaceInteractions
@@ -91,7 +87,7 @@ function ensureAddInterfaceInteractionAction (
 
   if (!matchedInteraction)
     return createAddInterfaceInteractionAction({
-      request, response, type, status
+      request, response, type
     })
   return null
 }
@@ -104,11 +100,11 @@ function createChangeTransactionStateAction (transactionId, transactionState) {
   }
 }
 
-function createSetCustomFieldAction (name, value) {
+function createSetCustomFieldAction (name, response) {
   return {
     action: 'setCustomField',
     name,
-    value
+    value: JSON.stringify(response)
   }
 }
 

@@ -13,14 +13,15 @@ async function initServerAndExtension (ctpClient, testServerPort = 8000) {
   await testUtils.deleteAllResources(ctpClient, 'extensions')
   return new Promise(((resolve) => {
     server.listen(testServerPort, async () => {
-      await ensureResources()
-      console.log(`Server running at http://127.0.0.1:${testServerPort}/`)
+      await ensureResources(ctpClient)
+      /* eslint-disable no-console */
+      console.log(`Extension module is running at http://localhost:${testServerPort}/`)
       resolve()
     })
   }))
 }
 
-async function cleanupResources (ctpClient) {
+async function cleanupResources () {
   server.close()
   await ngrok.kill()
 }
