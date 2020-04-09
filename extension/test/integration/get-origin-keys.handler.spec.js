@@ -12,8 +12,8 @@ describe('::getOriginKeys::', () => {
     await iTSetUp.initServerAndExtension(ctpClient)
   })
 
-  after(async () => {
-    await iTSetUp.cleanupResources(ctpClient)
+  afterEach(async () => {
+    await iTSetUp.cleanupResources()
   })
 
   it('given a payment ' +
@@ -22,8 +22,8 @@ describe('::getOriginKeys::', () => {
     'and interface interaction with type getOriginKeysRequest', async () => {
     const getOriginKeysRequestDraft = {
       originDomains: [
-        "http://localhost:8080",
-        "http://localhost:8081"
+        'http://localhost:8080',
+        'http://localhost:8081'
       ]
     }
     const paymentDraft = {
@@ -36,7 +36,7 @@ describe('::getOriginKeys::', () => {
       },
       custom: {
         type: {
-          typeId: "type",
+          typeId: 'type',
           key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
         },
         fields: {

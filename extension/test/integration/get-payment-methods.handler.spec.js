@@ -13,7 +13,7 @@ describe('::getPaymentMethods::', () => {
   })
 
   after(async () => {
-    await iTSetUp.cleanupResources(ctpClient)
+    await iTSetUp.cleanupResources()
   })
 
   it('given a payment ' +
@@ -21,10 +21,10 @@ describe('::getPaymentMethods::', () => {
     'then should set custom field getPaymentMethodsResponse ' +
     'and interface interaction with type getPaymentMethods', async () => {
     const getPaymentMethodsRequestDraft = {
-      countryCode: "DE",
-      shopperLocale: "de-DE",
+      countryCode: 'DE',
+      shopperLocale: 'de-DE',
       amount: {
-        currency: "EUR",
+        currency: 'EUR',
         value: 1000
       }
     }
@@ -38,7 +38,7 @@ describe('::getPaymentMethods::', () => {
       },
       custom: {
         type: {
-          typeId: "type",
+          typeId: 'type',
           key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
         },
         fields: {
@@ -75,14 +75,14 @@ describe('::getPaymentMethods::', () => {
     'and interface interactions with type getPaymentMethods and getOriginKeys', async () => {
     const getOriginKeysRequestDraft = {
       originDomains: [
-        "http://localhost"
+        'http://localhost'
       ]
     }
     const getPaymentMethodsRequestDraft = {
-      countryCode: "DE",
-      shopperLocale: "de-DE",
+      countryCode: 'DE',
+      shopperLocale: 'de-DE',
       amount: {
-        currency: "EUR",
+        currency: 'EUR',
         value: 1000
       }
     }
@@ -96,7 +96,7 @@ describe('::getPaymentMethods::', () => {
       },
       custom: {
         type: {
-          typeId: "type",
+          typeId: 'type',
           key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
         },
         fields: {

@@ -28,8 +28,8 @@ describe('Payment controller', () => {
 
     it('on invalid web component request should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.getOriginKeysRequest = '{'  // invalid
-      ctpPaymentClone.custom.fields.getPaymentMethodsRequest = '{}' // valid
+      ctpPaymentClone.custom.fields.getOriginKeysRequest = '{'
+      ctpPaymentClone.custom.fields.getPaymentMethodsRequest = '{}'
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
       utilsStub.sendResponse = ({ statusCode, data }) => {

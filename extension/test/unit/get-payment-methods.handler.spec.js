@@ -1,17 +1,15 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const fetch = require('node-fetch')
-const _ = require('lodash')
-
 const c = require('../../src/config/constants')
 const { execute } = require('../../src/paymentHandler/get-payment-methods.handler')
 
 describe('get-payment-methods::handlePayment::', () => {
   const getPaymentMethodsRequest = {
-    countryCode: "DE",
-    shopperLocale: "de-DE",
+    countryCode: 'DE',
+    shopperLocale: 'de-DE',
     amount: {
-      currency: "EUR",
+      currency: 'EUR',
       value: 1000
     }
   }
@@ -26,7 +24,7 @@ describe('get-payment-methods::handlePayment::', () => {
     interfaceInteractions: [],
     custom: {
       type: {
-        typeId: "type",
+        typeId: 'type',
         key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
       },
       fields: {
@@ -36,30 +34,30 @@ describe('get-payment-methods::handlePayment::', () => {
   }
 
   afterEach(() => {
-    sinon.restore();
-  });
+    sinon.restore()
+  })
 
   it('handlePayment should return the right actions', async () => {
     const adyenGetPaymentResponse = {
-      "groups": [
+      groups: [
         {
-          "name": "Credit Card",
-          "types": [
-            "visa",
-            "mc"
+          name: 'Credit Card',
+          types: [
+            'visa',
+            'mc'
           ]
         },
       ],
-      "paymentMethods": [
+      paymentMethods: [
         {
-          "name": "PayPal",
-          "supportsRecurring": true,
-          "type": "paypal"
+          name: 'PayPal',
+          supportsRecurring: true,
+          type: 'paypal'
         }
       ]
     }
 
-    sinon.stub(fetch, 'Promise').resolves({ json: () => (adyenGetPaymentResponse)})
+    sinon.stub(fetch, 'Promise').resolves({ json: () => (adyenGetPaymentResponse) })
 
     const result = await execute(paymentObject)
 
@@ -75,7 +73,7 @@ describe('get-payment-methods::handlePayment::', () => {
 
   it('when adyen request fails ' +
     'then handlePayment should return the right actions with failed responses', async () => {
-    const errorMsg = "unexpected exception"
+    const errorMsg = 'unexpected exception'
     sinon.stub(fetch, 'Promise').rejects(errorMsg)
 
     const result = await execute(paymentObject)

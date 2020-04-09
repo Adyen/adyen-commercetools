@@ -14,7 +14,7 @@ describe.skip('kcp make payment', () => {
   })
 
   afterEach(async () => {
-    await iTSetUp.cleanupResources(ctpClient)
+    await iTSetUp.cleanupResources()
   })
 
   it('should create kcp redirect', async () => {

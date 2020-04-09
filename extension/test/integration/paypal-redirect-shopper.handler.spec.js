@@ -14,7 +14,7 @@ describe.skip('Paypal payment', () => {
   })
 
   afterEach(async () => {
-    await iTSetUp.cleanupResources(ctpClient)
+    await iTSetUp.cleanupResources()
   })
 
   it('should create paypal redirect', async () => {

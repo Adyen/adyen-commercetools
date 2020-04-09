@@ -74,10 +74,9 @@ function createAddInterfaceInteractionAction (
   }
 }
 
-//todo (ahmet) status needs to be removed, and other parts needs to be refactored.
 function ensureAddInterfaceInteractionAction (
   {
-    paymentObject, request, response, type, status
+    paymentObject, request, response, type
   }
 ) {
   const interactions = paymentObject.interfaceInteractions

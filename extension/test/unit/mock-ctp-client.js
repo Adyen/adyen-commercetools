@@ -1,3 +1,4 @@
+/*eslint-disable*/
 function setUpClient () {
   const mockClient = {
     get builder () {
