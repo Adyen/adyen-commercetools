@@ -67,7 +67,7 @@ function createAddInterfaceInteractionAction (
 
   return {
     action: 'addInterfaceInteraction',
-    type: { key: c.CTP_INTERFACE_INTERACTION_PAYMENT_TYPE_KEY },
+    type: { key: c.CTP_PAYMENT_INTERACTION_CUSTOM_TYPE_KEY },
     fields: {
       createdAt: new Date().toISOString(),
       response: JSON.stringify(response),

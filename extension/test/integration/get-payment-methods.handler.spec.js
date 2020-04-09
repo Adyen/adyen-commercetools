@@ -39,7 +39,7 @@ describe('::getPaymentMethods::', () => {
       custom: {
         type: {
           typeId: "type",
-          key: c.CTP_WEB_COMPONENTS_PAYMENT_TYPE_KEY
+          key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
         },
         fields: {
           getPaymentMethodsRequest: JSON.stringify(getPaymentMethodsRequestDraft)
@@ -97,7 +97,7 @@ describe('::getPaymentMethods::', () => {
       custom: {
         type: {
           typeId: "type",
-          key: c.CTP_WEB_COMPONENTS_PAYMENT_TYPE_KEY
+          key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
         },
         fields: {
           getOriginKeysRequest: JSON.stringify(getOriginKeysRequestDraft),
