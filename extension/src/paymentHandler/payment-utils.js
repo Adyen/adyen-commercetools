@@ -116,6 +116,20 @@ function createChangeTransactionInteractionId (transactionId, interactionId) {
   }
 }
 
+function createAddTransactionAction (type, state, amount, currency) {
+  return {
+    action: 'addTransaction',
+    transaction: {
+      type,
+      amount: {
+        currencyCode: currency,
+        centAmount: amount
+      },
+      state
+    }
+  }
+}
+
 module.exports = {
   getAuthorizationTransactionInitOrPending,
   getAuthorizationTransactionPending,
@@ -128,5 +142,6 @@ module.exports = {
   ensureAddInterfaceInteractionAction,
   createChangeTransactionStateAction,
   createSetCustomFieldAction,
-  createChangeTransactionInteractionId
+  createChangeTransactionInteractionId,
+  createAddTransactionAction
 }

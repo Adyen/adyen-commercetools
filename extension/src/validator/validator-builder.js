@@ -10,6 +10,7 @@ function withPayment (paymentObject) {
     validateAdyen () {
       const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === CTP_ADYEN_INTEGRATION
       if (!isAdyen)
+        // todo: should this be an error or just skip if it's not adyen?
         errors.isAdyen = errorMessages.MISSING_PAYMENT_INTERFACE
       return this
     },
@@ -20,6 +21,8 @@ function withPayment (paymentObject) {
         errors.getOriginKeysRequest = errorMessages.GET_ORIGIN_KEYS_REQUEST_INVALID_JSON
       if (!isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
         errors.getPaymentMethodsRequest = errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
+      if (!isValidJSON(paymentObject.custom.fields.makePaymentRequest))
+        errors.makePaymentRequest = errorMessages.MAKE_PAYMENT_REQUEST_INVALID_JSON
       return this
     },
     isCancelOrRefund () {

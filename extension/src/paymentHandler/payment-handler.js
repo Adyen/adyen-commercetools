@@ -1,6 +1,7 @@
 const ValidatorBuilder = require('../validator/validator-builder')
 const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const getOriginKeysHandler = require('./get-origin-keys.handler')
+const makePaymentHandler = require('./make-payment.handler')
 
 async function handlePayment (paymentObject) {
   const validatorBuilder = ValidatorBuilder.withPayment(paymentObject)
@@ -36,6 +37,8 @@ function _getPaymentHandlers (paymentObject) {
     handlers.push(getOriginKeysHandler)
   if (paymentObject.custom.fields.getPaymentMethodsRequest && !paymentObject.custom.fields.getPaymentMethodsResponse)
     handlers.push(getPaymentMethodsHandler)
+  if (paymentObject.custom.fields.makePaymentRequest && !paymentObject.custom.fields.makePaymentResponse)
+    handlers.push(makePaymentHandler)
   return handlers
 }
 
