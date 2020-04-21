@@ -4,7 +4,7 @@ const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const iTSetUp = require('./integration-test-set-up')
 const c = require('../../src/config/constants')
 
-describe('::getOriginKeys::', () => {
+describe('::makePayment::', () => {
   let ctpClient
 
   before(async () => {
