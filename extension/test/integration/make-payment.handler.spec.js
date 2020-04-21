@@ -69,5 +69,6 @@ describe('::makePayment::', () => {
     expect(transaction.type).to.be.equal('Authorization')
     expect(transaction.amount.currencyCode).to.be.equal('EUR')
     expect(transaction.amount.centAmount).to.be.equal(paymentDraft.amountPlanned.centAmount)
+    expect(transaction.interactionId).to.be.a('string')
   })
 })

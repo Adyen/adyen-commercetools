@@ -80,6 +80,7 @@ describe('Make a payment', () => {
       expect(addTransaction.transaction).to.be.a('object')
       expect(addTransaction.transaction.type).to.equal('Authorization')
       expect(addTransaction.transaction.state).to.equal('Success')
+      expect(addTransaction.transaction.interactionId).to.equal(JSON.parse(paymentSuccessResponse).pspReference)
     })
 
   it('when resultCode from Adyen is "RedirectShopper", '
@@ -169,6 +170,7 @@ describe('Make a payment', () => {
     expect(addTransaction.transaction).to.be.a('object')
     expect(addTransaction.transaction.type).to.equal('Authorization')
     expect(addTransaction.transaction.state).to.equal('Failure')
+    expect(addTransaction.transaction.interactionId).to.equal(JSON.parse(paymentRefusedResponse).pspReference)
   })
 
   it('when adyen returns error, execute() should return actions ' +
@@ -201,5 +203,6 @@ describe('Make a payment', () => {
     expect(addTransaction.transaction).to.be.a('object')
     expect(addTransaction.transaction.type).to.equal('Authorization')
     expect(addTransaction.transaction.state).to.equal('Failure')
+    expect(addTransaction.transaction.interactionId).to.equal(JSON.parse(paymentErrorResponse).pspReference)
   })
 })

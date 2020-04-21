@@ -116,7 +116,7 @@ function createChangeTransactionInteractionId (transactionId, interactionId) {
   }
 }
 
-function createAddTransactionAction (type, state, amount, currency) {
+function createAddTransactionAction (type, state, amount, currency, interactionId) {
   return {
     action: 'addTransaction',
     transaction: {
@@ -125,7 +125,8 @@ function createAddTransactionAction (type, state, amount, currency) {
         currencyCode: currency,
         centAmount: amount
       },
-      state
+      state,
+      interactionId
     }
   }
 }

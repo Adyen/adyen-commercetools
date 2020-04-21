@@ -18,14 +18,16 @@ async function execute (paymentObject) {
     case 'Authorised':
       actions.push(
         pU.createAddTransactionAction('Authorization', 'Success',
-          paymentObject.amountPlanned.centAmount, paymentObject.amountPlanned.currencyCode)
+          paymentObject.amountPlanned.centAmount, paymentObject.amountPlanned.currencyCode,
+          response.pspReference)
       )
       break
     case 'Refused':
     case 'Error':
       actions.push(
         pU.createAddTransactionAction('Authorization', 'Failure',
-          paymentObject.amountPlanned.centAmount, paymentObject.amountPlanned.currencyCode)
+          paymentObject.amountPlanned.centAmount, paymentObject.amountPlanned.currencyCode,
+          response.pspReference)
       )
       break
   }
