@@ -63,6 +63,7 @@ describe('::makePayment::', () => {
     const interfaceInteraction = payment.interfaceInteractions
       .find(interaction => interaction.fields.type === c.CTP_INTERACTION_TYPE_MAKE_PAYMENT)
     expect(makePaymentResponse).to.be.deep.equal(interfaceInteraction.fields.response)
+    expect(JSON.parse(makePaymentResponse).resultCode).to.be.equal('Authorised')
 
     expect(payment.transactions).to.have.lengthOf(1)
     const transaction = payment.transactions[0]
