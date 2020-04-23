@@ -18,9 +18,9 @@ describe('::makePayment::', () => {
 
   it('given a payment ' +
     'when makePayment custom field is set and response from Adyen is Authorised, ' +
-    'then should set custom field makePaymentResponse, ' +
-    'should add transaction, ' +
-    'should add interface interactions', async () => {
+    'then it should set custom field makePaymentResponse, ' +
+    'add transaction, ' +
+    'add interface interactions', async () => {
     const makePaymentRequestDraft = {
       amount: {
         currency: 'USD',
