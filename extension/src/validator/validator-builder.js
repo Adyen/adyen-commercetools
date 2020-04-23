@@ -10,7 +10,6 @@ function withPayment (paymentObject) {
     validateAdyen () {
       const isAdyen = paymentObject.paymentMethodInfo.paymentInterface === CTP_ADYEN_INTEGRATION
       if (!isAdyen)
-        // todo: should this be an error or just skip if it's not adyen?
         errors.isAdyen = errorMessages.MISSING_PAYMENT_INTERFACE
       return this
     },
