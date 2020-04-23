@@ -2,14 +2,15 @@ const ValidatorBuilder = require('../validator/validator-builder')
 const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const getOriginKeysHandler = require('./get-origin-keys.handler')
 const makePaymentHandler = require('./make-payment.handler')
+const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
+
 
 async function handlePayment (paymentObject) {
-  const validatorBuilder = ValidatorBuilder.withPayment(paymentObject)
-  const adyenValidator = validatorBuilder.validateAdyen()
-  if (adyenValidator.hasErrors())
+  if (!_isAdyenPayment(paymentObject))
     // if it's not adyen payment, ignore the payment
     return { success: true, data: null }
 
+  const validatorBuilder = ValidatorBuilder.withPayment(paymentObject)
   const requestValidator = validatorBuilder.validateRequestFields()
   if (requestValidator.hasErrors())
     return {
@@ -40,6 +41,10 @@ function _getPaymentHandlers (paymentObject) {
   if (paymentObject.custom.fields.makePaymentRequest && !paymentObject.custom.fields.makePaymentResponse)
     handlers.push(makePaymentHandler)
   return handlers
+}
+
+function _isAdyenPayment (paymentObject) {
+  return paymentObject.paymentMethodInfo.paymentInterface === CTP_ADYEN_INTEGRATION
 }
 
 module.exports = { handlePayment }
