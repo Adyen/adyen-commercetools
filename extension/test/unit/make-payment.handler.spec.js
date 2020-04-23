@@ -10,7 +10,7 @@ const paymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redir
 const paymentValidationFailedResponse = require('./fixtures/adyen-make-payment-validation-failed-response')
 const ctpPayment = require('../fixtures/ctp-payment')
 
-describe('Make a payment', () => {
+describe('make-payment::execute', () => {
   const config = configLoader.load()
   let scope
 
@@ -49,7 +49,7 @@ describe('Make a payment', () => {
   })
 
   it('when resultCode from Adyen is "Authorized", '
-    + 'execute() should return actions create transaction, add interface interaction and set custom field',
+    + 'it should return actions "addTransaction", "addInterfaceInteraction" and "setCustomField"',
     async () => {
       scope.post('/payments')
         .reply(200, paymentSuccessResponse)
@@ -60,11 +60,13 @@ describe('Make a payment', () => {
       const response = await execute(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf(3)
+
       const addInterfaceInteraction = response.actions.find(a => a.action === 'addInterfaceInteraction')
       expect(addInterfaceInteraction.fields.type).to.equal('makePayment')
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
       expect(addInterfaceInteraction.fields.response).to.be.a('string')
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
+
       const request = JSON.parse(addInterfaceInteraction.fields.request)
       expect(request.reference).to.deep.equal(makePaymentRequest.reference)
       expect(request.riskData).to.deep.equal(makePaymentRequest.riskData)
@@ -72,10 +74,12 @@ describe('Make a payment', () => {
       expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
       expect(request.amount).to.deep.equal(makePaymentRequest.amount)
       expect(request.merchantAccount).to.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
+
       const setCustomFieldAction = response.actions.find(a => a.action === 'setCustomField')
       expect(setCustomFieldAction.name).to.equal('makePaymentResponse')
       expect(setCustomFieldAction.value).to.be.a('string')
       expect(setCustomFieldAction.value).to.equal(addInterfaceInteraction.fields.response)
+
       const addTransaction = response.actions.find(a => a.action === 'addTransaction')
       expect(addTransaction.transaction).to.be.a('object')
       expect(addTransaction.transaction.type).to.equal('Authorization')
@@ -84,7 +88,7 @@ describe('Make a payment', () => {
     })
 
   it('when resultCode from Adyen is "RedirectShopper", '
-    + 'execute() should return actions add interface interaction and set custom field',
+    + 'it should return actions "addInterfaceInteraction" and "setCustomField"',
     async () => {
       scope.post('/payments')
         .reply(200, paymentRedirectResponse)
@@ -95,11 +99,13 @@ describe('Make a payment', () => {
       const response = await execute(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf(2)
+
       const addInterfaceInteraction = response.actions.find(a => a.action === 'addInterfaceInteraction')
       expect(addInterfaceInteraction.fields.type).to.equal('makePayment')
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
       expect(addInterfaceInteraction.fields.response).to.be.a('string')
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
+
       const request = JSON.parse(addInterfaceInteraction.fields.request)
       expect(request.reference).to.deep.equal(makePaymentRequest.reference)
       expect(request.riskData).to.deep.equal(makePaymentRequest.riskData)
@@ -107,13 +113,15 @@ describe('Make a payment', () => {
       expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
       expect(request.amount).to.deep.equal(makePaymentRequest.amount)
       expect(request.merchantAccount).to.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
+
       const setCustomFieldAction = response.actions.find(a => a.action === 'setCustomField')
       expect(setCustomFieldAction.name).to.equal('makePaymentResponse')
       expect(setCustomFieldAction.value).to.be.a('string')
       expect(setCustomFieldAction.value).to.equal(addInterfaceInteraction.fields.response)
     })
 
-  it('when adyen validation failed, execute() should save response', async () => {
+  it('when adyen validation failed, ' +
+    'it should return actions "addInterfaceInteraction" and "setCustomField"', async () => {
     scope.post('/payments')
       .reply(422, paymentValidationFailedResponse)
 
@@ -121,12 +129,15 @@ describe('Make a payment', () => {
     ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(makePaymentRequest)
 
     const response = await execute(ctpPaymentClone)
+
     expect(response.actions).to.have.lengthOf(2)
+
     const addInterfaceInteraction = response.actions.find(a => a.action === 'addInterfaceInteraction')
     expect(addInterfaceInteraction.fields.type).to.equal('makePayment')
     expect(addInterfaceInteraction.fields.request).to.be.a('string')
     expect(addInterfaceInteraction.fields.response).to.be.a('string')
     expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
+
     const request = JSON.parse(addInterfaceInteraction.fields.request)
     expect(request.reference).to.deep.equal(makePaymentRequest.reference)
     expect(request.riskData).to.deep.equal(makePaymentRequest.riskData)
@@ -134,14 +145,15 @@ describe('Make a payment', () => {
     expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
     expect(request.amount).to.deep.equal(makePaymentRequest.amount)
     expect(request.merchantAccount).to.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
+
     const setCustomFieldAction = response.actions.find(a => a.action === 'setCustomField')
     expect(setCustomFieldAction.name).to.equal('makePaymentResponse')
     expect(setCustomFieldAction.value).to.be.a('string')
     expect(setCustomFieldAction.value).to.equal(addInterfaceInteraction.fields.response)
   })
 
-  it('when adyen returns refused, execute() should return actions ' +
-    'create transaction, add interface interaction and set custom field', async () => {
+  it('when adyen returns refused, ' +
+    'it should return actions "addTransaction", "addInterfaceInteraction" and "setCustomField"', async () => {
     scope.post('/payments')
       .reply(422, paymentRefusedResponse)
 
@@ -149,12 +161,15 @@ describe('Make a payment', () => {
     ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(makePaymentRequest)
 
     const response = await execute(ctpPaymentClone)
+
     expect(response.actions).to.have.lengthOf(3)
+
     const addInterfaceInteraction = response.actions.find(a => a.action === 'addInterfaceInteraction')
     expect(addInterfaceInteraction.fields.type).to.equal('makePayment')
     expect(addInterfaceInteraction.fields.request).to.be.a('string')
     expect(addInterfaceInteraction.fields.response).to.be.a('string')
     expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
+
     const request = JSON.parse(addInterfaceInteraction.fields.request)
     expect(request.reference).to.deep.equal(makePaymentRequest.reference)
     expect(request.riskData).to.deep.equal(makePaymentRequest.riskData)
@@ -162,10 +177,12 @@ describe('Make a payment', () => {
     expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
     expect(request.amount).to.deep.equal(makePaymentRequest.amount)
     expect(request.merchantAccount).to.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
+
     const setCustomFieldAction = response.actions.find(a => a.action === 'setCustomField')
     expect(setCustomFieldAction.name).to.equal('makePaymentResponse')
     expect(setCustomFieldAction.value).to.be.a('string')
     expect(setCustomFieldAction.value).to.equal(addInterfaceInteraction.fields.response)
+
     const addTransaction = response.actions.find(a => a.action === 'addTransaction')
     expect(addTransaction.transaction).to.be.a('object')
     expect(addTransaction.transaction.type).to.equal('Authorization')
@@ -173,8 +190,8 @@ describe('Make a payment', () => {
     expect(addTransaction.transaction.interactionId).to.equal(JSON.parse(paymentRefusedResponse).pspReference)
   })
 
-  it('when adyen returns error, execute() should return actions ' +
-    'create transaction, add interface interaction and set custom field', async () => {
+  it('when adyen returns error, ' +
+    'execute() should return actions "addTransaction", "addInterfaceInteraction" and "setCustomField"', async () => {
     scope.post('/payments')
       .reply(422, paymentErrorResponse)
 
@@ -182,12 +199,15 @@ describe('Make a payment', () => {
     ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(makePaymentRequest)
 
     const response = await execute(ctpPaymentClone)
+
     expect(response.actions).to.have.lengthOf(3)
+
     const addInterfaceInteraction = response.actions.find(a => a.action === 'addInterfaceInteraction')
     expect(addInterfaceInteraction.fields.type).to.equal('makePayment')
     expect(addInterfaceInteraction.fields.request).to.be.a('string')
     expect(addInterfaceInteraction.fields.response).to.be.a('string')
     expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
+
     const request = JSON.parse(addInterfaceInteraction.fields.request)
     expect(request.reference).to.deep.equal(makePaymentRequest.reference)
     expect(request.riskData).to.deep.equal(makePaymentRequest.riskData)
@@ -195,10 +215,12 @@ describe('Make a payment', () => {
     expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
     expect(request.amount).to.deep.equal(makePaymentRequest.amount)
     expect(request.merchantAccount).to.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
+
     const setCustomFieldAction = response.actions.find(a => a.action === 'setCustomField')
     expect(setCustomFieldAction.name).to.equal('makePaymentResponse')
     expect(setCustomFieldAction.value).to.be.a('string')
     expect(setCustomFieldAction.value).to.equal(addInterfaceInteraction.fields.response)
+
     const addTransaction = response.actions.find(a => a.action === 'addTransaction')
     expect(addTransaction.transaction).to.be.a('object')
     expect(addTransaction.transaction.type).to.equal('Authorization')

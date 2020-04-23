@@ -56,6 +56,7 @@ describe('::makePayment::', () => {
     }
 
     const { statusCode, body: payment } = await ctpClient.create(ctpClient.builder.payments, paymentDraft)
+
     expect(statusCode).to.equal(201)
 
     const { makePaymentResponse } = payment.custom.fields
