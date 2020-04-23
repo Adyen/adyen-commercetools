@@ -49,7 +49,7 @@ describe('make-payment::execute', () => {
   })
 
   it('when resultCode from Adyen is "Authorized", '
-    + 'it should return actions "addTransaction", "addInterfaceInteraction" and "setCustomField"',
+    + 'then it should return actions "addTransaction", "addInterfaceInteraction" and "setCustomField"',
     async () => {
       scope.post('/payments')
         .reply(200, paymentSuccessResponse)
@@ -88,7 +88,7 @@ describe('make-payment::execute', () => {
     })
 
   it('when resultCode from Adyen is "RedirectShopper", '
-    + 'it should return actions "addInterfaceInteraction" and "setCustomField"',
+    + 'then it should return actions "addInterfaceInteraction" and "setCustomField"',
     async () => {
       scope.post('/payments')
         .reply(200, paymentRedirectResponse)
@@ -121,7 +121,7 @@ describe('make-payment::execute', () => {
     })
 
   it('when adyen validation failed, ' +
-    'it should return actions "addInterfaceInteraction" and "setCustomField"', async () => {
+    'then it should return actions "addInterfaceInteraction" and "setCustomField"', async () => {
     scope.post('/payments')
       .reply(422, paymentValidationFailedResponse)
 
@@ -152,8 +152,8 @@ describe('make-payment::execute', () => {
     expect(setCustomFieldAction.value).to.equal(addInterfaceInteraction.fields.response)
   })
 
-  it('when adyen returns refused, ' +
-    'it should return actions "addTransaction", "addInterfaceInteraction" and "setCustomField"', async () => {
+  it('when resultCode from Adyen is "Refused"' +
+    'then it should return actions "addTransaction", "addInterfaceInteraction" and "setCustomField"', async () => {
     scope.post('/payments')
       .reply(422, paymentRefusedResponse)
 
@@ -190,8 +190,8 @@ describe('make-payment::execute', () => {
     expect(addTransaction.transaction.interactionId).to.equal(JSON.parse(paymentRefusedResponse).pspReference)
   })
 
-  it('when adyen returns error, ' +
-    'execute() should return actions "addTransaction", "addInterfaceInteraction" and "setCustomField"', async () => {
+  it('when resultCode from Adyen is "Error", ' +
+    'then it should return actions "addTransaction", "addInterfaceInteraction" and "setCustomField"', async () => {
     scope.post('/payments')
       .reply(422, paymentErrorResponse)
 
