@@ -12,6 +12,10 @@ function getPaymentMethods (getPaymentMethodsRequestObj) {
   return callAdyen('paymentMethods', getPaymentMethodsRequestObj)
 }
 
+function makePayment (makePaymentRequest) {
+  return callAdyen('payments', makePaymentRequest)
+}
+
 async function callAdyen (endpoint, requestObj) {
   let response
   try {
@@ -48,5 +52,6 @@ function buildRequest (requestObj) {
 
 module.exports = {
   getOriginKeys,
-  getPaymentMethods
+  getPaymentMethods,
+  makePayment
 }

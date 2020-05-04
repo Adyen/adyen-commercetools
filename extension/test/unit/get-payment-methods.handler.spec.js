@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 const c = require('../../src/config/constants')
 const { execute } = require('../../src/paymentHandler/get-payment-methods.handler')
 
-describe('get-payment-methods::handlePayment::', () => {
+describe('get-payment-methods::execute::', () => {
   const getPaymentMethodsRequest = {
     countryCode: 'DE',
     shopperLocale: 'de-DE',

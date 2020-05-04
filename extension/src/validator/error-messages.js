@@ -12,5 +12,6 @@ module.exports = {
   MISSING_PARES: 'Set custom.fields.PaRes',
   MISSING_MD: 'Set custom.fields.MD',
   GET_ORIGIN_KEYS_REQUEST_INVALID_JSON: 'getOriginKeysRequest does not contain valid JSON.',
-  GET_PAYMENT_METHODS_REQUEST_INVALID_JSON: 'getOriginKeysRequest does not contain valid JSON.'
+  GET_PAYMENT_METHODS_REQUEST_INVALID_JSON: 'getOriginKeysRequest does not contain valid JSON.',
+  MAKE_PAYMENT_REQUEST_INVALID_JSON: 'makePaymentRequest does not contain valid JSON.'
 }
