@@ -2,6 +2,7 @@ const ValidatorBuilder = require('../validator/validator-builder')
 const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const getOriginKeysHandler = require('./get-origin-keys.handler')
 const makePaymentHandler = require('./make-payment.handler')
+const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 
 
@@ -39,6 +40,10 @@ function _getPaymentHandlers (paymentObject) {
     handlers.push(getPaymentMethodsHandler)
   if (paymentObject.custom.fields.makePaymentRequest && !paymentObject.custom.fields.makePaymentResponse)
     handlers.push(makePaymentHandler)
+  if (paymentObject.custom.fields.makePaymentResponse
+    && paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
+    && !paymentObject.custom.fields.submitAdditionalPaymentDetailsResponse)
+    handlers.push(submitPaymentDetailsHandler)
   return handlers
 }
 
