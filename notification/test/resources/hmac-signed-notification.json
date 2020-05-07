@@ -1,0 +1,28 @@
+{
+  "live":"false",
+  "notificationItems":[
+    {
+      "NotificationRequestItem":{
+        "additionalData":{
+          "hmacSignature":"coqCmt/IZ4E3CzPvMY8zTjQVL5hYJUiBRg8UU+iCWo0="
+        },
+        "amount":{
+          "value":1130,
+          "currency":"EUR"
+        },
+        "pspReference":"7914073381342284",
+        "eventCode":"AUTHORISATION",
+        "eventDate":"2019-05-06T17:15:34.121+02:00",
+        "merchantAccountCode":"TestMerchant",
+        "operations":[
+          "CANCEL",
+          "CAPTURE",
+          "REFUND"
+        ],
+        "merchantReference":"TestPayment-1407325143704",
+        "paymentMethod":"visa",
+        "success":"true"
+      }
+    }
+  ]
+}
