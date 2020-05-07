@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const ValidatorBuilder = require('../validator/validator-builder')
 const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const getOriginKeysHandler = require('./get-origin-keys.handler')
@@ -41,9 +42,22 @@ function _getPaymentHandlers (paymentObject) {
   if (paymentObject.custom.fields.makePaymentRequest && !paymentObject.custom.fields.makePaymentResponse)
     handlers.push(makePaymentHandler)
   if (paymentObject.custom.fields.makePaymentResponse
-    && paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
-    && !paymentObject.custom.fields.submitAdditionalPaymentDetailsResponse)
-    handlers.push(submitPaymentDetailsHandler)
+    && paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest) {
+    const interfaceInteraction = paymentObject.interfaceInteractions
+      .find(interaction => interaction.fields.type === 'submitPaymentDetails')
+    if (interfaceInteraction) {
+      const oldSubmitDetailsRequest = interfaceInteraction.fields.request
+      if (oldSubmitDetailsRequest) {
+        const oldSubmitDetailsRequestObj = JSON.parse(oldSubmitDetailsRequest)
+        const newSubmitDetailsRequestObj = JSON.parse(paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest)
+        if (!_.isEqual(oldSubmitDetailsRequestObj, newSubmitDetailsRequestObj))
+          // call submitPaymentDetailsHandler if new and old requests are different
+          handlers.push(submitPaymentDetailsHandler)
+      }
+    } else
+      // call submitPaymentDetailsHandler if theres no request yet
+      handlers.push(submitPaymentDetailsHandler)
+  }
   return handlers
 }
 
