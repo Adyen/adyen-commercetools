@@ -25,6 +25,10 @@ describe('payment-handler::execute', () => {
     scope = nock(`${config.adyen.apiBaseUrl}`)
   })
 
+  afterEach(() => {
+    nock.cleanAll()
+  })
+
   it('when payment contains "submitPaymentDetailsRequest" with "makePaymentResponse", ' +
     'then it should call "submitPaymentDetailsRequest"', async () => {
     scope.post('/payments/details')
