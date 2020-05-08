@@ -95,6 +95,7 @@ function calculateUpdateActionsForPayment (payment, notification) {
 }
 
 function getAddInterfaceInteractionUpdateAction (notification) {
+  // TODO(ahmetoz): clarify https://github.com/commercetools/commercetools-adyen-integration/issues/260
   // strip away sensitive data
   delete notification.additionalData
   delete notification.reason
