@@ -1,6 +1,8 @@
 const sinon = require('sinon')
 const { expect } = require('chai')
 const { cloneDeep } = require('lodash')
+const config = require('../../src/config/config')()
+
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const notificationsMock = require('../resources/notification').notificationItems
 const concurrentModificationError = require('../resources/concurrent-modification-exception')
@@ -9,15 +11,10 @@ const paymentMock = require('../resources/payment-credit-card')
 
 const sandbox = sinon.createSandbox()
 
-const config = {
-  ctp: {
-    projectKey: 'test',
-    clientId: 'test',
-    clientSecret: 'test'
-  }
-}
-
 describe('notification module', () => {
+  before(() => {
+    config.adyen.disableHMACSignature = true
+  })
   afterEach(() => sandbox.restore())
 
   it(`given that ADYEN sends an "AUTHORISATION is successful" notification
@@ -102,6 +99,9 @@ describe('notification module', () => {
     // prepare data
     const notifications = [{
       NotificationRequestItem: {
+        "additionalData": {
+          "hmacSignature":"cjiTz03EI0jkkysGDdPJQdLbecRVVU/5jm12/DTFEHo="
+        },
         amount: {
           currency: "EUR",
           value: 10100

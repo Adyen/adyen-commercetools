@@ -1,4 +1,4 @@
-const { merge } = require('lodash')
+const { merge, isEmpty } = require('lodash')
 
 const configPath = process.env.CONFIG_PATH
 
@@ -20,6 +20,13 @@ function getCTPEnvCredentials () {
     clientSecret: process.env.CTP_CLIENT_SECRET,
     apiUrl: process.env.CTP_HOST || 'https://api.europe-west1.gcp.commercetools.com',
     authUrl: process.env.CTP_AUTH_URL || 'https://auth.europe-west1.gcp.commercetools.com'
+  }
+}
+
+function getAdyenCredentials () {
+  return {
+    secretHMACKey: process.env.ADYEN_SECRET_HMAC_KEY,
+    disableHMACSignature: process.env.DISABLE_HMAC_SIGNETURE || false
   }
 }
 
@@ -47,11 +54,17 @@ module.exports = function load () {
     config = merge(
       getEnvConfig(),
       { ctp: getCTPEnvCredentials() },
+      { adyen: getAdyenCredentials() },
       getFileConfig()
     )
-    // raise an exception when there are no CTP credentials
+
     if (!config.ctp.projectKey || !config.ctp.clientId || !config.ctp.clientSecret)
       throw new Error('CTP project credentials are missing')
+
+    if (!config.adyen.disableHMACSignature && isEmpty(config.adyen.secretHMACKey))
+      throw new Error('The "ADYEN_SECRET_HMAC_KEY" environment variable is missing to be able to verify notifications, ' +
+        'please generate a secret HMAC key in Adyen Customer Area ' +
+        'or set "DISABLE_HMAC_SIGNETURE=true" to disable the verification feature.')
   }
 
   return config

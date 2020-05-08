@@ -23,6 +23,7 @@ describe('notification module', () => {
   })
 
   beforeEach(async () => {
+    config.adyen.disableHMACSignature = true
     await iTSetUp.prepareProject(ctpClient)
   })
 
@@ -291,5 +292,24 @@ describe('notification module', () => {
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
     const notification = modifiedNotification.notificationItems[0]
     expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(JSON.stringify(notification))
+  })
+
+  it('should not acknowledge the request when notification is unauthorised/unsigned', async () => {
+    // enable hmac verification
+    config.adyen.disableHMACSignature = false
+
+    const modifiedNotification = cloneDeep(notifications)
+
+    // Simulating a modification by a middle man during transmission
+    modifiedNotification.notificationItems[0].NotificationRequestItem.amount.value = 0
+
+    // Simulating a notification from Adyen
+    const response = await fetch(`http://${localhostIp}:8000`, {
+      method: 'post',
+      body: JSON.stringify(modifiedNotification),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    const { status } = response
+    expect(status).to.equal(500)
   })
 })

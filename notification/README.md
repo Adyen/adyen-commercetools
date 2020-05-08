@@ -20,6 +20,9 @@ Adyen sends notifications which look like this:
   "notificationItems": [
     {
       "NotificationRequestItem": {
+        "additionalData": {
+          "hmacSignature":"cjiTz03EI0jkkysGDdPJQdLbecRVVU/5jm12/DTFEHo="
+        },
         "amount": {
           "currency": "EUR",
           "value": 10100
