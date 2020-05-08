@@ -4,7 +4,7 @@ const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const getOriginKeysHandler = require('./get-origin-keys.handler')
 const makePaymentHandler = require('./make-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
-const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
+const { CTP_ADYEN_INTEGRATION, CTP_INTERACTION_TYPE_SUBMIT_PAYMENT_DETAILS } = require('../config/constants')
 
 
 async function handlePayment (paymentObject) {
@@ -44,7 +44,7 @@ function _getPaymentHandlers (paymentObject) {
   if (paymentObject.custom.fields.makePaymentResponse
     && paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest) {
     const interfaceInteraction = paymentObject.interfaceInteractions
-      .find(interaction => interaction.fields.type === 'submitPaymentDetails')
+      .find(interaction => interaction.fields.type === CTP_INTERACTION_TYPE_SUBMIT_PAYMENT_DETAILS)
     if (interfaceInteraction) {
       const oldSubmitDetailsRequest = interfaceInteraction.fields.request
       if (oldSubmitDetailsRequest) {
@@ -55,7 +55,7 @@ function _getPaymentHandlers (paymentObject) {
           handlers.push(submitPaymentDetailsHandler)
       }
     } else
-      // call submitPaymentDetailsHandler if theres no request yet
+      // call submitPaymentDetailsHandler if there are no requests yet
       handlers.push(submitPaymentDetailsHandler)
   }
   return handlers
