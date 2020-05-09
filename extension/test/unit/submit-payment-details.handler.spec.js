@@ -40,7 +40,6 @@ describe('submit-payment::execute', () => {
     ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(makePaymentRedirectResponse)
 
     const response = await execute(ctpPaymentClone)
-    console.log(`response ${JSON.stringify(response.actions)}`)
 
     expect(response.actions).to.have.lengthOf(3)
     const addInterfaceInteraction = response.actions.find(a => a.action === 'addInterfaceInteraction')
