@@ -16,11 +16,7 @@ function makePayment (makePaymentRequest) {
   return callAdyen('payments', makePaymentRequest)
 }
 
-function submitAdditionalPaymentDetails (submitAdditionalPaymentDetailsRequest, paymentObject) {
-  if (!submitAdditionalPaymentDetailsRequest.paymentData) {
-    const makePaymentResponseObj = JSON.parse(paymentObject.custom.fields.makePaymentResponse)
-    submitAdditionalPaymentDetailsRequest.paymentData = makePaymentResponseObj.paymentData
-  }
+function submitAdditionalPaymentDetails (submitAdditionalPaymentDetailsRequest) {
   return callAdyen('payments/details', submitAdditionalPaymentDetailsRequest)
 }
 

@@ -5,7 +5,11 @@ const c = require('../config/constants')
 async function execute (paymentObject) {
   const submitAdditionalDetailsRequestObj
     = JSON.parse(paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest)
-  const { request, response } = await submitAdditionalPaymentDetails(submitAdditionalDetailsRequestObj, paymentObject)
+  if (!submitAdditionalDetailsRequestObj.paymentData) {
+    const makePaymentResponseObj = JSON.parse(paymentObject.custom.fields.makePaymentResponse)
+    submitAdditionalDetailsRequestObj.paymentData = makePaymentResponseObj.paymentData
+  }
+  const { request, response } = await submitAdditionalPaymentDetails(submitAdditionalDetailsRequestObj)
   const actions = [
     pU.createAddInterfaceInteractionAction({
       request, response, type: c.CTP_INTERACTION_TYPE_SUBMIT_PAYMENT_DETAILS
