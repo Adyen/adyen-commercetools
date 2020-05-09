@@ -16,12 +16,12 @@ function makePayment (makePaymentRequest) {
   return callAdyen('payments', makePaymentRequest)
 }
 
-function submitPaymentDetails (submitPaymentDetailsRequest, paymentObject) {
-  if (!submitPaymentDetailsRequest.paymentData) {
+function submitAdditionalPaymentDetails (submitAdditionalPaymentDetailsRequest, paymentObject) {
+  if (!submitAdditionalPaymentDetailsRequest.paymentData) {
     const makePaymentResponseObj = JSON.parse(paymentObject.custom.fields.makePaymentResponse)
-    submitPaymentDetailsRequest.paymentData = makePaymentResponseObj.paymentData
+    submitAdditionalPaymentDetailsRequest.paymentData = makePaymentResponseObj.paymentData
   }
-  return callAdyen('payments/details', submitPaymentDetailsRequest)
+  return callAdyen('payments/details', submitAdditionalPaymentDetailsRequest)
 }
 
 async function callAdyen (endpoint, request) {
@@ -62,5 +62,5 @@ module.exports = {
   getOriginKeys,
   getPaymentMethods,
   makePayment,
-  submitPaymentDetails
+  submitAdditionalPaymentDetails
 }

@@ -1,11 +1,11 @@
-const { submitPaymentDetails } = require('../web-component-service')
+const { submitAdditionalPaymentDetails } = require('../web-component-service')
 const pU = require('./payment-utils')
 const c = require('../config/constants')
 
 async function execute (paymentObject) {
   const submitAdditionalDetailsRequestObj
     = JSON.parse(paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest)
-  const { request, response } = await submitPaymentDetails(submitAdditionalDetailsRequestObj, paymentObject)
+  const { request, response } = await submitAdditionalPaymentDetails(submitAdditionalDetailsRequestObj, paymentObject)
   const actions = [
     pU.createAddInterfaceInteractionAction({
       request, response, type: c.CTP_INTERACTION_TYPE_SUBMIT_PAYMENT_DETAILS

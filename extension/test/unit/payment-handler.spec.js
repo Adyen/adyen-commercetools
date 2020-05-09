@@ -7,6 +7,7 @@ const submitPaymentDetailsChallengeResponse
 const ctpPayment = require('../fixtures/ctp-payment')
 const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
 const configLoader = require('../../src/config/config')
+const c = require('../../src/config/constants')
 
 
 describe('payment-handler::execute', () => {
@@ -29,8 +30,8 @@ describe('payment-handler::execute', () => {
     nock.cleanAll()
   })
 
-  it('when payment contains "submitPaymentDetailsRequest" with "makePaymentResponse", ' +
-    'then it should call "submitPaymentDetailsRequest"', async () => {
+  it('when payment contains "submitAdditionalPaymentDetailsRequest" with "makePaymentResponse", ' +
+    'then it should call "submitAdditionalPaymentDetailsRequest"', async () => {
     scope.post('/payments/details')
       .reply(200, submitPaymentDetailsChallengeResponse)
 
@@ -44,7 +45,7 @@ describe('payment-handler::execute', () => {
   })
 
   it('when payment does not contain "makePaymentResponse", ' +
-    'then it should not call "submitPaymentDetailsRequest"', async () => {
+    'then it should not call "submitAdditionalPaymentDetailsRequest"', async () => {
     scope.post('/payments/details')
       .reply(200, submitPaymentDetailsChallengeResponse)
 
@@ -56,7 +57,7 @@ describe('payment-handler::execute', () => {
     expect(response.data.actions).to.have.lengthOf(0)
   })
 
-  it('when "submitPaymentDetailsRequest" contains same request, ' +
+  it('when "submitAdditionalPaymentDetailsRequest" contains same request, ' +
     'then it should NOT call Adyen endpoint again if response exists', async () => {
     scope.post('/payments/details')
       .reply(200, submitPaymentDetailsChallengeResponse)
@@ -69,7 +70,7 @@ describe('payment-handler::execute', () => {
           id: 'bdbd6d06-9e29-4470-a3de-76b529c9eb5e'
         },
         fields: {
-          type: 'submitPaymentDetails',
+          type: c.CTP_INTERACTION_TYPE_SUBMIT_PAYMENT_DETAILS,
           request: JSON.stringify(submitPaymentDetailsRequest)
         }
       }
@@ -81,7 +82,7 @@ describe('payment-handler::execute', () => {
     expect(response.data.actions).to.have.lengthOf(0)
   })
 
-  it('when "submitPaymentDetailsRequest" contains different request, ' +
+  it('when "submitAdditionalPaymentDetailsRequest" contains different request, ' +
     'then it should call Adyen endpoint again', async () => {
     scope.post('/payments/details')
       .reply(200, submitPaymentDetailsChallengeResponse)
@@ -94,7 +95,7 @@ describe('payment-handler::execute', () => {
           id: 'bdbd6d06-9e29-4470-a3de-76b529c9eb5e'
         },
         fields: {
-          type: 'submitPaymentDetails',
+          type: c.CTP_INTERACTION_TYPE_SUBMIT_PAYMENT_DETAILS,
           request: JSON.stringify(submitPaymentDetailsRequest)
         }
       }
@@ -111,7 +112,7 @@ describe('payment-handler::execute', () => {
     expect(response.data.actions).to.have.lengthOf.above(0)
   })
 
-  it('when "submitPaymentDetailsRequest" contains new request and payment has no interface interaction, ' +
+  it('when "submitAdditionalPaymentDetailsRequest" contains new request and payment has no interface interaction, ' +
     'then it should call Adyen endpoint again', async () => {
     scope.post('/payments/details')
       .reply(200, submitPaymentDetailsChallengeResponse)
