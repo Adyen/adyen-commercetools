@@ -17,32 +17,14 @@ async function execute (paymentObject) {
     pU.createSetCustomFieldAction(c.CTP_CUSTOM_FIELD_SUBMIT_PAYMENT_DETAILS_RESPONSE, response)
   ]
 
-  // eslint-disable-next-line default-case
-  switch (response.resultCode) {
-    case 'Authorised':
-      actions.push(
-        pU.createAddTransactionAction({
-          type: 'Authorization',
-          state: 'Success',
-          amount: paymentObject.amountPlanned.centAmount,
-          currency: paymentObject.amountPlanned.currencyCode,
-          interactionId: response.pspReference
-        })
-      )
-      break
-    case 'Refused':
-    case 'Error':
-      actions.push(
-        pU.createAddTransactionAction({
-          type: 'Authorization',
-          state: 'Failure',
-          amount: paymentObject.amountPlanned.centAmount,
-          currency: paymentObject.amountPlanned.currencyCode,
-          interactionId: response.pspReference
-        })
-      )
-      break
-  }
+  const addTransactionAction = pU.createAddTransactionActionByResponse(
+    paymentObject.amountPlanned.centAmount,
+    paymentObject.amountPlanned.currencyCode,
+    response
+  )
+
+  if (addTransactionAction)
+    actions.push(addTransactionAction)
 
   return {
     actions

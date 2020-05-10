@@ -83,7 +83,7 @@ function ensureAddInterfaceInteractionAction (
 
   const matchedInteraction = _.find(interactions,
     interaction => interaction.fields.request === JSON.stringify(request)
-        || interaction.fields.response === JSON.stringify(response))
+      || interaction.fields.response === JSON.stringify(response))
 
   if (!matchedInteraction)
     return createAddInterfaceInteractionAction({
@@ -133,6 +133,30 @@ function createAddTransactionAction ({
   }
 }
 
+function createAddTransactionActionByResponse (amount, currencyCode, response) {
+  // eslint-disable-next-line default-case
+  switch (response.resultCode) {
+    case 'Authorised':
+      return createAddTransactionAction({
+        type: 'Authorization',
+        state: 'Success',
+        amount,
+        currency: currencyCode,
+        interactionId: response.pspReference
+      })
+    case 'Refused':
+    case 'Error':
+      return createAddTransactionAction({
+        type: 'Authorization',
+        state: 'Failure',
+        amount,
+        currency: currencyCode,
+        interactionId: response.pspReference
+      })
+  }
+  return null
+}
+
 module.exports = {
   getAuthorizationTransactionInitOrPending,
   getAuthorizationTransactionPending,
@@ -146,5 +170,6 @@ module.exports = {
   createChangeTransactionStateAction,
   createSetCustomFieldAction,
   createChangeTransactionInteractionId,
-  createAddTransactionAction
+  createAddTransactionAction,
+  createAddTransactionActionByResponse
 }
