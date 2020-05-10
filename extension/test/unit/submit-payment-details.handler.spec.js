@@ -59,6 +59,7 @@ describe('submit-additional-payment-details::execute', () => {
     const setCustomFieldAction = response.actions.find(a => a.action === 'setCustomField')
     expect(setCustomFieldAction.name).to.equal(c.CTP_CUSTOM_FIELD_SUBMIT_PAYMENT_DETAILS_RESPONSE)
     expect(setCustomFieldAction.value).to.be.a('string')
+    expect(setCustomFieldAction.value).to.equal(submitPaymentDetailsSuccessResponse)
     expect(setCustomFieldAction.value).to.equal(addInterfaceInteraction.fields.response)
 
     const addTransaction = response.actions.find(a => a.action === 'addTransaction')
@@ -100,6 +101,7 @@ describe('submit-additional-payment-details::execute', () => {
       const setCustomFieldAction = response.actions.find(a => a.action === 'setCustomField')
       expect(setCustomFieldAction.name).to.equal(c.CTP_CUSTOM_FIELD_SUBMIT_PAYMENT_DETAILS_RESPONSE)
       expect(setCustomFieldAction.value).to.be.a('string')
+      expect(setCustomFieldAction.value).to.equal(submitPaymentDetailsChallengeResponse)
       expect(setCustomFieldAction.value).to.equal(addInterfaceInteraction.fields.response)
     })
 
