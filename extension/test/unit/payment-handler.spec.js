@@ -31,7 +31,7 @@ describe('payment-handler::execute', () => {
   })
 
   it('when payment contains "submitAdditionalPaymentDetailsRequest" with "makePaymentResponse", ' +
-    'then it should call "submitAdditionalPaymentDetailsRequest"', async () => {
+    'then it should call /payments/details on Adyen', async () => {
     scope.post('/payments/details')
       .reply(200, submitPaymentDetailsChallengeResponse)
 
@@ -45,7 +45,7 @@ describe('payment-handler::execute', () => {
   })
 
   it('when payment does not contain "makePaymentResponse", ' +
-    'then it should not call "submitAdditionalPaymentDetailsRequest"', async () => {
+    'then it should not call /payments/details on Adyen', async () => {
     scope.post('/payments/details')
       .reply(200, submitPaymentDetailsChallengeResponse)
 
@@ -57,8 +57,8 @@ describe('payment-handler::execute', () => {
     expect(response.data.actions).to.have.lengthOf(0)
   })
 
-  it('when "submitAdditionalPaymentDetailsRequest" contains same request, ' +
-    'then it should NOT call Adyen endpoint again if response exists', async () => {
+  it('when "submitAdditionalPaymentDetailsRequest" contains the same request, ' +
+    'then it should NOT call /payments/details on Adyen if response exists', async () => {
     scope.post('/payments/details')
       .reply(200, submitPaymentDetailsChallengeResponse)
 
@@ -82,8 +82,8 @@ describe('payment-handler::execute', () => {
     expect(response.data.actions).to.have.lengthOf(0)
   })
 
-  it('when "submitAdditionalPaymentDetailsRequest" contains different request, ' +
-    'then it should call Adyen endpoint again', async () => {
+  it('when "submitAdditionalPaymentDetailsRequest" contains a different request, ' +
+    'then it should call /payments/details on Adyen again', async () => {
     scope.post('/payments/details')
       .reply(200, submitPaymentDetailsChallengeResponse)
 
@@ -112,8 +112,8 @@ describe('payment-handler::execute', () => {
     expect(response.data.actions).to.have.lengthOf.above(0)
   })
 
-  it('when "submitAdditionalPaymentDetailsRequest" contains new request and payment has no interface interaction, ' +
-    'then it should call Adyen endpoint again', async () => {
+  it('when "submitAdditionalPaymentDetailsRequest" contains a request and payment has no interface interaction, ' +
+    'then it should call /payments/details on Adyen', async () => {
     scope.post('/payments/details')
       .reply(200, submitPaymentDetailsChallengeResponse)
 

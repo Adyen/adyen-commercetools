@@ -10,7 +10,7 @@ const ctpPayment = require('../fixtures/ctp-payment')
 const configLoader = require('../../src/config/config')
 const c = require('../../src/config/constants')
 
-describe('submit-payment::execute', () => {
+describe('submit-additional-payment-details::execute', () => {
   const config = configLoader.load()
   let scope
   /* eslint-disable max-len */
