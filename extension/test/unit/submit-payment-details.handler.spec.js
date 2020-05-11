@@ -43,7 +43,7 @@ describe('submit-additional-payment-details::execute', () => {
 
     expect(response.actions).to.have.lengthOf(3)
     const addInterfaceInteraction = response.actions.find(a => a.action === 'addInterfaceInteraction')
-    expect(addInterfaceInteraction.fields.type).to.equal(c.CTP_INTERACTION_TYPE_SUBMIT_PAYMENT_DETAILS)
+    expect(addInterfaceInteraction.fields.type).to.equal(c.CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS)
     expect(addInterfaceInteraction.fields.request).to.be.a('string')
     expect(addInterfaceInteraction.fields.response).to.be.a('string')
     expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
@@ -57,7 +57,7 @@ describe('submit-additional-payment-details::execute', () => {
     expect(request.merchantAccount).to.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
 
     const setCustomFieldAction = response.actions.find(a => a.action === 'setCustomField')
-    expect(setCustomFieldAction.name).to.equal(c.CTP_CUSTOM_FIELD_SUBMIT_PAYMENT_DETAILS_RESPONSE)
+    expect(setCustomFieldAction.name).to.equal(c.CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE)
     expect(setCustomFieldAction.value).to.be.a('string')
     expect(setCustomFieldAction.value).to.equal(submitPaymentDetailsSuccessResponse)
     expect(setCustomFieldAction.value).to.equal(addInterfaceInteraction.fields.response)
@@ -85,7 +85,7 @@ describe('submit-additional-payment-details::execute', () => {
       expect(response.actions).to.have.lengthOf(2)
 
       const addInterfaceInteraction = response.actions.find(a => a.action === 'addInterfaceInteraction')
-      expect(addInterfaceInteraction.fields.type).to.equal(c.CTP_INTERACTION_TYPE_SUBMIT_PAYMENT_DETAILS)
+      expect(addInterfaceInteraction.fields.type).to.equal(c.CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS)
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
       expect(addInterfaceInteraction.fields.response).to.be.a('string')
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
@@ -99,7 +99,7 @@ describe('submit-additional-payment-details::execute', () => {
       expect(request.merchantAccount).to.equal(process.env.ADYEN_MERCHANT_ACCOUNT)
 
       const setCustomFieldAction = response.actions.find(a => a.action === 'setCustomField')
-      expect(setCustomFieldAction.name).to.equal(c.CTP_CUSTOM_FIELD_SUBMIT_PAYMENT_DETAILS_RESPONSE)
+      expect(setCustomFieldAction.name).to.equal(c.CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE)
       expect(setCustomFieldAction.value).to.be.a('string')
       expect(setCustomFieldAction.value).to.equal(submitPaymentDetailsChallengeResponse)
       expect(setCustomFieldAction.value).to.equal(addInterfaceInteraction.fields.response)

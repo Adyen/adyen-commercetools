@@ -70,7 +70,7 @@ describe('payment-handler::execute', () => {
           id: 'bdbd6d06-9e29-4470-a3de-76b529c9eb5e'
         },
         fields: {
-          type: c.CTP_INTERACTION_TYPE_SUBMIT_PAYMENT_DETAILS,
+          type: c.CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
           request: JSON.stringify(submitPaymentDetailsRequest)
         }
       }
@@ -95,7 +95,7 @@ describe('payment-handler::execute', () => {
           id: 'bdbd6d06-9e29-4470-a3de-76b529c9eb5e'
         },
         fields: {
-          type: c.CTP_INTERACTION_TYPE_SUBMIT_PAYMENT_DETAILS,
+          type: c.CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
           request: JSON.stringify(submitPaymentDetailsRequest)
         }
       }

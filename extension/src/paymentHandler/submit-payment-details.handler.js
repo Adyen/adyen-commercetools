@@ -12,9 +12,9 @@ async function execute (paymentObject) {
   const { request, response } = await submitAdditionalPaymentDetails(submitAdditionalDetailsRequestObj)
   const actions = [
     pU.createAddInterfaceInteractionAction({
-      request, response, type: c.CTP_INTERACTION_TYPE_SUBMIT_PAYMENT_DETAILS
+      request, response, type: c.CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS
     }),
-    pU.createSetCustomFieldAction(c.CTP_CUSTOM_FIELD_SUBMIT_PAYMENT_DETAILS_RESPONSE, response)
+    pU.createSetCustomFieldAction(c.CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE, response)
   ]
 
   const addTransactionAction = pU.createAddTransactionActionByResponse(
