@@ -26,7 +26,7 @@ function getCTPEnvCredentials () {
 function getAdyenCredentials () {
   return {
     secretHMACKey: process.env.ADYEN_SECRET_HMAC_KEY,
-    enableHmacSignature: process.env.ENABLE_HMAC_SIGNATURE !== 'false'
+    enableHmacSignature: process.env.ADYEN_ENABLE_HMAC_SIGNATURE !== 'false'
   }
 }
 
@@ -64,7 +64,7 @@ module.exports = function load () {
     if (!config.adyen.enableHmacSignature && isEmpty(config.adyen.secretHMACKey))
       throw new Error('The "ADYEN_SECRET_HMAC_KEY" environment variable is missing to be able to verify notifications, ' +
         'please generate a secret HMAC key in Adyen Customer Area ' +
-        'or set "ENABLE_HMAC_SIGNATURE=false" to disable the verification feature.')
+        'or set "ADYEN_ENABLE_HMAC_SIGNATURE=false" to disable the verification feature.')
   }
 
   return config
