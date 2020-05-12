@@ -20,22 +20,28 @@ async function handleNotification (request, response) {
       logger.error('Notification does not have a valid HMAC signature, ' +
         'please confirm that the notification was sent by Adyen, ' +
         `and was not modified during transmission. Notification: ${JSON.stringify(notification)}`)
-
-      // TODO(ahmetoz): clarify the correct flow or best practice with Adyen.
-      return httpUtils.sendResponse(response, 500)
+      return sendAcceptedResponse(response)
     }
 
     // TODO(ahmetoz) https://github.com/commercetools/commercetools-adyen-integration/issues/272
     await processNotifications(notification, ctpClient)
-    return httpUtils.sendResponse(response,
-      200,
-      { 'Content-Type': 'application/json' },
-      JSON.stringify({ notificationResponse: '[accepted]' }))
+    return sendAcceptedResponse(response)
   } catch (err) {
     logger.error({ adyenRequestBody: `${body}`, err },
       'Unexpected exception occurred.')
     return httpUtils.sendResponse(response, 500)
   }
+}
+
+function sendAcceptedResponse(response) {
+  // From the Adyen docs:
+  // To ensure that your server is properly accepting notifications,
+  // we require you to acknowledge every notification of any type with an [accepted] response.
+
+  return httpUtils.sendResponse(response,
+    200,
+    { 'Content-Type': 'application/json' },
+    JSON.stringify({ notificationResponse: '[accepted]' }))
 }
 
 module.exports = { handleNotification }

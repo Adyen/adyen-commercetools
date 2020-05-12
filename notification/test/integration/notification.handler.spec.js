@@ -294,9 +294,11 @@ describe('notification module', () => {
     expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(JSON.stringify(notification))
   })
 
-  it('should not acknowledge the request when notification is unauthorised/unsigned', async () => {
+  it('should not update payment ' +
+    'when the notification is unauthorised', async () => {
     // enable hmac verification
     config.adyen.enableHmacSignature = true
+    config.adyen.secretHmacKey = '44782DEF547AAA06C910C43932B1EB0C71FC68D9D0C057550C48EC2ACF6BA056'
 
     const modifiedNotification = cloneDeep(notifications)
 
@@ -310,6 +312,17 @@ describe('notification module', () => {
       headers: { 'Content-Type': 'application/json' },
     })
     const { status } = response
-    expect(status).to.equal(500)
+    const responseBody = await response.json()
+
+    expect(responseBody).to.deep.equal({ notificationResponse: '[accepted]' })
+    expect(status).to.equal(200)
+
+    const { body: { results: [ paymentAfter ] } } = await ctpClient.fetch(ctpClient.builder.payments)
+    expect(paymentAfter.transactions).to.have.lengthOf(1)
+    expect(paymentAfter.transactions[0].type).to.equal('Authorization')
+    expect(paymentAfter.transactions[0].state).to.equal('Pending')
+
+    // make sure that the notification is not polluting interactions
+    expect(paymentAfter.interfaceInteractions).to.have.lengthOf(0)
   })
 })
