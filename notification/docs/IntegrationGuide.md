@@ -38,6 +38,8 @@ Name | Content | Required | Default value
 CTP_PROJECT_KEY | commercetools project key (you can get in the commercetools Merchant Center) | **YES** |
 CTP_CLIENT_ID | commercetools client ID (you can get in the commercetools Merchant Center) | **YES** |
 CTP_CLIENT_SECRET | commercetools client secret (you can get in the commercetools Merchant Center) | **YES** |
+CTP_HOST | commercetools HTTP API is hosted at that URL| **YES** | https://api.europe-west1.gcp.commercetools.com
+CTP_AUTH_URL | commercetools’ OAuth 2.0 service is hosted at that URL | **YES** | https://auth.europe-west1.gcp.commercetools.com
 LOG_LEVEL | bunyan log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)| NO | `info`
 PORT | port on which the application will run | NO | 443
 KEEP_ALIVE_TIMEOUT | milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_server_keepalivetimeout)) | NO | Node.js default
