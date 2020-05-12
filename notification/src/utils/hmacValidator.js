@@ -22,7 +22,7 @@ function hasValidHmacSignature(notification) {
   if (!notificationRequestItem.additionalData || !notificationRequestItem.additionalData.hmacSignature)
     return false;
 
-  return validator.validateHMAC(notificationRequestItem, config.adyen.secretHMACKey)
+  return validator.validateHMAC(notificationRequestItem, config.adyen.secretHmacKey)
 }
 
 module.exports = { hasValidHmacSignature }

@@ -25,7 +25,7 @@ function getCTPEnvCredentials () {
 
 function getAdyenCredentials () {
   return {
-    secretHMACKey: process.env.ADYEN_SECRET_HMAC_KEY,
+    secretHmacKey: process.env.ADYEN_SECRET_HMAC_KEY,
     enableHmacSignature: process.env.ADYEN_ENABLE_HMAC_SIGNATURE !== 'false'
   }
 }
@@ -61,7 +61,7 @@ module.exports = function load () {
     if (!config.ctp.projectKey || !config.ctp.clientId || !config.ctp.clientSecret)
       throw new Error('CTP project credentials are missing')
 
-    if (!config.adyen.enableHmacSignature && isEmpty(config.adyen.secretHMACKey))
+    if (!config.adyen.enableHmacSignature && isEmpty(config.adyen.secretHmacKey))
       throw new Error('The "ADYEN_SECRET_HMAC_KEY" environment variable is missing to be able to verify notifications, ' +
         'please generate a secret HMAC key in Adyen Customer Area ' +
         'or set "ADYEN_ENABLE_HMAC_SIGNATURE=false" to disable the verification feature.')
