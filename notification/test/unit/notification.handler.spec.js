@@ -13,7 +13,7 @@ const sandbox = sinon.createSandbox()
 
 describe('notification module', () => {
   before(() => {
-    config.adyen.disableHMACSignature = true
+    config.adyen.enableHmacSignature = false
   })
   afterEach(() => sandbox.restore())
 

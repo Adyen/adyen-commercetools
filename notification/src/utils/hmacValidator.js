@@ -3,7 +3,7 @@ const {hmacValidator} = require('@adyen/api-library')
 const validator = new hmacValidator()
 
 function hasValidHmacSignature(notification) {
-  if (config.adyen.disableHMACSignature)
+  if (!config.adyen.enableHmacSignature)
     return true
 
   /* By verifying this (hmacSignature) signature, We confirm that the notification was sent by Adyen,

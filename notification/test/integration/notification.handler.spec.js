@@ -23,7 +23,7 @@ describe('notification module', () => {
   })
 
   beforeEach(async () => {
-    config.adyen.disableHMACSignature = true
+    config.adyen.enableHmacSignature = false
     await iTSetUp.prepareProject(ctpClient)
   })
 
@@ -296,7 +296,7 @@ describe('notification module', () => {
 
   it('should not acknowledge the request when notification is unauthorised/unsigned', async () => {
     // enable hmac verification
-    config.adyen.disableHMACSignature = false
+    config.adyen.enableHmacSignature = true
 
     const modifiedNotification = cloneDeep(notifications)
 
