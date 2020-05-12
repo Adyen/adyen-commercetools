@@ -3,8 +3,14 @@ const { expect } = require('chai')
 const { hasValidHmacSignature } = require('../../src/utils/hmacValidator')
 const notificationRequest = require('../resources/notification.json')
 const notification = notificationRequest.notificationItems
+const config = require('../../src/config/config')()
 
 describe('verify hmac signatures', () => {
+
+  before(() => {
+    config.adyen.enableHmacSignature = true // default
+    config.adyen.secretHmacKey = '44782DEF547AAA06C910C43932B1EB0C71FC68D9D0C057550C48EC2ACF6BA056' // Sample HMAC key
+  })
 
   it('given a sample signed notification ' +
     'when matches with the stored HMAC key ' +
