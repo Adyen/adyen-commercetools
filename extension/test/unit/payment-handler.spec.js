@@ -62,6 +62,9 @@ describe('payment-handler::execute', () => {
     scope.post('/payments/details')
       .reply(200, submitPaymentDetailsChallengeResponse)
 
+    const oldSubmitPaymentDetailsRequest = _.cloneDeep(submitPaymentDetailsRequest)
+    oldSubmitPaymentDetailsRequest.paymentData = JSON.parse(makePaymentRedirectResponse).paymentData
+
     const ctpPaymentClone = _.cloneDeep(ctpPayment)
     ctpPaymentClone.interfaceInteractions = [
       {
@@ -71,7 +74,7 @@ describe('payment-handler::execute', () => {
         },
         fields: {
           type: c.CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
-          request: JSON.stringify(submitPaymentDetailsRequest)
+          request: JSON.stringify(oldSubmitPaymentDetailsRequest)
         }
       }
     ]

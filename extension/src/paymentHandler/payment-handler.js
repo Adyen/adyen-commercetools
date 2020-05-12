@@ -4,7 +4,7 @@ const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const getOriginKeysHandler = require('./get-origin-keys.handler')
 const makePaymentHandler = require('./make-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
-const { CTP_ADYEN_INTEGRATION, CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = require('../config/constants')
+const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 
 
 async function handlePayment (paymentObject) {
@@ -43,27 +43,9 @@ function _getPaymentHandlers (paymentObject) {
     handlers.push(makePaymentHandler)
   if (paymentObject.custom.fields.makePaymentResponse
     && paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
-    && isSubmitAdditionalPaymentDetailsRequestNew(paymentObject))
+    && !paymentObject.custom.fields.submitAdditionalPaymentDetailsResponse)
     handlers.push(submitPaymentDetailsHandler)
   return handlers
-}
-
-function isSubmitAdditionalPaymentDetailsRequestNew (paymentObject) {
-  const interfaceInteraction = paymentObject.interfaceInteractions
-    .find(interaction => interaction.fields.type === CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS)
-  if (interfaceInteraction) {
-    const oldSubmitDetailsRequest = interfaceInteraction.fields.request
-    if (oldSubmitDetailsRequest) {
-      const oldSubmitDetailsRequestObj = JSON.parse(oldSubmitDetailsRequest)
-      const newSubmitDetailsRequestObj = JSON.parse(paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest)
-      if (!_.isEqual(oldSubmitDetailsRequestObj, newSubmitDetailsRequestObj))
-        // request is new if new and old requests are different
-        return true
-    }
-  } else
-    // request is new if there are no requests yet
-    return true
-  return false
 }
 
 function _isAdyenPayment (paymentObject) {
