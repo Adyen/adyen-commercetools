@@ -2,7 +2,7 @@ const config = require('../config/config')()
 const {hmacValidator} = require('@adyen/api-library')
 const validator = new hmacValidator()
 
-function hasValidHMACSignature(notification) {
+function hasValidHmacSignature(notification) {
   if (config.adyen.disableHMACSignature)
     return true
 
@@ -25,4 +25,4 @@ function hasValidHMACSignature(notification) {
   return validator.validateHMAC(notificationRequestItem, config.adyen.secretHMACKey)
 }
 
-module.exports = { hasValidHMACSignature }
+module.exports = { hasValidHmacSignature }
