@@ -12,7 +12,7 @@ async function execute (paymentObject) {
     const makePaymentResponseObj = JSON.parse(paymentObject.custom.fields.makePaymentResponse)
     submitAdditionalDetailsRequestObj.paymentData = makePaymentResponseObj.paymentData
   }
-  if (_isSubmitAdditionalPaymentDetailsRequestNew(submitAdditionalDetailsRequestObj, paymentObject)) {
+  if (_isNewRequest(submitAdditionalDetailsRequestObj, paymentObject)) {
     const { request, response } = await submitAdditionalPaymentDetails(submitAdditionalDetailsRequestObj)
     actions.push(
       pU.createAddInterfaceInteractionAction({
@@ -35,7 +35,7 @@ async function execute (paymentObject) {
   }
 }
 
-function _isSubmitAdditionalPaymentDetailsRequestNew (submitAdditionalPaymentDetailsRequestObj, paymentObject) {
+function _isNewRequest (submitAdditionalPaymentDetailsRequestObj, paymentObject) {
   const interfaceInteraction = paymentObject.interfaceInteractions
     .find(interaction => interaction.fields.type === CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS)
   if (!interfaceInteraction)
