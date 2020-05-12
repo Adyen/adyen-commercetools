@@ -15,6 +15,9 @@ function withPayment (paymentObject) {
         errors.getPaymentMethodsRequest = errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
       if (!isValidJSON(paymentObject.custom.fields.makePaymentRequest))
         errors.makePaymentRequest = errorMessages.MAKE_PAYMENT_REQUEST_INVALID_JSON
+      if (!isValidJSON(paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest))
+        errors.submitAdditionalPaymentDetailsRequest
+          = errorMessages.SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
       return this
     },
     isCancelOrRefund () {

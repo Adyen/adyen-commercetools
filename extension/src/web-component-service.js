@@ -16,14 +16,18 @@ function makePayment (makePaymentRequest) {
   return callAdyen('payments', makePaymentRequest)
 }
 
-async function callAdyen (endpoint, requestObj) {
+function submitAdditionalPaymentDetails (submitAdditionalPaymentDetailsRequest) {
+  return callAdyen('payments/details', submitAdditionalPaymentDetailsRequest)
+}
+
+async function callAdyen (endpoint, request) {
   let response
   try {
-    response = await fetchAsync(endpoint, requestObj)
+    response = await fetchAsync(endpoint, request)
   } catch (err) {
     response = serializeError(err)
   }
-  return { request: requestObj, response }
+  return { request, response }
 }
 
 async function fetchAsync (endpoint, requestObj) {
@@ -53,5 +57,6 @@ function buildRequest (requestObj) {
 module.exports = {
   getOriginKeys,
   getPaymentMethods,
-  makePayment
+  makePayment,
+  submitAdditionalPaymentDetails
 }
