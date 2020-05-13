@@ -25,7 +25,7 @@ async function handleNotification (request, response) {
   }
 }
 
-function sendAcceptedResponse(response) {
+function sendAcceptedResponse (response) {
   // From the Adyen docs:
   // To ensure that your server is properly accepting notifications,
   // we require you to acknowledge every notification of any type with an [accepted] response.
