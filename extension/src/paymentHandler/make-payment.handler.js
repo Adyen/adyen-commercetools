@@ -4,7 +4,6 @@ const c = require('../config/constants')
 
 async function execute (paymentObject) {
   const makePaymentRequestObj = JSON.parse(paymentObject.custom.fields.makePaymentRequest)
-  // todo: check amount planned
   const { request, response } = await makePayment(makePaymentRequestObj)
   const actions = [
     pU.createAddInterfaceInteractionAction({

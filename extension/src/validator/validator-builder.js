@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const pU = require('../paymentHandler/payment-utils')
 const errorMessages = require('./error-messages')
+const c = require('../config/constants')
 
 function withPayment (paymentObject) {
   const errors = {}
@@ -18,6 +19,23 @@ function withPayment (paymentObject) {
       if (!isValidJSON(paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest))
         errors.submitAdditionalPaymentDetailsRequest
           = errorMessages.SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
+      return this
+    },
+    validateAmountPlanned () {
+      const oldMakePaymentRequestObj = paymentObject.interfaceInteractions
+        .filter(interaction => interaction.fields.type === c.CTP_INTERACTION_TYPE_MAKE_PAYMENT)
+        .sort(interaction => interaction.createdAt)
+        .pop()
+
+      if (oldMakePaymentRequestObj) {
+        const { amount } = JSON.parse(oldMakePaymentRequestObj.fields.request)
+        const oldAmount = amount.value
+        const newAmount = paymentObject.amountPlanned.centAmount
+        const oldCurrencyCode = amount.currency
+        const newCurrencyCode = paymentObject.amountPlanned.currencyCode
+        if (oldAmount !== newAmount || oldCurrencyCode !== newCurrencyCode)
+          errors.amountPlanned = errorMessages.AMOUNT_PLANNED_INVALID
+      }
       return this
     },
     isCancelOrRefund () {
