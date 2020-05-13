@@ -3,9 +3,6 @@ const {hmacValidator} = require('@adyen/api-library')
 const validator = new hmacValidator()
 
 function hasValidHmacSignature(notification) {
-  if (!config.adyen.enableHmacSignature)
-    return true
-
   /* By verifying this (hmacSignature) signature, We confirm that the notification was sent by Adyen,
   and was not modified during transmission.
   A sample representation will look like:
@@ -18,7 +15,7 @@ function hasValidHmacSignature(notification) {
      }
   }
   */
-  const notificationRequestItem = notification[0].NotificationRequestItem
+  const notificationRequestItem = notification.NotificationRequestItem
   if (!notificationRequestItem.additionalData || !notificationRequestItem.additionalData.hmacSignature)
     return false;
 

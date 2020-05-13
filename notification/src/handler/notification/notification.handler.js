@@ -2,8 +2,10 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { serializeError } = require('serialize-error')
 const ctp = require('../../utils/ctp')
+const { hasValidHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
 const logger = require('../../utils/logger').getLogger()
+const config = require('../../config/config')()
 
 async function processNotifications (notifications, ctpClient) {
   await Promise.map(notifications,
@@ -12,6 +14,13 @@ async function processNotifications (notifications, ctpClient) {
 }
 
 async function processNotification (notification, ctpClient) {
+  if (config.adyen.enableHmacSignature && !hasValidHmacSignature(notification)) {
+    logger.error('Notification does not have a valid HMAC signature, ' +
+      'please confirm that the notification was sent by Adyen, ' +
+      `and was not modified during transmission. Notification: ${JSON.stringify(notification)}`)
+    return
+  }
+
   const merchantReference = _.get(notification, 'NotificationRequestItem.merchantReference', null)
   if (merchantReference === null) {
     logger.error(`Can't extract merchantReference from the notification: ${JSON.stringify(notification)}`)

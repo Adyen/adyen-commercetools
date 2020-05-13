@@ -2,7 +2,7 @@ const { cloneDeep } = require('lodash')
 const { expect } = require('chai')
 const { hasValidHmacSignature } = require('../../src/utils/hmacValidator')
 const notificationRequest = require('../resources/notification.json')
-const notification = notificationRequest.notificationItems
+const notification = notificationRequest.notificationItems[0]
 const config = require('../../src/config/config')()
 
 describe('verify hmac signatures', () => {
@@ -23,7 +23,7 @@ describe('verify hmac signatures', () => {
     'when notification is modified on the way' +
     'then verification should NOT pass', () => {
     const modifiedNotification = cloneDeep(notification)
-    modifiedNotification[0].NotificationRequestItem.amount.value = 0
+    modifiedNotification.NotificationRequestItem.amount.value = 0
 
     const valid = hasValidHmacSignature(modifiedNotification)
     expect(valid).to.equal(false)
