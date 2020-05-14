@@ -23,6 +23,10 @@ Name | Content | Required | Default value
 CTP_PROJECT_KEY | commercetools project key (you can get in the [commercetools Merchant Center](https://mc.commercetools.com)) | **YES** |
 CTP_CLIENT_ID | commercetools client ID with `manage_types` and `manage_payments` scopes (you can get in the [commercetools Merchant Center](https://mc.commercetools.com)) | **YES** |
 CTP_CLIENT_SECRET | commercetools client secret (you can get in the [commercetools Merchant Center](https://mc.commercetools.com)) | **YES** |
+CTP_HOST | commercetools HTTP API is hosted at that URL| NO | https://api.europe-west1.gcp.commercetools.com
+CTP_AUTH_URL | commercetools’ OAuth 2.0 service is hosted at that URL | NO | https://auth.europe-west1.gcp.commercetools.com
+ADYEN_ENABLE_HMAC_SIGNATURE | Verify the integrity of notifications using [Adyen HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures) | NO | `true`
+ADYEN_SECRET_HMAC_KEY | The generated secret HMAC key that is linked to a Adyen **Standard Notification** endpoint | NO | 
 LOG_LEVEL | bunyan log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)| NO | `info`
 PORT | port on which the application will run | NO | 443
 KEEP_ALIVE_TIMEOUT | milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_server_keepalivetimeout)) | NO | Node.js default
