@@ -155,7 +155,7 @@ describe('payment-handler::execute', () => {
 
       expect(response.success).to.equal(false)
       expect(response.data.errors).to.have.lengthOf.above(0)
-      expect(response.data.errors[0].message).to.equal(errorMessage.AMOUNT_PLANNED_INVALID)
+      expect(response.data.errors[0].message).to.equal(errorMessage.AMOUNT_PLANNED_CHANGE_NOT_ALLOWED)
     })
 
     it('when amountPlanned is updated and makePayment request does not exist, ' +
@@ -205,7 +205,7 @@ describe('payment-handler::execute', () => {
 
       expect(response.success).to.equal(false)
       expect(response.data.errors).to.have.lengthOf.above(0)
-      expect(response.data.errors[0].message).to.equal(errorMessage.AMOUNT_PLANNED_INVALID)
+      expect(response.data.errors[0].message).to.equal(errorMessage.AMOUNT_PLANNED_CHANGE_NOT_ALLOWED)
     })
   })
 })

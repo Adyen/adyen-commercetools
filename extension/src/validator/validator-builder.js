@@ -34,7 +34,7 @@ function withPayment (paymentObject) {
         const oldCurrencyCode = amount.currency
         const newCurrencyCode = paymentObject.amountPlanned.currencyCode
         if (oldAmount !== newAmount || oldCurrencyCode !== newCurrencyCode)
-          errors.amountPlanned = errorMessages.AMOUNT_PLANNED_INVALID
+          errors.amountPlanned = errorMessages.AMOUNT_PLANNED_CHANGE_NOT_ALLOWED
       }
       return this
     },
