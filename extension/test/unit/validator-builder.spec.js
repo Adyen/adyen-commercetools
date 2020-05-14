@@ -6,7 +6,8 @@ const {
   GET_ORIGIN_KEYS_REQUEST_INVALID_JSON,
   GET_PAYMENT_METHODS_REQUEST_INVALID_JSON,
   MAKE_PAYMENT_REQUEST_INVALID_JSON,
-  SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
+  SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON,
+  AMOUNT_PLANNED_CHANGE_NOT_ALLOWED
 } = require('../../src/validator/error-messages')
 
 describe('Validator builder', () => {
@@ -30,7 +31,7 @@ describe('Validator builder', () => {
   )
 
   it('on invalid JSON validateRequestFields() should return error object', async () => {
-    const invalidPaymentString = {
+    const invalidPayment = {
       custom: {
         fields: {
           getOriginKeysRequest: '{"a"}',
@@ -40,7 +41,7 @@ describe('Validator builder', () => {
         }
       }
     }
-    const errorObject = ValidatorBuilder.withPayment(invalidPaymentString)
+    const errorObject = ValidatorBuilder.withPayment(invalidPayment)
       .validateRequestFields()
       .getErrors()
     expect(errorObject.getOriginKeysRequest).to.equal(GET_ORIGIN_KEYS_REQUEST_INVALID_JSON)
@@ -48,5 +49,59 @@ describe('Validator builder', () => {
     expect(errorObject.makePaymentRequest).to.equal(MAKE_PAYMENT_REQUEST_INVALID_JSON)
     expect(errorObject.submitAdditionalPaymentDetailsRequest)
       .to.equal(SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON)
+  })
+
+  it('on changing amountPlanned when different amountPlanned exists in the interaction, ' +
+    'validateAmountPlanned() should return error object', async () => {
+    const payment = {
+      amountPlanned: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 10,
+        fractionDigits: 2
+      },
+      interfaceInteractions: [
+        {
+          fields: {
+            type: 'makePayment',
+            request: JSON.stringify({
+              amount: {
+                currency: 'EUR',
+                value: 10
+              }
+            }),
+            createdAt: '2018-05-14T07:18:37.560Z'
+          }
+        },
+        {
+          fields: {
+            type: 'makePayment',
+            request: JSON.stringify({
+              amount: {
+                currency: 'EUR',
+                value: 1000
+              }
+            }),
+            createdAt: '2020-05-14T07:18:37.560Z'
+          }
+        },
+        {
+          fields: {
+            type: 'makePayment',
+            request: JSON.stringify({
+              amount: {
+                currency: 'EUR',
+                value: 10
+              }
+            }),
+            createdAt: '2019-05-14T07:18:37.560Z'
+          }
+        }
+      ]
+    }
+    const errorObject = ValidatorBuilder.withPayment(payment)
+      .validateAmountPlanned()
+      .getErrors()
+    expect(errorObject.amountPlanned).to.equal(AMOUNT_PLANNED_CHANGE_NOT_ALLOWED)
   })
 })

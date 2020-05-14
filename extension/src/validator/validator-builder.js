@@ -24,7 +24,7 @@ function withPayment (paymentObject) {
     validateAmountPlanned () {
       const oldMakePaymentRequestObj = paymentObject.interfaceInteractions
         .filter(interaction => interaction.fields.type === c.CTP_INTERACTION_TYPE_MAKE_PAYMENT)
-        .sort(interaction => interaction.createdAt)
+        .sort((i1, i2) => i1.fields.createdAt.localeCompare(i2.fields.createdAt))
         .pop()
 
       if (oldMakePaymentRequestObj) {
