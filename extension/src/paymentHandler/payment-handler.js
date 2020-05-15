@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const ValidatorBuilder = require('../validator/validator-builder')
 const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const getOriginKeysHandler = require('./get-origin-keys.handler')
@@ -12,7 +11,9 @@ async function handlePayment (paymentObject) {
     // if it's not adyen payment, ignore the payment
     return { success: true, data: null }
 
-  const paymentValidator = ValidatorBuilder.withPayment(paymentObject).validateRequestFields()
+  const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
+    .validateRequestFields()
+    .validateAmountPlanned()
   if (paymentValidator.hasErrors())
     return {
       success: false,
