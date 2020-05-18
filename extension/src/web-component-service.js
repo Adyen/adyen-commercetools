@@ -5,34 +5,38 @@ const configLoader = require('./config/config')
 const config = configLoader.load()
 
 function getOriginKeys (getOriginKeysRequestObj) {
-  return callAdyen('originKeys', getOriginKeysRequestObj)
+  return callAdyen(`${config.adyen.apiBaseUrl}/originKeys`, getOriginKeysRequestObj)
 }
 
 function getPaymentMethods (getPaymentMethodsRequestObj) {
-  return callAdyen('paymentMethods', getPaymentMethodsRequestObj)
+  return callAdyen(`${config.adyen.apiBaseUrl}/paymentMethods`, getPaymentMethodsRequestObj)
 }
 
 function makePayment (makePaymentRequest) {
-  return callAdyen('payments', makePaymentRequest)
+  return callAdyen(`${config.adyen.apiBaseUrl}/payments`, makePaymentRequest)
 }
 
 function submitAdditionalPaymentDetails (submitAdditionalPaymentDetailsRequest) {
-  return callAdyen('payments/details', submitAdditionalPaymentDetailsRequest)
+  return callAdyen(`${config.adyen.apiBaseUrl}/payments/details`, submitAdditionalPaymentDetailsRequest)
 }
 
-async function callAdyen (endpoint, request) {
+function cancelOrRefund(cancelOrRefundRequestObj) {
+  return callAdyen(`${config.adyen.legacyApiBaseUrl}/cancelOrRefund`, cancelOrRefundRequestObj)
+}
+
+async function callAdyen (url, request) {
   let response
   try {
-    response = await fetchAsync(endpoint, request)
+    response = await fetchAsync(url, request)
   } catch (err) {
     response = serializeError(err)
   }
   return { request, response }
 }
 
-async function fetchAsync (endpoint, requestObj) {
+async function fetchAsync (url, requestObj) {
   const request = buildRequest(requestObj)
-  const response = await fetch(`${config.adyen.apiBaseUrl}/${endpoint}`, request)
+  const response = await fetch(url, request)
   const responseBody = await response.json()
   // strip away sensitive data from the adyen response.
   delete responseBody.additionalData
@@ -58,5 +62,6 @@ module.exports = {
   getOriginKeys,
   getPaymentMethods,
   makePayment,
-  submitAdditionalPaymentDetails
+  submitAdditionalPaymentDetails,
+  cancelOrRefund
 }
