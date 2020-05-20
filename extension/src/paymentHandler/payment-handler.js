@@ -4,7 +4,7 @@ const getOriginKeysHandler = require('./get-origin-keys.handler')
 const makePaymentHandler = require('./make-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const cancelOrRefundHandler = require('./cancel-or-refund.handler')
-const {CTP_ADYEN_INTEGRATION} = require('../config/constants')
+const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 
 
 async function handlePayment (paymentObject) {

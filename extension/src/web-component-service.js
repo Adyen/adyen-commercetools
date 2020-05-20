@@ -12,15 +12,15 @@ function getPaymentMethods (getPaymentMethodsRequestObj) {
   return callAdyen(`${config.adyen.apiBaseUrl}/paymentMethods`, getPaymentMethodsRequestObj)
 }
 
-function makePayment (makePaymentRequest) {
-  return callAdyen(`${config.adyen.apiBaseUrl}/payments`, makePaymentRequest)
+function makePayment (makePaymentRequestObj) {
+  return callAdyen(`${config.adyen.apiBaseUrl}/payments`, makePaymentRequestObj)
 }
 
-function submitAdditionalPaymentDetails (submitAdditionalPaymentDetailsRequest) {
-  return callAdyen(`${config.adyen.apiBaseUrl}/payments/details`, submitAdditionalPaymentDetailsRequest)
+function submitAdditionalPaymentDetails (submitAdditionalPaymentDetailsRequestObj) {
+  return callAdyen(`${config.adyen.apiBaseUrl}/payments/details`, submitAdditionalPaymentDetailsRequestObj)
 }
 
-function cancelOrRefund(cancelOrRefundRequestObj) {
+function cancelOrRefund (cancelOrRefundRequestObj) {
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/cancelOrRefund`, cancelOrRefundRequestObj)
 }
 

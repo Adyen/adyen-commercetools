@@ -1,6 +1,6 @@
 const { isEmpty } = require('lodash')
 const pU = require('./payment-utils')
-const {cancelOrRefund} = require('../web-component-service')
+const { cancelOrRefund } = require('../web-component-service')
 
 const {
   CTP_INTERACTION_TYPE_MAKE_PAYMENT,
@@ -8,36 +8,29 @@ const {
   CTP_TXN_STATE_PENDING,
 } = require('../config/constants')
 
-async function execute(paymentObject) {
-  const {request, response} = await _cancelOrRefundPayment(paymentObject)
+async function execute (paymentObject) {
+  const { request, response } = await _cancelOrRefundPayment(paymentObject)
+
+  const addInterfaceInteractionAction = pU.createAddInterfaceInteractionAction({
+      request, response, type: CTP_INTERACTION_TYPE_CANCEL_OR_REFUND
+  })
+
+  if (isEmpty(response.pspReference))
+    return { actions: [ addInterfaceInteractionAction ] }
 
   const actions = [
-    pU.createAddInterfaceInteractionAction({
-      request, response, type: CTP_INTERACTION_TYPE_CANCEL_OR_REFUND
-    })
+    addInterfaceInteractionAction,
+    ...getTransactionActions(paymentObject, response.pspReference)
   ]
-  if (!isEmpty(response.pspReference))
-    return { actions }
-
-  const cancelTransaction = pU.getCancelAuthorizationTransactionInit(paymentObject)
-  const refundTransaction = pU.getRefundTransactionInit(paymentObject)
-  if (cancelTransaction)
-    actions.push(
-      pU.createChangeTransactionStateAction(cancelTransaction.id, CTP_TXN_STATE_PENDING)
-    )
-  else if (refundTransaction)
-    actions.push(
-      pU.createChangeTransactionStateAction(refundTransaction.id, CTP_TXN_STATE_PENDING)
-    )
 
   return { actions }
 }
 
-async function _cancelOrRefundPayment(paymentObject) {
+async function _cancelOrRefundPayment (paymentObject) {
   const authorizationTransaction = pU.getAuthorizationTransactionSuccess(paymentObject)
   // "originalReference: The original pspReference of the payment that you want to cancel or refund.
   // This reference is returned in the response to your payment request, and in the AUTHORISATION notification."
-  const cancelOrRefundRequestObj = {originalReferenc2e: authorizationTransaction.interactionId}
+  const cancelOrRefundRequestObj = { originalReference: authorizationTransaction.interactionId }
 
   const interfaceInteraction = paymentObject.interfaceInteractions
     .find(interaction => interaction.fields.type === CTP_INTERACTION_TYPE_MAKE_PAYMENT)
@@ -52,4 +45,19 @@ async function _cancelOrRefundPayment(paymentObject) {
   return cancelOrRefund(cancelOrRefundRequestObj)
 }
 
-module.exports = {execute}
+function getTransactionActions (paymentObject, pspReference) {
+  const cancelTransaction = pU.getCancelAuthorizationTransactionInit(paymentObject)
+  const refundTransaction = pU.getRefundTransactionInit(paymentObject)
+  let transactionId
+  if (cancelTransaction)
+    transactionId = cancelTransaction.id
+  else if (refundTransaction)
+    transactionId = refundTransaction.id
+
+  return [
+    pU.createChangeTransactionStateAction(transactionId, CTP_TXN_STATE_PENDING),
+    pU.createChangeTransactionInteractionId(transactionId, pspReference)
+  ]
+}
+
+module.exports = { execute }

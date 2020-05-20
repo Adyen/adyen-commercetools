@@ -1,14 +1,15 @@
-const {expect} = require('chai')
+const { expect } = require('chai')
 
 const iTSetUp = require('./integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
-const { CTP_ADYEN_INTEGRATION, CTP_PAYMENT_CUSTOM_TYPE_KEY } = require('../../src/config/constants')
+const {
+  CTP_ADYEN_INTEGRATION, CTP_PAYMENT_CUSTOM_TYPE_KEY, CTP_INTERACTION_TYPE_CANCEL_OR_REFUND
+} = require('../../src/config/constants')
 
 describe('::cancelOrRefund::', () => {
   let ctpClient
 
   let payment
-  const reference = 'YOUR_ORDER_NUMBER'
 
   beforeEach(async () => {
     ctpClient = ctpClientBuilder.get()
@@ -19,7 +20,7 @@ describe('::cancelOrRefund::', () => {
         currency: 'EUR',
         value: 1000
       },
-      reference,
+      reference: 'YOUR_ORDER_NUMBER',
       paymentMethod: {
         type: 'scheme',
         encryptedCardNumber: 'test_4111111111111111',
@@ -58,9 +59,8 @@ describe('::cancelOrRefund::', () => {
 
   it('given a payment ' +
     'when a transaction with type "Refund" with "Initial" state, ' +
-    'then it should issue a "/cancelOrRefund" request to Adyen ' +
-    'and should modify "Initial" state to "Pending" of the "Refund" transaction', async () => {
-    const actions = [
+    'then it should modify "Initial" state to "Pending" of the "Refund" transaction', async () => {
+    const addTransaction = [
       {
         action: 'addTransaction',
         transaction: {
@@ -73,17 +73,19 @@ describe('::cancelOrRefund::', () => {
         }
       }
     ]
-    const {body: refundedPayment} = await ctpClient.update(ctpClient.builder.payments,
-      payment.id, payment.version, actions)
+    const { body: refundedPayment } = await ctpClient.update(ctpClient.builder.payments,
+      payment.id, payment.version, addTransaction)
 
     expect(refundedPayment.transactions).to.have.lengthOf(2)
     const transaction = refundedPayment.transactions[1]
     expect(transaction.type).to.equal('Refund')
     expect(transaction.state).to.equal('Pending')
 
-    // const interfaceInteraction = payment.interfaceInteractions
-    //   .find(interaction => interaction.fields.type === c.CTP_INTERACTION_TYPE_CANCEL_OR_REFUND)
-    // const adyenResponse = JSON.parse(interfaceInteraction.fields.response)
-    // expect(adyenResponse.response).to.equal('[cancelOrRefund-received]')
+    const interfaceInteraction = refundedPayment.interfaceInteractions
+      .find(interaction => interaction.fields.type === CTP_INTERACTION_TYPE_CANCEL_OR_REFUND)
+
+    const adyenResponse = JSON.parse(interfaceInteraction.fields.response)
+    expect(adyenResponse.response).to.equal('[cancelOrRefund-received]')
+    expect(transaction.interactionId).to.equal(adyenResponse.pspReference)
   })
 })
