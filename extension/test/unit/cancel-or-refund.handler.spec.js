@@ -41,7 +41,7 @@ describe('cancel-or-refund.handler::execute::', () => {
           request: '{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_ORDER_NUMBER\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/\",\"merchantAccount\":\"CommercetoolsGmbHDE775\"}',
           response: '{\"pspReference\":\"883589969904820D\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_ORDER_NUMBER\"}',
           createdAt: '2020-05-20T10:18:25.073Z'
-        },
+        }
       }
     ]
   }
