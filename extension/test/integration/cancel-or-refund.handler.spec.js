@@ -58,7 +58,7 @@ describe('::cancelOrRefund::', () => {
   })
 
   it('given a payment ' +
-    'when a transaction with type "Refund" with "Initial" state, ' +
+    'when a transaction with type "Refund" with "Initial" state exists, ' +
     'then it should modify "Initial" state to "Pending" of the "Refund" transaction', async () => {
     const addTransaction = [
       {
