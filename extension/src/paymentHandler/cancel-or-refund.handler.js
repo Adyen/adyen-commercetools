@@ -32,14 +32,16 @@ async function _cancelOrRefundPayment (paymentObject) {
   // This reference is returned in the response to your payment request, and in the AUTHORISATION notification."
   const cancelOrRefundRequestObj = { originalReference: authorizationTransaction.interactionId }
 
-  const interfaceInteraction = paymentObject.interfaceInteractions
-    .find(interaction => interaction.fields.type === CTP_INTERACTION_TYPE_MAKE_PAYMENT)
-  if (interfaceInteraction && !isEmpty(interfaceInteraction.fields.response)) {
+  const interfaceInteraction = pU.getLatestInterfaceInteraction(
+    paymentObject.interfaceInteractions, CTP_INTERACTION_TYPE_MAKE_PAYMENT
+  )
+  if (interfaceInteraction && pU.isValidJSON(interfaceInteraction.fields.response)) {
     // OPTIONAL:
     // Specifies a unique identifier for payment modification.
     // The reference field is useful to tag a partial cancel or refund for future reconciliation.
     const makePaymentResponse = JSON.parse(interfaceInteraction.fields.response)
-    cancelOrRefundRequestObj.reference = makePaymentResponse.merchantReference
+    if (makePaymentResponse.merchantReference)
+      cancelOrRefundRequestObj.reference = makePaymentResponse.merchantReference
   }
 
   return cancelOrRefund(cancelOrRefundRequestObj)
