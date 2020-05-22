@@ -157,6 +157,26 @@ function createAddTransactionActionByResponse (amount, currencyCode, response) {
   return null
 }
 
+function getLatestInterfaceInteraction (interfaceInteractions, type) {
+  return interfaceInteractions
+    .filter(interaction => interaction.fields.type === type)
+    .sort((i1, i2) => i1.fields.createdAt.localeCompare(i2.fields.createdAt))
+    .pop()
+}
+
+function isValidJSON (jsonString) {
+  if (typeof jsonString === 'undefined')
+    return true
+  try {
+    const o = JSON.parse(jsonString)
+    if (o && typeof o === 'object')
+      return true
+  } catch (e) {
+    // continue regardless of error
+  }
+  return false
+}
+
 module.exports = {
   getAuthorizationTransactionInitOrPending,
   getAuthorizationTransactionPending,
@@ -171,5 +191,7 @@ module.exports = {
   createSetCustomFieldAction,
   createChangeTransactionInteractionId,
   createAddTransactionAction,
-  createAddTransactionActionByResponse
+  createAddTransactionActionByResponse,
+  getLatestInterfaceInteraction,
+  isValidJSON
 }
