@@ -59,30 +59,6 @@ describe('cancel-or-refund.handler::execute::', () => {
     assertUpdateActions(response)
   })
 
-  function assertUpdateActions ({ actions }) {
-    expect(actions).to.have.lengthOf(3)
-
-    const addInterfaceInteraction = actions.find(a => a.action === 'addInterfaceInteraction')
-    expect(addInterfaceInteraction.fields.type).to.equal(CTP_INTERACTION_TYPE_CANCEL_OR_REFUND)
-    expect(addInterfaceInteraction.fields.request).to.be.a('string')
-    expect(addInterfaceInteraction.fields.response).to.equal(JSON.stringify(cancelOrRefundResponse))
-    expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
-
-    const changeTransactionState = actions.find(a => a.action === 'changeTransactionState')
-    expect(changeTransactionState).to.be.deep.equal({
-      action: 'changeTransactionState',
-      transactionId: 'transaction2',
-      state: 'Pending'
-    })
-
-    const changeTransactionInteractionId = actions.find(a => a.action === 'changeTransactionInteractionId')
-    expect(changeTransactionInteractionId).to.be.deep.equal({
-      action: 'changeTransactionInteractionId',
-      transactionId: 'transaction2',
-      interactionId: '853589969905798D'
-    })
-  }
-
   it('given a payment with a type "CancelAuthorization" transaction, '
     + 'when /cancelOrRefund" request to Adyen is issued successfully '
     + 'then it should return actions '
@@ -119,4 +95,28 @@ describe('cancel-or-refund.handler::execute::', () => {
     expect(actions[0].fields.response).to.equal(JSON.stringify(error))
     expect(actions[0].fields.createdAt).to.be.a('string')
   })
+
+  function assertUpdateActions ({ actions }) {
+    expect(actions).to.have.lengthOf(3)
+
+    const addInterfaceInteraction = actions.find(a => a.action === 'addInterfaceInteraction')
+    expect(addInterfaceInteraction.fields.type).to.equal(CTP_INTERACTION_TYPE_CANCEL_OR_REFUND)
+    expect(addInterfaceInteraction.fields.request).to.be.a('string')
+    expect(addInterfaceInteraction.fields.response).to.equal(JSON.stringify(cancelOrRefundResponse))
+    expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
+
+    const changeTransactionState = actions.find(a => a.action === 'changeTransactionState')
+    expect(changeTransactionState).to.be.deep.equal({
+      action: 'changeTransactionState',
+      transactionId: 'transaction2',
+      state: 'Pending'
+    })
+
+    const changeTransactionInteractionId = actions.find(a => a.action === 'changeTransactionInteractionId')
+    expect(changeTransactionInteractionId).to.be.deep.equal({
+      action: 'changeTransactionInteractionId',
+      transactionId: 'transaction2',
+      interactionId: '853589969905798D'
+    })
+  }
 })
