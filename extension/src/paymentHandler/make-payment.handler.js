@@ -1,9 +1,20 @@
-const { makePayment } = require('../web-component-service')
+const { makePayment } = require('../service/web-component-service')
+const { createLineItems } = require('../service/klarna-service')
 const pU = require('./payment-utils')
 const c = require('../config/constants')
+const ctpClientBuilder = require('../ctp/ctp-client')
 
 async function execute (paymentObject) {
   const makePaymentRequestObj = JSON.parse(paymentObject.custom.fields.makePaymentRequest)
+  if (_isKlarna(makePaymentRequestObj) && !makePaymentRequestObj.lineItems) {
+    const ctpClient = ctpClientBuilder.get()
+    const { body } = await ctpClient.fetch(ctpClient.builder.carts
+      .where(`paymentInfo(payments(id="${paymentObject.id}"))`)
+      .expand('shippingInfo.shippingMethod'))
+    if (body.results.length > 0)
+      makePaymentRequestObj.lineItems = createLineItems(paymentObject, body.results[0])
+  }
+
   const { request, response } = await makePayment(makePaymentRequestObj)
   const actions = [
     pU.createAddInterfaceInteractionAction({
@@ -24,6 +35,10 @@ async function execute (paymentObject) {
   return {
     actions
   }
+}
+
+function _isKlarna (makePaymentRequestObj) {
+  return c.PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(makePaymentRequestObj.paymentMethod.type)
 }
 
 module.exports = { execute }

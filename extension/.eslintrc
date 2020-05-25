@@ -21,6 +21,7 @@
       "WithStatement"
     ],
     "no-param-reassign": 0,
+    "no-plusplus": 0,
     "no-unused-expressions": "off",
     "template-curly-spacing" : "off",
     "indent": "off",

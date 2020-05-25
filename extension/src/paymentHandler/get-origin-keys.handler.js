@@ -1,6 +1,6 @@
 const pU = require('./payment-utils')
 const c = require('../config/constants')
-const { getOriginKeys } = require('../web-component-service')
+const { getOriginKeys } = require('../service/web-component-service')
 
 async function execute (paymentObject) {
   const getOriginKeysRequestObj = JSON.parse(paymentObject.custom.fields.getOriginKeysRequest)

@@ -22,5 +22,6 @@ module.exports = {
   CTP_CUSTOM_FIELD_MAKE_PAYMENT_RESPONSE: 'makePaymentResponse',
   CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS: 'submitAdditionalPaymentDetails',
   CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST: 'submitAdditionalPaymentDetailsRequest',
-  CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE: 'submitAdditionalPaymentDetailsResponse'
+  CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE: 'submitAdditionalPaymentDetailsResponse',
+  PAYMENT_METHOD_TYPE_KLARNA_METHODS: ['klarna', 'klarna_paynow', 'klarna_account']
 }
