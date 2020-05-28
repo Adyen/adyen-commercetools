@@ -1,0 +1,24 @@
+{
+  "value": {
+    "type": "relative",
+    "permyriad": 1000
+  },
+  "cartPredicate": "1 = 1",
+  "target": {
+    "type": "lineItems",
+    "predicate": "1 = 1"
+  },
+  "name": {
+    "de": "10% Off Non-Sale Items"
+  },
+  "description": {
+    "de": "10% Off Non-Sale Items"
+  },
+  "validFrom": "2016-12-26T00:00:00.000Z",
+  "validUntil": "2099-06-30T10:00:00.000Z",
+  "stackingMode": "Stacking",
+  "isActive": true,
+  "requiresDiscountCode": true,
+  "sortOrder": "0.01",
+  "key": "ctp-adyen-test-cart-discount"
+}

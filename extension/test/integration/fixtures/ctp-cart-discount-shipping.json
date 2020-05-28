@@ -1,0 +1,23 @@
+{
+  "value": {
+    "type": "relative",
+    "permyriad": 1000
+  },
+  "cartPredicate": "1 = 1",
+  "target": {
+    "type": "shipping"
+  },
+  "name": {
+    "de": "Free Shipping Discount"
+  },
+  "description": {
+    "de": "Free Shipping Discount"
+  },
+  "validFrom": "2016-12-26T00:00:00.000Z",
+  "validUntil": "2099-06-30T10:00:00.000Z",
+  "stackingMode": "Stacking",
+  "isActive": true,
+  "requiresDiscountCode": true,
+  "sortOrder": "0.2",
+  "key": "ctp-adyen-test-cart-discount-shipping"
+}

@@ -23,8 +23,15 @@ async function unpublish (ctpClient, product) {
   const actions = [{
     action: 'unpublish'
   }]
-  const res = await ctpClient.update(uri, product.id, product.version, actions)
-  return res.body
+  return ctpClient.update(uri, product.id, product.version, actions)
+}
+
+async function publish (ctpClient, product) {
+  const uri = ctpClient.builder.products
+  const actions = [{
+    action: 'publish'
+  }]
+  return ctpClient.update(uri, product.id, product.version, actions)
 }
 
 function deleteAllResources (ctpClient, endpoint, condition) {
@@ -35,8 +42,10 @@ function deleteAllResources (ctpClient, endpoint, condition) {
 
   return ctpClient.fetchBatches(requestBuilder,
     items => Promise.map(items, async (item) => {
-      if (endpoint === 'products' && item.masterData.published)
-        item = await unpublish(ctpClient, item)
+      if (endpoint === 'products' && item.masterData.published) {
+        const { body } = await unpublish(ctpClient, item)
+        item = body
+      }
 
       return deleteResource(ctpClient, endpoint, item)
     }, { concurrency: 10 }))
@@ -92,6 +101,6 @@ function createCreditCard3DSPaymentDraft ({
 module.exports = {
   createCreditCardPaymentDraft,
   createCreditCard3DSPaymentDraft,
-  unpublish,
+  publish,
   deleteAllResources
 }

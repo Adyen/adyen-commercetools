@@ -1,0 +1,9 @@
+{
+  "name": "Europa",
+  "key": "europa",
+  "locations": [
+    {
+      "country": "DE"
+    }
+  ]
+}

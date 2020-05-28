@@ -1,0 +1,21 @@
+{
+  "name": "adyen-test-product-type",
+  "description": "Test product type",
+  "attributes": [
+    {
+      "name": "test",
+      "label": {
+        "de-DE": "test"
+      },
+      "isRequired": false,
+      "type": {
+        "name": "text"
+      },
+      "attributeConstraint": "None",
+      "isSearchable": false,
+      "inputHint": "SingleLine",
+      "displayGroup": "Other"
+    }
+  ],
+  "key": "adyen-test-product-type"
+}
