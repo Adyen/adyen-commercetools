@@ -1,5 +1,6 @@
+const { ADYEN_PERCENTAGE_MINOR_UNIT } = require('../config/constants')
+
 const DEFAULT_PAYMENT_LANGUAGE = 'en'
-const MINOR_UNIT = 10000
 
 function createLineItems (payment, cart) {
   const lineItems = []
@@ -32,28 +33,22 @@ function _getLocales (cart, payment) {
 }
 
 function _createAdyenLineItemFromLineItem (ctpLineItem, locales) {
-  const amountExcludingTax = ctpLineItem.taxedPrice.totalNet.centAmount / ctpLineItem.quantity
   return {
     id: ctpLineItem.variant.sku,
     quantity: ctpLineItem.quantity,
     description: _localizeOrFallback(ctpLineItem.name, locales, 'item'),
-    amountExcludingTax,
     amountIncludingTax: ctpLineItem.price.value.centAmount,
-    taxAmount: ctpLineItem.price.value.centAmount - amountExcludingTax,
-    taxPercentage: ctpLineItem.taxRate.amount * MINOR_UNIT
+    taxPercentage: ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT
   }
 }
 
 function _createAdyenLineItemFromCustomLineItem (ctpLineItem, locales) {
-  const amountExcludingTax = ctpLineItem.taxedPrice.totalNet.centAmount / ctpLineItem.quantity
   return {
     id: ctpLineItem.id,
     quantity: ctpLineItem.quantity,
     description: _localizeOrFallback(ctpLineItem.name, locales, 'item'),
-    amountExcludingTax,
     amountIncludingTax: ctpLineItem.money.centAmount,
-    taxAmount: ctpLineItem.money.centAmount - amountExcludingTax,
-    taxPercentage: ctpLineItem.taxRate.amount * MINOR_UNIT
+    taxPercentage: ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT
   }
 }
 
@@ -62,10 +57,8 @@ function _createShippingInfoAdyenLineItem (shippingInfo) {
     id: `${shippingInfo.shippingMethodName}`,
     quantity: 1,
     description: _getShippingMethodDescription(shippingInfo),
-    amountExcludingTax: shippingInfo.taxedPrice.totalNet.centAmount,
-    amountIncludingTax: shippingInfo.taxedPrice.totalGross.centAmount,
-    taxAmount: shippingInfo.taxedPrice.totalGross.centAmount - shippingInfo.taxedPrice.totalNet.centAmount,
-    taxPercentage: shippingInfo.taxRate.amount * MINOR_UNIT
+    amountIncludingTax: shippingInfo.price.centAmount,
+    taxPercentage: shippingInfo.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT
   }
 }
 
