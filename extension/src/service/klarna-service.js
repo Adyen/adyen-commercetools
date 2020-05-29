@@ -1,6 +1,8 @@
-const { ADYEN_PERCENTAGE_MINOR_UNIT } = require('../config/constants')
-
-const DEFAULT_PAYMENT_LANGUAGE = 'en'
+const {
+  ADYEN_PERCENTAGE_MINOR_UNIT,
+  DEFAULT_PAYMENT_LANGUAGE,
+  KLARNA_DEFAULT_LINE_ITEM_NAME
+} = require('../config/klarna-constants')
 
 function createLineItems (payment, cart) {
   const lineItems = []
@@ -36,7 +38,7 @@ function _createAdyenLineItemFromLineItem (ctpLineItem, locales) {
   return {
     id: ctpLineItem.variant.sku,
     quantity: ctpLineItem.quantity,
-    description: _localizeOrFallback(ctpLineItem.name, locales, 'item'),
+    description: _localizeOrFallback(ctpLineItem.name, locales, KLARNA_DEFAULT_LINE_ITEM_NAME),
     amountIncludingTax: ctpLineItem.price.value.centAmount,
     taxPercentage: ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT
   }
@@ -46,7 +48,7 @@ function _createAdyenLineItemFromCustomLineItem (ctpLineItem, locales) {
   return {
     id: ctpLineItem.id,
     quantity: ctpLineItem.quantity,
-    description: _localizeOrFallback(ctpLineItem.name, locales, 'item'),
+    description: _localizeOrFallback(ctpLineItem.name, locales, KLARNA_DEFAULT_LINE_ITEM_NAME),
     amountIncludingTax: ctpLineItem.money.centAmount,
     taxPercentage: ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT
   }
@@ -66,7 +68,7 @@ function _getShippingMethodDescription (shippingInfo) {
   const shippingMethod = shippingInfo.shippingMethod.obj
   if (shippingMethod)
     return shippingMethod.description
-  return `Shipping ${shippingInfo.shippingMethodName}`
+  return shippingInfo.shippingMethodName
 }
 
 function _localizeOrFallback (localizedString,

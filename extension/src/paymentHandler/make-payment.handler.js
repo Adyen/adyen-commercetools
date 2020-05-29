@@ -2,6 +2,7 @@ const { makePayment } = require('../service/web-component-service')
 const { createLineItems } = require('../service/klarna-service')
 const pU = require('./payment-utils')
 const c = require('../config/constants')
+const { PAYMENT_METHOD_TYPE_KLARNA_METHODS } = require('../config/klarna-constants')
 const ctpClientBuilder = require('../ctp/ctp-client')
 
 async function execute (paymentObject) {
@@ -43,7 +44,7 @@ async function _fetchMatchingCart (paymentObject) {
 }
 
 function _isKlarna (makePaymentRequestObj) {
-  return c.PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(makePaymentRequestObj.paymentMethod.type)
+  return PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(makePaymentRequestObj.paymentMethod.type)
 }
 
 module.exports = { execute }

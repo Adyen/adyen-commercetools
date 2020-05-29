@@ -10,7 +10,7 @@ const paymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redir
 const paymentValidationFailedResponse = require('./fixtures/adyen-make-payment-validation-failed-response')
 const ctpPayment = require('../fixtures/ctp-payment')
 const ctpCart = require('./fixtures/ctp-cart')
-const c = require('../../src/config/constants')
+const { ADYEN_PERCENTAGE_MINOR_UNIT } = require('../../src/config/klarna-constants')
 
 describe('make-payment::execute', () => {
   const config = configLoader.load()
@@ -267,13 +267,13 @@ describe('make-payment::execute', () => {
       const ctpLineItem = ctpCart.lineItems[0]
       const adyenLineItem = makePaymentRequestInteraction.lineItems.find(item => item.id === 'test-product-sku-1')
       expect(ctpLineItem.price.value.centAmount).to.equal(adyenLineItem.amountIncludingTax)
-      expect(ctpLineItem.taxRate.amount * c.ADYEN_PERCENTAGE_MINOR_UNIT).to.equal(adyenLineItem.taxPercentage)
+      expect(ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT).to.equal(adyenLineItem.taxPercentage)
 
       const ctpShippingInfo = ctpCart.shippingInfo
       const adyenShippingInfo = makePaymentRequestInteraction.lineItems
         .find(item => item.id === ctpShippingInfo.shippingMethodName)
       expect(ctpShippingInfo.price.centAmount).to.equal(adyenShippingInfo.amountIncludingTax)
-      expect(ctpShippingInfo.taxRate.amount * c.ADYEN_PERCENTAGE_MINOR_UNIT)
+      expect(ctpShippingInfo.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT)
         .to.equal(adyenShippingInfo.taxPercentage)
     })
 
