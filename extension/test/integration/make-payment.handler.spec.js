@@ -7,7 +7,7 @@ const c = require('../../src/config/constants')
 describe('::makePayment::', () => {
   let ctpClient
 
-  before(async () => {
+  beforeEach(async () => {
     ctpClient = ctpClientBuilder.get()
     await iTSetUp.initServerAndExtension(ctpClient)
   })
