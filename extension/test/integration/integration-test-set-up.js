@@ -48,7 +48,6 @@ async function _cleanupCtpResources (ctpClient) {
 }
 
 async function _ensureCtpResources (ctpClient) {
-  await ensureResources(ctpClient)
   const { body: { id: zoneId } } = await _ensureZones(ctpClient)
   const { body: { id: taxCategoryId } } = await _ensureTaxCategories(ctpClient)
   const { body: { id: productTypeId } } = await _ensureProductTypes(ctpClient)
@@ -185,14 +184,14 @@ async function _createCart (ctpClient, productId, paymentId, shippingMethodId, d
 }
 
 async function initPaymentWithCart (ctpClient) {
-  await _cleanupCtpResources(ctpClient)
   const payment = await _ensureCtpResources(ctpClient)
   return payment
 }
 
-async function cleanupResources () {
+async function cleanupResources (ctpClient) {
   server.close()
   await ngrok.kill()
+  await _cleanupCtpResources(ctpClient)
 }
 
 module.exports = {
