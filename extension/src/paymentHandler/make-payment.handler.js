@@ -7,12 +7,9 @@ const ctpClientBuilder = require('../ctp/ctp-client')
 async function execute (paymentObject) {
   const makePaymentRequestObj = JSON.parse(paymentObject.custom.fields.makePaymentRequest)
   if (_isKlarna(makePaymentRequestObj) && !makePaymentRequestObj.lineItems) {
-    const ctpClient = ctpClientBuilder.get()
-    const { body } = await ctpClient.fetch(ctpClient.builder.carts
-      .where(`paymentInfo(payments(id="${paymentObject.id}"))`)
-      .expand('shippingInfo.shippingMethod'))
-    if (body.results.length > 0)
-      makePaymentRequestObj.lineItems = createLineItems(paymentObject, body.results[0])
+    const ctpCart = await _fetchMatchingCart(paymentObject)
+    if (ctpCart)
+      makePaymentRequestObj.lineItems = createLineItems(paymentObject, ctpCart)
   }
 
   const { request, response } = await makePayment(makePaymentRequestObj)
@@ -35,6 +32,14 @@ async function execute (paymentObject) {
   return {
     actions
   }
+}
+
+async function _fetchMatchingCart (paymentObject) {
+  const ctpClient = ctpClientBuilder.get()
+  const { body } = await ctpClient.fetch(ctpClient.builder.carts
+    .where(`paymentInfo(payments(id="${paymentObject.id}"))`)
+    .expand('shippingInfo.shippingMethod'))
+  return body.results[0]
 }
 
 function _isKlarna (makePaymentRequestObj) {
