@@ -13,7 +13,7 @@ describe('::getOriginKeys::', () => {
   })
 
   afterEach(async () => {
-    await iTSetUp.cleanupResources()
+    await iTSetUp.cleanupResources(ctpClient)
   })
 
   it('given a payment ' +
