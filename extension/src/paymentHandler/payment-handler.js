@@ -3,6 +3,7 @@ const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const getOriginKeysHandler = require('./get-origin-keys.handler')
 const makePaymentHandler = require('./make-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
+const cancelOrRefundHandler = require('./cancel-or-refund.handler')
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 
 
@@ -19,6 +20,12 @@ async function handlePayment (paymentObject) {
       success: false,
       data: paymentValidator.buildCtpErrorResponse()
     }
+
+  const isCancelOrRefund = paymentValidator.isCancelOrRefund()
+  if (isCancelOrRefund) {
+    const cancelOrRefundResponse = await cancelOrRefundHandler.execute(paymentObject)
+    return { success: true, data: cancelOrRefundResponse }
+  }
 
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(

@@ -1,51 +1,65 @@
-const fetch = require('node-fetch')
-const configLoader = require('../config/config')
-const pU = require('../paymentHandler/payment-utils')
-const c = require('../config/constants')
+const { isEmpty } = require('lodash')
+const pU = require('./payment-utils')
+const { cancelOrRefund } = require('../web-component-service')
 
-const config = configLoader.load()
+const {
+  CTP_INTERACTION_TYPE_MAKE_PAYMENT,
+  CTP_INTERACTION_TYPE_CANCEL_OR_REFUND,
+  CTP_TXN_STATE_PENDING,
+} = require('../config/constants')
 
-async function handlePayment (paymentObject) {
+async function execute (paymentObject) {
   const { request, response } = await _cancelOrRefundPayment(paymentObject)
-  const status = response.status === 200 ? c.SUCCESS : c.FAILURE
-  const responseBody = await response.json()
+
+  const addInterfaceInteractionAction = pU.createAddInterfaceInteractionAction({
+      request, response, type: CTP_INTERACTION_TYPE_CANCEL_OR_REFUND
+  })
+
+  if (isEmpty(response.pspReference))
+    return { actions: [ addInterfaceInteractionAction ] }
+
   const actions = [
-    pU.ensureAddInterfaceInteractionAction({
-      paymentObject, request, response: responseBody, type: c.CTP_INTERACTION_TYPE_CANCEL_REFUND, status
-    })
+    addInterfaceInteractionAction,
+    ...getTransactionActions(paymentObject, response.pspReference)
   ]
-  if (status === c.SUCCESS) {
-    const cancelTransaction = pU.getCancelAuthorizationTransactionInit(paymentObject)
-    const refundTransaction = pU.getRefundTransactionInit(paymentObject)
-    if (cancelTransaction)
-      actions.push(
-        pU.createChangeTransactionStateAction(cancelTransaction.id, c.CTP_TXN_STATE_PENDING)
-      )
-    else if (refundTransaction)
-      actions.push(
-        pU.createChangeTransactionStateAction(refundTransaction.id, c.CTP_TXN_STATE_PENDING)
-      )
-  }
+
   return { actions }
 }
 
 async function _cancelOrRefundPayment (paymentObject) {
-  const transaction = pU.getAuthorizationTransactionSuccess(paymentObject)
+  const authorizationTransaction = pU.getAuthorizationTransactionSuccess(paymentObject)
   // "originalReference: The original pspReference of the payment that you want to cancel or refund.
   // This reference is returned in the response to your payment request, and in the AUTHORISATION notification."
-  const body = {
-    merchantAccount: config.adyen.merchantAccount,
-    originalReference: transaction.interactionId,
-    reference: paymentObject.custom.fields.merchantReference
+  const cancelOrRefundRequestObj = { originalReference: authorizationTransaction.interactionId }
+
+  const interfaceInteraction = pU.getLatestInterfaceInteraction(
+    paymentObject.interfaceInteractions, CTP_INTERACTION_TYPE_MAKE_PAYMENT
+  )
+  if (interfaceInteraction && pU.isValidJSON(interfaceInteraction.fields.response)) {
+    // OPTIONAL:
+    // Specifies a unique identifier for payment modification.
+    // The reference field is useful to tag a partial cancel or refund for future reconciliation.
+    const makePaymentResponse = JSON.parse(interfaceInteraction.fields.response)
+    if (makePaymentResponse.merchantReference)
+      cancelOrRefundRequestObj.reference = makePaymentResponse.merchantReference
   }
 
-  const request = {
-    method: 'POST',
-    body: JSON.stringify(body),
-    headers: { 'x-api-key': config.adyen.apiKey, 'Content-Type': 'application/json' }
-  }
-  const response = await fetch(`${config.adyen.legacyApiBaseUrl}/cancelOrRefund`, request)
-  return { response, request }
+  return cancelOrRefund(cancelOrRefundRequestObj)
 }
 
-module.exports = { handlePayment }
+function getTransactionActions (paymentObject, pspReference) {
+  const cancelTransaction = pU.getCancelAuthorizationTransactionInit(paymentObject)
+  const refundTransaction = pU.getRefundTransactionInit(paymentObject)
+  let transactionId
+  if (cancelTransaction)
+    transactionId = cancelTransaction.id
+  else if (refundTransaction)
+    transactionId = refundTransaction.id
+
+  return [
+    pU.createChangeTransactionStateAction(transactionId, CTP_TXN_STATE_PENDING),
+    pU.createChangeTransactionInteractionId(transactionId, pspReference)
+  ]
+}
+
+module.exports = { execute }

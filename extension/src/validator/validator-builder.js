@@ -10,22 +10,21 @@ function withPayment (paymentObject) {
     validateRequestFields () {
       if (!paymentObject.custom)
         return this
-      if (!isValidJSON(paymentObject.custom.fields.getOriginKeysRequest))
+      if (!pU.isValidJSON(paymentObject.custom.fields.getOriginKeysRequest))
         errors.getOriginKeysRequest = errorMessages.GET_ORIGIN_KEYS_REQUEST_INVALID_JSON
-      if (!isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
+      if (!pU.isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
         errors.getPaymentMethodsRequest = errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
-      if (!isValidJSON(paymentObject.custom.fields.makePaymentRequest))
+      if (!pU.isValidJSON(paymentObject.custom.fields.makePaymentRequest))
         errors.makePaymentRequest = errorMessages.MAKE_PAYMENT_REQUEST_INVALID_JSON
-      if (!isValidJSON(paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest))
+      if (!pU.isValidJSON(paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest))
         errors.submitAdditionalPaymentDetailsRequest
           = errorMessages.SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
       return this
     },
     validateAmountPlanned () {
-      const oldMakePaymentRequestObj = paymentObject.interfaceInteractions
-        .filter(interaction => interaction.fields.type === c.CTP_INTERACTION_TYPE_MAKE_PAYMENT)
-        .sort((i1, i2) => i1.fields.createdAt.localeCompare(i2.fields.createdAt))
-        .pop()
+      const oldMakePaymentRequestObj = pU.getLatestInterfaceInteraction(
+        paymentObject.interfaceInteractions, c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+      )
 
       if (oldMakePaymentRequestObj) {
         const { amount } = JSON.parse(oldMakePaymentRequestObj.fields.request)
@@ -143,19 +142,6 @@ function withPayment (paymentObject) {
       return { errors: errorArray }
     }
   }
-}
-
-function isValidJSON (requestString) {
-  if (typeof requestString === 'undefined')
-    return true
-  try {
-    const o = JSON.parse(requestString)
-    if (o && typeof o === 'object')
-      return true
-  } catch (e) {
-    // continue regardless of error
-  }
-  return false
 }
 
 module.exports = { withPayment }
