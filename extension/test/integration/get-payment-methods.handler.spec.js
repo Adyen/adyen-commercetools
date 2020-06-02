@@ -9,7 +9,7 @@ describe('::getPaymentMethods::', () => {
 
   before(async () => {
     ctpClient = ctpClientBuilder.get()
-    await iTSetUp.initServerAndExtension(ctpClient)
+    await iTSetUp.initServerAndExtension({ ctpClient })
   })
 
   after(async () => {
