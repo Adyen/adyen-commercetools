@@ -60,7 +60,6 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.19.0",
     "mocha": "^7.1.0",
-    "mocha-param": "^2.0.1",
     "ngrok": "^3.2.7",
     "nock": "^12.0.3",
     "node-static": "^0.7.11",
