@@ -47,7 +47,7 @@ describe('Lambda handler', () => {
 
     expect(result.responseType).equals('UpdateRequest')
     expect(result.errors).equals(undefined)
-    expect(result.actions).to.equal(undefined)
+    expect(result.actions).to.be.empty
   })
 
   it('logs and throws unhandled exceptions', async () => {
