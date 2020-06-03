@@ -9,8 +9,10 @@ exports.handler = async function (event) {
 
     return {
       responseType: paymentResult.success ? 'UpdateRequest' : 'FailedValidation',
-      errors: paymentResult.data.errors,
-      actions: paymentResult.data.actions
+      // Null check around paymentResult.data,
+      // which can be null if paymentHandler short circuits when not an adyen payment
+      errors: paymentResult.data ? paymentResult.data.errors : undefined,
+      actions: paymentResult.data ? paymentResult.data.actions : undefined
     }
   } catch (e) {
     logger.error(e, `Unexpected error when processing event ${JSON.stringify(event)}`)

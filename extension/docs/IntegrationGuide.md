@@ -34,8 +34,8 @@ Other used terms in the documentation:
 ## Requirements for CTP project
 All the requirements below are automatically created by the Extension module.
 1. [API Extension subscription to Extension module endpoints](../resources/api-extension.json)
-1. [Custom types for payments](../resources/payment-custom-types.json)
-1. [Custom types for interface interactions](../resources/payment-interface-interaction-types.json)
+1. [Custom types for payments](../resources/payment-custom-type.json)
+1. [Custom types for interface interactions](../resources/payment-interface-interaction-type.json)
 
 **Note**: Extension module will not create if there are already resources with same key in the CTP project. In this case, you have to synchronize by yourself.
 
