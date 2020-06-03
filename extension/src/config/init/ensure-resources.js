@@ -14,7 +14,7 @@ function ensureCustomTypes () {
 }
 
 function ensureResources () {
-  let config = configLoader.load()
+  const config = configLoader.load()
   if (!config.ensureResources) return Promise.resolve()
   return Promise.all([
     ensureCustomTypes(),

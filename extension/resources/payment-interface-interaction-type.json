@@ -1,0 +1,77 @@
+{
+  "key": "ctp-adyen-integration-interaction",
+  "name": {
+    "en": "ctp-adyen-integration-interaction"
+  },
+  "resourceTypeIds": [
+    "payment-interface-interaction"
+  ],
+  "fieldDefinitions": [
+    {
+      "name": "createdAt",
+      "label": {
+        "en": "createdAt"
+      },
+      "required": true,
+      "type": {
+        "name": "DateTime"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "transactionId",
+      "label": {
+        "en": "transactionId"
+      },
+      "required": false,
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "request",
+      "label": {
+        "en": "request"
+      },
+      "required": true,
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine"
+    },
+    {
+      "name": "response",
+      "label": {
+        "en": "response"
+      },
+      "required": true,
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine"
+    },
+    {
+      "name": "type",
+      "label": {
+        "en": "type"
+      },
+      "required": true,
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "status",
+      "label": {
+        "en": "status"
+      },
+      "required": false,
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine"
+    }
+  ]
+}
