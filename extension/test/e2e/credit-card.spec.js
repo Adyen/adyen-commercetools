@@ -11,6 +11,8 @@ const c = require('../../src/config/constants')
 describe('credit-card-payment', () => {
   let browser
   let ctpClient
+
+  // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
     { name: 'American Express', creditCardNumber: '3700 0000 0000 002', creditCardCvc: '7373' },
     { name: 'Cartes Bancaires', creditCardNumber: '4035 5010 0000 0008' },
@@ -107,7 +109,14 @@ describe('credit-card-payment', () => {
         `resultCode is not Authorised: ${makePaymentResponseString}`)
       expect(makePaymentResponse.pspReference).to.match(/[A-Z0-9]+/,
         `pspReference does not match '/[A-Z0-9]+/': ${ makePaymentResponseString}`)
-      // todo: check that a transaction is created
+
+      expect(updatedPayment.transactions).to.have.lengthOf(1)
+      const transaction = updatedPayment.transactions[0]
+      expect(transaction.state).to.equal(c.CTP_TXN_STATE_SUCCESS)
+      expect(transaction.type).to.equal('Authorization')
+      expect(transaction.interactionId).to.equal(makePaymentResponse.pspReference)
+      expect(transaction.amount.centAmount).to.equal(updatedPayment.amountPlanned.centAmount)
+      expect(transaction.amount.currencyCode).to.equal(updatedPayment.amountPlanned.currencyCode)
     })
 
   async function executeInAdyenIframe (page, selector, executeFn) {
