@@ -2,6 +2,8 @@ const ValidatorBuilder = require('../validator/validator-builder')
 const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const getOriginKeysHandler = require('./get-origin-keys.handler')
 const makePaymentHandler = require('./make-payment.handler')
+const klarnaMakePaymentHandler = require('./klarna-make-payment.handler')
+const { PAYMENT_METHOD_TYPE_KLARNA_METHODS } = require('../config/klarna-constants')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const cancelOrRefundHandler = require('./cancel-or-refund.handler')
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
@@ -47,8 +49,13 @@ function _getPaymentHandlers (paymentObject) {
     handlers.push(getOriginKeysHandler)
   if (paymentObject.custom.fields.getPaymentMethodsRequest && !paymentObject.custom.fields.getPaymentMethodsResponse)
     handlers.push(getPaymentMethodsHandler)
-  if (paymentObject.custom.fields.makePaymentRequest && !paymentObject.custom.fields.makePaymentResponse)
-    handlers.push(makePaymentHandler)
+  if (paymentObject.custom.fields.makePaymentRequest && !paymentObject.custom.fields.makePaymentResponse) {
+    const makePaymentRequestObj = JSON.parse(paymentObject.custom.fields.makePaymentRequest)
+    if (_isKlarna(makePaymentRequestObj) && !makePaymentRequestObj.lineItems)
+      handlers.push(klarnaMakePaymentHandler)
+    else
+      handlers.push(makePaymentHandler)
+  }
   if (paymentObject.custom.fields.makePaymentResponse
     && paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
     && !paymentObject.custom.fields.submitAdditionalPaymentDetailsResponse)
@@ -58,6 +65,10 @@ function _getPaymentHandlers (paymentObject) {
 
 function _isAdyenPayment (paymentObject) {
   return paymentObject.paymentMethodInfo.paymentInterface === CTP_ADYEN_INTEGRATION
+}
+
+function _isKlarna (makePaymentRequestObj) {
+  return PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(makePaymentRequestObj.paymentMethod.type)
 }
 
 module.exports = { handlePayment }

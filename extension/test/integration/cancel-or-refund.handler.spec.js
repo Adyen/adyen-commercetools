@@ -54,7 +54,7 @@ describe('::cancelOrRefund::', () => {
   })
 
   afterEach(async () => {
-    await iTSetUp.cleanupResources()
+    await iTSetUp.cleanupResources(ctpClient)
   })
 
   it('given a payment ' +
