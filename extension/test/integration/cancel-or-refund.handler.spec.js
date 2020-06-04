@@ -54,7 +54,7 @@ describe('::cancelOrRefund::', () => {
   })
 
   afterEach(async () => {
-    await iTSetUp.cleanupResources(ctpClient)
+    await iTSetUp.stopRunningServers()
   })
 
   it('given a payment ' +

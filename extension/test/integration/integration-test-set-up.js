@@ -21,7 +21,9 @@ const testUtils = require('../test-utils')
 async function initServerAndExtension (ctpClient, testServerPort = 8000) {
   const ngrokUrl = await ngrok.connect(testServerPort)
   process.env.API_EXTENSION_BASE_URL = ngrokUrl
-  await _cleanupCtpResources(ctpClient)
+  await testUtils.deleteAllResources(ctpClient, 'payments')
+  await testUtils.deleteAllResources(ctpClient, 'types')
+  await testUtils.deleteAllResources(ctpClient, 'extensions')
   return new Promise(((resolve) => {
     server.listen(testServerPort, async () => {
       await ensureResources(ctpClient)
@@ -32,7 +34,7 @@ async function initServerAndExtension (ctpClient, testServerPort = 8000) {
   }))
 }
 
-async function _cleanupCtpResources (ctpClient) {
+async function cleanupCtpResources (ctpClient) {
   await testUtils.deleteAllResources(ctpClient, 'carts')
   await testUtils.deleteAllResources(ctpClient, 'payments')
   await testUtils.deleteAllResources(ctpClient, 'products')
@@ -188,12 +190,11 @@ async function initPaymentWithCart (ctpClient) {
   return payment
 }
 
-async function cleanupResources (ctpClient) {
+async function stopRunningServers () {
   server.close()
   await ngrok.kill()
-  await _cleanupCtpResources(ctpClient)
 }
 
 module.exports = {
-  initServerAndExtension, cleanupResources, initPaymentWithCart
+  initServerAndExtension, stopRunningServers, initPaymentWithCart, cleanupCtpResources
 }
