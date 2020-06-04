@@ -66,7 +66,7 @@
     "@commercetools/api-request-builder": "^5.6.1",
     "@commercetools/sdk-client": "^2.1.2",
     "@commercetools/sdk-middleware-auth": "^6.1.4",
-    "@commercetools/sdk-middleware-http": "^6.0.6",
+    "@commercetools/sdk-middleware-http": "^6.0.7",
     "@commercetools/sdk-middleware-queue": "^2.1.4",
     "@commercetools/sync-actions": "^4.7.2",
     "bluebird": "^3.7.2",
