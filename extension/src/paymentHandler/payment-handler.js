@@ -51,7 +51,7 @@ function _getPaymentHandlers (paymentObject) {
     handlers.push(getPaymentMethodsHandler)
   if (paymentObject.custom.fields.makePaymentRequest && !paymentObject.custom.fields.makePaymentResponse) {
     const makePaymentRequestObj = JSON.parse(paymentObject.custom.fields.makePaymentRequest)
-    if (_isKlarna(makePaymentRequestObj) && !makePaymentRequestObj.lineItems)
+    if (_isKlarna(makePaymentRequestObj))
       handlers.push(klarnaMakePaymentHandler)
     else
       handlers.push(makePaymentHandler)

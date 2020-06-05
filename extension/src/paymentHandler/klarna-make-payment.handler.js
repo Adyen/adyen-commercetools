@@ -3,10 +3,13 @@ const ctpClientBuilder = require('../ctp/ctp-client')
 const makePaymentHandler = require('./make-payment.handler')
 
 async function execute (paymentObject) {
-  const ctpCart = await _fetchMatchingCart(paymentObject)
-  if (ctpCart) {
-    const makePaymentRequestObj = JSON.parse(paymentObject.custom.fields.makePaymentRequest)
-    makePaymentRequestObj.lineItems = createLineItems(paymentObject, ctpCart)
+  const makePaymentRequestObj = JSON.parse(paymentObject.custom.fields.makePaymentRequest)
+  if (!makePaymentRequestObj.lineItems) {
+    const ctpCart = await _fetchMatchingCart(paymentObject)
+    if (ctpCart) {
+      makePaymentRequestObj.lineItems = createLineItems(paymentObject, ctpCart)
+      paymentObject.custom.fields.makePaymentRequest = JSON.stringify(makePaymentRequestObj)
+    }
   }
 
   return makePaymentHandler.execute(paymentObject)

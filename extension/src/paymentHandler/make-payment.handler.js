@@ -1,18 +1,9 @@
 const { makePayment } = require('../service/web-component-service')
-const { createLineItems } = require('../service/klarna-service')
 const pU = require('./payment-utils')
 const c = require('../config/constants')
-const { PAYMENT_METHOD_TYPE_KLARNA_METHODS } = require('../config/klarna-constants')
-const ctpClientBuilder = require('../ctp/ctp-client')
 
 async function execute (paymentObject) {
   const makePaymentRequestObj = JSON.parse(paymentObject.custom.fields.makePaymentRequest)
-  if (_isKlarna(makePaymentRequestObj) && !makePaymentRequestObj.lineItems) {
-    const ctpCart = await _fetchMatchingCart(paymentObject)
-    if (ctpCart)
-      makePaymentRequestObj.lineItems = createLineItems(paymentObject, ctpCart)
-  }
-
   const { request, response } = await makePayment(makePaymentRequestObj)
   const actions = [
     pU.createAddInterfaceInteractionAction({
@@ -33,18 +24,6 @@ async function execute (paymentObject) {
   return {
     actions
   }
-}
-
-async function _fetchMatchingCart (paymentObject) {
-  const ctpClient = ctpClientBuilder.get()
-  const { body } = await ctpClient.fetch(ctpClient.builder.carts
-    .where(`paymentInfo(payments(id="${paymentObject.id}"))`)
-    .expand('shippingInfo.shippingMethod'))
-  return body.results[0]
-}
-
-function _isKlarna (makePaymentRequestObj) {
-  return PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(makePaymentRequestObj.paymentMethod.type)
 }
 
 module.exports = { execute }
