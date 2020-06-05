@@ -72,8 +72,8 @@ function _getShippingMethodDescription (shippingInfo) {
 function _localizeOrFallback (localizedString,
                               locales,
                               fallback) {
-  const value = locales.find(l => localizedString[l])
-  return value || fallback
+  const locale = locales.find(l => localizedString[l])
+  return locale ? localizedString[locale] : fallback
 }
 
 module.exports = { createLineItems }
