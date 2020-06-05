@@ -31,14 +31,18 @@ function createLineItems (payment, cart) {
   const locales = _getLocales(cart, payment)
 
   cart.lineItems.forEach((item) => {
-    lineItems.push(_createAdyenLineItemFromLineItem(item, locales))
+    if (item.taxRate)
+      lineItems.push(_createAdyenLineItemFromLineItem(item, locales))
   })
 
   cart.customLineItems.forEach((item) => {
-    lineItems.push(_createAdyenLineItemFromCustomLineItem(item, locales))
+    if (item.taxRate)
+      lineItems.push(_createAdyenLineItemFromCustomLineItem(item, locales))
   })
 
-  lineItems.push(_createShippingInfoAdyenLineItem(cart.shippingInfo))
+  const { shippingInfo } = cart
+  if (shippingInfo && shippingInfo.taxRate)
+    lineItems.push(_createShippingInfoAdyenLineItem(shippingInfo))
 
   return lineItems
 }
