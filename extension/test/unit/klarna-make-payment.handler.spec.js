@@ -9,6 +9,8 @@ const ctpCart = require('./fixtures/ctp-cart')
 
 describe('klarna-make-payment::execute', () => {
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
+  const DEFAULT_PAYMENT_LANGUAGE = 'en'
+  const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
   const config = configLoader.load()
   let scope
 
@@ -17,22 +19,13 @@ describe('klarna-make-payment::execute', () => {
     scope = nock(`${config.adyen.apiBaseUrl}`)
   })
 
+  afterEach(() => {
+    nock.cleanAll()
+  })
+
   it('when request does not contain lineItems, ' +
     'then it should add lineItems correctly', async () => {
-    const ctpApiScope = nock(`${config.ctp.apiUrl}`)
-    const ctpAuthScope = nock(`${config.ctp.authUrl}`)
-    ctpAuthScope.post('/oauth/token')
-      .reply(200, {
-        access_token: 'xxx',
-        token_type: 'Bearer',
-        expires_in: 172800,
-        scope: 'manage_project:xxx'
-      })
-    ctpApiScope
-      .get('/adyen-integration-test/carts')
-      .query(true)
-      .reply(200, { results: [ctpCart] })
-
+    _mockCtpCartsEndpoint()
     scope.post('/payments')
       .reply(200, paymentSuccessResponse)
 
@@ -65,19 +58,7 @@ describe('klarna-make-payment::execute', () => {
 
   it('when request does contain lineItems, ' +
     'then it should not add lineItems', async () => {
-    const ctpApiScope = nock(`${config.ctp.apiUrl}`)
-    const ctpAuthScope = nock(`${config.ctp.authUrl}`)
-    ctpAuthScope.post('/oauth/token')
-      .reply(200, {
-        access_token: 'xxx',
-        token_type: 'Bearer',
-        expires_in: 172800,
-        scope: 'manage_project:xxx'
-      })
-    ctpApiScope
-      .get('/adyen-integration-test/carts')
-      .query(true)
-      .reply(200, { results: [ctpCart] })
+    _mockCtpCartsEndpoint()
 
     scope.post('/payments')
       .reply(200, paymentSuccessResponse)
@@ -99,4 +80,167 @@ describe('klarna-make-payment::execute', () => {
     )
     expect(makePaymentRequestInteraction.lineItems).to.deep.equal(klarnaMakePaymentRequest.lineItems)
   })
+
+  it('when locale is not existing, ' +
+    'it should fall back to default line item name', async () => {
+    _mockCtpCartsEndpoint()
+    scope.post('/payments')
+      .reply(200, paymentSuccessResponse)
+
+    const ctpPaymentToTest = {
+      amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
+      custom: {
+        fields: {
+          languageCode: 'nonExistingLanguageCode',
+          makePaymentRequest: '{}'
+        }
+      }
+    }
+    const response = await execute(ctpPaymentToTest)
+    const { lineItems } = JSON.parse(
+      response.actions
+        .find(a => a.action === 'addInterfaceInteraction')
+        .fields.request
+    )
+    expect(lineItems).to.have.lengthOf(3)
+    expect(lineItems[0].description).to.equal(KLARNA_DEFAULT_LINE_ITEM_NAME)
+    expect(lineItems[1].description).to.equal(ctpCart.customLineItems[0].name[DEFAULT_PAYMENT_LANGUAGE])
+    expect(lineItems[2].description).to.equal(ctpCart.shippingInfo.shippingMethod.obj.description)
+  })
+
+  it('when shipping info is not expanded, ' +
+    'it should return default shipping name', async () => {
+    const clonedCtpCart = _.cloneDeep(ctpCart)
+    delete clonedCtpCart.shippingInfo.shippingMethod.obj
+    _mockCtpCartsEndpoint(clonedCtpCart)
+    scope.post('/payments')
+      .reply(200, paymentSuccessResponse)
+
+    const ctpPaymentToTest = {
+      amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
+      custom: {
+        fields: {
+          languageCode: 'nonExistingLanguageCode',
+          makePaymentRequest: '{}'
+        }
+      }
+    }
+
+    const response = await execute(ctpPaymentToTest)
+    const { lineItems } = JSON.parse(
+      response.actions
+        .find(a => a.action === 'addInterfaceInteraction')
+        .fields.request
+    )
+    expect(lineItems[2].description).to.equal(ctpCart.shippingInfo.shippingMethodName)
+  })
+
+  it('when payment has languageCode, ' +
+    'it should take precedence', async () => {
+    const clonedCtpCart = _.cloneDeep(ctpCart)
+    clonedCtpCart.lineItems[0].name = {
+      de: 'test-de',
+      fr: 'test-fr',
+      at: 'test-at',
+      en: 'test-en'
+    }
+    _mockCtpCartsEndpoint(clonedCtpCart)
+    scope.post('/payments')
+      .reply(200, paymentSuccessResponse)
+
+    const ctpPaymentToTest = {
+      amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
+      custom: {
+        fields: {
+          languageCode: 'de',
+          makePaymentRequest: '{}'
+        }
+      }
+    }
+    const response = await execute(ctpPaymentToTest)
+    const { lineItems } = JSON.parse(
+      response.actions
+        .find(a => a.action === 'addInterfaceInteraction')
+        .fields.request
+    )
+    expect(lineItems[0].description).to.equal('test-de')
+  })
+
+  it('when payment has NO languageCode and cart has locale, ' +
+    'it should take precedence', async () => {
+    const clonedCtpCart = _.cloneDeep(ctpCart)
+    clonedCtpCart.locale = 'fr'
+    clonedCtpCart.lineItems[0].name = {
+      de: 'test-de',
+      fr: 'test-fr',
+      at: 'test-at',
+      en: 'test-en'
+    }
+    _mockCtpCartsEndpoint(clonedCtpCart)
+    scope.post('/payments')
+      .reply(200, paymentSuccessResponse)
+
+    const ctpPaymentToTest = {
+      amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
+      custom: {
+        fields: {
+          makePaymentRequest: '{}'
+        }
+      }
+    }
+    const response = await execute(ctpPaymentToTest)
+    const { lineItems } = JSON.parse(
+      response.actions
+        .find(a => a.action === 'addInterfaceInteraction')
+        .fields.request
+    )
+    expect(lineItems[0].description).to.equal('test-fr')
+  })
+
+  it('when payment has NO languageCode and cart has NO locale, ' +
+    'it should fall back to default language', async () => {
+    const clonedCtpCart = _.cloneDeep(ctpCart)
+    clonedCtpCart.lineItems[0].name = {
+      de: 'test-de',
+      fr: 'test-fr',
+      at: 'test-at',
+      en: 'test-en'
+    }
+    _mockCtpCartsEndpoint(clonedCtpCart)
+    scope.post('/payments')
+      .reply(200, paymentSuccessResponse)
+
+    const ctpPaymentToTest = {
+      amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
+      custom: {
+        fields: {
+          makePaymentRequest: '{}'
+        }
+      }
+    }
+    const response = await execute(ctpPaymentToTest)
+    const { lineItems } = JSON.parse(
+      response.actions
+        .find(a => a.action === 'addInterfaceInteraction')
+        .fields.request
+    )
+    expect(lineItems[0].description).to.equal('test-en')
+  })
+
+
+  function _mockCtpCartsEndpoint (mockCart = ctpCart) {
+    const ctpApiScope = nock(`${config.ctp.apiUrl}`)
+    const ctpAuthScope = nock(`${config.ctp.authUrl}`)
+    ctpAuthScope.post('/oauth/token')
+      .reply(200, {
+        access_token: 'xxx',
+        token_type: 'Bearer',
+        expires_in: 172800,
+        scope: 'manage_project:xxx'
+      })
+    ctpApiScope
+      .get('/adyen-integration-test/carts')
+      .query(true)
+      .reply(200, { results: [mockCart] })
+  }
 })
