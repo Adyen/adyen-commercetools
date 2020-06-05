@@ -72,12 +72,7 @@ function _getShippingMethodDescription (shippingInfo) {
 function _localizeOrFallback (localizedString,
                               locales,
                               fallback) {
-  let value
-  for (let i = 0; i < locales.length; i++) {
-    value = localizedString[locales[i]]
-    if (value)
-      break
-  }
+  const value = locales.find(l => localizedString[l])
   return value || fallback
 }
 
