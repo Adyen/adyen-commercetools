@@ -1,8 +1,6 @@
-const {
-  ADYEN_PERCENTAGE_MINOR_UNIT,
-  DEFAULT_PAYMENT_LANGUAGE,
-  KLARNA_DEFAULT_LINE_ITEM_NAME
-} = require('../config/klarna-constants')
+const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
+const DEFAULT_PAYMENT_LANGUAGE = 'en'
+const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
 
 function createLineItems (payment, cart) {
   const lineItems = []

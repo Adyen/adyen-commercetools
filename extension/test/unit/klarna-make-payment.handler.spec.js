@@ -6,14 +6,13 @@ const { execute } = require('../../src/paymentHandler/klarna-make-payment.handle
 const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
 const ctpPayment = require('../fixtures/ctp-payment')
 const ctpCart = require('./fixtures/ctp-cart')
-const { ADYEN_PERCENTAGE_MINOR_UNIT } = require('../../src/config/klarna-constants')
 
 describe('klarna-make-payment::execute', () => {
+  const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
   const config = configLoader.load()
   let scope
 
   /* eslint-enable max-len */
-
   beforeEach(() => {
     scope = nock(`${config.adyen.apiBaseUrl}`)
   })

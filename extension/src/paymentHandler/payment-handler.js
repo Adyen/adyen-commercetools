@@ -3,10 +3,11 @@ const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const getOriginKeysHandler = require('./get-origin-keys.handler')
 const makePaymentHandler = require('./make-payment.handler')
 const klarnaMakePaymentHandler = require('./klarna-make-payment.handler')
-const { PAYMENT_METHOD_TYPE_KLARNA_METHODS } = require('../config/klarna-constants')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const cancelOrRefundHandler = require('./cancel-or-refund.handler')
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
+
+const PAYMENT_METHOD_TYPE_KLARNA_METHODS = ['klarna', 'klarna_paynow', 'klarna_account']
 
 
 async function handlePayment (paymentObject) {

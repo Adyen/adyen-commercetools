@@ -1,10 +1,12 @@
 const { expect } = require('chai')
 const _ = require('lodash')
 const klarnaService = require('../../../src/service/klarna-service')
-const { KLARNA_DEFAULT_LINE_ITEM_NAME, DEFAULT_PAYMENT_LANGUAGE } = require('../../../src/config/klarna-constants')
 const ctpCart = require('../fixtures/ctp-cart')
 
 describe('klarna-service::createLineItems', () => {
+  const DEFAULT_PAYMENT_LANGUAGE = 'en'
+  const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
+
   it('when locale is not existing, ' +
     'it should fall back to default line item name', () => {
     const ctpPayment = {
