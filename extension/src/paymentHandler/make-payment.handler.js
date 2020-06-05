@@ -1,4 +1,4 @@
-const { makePayment } = require('../web-component-service')
+const { makePayment } = require('../service/web-component-service')
 const pU = require('./payment-utils')
 const c = require('../config/constants')
 

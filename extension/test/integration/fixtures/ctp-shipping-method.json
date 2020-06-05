@@ -1,0 +1,26 @@
+{
+  "name": "ABHOLUNG",
+  "key": "abholung",
+  "description": "Abholung beim Fachhändler (kostenlos)",
+  "taxCategory": {
+    "typeId": "tax-category",
+    "id": ""
+  },
+  "zoneRates": [
+    {
+      "zone": {
+        "typeId": "zone",
+        "id": ""
+      },
+      "shippingRates": [
+        {
+          "price": {
+            "currencyCode": "EUR",
+            "centAmount": 3000
+          }
+        }
+      ]
+    }
+  ],
+  "isDefault": true
+}
