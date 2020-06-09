@@ -96,6 +96,28 @@
       "required": false
     },
     {
+      "name": "capturePaymentRequest",
+      "label": {
+        "en": "capturePaymentRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "capturePaymentResponse",
+      "label": {
+        "en": "capturePaymentResponse"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
       "name": "languageCode",
       "label": {
         "en": "Language code is used to determine the default locale for line item names in the matching cart."
