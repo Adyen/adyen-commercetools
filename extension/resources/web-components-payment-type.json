@@ -96,9 +96,9 @@
       "required": false
     },
     {
-      "name": "capturePaymentRequest",
+      "name": "manualCaptureRequest",
       "label": {
-        "en": "capturePaymentRequest"
+        "en": "manualCaptureRequest"
       },
       "type": {
         "name": "String"
@@ -107,9 +107,9 @@
       "required": false
     },
     {
-      "name": "capturePaymentResponse",
+      "name": "manualCaptureResponse",
       "label": {
-        "en": "capturePaymentResponse"
+        "en": "manualCaptureResponse"
       },
       "type": {
         "name": "String"
