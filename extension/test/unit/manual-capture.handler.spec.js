@@ -12,7 +12,7 @@ describe('manual-capture.handler::execute::', () => {
       {
         id: 'transaction1',
         type: 'Authorization',
-        interactionId: '883589969904820D',
+        interactionId: '8313547924770610',
         state: 'Success'
       }
     ],
@@ -23,14 +23,23 @@ describe('manual-capture.handler::execute::', () => {
         },
         fields: {
           type: 'makePayment',
-          request: '{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_ORDER_NUMBER\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/\",\"merchantAccount\":\"CommercetoolsGmbHDE775\"}',
-          response: '{\"pspReference\":\"883589969904820D\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_ORDER_NUMBER\"}',
-          createdAt: '2020-05-20T10:18:25.073Z'
+          request: '{\"amount\":{\"currency\":\"EUR\",\"value\":500},\"reference\":\"YOUR_UNIQUE_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/\",\"merchantAccount\":\"CommercetoolsGmbHDE775\"}',
+          response: '{\"pspReference\":\"8313547924770610\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":500},\"merchantReference\":\"YOUR_UNIQUE_REFERENCE\"}',
+          createdAt: '2020-06-10T12:37:00.010Z'
         }
       }
     ]
   }
   /* eslint-enable */
+
+  const manualCaptureRequest = {
+    modificationAmount: {
+      value: 500,
+      currency: 'EUR'
+    },
+    originalReference: '8313547924770610',
+    reference: 'YOUR_UNIQUE_REFERENCE'
+  }
 
   let scope
   const config = configLoader.load()
@@ -38,12 +47,11 @@ describe('manual-capture.handler::execute::', () => {
     scope = nock(`${config.adyen.legacyApiBaseUrl}`)
   })
 
-  it('given a payment with a type "Authorised" transaction, '
-    + 'when /capture" request to Adyen is issued successfully '
-    + 'then it should return actions '
-    + '"addInterfaceInteraction", "setCustomField" and "addTransaction"', async () => {
+  it('given a payment '
+    + 'when /capture" request to Adyen is received successfully '
+    + 'then it should return actions "addInterfaceInteraction" and "setCustomField"', async () => {
     const manualCaptureResponse = {
-      pspReference: '883589969904820D',
+      pspReference: '8825408195409505',
       response: '[capture-received]'
     }
     scope.post('/capture').reply(200, manualCaptureResponse)
@@ -51,20 +59,13 @@ describe('manual-capture.handler::execute::', () => {
     const paymentObject = cloneDeep(authorisedPayment)
     paymentObject.custom = {
       fields: {
-        manualCaptureRequest: JSON.stringify({
-          modificationAmount: {
-            value: 1000,
-            currency: 'EUR'
-          },
-          originalReference: '883589969904820D',
-          reference: 'YOUR_ORDER_NUMBER'
-        })
+        manualCaptureRequest: JSON.stringify(manualCaptureRequest)
       }
     }
 
     const { actions } = await execute(paymentObject)
 
-    expect(actions).to.have.lengthOf(3)
+    expect(actions).to.have.lengthOf(2)
 
     const addInterfaceInteraction = actions.find(a => a.action === 'addInterfaceInteraction')
     expect(addInterfaceInteraction.fields.type).to.equal(CTP_INTERACTION_TYPE_MANUAL_CAPTURE)
@@ -78,14 +79,30 @@ describe('manual-capture.handler::execute::', () => {
       name: 'manualCaptureResponse',
       value: JSON.stringify(manualCaptureResponse)
     })
+  })
 
-    const addTransaction = actions.find(a => a.action === 'addTransaction')
-    expect(addTransaction).to.be.contain({
-      action: 'addTransaction',
-      transaction: {
-        type: 'Charge',
-        state: 'Success'
+  it('given a payment '
+    + 'when "/capture" request to Adyen is failed '
+    + 'then it should save failed response into payment object', async () => {
+    const validationError = {
+      status: 422,
+      errorCode: '167',
+      message: 'Original pspReference required for this operation',
+      errorType: 'validation'
+    }
+    scope.post('/capture').reply(422, validationError)
+
+    const paymentObject = cloneDeep(authorisedPayment)
+    paymentObject.custom = {
+      fields: {
+        manualCaptureRequest: JSON.stringify(manualCaptureRequest)
       }
-    })
+    }
+
+    const { actions } = await execute(paymentObject)
+
+    const addInterfaceInteraction = actions.find(a => a.action === 'addInterfaceInteraction')
+    expect(addInterfaceInteraction.fields.type).to.equal(CTP_INTERACTION_TYPE_MANUAL_CAPTURE)
+    expect(addInterfaceInteraction.fields.response).to.equal(JSON.stringify(validationError))
   })
 })
