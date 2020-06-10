@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Submit additional payment details</title>
+        <link rel="stylesheet"
+              href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/3.6.1/adyen.css"
+              integrity="sha384-l5/gSrWMFWCKnEqoG1F21fvhDesLnZt/JlXjkA0FWp6E68Pc/9mxg+nPvvx+uB4G"
+              crossorigin="anonymous">
+    </head>
+    <body>
+        <div>
+            <input type="text" id="adyen-make-payment-response-action-field"
+                   placeholder="Adyen actin field"/><br/>
+            <input type="text" id="adyen-origin-key" placeholder="Adyen origin key"/><br/>
+            <button type="button" id="redirect-payment-button">Redirect payment</button>
+        </div>
+        <div id="component-container"></div>
+
+        <script src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/3.6.1/adyen.js"
+                integrity="sha384-hUb/CFxzLJZWUbDBmQfccbVjE3LFxAx3Wt4O37edYVLZmNhcmVUyYLgn6kWk3Hz+"
+                crossorigin="anonymous"></script>
+        <script type="application/javascript">
+          const configuration = {
+            locale: "en_US",
+            environment: "test"
+          }
+
+          const actionFieldElemenet = document.getElementById('redirect-payment-button');
+          actionFieldElemenet.addEventListener('click', () => {
+            const originKeyElement = document.getElementById('adyen-origin-key');
+            configuration.originKey = originKeyElement.value;
+            const actionFieldElemenet = document.getElementById('adyen-make-payment-response-action-field');
+            const action = JSON.parse(actionFieldElemenet.value);
+            const checkout = new AdyenCheckout(configuration);
+            checkout.createFromAction(action).mount('#component-container');
+          })
+        </script>
+    </body>
+</html>
