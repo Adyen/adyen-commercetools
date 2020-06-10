@@ -48,8 +48,8 @@ describe('manual-capture.handler::execute::', () => {
   })
 
   it('given a payment '
-    + 'when /capture" request to Adyen is received successfully '
-    + 'then it should return actions "addInterfaceInteraction" and "setCustomField"', async () => {
+    + 'when "/capture" request to Adyen is received successfully '
+    + 'then it should return actions "addInterfaceInteraction", "setCustomField" and "addTransaction"', async () => {
     const manualCaptureResponse = {
       pspReference: '8825408195409505',
       response: '[capture-received]'
@@ -65,7 +65,7 @@ describe('manual-capture.handler::execute::', () => {
 
     const { actions } = await execute(paymentObject)
 
-    expect(actions).to.have.lengthOf(2)
+    expect(actions).to.have.lengthOf(3)
 
     const addInterfaceInteraction = actions.find(a => a.action === 'addInterfaceInteraction')
     expect(addInterfaceInteraction.fields.type).to.equal(CTP_INTERACTION_TYPE_MANUAL_CAPTURE)
@@ -79,11 +79,26 @@ describe('manual-capture.handler::execute::', () => {
       name: 'manualCaptureResponse',
       value: JSON.stringify(manualCaptureResponse)
     })
+
+    const addTransaction = actions.find(a => a.action === 'addTransaction')
+    expect(addTransaction).to.be.deep.equal({
+      action: 'addTransaction',
+      transaction: {
+        type: 'Charge',
+        amount: {
+          currencyCode: manualCaptureRequest.modificationAmount.currency,
+          centAmount: manualCaptureRequest.modificationAmount.value
+        },
+        state: 'Pending',
+        interactionId: manualCaptureResponse.pspReference
+      }
+    })
   })
 
   it('given a payment '
     + 'when "/capture" request to Adyen is failed '
-    + 'then it should save failed response into payment object', async () => {
+    + 'then it should return "addInterfaceInteraction", "setCustomField" action with validation error' +
+    'and should not return "addTransaction" action', async () => {
     const validationError = {
       status: 422,
       errorCode: '167',
@@ -100,9 +115,22 @@ describe('manual-capture.handler::execute::', () => {
     }
 
     const { actions } = await execute(paymentObject)
+    expect(actions).to.have.lengthOf(2)
 
     const addInterfaceInteraction = actions.find(a => a.action === 'addInterfaceInteraction')
     expect(addInterfaceInteraction.fields.type).to.equal(CTP_INTERACTION_TYPE_MANUAL_CAPTURE)
+    expect(addInterfaceInteraction.fields.request).to.be.a('string')
     expect(addInterfaceInteraction.fields.response).to.equal(JSON.stringify(validationError))
+    expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
+
+    const setCustomField = actions.find(a => a.action === 'setCustomField')
+    expect(setCustomField).to.be.deep.equal({
+      action: 'setCustomField',
+      name: 'manualCaptureResponse',
+      value: JSON.stringify(validationError)
+    })
+
+    const addTransaction = actions.find(a => a.action === 'addTransaction')
+    expect(addTransaction).to.equal(undefined)
   })
 })

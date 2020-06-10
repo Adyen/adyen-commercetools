@@ -3,7 +3,7 @@ const { expect } = require('chai')
 const iTSetUp = require('./integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const {
-  CTP_ADYEN_INTEGRATION, CTP_PAYMENT_CUSTOM_TYPE_KEY, CTP_INTERACTION_TYPE_CANCEL_OR_REFUND
+  CTP_ADYEN_INTEGRATION, CTP_PAYMENT_CUSTOM_TYPE_KEY
 } = require('../../src/config/constants')
 
 describe('::manualCapture::', () => {
@@ -60,19 +60,20 @@ describe('::manualCapture::', () => {
 
   it('given a payment ' +
     'when "manualCaptureRequest" custom field is set with valid request (with correct amount and references) ' +
-    'then Adyen should response with [capture-received]', async () => {
-
-    const { statusCode, body: updatedPayment } = await ctpClient.update(ctpClient.builder.payments,
-      payment.id, payment.version, [
+    'then Adyen should response with [capture-received] ' +
+    'and payment should has a "Charge" transaction with "Pending status"', async () => {
+    const { statusCode, body: chargedPayment } = await ctpClient.update(ctpClient.builder.payments,
+      payment.id, payment.version,
+      [
         {
           action: 'setCustomField',
           name: 'manualCaptureRequest',
           value: JSON.stringify({
             modificationAmount: {
-              value: 550,
+              value: 500,
               currency: 'EUR'
             },
-            originalReference: '8313547924770610',
+            originalReference: payment.transactions[0].interactionId,
             reference: 'YOUR_UNIQUE_REFERENCE'
           })
         }
@@ -80,6 +81,9 @@ describe('::manualCapture::', () => {
 
     expect(statusCode).to.be.equal(200)
 
-
+    expect(chargedPayment.transactions).to.have.lengthOf(2)
+    const transaction = chargedPayment.transactions[1]
+    expect(transaction.type).to.equal('Charge')
+    expect(transaction.state).to.equal('Pending')
   })
 })
