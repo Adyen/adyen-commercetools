@@ -1,0 +1,25 @@
+{
+  "name": "standard",
+  "key": "standard",
+  "description": "Standard tax category",
+  "rates": [
+    {
+      "name": "20% MwSt",
+      "amount": 0.19,
+      "includedInPrice": true,
+      "country": "DE",
+      "id": "Cw8VFRYD",
+      "subRates": [],
+      "externallySet": false
+    },
+    {
+      "name": "10% MwSt",
+      "amount": 0.1,
+      "includedInPrice": true,
+      "country": "AT",
+      "id": "HHCeCkY0",
+      "subRates": [],
+      "externallySet": false
+    }
+  ]
+}

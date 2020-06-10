@@ -1,6 +1,6 @@
 const fetch = require('node-fetch')
 const { serializeError } = require('serialize-error')
-const configLoader = require('./config/config')
+const configLoader = require('../config/config')
 
 const config = configLoader.load()
 

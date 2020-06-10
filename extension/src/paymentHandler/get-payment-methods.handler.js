@@ -1,6 +1,6 @@
 const pU = require('./payment-utils')
 const c = require('../config/constants')
-const { getPaymentMethods } = require('../web-component-service')
+const { getPaymentMethods } = require('../service/web-component-service')
 
 async function execute (paymentObject) {
   const getPaymentMethodsRequestObj = JSON.parse(paymentObject.custom.fields.getPaymentMethodsRequest)

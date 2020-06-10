@@ -78,7 +78,7 @@ describe('credit-card-payment-redirect', () => {
   })
 
   afterEach(async () => {
-    await iTSetUp.cleanupResources()
+    await iTSetUp.stopRunningServers()
     await browser.close()
   })
 

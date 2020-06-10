@@ -1,0 +1,27 @@
+{
+  "value": {
+    "type": "relative",
+    "permyriad": 1000
+  },
+  "cartPredicate": "1 = 1",
+  "target": {
+    "type": "multiBuyLineItems",
+    "predicate": "1 = 1",
+    "triggerQuantity": 2,
+    "discountedQuantity": 1,
+    "selectionMode": "MostExpensive"
+  },
+  "name": {
+    "de": "10% Off Multi Buy"
+  },
+  "description": {
+    "de": "10% Off Multi Buy"
+  },
+  "validFrom": "2016-12-26T00:00:00.000Z",
+  "validUntil": "2099-06-30T10:00:00.000Z",
+  "stackingMode": "Stacking",
+  "isActive": true,
+  "requiresDiscountCode": true,
+  "sortOrder": "0.1",
+  "key": "ctp-adyen-test-cart-discount-multi-buy"
+}

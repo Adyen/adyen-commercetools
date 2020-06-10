@@ -50,7 +50,7 @@ describe('credit-card-payment', () => {
   })
 
   afterEach(async () => {
-    await iTSetUp.cleanupResources()
+    await iTSetUp.stopRunningServers()
     await browser.close()
   })
 

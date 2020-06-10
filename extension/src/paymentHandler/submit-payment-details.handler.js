@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { submitAdditionalPaymentDetails } = require('../web-component-service')
+const { submitAdditionalPaymentDetails } = require('../service/web-component-service')
 const pU = require('./payment-utils')
 const c = require('../config/constants')
 const { CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = require('../config/constants')

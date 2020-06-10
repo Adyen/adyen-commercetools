@@ -1,0 +1,557 @@
+{
+  "type": "Cart",
+  "customerEmail": "youremail@email.com",
+  "createdAt": "2017-05-29T08:16:08.351Z",
+  "lastModifiedAt": "2017-05-29T08:16:08.988Z",
+  "lineItems": [
+    {
+      "productId":"55555555-5555-5555-5555-555555555555",
+      "name": {
+        "en": "Necklace",
+        "de": "Halskette"
+      },
+      "productType": {
+        "typeId": "product-type"
+      },
+      "productSlug": {
+        "en": "necklace-123454323454667"
+      },
+      "variant": {
+        "id": 1,
+        "sku": "123454323454667",
+        "prices": [
+          {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 12999
+            }
+          },
+          {
+            "value": {
+              "currencyCode": "CHF",
+              "centAmount": 11998
+            }
+          }
+        ],
+        "images": [],
+        "attributes": [],
+        "assets": []
+      },
+      "price": {
+        "value": {
+          "currencyCode": "EUR",
+          "centAmount": 12999
+        }
+      },
+      "quantity": 4,
+      "discountedPrice": {
+        "value": {
+          "currencyCode": "EUR",
+          "centAmount": 11524
+        },
+        "includedDiscounts": [
+          {
+            "discount": {
+              "typeId": "cart-discount"
+            },
+            "discountedAmount": {
+              "currencyCode": "EUR",
+              "centAmount": 194
+            }
+          },
+          {
+            "discount": {
+              "typeId": "cart-discount"
+            },
+            "discountedAmount": {
+              "currencyCode": "EUR",
+              "centAmount": 1281
+            }
+          }
+        ]
+      },
+      "discountedPricePerQuantity": [
+        {
+          "quantity": 1,
+          "discountedPrice": {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 11524
+            },
+            "includedDiscounts": [
+              {
+                "discount": {
+                  "typeId": "cart-discount"
+                },
+                "discountedAmount": {
+                  "currencyCode": "EUR",
+                  "centAmount": 194
+                }
+              },
+              {
+                "discount": {
+                  "typeId": "cart-discount"
+                },
+                "discountedAmount": {
+                  "currencyCode": "EUR",
+                  "centAmount": 1281
+                }
+              }
+            ]
+          }
+        },
+        {
+          "quantity": 3,
+          "discountedPrice": {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 11524
+            },
+            "includedDiscounts": [
+              {
+                "discount": {
+                  "typeId": "cart-discount"
+                },
+                "discountedAmount": {
+                  "currencyCode": "EUR",
+                  "centAmount": 195
+                }
+              },
+              {
+                "discount": {
+                  "typeId": "cart-discount"
+                },
+                "discountedAmount": {
+                  "currencyCode": "EUR",
+                  "centAmount": 1280
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "taxRate": {
+        "name": "19% MwSt",
+        "amount": 0.19,
+        "includedInPrice": true,
+        "country": "DE",
+        "id": "cp110K8t",
+        "subRates": []
+      },
+      "state": [
+        {
+          "quantity": 4,
+          "state": {
+            "typeId": "state"
+          }
+        }
+      ],
+      "priceMode": "Platform",
+      "totalPrice": {
+        "currencyCode": "EUR",
+        "centAmount": 46096
+      },
+      "taxedPrice": {
+        "totalNet": {
+          "currencyCode": "EUR",
+          "centAmount": 38736
+        },
+        "totalGross": {
+          "currencyCode": "EUR",
+          "centAmount": 46096
+        }
+      }
+    },
+    {
+      "productId":"66666666-6666-6666-6666-666666666666",
+      "name": {
+        "en": "box",
+        "de": "Kasten"
+      },
+      "productType": {
+        "typeId": "product-type"
+      },
+      "productSlug": {
+        "en": "box-2345234523"
+      },
+      "variant": {
+        "id": 1,
+        "sku": "2345234523",
+        "prices": [
+          {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 0
+            }
+          }
+        ],
+        "images": [],
+        "attributes": [],
+        "assets": []
+      },
+      "price": {
+        "value": {
+          "currencyCode": "EUR",
+          "centAmount": 0
+        }
+      },
+      "quantity": 1,
+      "discountedPrice": {
+        "value": {
+          "currencyCode": "EUR",
+          "centAmount": 0
+        },
+        "includedDiscounts": [
+          {
+            "discount": {
+              "typeId": "cart-discount"
+            },
+            "discountedAmount": {
+              "currencyCode": "EUR",
+              "centAmount": 0
+            }
+          },
+          {
+            "discount": {
+              "typeId": "cart-discount"
+            },
+            "discountedAmount": {
+              "currencyCode": "EUR",
+              "centAmount": 0
+            }
+          }
+        ]
+      },
+      "discountedPricePerQuantity": [
+        {
+          "quantity": 1,
+          "discountedPrice": {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 0
+            },
+            "includedDiscounts": [
+              {
+                "discount": {
+                  "typeId": "cart-discount"
+                },
+                "discountedAmount": {
+                  "currencyCode": "EUR",
+                  "centAmount": 0
+                }
+              },
+              {
+                "discount": {
+                  "typeId": "cart-discount"
+                },
+                "discountedAmount": {
+                  "currencyCode": "EUR",
+                  "centAmount": 0
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "taxRate": {
+        "name": "19% MwSt",
+        "amount": 0.19,
+        "includedInPrice": true,
+        "country": "DE",
+        "id": "cp110K8t",
+        "subRates": []
+      },
+      "state": [
+        {
+          "quantity": 1,
+          "state": {
+            "typeId": "state"
+          }
+        }
+      ],
+      "priceMode": "Platform",
+      "totalPrice": {
+        "currencyCode": "EUR",
+        "centAmount": 0
+      },
+      "taxedPrice": {
+        "totalNet": {
+          "currencyCode": "EUR",
+          "centAmount": 0
+        },
+        "totalGross": {
+          "currencyCode": "EUR",
+          "centAmount": 0
+        }
+      }
+    },
+    {
+      "productId":"77777777-7777-7777-7777-777777777777",
+      "name": {
+        "en": "Ring",
+        "de": "Ringe"
+      },
+      "productType": {
+        "typeId": "product-type"
+      },
+      "productSlug": {
+        "en": "ring-456786468866578"
+      },
+      "variant": {
+        "id": 1,
+        "sku": "456786468866578",
+        "prices": [
+          {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 4923
+            }
+          },
+          {
+            "value": {
+              "currencyCode": "CHF",
+              "centAmount": 4511
+            }
+          }
+        ],
+        "images": [],
+        "attributes": [],
+        "assets": []
+      },
+      "price": {
+        "value": {
+          "currencyCode": "EUR",
+          "centAmount": 4923
+        }
+      },
+      "quantity": 3,
+      "discountedPrice": {
+        "value": {
+          "currencyCode": "EUR",
+          "centAmount": 4365
+        },
+        "includedDiscounts": [
+          {
+            "discount": {
+              "typeId": "cart-discount"
+            },
+            "discountedAmount": {
+              "currencyCode": "EUR",
+              "centAmount": 73
+            }
+          },
+          {
+            "discount": {
+              "typeId": "cart-discount"
+            },
+            "discountedAmount": {
+              "currencyCode": "EUR",
+              "centAmount": 485
+            }
+          }
+        ]
+      },
+      "discountedPricePerQuantity": [
+        {
+          "quantity": 2,
+          "discountedPrice": {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 4365
+            },
+            "includedDiscounts": [
+              {
+                "discount": {
+                  "typeId": "cart-discount"
+                },
+                "discountedAmount": {
+                  "currencyCode": "EUR",
+                  "centAmount": 73
+                }
+              },
+              {
+                "discount": {
+                  "typeId": "cart-discount"
+                },
+                "discountedAmount": {
+                  "currencyCode": "EUR",
+                  "centAmount": 485
+                }
+              }
+            ]
+          }
+        },
+        {
+          "quantity": 1,
+          "discountedPrice": {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 4364
+            },
+            "includedDiscounts": [
+              {
+                "discount": {
+                  "typeId": "cart-discount"
+                },
+                "discountedAmount": {
+                  "currencyCode": "EUR",
+                  "centAmount": 74
+                }
+              },
+              {
+                "discount": {
+                  "typeId": "cart-discount"
+                },
+                "discountedAmount": {
+                  "currencyCode": "EUR",
+                  "centAmount": 485
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "taxRate": {
+        "name": "19% MwSt",
+        "amount": 0.19,
+        "includedInPrice": true,
+        "country": "DE",
+        "id": "cp110K8t",
+        "subRates": []
+      },
+      "state": [
+        {
+          "quantity": 3,
+          "state": {
+            "typeId": "state"
+          }
+        }
+      ],
+      "priceMode": "Platform",
+      "totalPrice": {
+        "currencyCode": "EUR",
+        "centAmount": 13094
+      },
+      "taxedPrice": {
+        "totalNet": {
+          "currencyCode": "EUR",
+          "centAmount": 11003
+        },
+        "totalGross": {
+          "currencyCode": "EUR",
+          "centAmount": 13094
+        }
+      }
+    }
+  ],
+  "cartState": "Ordered",
+  "totalPrice": {
+    "currencyCode": "EUR",
+    "centAmount": 59685
+  },
+  "taxedPrice": {
+    "totalNet": {
+      "currencyCode": "EUR",
+      "centAmount": 50155
+    },
+    "totalGross": {
+      "currencyCode": "EUR",
+      "centAmount": 59685
+    },
+    "taxPortions": [
+      {
+        "rate": 0.19,
+        "amount": {
+          "currencyCode": "EUR",
+          "centAmount": 9451
+        },
+        "name": "19% MwSt"
+      }
+    ]
+  },
+  "country": "DE",
+  "shippingAddress": {
+    "title": "Mr.",
+    "firstName": "Testperson-de",
+    "lastName": "Approved",
+    "streetName": "Hellersbergstraße 14",
+    "additionalStreetInfo": "",
+    "postalCode": "41460",
+    "city": "Neuss",
+    "country": "DE",
+    "phone": "01522113356",
+    "email": "youremail@email.com"
+  },
+  "billingAddress": {
+    "title": "Mr.",
+    "firstName": "Testperson-de",
+    "lastName": "Approved",
+    "streetName": "Hellersbergstraße 14",
+    "additionalStreetInfo": "",
+    "postalCode": "41460",
+    "city": "Neuss",
+    "country": "DE",
+    "phone": "01522113356",
+    "email": "youremail@email.com"
+  },
+  "customLineItems": [],
+  "discountCodes": [
+    {
+      "discountCode": {
+        "typeId": "discount-code"
+      },
+      "state": "MatchesCart"
+    },
+    {
+      "discountCode": {
+        "typeId": "discount-code"
+      },
+      "state": "MatchesCart"
+    }
+  ],
+  "shippingInfo": {
+    "shippingMethodName": "DHL",
+    "price": {
+      "currencyCode": "EUR",
+      "centAmount": 495
+    },
+    "shippingRate": {
+      "price": {
+        "currencyCode": "EUR",
+        "centAmount": 495
+      }
+    },
+    "taxRate": {
+      "name": "DE",
+      "amount": 0.19,
+      "includedInPrice": true,
+      "country": "DE",
+      "id": "lVMXxfRj",
+      "subRates": []
+    },
+    "taxCategory": {
+      "typeId": "tax-category"
+    },
+    "deliveries": [],
+    "shippingMethod": {
+      "typeId": "shipping-method"
+    },
+    "taxedPrice": {
+      "totalNet": {
+        "currencyCode": "EUR",
+        "centAmount": 416
+      },
+      "totalGross": {
+        "currencyCode": "EUR",
+        "centAmount": 495
+      }
+    }
+  },
+  "paymentInfo": {
+    "payments": []
+  },
+  "inventoryMode": "None",
+  "taxMode": "Platform",
+  "taxRoundingMode": "HalfEven",
+  "locale": "de"
+}

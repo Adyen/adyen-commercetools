@@ -1,6 +1,6 @@
 const { isEmpty } = require('lodash')
 const pU = require('./payment-utils')
-const { cancelOrRefund } = require('../web-component-service')
+const { cancelOrRefund } = require('../service/web-component-service')
 
 const {
   CTP_INTERACTION_TYPE_MAKE_PAYMENT,
