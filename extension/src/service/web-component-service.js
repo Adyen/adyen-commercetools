@@ -24,6 +24,10 @@ function cancelOrRefund (cancelOrRefundRequestObj) {
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/cancelOrRefund`, cancelOrRefundRequestObj)
 }
 
+function manualCapture (manualCaptureRequestObj) {
+  return callAdyen(`${config.adyen.legacyApiBaseUrl}/capture`, manualCaptureRequestObj)
+}
+
 async function callAdyen (url, request) {
   let response
   try {
@@ -63,5 +67,6 @@ module.exports = {
   getPaymentMethods,
   makePayment,
   submitAdditionalPaymentDetails,
-  cancelOrRefund
+  cancelOrRefund,
+  manualCapture
 }
