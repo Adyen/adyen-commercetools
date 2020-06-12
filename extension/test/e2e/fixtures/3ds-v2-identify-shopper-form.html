@@ -13,12 +13,13 @@
             <input type="text" id="adyen-make-payment-response-action-field"
                    placeholder="Adyen action field"/><br/>
             <input type="text" id="adyen-origin-key" placeholder="Adyen origin key"/><br/>
-            <button type="button" id="redirect-payment-button">Redirect payment</button>
+            <button type="button" id="get-additional-payment-details-btn">Get additional payment details</button>
             <br/>
             <br/>
             <input type="text" id="adyen-additional-payment-details"
                    placeholder="Additional payment details will be here"/><br/>
         </div>
+
         <div id="component-container"></div>
 
         <script src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/3.6.1/adyen.js"
@@ -31,7 +32,7 @@
             onAdditionalDetails: handleOnAdditionalDetails
           }
 
-          const actionFieldElemenet = document.getElementById('redirect-payment-button');
+          const actionFieldElemenet = document.getElementById('get-additional-payment-details-btn');
           actionFieldElemenet.addEventListener('click', () => {
             const originKeyElement = document.getElementById('adyen-origin-key');
             configuration.originKey = originKeyElement.value;

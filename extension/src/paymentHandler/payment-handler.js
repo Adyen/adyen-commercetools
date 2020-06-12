@@ -69,7 +69,8 @@ function _isAdyenPayment (paymentObject) {
 }
 
 function _isKlarna (makePaymentRequestObj) {
-  return PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(makePaymentRequestObj.paymentMethod.type)
+  return makePaymentRequestObj.paymentMethod
+    && PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(makePaymentRequestObj.paymentMethod.type)
 }
 
 module.exports = { handlePayment }

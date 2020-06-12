@@ -255,25 +255,10 @@
                   "type": "svs"
                 }
               ]
-            }
-            , // The payment methods response returned in step 1.
-            onChange: handleOnChange, // Your function for handling onChange event
-            onAdditionalDetails: handleOnAdditionalDetails, // Your function for handling onAdditionalDetails event
+            }, // The payment methods response returned in step 1.
             showPayButton: true,
             onSubmit: handleOnSubmit
           };
-
-          function handleOnChange (state, component) {
-            console.log('handleOnChange')
-            console.log(state)
-            console.log(component)
-          }
-
-          function handleOnAdditionalDetails (state, component) {
-            console.log('handleOnAdditionalDetails')
-            console.log(state)
-            console.log(component)
-          }
 
           function handleOnSubmit (state, component) {
             console.log('handleOnSubmit')

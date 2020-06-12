@@ -289,6 +289,9 @@
             makePaymentRequest.channel = "Web"
             makePaymentRequest.origin = window.location.origin
             makePaymentRequest.returnUrl = window.location.origin + '/return-url'
+            makePaymentRequest.additionalData = {
+              "allow3DS2": true
+            }
 
             document.getElementById('adyen-make-payment-request').innerHTML = JSON.stringify(makePaymentRequest)
           }
