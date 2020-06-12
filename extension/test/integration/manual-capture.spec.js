@@ -3,7 +3,7 @@ const { expect } = require('chai')
 const iTSetUp = require('./integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const {
-  CTP_ADYEN_INTEGRATION, CTP_PAYMENT_CUSTOM_TYPE_KEY
+  CTP_ADYEN_INTEGRATION, CTP_PAYMENT_CUSTOM_TYPE_KEY, CTP_INTERACTION_TYPE_MANUAL_CAPTURE
 } = require('../../src/config/constants')
 
 describe('::manualCapture::', () => {
@@ -85,5 +85,12 @@ describe('::manualCapture::', () => {
     const transaction = chargedPayment.transactions[1]
     expect(transaction.type).to.equal('Charge')
     expect(transaction.state).to.equal('Pending')
+
+    const interfaceInteraction = chargedPayment.interfaceInteractions
+      .find(interaction => interaction.fields.type === CTP_INTERACTION_TYPE_MANUAL_CAPTURE)
+
+    const adyenResponse = JSON.parse(interfaceInteraction.fields.response)
+    expect(adyenResponse.response).to.equal('[capture-received]')
+    expect(transaction.interactionId).to.equal(adyenResponse.pspReference)
   })
 })
