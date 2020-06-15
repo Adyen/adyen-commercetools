@@ -72,7 +72,7 @@ Otherwise shopper might continue with further payment steps.
     1. Before presenting the payment methods in the response from Adyen, please check Extension module documentation for supported payment methods.
 1. **Continue with one of the supported payment methods**
     > Below guides describe how to handle different type of payment methods selected by the user:
-    - [Credit card payment](./CreditCardIntegration.md)  
+    - Credit card payment // TODO
     - [Paypal payment](./PaypalIntegration.md)
 
 # Error cases
