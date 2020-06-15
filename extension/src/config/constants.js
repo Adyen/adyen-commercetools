@@ -1,6 +1,4 @@
 module.exports = {
-  SUCCESS: 'SUCCESS',
-  FAILURE: 'FAILURE',
   CTP_ADYEN_INTEGRATION: 'ctp-adyen-integration',
   CTP_PAYMENT_INTERACTION_CUSTOM_TYPE_KEY: 'ctp-adyen-integration-interaction-payment-type',
   CTP_PAYMENT_CUSTOM_TYPE_KEY: 'ctp-adyen-integration-web-components-payment-type',
