@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:8
+FROM node:12.18.0-alpine
 MAINTAINER Professional Services <ps-dev@commercetools.de>
 
 WORKDIR /app

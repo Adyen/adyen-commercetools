@@ -40,6 +40,16 @@ describe('Lambda handler', () => {
     expect(result.actions).to.equal(undefined)
   })
 
+  it('does not throw unhandled exception when handlePayment data is null', async () => {
+    sinon.stub(paymentHandler, 'handlePayment').returns({ success: true, data: null })
+
+    const result = await handler(event)
+
+    expect(result.responseType).equals('UpdateRequest')
+    expect(result.errors).equals(undefined)
+    expect(result.actions).to.be.empty
+  })
+
   it('logs and throws unhandled exceptions', async () => {
     const logSpy = sinon.spy()
     utils.getLogger().error = logSpy
