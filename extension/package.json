@@ -40,7 +40,6 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration#readme",
   "devDependencies": {
-    "adyen-cse-js": "Adyen/adyen-cse-web#0_1_23",
     "babel-eslint": "^10.1.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
@@ -70,7 +69,6 @@
     "bunyan": "^1.8.12",
     "lodash": "^4.17.15",
     "node-fetch": "^2.6.0",
-    "serialize-error": "^6.0.0",
-    "async": "^3.2.0"
+    "serialize-error": "^6.0.0"
   }
 }
