@@ -7,7 +7,8 @@ const {
   GET_PAYMENT_METHODS_REQUEST_INVALID_JSON,
   MAKE_PAYMENT_REQUEST_INVALID_JSON,
   SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON,
-  AMOUNT_PLANNED_CHANGE_NOT_ALLOWED
+  AMOUNT_PLANNED_CHANGE_NOT_ALLOWED,
+  MANUAL_CAPTURE_REQUEST_INVALID_JSON
 } = require('../../src/validator/error-messages')
 
 describe('Validator builder', () => {
@@ -37,7 +38,8 @@ describe('Validator builder', () => {
           getOriginKeysRequest: '{"a"}',
           getPaymentMethodsRequest: '{"a"}',
           makePaymentRequest: '{"a"}',
-          submitAdditionalPaymentDetailsRequest: '{"a"}'
+          submitAdditionalPaymentDetailsRequest: '{"a"}',
+          manualCaptureRequest: '{"a"}'
         }
       }
     }
@@ -49,6 +51,7 @@ describe('Validator builder', () => {
     expect(errorObject.makePaymentRequest).to.equal(MAKE_PAYMENT_REQUEST_INVALID_JSON)
     expect(errorObject.submitAdditionalPaymentDetailsRequest)
       .to.equal(SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON)
+    expect(errorObject.manualCaptureRequest).to.equal(MANUAL_CAPTURE_REQUEST_INVALID_JSON)
   })
 
   it('on changing amountPlanned when different amountPlanned exists in the interaction, ' +

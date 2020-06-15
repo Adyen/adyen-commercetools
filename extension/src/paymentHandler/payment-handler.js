@@ -5,6 +5,7 @@ const makePaymentHandler = require('./make-payment.handler')
 const klarnaMakePaymentHandler = require('./klarna-make-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const cancelOrRefundHandler = require('./cancel-or-refund.handler')
+const manualCaptureHandler = require('./manual-capture.handler')
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 
 const PAYMENT_METHOD_TYPE_KLARNA_METHODS = ['klarna', 'klarna_paynow', 'klarna_account']
@@ -61,6 +62,8 @@ function _getPaymentHandlers (paymentObject) {
     && paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
     && !paymentObject.custom.fields.submitAdditionalPaymentDetailsResponse)
     handlers.push(submitPaymentDetailsHandler)
+  if (paymentObject.custom.fields.manualCaptureRequest && !paymentObject.custom.fields.manualCaptureResponse)
+    handlers.push(manualCaptureHandler)
   return handlers
 }
 
