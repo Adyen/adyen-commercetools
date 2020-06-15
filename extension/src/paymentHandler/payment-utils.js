@@ -1,12 +1,6 @@
 const _ = require('lodash')
 const c = require('../config/constants')
 
-function getAuthorizationTransactionPending (paymentObject) {
-  return getTransactionWithTypesAndStates(paymentObject,
-    ['Authorization'],
-    ['Pending'])
-}
-
 function getAuthorizationTransactionSuccess (paymentObject) {
   return getTransactionWithTypesAndStates(paymentObject,
     ['Authorization'],
@@ -25,30 +19,9 @@ function getRefundTransactionInit (paymentObject) {
     ['Initial'])
 }
 
-function getAuthorizationTransactionInit (paymentObject) {
-  return getTransactionWithTypesAndStates(paymentObject,
-    ['Authorization'],
-    ['Initial'])
-}
-
 function getTransactionWithTypesAndStates (paymentObject, types, states) {
   return paymentObject.transactions.find(t => types.includes(t.type)
     && (states.includes(t.state)))
-}
-
-// see https://docs.adyen.com/developers/payments-basics/payments-lifecycle
-// and https://docs.adyen.com/developers/checkout/payment-result-codes
-function getMatchingCtpState (adyenState) {
-  const paymentAdyenStateToCtpState = {
-    redirectshopper: c.CTP_TXN_STATE_PENDING,
-    received: c.CTP_TXN_STATE_PENDING,
-    pending: c.CTP_TXN_STATE_PENDING,
-    authorised: c.CTP_TXN_STATE_SUCCESS,
-    refused: c.CTP_TXN_STATE_FAILURE,
-    cancelled: c.CTP_TXN_STATE_FAILURE,
-    error: c.CTP_TXN_STATE_FAILURE
-  }
-  return paymentAdyenStateToCtpState[adyenState]
 }
 
 function createAddInterfaceInteractionAction (
@@ -66,24 +39,6 @@ function createAddInterfaceInteractionAction (
       type
     }
   }
-}
-
-function ensureAddInterfaceInteractionAction (
-  {
-    paymentObject, request, response, type
-  }
-) {
-  const interactions = paymentObject.interfaceInteractions
-
-  const matchedInteraction = _.find(interactions,
-    interaction => interaction.fields.request === JSON.stringify(request)
-      || interaction.fields.response === JSON.stringify(response))
-
-  if (!matchedInteraction)
-    return createAddInterfaceInteractionAction({
-      request, response, type
-    })
-  return null
 }
 
 function createChangeTransactionStateAction (transactionId, transactionState) {
@@ -172,14 +127,10 @@ function isValidJSON (jsonString) {
 }
 
 module.exports = {
-  getAuthorizationTransactionPending,
-  getAuthorizationTransactionInit,
   getAuthorizationTransactionSuccess,
   getCancelAuthorizationTransactionInit,
   getRefundTransactionInit,
-  getMatchingCtpState,
   createAddInterfaceInteractionAction,
-  ensureAddInterfaceInteractionAction,
   createChangeTransactionStateAction,
   createSetCustomFieldAction,
   createChangeTransactionInteractionId,
