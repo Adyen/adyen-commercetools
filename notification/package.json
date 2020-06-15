@@ -1,6 +1,6 @@
 {
   "name": "commercetools-adyen-integration",
-  "version": "4.0.2",
+  "version": "5.0.0",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "scripts": {
     "test": "npm run unit && npm run integration",
