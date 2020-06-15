@@ -21,7 +21,6 @@ describe('Validator builder', () => {
       vb.validateEncryptedSecurityCodeField,
       vb.validateReturnUrlField,
       vb.validatePayloadField,
-      vb.validatePaymentDataField,
       vb.validatePaResField,
       vb.validateMdField],
     (validation) => {

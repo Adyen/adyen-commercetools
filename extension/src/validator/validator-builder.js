@@ -45,20 +45,6 @@ function withPayment (paymentObject) {
         && (_.isObject(pU.getCancelAuthorizationTransactionInit(paymentObject))
         || _.isObject(pU.getRefundTransactionInit(paymentObject)))
     },
-    validateAuthorizationTransactionPending () {
-      const transaction = pU.getAuthorizationTransactionPending(paymentObject)
-      const hasAuthorizationTransactionPending = _.isObject(transaction)
-      if (!hasAuthorizationTransactionPending)
-        errors.hasAuthorizationTransactionPending = errorMessages.MISSING_TXN_AUTHORIZATION_PENDING
-      return this
-    },
-    validateAuthorizationTransactionInit () {
-      const transaction = pU.getAuthorizationTransactionInit(paymentObject)
-      const hasAuthorizationTransactionInit = _.isObject(transaction)
-      if (!hasAuthorizationTransactionInit)
-        errors.hasAuthorizationTransactionInit = errorMessages.MISSING_TXN_AUTHORIZATION_INIT
-      return this
-    },
     validateEncryptedCardNumberField () {
       const hasEncryptedCardNumber = _.isObject(paymentObject.custom)
         && _.isObject(paymentObject.custom.fields)
@@ -105,14 +91,6 @@ function withPayment (paymentObject) {
         && !_.isEmpty(paymentObject.custom.fields.payload)
       if (!hasPayload)
         errors.hasPayload = errorMessages.MISSING_PAYLOAD
-      return this
-    },
-    validatePaymentDataField () {
-      const hasPaymentData = _.isObject(paymentObject.custom)
-        && _.isObject(paymentObject.custom.fields)
-        && !_.isEmpty(paymentObject.custom.fields.paymentData)
-      if (!hasPaymentData)
-        errors.hasPaymentData = errorMessages.MISSING_PAYMENT_DATA
       return this
     },
     validatePaResField () {
