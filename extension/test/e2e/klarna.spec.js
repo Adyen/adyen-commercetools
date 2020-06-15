@@ -6,7 +6,7 @@ const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const { routes } = require('../../src/routes')
 const c = require('../../src/config/constants')
 const httpUtils = require('../../src/utils')
-
+const { pasteValue } = require('./e2e-test-utils')
 
 describe('klarna-payment', () => {
   let browser
@@ -48,13 +48,11 @@ describe('klarna-payment', () => {
 
   afterEach(async () => {
     await iTSetUp.stopRunningServers()
-     await browser.close()
+    await browser.close()
   })
 
   it('when payment method is klarna and process is done correctly, ' +
     'it should successfully finish the payment', async function () {
-    this.timeout(60000)
-
     const page = await browser.newPage()
     const baseUrl = process.env.API_EXTENSION_BASE_URL
 
@@ -183,10 +181,4 @@ describe('klarna-payment', () => {
     expect(manualCaptureResponse.pspReference).to.match(/[A-Z0-9]+/,
       `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`)
   })
-
-  async function pasteValue (page, selector, value) {
-    return page.evaluate((data) => {
-      document.querySelector(data.selector).value = data.value
-    }, { selector, value })
-  }
 })

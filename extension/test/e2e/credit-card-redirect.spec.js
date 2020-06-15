@@ -7,6 +7,7 @@ const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const { routes } = require('../../src/routes')
 const c = require('../../src/config/constants')
 const httpUtils = require('../../src/utils')
+const { pasteValue, executeInAdyenIframe } = require('./e2e-test-utils')
 
 describe('credit-card-payment-redirect', () => {
   let browser
@@ -191,20 +192,4 @@ describe('credit-card-payment-redirect', () => {
         expect(transaction.amount.currencyCode).to.equal(finalPayment.amountPlanned.currencyCode)
       })
   })
-
-  async function pasteValue (page, selector, value) {
-    return page.evaluate((data) => {
-      document.querySelector(data.selector).value = data.value
-    }, { selector, value })
-  }
-
-  async function executeInAdyenIframe (page, selector, executeFn) {
-    for (const frame of page.mainFrame().childFrames()) {
-      const elementHandle = await frame.$(selector)
-      if (elementHandle) {
-        await executeFn(elementHandle)
-        break
-      }
-    }
-  }
 })

@@ -5,6 +5,7 @@ const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const { routes } = require('../../src/routes')
 const c = require('../../src/config/constants')
+const { executeInAdyenIframe } = require('./e2e-test-utils')
 
 describe('credit-card-payment', () => {
   let browser
@@ -125,15 +126,4 @@ describe('credit-card-payment', () => {
         expect(transaction.amount.currencyCode).to.equal(updatedPayment.amountPlanned.currencyCode)
       })
   })
-
-
-  async function executeInAdyenIframe (page, selector, executeFn) {
-    for (const frame of page.mainFrame().childFrames()) {
-      const elementHandle = await frame.$(selector)
-      if (elementHandle) {
-        await executeFn(elementHandle)
-        break
-      }
-    }
-  }
 })
