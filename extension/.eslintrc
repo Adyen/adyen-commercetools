@@ -2,12 +2,8 @@
   "extends": "commercetools",
   "env": {
     "es6": true,
-    "node": true,
-    "cypress/globals": true
+    "node": true
   },
-  "plugins": [
-    "cypress"
-  ],
   "rules": {
     "nonblock-statement-body-position": "off",
     "comma-dangle": "off",

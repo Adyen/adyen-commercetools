@@ -50,8 +50,7 @@ In addition to the environmental variables from [Run Module](#run-module), there
 There are 3 different types of tests. Don't forget to provide all required environmental variables:
 1. [Unit tests](../test/unit) - these tests are mocking all external communications.
 1. [Integration tests](../test/integration) - these tests interacts with real 3rd party systems.
-1. [Web tests](../../cypress/integration) - for some payment methods, it's not possible to test without interacting
-with the UI (e.g. credit card 3ds). In such cases, we use Cypress.io. Run `npm run cypress-ui` to test.
+1. Web tests // TODO
 
 ## Deployment
 

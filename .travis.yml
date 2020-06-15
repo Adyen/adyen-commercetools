@@ -12,7 +12,6 @@ script:
   - cd $TEST_DIR
   - npm ci
   - npm run test
-  #- if [ "$TEST_DIR" = "extension" ]; then npm run cypress; fi
   - cd $TRAVIS_BUILD_DIR
 
 before_deploy:
@@ -20,14 +19,6 @@ before_deploy:
 
 after_deploy:
   - docker logout
-
-# cypress test fails without libgconf-2-4 package
-# see https://github.com/cypress-io/cypress/issues/4069
-addons:
-  apt:
-    packages:
-    - libgconf-2-4
-
 deploy:
   - provider: script
     script: bash ./travis-build.sh "$TEST_DIR"
