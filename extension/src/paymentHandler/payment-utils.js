@@ -1,12 +1,6 @@
 const _ = require('lodash')
 const c = require('../config/constants')
 
-function getAuthorizationTransactionInitOrPending (paymentObject) {
-  return getTransactionWithTypesAndStates(paymentObject,
-    ['Authorization'],
-    ['Initial', 'Pending'])
-}
-
 function getAuthorizationTransactionPending (paymentObject) {
   return getTransactionWithTypesAndStates(paymentObject,
     ['Authorization'],
@@ -178,7 +172,6 @@ function isValidJSON (jsonString) {
 }
 
 module.exports = {
-  getAuthorizationTransactionInitOrPending,
   getAuthorizationTransactionPending,
   getAuthorizationTransactionInit,
   getAuthorizationTransactionSuccess,
