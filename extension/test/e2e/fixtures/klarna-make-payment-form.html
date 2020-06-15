@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Make Payment</title>
+        <link rel="stylesheet"
+              href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/3.6.1/adyen.css"
+              integrity="sha384-l5/gSrWMFWCKnEqoG1F21fvhDesLnZt/JlXjkA0FWp6E68Pc/9mxg+nPvvx+uB4G"
+              crossorigin="anonymous">
+    </head>
+    <body>
+        <div>
+            <input type="text" id="adyen-origin-key" placeholder="Adyen origin key"/><br/>
+            <textarea id="adyen-make-payment-request">Make payment request will come here</textarea>
+        </div>
+        <br/>
+        <div id="klarna_paynow-container"></div>
+
+        <script src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/3.6.1/adyen.js"
+                integrity="sha384-hUb/CFxzLJZWUbDBmQfccbVjE3LFxAx3Wt4O37edYVLZmNhcmVUyYLgn6kWk3Hz+"
+                crossorigin="anonymous"></script>
+        <script type="application/javascript">
+          const configuration = {
+            environment: "test", // When you"re ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
+            originKey: "", // Your website"s Origin Key. To find out how to generate one, see https://docs.adyen.com/user-management/how-to-get-an-origin-key.
+            paymentMethodsResponse: {
+              "groups": [
+                {
+                  "name": "Gift Card",
+                  "types": [
+                    "givex",
+                    "svs"
+                  ]
+                },
+                {
+                  "name": "Credit Card",
+                  "types": [
+                    "visa",
+                    "mc",
+                    "amex",
+                    "maestro",
+                    "uatp",
+                    "cup",
+                    "diners",
+                    "discover",
+                    "hipercard",
+                    "jcb"
+                  ]
+                }
+              ],
+              "paymentMethods": [
+                {
+                  "name": "PayPal",
+                  "supportsRecurring": true,
+                  "type": "paypal"
+                },
+                {
+                  "brands": [
+                    "visa",
+                    "mc",
+                    "amex",
+                    "maestro",
+                    "uatp",
+                    "cup",
+                    "diners",
+                    "discover",
+                    "hipercard",
+                    "jcb"
+                  ],
+                  "details": [
+                    {
+                      "key": "encryptedCardNumber",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedSecurityCode",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryMonth",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryYear",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "holderName",
+                      "optional": true,
+                      "type": "text"
+                    }
+                  ],
+                  "name": "Kreditkarte",
+                  "type": "scheme"
+                },
+                {
+                  "name": "Sofort.",
+                  "supportsRecurring": true,
+                  "type": "directEbanking"
+                },
+                {
+                  "details": [
+                    {
+                      "key": "sepa.ownerName",
+                      "type": "text"
+                    },
+                    {
+                      "key": "sepa.ibanNumber",
+                      "type": "text"
+                    }
+                  ],
+                  "name": "SEPA Lastschrift",
+                  "supportsRecurring": true,
+                  "type": "sepadirectdebit"
+                },
+                {
+                  "name": "Rechnung mit Klarna.",
+                  "supportsRecurring": true,
+                  "type": "klarna"
+                },
+                {
+                  "details": [
+                    {
+                      "key": "bic",
+                      "optional": true,
+                      "type": "text"
+                    }
+                  ],
+                  "name": "GiroPay",
+                  "supportsRecurring": true,
+                  "type": "giropay"
+                },
+                {
+                  "name": "Ratenkauf mit Klarna.",
+                  "supportsRecurring": true,
+                  "type": "klarna_account"
+                },
+                {
+                  "details": [
+                    {
+                      "key": "encryptedCardNumber",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedSecurityCode",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryMonth",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryYear",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "holderName",
+                      "optional": true,
+                      "type": "text"
+                    },
+                    {
+                      "key": "telephoneNumber",
+                      "optional": true,
+                      "type": "text"
+                    }
+                  ],
+                  "name": "ExpressPay",
+                  "supportsRecurring": true,
+                  "type": "cup"
+                },
+                {
+                  "details": [
+                    {
+                      "key": "encryptedCardNumber",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedSecurityCode",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryMonth",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryYear",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedPassword",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "holderName",
+                      "optional": true,
+                      "type": "text"
+                    }
+                  ],
+                  "name": "Givex",
+                  "supportsRecurring": true,
+                  "type": "givex"
+                },
+                {
+                  "name": "Pay now with Klarna.",
+                  "supportsRecurring": true,
+                  "type": "klarna_paynow"
+                },
+                {
+                  "details": [
+                    {
+                      "key": "encryptedCardNumber",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedSecurityCode",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryMonth",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryYear",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedPassword",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "holderName",
+                      "optional": true,
+                      "type": "text"
+                    }
+                  ],
+                  "name": "SVS",
+                  "supportsRecurring": true,
+                  "type": "svs"
+                }
+              ]
+            }, // The payment methods response returned in step 1.
+            locale: "de-DE",
+            onSubmit: handleOnSubmit
+          };
+
+          function handleOnSubmit (state) {
+            console.log(state)
+            if (state.isValid) {
+              const makePaymentRequest = state.data
+              makePaymentRequest.reference = new Date().getMilliseconds()
+              makePaymentRequest.amount = {
+                "currency": "EUR",
+                "value": 1000
+              }
+              makePaymentRequest.channel = "Web"
+              makePaymentRequest.origin = window.location.origin
+              makePaymentRequest.returnUrl = window.location.origin + "/return-url"
+              makePaymentRequest.shopperLocale = "de-DE"
+              makePaymentRequest.countryCode = "DE"
+              makePaymentRequest.shopperEmail = "test@test.com"
+              makePaymentRequest.dateOfBirth = "1977-01-30"
+              makePaymentRequest.telephoneNumber = "+491725554479"
+              makePaymentRequest.shopperReference = "YOUR TEST REFERENCE"
+              makePaymentRequest.returnUrl = window.location.origin + "/return-url"
+              makePaymentRequest.shopperName = {
+                firstName: "firstName",
+                gender: "MALE",
+                lastName: "lastName"
+              }
+              makePaymentRequest.billingAddress = {
+                "city": "München",
+                "country": "DE",
+                "houseNumberOrName": "44",
+                "postalCode": "80797",
+                "street": "Adams-Lehmann-Straße"
+              }
+              makePaymentRequest.lineItems = [
+                {
+                  "quantity": "1",
+                  "amountExcludingTax": "331",
+                  "taxPercentage": "2100",
+                  "description": "Shoes",
+                  "id": "Item #1",
+                  "taxAmount": "69",
+                  "amountIncludingTax": "400"
+                },
+                {
+                  "quantity": "2",
+                  "amountExcludingTax": "248",
+                  "taxPercentage": "2100",
+                  "description": "Socks",
+                  "id": "Item #2",
+                  "taxAmount": "52",
+                  "amountIncludingTax": "300"
+                }
+              ]
+
+              document.getElementById("adyen-make-payment-request").innerHTML = JSON.stringify(makePaymentRequest)
+            }
+          }
+
+          const originKeyElement = document.getElementById("adyen-origin-key");
+          originKeyElement.addEventListener("blur", () => {
+            configuration.originKey = originKeyElement.value;
+            const checkout = new AdyenCheckout(configuration);
+            checkout.create("klarna_paynow").mount("#klarna_paynow-container");
+          })
+        </script>
+    </body>
+</html>
