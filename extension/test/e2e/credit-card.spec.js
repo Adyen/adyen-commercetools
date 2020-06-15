@@ -5,7 +5,7 @@ const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const { routes } = require('../../src/routes')
 const c = require('../../src/config/constants')
-const { executeInAdyenIframe } = require('./e2e-test-utils')
+const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
 
 describe('credit-card-payment', () => {
   let browser
@@ -93,16 +93,15 @@ describe('credit-card-payment', () => {
         const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
         const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
 
-        await page.goto(`${baseUrl}/make-payment-form`)
-        await page.type('#adyen-origin-key', getOriginKeysResponse.originKeys[baseUrl])
-        await page.$eval('#adyen-origin-key', e => e.blur())
-        await page.waitFor(2000)
-        await executeInAdyenIframe(page, '#encryptedCardNumber', el => el.type(creditCardNumber))
-        await executeInAdyenIframe(page, '#encryptedExpiryDate', el => el.type(creditCardDate))
-        await executeInAdyenIframe(page, '#encryptedSecurityCode', el => el.type(creditCardCvc))
-        await page.click('.adyen-checkout__button--pay')
-        const makePaymentRequestTextArea = await page.$('#adyen-make-payment-request')
-        const makePaymentRequest = await (await makePaymentRequestTextArea.getProperty('innerHTML')).jsonValue()
+        const makePaymentFormPage = new MakePaymentFormPage(page, baseUrl)
+        await makePaymentFormPage.goToThisPage()
+        const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({
+          getOriginKeysResponse,
+          creditCardNumber,
+          creditCardDate,
+          creditCardCvc
+        })
+
         const { body: updatedPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,
           payment.version, [{
             action: 'setCustomField',

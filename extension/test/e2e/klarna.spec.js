@@ -7,6 +7,7 @@ const { routes } = require('../../src/routes')
 const c = require('../../src/config/constants')
 const httpUtils = require('../../src/utils')
 const { pasteValue } = require('./e2e-test-utils')
+const KlarnaMakePaymentFormPage = require('./pageObjects/KlarnaMakePaymentFormPage')
 
 describe('klarna-payment', () => {
   let browser
@@ -84,15 +85,10 @@ describe('klarna-payment', () => {
     const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
     const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
 
-    await page.goto(`${baseUrl}/make-payment-form`)
-    await page.type('#adyen-origin-key', getOriginKeysResponse.originKeys[baseUrl])
-    await page.$eval('#adyen-origin-key', e => e.blur())
-    await page.waitFor(3000)
+    const makePaymentFormPage = new KlarnaMakePaymentFormPage(page, baseUrl)
+    await makePaymentFormPage.goToThisPage()
+    const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({ getOriginKeysResponse })
 
-    await page.click('.adyen-checkout__button--pay')
-
-    const makePaymentRequestTextArea = await page.$('#adyen-make-payment-request')
-    const makePaymentRequest = await (await makePaymentRequestTextArea.getProperty('innerHTML')).jsonValue()
     const { body: updatedPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,
       payment.version, [{
         action: 'setCustomField',
