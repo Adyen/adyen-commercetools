@@ -6,6 +6,7 @@ const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const { routes } = require('../../src/routes')
 const c = require('../../src/config/constants')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
+const { assertPayment } = require('./e2e-test-utils')
 
 describe('credit-card-payment', () => {
   let browser
@@ -109,20 +110,7 @@ describe('credit-card-payment', () => {
             value: makePaymentRequest
           }])
 
-        const { makePaymentResponse: makePaymentResponseString } = updatedPayment.custom.fields
-        const makePaymentResponse = await JSON.parse(makePaymentResponseString)
-        expect(makePaymentResponse.resultCode).to.equal('Authorised',
-          `resultCode is not Authorised: ${makePaymentResponseString}`)
-        expect(makePaymentResponse.pspReference).to.match(/[A-Z0-9]+/,
-          `pspReference does not match '/[A-Z0-9]+/': ${makePaymentResponseString}`)
-
-        expect(updatedPayment.transactions).to.have.lengthOf(1)
-        const transaction = updatedPayment.transactions[0]
-        expect(transaction.state).to.equal(c.CTP_TXN_STATE_SUCCESS)
-        expect(transaction.type).to.equal('Authorization')
-        expect(transaction.interactionId).to.equal(makePaymentResponse.pspReference)
-        expect(transaction.amount.centAmount).to.equal(updatedPayment.amountPlanned.centAmount)
-        expect(transaction.amount.currencyCode).to.equal(updatedPayment.amountPlanned.currencyCode)
+        assertPayment(updatedPayment, 'makePayment')
       })
   })
 })

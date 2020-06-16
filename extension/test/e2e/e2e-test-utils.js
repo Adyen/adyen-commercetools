@@ -1,4 +1,6 @@
 const { getLatestInterfaceInteraction } = require('../../src/paymentHandler/payment-utils')
+const { expect } = require('chai')
+const c = require('../../src/config/constants')
 
 async function pasteValue (page, selector, value) {
   return page.evaluate((data) => {
@@ -16,8 +18,8 @@ async function executeInAdyenIframe (page, selector, executeFn) {
   }
 }
 
-function assertPayment (payment) {
-  const { submitAdditionalPaymentDetailsResponse: submitAdditionalPaymentDetailsResponseString }
+function assertPayment (payment, finalInterfaceInteractionFromAdyen = 'submitAdditionalPaymentDetails') {
+  const { [finalInterfaceInteractionFromAdyen + 'Response']: submitAdditionalPaymentDetailsResponseString }
     = payment.custom.fields
   const submitAdditionalPaymentDetailsResponse = JSON.parse(submitAdditionalPaymentDetailsResponseString)
   expect(submitAdditionalPaymentDetailsResponse.resultCode).to.equal('Authorised',
@@ -26,7 +28,7 @@ function assertPayment (payment) {
     `pspReference does not match '/[A-Z0-9]+/': ${submitAdditionalPaymentDetailsResponseString}`)
 
   const submitAdditionalPaymentDetailsInteraction = getLatestInterfaceInteraction(payment.interfaceInteractions,
-    'submitAdditionalPaymentDetails')
+    finalInterfaceInteractionFromAdyen)
   expect(submitAdditionalPaymentDetailsInteraction.fields.response)
     .to.equal(submitAdditionalPaymentDetailsResponseString)
 

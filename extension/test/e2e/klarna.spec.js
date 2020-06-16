@@ -129,6 +129,10 @@ describe('klarna-payment', () => {
 
     assertPayment(updatedPayment2)
 
+    const transaction = updatedPayment2.transactions[0]
+    const { 'submitAdditionalPaymentDetailsResponse': submitAdditionalPaymentDetailsResponseString }
+      = updatedPayment2.custom.fields
+    const submitAdditionalPaymentDetailsResponse = JSON.parse(submitAdditionalPaymentDetailsResponseString)
     const { body: updatedPayment3 } = await ctpClient.update(ctpClient.builder.payments, payment.id,
       updatedPayment2.version, [{
         action: 'setCustomField',
