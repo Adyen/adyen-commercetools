@@ -8,6 +8,7 @@ const c = require('../../src/config/constants')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
 const { assertPayment } = require('./e2e-test-utils')
 
+// Flow description: https://docs.adyen.com/checkout/components-web
 describe('credit-card-payment', () => {
   let browser
   let ctpClient

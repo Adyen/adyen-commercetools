@@ -12,6 +12,7 @@ const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const CreditCardRedirectPage = require('./pageObjects/CreditCardRedirectPage')
 
+// Flow description: https://docs.adyen.com/checkout/3d-secure/redirect-3ds2-3ds1/web-component
 describe('credit-card-payment-redirect', () => {
   let browser
   let ctpClient
