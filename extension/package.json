@@ -4,8 +4,8 @@
   "description": "Integration between Commercetools and Adyen payment service provider",
   "license": "MIT",
   "scripts": {
-    "check-coverage": "nyc check-coverage --statements 97",
-    "test": "nyc mocha --exit --timeout 30000 --full-trace test/**/*.spec.js && npm run check-coverage",
+    "coverage": "codecov",
+    "test": "nyc --reporter=lcov mocha --exit --timeout 30000 --full-trace test/**/*.spec.js",
     "unit": "nyc mocha --exit --timeout 30000 --full-trace test/unit/**/*.spec.js",
     "integration": "nyc mocha --exit --timeout 30000 --full-trace test/integration/**/*.spec.js",
     "start": "node ./src/init.js",
@@ -43,6 +43,7 @@
     "babel-eslint": "^10.1.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "codecov": "^3.7.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-commercetools": "^6.0.0",
@@ -51,8 +52,8 @@
     "eslint-plugin-react": "^7.20.0",
     "mocha": "^8.0.1",
     "ngrok": "^3.2.7",
-    "nyc": "^15.1.0",
     "nock": "^12.0.3",
+    "nyc": "^15.1.0",
     "proxyquire": "^2.1.3",
     "sinon": "^9.0.2"
   },
