@@ -4,8 +4,7 @@
   "description": "Integration between Commercetools and Adyen payment service provider",
   "license": "MIT",
   "scripts": {
-    "coverage": "codecov",
-    "test": "nyc --reporter=lcov mocha --exit --timeout 30000 --full-trace test/**/*.spec.js",
+    "test": "nyc --reporter=lcov mocha --exit --timeout 30000 --full-trace test/**/*.spec.js && codecov",
     "unit": "nyc mocha --exit --timeout 30000 --full-trace test/unit/**/*.spec.js",
     "integration": "nyc mocha --exit --timeout 30000 --full-trace test/integration/**/*.spec.js",
     "start": "node ./src/init.js",
