@@ -6,8 +6,9 @@ const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const { routes } = require('../../src/routes')
 const c = require('../../src/config/constants')
 const httpUtils = require('../../src/utils')
-const { pasteValue, executeInAdyenIframe } = require('./e2e-test-utils')
+const { executeInAdyenIframe, assertPayment } = require('./e2e-test-utils')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
+const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
 describe('credit-card-payment-3ds-v2', () => {
@@ -63,9 +64,6 @@ describe('credit-card-payment-3ds-v2', () => {
     const fileServer = new nodeStatic.Server()
     routes['/make-payment-form'] = async (request, response) => {
       fileServer.serveFile('./test/e2e/fixtures/3ds-v2-make-payment-form.html', 200, {}, request, response)
-    }
-    routes['/identify-shopper-form'] = async (request, response) => {
-      fileServer.serveFile('./test/e2e/fixtures/3ds-v2-identify-shopper-form.html', 200, {}, request, response)
     }
     routes['/redirect-payment-form'] = async (request, response) => {
       fileServer.serveFile('./test/e2e/fixtures/redirect-payment-form.html', 200, {}, request, response)
@@ -152,11 +150,9 @@ describe('credit-card-payment-3ds-v2', () => {
 
         const { makePaymentResponse: makePaymentResponseString } = updatedPayment.custom.fields
         const makePaymentResponse = await JSON.parse(makePaymentResponseString)
-
-        await page.goto(`${baseUrl}/identify-shopper-form`)
-        await pasteValue(page, '#adyen-origin-key', getOriginKeysResponse.originKeys[baseUrl])
-        await pasteValue(page, '#adyen-make-payment-response-action-field', JSON.stringify(makePaymentResponse.action))
-        await page.click('#get-additional-payment-details-btn')
+        const redirectPaymentFormPage = new RedirectPaymentFormPage(page, baseUrl)
+        await redirectPaymentFormPage.goToThisPage()
+        await redirectPaymentFormPage.redirectToAdyenPaymentPage(getOriginKeysResponse, makePaymentResponse)
 
         await page.waitFor(2000)
 
@@ -174,16 +170,14 @@ describe('credit-card-payment-3ds-v2', () => {
           = updatedPayment2.custom.fields
         const submitAdditionalPaymentDetailsResponse1 = await JSON.parse(submitAdditionalPaymentDetailsResponseString)
 
-        await page.goto(`${baseUrl}/redirect-payment-form`)
-        await pasteValue(page, '#adyen-origin-key', getOriginKeysResponse.originKeys[baseUrl])
-        await pasteValue(page, '#adyen-make-payment-response-action-field',
-          JSON.stringify(submitAdditionalPaymentDetailsResponse1.action))
+        await redirectPaymentFormPage.goToThisPage()
+        await redirectPaymentFormPage.redirectToAdyenPaymentPage(
+          getOriginKeysResponse, submitAdditionalPaymentDetailsResponse1
+        )
 
-        await page.click('#redirect-payment-button')
         await page.waitFor(2000)
 
         await executeInAdyenIframe(page, '[name=answer]', el => el.type('password'))
-
         await executeInAdyenIframe(page, '.button--primary', el => el.click())
 
         await page.waitFor(2000)
@@ -192,38 +186,19 @@ describe('credit-card-payment-3ds-v2', () => {
         const additionalPaymentDetailsString2 = await page.evaluate(el => el.value, additionalPaymentDetailsInput2)
 
         const { body: finalPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,
-          updatedPayment2.version, [{
-            action: 'setCustomField',
-            name: 'submitAdditionalPaymentDetailsRequest',
-            value: additionalPaymentDetailsString2
-          },
+          updatedPayment2.version, [
+            {
+              action: 'setCustomField',
+              name: 'submitAdditionalPaymentDetailsRequest',
+              value: additionalPaymentDetailsString2
+            },
             {
               action: 'setCustomField',
               name: 'submitAdditionalPaymentDetailsResponse',
             }
           ])
 
-        const { submitAdditionalPaymentDetailsResponse: submitAdditionalPaymentDetailsResponseString2 }
-          = finalPayment.custom.fields
-        const submitAdditionalPaymentDetailsResponse2 = await JSON.parse(submitAdditionalPaymentDetailsResponseString2)
-        expect(submitAdditionalPaymentDetailsResponse2.resultCode).to.equal('Authorised',
-          `resultCode is not Authorised: ${submitAdditionalPaymentDetailsResponseString}`)
-        expect(submitAdditionalPaymentDetailsResponse2.pspReference).to.match(/[A-Z0-9]+/,
-          `pspReference does not match '/[A-Z0-9]+/': ${submitAdditionalPaymentDetailsResponseString}`)
-
-        const submitAdditionalPaymentDetailsInteraction = finalPayment.interfaceInteractions
-          .find(i => i.fields.type === 'submitAdditionalPaymentDetails')
-        expect(submitAdditionalPaymentDetailsInteraction.fields.response)
-          .to.equal(submitAdditionalPaymentDetailsResponseString)
-
-
-        expect(finalPayment.transactions).to.have.lengthOf(1)
-        const transaction = finalPayment.transactions[0]
-        expect(transaction.state).to.equal(c.CTP_TXN_STATE_SUCCESS)
-        expect(transaction.type).to.equal('Authorization')
-        expect(transaction.interactionId).to.equal(submitAdditionalPaymentDetailsResponse2.pspReference)
-        expect(transaction.amount.centAmount).to.equal(finalPayment.amountPlanned.centAmount)
-        expect(transaction.amount.currencyCode).to.equal(finalPayment.amountPlanned.currencyCode)
+        assertPayment(finalPayment)
       })
   })
 })

@@ -6,8 +6,9 @@ const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const { routes } = require('../../src/routes')
 const c = require('../../src/config/constants')
 const httpUtils = require('../../src/utils')
-const { pasteValue } = require('./e2e-test-utils')
+const { assertPayment } = require('./e2e-test-utils')
 const KlarnaMakePaymentFormPage = require('./pageObjects/KlarnaMakePaymentFormPage')
+const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 
 describe('klarna-payment', () => {
   let browser
@@ -20,9 +21,6 @@ describe('klarna-payment', () => {
     const fileServer = new nodeStatic.Server()
     routes['/make-payment-form'] = async (request, response) => {
       fileServer.serveFile('./test/e2e/fixtures/klarna-make-payment-form.html', 200, {}, request, response)
-    }
-    routes['/identify-shopper-form'] = async (request, response) => {
-      fileServer.serveFile('./test/e2e/fixtures/3ds-v2-identify-shopper-form.html', 200, {}, request, response)
     }
     routes['/redirect-payment-form'] = async (request, response) => {
       fileServer.serveFile('./test/e2e/fixtures/redirect-payment-form.html', 200, {}, request, response)
@@ -99,13 +97,10 @@ describe('klarna-payment', () => {
     const { makePaymentResponse: makePaymentResponseString } = updatedPayment.custom.fields
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
 
-    await page.goto(`${baseUrl}/redirect-payment-form`)
-    await pasteValue(page, '#adyen-origin-key', getOriginKeysResponse.originKeys[baseUrl])
-    await pasteValue(page, '#adyen-make-payment-response-action-field',
-      JSON.stringify(makePaymentResponse.action))
-
+    const redirectPaymentFormPage = new RedirectPaymentFormPage(page, baseUrl)
+    await redirectPaymentFormPage.goToThisPage()
     await Promise.all([
-      page.click('#redirect-payment-button'),
+      redirectPaymentFormPage.redirectToAdyenPaymentPage(getOriginKeysResponse, makePaymentResponse),
       page.waitForSelector('#buy-button:not([disabled])')
     ])
 
@@ -132,28 +127,7 @@ describe('klarna-payment', () => {
         })
       }])
 
-    const { submitAdditionalPaymentDetailsResponse: submitAdditionalPaymentDetailsResponseString }
-      = updatedPayment2.custom.fields
-    const submitAdditionalPaymentDetailsResponse = await JSON.parse(submitAdditionalPaymentDetailsResponseString)
-
-    expect(submitAdditionalPaymentDetailsResponse.resultCode).to.equal('Authorised',
-      `resultCode is not Authorised: ${submitAdditionalPaymentDetailsResponseString}`)
-    expect(submitAdditionalPaymentDetailsResponse.pspReference).to.match(/[A-Z0-9]+/,
-      `pspReference does not match '/[A-Z0-9]+/': ${submitAdditionalPaymentDetailsResponseString}`)
-
-    const submitAdditionalPaymentDetailsInteraction = updatedPayment2.interfaceInteractions
-      .find(i => i.fields.type === 'submitAdditionalPaymentDetails')
-    expect(submitAdditionalPaymentDetailsInteraction.fields.response)
-      .to.equal(submitAdditionalPaymentDetailsResponseString)
-
-
-    expect(updatedPayment2.transactions).to.have.lengthOf(1)
-    const transaction = updatedPayment2.transactions[0]
-    expect(transaction.state).to.equal(c.CTP_TXN_STATE_SUCCESS)
-    expect(transaction.type).to.equal('Authorization')
-    expect(transaction.interactionId).to.equal(submitAdditionalPaymentDetailsResponse.pspReference)
-    expect(transaction.amount.centAmount).to.equal(updatedPayment2.amountPlanned.centAmount)
-    expect(transaction.amount.currencyCode).to.equal(updatedPayment2.amountPlanned.currencyCode)
+    assertPayment(updatedPayment2)
 
     const { body: updatedPayment3 } = await ctpClient.update(ctpClient.builder.payments, payment.id,
       updatedPayment2.version, [{
@@ -169,12 +143,15 @@ describe('klarna-payment', () => {
         })
       }])
 
-    const { manualCaptureResponse: manualCaptureResponseString }
-      = updatedPayment3.custom.fields
-    const manualCaptureResponse = await JSON.parse(manualCaptureResponseString)
+    const { manualCaptureResponse: manualCaptureResponseString } = updatedPayment3.custom.fields
+    assertManualCaptureResponse(manualCaptureResponseString)
+  })
+
+  function assertManualCaptureResponse (manualCaptureResponseString) {
+    const manualCaptureResponse = JSON.parse(manualCaptureResponseString)
     expect(manualCaptureResponse.response).to.equal('[capture-received]',
       `response is not [capture-received]: ${manualCaptureResponse}`)
     expect(manualCaptureResponse.pspReference).to.match(/[A-Z0-9]+/,
       `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`)
-  })
+  }
 })

@@ -7,8 +7,9 @@ const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const { routes } = require('../../src/routes')
 const c = require('../../src/config/constants')
 const httpUtils = require('../../src/utils')
-const { pasteValue } = require('./e2e-test-utils')
+const { assertPayment } = require('./e2e-test-utils')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
+const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 
 describe('credit-card-payment-redirect', () => {
   let browser
@@ -141,12 +142,11 @@ describe('credit-card-payment-redirect', () => {
         const { makePaymentResponse: makePaymentResponseString } = updatedPayment.custom.fields
         const makePaymentResponse = await JSON.parse(makePaymentResponseString)
 
-        await page.goto(`${baseUrl}/redirect-payment-form`)
-        await pasteValue(page, '#adyen-origin-key', getOriginKeysResponse.originKeys[baseUrl])
-        await pasteValue(page, '#adyen-make-payment-response-action-field', JSON.stringify(makePaymentResponse.action))
+        const redirectPaymentFormPage = new RedirectPaymentFormPage(page, baseUrl)
+        await redirectPaymentFormPage.goToThisPage()
 
         await Promise.all([
-          page.click('#redirect-payment-button'),
+          redirectPaymentFormPage.redirectToAdyenPaymentPage(getOriginKeysResponse, makePaymentResponse),
           page.waitForNavigation()
         ])
 
@@ -169,27 +169,7 @@ describe('credit-card-payment-redirect', () => {
             })
           }])
 
-        const { submitAdditionalPaymentDetailsResponse: submitAdditionalPaymentDetailsResponseString }
-          = finalPayment.custom.fields
-        const submitAdditionalPaymentDetailsResponse = await JSON.parse(submitAdditionalPaymentDetailsResponseString)
-        expect(submitAdditionalPaymentDetailsResponse.resultCode).to.equal('Authorised',
-          `resultCode is not Authorised: ${submitAdditionalPaymentDetailsResponseString}`)
-        expect(submitAdditionalPaymentDetailsResponse.pspReference).to.match(/[A-Z0-9]+/,
-          `pspReference does not match '/[A-Z0-9]+/': ${submitAdditionalPaymentDetailsResponseString}`)
-
-        const submitAdditionalPaymentDetailsInteraction = finalPayment.interfaceInteractions
-          .find(i => i.fields.type === 'submitAdditionalPaymentDetails')
-        expect(submitAdditionalPaymentDetailsInteraction.fields.response)
-          .to.equal(submitAdditionalPaymentDetailsResponseString)
-
-
-        expect(finalPayment.transactions).to.have.lengthOf(1)
-        const transaction = finalPayment.transactions[0]
-        expect(transaction.state).to.equal(c.CTP_TXN_STATE_SUCCESS)
-        expect(transaction.type).to.equal('Authorization')
-        expect(transaction.interactionId).to.equal(submitAdditionalPaymentDetailsResponse.pspReference)
-        expect(transaction.amount.centAmount).to.equal(finalPayment.amountPlanned.centAmount)
-        expect(transaction.amount.currencyCode).to.equal(finalPayment.amountPlanned.currencyCode)
+        assertPayment(finalPayment)
       })
   })
 })
