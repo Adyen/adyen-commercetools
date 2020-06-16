@@ -8,6 +8,7 @@ const httpUtils = require('../../src/utils')
 const { executeInAdyenIframe, assertPayment } = require('./e2e-test-utils')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
+const CreditCard3dsV2Page = require('./pageObjects/CreditCard3dsV2Page')
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
 describe('credit-card-payment-3ds-v2', () => {
@@ -131,6 +132,7 @@ describe('credit-card-payment-3ds-v2', () => {
         const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
         const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
 
+        // Make payment:
         const makePaymentFormPage = new MakePaymentFormPage(page, baseUrl)
         await makePaymentFormPage.goToThisPage()
         const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({
@@ -147,6 +149,7 @@ describe('credit-card-payment-3ds-v2', () => {
             value: makePaymentRequest
           }])
 
+        // Redirect shopper to payment provider
         const { makePaymentResponse: makePaymentResponseString } = updatedPayment.custom.fields
         const makePaymentResponse = await JSON.parse(makePaymentResponseString)
         const redirectPaymentFormPage = new RedirectPaymentFormPage(page, baseUrl)
@@ -165,10 +168,10 @@ describe('credit-card-payment-3ds-v2', () => {
             value: additionalPaymentDetailsString
           }])
 
+        // Submit additional details 1
         const { submitAdditionalPaymentDetailsResponse: submitAdditionalPaymentDetailsResponseString }
           = updatedPayment2.custom.fields
         const submitAdditionalPaymentDetailsResponse1 = await JSON.parse(submitAdditionalPaymentDetailsResponseString)
-
         await redirectPaymentFormPage.goToThisPage()
         await redirectPaymentFormPage.redirectToAdyenPaymentPage(
           getOriginKeysResponse, submitAdditionalPaymentDetailsResponse1
@@ -176,14 +179,9 @@ describe('credit-card-payment-3ds-v2', () => {
 
         await page.waitFor(2000)
 
-        await executeInAdyenIframe(page, '[name=answer]', el => el.type('password'))
-        await executeInAdyenIframe(page, '.button--primary', el => el.click())
-
-        await page.waitFor(2000)
-
-        const additionalPaymentDetailsInput2 = await page.$('#adyen-additional-payment-details')
-        const additionalPaymentDetailsString2 = await page.evaluate(el => el.value, additionalPaymentDetailsInput2)
-
+        // Submit additional details 2
+        const creditCard3dsV2Page = new CreditCard3dsV2Page(page, baseUrl)
+        const additionalPaymentDetailsString2 = await creditCard3dsV2Page.finish3DSV2Payment()
         const { body: finalPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,
           updatedPayment2.version, [
             {

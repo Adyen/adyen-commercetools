@@ -9,6 +9,7 @@ const httpUtils = require('../../src/utils')
 const { assertPayment } = require('./e2e-test-utils')
 const KlarnaMakePaymentFormPage = require('./pageObjects/KlarnaMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
+const KlarnaPage = require('./pageObjects/KlarnaPage')
 
 describe('klarna-payment', () => {
   let browser
@@ -83,6 +84,7 @@ describe('klarna-payment', () => {
     const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
     const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
 
+    // Make payment
     const makePaymentFormPage = new KlarnaMakePaymentFormPage(page, baseUrl)
     await makePaymentFormPage.goToThisPage()
     const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({ getOriginKeysResponse })
@@ -97,6 +99,7 @@ describe('klarna-payment', () => {
     const { makePaymentResponse: makePaymentResponseString } = updatedPayment.custom.fields
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
 
+    // Redirect to Klarna page
     const redirectPaymentFormPage = new RedirectPaymentFormPage(page, baseUrl)
     await redirectPaymentFormPage.goToThisPage()
     await Promise.all([
@@ -104,17 +107,14 @@ describe('klarna-payment', () => {
       page.waitForSelector('#buy-button:not([disabled])')
     ])
 
-    await page.click('#buy-button')
-
-    const confirmationFrame = page.frames().find(f => f.name() === 'klarna-hpp-instance-fullscreen')
-
-    await confirmationFrame.waitForSelector('#direct-debit-mandate-review__bottom button')
+    const klarnaPage = new KlarnaPage(page, baseUrl)
 
     await Promise.all([
-      confirmationFrame.click('#direct-debit-mandate-review__bottom button'),
+      klarnaPage.finishKlarnaPayment(),
       page.waitForSelector('#redirect-response')
     ])
 
+    // Submit payment details
     const returnPageUrl = new URL(page.url())
     const searchParamsJson = Object.fromEntries(returnPageUrl.searchParams)
 
@@ -129,6 +129,7 @@ describe('klarna-payment', () => {
 
     assertPayment(updatedPayment2)
 
+    // Capture the payment
     const transaction = updatedPayment2.transactions[0]
     const { 'submitAdditionalPaymentDetailsResponse': submitAdditionalPaymentDetailsResponseString }
       = updatedPayment2.custom.fields

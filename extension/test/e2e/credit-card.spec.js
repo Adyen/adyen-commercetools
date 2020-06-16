@@ -94,6 +94,7 @@ describe('credit-card-payment', () => {
         const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
         const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
 
+        // Make payment:
         const makePaymentFormPage = new MakePaymentFormPage(page, baseUrl)
         await makePaymentFormPage.goToThisPage()
         const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({

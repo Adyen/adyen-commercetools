@@ -10,6 +10,7 @@ const httpUtils = require('../../src/utils')
 const { assertPayment } = require('./e2e-test-utils')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
+const CreditCardRedirectPage = require('./pageObjects/CreditCardRedirectPage')
 
 describe('credit-card-payment-redirect', () => {
   let browser
@@ -123,6 +124,7 @@ describe('credit-card-payment-redirect', () => {
         const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
         const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
 
+        // Make payment
         const makePaymentFormPage = new MakePaymentFormPage(page, baseUrl)
         await makePaymentFormPage.goToThisPage()
         const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({
@@ -139,6 +141,7 @@ describe('credit-card-payment-redirect', () => {
             value: makePaymentRequest
           }])
 
+        // Redirect payment to the payment provider
         const { makePaymentResponse: makePaymentResponseString } = updatedPayment.custom.fields
         const makePaymentResponse = await JSON.parse(makePaymentResponseString)
 
@@ -150,15 +153,10 @@ describe('credit-card-payment-redirect', () => {
           page.waitForNavigation()
         ])
 
-        await page.type('#username', 'user')
-        await page.type('#password', 'password')
+        const creditCardRedirectPage = new CreditCardRedirectPage(page, baseUrl)
+        const value = await creditCardRedirectPage.finishRedirectPayment()
 
-        await Promise.all([
-          page.click('.paySubmit'),
-          page.waitForSelector('#redirect-response')
-        ])
-        const element = await page.$('#redirect-response')
-        const value = await page.evaluate(el => el.textContent, element)
+        // Submit payment details
         const parsedQuery = querystring.parse(value)
         const { body: finalPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,
           updatedPayment.version, [{
