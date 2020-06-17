@@ -14,10 +14,10 @@ script:
   - npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
   - npm run test
   - cd $TRAVIS_BUILD_DIR
-after_success:
-  - npm run coverage
+
 before_deploy:
   - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
+
 after_deploy:
   - docker logout
 deploy:
