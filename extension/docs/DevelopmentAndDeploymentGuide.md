@@ -14,7 +14,7 @@
   - [Contribution](#contribution)
 
 ## Parameters
-In order to make the extension module working, following parameters have to be provided to the Extension module by using environment variables.
+In order to make the extension module working, following environment variables should be provided:
 
 | Name | Content | Required | Default value |
 | --- | --- | --- | --- |
