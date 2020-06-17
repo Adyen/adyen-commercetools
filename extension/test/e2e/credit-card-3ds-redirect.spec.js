@@ -72,14 +72,14 @@ describe('::creditCardPayment3dsRedirect::', () => {
 
         // next steps depend on whether the /payments response contains an action object in card.
         // here in this step we will receive `action.type: redirect`.
-        const payment = await makePaymentRequest(page, creditCardNumber);
+        const payment = await makePaymentRequest(page, creditCardNumber)
 
         // an example "body" representation of the redirected http call to "return-url".
         // "details":{
         //     "MD":"Ab02b4c0!BQABAgCW5sxB4e/==..",
         //     "PaRes":"eNrNV0mTo7gS.."
         // }
-        const details = await handleTheRedirect(page, payment);
+        const details = await handleTheRedirect(page, payment)
 
         const { body: authorisedPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,
           payment.version, [{
@@ -94,36 +94,37 @@ describe('::creditCardPayment3dsRedirect::', () => {
       })
   })
 
-  async function makePaymentRequest(page, creditCardNumber) {
+  async function makePaymentRequest (page, creditCardNumber) {
     const initialPayment = await createPaymentWithOriginKeyResponse(ctpClient)
 
     const form = new MakePaymentFormPage(page)
     await form.goToThisPage()
-    const makePaymentRequest =  await form.getMakePaymentRequest({
+    const request = await form.getMakePaymentRequest({
       getOriginKeysResponse: JSON.parse(initialPayment.custom.fields.getOriginKeysResponse),
       creditCardNumber,
       creditCardDate: '10/20',
       creditCardCvc: '737'
     })
 
-    const {body: payment} = await ctpClient.update(ctpClient.builder.payments, initialPayment.id,
+    const { body: payment } = await ctpClient.update(ctpClient.builder.payments, initialPayment.id,
       initialPayment.version, [{
         action: 'setCustomField',
         name: 'makePaymentRequest',
-        value: makePaymentRequest
+        value: request
       }])
 
     return payment
   }
 
-  async function handleTheRedirect(page, payment) {
-    const redirectPaymentFormPage = new RedirectPaymentFormPage(page)
-    await redirectPaymentFormPage.goToThisPage()
+  async function handleTheRedirect (page, payment) {
+    const form = new RedirectPaymentFormPage(page)
+    await form.goToThisPage()
 
     await Promise.all([
-      redirectPaymentFormPage.redirectToAdyenPaymentPage(
+      form.redirectToAdyenPaymentPage(
         JSON.parse(payment.custom.fields.getOriginKeysResponse),
-        JSON.parse(payment.custom.fields.makePaymentResponse)),
+        JSON.parse(payment.custom.fields.makePaymentResponse)
+      ),
       page.waitForNavigation()
     ])
 
