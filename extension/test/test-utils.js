@@ -2,10 +2,6 @@ global.window = {}
 global.navigator = {}
 
 const Promise = require('bluebird')
-const _ = require('lodash')
-
-const creditCardTpl = require('./fixtures/payment-credit-card.json')
-const creditCard3dTpl = require('./fixtures/payment-credit-card-3d.json')
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -51,56 +47,7 @@ function deleteAllResources (ctpClient, endpoint, condition) {
     }, { concurrency: 10 }))
 }
 
-function createCreditCardPaymentDraft ({
-  cardNumber, cvc, expiryMonth, expiryYear,
-  returnUrl, paymentTemplate = creditCardTpl
-}) {
-  /* todo: adyen-cse-js is deprecated
-  const key = process.env.CLIENT_ENCRYPTION_PUBLIC_KEY
-  const cseInstance = adyenEncrypt.createEncryption(key, {})
-
-  const encryptedCardNumber = cseInstance.encrypt({
-    number: cardNumber,
-    generationtime: new Date().toISOString()
-  })
-  const encryptedSecurityCode = cseInstance.encrypt({
-    cvc,
-    generationtime: new Date().toISOString()
-  })
-  const encryptedExpiryMonth = cseInstance.encrypt({
-    expiryMonth,
-    generationtime: new Date().toISOString()
-  })
-  const encryptedExpiryYear = cseInstance.encrypt({
-    expiryYear,
-    generationtime: new Date().toISOString()
-  })
-   */
-  return _.template(JSON.stringify(paymentTemplate))({
-    cardNumber,
-    cvc,
-    expiryMonth,
-    expiryYear,
-    returnUrl
-  })
-}
-
-function createCreditCard3DSPaymentDraft ({
-  cardNumber, cvc, expiryMonth, expiryYear, returnUrl
-}) {
-  return createCreditCardPaymentDraft({
-    cardNumber,
-    cvc,
-    expiryMonth,
-    expiryYear,
-    returnUrl,
-    paymentTemplate: creditCard3dTpl
-  })
-}
-
 module.exports = {
-  createCreditCardPaymentDraft,
-  createCreditCard3DSPaymentDraft,
   publish,
   deleteAllResources
 }
