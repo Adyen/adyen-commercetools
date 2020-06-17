@@ -6,4 +6,5 @@ Extension module is a public service. When CTP Payments change, It receives call
 maps and sends the request to Adyen and then returns update actions back to commercetools platform.
 
 1. Read [Integration Guide](./docs/IntegrationGuide.md) for information how to integrate your shop with this module.  
-1. Read [Development and Deployment Guide](./docs/DevelopmentAndDeploymentGuide.md) if you want to run the extension module by yourself or contribute to it.
+1. Read [Deployment Guide](./docs/DeploymentGuide.md) to run extension module.
+1. Read [Development Guide](./docs/DevelopmentGuide.md) if you want to contribute to it.

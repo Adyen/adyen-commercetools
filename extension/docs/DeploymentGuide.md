@@ -1,4 +1,4 @@
-# Development and Deployment Guide
+# Deployment Guide
 
 **Contents**
 
@@ -9,9 +9,6 @@
   - [Docker](#docker)
     - [Pull the image](#pull-the-image)
     - [Run the container](#run-the-container)
-- [Development](#development)
-  - [Running Tests](#running-tests)
-  - [Contribution](#contribution)
 
 ## Parameters
 In order to make the extension module working, following environment variables should be provided:
@@ -67,25 +64,3 @@ Replace all `XXX` values and execute:
 ```
 docker run -e ADYEN_API_BASE_URL=XXX -e ADYEN_MERCHANT_ACCOUNT=XXX -e API_EXTENSION_BASE_URL=XXX -e CTP_PROJECT_KEY=XXX -e ADYEN_API_KEY=XXX -e CTP_CLIENT_ID=XXX -e CTP_CLIENT_SECRET=XXX ctp-adyen-integration-extension:XXX
 ```
-
-## Development
-
-1. Install Node.js >=12
-1. Install npm >=6
-1. Run `npm install`
-
-### Running Tests
-
-- Execute `npm run unit` to run [Unit tests](../test/unit)
-- Execute `npm run integration` to run [Integration tests](../test/integration) 
-- Execute `npm run e2e` to run [E2e tests](../test/e2e)
-
-Execute `npm run test` to run all tests.
-
-In the end, a code coverage report will be printed.
-
-### Contribution
-
-- Every PR should address an issue on the repository. If the issue doesn't exist, please create it first.
-- Pull requests should always follow the following naming convention: 
-`[issue-number]-[pr-name]`. For example, `12-update-payment-type`.
