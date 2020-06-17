@@ -13,24 +13,8 @@ describe('::creditCardPayment::', () => {
 
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
-    { name: 'American Express', creditCardNumber: '3700 0000 0000 002', creditCardCvc: '7373' },
-    { name: 'Cartes Bancaires', creditCardNumber: '4035 5010 0000 0008' },
-    {
-      name: 'China UnionPay ExpressPay',
-      creditCardNumber: '8171 9999 2766 0000',
-      creditCardDate: '10/30'
-    },
-    { name: 'Dankort', creditCardNumber: '5019 5555 4444 5555' },
-    { name: 'Diners', creditCardNumber: '3600 6666 3333 44' },
-    { name: 'Discover', creditCardNumber: '6011 6011 6011 6611' },
-    { name: 'Elo', creditCardNumber: '5066 9911 1111 1118' },
-    { name: 'Hipercard', creditCardNumber: '6062 8288 8866 6688' },
-    { name: 'JCB', creditCardNumber: '3569 9900 1009 5841' },
     { name: 'Mastercard', creditCardNumber: '5101 1800 0000 0007' },
-    { name: 'UATP', creditCardNumber: '1354 1001 4004 955', creditCardDate: '06/22' },
-    { name: 'VISA', creditCardNumber: '4166 6766 6766 6746' },
-    { name: 'Visa Electron', creditCardNumber: '4001 0200 0000 0009' },
-    { name: 'V Pay', creditCardNumber: '4013 2500 0000 0000 006' },
+    { name: 'VISA', creditCardNumber: '4166 6766 6766 6746' }
   ]
 
   // note: ngrok should be restarted for every test case, otherwise there will be

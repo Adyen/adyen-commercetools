@@ -17,38 +17,8 @@ describe('::creditCardPayment3dsNative::', () => {
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
     {
-      name: 'American Express',
-      creditCardNumber: '3714 4963 5398 431',
-      creditCardCvc: '7373'
-    },
-    {
-      name: 'Cartes Bancaires',
-      creditCardNumber: '4035 5014 2814 6300',
-      creditCardCvc: '7373'
-    },
-    {
-      name: 'Diners',
-      creditCardNumber: '3056 9309 0259 04'
-    },
-    {
-      name: 'Discover',
-      creditCardNumber: '6011 1111 1111 1117'
-    },
-    {
-      name: 'JCB',
-      creditCardNumber: '3566 1111 1111 1113'
-    },
-    {
-      name: 'Maestro',
-      creditCardNumber: '5000 5500 0000 0029'
-    },
-    {
       name: 'Mastercard',
       creditCardNumber: '5454 5454 5454 5454'
-    },
-    {
-      name: 'UnionPay',
-      creditCardNumber: '6212 3456 7890 1232'
     },
     {
       name: 'Visa',

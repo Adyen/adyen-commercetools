@@ -18,27 +18,6 @@ describe('::creditCardPayment3dsRedirect::', () => {
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
     {
-      name: 'American Express',
-      creditCardNumber: '3451 7792 5488 348',
-      creditCardCvc: '7373'
-    },
-    {
-      name: 'International',
-      creditCardNumber: '6731 0123 4567 8906'
-    },
-    {
-      name: 'JCB',
-      creditCardNumber: '3569 9900 1009 5833'
-    },
-    {
-      name: 'Maestro',
-      creditCardNumber: '6771 8309 9999 1239'
-    },
-    {
-      name: 'Maestro',
-      creditCardNumber: '6771 8300 0000 0000 006'
-    },
-    {
       name: 'Mastercard',
       creditCardNumber: '5212 3456 7890 1234'
     },
