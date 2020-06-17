@@ -31,7 +31,7 @@ describe('::makePayment::', () => {
       },
       amount: {
         currency: 'EUR',
-        value: '8610'
+        value: 1000
       },
       shopperLocale: 'de_DE',
       countryCode: 'DE',

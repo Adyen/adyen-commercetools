@@ -21,7 +21,7 @@ describe('::makePayment::', () => {
     'then it should set custom field makePaymentResponse, add transaction,  add interface interactions', async () => {
     const makePaymentRequestDraft = {
       amount: {
-        currency: 'USD',
+        currency: 'EUR',
         value: 1000
       },
       reference: 'testReference',

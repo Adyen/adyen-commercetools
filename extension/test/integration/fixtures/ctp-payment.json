@@ -1,7 +1,7 @@
 {
   "amountPlanned" : {
-    "currencyCode" : "USD",
-    "centAmount" : 8910
+    "currencyCode" : "EUR",
+    "centAmount" : 1000
   },
   "paymentMethodInfo" : {
     "paymentInterface": "ctp-adyen-integration"
