@@ -116,13 +116,9 @@ and transactions type `Authorization` or `Charge`.
 ### Mapping from Adyen result codes to CTP transaction state
 |Adyen result code| CTP transaction state
 | --- | --- |
-| redirectshopper| Pending|
-| received| Pending|
-| pending| Pending|
-| authorised| Success|
-| refused| Failure|
-| cancelled| Failure|
-| error| Failure|
+| Authorised| Success|
+| Refused| Failure|
+| Error| Failure|
 
 # Bad practice
 - Never delete or un-assign created payment objects during checkout from the cart. If required — clean up unused/obsolete payment objects by another asynchronous process instead.
