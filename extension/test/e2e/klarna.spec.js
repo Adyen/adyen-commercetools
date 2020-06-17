@@ -53,7 +53,7 @@ describe('klarna-payment', () => {
   })
 
   it('when payment method is klarna and process is done correctly, ' +
-    'it should successfully finish the payment', async function () {
+    'it should successfully finish the payment', async () => {
     const page = await browser.newPage()
     const baseUrl = process.env.API_EXTENSION_BASE_URL
 
@@ -132,7 +132,7 @@ describe('klarna-payment', () => {
 
     // Capture the payment
     const transaction = updatedPayment2.transactions[0]
-    const { 'submitAdditionalPaymentDetailsResponse': submitAdditionalPaymentDetailsResponseString }
+    const { submitAdditionalPaymentDetailsResponse: submitAdditionalPaymentDetailsResponseString }
       = updatedPayment2.custom.fields
     const submitAdditionalPaymentDetailsResponse = JSON.parse(submitAdditionalPaymentDetailsResponseString)
     const { body: updatedPayment3 } = await ctpClient.update(ctpClient.builder.payments, payment.id,

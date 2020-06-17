@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer')
 const nodeStatic = require('node-static')
-const { expect } = require('chai')
 const querystring = require('querystring')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')

@@ -1,7 +1,6 @@
 const { executeInAdyenIframe } = require('../e2e-test-utils')
 
 module.exports = class CreditCard3dsV2Page {
-
   constructor (page, baseUrl) {
     this.page = page
     this.baseUrl = baseUrl
@@ -14,6 +13,6 @@ module.exports = class CreditCard3dsV2Page {
     await this.page.waitFor(2000)
 
     const additionalPaymentDetailsInput2 = await this.page.$('#adyen-additional-payment-details')
-    return await this.page.evaluate(el => el.value, additionalPaymentDetailsInput2)
+    return this.page.evaluate(el => el.value, additionalPaymentDetailsInput2)
   }
 }

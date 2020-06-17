@@ -1,5 +1,6 @@
-const { getLatestInterfaceInteraction } = require('../../src/paymentHandler/payment-utils')
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { expect } = require('chai')
+const { getLatestInterfaceInteraction } = require('../../src/paymentHandler/payment-utils')
 const c = require('../../src/config/constants')
 
 async function pasteValue (page, selector, value) {
@@ -19,7 +20,7 @@ async function executeInAdyenIframe (page, selector, executeFn) {
 }
 
 function assertPayment (payment, finalInterfaceInteractionFromAdyen = 'submitAdditionalPaymentDetails') {
-  const { [finalInterfaceInteractionFromAdyen + 'Response']: submitAdditionalPaymentDetailsResponseString }
+  const { [`${finalInterfaceInteractionFromAdyen}Response`]: submitAdditionalPaymentDetailsResponseString }
     = payment.custom.fields
   const submitAdditionalPaymentDetailsResponse = JSON.parse(submitAdditionalPaymentDetailsResponseString)
   expect(submitAdditionalPaymentDetailsResponse.resultCode).to.equal('Authorised',
