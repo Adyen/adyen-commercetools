@@ -2,10 +2,6 @@ const { executeInAdyenIframe } = require('../e2e-test-utils')
 const MakePaymentFormPage = require('./MakePaymentFormPage')
 
 module.exports = class CreditCardMakePaymentFormPage extends MakePaymentFormPage {
-  async goToThisPage () {
-    await this.page.goto(`${this.baseUrl}/make-payment-form`)
-  }
-
   async getMakePaymentRequest ({
                                  getOriginKeysResponse,
                                  creditCardNumber, creditCardDate, creditCardCvc

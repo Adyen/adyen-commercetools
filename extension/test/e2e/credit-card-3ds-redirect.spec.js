@@ -9,10 +9,10 @@ const httpUtils = require('../../src/utils')
 const { assertPayment } = require('./e2e-test-utils')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
-const CreditCardRedirectPage = require('./pageObjects/CreditCardRedirectPage')
+const CreditCardRedirectPage = require('./pageObjects/CreditCard3dsRedirectPage')
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/redirect-3ds2-3ds1/web-component
-describe('credit-card-payment-redirect', () => {
+describe('::creditCardPayment3dsRedirect::', () => {
   let browser
   let ctpClient
 
@@ -153,8 +153,8 @@ describe('credit-card-payment-redirect', () => {
           page.waitForNavigation()
         ])
 
-        const creditCardRedirectPage = new CreditCardRedirectPage(page, baseUrl)
-        const value = await creditCardRedirectPage.finishRedirectPayment()
+        const creditCardRedirectPage = new CreditCardRedirectPage(page)
+        const value = await creditCardRedirectPage.finish3dsRedirectPayment()
 
         // Submit payment details
         const parsedQuery = querystring.parse(value)

@@ -12,7 +12,7 @@ const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const KlarnaPage = require('./pageObjects/KlarnaPage')
 
 // Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction
-describe('klarna-payment', () => {
+describe('::klarnaPayment::', () => {
   let browser
   let ctpClient
 

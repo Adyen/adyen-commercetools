@@ -1,10 +1,9 @@
-module.exports = class CreditCard3dsV2Page {
-  constructor (page, baseUrl) {
+module.exports = class CreditCard3dsRedirectPage {
+  constructor (page) {
     this.page = page
-    this.baseUrl = baseUrl
   }
 
-  async finishRedirectPayment () {
+  async finish3dsRedirectPayment () {
     await this.page.type('#username', 'user')
     await this.page.type('#password', 'password')
 

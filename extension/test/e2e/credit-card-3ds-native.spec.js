@@ -8,10 +8,10 @@ const httpUtils = require('../../src/utils')
 const { assertPayment } = require('./e2e-test-utils')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
-const CreditCard3dsV2Page = require('./pageObjects/CreditCard3dsV2Page')
+const CreditCardNativePage = require('./pageObjects/CreditCard3dsNativePage')
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
-describe('credit-card-payment-3ds-v2', () => {
+describe('::creditCardPayment3dsNative::', () => {
   let browser
   let ctpClient
 
@@ -180,8 +180,8 @@ describe('credit-card-payment-3ds-v2', () => {
         await page.waitFor(2000)
 
         // Submit additional details 2
-        const creditCard3dsV2Page = new CreditCard3dsV2Page(page, baseUrl)
-        const additionalPaymentDetailsString2 = await creditCard3dsV2Page.finish3DSV2Payment()
+        const creditCardNativePage = new CreditCardNativePage(page, baseUrl)
+        const additionalPaymentDetailsString2 = await creditCardNativePage.finish3dsNativePayment()
         const { body: finalPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,
           updatedPayment2.version, [
             {
