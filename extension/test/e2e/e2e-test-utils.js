@@ -5,6 +5,7 @@ const c = require('../../src/config/constants')
 
 async function pasteValue (page, selector, value) {
   return page.evaluate((data) => {
+    // eslint-disable-next-line no-undef
     document.querySelector(data.selector).value = data.value
   }, { selector, value })
 }
