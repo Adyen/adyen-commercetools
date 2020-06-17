@@ -2,31 +2,19 @@
 
 **Contents**
 
-- [Prerequisites](#prerequisites)
+- [Parameters](#parameters)
 - [Requirements for CTP project](#requirements-for-ctp-project)
-- [Required parameters](#required-parameters)
-- [Run Tests](#run-tests)
 - [Deployment](#deployment)
   - [AWS Lambda](#aws-lambda)
   - [Docker](#docker)
     - [Pull the image](#pull-the-image)
     - [Run the container](#run-the-container)
+- [Development](#development)
+  - [Running Tests](#running-tests)
+  - [Contribution](#contribution)
 
-## Prerequisites
-1. Install Node.js >=12
-1. Install npm >=6
-1. Run `npm ci`
-
-## Requirements for CTP project
-All the requirements below are automatically created by the Extension module.
-1. [API Extension subscription to Extension module endpoints](../resources/api-extension.json)
-1. [Payment custom type](../resources/web-components-payment-type.json)
-1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
-
-**Note**: Extension module will not create if there are already resources with same key in the CTP project. In this case, you have to synchronize by yourself.
-
-## Required Parameters
-In order to make the extension module working, following parameters have to be provided to the Extension module:
+## Parameters
+In order to make the extension module working, following parameters have to be provided to the Extension module by using environment variables.
 
 | Name | Content | Required | Default value |
 | --- | --- | --- | --- |
@@ -45,14 +33,11 @@ In order to make the extension module working, following parameters have to be p
 |`KEEP_ALIVE_TIMEOUT` | milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_server_keepalivetimeout)) | NO | Node.js default
 |`ENSURE_RESOURCES` | Set to `false` to disable the creation of resources in commercetools (e.g. custom types) | NO | `true`
 
-## Run Tests
-In addition to the environmental variables from [Required parameters](#required-parameters), there's one additional environmental variable:
-1. `CLIENT_ENCRYPTION_PUBLIC_KEY`: Get your key from `https://ca-test.adyen.com/ca/ca/config/users.shtml`. Select `Web Service` user type account and copy `Client Encryption Public Key`. This key is used to encrypt credit card credentials in tests.
-
-There are 3 different types of tests. Don't forget to provide all required environmental variables:
-1. [Unit tests](../test/unit) - these tests are mocking all external communications.
-1. [Integration tests](../test/integration) - these tests interacts with real 3rd party systems.
-1. [End to end tests](../test/e2e) - for some payment methods, it's not possible to test without interacting with the UI (e.g. credit card 3ds).
+## Requirements for CTP project
+All the requirements below created by the extension module.
+1. [API Extension subscription to Extension module endpoints](../resources/api-extension.json)
+1. [Payment custom type](../resources/web-components-payment-type.json)
+1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
 
 ## Deployment
 
@@ -82,3 +67,25 @@ Replace all `XXX` values and execute:
 ```
 docker run -e ADYEN_API_BASE_URL=XXX -e ADYEN_MERCHANT_ACCOUNT=XXX -e API_EXTENSION_BASE_URL=XXX -e CTP_PROJECT_KEY=XXX -e ADYEN_API_KEY=XXX -e CTP_CLIENT_ID=XXX -e CTP_CLIENT_SECRET=XXX ctp-adyen-integration-extension:XXX
 ```
+
+## Development
+
+1. Install Node.js >=12
+1. Install npm >=6
+1. Run `npm install`
+
+### Running Tests
+
+- Execute `npm run unit` to run [Unit tests](../test/unit)
+- Execute `npm run integration` to run [Integration tests](../test/integration) 
+- Execute `npm run e2e` to run [E2e tests](../test/e2e)
+
+Execute `npm run test` to run all tests.
+
+In the end, a code coverage report will be printed.
+
+### Contribution
+
+- Every PR should address an issue on the repository. If the issue doesn't exist, please create it first.
+- Pull requests should always follow the following naming convention: 
+`[issue-number]-[pr-name]`. For example, `12-update-payment-type`.
