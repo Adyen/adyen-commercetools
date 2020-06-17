@@ -18,7 +18,7 @@ describe('::manualCapture::', () => {
     const makePaymentRequestDraft = {
       amount: {
         currency: 'EUR',
-        value: 500
+        value: 1000
       },
       reference: 'YOUR_UNIQUE_REFERENCE',
       paymentMethod: {
@@ -33,7 +33,7 @@ describe('::manualCapture::', () => {
     const paymentDraft = {
       amountPlanned: {
         currencyCode: 'EUR',
-        centAmount: 500,
+        centAmount: 1000,
       },
       paymentMethodInfo: {
         paymentInterface: CTP_ADYEN_INTEGRATION

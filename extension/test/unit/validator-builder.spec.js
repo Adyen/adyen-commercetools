@@ -1,5 +1,4 @@
 const { expect } = require('chai')
-const async = require('async')
 
 const ValidatorBuilder = require('../../src/validator/validator-builder')
 const {
@@ -12,25 +11,6 @@ const {
 } = require('../../src/validator/error-messages')
 
 describe('Validator builder', () => {
-  const vb = ValidatorBuilder.withPayment({})
-
-  async.each(
-    [vb.validateEncryptedCardNumberField,
-      vb.validateEncryptedExpiryMonthField,
-      vb.validateEncryptedExpiryYearField,
-      vb.validateEncryptedSecurityCodeField,
-      vb.validateReturnUrlField,
-      vb.validatePayloadField,
-      vb.validatePaymentDataField,
-      vb.validatePaResField,
-      vb.validateMdField],
-    (validation) => {
-      it(`on empty payment object validation for ${validation.name} to not throw exception`, async () => {
-        expect(validation).to.not.throw()
-      })
-    }
-  )
-
   it('on invalid JSON validateRequestFields() should return error object', async () => {
     const invalidPayment = {
       custom: {

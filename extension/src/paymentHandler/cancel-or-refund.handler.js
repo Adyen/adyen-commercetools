@@ -4,8 +4,7 @@ const { cancelOrRefund } = require('../service/web-component-service')
 
 const {
   CTP_INTERACTION_TYPE_MAKE_PAYMENT,
-  CTP_INTERACTION_TYPE_CANCEL_OR_REFUND,
-  CTP_TXN_STATE_PENDING,
+  CTP_INTERACTION_TYPE_CANCEL_OR_REFUND
 } = require('../config/constants')
 
 async function execute (paymentObject) {
@@ -57,7 +56,7 @@ function getTransactionActions (paymentObject, pspReference) {
     transactionId = refundTransaction.id
 
   return [
-    pU.createChangeTransactionStateAction(transactionId, CTP_TXN_STATE_PENDING),
+    pU.createChangeTransactionStateAction(transactionId, 'Pending'),
     pU.createChangeTransactionInteractionId(transactionId, pspReference)
   ]
 }
