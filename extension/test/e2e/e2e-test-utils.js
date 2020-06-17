@@ -36,17 +36,17 @@ function assertPayment (payment, finalAdyenPaymentInteractionName = 'submitAddit
 
   expect(payment.transactions).to.have.lengthOf(1)
   const transaction = payment.transactions[0]
-  expect(transaction.state).to.equal(c.CTP_TXN_STATE_SUCCESS)
+  expect(transaction.state).to.equal('Success')
   expect(transaction.type).to.equal('Authorization')
   expect(transaction.interactionId).to.equal(finalAdyenPaymentResponse.pspReference)
   expect(transaction.amount.centAmount).to.equal(payment.amountPlanned.centAmount)
   expect(transaction.amount.currencyCode).to.equal(payment.amountPlanned.currencyCode)
 }
 
-async function createPaymentWithOriginKeyResponse (ctpClient, baseUrl) {
+async function createPaymentWithOriginKeyResponse (ctpClient) {
   const getOriginKeysRequestDraft = {
     originDomains: [
-      baseUrl
+      process.env.API_EXTENSION_BASE_URL // todo: use config loader.
     ]
   }
   const paymentDraft = {

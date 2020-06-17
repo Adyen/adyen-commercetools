@@ -1,9 +1,9 @@
 const { pasteValue } = require('../e2e-test-utils')
 
 module.exports = class RedirectPaymentFormPage {
-  constructor (page, baseUrl) {
+  constructor (page) {
     this.page = page
-    this.baseUrl = baseUrl
+    this.baseUrl = process.env.API_EXTENSION_BASE_URL // todo: use config loader.
   }
 
   async goToThisPage () {

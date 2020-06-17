@@ -1,7 +1,7 @@
 module.exports = class MakePaymentFormPage {
-  constructor (page, baseUrl) {
+  constructor (page) {
     this.page = page
-    this.baseUrl = baseUrl
+    this.baseUrl = process.env.API_EXTENSION_BASE_URL // todo: use config loader.
   }
 
   async goToThisPage () {
