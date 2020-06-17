@@ -22,6 +22,9 @@ let server
 
 async function initServerAndExtension ({ ctpClient, testServerPort = 8000, routes = defaultRoutes }) {
   server = serverBuilder.setupServer(routes)
+  // note: ngrok should be restarted for every test case, otherwise there will be
+  // 429 Too Many Requests error. This is due to the limit of maximum opened HTTP connections,
+  // which is 40 connections at the same time as we're using Free program (https://ngrok.com/pricing).
   const ngrokUrl = await ngrok.connect(testServerPort)
   process.env.API_EXTENSION_BASE_URL = ngrokUrl
   await testUtils.deleteAllResources(ctpClient, 'payments')

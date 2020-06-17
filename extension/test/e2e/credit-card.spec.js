@@ -17,9 +17,6 @@ describe('::creditCardPayment::', () => {
     { name: 'VISA', creditCardNumber: '4166 6766 6766 6746' }
   ]
 
-  // note: ngrok should be restarted for every test case, otherwise there will be
-  // 429 Too Many Requests error. This is due to the limit of maximum opened HTTP connections,
-  // which is 40 connections at the same time.
   beforeEach(async () => {
     const fileServer = new nodeStatic.Server()
     routes['/make-payment-form'] = async (request, response) => {
