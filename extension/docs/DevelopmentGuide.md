@@ -8,10 +8,10 @@
 ## Prerequisites
 
 Minimum requirements are:
- - **Node.js** version 12 or higher.
- - **Npm** version 6 and above.
+ - **Node.js** version 12.
+ - **Npm** version 6.
  
-You can install all other dependencies using npm with following command:
+You can install all dependencies using `npm` with following command:
 
 ```
 npm install
