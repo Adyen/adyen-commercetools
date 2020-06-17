@@ -4,9 +4,8 @@ const { expect } = require('chai')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const { routes } = require('../../src/routes')
-const c = require('../../src/config/constants')
 const httpUtils = require('../../src/utils')
-const { assertPayment } = require('./e2e-test-utils')
+const { assertPayment, createPaymentWithOriginKeyResponse } = require('./e2e-test-utils')
 const KlarnaMakePaymentFormPage = require('./pageObjects/KlarnaMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const KlarnaPage = require('./pageObjects/KlarnaPage')
@@ -54,37 +53,12 @@ describe('::klarnaPayment::', () => {
 
   it('when payment method is klarna and process is done correctly, ' +
     'it should successfully finish the payment', async () => {
-    const page = await browser.newPage()
     const baseUrl = process.env.API_EXTENSION_BASE_URL
-
-    const getOriginKeysRequestDraft = {
-      originDomains: [
-        baseUrl
-      ]
-    }
-    const paymentDraft = {
-      amountPlanned: {
-        currencyCode: 'EUR',
-        centAmount: 1000,
-      },
-      paymentMethodInfo: {
-        paymentInterface: c.CTP_ADYEN_INTEGRATION
-      },
-      custom: {
-        type: {
-          typeId: 'type',
-          key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
-        },
-        fields: {
-          getOriginKeysRequest: JSON.stringify(getOriginKeysRequestDraft)
-        }
-      }
-    }
-
-    const { body: payment } = await ctpClient.create(ctpClient.builder.payments, paymentDraft)
+    const payment = await createPaymentWithOriginKeyResponse(ctpClient, baseUrl)
     const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
     const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
 
+    const page = await browser.newPage()
     // Make payment
     const makePaymentFormPage = new KlarnaMakePaymentFormPage(page, baseUrl)
     await makePaymentFormPage.goToThisPage()

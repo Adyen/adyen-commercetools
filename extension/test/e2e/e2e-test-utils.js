@@ -42,6 +42,35 @@ function assertPayment (payment, finalAdyenPaymentInteractionName = 'submitAddit
   expect(transaction.amount.currencyCode).to.equal(payment.amountPlanned.currencyCode)
 }
 
+async function createPaymentWithOriginKeyResponse (ctpClient, baseUrl) {
+  const getOriginKeysRequestDraft = {
+    originDomains: [
+      baseUrl
+    ]
+  }
+  const paymentDraft = {
+    amountPlanned: {
+      currencyCode: 'EUR',
+      centAmount: 1000,
+    },
+    paymentMethodInfo: {
+      paymentInterface: c.CTP_ADYEN_INTEGRATION
+    },
+    custom: {
+      type: {
+        typeId: 'type',
+        key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
+      },
+      fields: {
+        getOriginKeysRequest: JSON.stringify(getOriginKeysRequestDraft)
+      }
+    }
+  }
+
+  const { body: payment } = await ctpClient.create(ctpClient.builder.payments, paymentDraft)
+  return payment
+}
+
 module.exports = {
-  pasteValue, executeInAdyenIframe, assertPayment
+  pasteValue, executeInAdyenIframe, assertPayment, createPaymentWithOriginKeyResponse
 }

@@ -4,9 +4,8 @@ const querystring = require('querystring')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const { routes } = require('../../src/routes')
-const c = require('../../src/config/constants')
 const httpUtils = require('../../src/utils')
-const { assertPayment } = require('./e2e-test-utils')
+const { assertPayment, createPaymentWithOriginKeyResponse } = require('./e2e-test-utils')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const CreditCardRedirectPage = require('./pageObjects/CreditCard3dsRedirectPage')
@@ -93,37 +92,12 @@ describe('::creditCardPayment3dsRedirect::', () => {
     it(`when issuer is ${name} and number is ${creditCardNumber}, ` +
       'it should successfully finish the payment with credit card',
       async () => {
-        const page = await browser.newPage()
         const baseUrl = process.env.API_EXTENSION_BASE_URL
-
-        const getOriginKeysRequestDraft = {
-          originDomains: [
-            baseUrl
-          ]
-        }
-        const paymentDraft = {
-          amountPlanned: {
-            currencyCode: 'EUR',
-            centAmount: 1000,
-          },
-          paymentMethodInfo: {
-            paymentInterface: c.CTP_ADYEN_INTEGRATION
-          },
-          custom: {
-            type: {
-              typeId: 'type',
-              key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
-            },
-            fields: {
-              getOriginKeysRequest: JSON.stringify(getOriginKeysRequestDraft)
-            }
-          }
-        }
-
-        const { body: payment } = await ctpClient.create(ctpClient.builder.payments, paymentDraft)
+        const payment = await createPaymentWithOriginKeyResponse(ctpClient, baseUrl)
         const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
         const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
 
+        const page = await browser.newPage()
         // Make payment
         const makePaymentFormPage = new MakePaymentFormPage(page, baseUrl)
         await makePaymentFormPage.goToThisPage()
