@@ -5,16 +5,13 @@
   "license": "MIT",
   "scripts": {
     "check-coverage": "nyc check-coverage --statements 97",
-    "test": "nyc mocha --exit --timeout 30000 --full-trace test/**/*.spec.js && npm run check-coverage",
+    "test": "npm run lint && nyc mocha --exit --timeout 30000 --full-trace test/**/*.spec.js && npm run check-coverage",
     "unit": "nyc mocha --exit --timeout 30000 --full-trace test/unit/**/*.spec.js",
     "integration": "nyc mocha --exit --timeout 30000 --full-trace test/integration/**/*.spec.js",
     "start": "node ./src/init.js",
     "lint": "eslint ./src ./test",
     "create-custom-types": "node -e 'require(\"./src/config/init/ensure-resources.js\").ensureCustomTypes()'"
   },
-  "pre-commit": [
-    "lint"
-  ],
   "keywords": [
     "Adyen",
     "commercetools",
