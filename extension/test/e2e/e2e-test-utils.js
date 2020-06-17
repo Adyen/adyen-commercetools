@@ -19,25 +19,25 @@ async function executeInAdyenIframe (page, selector, executeFn) {
   }
 }
 
-function assertPayment (payment, finalInterfaceInteractionFromAdyen = 'submitAdditionalPaymentDetails') {
-  const { [`${finalInterfaceInteractionFromAdyen}Response`]: submitAdditionalPaymentDetailsResponseString }
+function assertPayment (payment, finalAdyenPaymentInteractionName = 'submitAdditionalPaymentDetails') {
+  const { [`${finalAdyenPaymentInteractionName}Response`]: finalAdyenPaymentResponseString }
     = payment.custom.fields
-  const submitAdditionalPaymentDetailsResponse = JSON.parse(submitAdditionalPaymentDetailsResponseString)
-  expect(submitAdditionalPaymentDetailsResponse.resultCode).to.equal('Authorised',
-    `resultCode is not Authorised: ${submitAdditionalPaymentDetailsResponseString}`)
-  expect(submitAdditionalPaymentDetailsResponse.pspReference).to.match(/[A-Z0-9]+/,
-    `pspReference does not match '/[A-Z0-9]+/': ${submitAdditionalPaymentDetailsResponseString}`)
+  const finalAdyenPaymentResponse = JSON.parse(finalAdyenPaymentResponseString)
+  expect(finalAdyenPaymentResponse.resultCode).to.equal('Authorised',
+    `resultCode is not Authorised: ${finalAdyenPaymentResponseString}`)
+  expect(finalAdyenPaymentResponse.pspReference).to.match(/[A-Z0-9]+/,
+    `pspReference does not match '/[A-Z0-9]+/': ${finalAdyenPaymentResponseString}`)
 
-  const submitAdditionalPaymentDetailsInteraction = getLatestInterfaceInteraction(payment.interfaceInteractions,
-    finalInterfaceInteractionFromAdyen)
-  expect(submitAdditionalPaymentDetailsInteraction.fields.response)
-    .to.equal(submitAdditionalPaymentDetailsResponseString)
+  const finalAdyenPaymentInteraction = getLatestInterfaceInteraction(payment.interfaceInteractions,
+    finalAdyenPaymentInteractionName)
+  expect(finalAdyenPaymentInteraction.fields.response)
+    .to.equal(finalAdyenPaymentResponseString)
 
   expect(payment.transactions).to.have.lengthOf(1)
   const transaction = payment.transactions[0]
   expect(transaction.state).to.equal(c.CTP_TXN_STATE_SUCCESS)
   expect(transaction.type).to.equal('Authorization')
-  expect(transaction.interactionId).to.equal(submitAdditionalPaymentDetailsResponse.pspReference)
+  expect(transaction.interactionId).to.equal(finalAdyenPaymentResponse.pspReference)
   expect(transaction.amount.centAmount).to.equal(payment.amountPlanned.centAmount)
   expect(transaction.amount.currencyCode).to.equal(payment.amountPlanned.currencyCode)
 }
