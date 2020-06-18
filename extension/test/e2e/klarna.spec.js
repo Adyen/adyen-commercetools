@@ -100,7 +100,7 @@ describe('::klarnaPayment::', () => {
       browserTab.waitForSelector('#buy-button:not([disabled])')
     ])
 
-    const klarnaPage = new KlarnaPage(browserTab, baseUrl)
+    const klarnaPage = new KlarnaPage(browserTab)
 
     await Promise.all([
       klarnaPage.finishKlarnaPayment(),

@@ -1,7 +1,6 @@
 module.exports = class KlarnaPage {
-  constructor (page, baseUrl) {
+  constructor (page) {
     this.page = page
-    this.baseUrl = baseUrl
   }
 
   async finishKlarnaPayment () {
