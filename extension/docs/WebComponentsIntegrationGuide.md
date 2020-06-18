@@ -2,7 +2,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents** 
 
-- [Integration Guide](#integration-guide)
+- [Web Components integration guide](#web-components-integration-guide)
+  - [Before you begin](#before-you-begin)
   - [Step 1: CTP checkout validations](#step-1-ctp-checkout-validations)
     - [Validate cart state](#validate-cart-state)
     - [Recalculate cart](#recalculate-cart)
@@ -17,7 +18,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Integration Guide
+# Web Components integration guide
 
 In this integration process, there are different parties working with extension module. Those: 
 
@@ -26,9 +27,12 @@ In this integration process, there are different parties working with extension 
 - **Merchant Server** - backend part of the checkout.
 - **[Notification module](./../../notification/README.md)** - Notification module is receiving notifications from Adyen payment service provider, processing and storing them on a commercetools.
 
-The following diagram shows whole checkout flow supported with [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
+The following diagram shows whole checkout integration flow using with [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
 
 ![Flow](https://user-images.githubusercontent.com/3469524/85017686-3317bf00-b16c-11ea-8840-f34b97ac3dcb.jpeg)
+
+## Before you begin
+If you haven't done so already, follow the official Adyen [Get started guide](https://docs.adyen.com/checkout/get-started) to set up your test account, get your API key.
 
 ## Step 1: CTP checkout validations
 
