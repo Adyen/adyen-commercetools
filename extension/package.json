@@ -5,10 +5,13 @@
   "license": "MIT",
   "scripts": {
     "check-coverage": "nyc check-coverage --statements 97",
-    "test": "npm run lint && npm run unit && npm run integration && npm run e2e && npm run check-coverage",
-    "unit": "nyc mocha --exit --timeout 30000 --no-clean --full-trace test/unit/**/*.spec.js",
-    "integration": "nyc mocha --exit --timeout 30000 --no-clean --full-trace test/integration/**/*.spec.js",
-    "e2e": "nyc mocha --exit --timeout 30000 --no-clean --full-trace test/e2e/**/*.spec.js",
+    "test": "npm run lint && npm run cover:unit && npm run cover:integration && npm run cover:e2e && npm run check-coverage",
+    "cover:unit": "nyc --silent npm run unit",
+    "cover:integration": "nyc --silent --no-clean npm run integration",
+    "cover:e2e": "nyc --silent --no-clean npm run e2e",
+    "unit": "nyc mocha --exit --timeout 30000 --full-trace test/unit/**/*.spec.js",
+    "integration": "nyc mocha --exit --timeout 30000 --full-trace test/integration/**/*.spec.js",
+    "e2e": "nyc mocha --exit --timeout 30000 --full-trace test/e2e/**/*.spec.js",
     "start": "node ./src/init.js",
     "lint": "eslint ./src ./test",
     "create-custom-types": "node -e 'require(\"./src/config/init/ensure-resources.js\").ensureCustomTypes()'"
