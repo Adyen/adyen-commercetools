@@ -3,7 +3,7 @@
   "version": "5.0.0",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "scripts": {
-    "check-coverage": "nyc check-coverage --statements 85 --lines 85",
+    "check-coverage": "nyc check-coverage --statements 93",
     "test": "npm run lint && npm run cover:unit && npm run cover:integration && npm run check-coverage",
     "cover:unit": "nyc --silent npm run unit",
     "cover:integration": "nyc --silent --no-clean npm run integration",
