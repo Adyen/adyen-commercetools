@@ -53,7 +53,7 @@ CTP payment representation:
 
 The response includes the list of available paymentMethods:
 
-``` json
+```
 {
  "paymentMethods":[
   {
