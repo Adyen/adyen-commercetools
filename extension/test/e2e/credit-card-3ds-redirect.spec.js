@@ -2,6 +2,7 @@ const nodeStatic = require('node-static')
 const querystring = require('querystring')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
+const configBuilder = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
 const { assertPayment, createPaymentWithOriginKeyResponse, initPuppeteerBrowser } = require('./e2e-test-utils')
@@ -61,9 +62,9 @@ describe('::creditCardPayment3dsRedirect::', () => {
                        }) => {
     // eslint-disable-next-line no-template-curly-in-string
     it(`when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
-      'it should successfully finish the payment with 3DS redirect flow',
+      'then it should successfully finish the payment with 3DS redirect flow',
       async () => {
-        const baseUrl = process.env.API_EXTENSION_BASE_URL
+        const baseUrl = configBuilder.load().apiExtensionBaseUrl
         const payment = await createPaymentWithOriginKeyResponse(ctpClient, baseUrl)
         const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
         const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)

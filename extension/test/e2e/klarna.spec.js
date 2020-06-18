@@ -2,6 +2,7 @@ const nodeStatic = require('node-static')
 const { expect } = require('chai')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
+const configBuilder = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
 const { assertPayment, createPaymentWithOriginKeyResponse, initPuppeteerBrowser } = require('./e2e-test-utils')
@@ -44,8 +45,8 @@ describe('::klarnaPayment::', () => {
   })
 
   it('when payment method is klarna and process is done correctly, ' +
-    'it should successfully finish the payment', async () => {
-    const baseUrl = process.env.API_EXTENSION_BASE_URL
+    'then it should successfully finish the payment', async () => {
+    const baseUrl = configBuilder.load().apiExtensionBaseUrl
     const payment = await createPaymentWithOriginKeyResponse(ctpClient, baseUrl)
     const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
     const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
