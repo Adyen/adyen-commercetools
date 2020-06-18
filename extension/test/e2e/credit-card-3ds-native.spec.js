@@ -84,7 +84,7 @@ describe('::creditCardPayment3dsNative::', () => {
           payment: paymentAfterMakePayment, browserTab, baseUrl, getOriginKeysResponse
         })
 
-        const paymentAfterAuthentication = await performAuthenticationFlow({
+        const paymentAfterAuthentication = await performChallengeFlow({
           payment: paymentAfterIdentifyShopper,
           browserTab,
           baseUrl,
@@ -143,7 +143,7 @@ describe('::creditCardPayment3dsNative::', () => {
     return updatedPayment2
   }
 
-  async function performAuthenticationFlow ({
+  async function performChallengeFlow ({
                                               payment, browserTab, baseUrl, getOriginKeysResponse
                                             }) {
     // Submit additional details 1
