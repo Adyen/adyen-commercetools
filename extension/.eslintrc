@@ -21,6 +21,7 @@
     "no-unused-expressions": "off",
     "template-curly-spacing" : "off",
     "indent": "off",
-    "operator-linebreak": "off"
+    "operator-linebreak": "off",
+    "no-await-in-loop": "off"
   }
 }

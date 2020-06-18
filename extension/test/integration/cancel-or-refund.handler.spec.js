@@ -13,7 +13,7 @@ describe('::cancelOrRefund::', () => {
 
   beforeEach(async () => {
     ctpClient = ctpClientBuilder.get()
-    await iTSetUp.initServerAndExtension(ctpClient)
+    await iTSetUp.initServerAndExtension({ ctpClient })
 
     const makePaymentRequestDraft = {
       amount: {

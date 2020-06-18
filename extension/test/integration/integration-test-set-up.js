@@ -1,6 +1,5 @@
 const ngrok = require('ngrok')   // eslint-disable-line
 const _ = require('lodash')
-const server = require('../../src/server').setupServer()
 const ctpZone = require('./fixtures/ctp-zone')
 const ctpTaxCategory = require('./fixtures/ctp-tax-category')
 const ctpShippingMethod = require('./fixtures/ctp-shipping-method')
@@ -14,11 +13,18 @@ const ctpCartDiscountShipping = require('./fixtures/ctp-cart-discount-shipping')
 const ctpDiscountCode = require('./fixtures/ctp-discount-code')
 const ctpDiscountCodeMultiBuy = require('./fixtures/ctp-discount-code-multi-buy')
 const ctpDiscountCodeShipping = require('./fixtures/ctp-discount-code-shipping')
-
+const serverBuilder = require('../../src/server')
+const { routes: defaultRoutes } = require('../../src/routes')
 const { ensureResources } = require('../../src/config/init/ensure-resources')
 const testUtils = require('../test-utils')
 
-async function initServerAndExtension (ctpClient, testServerPort = 8000) {
+let server
+
+async function initServerAndExtension ({ ctpClient, testServerPort = 8000, routes = defaultRoutes }) {
+  server = serverBuilder.setupServer(routes)
+  // note: ngrok should be restarted for every test case, otherwise there will be
+  // 429 Too Many Requests error. This is due to the limit of maximum opened HTTP connections,
+  // which is 40 connections at the same time as we're using Free program (https://ngrok.com/pricing).
   const ngrokUrl = await ngrok.connect(testServerPort)
   process.env.API_EXTENSION_BASE_URL = ngrokUrl
   await testUtils.deleteAllResources(ctpClient, 'payments')

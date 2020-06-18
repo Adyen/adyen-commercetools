@@ -9,7 +9,7 @@ describe('::makePayment::', () => {
   beforeEach(async () => {
     ctpClient = ctpClientBuilder.get()
     await iTSetUp.cleanupCtpResources(ctpClient)
-    await iTSetUp.initServerAndExtension(ctpClient)
+    await iTSetUp.initServerAndExtension({ ctpClient })
   })
 
   afterEach(async () => {
