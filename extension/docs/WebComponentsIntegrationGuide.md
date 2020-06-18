@@ -22,8 +22,6 @@ When your shopper is ready to pay, get a list of the available payment methods b
 
 From the merchant server, [Create/Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with `getPaymentMethodsRequest` custom field.  
 
-### Request
-
 Set `getPaymentMethodsRequest` custom field for a shopper in the Germany, for a payment of `10 EUR`: 
 
 ``` json
@@ -52,10 +50,6 @@ CTP payment representation:
   }
 }
 ```
-
-### Response
-
-Pass the `getPaymentMethodsResponse` to your front end. You might use this in the next step to show which payment methods are available for the shopper.
 
 The response includes the list of available paymentMethods:
 
@@ -95,6 +89,8 @@ CTP payment representation:
 }
 
 ```
+
+Pass the `getPaymentMethodsResponse` to your front end. You might use this in the next step to show which payment methods are available for the shopper.
 
 ## Step 2: Add Components to your payments form
 
@@ -148,7 +144,7 @@ CTP payment representation:
 }
 ```
 
-Pass the `origin key` to your front end.
+Pass the `origin key` to your front end. You might use this origin key to be able to render Component.
 
-> Note: First 2 steps are optional if originKey and payment methods has been already cached by the merchant server.
+> Note: First 2 steps are optional if origin key and payment methods has been already cached by the merchant server.
  
