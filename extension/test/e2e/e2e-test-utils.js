@@ -1,5 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { expect } = require('chai')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const puppeteer = require('puppeteer')
 const { getLatestInterfaceInteraction } = require('../../src/paymentHandler/payment-utils')
 const c = require('../../src/config/constants')
 
@@ -20,6 +22,14 @@ async function executeInAdyenIframe (page, selector, executeFn) {
   }
 }
 
+async function initPuppeteerBrowser () {
+  return puppeteer.launch({
+    headless: true,
+    ignoreHTTPSErrors: true,
+    args: ['--disable-web-security', '--disable-features=IsolateOrigins,site-per-process']
+  })
+}
+
 function assertPayment (payment, finalAdyenPaymentInteractionName = 'submitAdditionalPaymentDetails') {
   const { [`${finalAdyenPaymentInteractionName}Response`]: finalAdyenPaymentResponseString }
     = payment.custom.fields
@@ -36,7 +46,7 @@ function assertPayment (payment, finalAdyenPaymentInteractionName = 'submitAddit
 
   expect(payment.transactions).to.have.lengthOf(1)
   const transaction = payment.transactions[0]
-  expect(transaction.state).to.equal(c.CTP_TXN_STATE_SUCCESS)
+  expect(transaction.state).to.equal('Success')
   expect(transaction.type).to.equal('Authorization')
   expect(transaction.interactionId).to.equal(finalAdyenPaymentResponse.pspReference)
   expect(transaction.amount.centAmount).to.equal(payment.amountPlanned.centAmount)
@@ -73,5 +83,5 @@ async function createPaymentWithOriginKeyResponse (ctpClient, baseUrl) {
 }
 
 module.exports = {
-  pasteValue, executeInAdyenIframe, assertPayment, createPaymentWithOriginKeyResponse
+  pasteValue, executeInAdyenIframe, assertPayment, createPaymentWithOriginKeyResponse, initPuppeteerBrowser
 }

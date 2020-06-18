@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "check-coverage": "nyc check-coverage --statements 97",
-    "test": "npm run lint && nyc mocha --exit --timeout 30000 --full-trace test/**/*.spec.js && npm run check-coverage",
+    "test": "npm run lint && npm run unit && npm run integration && npm run e2e && npm run check-coverage",
     "unit": "nyc mocha --exit --timeout 30000 --full-trace test/unit/**/*.spec.js",
     "integration": "nyc mocha --exit --timeout 30000 --full-trace test/integration/**/*.spec.js",
     "e2e": "nyc mocha --exit --timeout 60000 --full-trace test/e2e/**/*.spec.js",
