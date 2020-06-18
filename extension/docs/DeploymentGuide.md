@@ -30,6 +30,8 @@ In order to make the extension module working, following environment variables s
 |`KEEP_ALIVE_TIMEOUT` | milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_server_keepalivetimeout)) | NO | Node.js default
 |`ENSURE_RESOURCES` | Set to `false` to disable the creation of resources in commercetools (e.g. custom types) | NO | `true`
 
+> Note: Sometimes it's necessary to regenerate the `ADYEN_API_KEY` key, otherwise you'll get `403 Forbidden error` from Adyen.
+
 ## Requirements for CTP project
 All the requirements below created by the extension module.
 1. [API Extension subscription to Extension module endpoints](../resources/api-extension.json)
