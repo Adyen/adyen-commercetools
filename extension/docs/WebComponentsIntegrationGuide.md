@@ -53,28 +53,24 @@ CTP payment representation:
 
 The response includes the list of available paymentMethods:
 
-```
+``` json
 {
  "paymentMethods":[
   {
-    "details":[...],
     "name":"Credit Card",
     "type":"scheme"
-    ...
   },
   {
-    "details":[...],
     "name":"SEPA Direct Debit",
     "type":"sepadirectdebit"
   },
-  ...
-  ]
+ ]
 }
 ```
 
 CTP payment representation:
 
-```
+``` json
 {
   "custom": {
     "type": {
