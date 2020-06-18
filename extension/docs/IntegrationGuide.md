@@ -4,9 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Contents**
 
-  - [Glossary](#glossary)
-  - [Requirements for CTP project](#requirements-for-ctp-project)
-  - [Required parameters](#required-parameters)
+- [Glossary](#glossary)
 - [Checkout steps](#checkout-steps)
 - [Error cases](#error-cases)
 - [Validations](#validations)
@@ -29,28 +27,6 @@ In this process, there are 3 parties involved:
 Other used terms in the documentation:
 - [**Cancel**](CancelRefundPayment.md#cancel-or-refund-a-payment) - cancel the authorisation on an uncaptured payment.
 - [**Refund**](CancelRefundPayment.md#cancel-or-refund-a-payment) - refund a payment back to the shopper.
-
-
-## Requirements for CTP project
-All the requirements below are automatically created by the Extension module.
-1. [API Extension subscription to Extension module endpoints](../resources/api-extension.json)
-1. [Custom type for payments](../resources/web-components-payment-type.json)
-1. [Custom type for payment interface interactions](../resources/payment-interface-interaction-type.json)
-
-**Note**: Extension module will not create if there are already resources with same key in the CTP project. In this case, you have to synchronize by yourself.
-
-## Required parameters
-In order to make the extension module working, following parameters have to be provided to the Extension module.
-
-| Name | Description |
-| --- | --- |
-| `CTP_PROJECT_KEY` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended template is `Admin Client`. |
-| `CTP_CLIENT_ID` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended template is `Admin Client`. |
-| `CTP_CLIENT_SECRET` | CTP credentials of the shop project. Go to `https://mc.commercetools.com/${your-ctp-project}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended template is `Admin Client`. |
-| `API_EXTENSION_BASE_URL` | URL of the Extension module. This URL will be called by CTP Extension endpoint. |
-| `ADYEN_API_KEY` | Go to [Account/Users](https://ca-test.adyen.com/ca/ca/config/users.shtml) - Select a user with `Web Service` User type - Generate New API Key (notice: in case you get `403 Forbidden` error from Adyen, try to regenerate the key). |
-| `ADYEN_MERCHANT_ACCOUNT` | Go to [Account/Merchant accounts](https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount) and get the name in Acccount code. | |
-| `KEEP_ALIVE_TIMEOUT` | milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_server_keepalivetimeout)) |
 
 # Checkout steps
 In your shop, ensure the steps below are done:
@@ -116,13 +92,9 @@ and transactions type `Authorization` or `Charge`.
 ### Mapping from Adyen result codes to CTP transaction state
 |Adyen result code| CTP transaction state
 | --- | --- |
-| redirectshopper| Pending|
-| received| Pending|
-| pending| Pending|
-| authorised| Success|
-| refused| Failure|
-| cancelled| Failure|
-| error| Failure|
+| Authorised| Success|
+| Refused| Failure|
+| Error| Failure|
 
 # Bad practice
 - Never delete or un-assign created payment objects during checkout from the cart. If required — clean up unused/obsolete payment objects by another asynchronous process instead.
