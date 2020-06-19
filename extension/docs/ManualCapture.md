@@ -35,6 +35,23 @@ The `manualCaptureResponse` contains a PSP reference associated with this manual
 } 
 ```
 
+Additionally, a [Charge](https://docs.commercetools.com/http-api-projects-payments#transactiontype) transaction with `Pending` transaction state will be added to CTP payment with the same Adyen `pspReference` on the `interactionId` field:
+
+```json
+{
+  "id": "6faada76-d5d5-49c4-8806-05885ac2598f",
+  "type": "Charge",
+  "amount": {
+  "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 500,
+    "fractionDigits": 2
+  },
+  "interactionId": "8825408195409505",
+  "state": "Pending"
+}
+```
+
 CTP payment representation:
 
 ``` json
@@ -82,7 +99,6 @@ CTP payment representation:
 
 ```
 
-Once Adyen have processed your capture request, Adyen will send a notification to our [Notification module](./../../notification/README.md)
 
 #### More info
 For more detailed information from Adyen's perspective, see [Adyen's documentation](https://docs.adyen.com/checkout/capture#manual-capture).
