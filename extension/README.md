@@ -1,5 +1,5 @@
 ## Extension module
-![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)
+[![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/repository/docker/commercetools/commercetools-adyen-integration-extension)
 
 Extension module is a public service. When CTP Payments change, It receives calls from 
 [API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions),

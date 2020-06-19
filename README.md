@@ -1,6 +1,5 @@
 # commercetools-adyen-integration
 [![Build Status](https://travis-ci.org/commercetools/commercetools-adyen-integration.svg?branch=master)](https://travis-ci.org/commercetools/commercetools-adyen-integration)
-[![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/repository/docker/commercetools/commercetools-adyen-integration-extension)
 
 This repository provides integration between commercetools and Adyen payment service provider.
 
@@ -20,13 +19,15 @@ Complete integration requires running both of the modules.
 - When Adyen cannot fulfill the payment requirement right away, it will later send a notification as a response.
 - The Notification module will process the notification and update the matching commercetools payment accordingly.    
 
-## Extension module
+## Extension module [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/repository/docker/commercetools/commercetools-adyen-integration-extension)
+
 Extension module is a public service. When a commercetools payment object changes, the [API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) send a request to the extension module.
 Then the extension module maps and sends a request to Adyen and responds with update actions back to the commercetools platform.
 
 For more info, go to the [Extension module](./extension/README.md).
 
-## Notification module
+## Notification module [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-notification)](https://hub.docker.com/repository/docker/commercetools/commercetools-adyen-integration-notification)
+
 Notification module is a public service which receives notifications sent by Adyen,
 processes them and saves on a commercetools project.
 
