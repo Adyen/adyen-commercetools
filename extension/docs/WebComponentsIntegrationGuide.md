@@ -149,7 +149,7 @@ After the shopper submits their payment details or chooses to pay with a payment
 the Adyen Web Components will generate a `makePaymentRequest`. Consult [Adyen documentation](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) to see which parameters 
 are necessary for the current payment request.
 
-[Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `makePaymentRequest` custom field. 
+[Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `makePaymentRequest` custom field, where value is the generated and stringified `makePaymentRequest` from Adyen Web Components. 
 ```json
 {
   "version": "PAYMENT_VERSION",
@@ -162,7 +162,7 @@ are necessary for the current payment request.
   ]
 }
 ```
-The response from Adyen is be added to `makePaymentResponse` custom field. 
+The response from Adyen is added to `makePaymentResponse` custom field. 
 The response contains information for the next steps of the payment process.
 For details, consult the [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-3-make-a-payment)
 
@@ -182,7 +182,8 @@ A CTP payment with `makePaymentResponse` for the case where user has to be redir
 }
 ```    
 
-A CTP payment with `makePaymentResponse` for the case where there is no further steps needed:
+A CTP payment with `makePaymentResponse` for the case where you can present the payment result to your shopper.
+See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-present-payment-result) for more information how to present the results.
 ```json
 {
   "custom": {
@@ -199,8 +200,8 @@ A CTP payment with `makePaymentResponse` for the case where there is no further 
 ```
 
 #### Klarna payment
-For Klarna payment it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) with `makePaymentRequest`.
-Extension module can add the line item details for you if [the payment is added to a cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
+For Klarna payment it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) in `makePaymentRequest`.
+Extension module can add the line item details for you if [the payment was added to a cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
 
 [Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `makePaymentRequest` custom field **WITHOUT** `lineItems` attribute. 
 ```json
@@ -261,34 +262,35 @@ Extension module will add line items to your `makePaymentRequest`
   "merchantAccount": "YourMerchantAccount"
 }
 ```
-If `makePaymentRequest` has `lineItems` attribute, extension module will not overwrite those `lineItems`.
+If `makePaymentRequest` has `lineItems` custom field, extension module will not overwrite those `lineItems`. This way you can also provide your own line item details if needed.
 
 ## Step 4: Submit additional payment details
-If the shopper performed additional action in the previous step,
-you need to make `submitAdditionalPaymentRequest` to either complete the payment, or to check the payment result.
+If the shopper performed additional action (e.g. redirect) in the previous step,
+you need to make `submitAdditionalPaymentDetailsRequest` to either complete the payment, or to check the payment result.
 
-Collect information from the previous step and [update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `submitAdditionalPaymentRequest` custom field.
+Collect information from the previous step and [update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `submitAdditionalPaymentDetailsRequest` custom field.
 The information is available either in `state.data.details` from the `onAdditionalDetails` event or, for redirects, the parameters you received when the shopper was redirected back to your website.
 ```json
 {
   "version": "PAYMENT_VERSION",
   "actions": [
     {
-      "action": "submitAdditionalPaymentRequest",
-      "name": "makePaymentRequest",
+      "action": "setCustomField",
+      "name": "submitAdditionalPaymentDetailsRequest",
       "value": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}"
     }
   ]
 }
 ```
 
-Extension module will extend `submitAdditionalPaymentRequest` with `paymentData` attribute if the attribute is missing.
-In this case, `paymentData` will be added from the previous `makePaymentRequest`.
+Extension module will extend `submitAdditionalPaymentDetailsRequest` with `paymentData` attribute if the attribute is missing.
+In this case, `paymentData` will be taken from the previous `makePaymentRequest`.
 
-After update, you will receive `submitAdditionalPaymentResponse` in the returned CTP payment.
-The next steps depend on if you received an action object in the `submitAdditionalPaymentResponse`.
+After update, you will receive `submitAdditionalPaymentDetailsResponse` in the returned CTP payment.
+The next steps depend on if you received an action object in the `submitAdditionalPaymentDetailsResponse`.
 
 If you received an action object, [pass the action object to your front end](https://docs.adyen.com/checkout/components-web/#step-4-additional-front-end) and perform Step 4 again.
+A CTP payment with `submitAdditionalPaymentDetailsResponse` for the case where you need to pass the action object to your front end:
 ```json
 {
   "custom": {
@@ -305,7 +307,8 @@ If you received an action object, [pass the action object to your front end](htt
 ```
 
 If you did not get an action object, you can present the payment result to your shopper. 
-See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-present-payment-result) for more information how to present the results. 
+See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-present-payment-result) for more information how to present the results.
+A CTP payment with `submitAdditionalPaymentDetailsResponse` for the case where you can present the result: 
 ```json
 {
   "custom": {
