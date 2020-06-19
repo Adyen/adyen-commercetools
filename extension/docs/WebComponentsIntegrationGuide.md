@@ -528,8 +528,7 @@ If you received an action object and need to repeat `submitPaymentDetailsRequest
     },
     {
       "action": "setCustomField",
-      "name": "submitAdditionalPaymentDetailsResponse",
-      "value": ""
+      "name": "submitAdditionalPaymentDetailsResponse"
     }
   ]
 }
