@@ -14,14 +14,14 @@
   - [Step 4: Make a payment](#step-4-make-a-payment)
       - [Klarna payment](#klarna-payment)
   - [Step 5: Submit additional payment details](#step-5-submit-additional-payment-details)
-  - [Step 6: Capture payment (required for Klarna)](#step-6-capture-payment-required-for-klarna)
-  - [Step N: Cancel or refund](#step-n-cancel-or-refund)
   - [Error handling](#error-handling)
     - [Extension module errors](#extension-module-errors)
     - [Adyen payment refusals](#adyen-payment-refusals)
     - [Shopper successfully paid but `redirectUrl` was not reached](#shopper-successfully-paid-but-redirecturl-was-not-reached)
     - [Shopper tries to pay a different amount than the actual order amount](#shopper-tries-to-pay-a-different-amount-than-the-actual-order-amount)
   - [Test and go live](#test-and-go-live)
+- [Manual Capture](#manual-capture)
+- [Cancel or refund](#cancel-or-refund)
 - [Bad Practices](#bad-practices)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -52,6 +52,9 @@ In the merchant server, ensure the steps below are done:
     * [Validate payment](#validate-payment)
     * [Validate payment transaction](#validate-payment-transaction)
 
+If all the above validations passed then the order can be created right away and order confirmation page shown.
+Otherwise, the shopper might continue with further payment steps.
+
 ### Validate cart state
 Check if [current cart has been ordered already](https://docs.commercetools.com/http-api-projects-carts#cartstate) (`Cart.cartState = Ordered`).
 In this case, load order by ordered cart ID and show order confirmation page.
@@ -70,10 +73,6 @@ There must be at least one CTP payment object of type Adyen (`Payment.paymentMet
 Cart's payment counts as successful if there is at least one payment object
 with successful transaction state (`Payment.Transaction.state=Success`) 
 and transactions type `Authorization` or `Charge`.
-
-If all the above validations passed then the order can be created right away and order confirmation page shown.
-
-Otherwise, the shopper might continue with further payment steps.
 
 ## Step 2: Get available payment methods
 When your shopper is ready to pay, get a list of the available payment methods based on their country, device, and the payment amount.
@@ -202,6 +201,7 @@ Pass the `origin key` to your front end. You might use this origin key to be abl
 
 > Note: The first 2 steps are optional if origin key and payment methods have been already cached by the merchant server.
  
+
 ## Step 4: Make a payment
 After the shopper submits their payment details or chooses to pay with a payment method that requires a redirection,
 the Adyen Web Components will generate a `makePaymentRequest`. Consult [Adyen documentation](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) to see which parameters 
@@ -566,18 +566,6 @@ and has `amount` taken from `amountPlanned`. `interactionId` is matching the `ma
 }
 ```
 
-## Step 6: Capture payment (required for Klarna)
-All Klarna payments [have to be manually captured](https://docs.adyen.com/payment-methods/klarna/web-component#capture) within 28 days after authorisation, even if you have enabled automatic capture on your merchant account.
-Refer to [Manual Capture](ManualCapture.md) guide to see how it can done.
-
-## Step N: Cancel or refund
-If you want to return the funds to your shopper, but are not certain whether the payment has been captured or not, use the Cancel or Refund functionality. 
-
-This will either: 
-
-- [**Cancel**](CancelRefundPayment.md#cancel-or-refund-a-payment) - cancel the authorisation on an uncaptured payment.
-- [**Refund**](CancelRefundPayment.md#cancel-or-refund-a-payment) - refund a payment back to the shopper.
-
 ## Error handling
 
 In case you encounter errors in your integration, refer to the following:
@@ -617,6 +605,19 @@ will be shown and order creation declined.
 After doing the all steps above and testing the payment methods with your test accounts, then when you are ready to go live, you need to do the following steps described as [testing the integration](https://docs.adyen.com/checkout/components-web/#testing-your-integration).
 
 Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist) to ensure you have a complete implementation into Adyen.
+
+# Manual Capture
+By default, payments are captured immediately after authorisation. For payment methods that support separate authorisation and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This allows you to cancel the payment in case of any issues with the shipment. 
+
+If you need to explicitly request a capture for each payment please follow our [manual capture documentation](./ManualCapture.md).
+
+# Cancel or refund
+If you want to return the funds to your shopper, but are not certain whether the payment has been captured or not, use the Cancel or Refund functionality. 
+
+This will either: 
+
+- [**Cancel**](CancelRefundPayment.md#cancel-or-refund-a-payment) - cancel the authorisation on an uncaptured payment.
+- [**Refund**](CancelRefundPayment.md#cancel-or-refund-a-payment) - refund a payment back to the shopper.
 
 # Bad Practices
 - **Never delete or un-assign** created payment objects during checkout from the cart. If required — clean up unused/obsolete payment objects by another asynchronous process instead.
