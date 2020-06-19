@@ -1,17 +1,16 @@
 # commercetools-adyen-integration
 [![Build Status](https://travis-ci.org/commercetools/commercetools-adyen-integration.svg?branch=master)](https://travis-ci.org/commercetools/commercetools-adyen-integration)
 
-
 This repository provides integration between commercetools and Adyen payment service provider.
 
-#### Supported payment methods
-- Credit card with 3DS payment  
-- Paypal payment
+## Supported payment methods
+`commercetools-adyen-integration` supports the concept of [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
+Components are available for cards, wallets, and most local payment methods. For a list of all payment methods with an available component, refer to [Supported payment methods](https://docs.adyen.com/checkout/supported-payment-methods).
 
+## Overview
 This repository contains two standalone modules that interact with CTP and Adyen.
 Complete integration requires running both of the modules.
 
-## Overview
 ![Overview diagram](https://user-images.githubusercontent.com/9251453/56047499-ce7dfa80-5d45-11e9-9443-aaef9da31eab.png)
 - Shop communicates only with commercetools platform.
 - commercetools platform communicates with the Extension module.
