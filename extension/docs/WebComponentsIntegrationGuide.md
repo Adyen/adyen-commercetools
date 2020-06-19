@@ -52,6 +52,9 @@ In the merchant server, ensure the steps below are done:
     * [Validate payment](#validate-payment)
     * [Validate payment transaction](#validate-payment-transaction)
 
+If all the above validations passed then the order can be created right away and order confirmation page shown.
+Otherwise, the shopper might continue with further payment steps.
+
 ### Validate cart state
 Check if [current cart has been ordered already](https://docs.commercetools.com/http-api-projects-carts#cartstate) (`Cart.cartState = Ordered`).
 In this case, load order by ordered cart ID and show order confirmation page.
@@ -70,10 +73,6 @@ There must be at least one CTP payment object of type Adyen (`Payment.paymentMet
 Cart's payment counts as successful if there is at least one payment object
 with successful transaction state (`Payment.Transaction.state=Success`) 
 and transactions type `Authorization` or `Charge`.
-
-If all the above validations passed then the order can be created right away and order confirmation page shown.
-
-Otherwise, the shopper might continue with further payment steps.
 
 ## Step 2: Get available payment methods
 When your shopper is ready to pay, get a list of the available payment methods based on their country, device, and the payment amount.
