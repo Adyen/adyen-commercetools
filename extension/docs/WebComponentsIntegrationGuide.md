@@ -20,14 +20,14 @@
 
 # Web Components integration guide
 
-In this integration process, there are different parties working with extension module. Those: 
+In this integration process, there are different parties working with the extension module. Those: 
 
 - **Shopper** - a person that's using the shop.
-- **Browser** - frontend part of the checkout UI (web shop). 
+- **Browser** - frontend part of the checkout UI (webshop). 
 - **Merchant Server** - backend part of the checkout.
-- **[Notification module](./../../notification/README.md)** - Notification module is receiving notifications from Adyen payment service provider, processing and storing them on a commercetools.
+- **[Notification module](./../../notification/README.md)** - Notification module is receiving notifications from Adyen payment service provider, processing and storing them on a commercetools payment object.
 
-The following diagram shows whole checkout integration flow using with [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
+The following diagram shows the whole checkout integration flow using with [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
 
 ![Flow](https://user-images.githubusercontent.com/3469524/85017686-3317bf00-b16c-11ea-8840-f34b97ac3dcb.jpeg)
 
@@ -45,14 +45,14 @@ In the `mechant server`, ensure the steps below are done:
 
 ### Validate cart state
 Check if [current cart has been ordered already](https://docs.commercetools.com/http-api-projects-carts#cartstate) (`Cart.cartState = Ordered`).
-In this case load order by ordered cart ID and show order confirmation page.
-This might happen if cart has been already ordered in a different tab 
+In this case, load order by ordered cart ID and show order confirmation page.
+This might happen if the cart has been already ordered in a different tab 
 or by asynchronous process like [commercetools-payment-to-order-processor job](https://github.com/commercetools/commercetools-payment-to-order-processor).
 
 ### Recalculate cart
 [Execute cart recalculate](https://docs.commercetools.com/http-api-projects-carts#recalculate) to ensure:
  - Cart totals are always up-to-date 
- - Time limited discounts are not removed/invalidated from cart automatically. They are validated on recalculate and order creation only.
+ - Time-limited discounts are not removed/invalidated from the cart automatically. They are validated on recalculate and order creation only.
 
 ### Validate payment
 There must be at least one CTP payment object of type Adyen
@@ -65,9 +65,9 @@ Cart's payment counts as successful if there is at least one payment object
 with successful transaction state (`Payment.Transaction.state=Success`) 
 and transactions type `Authorization` or `Charge`.
 
-If all above validations passed then order can be created right away and `order confirmation page` shown.
+If all the above validations passed then the order can be created right away and `order confirmation page` shown.
 
-Otherwise, shopper might continue with further payment steps.
+Otherwise, the shopper might continue with further payment steps.
 
 ## Step 2: Get available payment methods
 When your shopper is ready to pay, get a list of the available payment methods based on their country, device, and the payment amount.
@@ -164,7 +164,7 @@ An [update action](https://docs.commercetools.com/http-api-projects-payments#set
 }
 ```
 
-The response contains a list of origin key for all requested domains. For each list item, the key is the domain, and the value is its associated origin key.
+The response contains a list of origin keys for all requested domains. For each list item, the key is the domain, and the value is its associated origin key.
 
 ``` json
 {
@@ -194,7 +194,7 @@ CTP payment representation:
 
 Pass the `origin key` to your front end. You might use this origin key to be able to render Component.
 
-> Note: First 2 steps are optional if origin key and payment methods has been already cached by the merchant server.
+> Note: The First 2 steps are optional if origin key and payment methods have been already cached by the merchant server.
  
 
 ## Step N: Cancel or refund
@@ -207,17 +207,17 @@ This will either:
 
 # Error cases
 1. **Adyen returns HTTP code other than 200**  
-Request and response from Adyen are always stored in `Payment.interfaceInteractions` as strigified JSON.
+Request and response from Adyen are always stored in `Payment.interfaceInteractions` as stringified JSON.
 1. **Shopper successfully paid but `redirectUrl` was not reached**  
-In some payment redirect cases there might be a valid payment but no order as shopper did not reach the shop's `redirectUrl`.
-For example after successfully issued payment shopper loses internet connection or accidentally closes the tab.
-In this case [Notification module](../../notification) will receive later a notification with successful content, process it and update the payment.
+In some payment redirect cases, there might be a valid payment but no order as shopper did not reach the shop's `redirectUrl`.
+For example, after successfully issued payment shopper loses internet connection or accidentally closes the tab.
+In this case [Notification module](../../notification) will receive later a notification with successful content, process it, and update the payment.
 Usage of scheduled [commercetools-payment-to-order-processor](https://github.com/commercetools/commercetools-payment-to-order-processor) job ensures that for every successful payment
 an order can still be asynchronously created.
-1. **Shopper tries to pay different amount than the actual order amount**   
+1. **Shopper tries to pay a different amount than the actual order amount**   
 For redirect payments payment amount is bound to `redirectUrl`.
-After redirect and before actual finalisation of the payment at provider's page, shopper is still able to change the cart's amount within the second tab.
-If shopper decides to change cart's amount within the second tab and finalise payment within the first tab, then according to payment amount validation an error
+After redirect and before the actual finalization of the payment at the provider's page, the shopper is still able to change the cart's amount within the second tab.
+If shopper decides to change cart's amount within the second tab and finalize payment within the first tab, then according to payment amount validation an error
 will be shown and order creation declined.
 
 ### Mapping from Adyen result codes to CTP transaction state
