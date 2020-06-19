@@ -507,3 +507,7 @@ and has `amount` taken from `amountPlanned`. `interactionId` is matching the `ma
   ]
 }
 ```
+
+## Step 5: Capture payment (required for Klarna)
+All Klarna payments [have to be manually captured](https://docs.adyen.com/payment-methods/klarna/web-component#capture) within 28 days after authorisation, even if you have enabled automatic capture on your merchant account.
+Refer to [Manual Capture](./ManualCapture.md) guide to see how it can done.
