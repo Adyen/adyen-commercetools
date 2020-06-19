@@ -149,7 +149,7 @@ After the shopper submits their payment details or chooses to pay with a payment
 the Adyen Web Components will generate a `makePaymentRequest`. Consult [Adyen documentation](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) to see which parameters 
 are necessary for the current payment request.
 
-Make payment request generated from Adyen Web Components.
+Make payment request generated from Adyen Web Components for credit card payment.
 ```json
 {
   "amount": {
@@ -168,7 +168,7 @@ Make payment request generated from Adyen Web Components.
   "merchantAccount": "YOUR_MERCHANT_ACCOUNT"
 }
 ``` 
-[Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `makePaymentRequest` custom field.
+[Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with the request above.
 ```json
 {
   "version": "PAYMENT_VERSION",
@@ -185,7 +185,7 @@ The response from Adyen is added to `makePaymentResponse` custom field.
 The response contains information for the next steps of the payment process.
 For details, consult the [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-3-make-a-payment)
 
-Response from Adyen for `makePaymentRequest` for the case where user has to be redirected to a payment provider page for further authentication:
+Response from Adyen for the case where user has to be redirected to a payment provider page for further authentication:
 ```json
 {
   "resultCode": "RedirectShopper",
@@ -239,7 +239,7 @@ A CTP payment with `makePaymentResponse` field with the response above:
 }
 ```    
 
-Response from Adyen for makePaymentRequest for the case where you can present the payment result to your shopper.
+Response from Adyen for the case where you can present the payment result to your shopper.
 See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-present-payment-result) for more information how to present the results.
 ```json
 {
