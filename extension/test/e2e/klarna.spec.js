@@ -45,7 +45,9 @@ describe('::klarnaPayment::', () => {
   })
 
   it('when payment method is klarna and process is done correctly, ' +
-    'then it should successfully finish the payment', async () => {
+    'then it should successfully finish the payment', async function () {
+    this.timeout(60000)
+
     const baseUrl = configBuilder.load().apiExtensionBaseUrl
     const payment = await createPaymentWithOriginKeyResponse(ctpClient, baseUrl)
     const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
