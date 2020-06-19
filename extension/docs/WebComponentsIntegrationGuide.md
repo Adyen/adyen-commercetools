@@ -153,10 +153,10 @@ Make payment request generated from Adyen Web Components for credit card payment
 ```json
 {
   "amount": {
-    "currency": "USD",
+    "currency": "EUR",
     "value": 1000
   },
-  "reference": "Your order number",
+  "reference": "YOUR_ORDER_REFERENCE",
   "paymentMethod": {
     "type": "scheme",
     "encryptedCardNumber": "test_4111111111111111",
@@ -176,7 +176,7 @@ Make payment request generated from Adyen Web Components for credit card payment
     {
       "action": "setCustomField",
       "name": "makePaymentRequest",
-      "value": "{\"amount\":{\"currency\":\"USD\",\"value\":1000},\"reference\":\"Your order number\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
+      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_ORDER_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
     }
   ]
 }
@@ -232,7 +232,7 @@ A CTP payment with `makePaymentResponse` field with the response above:
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"USD\",\"value\":1000},\"reference\":\"Your order number\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_ORDER_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
       "makePaymentResponse": "{\"resultCode\":\"RedirectShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\",\"data\":{\"MD\":\"aTZmV09...\",\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\"},\"method\":\"POST\",\"type\":\"redirect\"},\"details\":[{\"key\":\"MD\",\"type\":\"text\"},{\"key\":\"PaRes\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\",\"redirect\":{\"data\":{\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\",\"MD\":\"aTZmV09...\"},\"method\":\"POST\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\"}}"
     }
   }
@@ -246,10 +246,10 @@ See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-
   "pspReference": "853592567856061C",
   "resultCode": "Authorised",
   "amount": {
-    "currency": "USD",
+    "currency": "EUR",
     "value": 1000
   },
-  "merchantReference": "Your order number"
+  "merchantReference": "YOUR_ORDER_REFERENCE"
 }
 ```
 A CTP payment with `makePaymentResponse` field with the response above.
@@ -269,8 +269,8 @@ and has `amount` taken from `amountPlanned`. `interactionId` is matching the `ma
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"USD\",\"value\":1000},\"reference\":\"Your order number\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
-      "makePaymentResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"USD\",\"value\":1000},\"merchantReference\":\"Your order number\"}"
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_ORDER_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
+      "makePaymentResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_ORDER_REFERENCE\"}"
     }
   },
   "transactions": [
@@ -303,7 +303,7 @@ Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` 
     "type": "klarna"
   },
   "amount": {
-    "currency": "SEK",
+    "currency": "EUR",
     "value": "1000"
   },
   "shopperLocale": "en_US",
@@ -348,7 +348,7 @@ Extension module will add line items to your `makePaymentRequest`
     "type": "klarna"
   },
   "amount": {
-    "currency": "SEK",
+    "currency": "EUR",
     "value": "1000"
   },
   "shopperLocale": "en_US",
@@ -464,10 +464,10 @@ Submit additional payment details response from Adyen for the case where you can
   "pspReference": "853592567856061C",
   "resultCode": "Authorised",
   "amount": {
-    "currency": "USD",
+    "currency": "EUR",
     "value": 1000
   },
-  "merchantReference": "Your order number"
+  "merchantReference": "YOUR_ORDER_REFERENCE"
 }
 ```
 A CTP payment with `submitAdditionalPaymentDetailsResponse` field with the response above.
@@ -488,7 +488,7 @@ and has `amount` taken from `amountPlanned`. `interactionId` is matching the `ma
     },
     "fields": {
       "submitPaymentDetailsRequest": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}",
-      "submitAdditionalPaymentDetailsResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"USD\",\"value\":1000},\"merchantReference\":\"Your order number\"}"
+      "submitAdditionalPaymentDetailsResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_ORDER_REFERENCE\"}"
     }
   },
   "transactions": [
