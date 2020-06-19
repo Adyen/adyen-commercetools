@@ -38,7 +38,7 @@ In order to make the extension module working, follow our [deployment guide](./D
 
 ## Step 1: CTP checkout validations
 
-In the `mechant server`, ensure the steps below are done:
+In the merchant server, ensure the steps below are done:
 1. On each checkout step [validate cart state](#validate-cart-state)
 1. Before starting payment process make sure there is no valid payments already:
     * [Recalculate cart](#recalculate-cart)
