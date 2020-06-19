@@ -252,9 +252,17 @@ See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-
   "merchantReference": "Your order number"
 }
 ```
-A CTP payment with `makePaymentResponse` field with the response above:
+A CTP payment with `makePaymentResponse` field with the response above.
+Notice that a transaction is added to the payment. The transaction is of type `Authorization` 
+and has `amount` taken from `amountPlanned`. `interactionId` is matching the `makePaymentResponse`
 ```json
 {
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 1000,
+    "fractionDigits": 2
+  },
   "custom": {
     "type": {
       "typeId": "type",
@@ -264,7 +272,21 @@ A CTP payment with `makePaymentResponse` field with the response above:
       "makePaymentRequest": "{\"amount\":{\"currency\":\"USD\",\"value\":1000},\"reference\":\"Your order number\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
       "makePaymentResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"USD\",\"value\":1000},\"merchantReference\":\"Your order number\"}"
     }
-  }
+  },
+  "transactions": [
+    {
+      "id": "eab650fd-8616-471b-b884-eef641b4f169",
+      "type": "Authorization",
+      "amount": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 1000,
+        "fractionDigits": 2
+      },
+      "interactionId": "853592567856061C",
+      "state": "Success"
+    }
+  ]
 }
 ```
 
@@ -448,9 +470,17 @@ Submit additional payment details response from Adyen for the case where you can
   "merchantReference": "Your order number"
 }
 ```
-A CTP payment with `submitAdditionalPaymentDetailsResponse` field with the response above: 
+A CTP payment with `submitAdditionalPaymentDetailsResponse` field with the response above.
+Notice that a transaction is added to the payment. The transaction is of type `Authorization` 
+and has `amount` taken from `amountPlanned`. `interactionId` is matching the `makePaymentResponse` 
 ```json
 {
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 1000,
+    "fractionDigits": 2
+  },
   "custom": {
     "type": {
       "typeId": "type",
@@ -460,6 +490,20 @@ A CTP payment with `submitAdditionalPaymentDetailsResponse` field with the respo
       "submitPaymentDetailsRequest": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}",
       "submitAdditionalPaymentDetailsResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"USD\",\"value\":1000},\"merchantReference\":\"Your order number\"}"
     }
-  }
+  },
+  "transactions": [
+    {
+      "id": "eab650fd-8616-471b-b884-eef641b4f169",
+      "type": "Authorization",
+      "amount": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 1000,
+        "fractionDigits": 2
+      },
+      "interactionId": "853592567856061C",
+      "state": "Success"
+    }
+  ]
 }
 ```
