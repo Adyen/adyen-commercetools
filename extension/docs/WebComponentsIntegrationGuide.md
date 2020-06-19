@@ -196,7 +196,7 @@ CTP payment representation:
 
 Pass the `origin key` to your front end. You might use this origin key to be able to render Component.
 
-> Note: The First 2 steps are optional if origin key and payment methods have been already cached by the merchant server.
+> Note: The first 2 steps are optional if origin key and payment methods have been already cached by the merchant server.
  
 
 ## Step N: Cancel or refund
