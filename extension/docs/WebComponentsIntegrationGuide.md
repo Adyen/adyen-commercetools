@@ -210,7 +210,7 @@ This will either:
 ## Test and go live
 After doing the all steps above and testing the payment methods with your test accounts, then when you are ready to go live, you need to do the following steps described as [testing the integration](https://docs.adyen.com/checkout/components-web/#testing-your-integration).
 
-Additionally, follow the official Adyen [integration checklist](ttps://docs.adyen.com/development-resources/integration-checklist) to ensure you have a complete implementation into Adyen.
+Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist) to ensure you have a complete implementation into Adyen.
 
 # Error cases
 1. **Adyen returns HTTP code other than 200**  
