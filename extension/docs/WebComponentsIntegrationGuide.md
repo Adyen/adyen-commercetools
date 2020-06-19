@@ -149,7 +149,26 @@ After the shopper submits their payment details or chooses to pay with a payment
 the Adyen Web Components will generate a `makePaymentRequest`. Consult [Adyen documentation](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) to see which parameters 
 are necessary for the current payment request.
 
-[Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `makePaymentRequest` custom field, where value is the generated and stringified `makePaymentRequest` from Adyen Web Components. 
+Make payment request generated from Adyen Web Components.
+```json
+{
+  "amount": {
+    "currency": "USD",
+    "value": 1000
+  },
+  "reference": "Your order number",
+  "paymentMethod": {
+    "type": "scheme",
+    "encryptedCardNumber": "test_4111111111111111",
+    "encryptedExpiryMonth": "test_03",
+    "encryptedExpiryYear": "test_2030",
+    "encryptedSecurityCode": "test_737"
+  },
+  "returnUrl": "https://your-company.com/...",
+  "merchantAccount": "YOUR_MERCHANT_ACCOUNT"
+}
+``` 
+[Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `makePaymentRequest` custom field.
 ```json
 {
   "version": "PAYMENT_VERSION",
@@ -157,7 +176,7 @@ are necessary for the current payment request.
     {
       "action": "setCustomField",
       "name": "makePaymentRequest",
-      "value": "{\"riskData\":{\"clientData\":\"xxx\"},\"paymentMethod\":{\"type\":\"scheme\",\"holderName\":\"Lam Tran\",\"encryptedCardNumber\":\"adyenjs_...\",\"encryptedExpiryMonth\":\"adyenjs_...\",\"encryptedExpiryYear\":\"adyenjs_...\",\"encryptedSecurityCode\":\"adyenjs_...\"},\"billingAddress\":{\"street\":\"Test Strasse\",\"houseNumberOrName\":\"10\",\"postalCode\":\"80000\",\"city\":\"Munich\",\"stateOrProvince\":\"Bayern\",\"country\":\"DE\"},\"browserInfo\":{\"acceptHeader\":\"*/*\",\"colorDepth\":24,\"language\":\"en-US\",\"javaEnabled\":false,\"screenHeight\":1050,\"screenWidth\":1680,\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36\",\"timeZoneOffset\":-120},\"reference\":773,\"amount\":{\"currency\":\"EUR\",\"value\":1000}}"
+      "value": "{\"amount\":{\"currency\":\"USD\",\"value\":1000},\"reference\":\"Your order number\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
     }
   ]
 }
@@ -166,7 +185,45 @@ The response from Adyen is added to `makePaymentResponse` custom field.
 The response contains information for the next steps of the payment process.
 For details, consult the [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-3-make-a-payment)
 
-A CTP payment with `makePaymentResponse` for the case where user has to be redirected to a payment provider page for further authentication:
+Response from Adyen for `makePaymentRequest` for the case where user has to be redirected to a payment provider page for further authentication:
+```json
+{
+  "resultCode": "RedirectShopper",
+  "action": {
+    "paymentData": "Ab02b4c0!...",
+    "paymentMethodType": "scheme",
+    "url": "https://test.adyen.com/hpp/3d/validate.shtml",
+    "data": {
+      "MD": "aTZmV09...",
+      "PaReq": "eNpVUtt...",
+      "TermUrl": "https://your-company.com/..."
+    },
+    "method": "POST",
+    "type": "redirect"
+  },
+  "details": [
+    {
+      "key": "MD",
+      "type": "text"
+    },
+    {
+      "key": "PaRes",
+      "type": "text"
+    }
+  ],
+  "paymentData": "Ab02b4c0!...",
+  "redirect": {
+    "data": {
+      "PaReq": "eNpVUtt...",
+      "TermUrl": "https://your-company.com/...",
+      "MD": "aTZmV09..."
+    },
+    "method": "POST",
+    "url": "https://test.adyen.com/hpp/3d/validate.shtml"
+  }
+}
+```
+A CTP payment with `makePaymentResponse` field with the response above:
 ```json
 {
   "custom": {
@@ -175,15 +232,27 @@ A CTP payment with `makePaymentResponse` for the case where user has to be redir
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
-      "makePaymentRequest": "{\"riskData\":{\"clientData\":\"xxx\"},\"paymentMethod\":{\"type\":\"scheme\",\"holderName\":\"Lam Tran\",\"encryptedCardNumber\":\"adyenjs_...\",\"encryptedExpiryMonth\":\"adyenjs_...\",\"encryptedExpiryYear\":\"adyenjs_...\",\"encryptedSecurityCode\":\"adyenjs_...\"},\"billingAddress\":{\"street\":\"Test Strasse\",\"houseNumberOrName\":\"10\",\"postalCode\":\"80000\",\"city\":\"Munich\",\"stateOrProvince\":\"Bayern\",\"country\":\"DE\"},\"browserInfo\":{\"acceptHeader\":\"*/*\",\"colorDepth\":24,\"language\":\"en-US\",\"javaEnabled\":false,\"screenHeight\":1050,\"screenWidth\":1680,\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36\",\"timeZoneOffset\":-120},\"reference\":773,\"amount\":{\"currency\":\"EUR\",\"value\":1000}}",
-      "makePaymentResponse": "{\"resultCode\":\"RedirectShopper\",\"action\":{\"paymentData\":\"xxx\",\"paymentMethodType\":\"scheme\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\",\"data\":{\"MD\":\"yyy\",\"PaReq\":\"zzz\",\"TermUrl\":\"https://9944328d3d5e.ngrok.io/return-url\"},\"method\":\"POST\",\"type\":\"redirect\"},\"details\":[{\"key\":\"MD\",\"type\":\"text\"},{\"key\":\"PaRes\",\"type\":\"text\"}],\"paymentData\":\"xxx\",\"redirect\":{\"data\":{\"PaReq\":\"zzz\",\"TermUrl\":\"https://9944328d3d5e.ngrok.io/return-url\",\"MD\":\"yyy\"},\"method\":\"POST\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\"}}"
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"USD\",\"value\":1000},\"reference\":\"Your order number\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
+      "makePaymentResponse": "{\"resultCode\":\"RedirectShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\",\"data\":{\"MD\":\"aTZmV09...\",\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\"},\"method\":\"POST\",\"type\":\"redirect\"},\"details\":[{\"key\":\"MD\",\"type\":\"text\"},{\"key\":\"PaRes\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\",\"redirect\":{\"data\":{\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\",\"MD\":\"aTZmV09...\"},\"method\":\"POST\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\"}}"
     }
   }
 }
 ```    
 
-A CTP payment with `makePaymentResponse` for the case where you can present the payment result to your shopper.
+Response from Adyen for makePaymentRequest for the case where you can present the payment result to your shopper.
 See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-present-payment-result) for more information how to present the results.
+```json
+{
+  "pspReference": "853592567856061C",
+  "resultCode": "Authorised",
+  "amount": {
+    "currency": "USD",
+    "value": 1000
+  },
+  "merchantReference": "Your order number"
+}
+```
+A CTP payment with `makePaymentResponse` field with the response above:
 ```json
 {
   "custom": {
@@ -192,8 +261,8 @@ See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
-      "makePaymentRequest": "{\"riskData\":{\"clientData\":\"xxx\"},\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"adyenjs_...\",\"encryptedExpiryMonth\":\"adyenjs_...\",\"encryptedExpiryYear\":\"adyenjs_...\",\"encryptedSecurityCode\":\"adyenjs_...\"},\"browserInfo\":{\"acceptHeader\":\"*/*\",\"colorDepth\":30,\"language\":\"en-US\",\"javaEnabled\":false,\"screenHeight\":1050,\"screenWidth\":1680,\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/83.0.4103.0 Safari/537.36\",\"timeZoneOffset\":-120},\"reference\":233,\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"channel\":\"Web\",\"origin\":\"https://6ca7e0942afd.ngrok.io\",\"returnUrl\":\"https://6ca7e0942afd.ngrok.io/return-url\"}",
-      "makePaymentResponse": "{\"pspReference\":\"852592493977365C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"233\"}"
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"USD\",\"value\":1000},\"reference\":\"Your order number\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
+      "makePaymentResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"USD\",\"value\":1000},\"merchantReference\":\"Your order number\"}"
     }
   }
 }
@@ -203,7 +272,38 @@ See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-
 For Klarna payment it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) in `makePaymentRequest`.
 Extension module can add the line item details for you if [the payment was added to a cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
 
-[Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `makePaymentRequest` custom field **WITHOUT** `lineItems` attribute. 
+Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` attribute.
+```json
+{
+  "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
+  "reference": "YOUR_ORDER_REFERENCE",
+  "paymentMethod": {
+    "type": "klarna"
+  },
+  "amount": {
+    "currency": "SEK",
+    "value": "1000"
+  },
+  "shopperLocale": "en_US",
+  "countryCode": "SE",
+  "shopperEmail": "youremail@email.com",
+  "shopperName": {
+    "firstName": "Testperson-se",
+    "gender": "UNKNOWN",
+    "lastName": "Approved"
+  },
+  "shopperReference": "YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j",
+  "billingAddress": {
+    "city": "Ankeborg",
+    "country": "SE",
+    "houseNumberOrName": "1",
+    "postalCode": "12345",
+    "street": "Stargatan"
+  },
+  "returnUrl": "https://www.your-company.com/..."
+}
+```
+[Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with the request above. 
 ```json
 {
   "version": "PAYMENT_VERSION",
@@ -211,7 +311,7 @@ Extension module can add the line item details for you if [the payment was added
     {
       "action": "setCustomField",
       "name": "makePaymentRequest",
-      "value": "{\"riskData\":{\"clientData\":\"xxx\"},\"reference\":\"Klarna Pay later\",\"paymentMethod\":{\"type\":\"klarna\"},\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"shopperLocale\":\"de_DE\",\"countryCode\":\"DE\",\"shopperEmail\":\"youremail@email.com\",\"shopperReference\":\"YOUR_UNIQUE_SHOPPER_ID\",\"returnUrl\":\"https://www.yourshop.com/checkout/result\"}"
+      "value": "{\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\",\"reference\":\"YOUR_ORDER_REFERENCE\",\"paymentMethod\":{\"type\":\"klarna\"},\"amount\":{\"currency\":\"SEK\",\"value\":\"1000\"},\"shopperLocale\":\"en_US\",\"countryCode\":\"SE\",\"shopperEmail\":\"youremail@email.com\",\"shopperName\":{\"firstName\":\"Testperson-se\",\"gender\":\"UNKNOWN\",\"lastName\":\"Approved\"},\"shopperReference\":\"YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j\",\"billingAddress\":{\"city\":\"Ankeborg\",\"country\":\"SE\",\"houseNumberOrName\":\"1\",\"postalCode\":\"12345\",\"street\":\"Stargatan\"},\"returnUrl\":\"https://www.your-company.com/...\"}"
     }
   ]
 }
@@ -220,46 +320,52 @@ Extension module can add the line item details for you if [the payment was added
 Extension module will add line items to your `makePaymentRequest`
 ```json
 {
-  "riskData": {
-    "clientData": "xxx"
-  },
-  "reference": "Klarna Pay later",
+  "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
+  "reference": "YOUR_ORDER_REFERENCE",
   "paymentMethod": {
     "type": "klarna"
   },
   "amount": {
-    "currency": "EUR",
-    "value": 1000
+    "currency": "SEK",
+    "value": "1000"
   },
-  "shopperLocale": "de_DE",
-  "countryCode": "DE",
+  "shopperLocale": "en_US",
+  "countryCode": "SE",
   "shopperEmail": "youremail@email.com",
-  "shopperReference": "YOUR_UNIQUE_SHOPPER_ID",
-  "returnUrl": "https://www.yourshop.com/checkout/result",
+  "shopperName": {
+    "firstName": "Testperson-se",
+    "gender": "UNKNOWN",
+    "lastName": "Approved"
+  },
+  "shopperReference": "YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j",
+  "billingAddress": {
+    "city": "Ankeborg",
+    "country": "SE",
+    "houseNumberOrName": "1",
+    "postalCode": "12345",
+    "street": "Stargatan"
+  },
+  "returnUrl": "https://www.your-company.com/...",
   "lineItems": [
     {
-      "id": "test-product-sku-1",
-      "quantity": 2,
-      "description": "item",
-      "amountIncludingTax": 1000,
-      "taxPercentage": 1900
+      "quantity": "1",
+      "amountExcludingTax": "331",
+      "taxPercentage": "2100",
+      "description": "Shoes",
+      "id": "Item #1",
+      "taxAmount": "69",
+      "amountIncludingTax": "400"
     },
     {
-      "id": "0a293870-ae74-48a3-a747-3d4d321c38eb",
-      "quantity": 1,
-      "description": "testCustomLineItem",
-      "amountIncludingTax": 4200,
-      "taxPercentage": 1900
-    },
-    {
-      "id": "ABHOLUNG",
-      "quantity": 1,
-      "description": "Abholung beim Fachhändler (kostenlos)",
-      "amountIncludingTax": 3000,
-      "taxPercentage": 1900
+      "quantity": "2",
+      "amountExcludingTax": "248",
+      "taxPercentage": "2100",
+      "description": "Socks",
+      "id": "Item #2",
+      "taxAmount": "52",
+      "amountIncludingTax": "300"
     }
-  ],
-  "merchantAccount": "YourMerchantAccount"
+  ]
 }
 ```
 If `makePaymentRequest` has `lineItems` custom field, extension module will not overwrite those `lineItems`. This way you can also provide your own line item details if needed.
@@ -290,7 +396,29 @@ After update, you will receive `submitAdditionalPaymentDetailsResponse` in the r
 The next steps depend on if you received an action object in the `submitAdditionalPaymentDetailsResponse`.
 
 If you received an action object, [pass the action object to your front end](https://docs.adyen.com/checkout/components-web/#step-4-additional-front-end) and perform Step 4 again.
-A CTP payment with `submitAdditionalPaymentDetailsResponse` for the case where you need to pass the action object to your front end:
+Submit additional payment details response from Adyen for the case where you need to pass the action object to your front end:
+```json
+{
+  "resultCode": "ChallengeShopper",
+  "action": {
+    "paymentData": "Ab02b4c0!...",
+    "paymentMethodType": "scheme",
+    "token": "eyJhY3...",
+    "type": "threeDS2Challenge"
+  },
+  "authentication": {
+    "threeds2.challengeToken": "eyJhY3..."
+  },
+  "details": [
+    {
+      "key": "threeds2.challengeResult",
+      "type": "text"
+    }
+  ],
+  "paymentData": "Ab02b4c0!..."
+}
+```
+A CTP payment with `submitAdditionalPaymentDetailsResponse` field with the response above:
 ```json
 {
   "custom": {
@@ -308,7 +436,19 @@ A CTP payment with `submitAdditionalPaymentDetailsResponse` for the case where y
 
 If you did not get an action object, you can present the payment result to your shopper. 
 See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-present-payment-result) for more information how to present the results.
-A CTP payment with `submitAdditionalPaymentDetailsResponse` for the case where you can present the result: 
+Submit additional payment details response from Adyen for the case where you can present the result:
+```json
+{
+  "pspReference": "853592567856061C",
+  "resultCode": "Authorised",
+  "amount": {
+    "currency": "USD",
+    "value": 1000
+  },
+  "merchantReference": "Your order number"
+}
+```
+A CTP payment with `submitAdditionalPaymentDetailsResponse` field with the response above: 
 ```json
 {
   "custom": {
@@ -318,7 +458,7 @@ A CTP payment with `submitAdditionalPaymentDetailsResponse` for the case where y
     },
     "fields": {
       "submitPaymentDetailsRequest": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}",
-      "submitAdditionalPaymentDetailsResponse": "{\"pspReference\":\"882592549876090E\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"23\"}"
+      "submitAdditionalPaymentDetailsResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"USD\",\"value\":1000},\"merchantReference\":\"Your order number\"}"
     }
   }
 }
