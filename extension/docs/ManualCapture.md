@@ -99,6 +99,7 @@ CTP payment representation:
 
 ```
 
+Once Adyen have processed your capture request, Adyen will send a notification to our [Notification module](./../../notification/README.md)
 
 #### More info
 For more detailed information from Adyen's perspective, see [Adyen's documentation](https://docs.adyen.com/checkout/capture#manual-capture).
