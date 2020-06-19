@@ -57,17 +57,14 @@ or by asynchronous process like [commercetools-payment-to-order-processor job](h
  - Time-limited discounts are not removed/invalidated from the cart automatically. They are validated on recalculate and order creation only.
 
 ### Validate payment
-There must be at least one CTP payment object of type Adyen
-(`Payment.paymentMethodInfo.paymentInterface = ctp-adyen-integration`)
-AND this CTP payment must have `Payment.custom.fields.merchantReference`.
-The combination of `Payment.custom.fields.merchantReference` and `Payment.paymentMethodInfo.paymentInterface` must be unique across the project. This field must not be changed once set.
+There must be at least one CTP payment object of type Adyen (`Payment.paymentMethodInfo.paymentInterface = ctp-adyen-integration`).
 
 ### Validate payment transaction
 Cart's payment counts as successful if there is at least one payment object
 with successful transaction state (`Payment.Transaction.state=Success`) 
 and transactions type `Authorization` or `Charge`.
 
-If all the above validations passed then the order can be created right away and `order confirmation page` shown.
+If all the above validations passed then the order can be created right away and order confirmation page shown.
 
 Otherwise, the shopper might continue with further payment steps.
 
