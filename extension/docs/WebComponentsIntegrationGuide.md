@@ -14,6 +14,7 @@
   - [Step 4: Make a payment](#step-4-make-a-payment)
       - [Klarna payment](#klarna-payment)
   - [Step 5: Submit additional payment details](#step-5-submit-additional-payment-details)
+  - [Step 6: Capture payment (required for Klarna)](#step-6-capture-payment-required-for-klarna)
   - [Error handling](#error-handling)
     - [Extension module errors](#extension-module-errors)
     - [Adyen payment refusals](#adyen-payment-refusals)
@@ -201,7 +202,6 @@ Pass the `origin key` to your front end. You might use this origin key to be abl
 
 > Note: The first 2 steps are optional if origin key and payment methods have been already cached by the merchant server.
  
-
 ## Step 4: Make a payment
 After the shopper submits their payment details or chooses to pay with a payment method that requires a redirection,
 the Adyen Web Components will generate a `makePaymentRequest`. Consult [Adyen documentation](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) to see which parameters 
@@ -587,6 +587,10 @@ and has `amount` taken from `amountPlanned`. `interactionId` is matching the `ma
   ]
 }
 ```
+
+## Step 6: Capture payment (required for Klarna)
+All Klarna payments [have to be manually captured](https://docs.adyen.com/payment-methods/klarna/web-component#capture) within 28 days after authorisation, even if you have enabled automatic capture on your merchant account.
+Refer to [Manual Capture](ManualCapture.md) guide to see how it can done.
 
 ## Error handling
 
