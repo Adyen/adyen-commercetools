@@ -12,6 +12,7 @@
   - [Step 2: Get available payment methods](#step-2-get-available-payment-methods)
   - [Step 3: Add Components to your payments form](#step-3-add-components-to-your-payments-form)
   - [Step N: Cancel or refund](#step-n-cancel-or-refund)
+  - [Test and go live](#test-and-go-live)
 - [Error cases](#error-cases)
     - [Mapping from Adyen result codes to CTP transaction state](#mapping-from-adyen-result-codes-to-ctp-transaction-state)
 - [Bad practices](#bad-practices)
@@ -32,7 +33,8 @@ The following diagram shows the whole checkout integration flow using with [Adye
 ![Flow](https://user-images.githubusercontent.com/3469524/85017686-3317bf00-b16c-11ea-8840-f34b97ac3dcb.jpeg)
 
 ## Before you begin
-If you haven't done so already, follow the official Adyen [Get started guide](https://docs.adyen.com/checkout/get-started) to set up your test account, get your API key.
+If you haven't done so already, follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your test account, get your API key.
+In order to make the extension module working, follow our [deployment guide](./DeploymentGuide.md).
 
 ## Step 1: CTP checkout validations
 
@@ -204,6 +206,11 @@ This will either:
 
 - [**Cancel**](CancelRefundPayment.md#cancel-or-refund-a-payment) - cancel the authorisation on an uncaptured payment.
 - [**Refund**](CancelRefundPayment.md#cancel-or-refund-a-payment) - refund a payment back to the shopper.
+
+## Test and go live
+After doing the all steps above and testing the payment methods with your test accounts, then when you are ready to go live, you need to do the following steps described as [testing the integration](https://docs.adyen.com/checkout/components-web/#testing-your-integration).
+
+Additionally, follow the official Adyen [integration checklist](ttps://docs.adyen.com/development-resources/integration-checklist) to ensure you have a complete implementation into Adyen.
 
 # Error cases
 1. **Adyen returns HTTP code other than 200**  
