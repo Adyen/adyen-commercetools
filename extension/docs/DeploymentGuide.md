@@ -1,3 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents** 
+
+- [Deployment Guide](#deployment-guide)
+  - [Parameters](#parameters)
+  - [Requirements for CTP project](#requirements-for-ctp-project)
+  - [Deployment](#deployment)
+    - [AWS Lambda](#aws-lambda)
+    - [Docker](#docker)
+      - [Pull the image](#pull-the-image)
+      - [Run the container](#run-the-container)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Deployment Guide
 
 **Contents**
