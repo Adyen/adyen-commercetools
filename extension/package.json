@@ -14,7 +14,8 @@
     "e2e": "nyc mocha --exit --timeout 60000 --full-trace test/e2e/**/*.spec.js",
     "start": "node ./src/init.js",
     "lint": "eslint ./src ./test",
-    "create-custom-types": "node -e 'require(\"./src/config/init/ensure-resources.js\").ensureCustomTypes()'"
+    "create-custom-types": "node -e 'require(\"./src/config/init/ensure-resources.js\").ensureCustomTypes()'",
+    "doctoc": "doctoc . --github"
   },
   "keywords": [
     "Adyen",
@@ -44,6 +45,7 @@
     "babel-eslint": "^10.1.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "doctoc": "^1.4.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-commercetools": "^6.0.0",
