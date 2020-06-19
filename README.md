@@ -1,5 +1,6 @@
 # commercetools-adyen-integration
 [![Build Status](https://travis-ci.org/commercetools/commercetools-adyen-integration.svg?branch=master)](https://travis-ci.org/commercetools/commercetools-adyen-integration)
+[![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/repository/docker/commercetools/commercetools-adyen-integration-extension)
 
 This repository provides integration between commercetools and Adyen payment service provider.
 
