@@ -1,4 +1,4 @@
-**Please see [Integration Guide](IntegrationGuide.md) first before continuing with this document.**
+**Please see [Integration Guide](WebComponentsIntegrationGuide.md) first before continuing with this document.**
 
 ## Cancel or refund a payment
 
@@ -58,4 +58,4 @@ The result of cancel/refund will be processed asynchronously by the notification
 ![Cancel or refund flow](https://user-images.githubusercontent.com/803826/56808274-6218f600-6831-11e9-8b6e-0997b9504492.png)
 
 #### More info
-For more detailed information from Adyen's perspective, see [Adyen's documentation](https://docs.adyen.com/developers/development-resources/payment-modifications/cancel-or-refund).
+For more detailed information from Adyen's perspective, see [Adyen's documentation](https://docs.adyen.com/checkout/cancel-or-refund).
