@@ -207,6 +207,9 @@ After the shopper submits their payment details or chooses to pay with a payment
 the Adyen Web Components will generate a `makePaymentRequest`. Consult [Adyen documentation](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) to see which parameters 
 are necessary for the current payment request.
 
+**NOTE:** `payment.amountPlanned` cannot be changed once `makePaymentRequest` is finished.
+This is to prevent the shopper paying a different amount than the one saved on the CTP payment object. 
+
 Make payment request generated from Adyen Web Components for credit card payment.
 ```json
 {
@@ -513,6 +516,26 @@ A CTP payment with `submitAdditionalPaymentDetailsResponse` field with the respo
   }
 }
 ```
+If you received an action object and need to repeat `submitPaymentDetailsRequest`, you must remove the existing `submitAdditionalPaymentDetailsResponse` custom field. This can be done in one request to CTP as follow: 
+```json
+{
+  "version": "PAYMENT_VERSION",
+  "actions": [
+    {
+      "action": "setCustomField",
+      "name": "submitAdditionalPaymentDetailsRequest",
+      "value": "{\"details\":{\"threeds2.challengeResult\":\"eyJ0cmFuc1...\"}}"
+    },
+    {
+      "action": "setCustomField",
+      "name": "submitAdditionalPaymentDetailsResponse",
+      "value": ""
+    }
+  ]
+}
+```
+
+  
 
 If you did not get an action object, you can present the payment result to your shopper. 
 See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-present-payment-result) for more information how to present the results.
