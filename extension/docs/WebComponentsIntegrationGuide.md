@@ -12,10 +12,13 @@
   - [Step 2: Get available payment methods](#step-2-get-available-payment-methods)
   - [Step 3: Add Components to your payments form](#step-3-add-components-to-your-payments-form)
   - [Step N: Cancel or refund](#step-n-cancel-or-refund)
+  - [Error handling](#error-handling)
+    - [Extension module errors](#extension-module-errors)
+    - [Adyen payment refusals](#adyen-payment-refusals)
+    - [Shopper successfully paid but `redirectUrl` was not reached](#shopper-successfully-paid-but-redirecturl-was-not-reached)
+    - [Shopper tries to pay a different amount than the actual order amount](#shopper-tries-to-pay-a-different-amount-than-the-actual-order-amount)
   - [Test and go live](#test-and-go-live)
-- [Error cases](#error-cases)
-    - [Mapping from Adyen result codes to CTP transaction state](#mapping-from-adyen-result-codes-to-ctp-transaction-state)
-- [Bad practices](#bad-practices)
+- [Bad Practices](#bad-practices)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -204,32 +207,45 @@ This will either:
 - [**Cancel**](CancelRefundPayment.md#cancel-or-refund-a-payment) - cancel the authorisation on an uncaptured payment.
 - [**Refund**](CancelRefundPayment.md#cancel-or-refund-a-payment) - refund a payment back to the shopper.
 
-## Test and go live
-After doing the all steps above and testing the payment methods with your test accounts, then when you are ready to go live, you need to do the following steps described as [testing the integration](https://docs.adyen.com/checkout/components-web/#testing-your-integration).
+## Error handling
 
-Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist) to ensure you have a complete implementation into Adyen.
+In case you encounter errors in your integration, refer to the following:
 
-# Error cases
-1. **Adyen returns HTTP code other than 200**  
-Request and response from Adyen are always stored in `Payment.interfaceInteractions` as stringified JSON.
-1. **Shopper successfully paid but `redirectUrl` was not reached**  
-In some payment redirect cases, there might be a valid payment but no order as shopper did not reach the shop's `redirectUrl`.
-For example, after successfully issued payment shopper loses internet connection or accidentally closes the tab.
-In this case [Notification module](../../notification) will receive later a notification with successful content, process it, and update the payment.
-Usage of scheduled [commercetools-payment-to-order-processor](https://github.com/commercetools/commercetools-payment-to-order-processor) job ensures that for every successful payment
-an order can still be asynchronously created.
-1. **Shopper tries to pay a different amount than the actual order amount**   
-For redirect payments payment amount is bound to `redirectUrl`.
-After redirect and before the actual finalization of the payment at the provider's page, the shopper is still able to change the cart's amount within the second tab.
-If shopper decides to change cart's amount within the second tab and finalize payment within the first tab, then according to payment amount validation an error
-will be shown and order creation declined.
+### Extension module errors
 
-### Mapping from Adyen result codes to CTP transaction state
+If you receive a `non-HTTP 200 response`, use the CTP `interface interactions` to troubleshoot the request and errors.
+
+Interface interactions can be requests sent to the Adyen, responses received from the Adyen or notifications received from the Adyen. 
+Some interactions may result in a transaction. If so, the interactionId in the Transaction should be set to match the `pspReference` of the Adyen for the interaction.
+
+### Adyen payment refusals
+
+If you receive an HTTP 200 response with an Error or Refused resultCode, check the refusal reason and, if possible, modify your request.
+
+Check the following table to see the mapping of Adyen [result codes](https://docs.adyen.com/development-resources/response-handling#error-codes-types) to CTP [transaction state](https://docs.commercetools.com/http-api-projects-payments#transactionstate)
 |Adyen result code| CTP transaction state
 | --- | --- |
 | Authorised| Success|
 | Refused| Failure|
 | Error| Failure|
 
-# Bad practices
-- Never delete or un-assign created payment objects during checkout from the cart. If required — clean up unused/obsolete payment objects by another asynchronous process instead.
+### Shopper successfully paid but `redirectUrl` was not reached
+In some payment redirect cases, there might be a valid payment but no order as shopper did not reach the shop's `redirectUrl`.
+For example, after successfully issued payment shopper loses internet connection or accidentally closes the tab.
+In this case [Notification module](../../notification) will receive later a notification with successful content, process it, and update the payment.
+Usage of scheduled [commercetools-payment-to-order-processor](https://github.com/commercetools/commercetools-payment-to-order-processor) job ensures that for every successful payment
+an order can still be asynchronously created.
+
+### Shopper tries to pay a different amount than the actual order amount
+For redirect payments payment amount is bound to `redirectUrl`.
+After redirect and before the actual finalization of the payment at the provider's page, the shopper is still able to change the cart's amount within the second tab.
+If shopper decides to change cart's amount within the second tab and finalize payment within the first tab, then according to payment amount validation an error
+will be shown and order creation declined.
+
+## Test and go live
+After doing the all steps above and testing the payment methods with your test accounts, then when you are ready to go live, you need to do the following steps described as [testing the integration](https://docs.adyen.com/checkout/components-web/#testing-your-integration).
+
+Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist) to ensure you have a complete implementation into Adyen.
+
+# Bad Practices
+- **Never delete or un-assign** created payment objects during checkout from the cart. If required — clean up unused/obsolete payment objects by another asynchronous process instead.
