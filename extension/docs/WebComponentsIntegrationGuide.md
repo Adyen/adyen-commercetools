@@ -242,7 +242,8 @@ Additionally, follow the official Adyen [integration checklist](https://docs.ady
 
 # Manual Capture
 By default, payments are captured immediately after authorisation. For payment methods that support separate authorisation and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This allows you to cancel the payment in case of any issues with the shipment. 
-For more details check official Adyen [manual capture](https://docs.adyen.com/checkout/capture#manual-capture) documentation.
+
+If you need to explicitly request a capture for each payment please follow our [manual capture documentation](./ManualCapture.md).
 
 # Cancel or refund
 If you want to return the funds to your shopper, but are not certain whether the payment has been captured or not, use the Cancel or Refund functionality. 
