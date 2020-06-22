@@ -33,9 +33,10 @@ In this integration process, there are different parties working with the extens
 
 - **Shopper** - a person that's using the shop.
 - **Browser** - frontend part of the checkout UI (webshop). 
-- **Merchant Server** - backend part of the checkout.
-- **Extension module** - Extension module is handling checkout steps integrating with Adyen and CTP payment object API calls with the [API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions).
-- **Notification module** - [Notification module](./../../notification/README.md) is receiving notifications from Adyen, processing and storing them on a commercetools payment object.
+- **Merchant server** - backend part of the checkout.
+- **Extension module** - extension module is handling checkout steps integrating with Adyen and CTP payment object API calls with the [API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions).
+- **Notification module** - [notification module](./../../notification/README.md) is receiving notifications from Adyen, processing and storing them on a commercetools payment object.
+
 The following diagram shows the whole checkout integration flow using with [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
 
 ![Flow](https://user-images.githubusercontent.com/3469524/85017686-3317bf00-b16c-11ea-8840-f34b97ac3dcb.jpeg)
