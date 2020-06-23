@@ -39,7 +39,7 @@ Extension module will update the transaction with `Pending` transaction state an
 
 Request/response between Adyen and extension module are stored in `interfaceInteraction` field of the payment with type `manualCapture`:
 
-CTP payment representation after successful capture has been done:
+CTP payment representation after a successful capture:
 
 ```json
 {

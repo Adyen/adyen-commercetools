@@ -14,10 +14,9 @@ async function execute (paymentObject) {
       request, response, type: CTP_INTERACTION_TYPE_MANUAL_CAPTURE
     }),
   ]
-  if (!response.errorCode) {
+  if (!response.errorCode && response.pspReference) {
     actions.push(pU.createChangeTransactionStateAction(chargeInitialTransaction.id, 'Pending'))
-    if (response.pspReference)
-      actions.push(pU.createChangeTransactionInteractionId(chargeInitialTransaction.id, response.pspReference))
+    actions.push(pU.createChangeTransactionInteractionId(chargeInitialTransaction.id, response.pspReference))
   }
 
 
