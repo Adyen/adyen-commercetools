@@ -3,8 +3,9 @@ const { expect } = require('chai')
 const iTSetUp = require('./integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const {
-  CTP_ADYEN_INTEGRATION, CTP_PAYMENT_CUSTOM_TYPE_KEY, CTP_INTERACTION_TYPE_MANUAL_CAPTURE
+  CTP_ADYEN_INTEGRATION, CTP_INTERACTION_TYPE_MANUAL_CAPTURE, CTP_PAYMENT_CUSTOM_TYPE_KEY
 } = require('../../src/config/constants')
+const { createAddTransactionAction } = require('../../src/paymentHandler/payment-utils')
 
 describe('::manualCapture::', () => {
   let ctpClient
@@ -15,21 +16,6 @@ describe('::manualCapture::', () => {
     ctpClient = ctpClientBuilder.get()
     await iTSetUp.cleanupCtpResources(ctpClient)
     await iTSetUp.initServerAndExtension({ ctpClient })
-    const makePaymentRequestDraft = {
-      amount: {
-        currency: 'EUR',
-        value: 1000
-      },
-      reference: 'YOUR_UNIQUE_REFERENCE',
-      paymentMethod: {
-        type: 'scheme',
-        encryptedCardNumber: 'test_4111111111111111',
-        encryptedExpiryMonth: 'test_03',
-        encryptedExpiryYear: 'test_2030',
-        encryptedSecurityCode: 'test_737'
-      },
-      returnUrl: 'https://your-company.com/'
-    }
     const paymentDraft = {
       amountPlanned: {
         currencyCode: 'EUR',
@@ -43,10 +29,19 @@ describe('::manualCapture::', () => {
           typeId: 'type',
           key: CTP_PAYMENT_CUSTOM_TYPE_KEY
         },
-        fields: {
-          makePaymentRequest: JSON.stringify(makePaymentRequestDraft)
+        fields: {}
+      },
+      transactions: [
+        {
+          type: 'Authorization',
+          amount: {
+            currencyCode: 'EUR',
+            centAmount: 1000,
+          },
+          interactionId: '883592826488441K',
+          state: 'Success'
         }
-      }
+      ]
     }
 
     const result = await ctpClient.create(ctpClient.builder.payments, paymentDraft)
@@ -65,18 +60,12 @@ describe('::manualCapture::', () => {
     const { statusCode, body: chargedPayment } = await ctpClient.update(ctpClient.builder.payments,
       payment.id, payment.version,
       [
-        {
-          action: 'setCustomField',
-          name: 'manualCaptureRequest',
-          value: JSON.stringify({
-            modificationAmount: {
-              value: 500,
-              currency: 'EUR'
-            },
-            originalReference: payment.transactions[0].interactionId,
-            reference: 'YOUR_UNIQUE_REFERENCE'
-          })
-        }
+        createAddTransactionAction({
+          type: 'Charge',
+          state: 'Initial',
+          currency: 'EUR',
+          amount: 500
+        })
       ])
 
     expect(statusCode).to.be.equal(200)

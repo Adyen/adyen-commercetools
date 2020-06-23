@@ -8,6 +8,7 @@ const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = require('../../src/config/consta
 describe('manual-capture.handler::execute::', () => {
   /* eslint-disable*/
   const authorisedPayment = {
+    id: 'paymentId',
     transactions: [
       {
         id: 'transaction1',
@@ -32,13 +33,14 @@ describe('manual-capture.handler::execute::', () => {
   }
   /* eslint-enable */
 
-  const manualCaptureRequest = {
-    modificationAmount: {
-      value: 500,
-      currency: 'EUR'
+  const chargeInitialTransaction = {
+    id: 'chargeInitialTransactionId',
+    type: 'Charge',
+    amount: {
+      currencyCode: 'EUR',
+      centAmount: 1000,
     },
-    originalReference: '8313547924770610',
-    reference: 'YOUR_UNIQUE_REFERENCE'
+    state: 'Initial'
   }
 
   let scope
@@ -49,7 +51,8 @@ describe('manual-capture.handler::execute::', () => {
 
   it('given a payment '
     + 'when "/capture" request to Adyen is received successfully '
-    + 'then it should return actions "addInterfaceInteraction", "setCustomField" and "addTransaction"', async () => {
+    + 'then it should return actions "addInterfaceInteraction", ' +
+    '"changeTransactionState" and "changeTransactionInteractionId"', async () => {
     const manualCaptureResponse = {
       pspReference: '8825408195409505',
       response: '[capture-received]'
@@ -57,11 +60,7 @@ describe('manual-capture.handler::execute::', () => {
     scope.post('/capture').reply(200, manualCaptureResponse)
 
     const paymentObject = cloneDeep(authorisedPayment)
-    paymentObject.custom = {
-      fields: {
-        manualCaptureRequest: JSON.stringify(manualCaptureRequest)
-      }
-    }
+    paymentObject.transactions.push(chargeInitialTransaction)
 
     const { actions } = await execute(paymentObject)
 
@@ -73,32 +72,24 @@ describe('manual-capture.handler::execute::', () => {
     expect(addInterfaceInteraction.fields.response).to.equal(JSON.stringify(manualCaptureResponse))
     expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
-    const setCustomField = actions.find(a => a.action === 'setCustomField')
-    expect(setCustomField).to.be.deep.equal({
-      action: 'setCustomField',
-      name: 'manualCaptureResponse',
-      value: JSON.stringify(manualCaptureResponse)
+    const changeTransactionState = actions.find(a => a.action === 'changeTransactionState')
+    expect(changeTransactionState).to.be.deep.equal({
+      transactionId: 'chargeInitialTransactionId',
+      action: 'changeTransactionState',
+      state: 'Pending'
     })
 
-    const addTransaction = actions.find(a => a.action === 'addTransaction')
-    expect(addTransaction).to.be.deep.equal({
-      action: 'addTransaction',
-      transaction: {
-        type: 'Charge',
-        amount: {
-          currencyCode: manualCaptureRequest.modificationAmount.currency,
-          centAmount: manualCaptureRequest.modificationAmount.value
-        },
-        state: 'Pending',
-        interactionId: manualCaptureResponse.pspReference
-      }
+    const changeTransactionInteractionId = actions.find(a => a.action === 'changeTransactionInteractionId')
+    expect(changeTransactionInteractionId).to.be.deep.equal({
+      transactionId: 'chargeInitialTransactionId',
+      action: 'changeTransactionInteractionId',
+      interactionId: '8825408195409505'
     })
   })
 
   it('given a payment '
     + 'when "/capture" request to Adyen is failed '
-    + 'then it should return "addInterfaceInteraction", "setCustomField" action with validation error' +
-    'and should not return "addTransaction" action', async () => {
+    + 'then it should return "addInterfaceInteraction" action only', async () => {
     const validationError = {
       status: 422,
       errorCode: '167',
@@ -108,27 +99,16 @@ describe('manual-capture.handler::execute::', () => {
     scope.post('/capture').reply(422, validationError)
 
     const paymentObject = cloneDeep(authorisedPayment)
-    paymentObject.custom = {
-      fields: {
-        manualCaptureRequest: JSON.stringify(manualCaptureRequest)
-      }
-    }
+    paymentObject.transactions.push(chargeInitialTransaction)
 
     const { actions } = await execute(paymentObject)
-    expect(actions).to.have.lengthOf(2)
+    expect(actions).to.have.lengthOf(1)
 
     const addInterfaceInteraction = actions.find(a => a.action === 'addInterfaceInteraction')
     expect(addInterfaceInteraction.fields.type).to.equal(CTP_INTERACTION_TYPE_MANUAL_CAPTURE)
     expect(addInterfaceInteraction.fields.request).to.be.a('string')
     expect(addInterfaceInteraction.fields.response).to.equal(JSON.stringify(validationError))
     expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
-
-    const setCustomField = actions.find(a => a.action === 'setCustomField')
-    expect(setCustomField).to.be.deep.equal({
-      action: 'setCustomField',
-      name: 'manualCaptureResponse',
-      value: JSON.stringify(validationError)
-    })
 
     const addTransaction = actions.find(a => a.action === 'addTransaction')
     expect(addTransaction).to.equal(undefined)

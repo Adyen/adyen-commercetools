@@ -24,7 +24,14 @@ function cancelOrRefund (cancelOrRefundRequestObj) {
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/cancelOrRefund`, cancelOrRefundRequestObj)
 }
 
-function manualCapture (manualCaptureRequestObj) {
+function manualCapture (chargePendingTransaction, authorizationTransactionInteractionId) {
+  const manualCaptureRequestObj = {
+    modificationAmount: {
+      value: chargePendingTransaction.amount.centAmount,
+      currency: chargePendingTransaction.amount.currencyCode
+    },
+    originalReference: authorizationTransactionInteractionId
+  }
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/capture`, manualCaptureRequestObj)
 }
 
