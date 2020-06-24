@@ -19,9 +19,6 @@ function withPayment (paymentObject) {
       if (!pU.isValidJSON(paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest))
         errors.submitAdditionalPaymentDetailsRequest
           = errorMessages.SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
-      if (!pU.isValidJSON(paymentObject.custom.fields.manualCaptureRequest))
-        errors.manualCaptureRequest = errorMessages.MANUAL_CAPTURE_REQUEST_INVALID_JSON
-
       return this
     },
     validateAmountPlanned () {

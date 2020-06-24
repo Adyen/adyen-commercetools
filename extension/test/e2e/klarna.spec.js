@@ -5,10 +5,12 @@ const ctpClientBuilder = require('../../src/ctp/ctp-client')
 const configBuilder = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
+const pU = require('../../src/paymentHandler/payment-utils')
 const { assertPayment, createPaymentWithOriginKeyResponse, initPuppeteerBrowser } = require('./e2e-test-utils')
 const KlarnaMakePaymentFormPage = require('./pageObjects/KlarnaMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const KlarnaPage = require('./pageObjects/KlarnaPage')
+const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = require('../../src/config/constants')
 
 // Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction
 describe('::klarnaPayment::', () => {
@@ -68,8 +70,7 @@ describe('::klarnaPayment::', () => {
     // Capture the payment
     const paymentAfterCapture = await capturePayment({ payment: paymentAfterHandleRedirect })
 
-    const { manualCaptureResponse: manualCaptureResponseString } = paymentAfterCapture.custom.fields
-    assertManualCaptureResponse(manualCaptureResponseString)
+    assertManualCaptureResponse(paymentAfterCapture)
   })
 
   async function makePayment ({
@@ -128,31 +129,29 @@ describe('::klarnaPayment::', () => {
 
   async function capturePayment ({ payment }) {
     const transaction = payment.transactions[0]
-    const { submitAdditionalPaymentDetailsResponse: submitAdditionalPaymentDetailsResponseString }
-      = payment.custom.fields
-    const submitAdditionalPaymentDetailsResponse = JSON.parse(submitAdditionalPaymentDetailsResponseString)
     const { body: updatedPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,
-      payment.version, [{
-        action: 'setCustomField',
-        name: 'manualCaptureRequest',
-        value: JSON.stringify({
-          modificationAmount: {
-            value: transaction.amount.centAmount,
-            currency: transaction.amount.currencyCode
-          },
-          originalReference: submitAdditionalPaymentDetailsResponse.pspReference,
-          reference: 'YOUR_UNIQUE_REFERENCE'
+      payment.version, [
+        pU.createAddTransactionAction({
+          type: 'Charge',
+          state: 'Initial',
+          currency: transaction.amount.currencyCode,
+          amount: transaction.amount.centAmount
         })
-      }])
+      ])
 
     return updatedPayment
   }
 
-  function assertManualCaptureResponse (manualCaptureResponseString) {
-    const manualCaptureResponse = JSON.parse(manualCaptureResponseString)
+  function assertManualCaptureResponse (paymentAfterCapture) {
+    const interfaceInteraction = pU.getLatestInterfaceInteraction(paymentAfterCapture.interfaceInteractions,
+      CTP_INTERACTION_TYPE_MANUAL_CAPTURE)
+    const manualCaptureResponse = JSON.parse(interfaceInteraction.fields.response)
     expect(manualCaptureResponse.response).to.equal('[capture-received]',
       `response is not [capture-received]: ${manualCaptureResponse}`)
     expect(manualCaptureResponse.pspReference).to.match(/[A-Z0-9]+/,
       `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`)
+
+    const chargePendingTransaction = pU.getChargeTransactionPending(paymentAfterCapture)
+    expect(chargePendingTransaction.interactionId).to.equal(manualCaptureResponse.pspReference)
   }
 })
