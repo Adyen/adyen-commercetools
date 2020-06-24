@@ -24,15 +24,15 @@ Extension module will update the transaction with `Pending` transaction state an
 
 ```json
 {
-  "id": "6faada76-d5d5-49c4-8806-05885ac2598f",
+  "id": "a2904b53-d79a-484e-8954-ee4c3b6de1a2",
   "type": "Charge",
   "amount": {
-  "type": "centPrecision",
+    "type": "centPrecision",
     "currencyCode": "EUR",
     "centAmount": 500,
     "fractionDigits": 2
   },
-  "interactionId": "8825408195409505",
+  "interactionId": "883592922122044A",
   "state": "Pending"
 }
 ```
