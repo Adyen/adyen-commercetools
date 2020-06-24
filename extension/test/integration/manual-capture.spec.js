@@ -54,9 +54,9 @@ describe('::manualCapture::', () => {
   })
 
   it('given a payment ' +
-    'when "manualCaptureRequest" custom field is set with valid request (with correct amount and references) ' +
+    'when "charge initial transaction" is added to the payment' +
     'then Adyen should response with [capture-received] ' +
-    'and payment should has a "Charge" transaction with "Pending status"', async () => {
+    'and payment should has a "Charge" transaction with "Pending" status', async () => {
     const { statusCode, body: chargedPayment } = await ctpClient.update(ctpClient.builder.payments,
       payment.id, payment.version,
       [
