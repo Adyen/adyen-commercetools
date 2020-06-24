@@ -24,7 +24,7 @@ async function executeInAdyenIframe (page, selector, executeFn) {
 
 async function initPuppeteerBrowser () {
   return puppeteer.launch({
-    headless: true,
+    headless: false,
     ignoreHTTPSErrors: true,
     args: ['--disable-web-security', '--disable-features=IsolateOrigins,site-per-process']
   })
