@@ -209,7 +209,7 @@ After the shopper submits their payment details or chooses to pay with a payment
 the Adyen Web Components will generate a `makePaymentRequest`. Consult [Adyen documentation](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) to see which parameters 
 are necessary for the current payment request.
 
-**NOTE:** `payment.amountPlanned` cannot be changed once `makePaymentRequest` is finished.
+**NOTE:** `payment.amountPlanned` CANNOT be changed once `makePaymentRequest` is finished.
 This is to prevent the shopper paying a different amount than the one saved on the commercetools payment object. 
 
 Make payment request generated from Adyen Web Components for credit card payment.
