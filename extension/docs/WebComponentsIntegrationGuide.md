@@ -640,7 +640,7 @@ By default, payments are captured immediately after authorisation. For payment m
 If you need to explicitly request a capture for each payment please follow our [manual capture documentation](./ManualCapture.md).
 
 # Cancel or refund
-If you want to return the funds to your shopper, but are not certain whether the payment has been captured or not, use the Cancel or Refund functionality. 
+If you want to return the funds to your shopper, use the Cancel or Refund functionality. 
 
 This will either: 
 
