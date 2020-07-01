@@ -30,7 +30,7 @@
 
 # Web Components integration guide
 
-In this integration process, there are different parties working with the extension module. Those: 
+Terms used in this guide:
 
 - **Shopper** - a person that's using the shop.
 - **Browser** - frontend part of the checkout UI (web shop). 
@@ -205,6 +205,7 @@ Pass the `origin key` to your front end. You might use this origin key to be abl
 > Note: The first 2 steps are optional if origin key and payment methods have been already cached by the merchant server.
  
  
+
 ## Step 4: Make a payment
 After the shopper submits their payment details or chooses to pay with a payment method that requires a redirection,
 the Adyen Web Components will generate a `makePaymentRequest`. Consult [Adyen documentation](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) to see which parameters 
