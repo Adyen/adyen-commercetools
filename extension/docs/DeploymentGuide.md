@@ -10,7 +10,7 @@
     - [Pull the image](#pull-the-image)
     - [Run the container](#run-the-container)
 
-## Parameters
+## Environment variables
 In order to make the extension module working, following environment variables should be provided:
 
 | Name | Content | Required | Default value |
