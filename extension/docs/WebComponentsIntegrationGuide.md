@@ -39,7 +39,7 @@ In this integration process, there are different parties working with the extens
 
 The following diagram shows the whole checkout integration flow using with [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
 
-![Flow](https://user-images.githubusercontent.com/3469524/85017686-3317bf00-b16c-11ea-8840-f34b97ac3dcb.jpeg)
+![Flow](https://user-images.githubusercontent.com/3469524/86238652-2c427080-bb9e-11ea-83cf-246bbc3a23f3.png)
 
 ## Before you begin
 If you haven't done so already, follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your test account, get your API key.
