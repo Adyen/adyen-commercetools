@@ -1,5 +1,5 @@
 ## Extension module
-[![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension)
+[![Build Status](https://travis-ci.org/commercetools/commercetools-adyen-integration.svg?branch=master)](https://travis-ci.org/commercetools/commercetools-adyen-integration) [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension)
 
 The extension module is a publicly exposed service that acts as a middleware between the commercetools platform and Adyen. 
 The extension module is called remotely from the commercetools platform with the [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) 
