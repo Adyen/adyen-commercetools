@@ -1,14 +1,18 @@
 # Deployment Guide
 
-**Contents**
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  
 
 - [Environment variables](#environment-variables)
 - [Requirements for the commercetools project](#requirements-for-the-commercetools-project)
+  - [Creating resources manually](#creating-resources-manually)
 - [Deployment](#deployment)
-  - [AWS Lambda](#aws-lambda)
   - [Docker](#docker)
-    - [Pull the image](#pull-the-image)
-    - [Run the container](#run-the-container)
+    - [Running the Docker image](#running-the-docker-image)
+  - [AWS Lambda](#aws-lambda)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Environment variables
 Following environment variables must be provided in order to run the extension module.
@@ -33,36 +37,49 @@ Following environment variables must be provided in order to run the extension m
 > Note: Sometimes it's necessary to regenerate the `ADYEN_API_KEY` key, otherwise you'll get `403 Forbidden error` from Adyen.
 
 ## Requirements for the commercetools project
-Configurations that will be automatically created by the extension module in your commercetools project.
+Resources below are required for the extension module to operate correctly. Configurations that ***will be automatically created*** by the extension module in your commercetools project.
+
 1. [API Extension subscription to Extension module endpoints](../resources/api-extension.json)
 1. [Payment custom type](../resources/web-components-payment-type.json)
 1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
 
+### Creating resources manually
+ 
+You can create these by running the command `npm run create-custom-types` as below:
+
+``` bash
+
+    CTP_PROJECT_KEY="xxxxxx" \ 
+    CTP_CLIENT_ID="xxxxxx" \ 
+    CTP_CLIENT_SECRET="xxxxxx" \
+    npm run create-custom-types
+```
+
+You will also need [create the commercetools HTTP API extension manually](https://docs.commercetools.com/http-api-projects-api-extensions#create-an-extension) for payment resource.
+Please refer to our [Extension Draft](../resources/api-extension.json) for the sample extension draft and replace `${ctpAdyenIntegrationBaseUrl}` with your publicly available HTTPs URL endpoint.
+
 ## Deployment
+
+Extension module supports different deployment options, you could deploy the extension module in your servers as 
+a docker container or you could use the AWS Lambda as a serverless option which lets you run code without provisioning or managing servers.
+
+### Docker
+Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension/tags) page to see the latest releases and tags.
+
+#### Running the Docker image
+
+```bash
+    docker run \
+    -e ADYEN_MERCHANT_ACCOUNT=xxxxxx \
+    -e ADYEN_API_KEY=xxxxxx \
+    -e CTP_PROJECT_KEY=xxxxxx \
+    -e CTP_CLIENT_ID=xxxxxx \
+    -e CTP_CLIENT_SECRET=xxxxxx \
+    -e API_EXTENSION_BASE_URL=xxxxxx \
+    commercetools/commercetools-adyen-integration-extension
+```
 
 ### AWS Lambda
 
-For deployment to AWS Lambda, zip the extensions folder and specify `src/lambda.handler` as the entry point for the lambda function.
-
-Custom types are required for the extension module to operate correctly.  When deploying to the AWS Lambda, the extension module will NOT create the custom types for you. Please create [payment custom type](../resources/web-components-payment-type.json) and [payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json) in your commercetools project.
-You can create these by running the command `npm run create-custom-types` and providing the `CTP_PROJECT_KEY`, `CTP_CLIENT_ID` and `CTP_CLIENT_SECRET` environment variables.
-
-Example command (bash): `CTP_PROJECT_KEY="project_key" CTP_CLIENT_ID="client_id" CTP_CLIENT_SECRET="client_secret" npm run create-custom-types`
-
-You will also need to setup the API extension manually as detailed [here](https://docs.commercetools.com/http-api-projects-api-extensions) for resourceTypeId `payment` and actions `Create and Update`
-
-### Docker
-For easy deployment you can use the [Extension module docker image](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension/tags).
-
-#### Pull the image 
-```
-docker pull commercetools/commercetools-adyen-integration-extension:X.X.X
-```
-(replace X.X.X with a image tag)
-
-#### Run the container
-
-Replace all `XXX` values and execute:
-```
-docker run -e ADYEN_API_BASE_URL=XXX -e ADYEN_MERCHANT_ACCOUNT=XXX -e API_EXTENSION_BASE_URL=XXX -e CTP_PROJECT_KEY=XXX -e ADYEN_API_KEY=XXX -e CTP_CLIENT_ID=XXX -e CTP_CLIENT_SECRET=XXX ctp-adyen-integration-extension:XXX
-```
+1. For deployment to AWS Lambda, zip the extensions folder and specify `src/lambda.handler` as the entry point for the AWS Lambda function.
+2. While using the AWS Lambda option **it will NOT create** the commercetools custom types resources and commercetools HTTP API extension for you. Please follow the statements in [creating commercetools resources manually](#creating-resources-manually) section. 
