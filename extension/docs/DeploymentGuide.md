@@ -2,7 +2,7 @@
 
 **Contents**
 
-- [Parameters](#parameters)
+- [Environment variables](#environment-variables)
 - [Requirements for the commercetools project](#requirements-for-the-commercetools-project)
 - [Deployment](#deployment)
   - [AWS Lambda](#aws-lambda)
