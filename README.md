@@ -11,7 +11,7 @@ Components are available for cards, wallets, and most local payment methods. For
 This repository contains two standalone modules that interact with CTP and Adyen.
 Complete integration requires running both of the modules.
 
-![Overview diagram](https://user-images.githubusercontent.com/9251453/56047499-ce7dfa80-5d45-11e9-9443-aaef9da31eab.png)
+![Overview diagram](https://user-images.githubusercontent.com/3469524/86220256-9f8ab900-bb83-11ea-963a-243e9992283f.jpg)
 - Shop communicates only with commercetools platform.
 - commercetools platform communicates with the Extension module.
 - Extension module communicates with Adyen payment provider.
