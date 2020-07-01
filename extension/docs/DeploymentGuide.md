@@ -44,7 +44,7 @@ Configurations that will be automatically created by the extension module in you
 
 For deployment to AWS Lambda, zip the extensions folder and specify `src/lambda.handler` as the entry point for the lambda function.
 
-When deploying the lambda, it will NOT create the custom types for you. These are required for the extension to operate correctly. Please add [payment custom type](../resources/web-components-payment-type.json) and [payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json) manually.
+Custom types are required for the extension module to operate correctly.  When deploying to the AWS Lambda, the extension module will NOT create the custom types for you. Please create [payment custom type](../resources/web-components-payment-type.json) and [payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json) in your commercetools project.
 You can create these by running the command `npm run create-custom-types` and providing the `CTP_PROJECT_KEY`, `CTP_CLIENT_ID` and `CTP_CLIENT_SECRET` environment variables.
 
 Example command (bash): `CTP_PROJECT_KEY="project_key" CTP_CLIENT_ID="client_id" CTP_CLIENT_SECRET="client_secret" npm run create-custom-types`
