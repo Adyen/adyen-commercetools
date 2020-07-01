@@ -43,7 +43,7 @@ The following diagram shows the whole checkout integration flow using with [Adye
 ![Flow](https://user-images.githubusercontent.com/3469524/86238652-2c427080-bb9e-11ea-83cf-246bbc3a23f3.png)
 
 ## Before you begin
-If you haven't done so already, follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your test account, get your API key.
+If you do not have Adyen API keys, follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your account, get your API key.
 In order to make the extension module working, follow our [deployment guide](./DeploymentGuide.md).
 
 ## Step 1: commercetools checkout validations
