@@ -11,7 +11,7 @@
     - [Run the container](#run-the-container)
 
 ## Environment variables
-In order to make the extension module working, following environment variables should be provided:
+Following environment variables must be provided in order to run the extension module.
 
 | Name | Content | Required | Default value |
 | --- | --- | --- | --- |
