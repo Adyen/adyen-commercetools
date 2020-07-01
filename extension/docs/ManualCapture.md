@@ -4,7 +4,7 @@
 By default, payments are captured immediately after authorisation. For payment methods that support separate authorisation and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This allows you to cancel the payment in case of any issues with the shipment. 
 
 ### Make an API call to capture a payment:
-To capture a payment manually, [add a transaction](https://docs.commercetools.com/http-api-projects-payments#add-transaction) with type `Charge` and state `Initial` to CTP payment.
+To capture a payment manually, [add a transaction](https://docs.commercetools.com/http-api-projects-payments#add-transaction) with type `Charge` and state `Initial` to the commercetools payment.
  
 ```json
 {
@@ -39,7 +39,7 @@ Extension module will update the transaction with `Pending` transaction state an
 
 Request/response between Adyen and extension module are stored in `interfaceInteraction` field of the payment with type `manualCapture`:
 
-CTP payment representation after a successful capture:
+The commercetools payment representation after a successful capture:
 
 ```json
 {

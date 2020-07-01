@@ -4,7 +4,7 @@
 
 - [Web Components integration guide](#web-components-integration-guide)
   - [Before you begin](#before-you-begin)
-  - [Step 1: CTP checkout validations](#step-1-ctp-checkout-validations)
+  - [Step 1: commercetools checkout validations](#step-1-commercetools-checkout-validations)
     - [Validate cart state](#validate-cart-state)
     - [Recalculate cart](#recalculate-cart)
     - [Validate payment](#validate-payment)
@@ -34,7 +34,7 @@ In this integration process, there are different parties working with the extens
 - **Shopper** - a person that's using the shop.
 - **Browser** - frontend part of the checkout UI (webshop). 
 - **Merchant server** - backend part of the checkout.
-- **Extension module** - extension module is handling checkout steps integrating with Adyen and CTP payment object API calls with the [API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions).
+- **Extension module** - extension module is handling checkout steps integrating with Adyen and commercetools payment object HTTP API calls with the [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions).
 - **Notification module** - [notification module](./../../notification/README.md) is receiving notifications from Adyen, processing and storing them on a commercetools payment object.
 
 The following diagram shows the whole checkout integration flow using with [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
@@ -45,7 +45,7 @@ The following diagram shows the whole checkout integration flow using with [Adye
 If you haven't done so already, follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your test account, get your API key.
 In order to make the extension module working, follow our [deployment guide](./DeploymentGuide.md).
 
-## Step 1: CTP checkout validations
+## Step 1: commercetools checkout validations
 
 In the merchant server, ensure the steps below are done:
 1. On each checkout step [validate cart state](#validate-cart-state)
@@ -69,7 +69,7 @@ or by asynchronous process like [commercetools-payment-to-order-processor job](h
  - Time-limited discounts are not removed/invalidated from the cart automatically. They are validated on recalculate and order creation only.
 
 ### Validate payment
-There must be at least one CTP payment object of type Adyen (`Payment.paymentMethodInfo.paymentInterface = ctp-adyen-integration`).
+There must be at least one commercetools payment object of type Adyen (`Payment.paymentMethodInfo.paymentInterface = ctp-adyen-integration`).
 
 ### Validate payment transaction
 Cart's payment counts as successful if there is at least one payment object
@@ -79,7 +79,7 @@ and transactions type `Authorization` or `Charge`.
 ## Step 2: Get available payment methods
 When your shopper is ready to pay, get a list of the available payment methods based on their country, device, and the payment amount.
 
-From the merchant server, [Create/Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with `getPaymentMethodsRequest` custom field.  
+From the merchant server, [Create/Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with `getPaymentMethodsRequest` custom field.  
 
 Set `getPaymentMethodsRequest` custom field for a shopper in the Germany, for a payment of `10 EUR`: 
 
@@ -94,7 +94,7 @@ Set `getPaymentMethodsRequest` custom field for a shopper in the Germany, for a 
 }
 ```
 
-CTP payment representation:
+The commercetools payment representation:
 
 ``` json
 {
@@ -127,7 +127,7 @@ The response includes the list of available payment methods:
 }
 ```
 
-CTP payment representation:
+The commercetools payment representation:
 
 ``` json
 {
@@ -155,7 +155,7 @@ If you haven't created the payment forms already in your frontend, follow the of
 
 An `origin key` is a client-side key that is used to validate Adyen's JavaScript component library. It is required to render Component.
 
-To be able to get the origin key extension module could be used, from the merchant server, [Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `getPaymentMethodsRequest` custom field.
+To be able to get the origin key extension module could be used, from the merchant server, [Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `getPaymentMethodsRequest` custom field.
 
 An [update action](https://docs.commercetools.com/http-api-projects-payments#set-customfield) to set `getOriginKeysRequest` custom field.
 ```
@@ -182,7 +182,7 @@ The response contains a list of origin keys for all requested domains. For each 
 }
 ```
 
-CTP payment representation:
+The commercetools payment representation:
 
 ``` json
 {
@@ -209,7 +209,7 @@ the Adyen Web Components will generate a `makePaymentRequest`. Consult [Adyen do
 are necessary for the current payment request.
 
 **NOTE:** `payment.amountPlanned` cannot be changed once `makePaymentRequest` is finished.
-This is to prevent the shopper paying a different amount than the one saved on the CTP payment object. 
+This is to prevent the shopper paying a different amount than the one saved on the commercetools payment object. 
 
 Make payment request generated from Adyen Web Components for credit card payment.
 ```json
@@ -230,7 +230,7 @@ Make payment request generated from Adyen Web Components for credit card payment
   "merchantAccount": "YOUR_MERCHANT_ACCOUNT"
 }
 ``` 
-[Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with the request above.
+[Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with the request above.
 ```json
 {
   "version": "PAYMENT_VERSION",
@@ -285,7 +285,7 @@ Response from Adyen for the case where user has to be redirected to a payment pr
   }
 }
 ```
-A CTP payment with `makePaymentResponse` field with the response above:
+A commercetools payment with `makePaymentResponse` field with the response above:
 ```json
 {
   "custom": {
@@ -314,7 +314,7 @@ See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-
   "merchantReference": "YOUR_ORDER_REFERENCE"
 }
 ```
-A CTP payment with `makePaymentResponse` field with the response above.
+A commercetools payment with `makePaymentResponse` field with the response above.
 Notice that a transaction is added to the payment. The transaction is of type `Authorization` 
 and has `amount` taken from `amountPlanned`. `interactionId` is matching the `makePaymentResponse`
 ```json
@@ -387,7 +387,7 @@ Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` 
   "returnUrl": "https://www.your-company.com/..."
 }
 ```
-[Update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with the request above. 
+[Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with the request above. 
 ```json
 {
   "version": "PAYMENT_VERSION",
@@ -458,7 +458,7 @@ If `makePaymentRequest` has `lineItems` custom field, extension module will not 
 If the shopper performed additional action (e.g. redirect) in the previous step,
 you need to make `submitAdditionalPaymentDetailsRequest` to either complete the payment, or to check the payment result.
 
-Collect information from the previous step and [update CTP payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `submitAdditionalPaymentDetailsRequest` custom field.
+Collect information from the previous step and [update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `submitAdditionalPaymentDetailsRequest` custom field.
 The information is available either in `state.data.details` from the `onAdditionalDetails` event or, for redirects, the parameters you received when the shopper was redirected back to your website.
 ```json
 {
@@ -476,7 +476,7 @@ The information is available either in `state.data.details` from the `onAddition
 Extension module will extend `submitAdditionalPaymentDetailsRequest` with `paymentData` attribute if the attribute is missing.
 In this case, `paymentData` will be taken from the previous `makePaymentRequest`.
 
-After update, you will receive `submitAdditionalPaymentDetailsResponse` in the returned CTP payment.
+After update, you will receive `submitAdditionalPaymentDetailsResponse` in the returned commercetools payment.
 The next steps depend on if you received an action object in the `submitAdditionalPaymentDetailsResponse`.
 
 If you received an action object, [pass the action object to your front end](https://docs.adyen.com/checkout/components-web/#step-4-additional-front-end) and perform Step 4 again.
@@ -502,7 +502,7 @@ Submit additional payment details response from Adyen for the case where you nee
   "paymentData": "Ab02b4c0!..."
 }
 ```
-A CTP payment with `submitAdditionalPaymentDetailsResponse` field with the response above:
+A commercetools payment with `submitAdditionalPaymentDetailsResponse` field with the response above:
 ```json
 {
   "custom": {
@@ -517,7 +517,7 @@ A CTP payment with `submitAdditionalPaymentDetailsResponse` field with the respo
   }
 }
 ```
-If you received an action object and need to repeat `submitPaymentDetailsRequest`, you must remove the existing `submitAdditionalPaymentDetailsResponse` custom field. This can be done in one request to CTP as follow: 
+If you received an action object and need to repeat `submitPaymentDetailsRequest`, you must remove the existing `submitAdditionalPaymentDetailsResponse` custom field. This can be done in one request to the commercetools platform as follow: 
 ```json
 {
   "version": "PAYMENT_VERSION",
@@ -551,7 +551,7 @@ Submit additional payment details response from Adyen for the case where you can
   "merchantReference": "YOUR_ORDER_REFERENCE"
 }
 ```
-A CTP payment with `submitAdditionalPaymentDetailsResponse` field with the response above.
+A commercetools payment with `submitAdditionalPaymentDetailsResponse` field with the response above.
 Notice that a transaction is added to the payment. The transaction is of type `Authorization` 
 and has `amount` taken from `amountPlanned`. `interactionId` is matching the `makePaymentResponse` 
 ```json
@@ -599,7 +599,7 @@ In case you encounter errors in your integration, refer to the following:
 
 ### Extension module errors
 
-If you receive a `non-HTTP 200 response`, use the CTP `interface interactions` to troubleshoot the request and errors.
+If you receive a `non-HTTP 200 response`, use the commercetools `interface interactions` to troubleshoot the request and errors.
 
 Interface interactions can be requests sent to the Adyen, responses received from the Adyen or notifications received from the Adyen. 
 Some interactions may result in a transaction. If so, the interactionId in the Transaction should be set to match the `pspReference` of the Adyen for the interaction.
@@ -608,8 +608,8 @@ Some interactions may result in a transaction. If so, the interactionId in the T
 
 If you receive an HTTP 200 response with an Error or Refused resultCode, check the refusal reason and, if possible, modify your request.
 
-Check the following table to see the mapping of Adyen [result codes](https://docs.adyen.com/development-resources/response-handling#error-codes-types) to CTP [transaction state](https://docs.commercetools.com/http-api-projects-payments#transactionstate)
-|Adyen result code| CTP transaction state
+Check the following table to see the mapping of Adyen [result codes](https://docs.adyen.com/development-resources/response-handling#error-codes-types) to commercetools [transaction state](https://docs.commercetools.com/http-api-projects-payments#transactionstate)
+|Adyen result code| The commercetools transaction state
 | --- | --- |
 | Authorised| Success|
 | Refused| Failure|

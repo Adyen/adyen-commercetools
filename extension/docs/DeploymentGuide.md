@@ -3,7 +3,7 @@
 **Contents**
 
 - [Parameters](#parameters)
-- [Requirements for CTP project](#requirements-for-ctp-project)
+- [Requirements for the commercetools project](#requirements-for-the-commercetools-project)
 - [Deployment](#deployment)
   - [AWS Lambda](#aws-lambda)
   - [Docker](#docker)
@@ -19,20 +19,20 @@ In order to make the extension module working, following environment variables s
 |`ADYEN_API_KEY` | Go to [Account/Users](https://ca-test.adyen.com/ca/ca/config/users.shtml) - Select a user with `Web Service` User type - Generate New API Key (notice: in case you get `403 Forbidden` error from Adyen, try to regenerate the key). | YES | |
 |`ADYEN_API_BASE_URL` | Base URL for Adyen requests | NO | `https://checkout-test.adyen.com/v52` |
 |`ADYEN_LEGACY_API_BASE_URL` | Base legacy URL for Adyen requests. Adyen is in the migration process of API URLs and for some actions, the legacy URL has to be used (e.g. cancelOrRefund). | NO | `https://pal-test.adyen.com/pal/servlet/Payment/v52` |
-|`CTP_PROJECT_KEY` | Get CTP credentials from `https://mc.commercetools.com/${your CTP project ID}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is `manage_project`. |  YES | |
-|`CTP_CLIENT_ID` | Get CTP credentials from `https://mc.commercetools.com/${your CTP project ID}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is `manage_project`. | YES | |
-|`CTP_CLIENT_SECRET` | Get CTP credentials from `https://mc.commercetools.com/${your CTP project ID}/settings/developer/api-clients`. This module needs to CRUD multiple CTP resources, thus recommended scope is `manage_project`. | YES | |
-|`CTP_HOST` | commercetools HTTP API is hosted at that URL| NO | `https://api.europe-west1.gcp.commercetools.com` |
-|`CTP_AUTH_URL` | commercetools’ OAuth 2.0 service is hosted at that URL | NO | `https://auth.europe-west1.gcp.commercetools.com` |
+|`CTP_PROJECT_KEY` | Get commercetools credentials from `https://mc.commercetools.com/${your commercetools project ID}/settings/developer/api-clients`. This module needs to CRUD multiple commercetools resources, thus recommended scope is `manage_project`. |  YES | |
+|`CTP_CLIENT_ID` | Get commercetools credentials from `https://mc.commercetools.com/${your commercetools project ID}/settings/developer/api-clients`. This module needs to CRUD multiple commercetools resources, thus recommended scope is `manage_project`. | YES | |
+|`CTP_CLIENT_SECRET` | Get commercetools credentials from `https://mc.commercetools.com/${your commercetools project ID}/settings/developer/api-clients`. This module needs to CRUD multiple commercetools resources, thus recommended scope is `manage_project`. | YES | |
+|`CTP_HOST` | The commercetools HTTP API is hosted at that URL| NO | `https://api.europe-west1.gcp.commercetools.com` |
+|`CTP_AUTH_URL` | The commercetools’ OAuth 2.0 service is hosted at that URL | NO | `https://auth.europe-west1.gcp.commercetools.com` |
 |`PORT` | port on which the application will run | NO | 8080 |
 |`LOG_LEVEL` | bunyan log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)| NO | `info` |
-|`API_EXTENSION_BASE_URL` | URL of the Extension module server. In case of any payment changes, [CTP API extension](https://docs.commercetools.com/http-api-projects-api-extensions) will call this URL and pass the payment object in body. | YES | |
+|`API_EXTENSION_BASE_URL` | URL of the Extension module server. In case of any payment changes, [commercetools API extension](https://docs.commercetools.com/http-api-projects-api-extensions) will call this URL and pass the payment object in body. | YES | |
 |`KEEP_ALIVE_TIMEOUT` | milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_server_keepalivetimeout)) | NO | Node.js default
 |`ENSURE_RESOURCES` | Set to `false` to disable the creation of resources in commercetools (e.g. custom types) | NO | `true`
 
 > Note: Sometimes it's necessary to regenerate the `ADYEN_API_KEY` key, otherwise you'll get `403 Forbidden error` from Adyen.
 
-## Requirements for CTP project
+## Requirements for the commercetools project
 All the requirements below created by the extension module.
 1. [API Extension subscription to Extension module endpoints](../resources/api-extension.json)
 1. [Payment custom type](../resources/web-components-payment-type.json)
