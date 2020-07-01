@@ -23,8 +23,9 @@ The Notification module will process the notification and update the matching co
 
 ## Extension module [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension)
 
-Extension module is a public service. When a commercetools payment object changes, the [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) send a request to the extension module.
-Then the extension module maps and sends a request to Adyen and responds with update actions back to the commercetools platform.
+Extension module is a publicly exposed service which acts as a middleware between the commercetools platform and Adyen. 
+Extension module is called remotely from the commercetools platform with the [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) 
+before processing of a create or update request of a commercetools payment.
 
 For more info, refer to the [Extension module](./extension/README.md) documentation.
 
