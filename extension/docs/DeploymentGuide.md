@@ -33,7 +33,7 @@ Following environment variables must be provided in order to run the extension m
 > Note: Sometimes it's necessary to regenerate the `ADYEN_API_KEY` key, otherwise you'll get `403 Forbidden error` from Adyen.
 
 ## Requirements for the commercetools project
-All the requirements below created by the extension module.
+Configurations that will be automatically created by the extension module in your commercetools project.
 1. [API Extension subscription to Extension module endpoints](../resources/api-extension.json)
 1. [Payment custom type](../resources/web-components-payment-type.json)
 1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
