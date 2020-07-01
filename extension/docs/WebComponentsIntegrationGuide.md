@@ -33,7 +33,7 @@
 In this integration process, there are different parties working with the extension module. Those: 
 
 - **Shopper** - a person that's using the shop.
-- **Browser** - frontend part of the checkout UI (webshop). 
+- **Browser** - frontend part of the checkout UI (web shop). 
 - **Merchant server** - backend part of the checkout.
 - **Extension module** - extension module is handling checkout steps integrating with Adyen and commercetools payment object HTTP API calls with the [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions).
 - **Notification module** - [notification module](./../../notification/README.md) is receiving notifications from Adyen, processing and storing them on a commercetools payment object.
@@ -48,7 +48,7 @@ In order to make the extension module working, follow our [deployment guide](./D
 
 ## Step 1: commercetools checkout validations
 
-In the merchant server, ensure the steps below are done:
+In the [merchant server](#web-components-integration-guide), ensure the steps below done:
 1. On each checkout step [validate cart state](#validate-cart-state)
 1. Before starting payment process make sure there is no valid payments already:
     * [Recalculate cart](#recalculate-cart)
@@ -203,6 +203,7 @@ The commercetools payment representation:
 Pass the `origin key` to your front end. You might use this origin key to be able to render Component.
 
 > Note: The first 2 steps are optional if origin key and payment methods have been already cached by the merchant server.
+ 
  
 ## Step 4: Make a payment
 After the shopper submits their payment details or chooses to pay with a payment method that requires a redirection,
