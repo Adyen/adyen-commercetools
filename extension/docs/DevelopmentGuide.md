@@ -1,6 +1,6 @@
 # Development Guide
 
-**Contents**
+## Contents
 - [Prerequisites](#prerequisites)
 - [Development](#development)
 - [Contribution](#contribution)
