@@ -42,7 +42,7 @@ Configurations that will be automatically created by the extension module in you
 
 ### AWS Lambda
 
-For deployment to lambda zip the extensions folder and specify `src/lambda.handler` as the entry point for the function
+For deployment to AWS Lambda, zip the extensions folder and specify `src/lambda.handler` as the entry point for the lambda function.
 
 When deploying the lambda, it will NOT create the custom types for you. These are required for the extension to operate correctly. Please add [payment custom type](../resources/web-components-payment-type.json) and [payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json) manually.
 You can create these by running the command `npm run create-custom-types` and providing the `CTP_PROJECT_KEY`, `CTP_CLIENT_ID` and `CTP_CLIENT_SECRET` environment variables.
