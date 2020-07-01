@@ -29,5 +29,5 @@ Before running integration tests you need to set right environment variables, [c
 
 ### Contribution
 
-- Every PR should address an issue on the repository. If the issue doesn't exist, please create it first.
+- Please create an issue if it doesn't list under the issues tab on the repository. Pull requests should be created with a link to the github issue link. 
 - Pull requests should always follow the following naming convention: `[issue-number]-[pr-name]`. For example, `12-update-payment-custom-type`.
