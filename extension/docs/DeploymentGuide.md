@@ -15,7 +15,7 @@ Following environment variables must be provided in order to run the extension m
 
 | Name | Content | Required | Default value |
 | --- | --- | --- | --- |
-|`ADYEN_MERCHANT_ACCOUNT` | Go to [Account/Merchant accounts](https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount) and get the name in Account code. | YES | |
+|`ADYEN_MERCHANT_ACCOUNT` | Adyen Account Code. Go to [Account/Merchant accounts](https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount) and get the name in Account code. | YES | |
 |`ADYEN_API_KEY` | Go to [Account/Users](https://ca-test.adyen.com/ca/ca/config/users.shtml) - Select a user with `Web Service` User type - Generate New API Key (notice: in case you get `403 Forbidden` error from Adyen, try to regenerate the key). | YES | |
 |`ADYEN_API_BASE_URL` | Base URL for Adyen requests | NO | `https://checkout-test.adyen.com/v52` |
 |`ADYEN_LEGACY_API_BASE_URL` | Base legacy URL for Adyen requests. Adyen is in the migration process of API URLs and for some actions, the legacy URL has to be used (e.g. cancelOrRefund). | NO | `https://pal-test.adyen.com/pal/servlet/Payment/v52` |
