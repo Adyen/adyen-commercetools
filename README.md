@@ -18,13 +18,16 @@ Complete integration requires running both of the modules.
 7. The shop verifies the updated payment.
 8. The shop presents the results to the shopper.
 
-## Extension module [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension)
+## Extension module 
+
+[![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension)
 
 The extension module is a publicly exposed service that acts as a middleware between the commercetools platform and Adyen. 
-The extension module is called remotely from the commercetools platform with the [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) 
-before processing of a create or update request of a commercetools payment.
+Once [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is configured to call Adyen extension module, for every payment create or update request an Adyen extension will be remotely called by the commercetools platform.
 
-For more info, refer to the [Extension module](./extension/README.md) documentation.
+- Follow [Integration Guide](./extension/docs/WebComponentsIntegrationGuide.md) for information how to integrate your shop with this module.
+- Follow [Deployment Guide](./extension/docs/DeploymentGuide.md) to run extension module.
+- Follow [Development Guide](./extension/docs/DevelopmentGuide.md) if you want to contribute to it.
 
 ## Notification module [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-notification)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-notification)
 
