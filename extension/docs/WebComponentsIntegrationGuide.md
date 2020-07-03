@@ -629,11 +629,11 @@ Some interactions may result in a transaction. If so, the interactionId in the p
 If you receive an HTTP 200 response with an Error or Refused resultCode, check the refusal reason and, if possible, modify your request.
 
 Check the following table to see the mapping of Adyen [result codes](https://docs.adyen.com/development-resources/response-handling#error-codes-types) to commercetools [transaction state](https://docs.commercetools.com/http-api-projects-payments#transactionstate)
-|Adyen result code| The commercetools transaction state
+|Adyen result code| The commercetools transaction (transaction state)
 | --- | --- |
-| Authorised| Success|
-| Refused| Failure|
-| Error| Failure|
+| Authorised| Authorization (Success)|
+| Refused| Authorization (Failure)|
+| Error| Authorization (Failure)|
 
 ### Shopper successfully paid but `redirectUrl` was not reached
 In some payment redirect cases, there might be a valid payment but no order as shopper did not reach the shop's `redirectUrl`.
