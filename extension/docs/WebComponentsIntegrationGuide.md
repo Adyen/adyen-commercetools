@@ -185,7 +185,7 @@ An [update action](https://docs.commercetools.com/http-api-projects-payments#set
 }
 ```
 
-The response contains a list of origin keys for all requested domains. For each list item, the key is the domain, and the value is its associated origin key.
+The response contains a list of origin keys for all requested domains. For each list item, the key is the domain, and the value is its associated origin key. For more info see also [origin keys](https://docs.adyen.com/user-management/how-to-get-an-origin-key) 
 
 ``` json
 {
