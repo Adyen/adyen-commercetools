@@ -162,7 +162,7 @@ Pass the `getPaymentMethodsResponse` to your front end. You might use this in th
 
 ## Step 3: Add Components to your payments form
 
-Next, use the `Component` to render the payment method, and collect the required payment details from your shopper.
+Next, use the Adyen `Component` to render the payment method, and collect the required payment details from the shopper.
 
 If you haven't created the payment forms already in your frontend, follow the official [Web Components integration guide](https://docs.adyen.com/checkout/components-web#step-2-add-components) from Adyen.
 
