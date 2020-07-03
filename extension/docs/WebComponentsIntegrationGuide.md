@@ -301,7 +301,7 @@ Example response from Adyen where the user has to be redirected to a payment pro
   }
 }
 ```
-A commercetools payment with `makePaymentResponse` field with the response above:
+A commercetools payment example with `makePaymentResponse` field with the response above:
 ```json
 {
   "custom": {
