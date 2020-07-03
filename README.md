@@ -28,8 +28,8 @@ For more info, refer to the [Extension module](./extension/README.md) documentat
 
 ## Notification module [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-notification)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-notification)
 
-Notification module is a publicly exposed service which receives notifications sent by Adyen, 
-When Adyen cannot fulfill the payment requirement right away, it will later send a notification to the notification module as a response.
+Notification module is a publicly exposed service which receives asynchronous notifications sent by Adyen, 
+Through notifications, Adyen provides asynchronously payment status changes like authorization, charge, or refund of the payment.
 The notification module will process the notification and update the matching commercetools payment accordingly.
 
 For more info, refer to the [Notification module](./notification/README.md) documentation.

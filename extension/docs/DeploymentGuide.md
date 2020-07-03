@@ -32,18 +32,18 @@ Following environment variables must be provided in order to run the extension m
 |`LOG_LEVEL` | bunyan log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)| NO | `info` |
 |`API_EXTENSION_BASE_URL` | URL of the Extension module server. In case of any payment changes, [commercetools API extension](https://docs.commercetools.com/http-api-projects-api-extensions) will call this URL and pass the payment object in body. | YES | |
 |`KEEP_ALIVE_TIMEOUT` | milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_server_keepalivetimeout)) | NO | Node.js default
-|`ENSURE_RESOURCES` | Set to `false` to disable the creation of resources in commercetools (e.g. custom types) | NO | `true`
+|`ENSURE_RESOURCES` | Set to `false` to disable the creation of required resources in commercetools (e.g. custom types) on startup | NO | `true`
 
 > Note: Sometimes it's necessary to regenerate the `ADYEN_API_KEY` key, otherwise you'll get `403 Forbidden error` from Adyen.
 
 ## Requirements for the commercetools project
-Resources below are required for the extension module to operate correctly. Configurations that ***will be automatically created*** by the extension module in your commercetools project.
+Resources below are required for the extension module to operate correctly. Resources that ***will be automatically created*** by the extension module in your commercetools project.
 
-1. [API Extension subscription to Extension module endpoints](../resources/api-extension.json)
+1. [The commercetools HTTP API Extension pointing to Adyen extension module](../resources/api-extension.json)
 1. [Payment custom type](../resources/web-components-payment-type.json)
 1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
 
-### Creating resources manually
+### Creating required resources manually
  
 You can create these by running the command `npm run create-custom-types` as below:
 
@@ -82,4 +82,4 @@ Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-a
 ### AWS Lambda
 
 1. For deployment to AWS Lambda, zip the extensions folder and specify `src/lambda.handler` as the entry point for the AWS Lambda function.
-2. While using the AWS Lambda option **it will NOT create** the commercetools custom types resources and commercetools HTTP API extension for you. Please follow the statements in [creating commercetools resources manually](#creating-resources-manually) section. 
+2. When the extension module is run as AWS Lambda **it will NOT create** the required resources like custom types or commercetools API extension for you. Please follow the [manual resource creation guide](#creating-resources-manually) instead. 
