@@ -52,6 +52,8 @@ The following diagram shows checkout integration flow based on [Adyen Web Compon
 - [Step 5](#step-5-submit-additional-payment-details): Set `submitAdditionalPaymentDetailsRequest ` custom field to commercetools payment to submit additional payment details. 
 - [Step 6](#step-6-capture-payment-required-for-klarna): Add an optional `Charge` transaction to commercetools payment in order to manually capture the payment.
 
+> **Note** for Step 2 and Step 3: For a better performance `getOriginKeysRequest` can be supplied together with `getPaymentMethodsRequest` and the responses could be cached by the merchant server.
+
 ## Before you begin
 If you do not have Adyen API keys, follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your account, get your API key.
 In order to make the extension module up and running, follow our [deployment guide](./DeploymentGuide.md).
@@ -212,9 +214,6 @@ The commercetools payment representation example:
 ```
 
 Pass the `origin key` to your front end. Origin key is required to render an Adyen payment method Component.
-
-> Note: The first 2 steps are optional if origin key and payment methods have been already cached by the merchant server.
- 
  
 
 ## Step 4: Make a payment
