@@ -649,7 +649,7 @@ After doing the all steps above and testing the payment methods with your test a
 Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist) to ensure you have a complete implementation into Adyen.
 
 # Manual Capture
-By default, payments are captured immediately after authorisation. For payment methods that support separate authorisation and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This allows you to cancel the payment in case of any issues with the shipment. 
+By default, payments are captured immediately (or with [delay](https://docs.adyen.com/point-of-sale/capturing-payments/delayed-capture#set-up-delayed-capture)) after authorisation. For payment methods that support separate authorization and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This also allows you to cancel the payment/authorization.
 
 If you need to explicitly request a capture for each payment please follow our [manual capture documentation](./ManualCapture.md).
 
