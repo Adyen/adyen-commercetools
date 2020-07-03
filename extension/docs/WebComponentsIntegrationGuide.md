@@ -90,7 +90,7 @@ with successful transaction state (`Payment.Transaction.state=Success`)
 and transaction type `Authorization` or `Charge`.
 
 ## Step 2: Get available payment methods
-When your shopper is ready to pay, get a list of the available payment methods based on their country, device, and the payment amount.
+When your shopper is ready to pay, get a list of the available payment methods based on their country and the payment amount.
 
 From the merchant server, [Create/Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with `getPaymentMethodsRequest` custom field.  
 
