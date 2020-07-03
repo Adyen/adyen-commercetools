@@ -107,7 +107,7 @@ Set `getPaymentMethodsRequest` custom field for a shopper in the Germany, for a 
 }
 ```
 
-The commercetools payment representation:
+The commercetools payment representation example:
 
 ``` json
 {
