@@ -644,7 +644,7 @@ If shopper decides to change cart's amount within the second tab and finalize pa
 will be shown and order creation must be declined.
 
 ## Test and go live
-After doing the all steps above and testing the payment methods with your test accounts, then when you are ready to go live, you need to do the following steps described as [testing the integration](https://docs.adyen.com/checkout/components-web/#testing-your-integration).
+Before you go live please follow [steps](https://docs.adyen.com/checkout/components-web/#testing-your-integration) described by Adyen.
 
 Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist).
 
