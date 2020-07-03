@@ -92,7 +92,8 @@ and transaction type `Authorization` or `Charge`.
 ## Step 2: Get available payment methods
 When your shopper is ready to pay, get a list of the available payment methods based on their country and the payment amount.
 
-From the merchant server, [Create/Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with `getPaymentMethodsRequest` custom field.  
+[Create/Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with `getPaymentMethodsRequest` custom field.  
+> Refer Adyen's [/paymentMethods](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/paymentMethods) request to check all possible request payload parameters.
 
 Set `getPaymentMethodsRequest` custom field for a shopper in the Germany, for a payment of `10 EUR`: 
 
@@ -172,6 +173,8 @@ In order to get the origin key [update commercetools payment](https://docs.comme
 Note: if you want to get both origin keys and payment methods at once, you can set both `getOriginKeysRequest` and `getPaymentMethodsRequest` to the commercetools payment object within a single update request or on payment creation.
 
 An [update action](https://docs.commercetools.com/http-api-projects-payments#set-customfield) to set `getOriginKeysRequest` custom field.
+> Refer Adyen's [/originKeys](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/v52/post/originKeys) request to check all possible request payload parameters.
+
 ```
 {
   "version": "PAYMENT_VERSION",
@@ -217,14 +220,16 @@ Pass the `origin key` to your front end. Origin key is required to render an Ady
  
 
 ## Step 4: Make a payment
+
 After the shopper submits their payment details or chooses to pay with a payment method that requires a redirection,
-the Adyen Web Components will generate a `makePaymentRequest`. Consult [Adyen documentation](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) to see which parameters 
-are necessary for `make payment` request.
+the Adyen Web Components will generate a `makePaymentRequest`. 
 
 **NOTE:** `payment.amountPlanned` CANNOT be changed once `makePaymentRequest` has been set and processed.
 This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
 
 Make payment request generated from Adyen Web Components for credit card payment.
+> Refer Adyen's [/payments](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) request to check all possible request payload parameters.
+
 ```json
 {
   "amount": {
@@ -473,6 +478,8 @@ you need to make `submitAdditionalPaymentDetailsRequest` to either complete the 
 
 Collect information from the previous step and [update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `submitAdditionalPaymentDetailsRequest` custom field.
 The information is available either in `state.data.details` from the `onAdditionalDetails` event or, for redirects, the parameters you received when the shopper was redirected back to your website.
+> Refer Adyen's [/payments/details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments/details) request to check all possible request payload parameters.
+
 ```json
 {
   "version": "PAYMENT_VERSION",
