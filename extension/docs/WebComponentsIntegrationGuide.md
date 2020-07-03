@@ -56,7 +56,7 @@ On this guide we describe both server-side and client-side in the checkout integ
 
 ## Before you begin
 If you do not have Adyen API keys, follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your account, get your API key.
-In order to make the extension module working, follow our [deployment guide](./DeploymentGuide.md).
+In order to make the extension module up and running, follow our [deployment guide](./DeploymentGuide.md).
 
 ## Step 1: commercetools checkout validations
 
