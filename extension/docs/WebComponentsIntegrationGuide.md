@@ -263,7 +263,7 @@ The response from Adyen is added to `makePaymentResponse` custom field.
 The response contains information for the next steps of the payment process.
 For details, consult the [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-3-make-a-payment)
 
-Response from Adyen for the case where user has to be redirected to a payment provider page for further authentication:
+Example response from Adyen where the user has to be redirected to a payment provider page for further authentication:
 ```json
 {
   "resultCode": "RedirectShopper",
