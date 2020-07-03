@@ -213,7 +213,7 @@ The commercetools payment representation:
 }
 ```
 
-Pass the `origin key` to your front end. You might use this origin key to be able to render Component.
+Pass the `origin key` to your front end. Origin key is required to render an Adyen payment method Component.
 
 > Note: The first 2 steps are optional if origin key and payment methods have been already cached by the merchant server.
  
