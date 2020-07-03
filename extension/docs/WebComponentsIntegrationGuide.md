@@ -79,7 +79,7 @@ or by an optional asynchronous process like [commercetools-payment-to-order-proc
 ### Recalculate cart
 [Execute cart recalculate](https://docs.commercetools.com/http-api-projects-carts#recalculate) to ensure:
  - Cart totals are always up-to-date 
- - Time-limited discounts are not removed/invalidated from the cart automatically. They are validated on recalculate and order creation only.
+ - Time-limited discounts are eventually removed from the cart (discounts are validated on re-calculate and order creation only).
 
 ### Validate payment
 There must be at least one commercetools payment object of type Adyen (`Payment.paymentMethodInfo.paymentInterface = ctp-adyen-integration`).
