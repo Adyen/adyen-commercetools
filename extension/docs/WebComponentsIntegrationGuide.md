@@ -87,7 +87,7 @@ There must be at least one commercetools payment object of type Adyen (`Payment.
 ### Validate payment transaction
 Cart's payment counts as successful if there is at least one payment object
 with successful transaction state (`Payment.Transaction.state=Success`) 
-and transactions type `Authorization` or `Charge`.
+and transaction type `Authorization` or `Charge`.
 
 ## Step 2: Get available payment methods
 When your shopper is ready to pay, get a list of the available payment methods based on their country, device, and the payment amount.
