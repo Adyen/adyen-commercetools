@@ -47,7 +47,7 @@ The following diagram shows checkout integration flow based on [Adyen Web Compon
 
 On this guide we describe both server-side and client-side in the checkout integration **steps**:
 
-- [Step 1](#step-1-commercetools-checkout-validations) : Do the required checkout validations in your merchant server.
+- [Step 1](#step-1-commercetools-checkout-validations) : Execute required checkout validations.
 - [Step 2](#step-2-get-available-payment-methods): Set `getPaymentMethodsRequest` custom field to commercetools payment to get a list of payment methods available to the shopper.
 - [Step 3](#step-3-add-components-to-your-payments-form): Set `getOriginKeysRequest` custom field to commercetools payment to get origin key and add the specific payment method Component to your checkout payments form.
 - [Step 4](#step-4-make-a-payment): Submit a payment request with setting `makePaymentRequest` custom field with the payment data returned by the Component.
