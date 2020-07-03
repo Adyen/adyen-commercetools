@@ -36,7 +36,7 @@ Terms used in this guide:
 - **Shopper** - a person that's using the shop.
 - **Browser** - frontend part of the checkout UI (web shop). 
 - **Merchant server** - backend part of the checkout.
-- **Extension module** - extension module is handling checkout steps integrating with Adyen and commercetools payment object HTTP API calls with the [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions).
+- **Extension module** - extension module configured as [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is handling checkout steps by intercepting payment modifications and executing communication with Adyen API.
 - **Notification module** - [notification module](./../../notification/README.md) is receiving notifications from Adyen, processing and storing them on a commercetools payment object.
 
 The following diagram shows the whole checkout integration flow using with [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
