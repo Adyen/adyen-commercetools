@@ -51,7 +51,7 @@ On this guide we describe both server-side and client-side in the checkout integ
 - [Step 2](#step-2-get-available-payment-methods): Set `getPaymentMethodsRequest` custom field to commercetools payment to get a list of payment methods available to the shopper.
 - [Step 3](#step-3-add-components-to-your-payments-form): Set `getOriginKeysRequest` custom field to commercetools payment to get origin key and add the specific payment method Component to your checkout payments form.
 - [Step 4](#step-4-make-a-payment): Submit a payment request with setting `makePaymentRequest` custom field with the payment data returned by the Component.
-- [Step 5](#step-5-submit-additional-payment-details): Set `getPaymentMethodsRequest` custom field to commercetools payment to submit additional payment details. 
+- [Step 5](#step-5-submit-additional-payment-details): Set `submitAdditionalPaymentDetailsRequest ` custom field to commercetools payment to submit additional payment details. 
 - [Step 6](#step-6-capture-payment-required-for-klarna): Add a `Charge` transaction to commercetools payment to manually capture payment.
 
 ## Before you begin
