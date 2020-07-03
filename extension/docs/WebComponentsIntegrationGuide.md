@@ -166,7 +166,7 @@ Next, use the Adyen `Component` to render the payment method, and collect the re
 
 If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Components integration guide](https://docs.adyen.com/checkout/components-web#step-2-add-components).
 
-An `origin key` is a client-side key that is used to validate Adyen's JavaScript component library. It is required to render Component.
+An `origin key` is a client-side key that is used to validate Adyen's JavaScript component library. It is required to render a Component.
 
 To be able to get the origin key extension module could be used, from the merchant server, [Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `getPaymentMethodsRequest` custom field.
 
