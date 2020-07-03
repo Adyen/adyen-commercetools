@@ -140,7 +140,7 @@ The response includes the list of available payment methods:
 }
 ```
 
-The commercetools payment representation:
+The commercetools payment representation example:
 
 ``` json
 {
@@ -196,7 +196,7 @@ The response contains a list of origin keys for all requested domains. For each 
 }
 ```
 
-The commercetools payment representation:
+The commercetools payment representation example:
 
 ``` json
 {
@@ -370,7 +370,7 @@ and has `amount` taken from `amountPlanned`. `interactionId` is matching the `ma
 
 #### Klarna payment
 For Klarna payment it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) in `makePaymentRequest`.
-Extension module can add the line item details for you if [the payment was added to a cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
+The extension module can add the line item details for you if [the payment is added to a cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
 
 Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` attribute.
 ```json
@@ -468,7 +468,7 @@ Extension module will add line items to your `makePaymentRequest`
   ]
 }
 ```
-If `makePaymentRequest` has `lineItems` custom field, extension module will not overwrite those `lineItems`. This way you can also provide your own line item details if needed.
+By default, the extension module will populate `lineItems` for you but in case you want to define your own values include `lineItems` in your `makePaymentRequest`.
 
 ## Step 5: Submit additional payment details
 If the shopper performed additional action (e.g. redirect) in the previous step,
@@ -493,7 +493,7 @@ Extension module will extend `submitAdditionalPaymentDetailsRequest` with `payme
 In this case, `paymentData` will be taken from the previous `makePaymentRequest`.
 
 After update, you will receive `submitAdditionalPaymentDetailsResponse` in the returned commercetools payment.
-The next steps depend on if you received an action object in the `submitAdditionalPaymentDetailsResponse`.
+The next steps depend on the existence of an action object within `submitAdditionalPaymentDetailsResponse`.
 
 If you received an action object, [pass the action object to your front end](https://docs.adyen.com/checkout/components-web/#step-4-additional-front-end) and perform Step 4 again.
 Submit additional payment details response from Adyen for the case where you need to pass the action object to your front end:
@@ -518,7 +518,7 @@ Submit additional payment details response from Adyen for the case where you nee
   "paymentData": "Ab02b4c0!..."
 }
 ```
-A commercetools payment with `submitAdditionalPaymentDetailsResponse` field with the response above:
+A commercetools example payment with `submitAdditionalPaymentDetailsResponse` field with the response above:
 ```json
 {
   "custom": {
@@ -533,7 +533,7 @@ A commercetools payment with `submitAdditionalPaymentDetailsResponse` field with
   }
 }
 ```
-If you received an action object and need to repeat `submitPaymentDetailsRequest`, you must remove the existing `submitAdditionalPaymentDetailsResponse` custom field. This can be done in one request to the commercetools platform as follow: 
+If you received an action object you need to repeat `submitAdditionalPaymentDetailsRequest` step. In order to do so remove the existing `submitAdditionalPaymentDetailsResponse` custom field. This can be done in a single payment update request as follow: 
 ```json
 {
   "version": "PAYMENT_VERSION",
@@ -567,7 +567,7 @@ Submit additional payment details response from Adyen for the case where you can
   "merchantReference": "YOUR_ORDER_REFERENCE"
 }
 ```
-A commercetools payment with `submitAdditionalPaymentDetailsResponse` field with the response above.
+A commercetools example payment with `submitAdditionalPaymentDetailsResponse` field with the response above.
 Notice that a transaction is added to the payment. The transaction is of type `Authorization` 
 and has `amount` taken from `amountPlanned`. `interactionId` is matching the `makePaymentResponse` 
 ```json
@@ -606,8 +606,8 @@ and has `amount` taken from `amountPlanned`. `interactionId` is matching the `ma
 ```
 
 ## Step 6: Capture payment (required for Klarna)
-All Klarna payments [have to be manually captured](https://docs.adyen.com/payment-methods/klarna/web-component#capture) within 28 days after authorisation, even if you have enabled automatic capture on your merchant account.
-Refer to [Manual Capture](ManualCapture.md) guide to see how it can done.
+All Klarna payments [have to be manually captured](https://docs.adyen.com/payment-methods/klarna/web-component#capture) within 28 days after authorisation, even if you have enabled automatic capture on your Adyen merchant account.
+Refer to [Manual Capture](ManualCapture.md) guide to see how it can be done.
 
 ## Error handling
 
@@ -615,10 +615,10 @@ In case you encounter errors in your integration, refer to the following:
 
 ### Extension module errors
 
-If you receive a `non-HTTP 200 response`, use the commercetools `interface interactions` to troubleshoot the request and errors.
+If you receive a `non-HTTP 200 response`, use the commercetools payment `interface interactions` to troubleshoot the response.
 
-Interface interactions can be requests sent to the Adyen, responses received from the Adyen or notifications received from the Adyen. 
-Some interactions may result in a transaction. If so, the interactionId in the Transaction should be set to match the `pspReference` of the Adyen for the interaction.
+Interface interactions can represent a `request` sent to Adyen, a `response`, or a `notification` received from Adyen. 
+Some interactions may result in a transaction. If so, the interactionId in the payment transaction will be set to match the `pspReference` of the Adyen API.
 
 ### Adyen payment refusals
 
@@ -634,7 +634,7 @@ Check the following table to see the mapping of Adyen [result codes](https://doc
 ### Shopper successfully paid but `redirectUrl` was not reached
 In some payment redirect cases, there might be a valid payment but no order as shopper did not reach the shop's `redirectUrl`.
 For example, after successfully issued payment shopper loses internet connection or accidentally closes the tab.
-In this case [Notification module](../../notification) will receive later a notification with successful content, process it, and update the payment.
+In this case [Notification module](../../notification) will receive asynchronously a notification from Adyen with payment confirmation which will result in a transaction creation or transaction state change.
 An optional usage of scheduled [commercetools-payment-to-order-processor](https://github.com/commercetools/commercetools-payment-to-order-processor) job ensures that for every successful payment
 an order can still be asynchronously created.
 
