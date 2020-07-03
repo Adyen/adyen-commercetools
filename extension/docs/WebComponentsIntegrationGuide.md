@@ -73,7 +73,7 @@ Otherwise, the shopper might continue with further payment steps.
 ### Validate cart state
 Check if [current cart has been ordered already](https://docs.commercetools.com/http-api-projects-carts#cartstate) (`Cart.cartState = Ordered`).
 In this case, load order by ordered cart ID and show order confirmation page.
-This might happen if the cart has been already ordered in a different tab 
+This might happen if the cart has been already ordered in a different tab (edge case)
 or by an optional asynchronous process like [commercetools-payment-to-order-processor job](https://github.com/commercetools/commercetools-payment-to-order-processor).
 
 ### Recalculate cart
