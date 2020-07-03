@@ -641,7 +641,7 @@ an order can still be asynchronously created.
 For redirect payments payment amount is bound to `redirectUrl`.
 After redirect and before the actual finalization of the payment at the provider's page, the shopper is still able to change the cart's amount within the second tab.
 If shopper decides to change cart's amount within the second tab and finalize payment within the first tab, then according to payment amount validation an error
-will be shown and order creation must be declined.
+will be shown and order creation must be declined. In such a case, it might be reasonable to [cancel or refund](#cancel-or-refund) the invalid payment.
 
 ## Test and go live
 Before you go live please follow [steps](https://docs.adyen.com/checkout/components-web/#testing-your-integration) described by Adyen.
