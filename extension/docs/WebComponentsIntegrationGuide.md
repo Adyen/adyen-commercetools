@@ -168,7 +168,8 @@ If you haven't created the payment forms already in your frontend, follow the of
 
 An `origin key` is a client-side key that is used to validate Adyen's JavaScript component library. It is required to render a Component.
 
-To be able to get the origin key extension module could be used, from the merchant server, [Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `getPaymentMethodsRequest` custom field.
+In order to get the origin key [update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `getOriginKeysRequest` custom field. 
+Note: if you want to get both origin keys and payment methods at once, you can set both `getOriginKeysRequest` and `getPaymentMethodsRequest` to the commercetools payment object within a single update request or on payment creation.
 
 An [update action](https://docs.commercetools.com/http-api-projects-payments#set-customfield) to set `getOriginKeysRequest` custom field.
 ```
