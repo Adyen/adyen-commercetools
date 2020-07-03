@@ -164,7 +164,7 @@ Pass the `getPaymentMethodsResponse` to your front end. You might use this in th
 
 Next, use the Adyen `Component` to render the payment method, and collect the required payment details from the shopper.
 
-If you haven't created the payment forms already in your frontend, follow the official [Web Components integration guide](https://docs.adyen.com/checkout/components-web#step-2-add-components) from Adyen.
+If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Components integration guide](https://docs.adyen.com/checkout/components-web#step-2-add-components).
 
 An `origin key` is a client-side key that is used to validate Adyen's JavaScript component library. It is required to render Component.
 
