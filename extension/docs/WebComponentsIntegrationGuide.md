@@ -62,7 +62,7 @@ In order to make the extension module up and running, follow our [deployment gui
 
 [merchant server](#web-components-integration-guide) should execute the following validations:
 1. On each checkout step [validate cart state](#validate-cart-state)
-1. Before starting payment process make sure there is no valid payments already:
+1. Before starting a new payment process make sure there are no paid payments on the cart already:
     * [Recalculate cart](#recalculate-cart)
     * [Validate payment](#validate-payment)
     * [Validate payment transaction](#validate-payment-transaction)
