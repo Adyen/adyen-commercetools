@@ -222,7 +222,7 @@ Pass the `origin key` to your front end. You might use this origin key to be abl
 ## Step 4: Make a payment
 After the shopper submits their payment details or chooses to pay with a payment method that requires a redirection,
 the Adyen Web Components will generate a `makePaymentRequest`. Consult [Adyen documentation](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) to see which parameters 
-are necessary for the current payment request.
+are necessary for `make payment` request.
 
 **NOTE:** `payment.amountPlanned` CANNOT be changed once `makePaymentRequest` is finished.
 This is to prevent the shopper paying a different amount than the one saved on the commercetools payment object. 
