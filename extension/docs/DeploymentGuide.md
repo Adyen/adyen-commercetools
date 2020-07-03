@@ -43,6 +43,8 @@ Resources below are required for the extension module to operate correctly. Reso
 1. [Payment custom type](../resources/web-components-payment-type.json)
 1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
 
+> Set `ENSURE_RESOURCES` environment variable to `false` to disable the automatic creation of required resources.
+
 ### Creating required resources manually
  
 You can create these by running the command `npm run create-custom-types` as below:
