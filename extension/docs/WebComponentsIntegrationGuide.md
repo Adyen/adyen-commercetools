@@ -52,7 +52,7 @@ On this guide we describe both server-side and client-side in the checkout integ
 - [Step 3](#step-3-add-components-to-your-payments-form): Set `getOriginKeysRequest` custom field to commercetools payment to get origin key and add the specific payment method Component to your checkout payments form.
 - [Step 4](#step-4-make-a-payment): Submit a payment request by setting `makePaymentRequest` payment custom field with the payment data returned by the Adyen web component.
 - [Step 5](#step-5-submit-additional-payment-details): Set `submitAdditionalPaymentDetailsRequest ` custom field to commercetools payment to submit additional payment details. 
-- [Step 6](#step-6-capture-payment-required-for-klarna): Add a `Charge` transaction to commercetools payment to manually capture payment.
+- [Step 6](#step-6-capture-payment-required-for-klarna): Add an optional `Charge` transaction to commercetools payment in order to manually capture the payment.
 
 ## Before you begin
 If you do not have Adyen API keys, follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your account, get your API key.
