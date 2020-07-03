@@ -60,7 +60,7 @@ In order to make the extension module up and running, follow our [deployment gui
 
 ## Step 1: commercetools checkout validations
 
-In the [merchant server](#web-components-integration-guide), ensure the steps below done:
+[merchant server](#web-components-integration-guide) should execute the following validations:
 1. On each checkout step [validate cart state](#validate-cart-state)
 1. Before starting payment process make sure there is no valid payments already:
     * [Recalculate cart](#recalculate-cart)
