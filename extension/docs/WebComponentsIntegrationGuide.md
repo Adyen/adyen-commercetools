@@ -55,7 +55,6 @@ The following diagram shows checkout integration flow based on [Adyen Web Compon
 > **Note** for Step 2 and Step 3: For a better performance `getOriginKeysRequest` can be supplied together with `getPaymentMethodsRequest` and the responses could be cached by the merchant server.
 
 ## Before you begin
-If you do not have Adyen API keys, follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your account, get your API key.
 In order to make the extension module up and running, follow our [deployment guide](./DeploymentGuide.md).
 
 ## Step 1: commercetools checkout validations

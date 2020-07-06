@@ -5,8 +5,11 @@
 **Table of Contents**  
 
 - [Environment variables](#environment-variables)
+  - [Adyen](#adyen)
+  - [commercetools](#commercetools)
+  - [Others](#others)
 - [Requirements for the commercetools project](#requirements-for-the-commercetools-project)
-  - [Creating resources manually](#creating-resources-manually)
+  - [Creating required resources manually](#creating-required-resources-manually)
 - [Deployment](#deployment)
   - [Docker](#docker)
     - [Running the Docker image](#running-the-docker-image)
@@ -17,22 +20,40 @@
 ## Environment variables
 Following environment variables must be provided in order to run the extension module.
 
+### Adyen
+
+- For **test environment** follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your **test account**, get your API key.
+- For **live environment** follow the official Adyen [documentation](https://docs.adyen.com/user-management/get-started-with-adyen#step-2-apply-for-your-live-account) for details.
+
+| Name | Content | Required | Default value (only for test environment) |
+| --- | --- | --- | --- |
+|`ADYEN_MERCHANT_ACCOUNT` | The name of your merchant account. | YES | |
+|`ADYEN_API_KEY` | You'll be making API requests that are authenticated with an [API key](https://docs.adyen.com/user-management/how-to-get-the-api-key#page-introduction). | YES | |
+|`ADYEN_API_BASE_URL` | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen. | YES | `https://checkout-test.adyen.com/v52` |
+|`ADYEN_LEGACY_API_BASE_URL` | [Standart payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen. | YES | `https://pal-test.adyen.com/pal/servlet/Payment/v52` |
+
+### commercetools
+
+If you don't have the commercetools OAuth credentials,[create a commercetools API Client](https://docs.commercetools.com/getting-started.html#create-an-api-client).
+> Extension module's recommended [scope](https://docs.commercetools.com/http-api-scopes#manage_projectprojectkey) is `manage_project`.
+
 | Name | Content | Required | Default value |
 | --- | --- | --- | --- |
-|`ADYEN_MERCHANT_ACCOUNT` | Adyen Account Code. Go to [Account/Merchant accounts](https://ca-test.adyen.com/ca/ca/accounts/show.shtml?accountTypeCode=MerchantAccount) and get the name in Account code. | YES | |
-|`ADYEN_API_KEY` | Go to [Account/Users](https://ca-test.adyen.com/ca/ca/config/users.shtml) - Select a user with `Web Service` User type -> Generate New API Key _(notice: in case you get `403 Forbidden` error from Adyen, try to regenerate the key)_. | YES | |
-|`ADYEN_API_BASE_URL` | Base URL for Adyen requests | NO | `https://checkout-test.adyen.com/v52` |
-|`ADYEN_LEGACY_API_BASE_URL` | Base legacy URL for Adyen requests. Adyen is in the migration process of API URLs and for some actions, the legacy URL has to be used (e.g. cancelOrRefund). | NO | `https://pal-test.adyen.com/pal/servlet/Payment/v52` |
-|`CTP_PROJECT_KEY` | Get commercetools credentials from `https://mc.commercetools.com/${your commercetools project ID}/settings/developer/api-clients`. This module needs to CRUD multiple commercetools resources, thus recommended scope is `manage_project`. |  YES | |
-|`CTP_CLIENT_ID` | Get commercetools credentials from `https://mc.commercetools.com/${your commercetools project ID}/settings/developer/api-clients`. This module needs to CRUD multiple commercetools resources, thus recommended scope is `manage_project`. | YES | |
-|`CTP_CLIENT_SECRET` | Get commercetools credentials from `https://mc.commercetools.com/${your commercetools project ID}/settings/developer/api-clients`. This module needs to CRUD multiple commercetools resources, thus recommended scope is `manage_project`. | YES | |
-|`CTP_HOST` | The commercetools HTTP API is hosted at that URL| NO | `https://api.europe-west1.gcp.commercetools.com` |
-|`CTP_AUTH_URL` | The commercetools’ OAuth 2.0 service is hosted at that URL | NO | `https://auth.europe-west1.gcp.commercetools.com` |
-|`PORT` | port on which the application will run | NO | 8080 |
-|`LOG_LEVEL` | bunyan log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)| NO | `info` |
-|`API_EXTENSION_BASE_URL` | URL of the Extension module server. In case of any payment changes, [commercetools API extension](https://docs.commercetools.com/http-api-projects-api-extensions) will call this URL and pass the payment object in body. | YES | |
-|`KEEP_ALIVE_TIMEOUT` | milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_server_keepalivetimeout)) | NO | Node.js default
-|`ENSURE_RESOURCES` | Set to `false` to disable the creation of required resources in commercetools (e.g. custom types) on startup | NO | `true`
+|`CTP_PROJECT_KEY` | The unique `key` of the commercetools project. |  YES | |
+|`CTP_CLIENT_ID` |  OAuth 2.0 `client_id` and can be used to obtain a token. | YES | |
+|`CTP_CLIENT_SECRET` |  OAuth 2.0 `client_secret` and can be used to obtain a token.  | YES | |
+|`CTP_HOST` | The commercetools HTTP API is hosted at that URL. | NO | `https://api.europe-west1.gcp.commercetools.com` |
+|`CTP_AUTH_URL` | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO | `https://auth.europe-west1.gcp.commercetools.com` |
+
+### Others
+
+| Name | Content | Required | Default value |
+| --- | --- | --- | --- |
+|`PORT` | Th port number on which the application will run. | NO | 8080 |
+|`LOG_LEVEL` | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).| NO | `info` |
+|`API_EXTENSION_BASE_URL` | Publicly available URL of the Extension module. In case of any payment changes, [commercetools API extension](https://docs.commercetools.com/http-api-projects-api-extensions) will call this URL and pass the payment object in body. | YES | |
+|`KEEP_ALIVE_TIMEOUT` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_server_keepalivetimeout)). | NO | Node.js default (5 seconds)
+|`ENSURE_RESOURCES` | Set to `false` to disable the creation of required resources in commercetools (e.g. custom types) on startup. | NO | `true`
 
 > Note: Sometimes it's necessary to regenerate the `ADYEN_API_KEY` key, otherwise you'll get `403 Forbidden error` from Adyen.
 
