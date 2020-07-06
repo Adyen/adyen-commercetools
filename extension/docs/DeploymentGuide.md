@@ -32,6 +32,8 @@ Following environment variables must be provided in order to run the extension m
 |`ADYEN_API_BASE_URL` | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen. | YES | `https://checkout-test.adyen.com/v52` |
 |`ADYEN_LEGACY_API_BASE_URL` | [Standart payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen. | YES | `https://pal-test.adyen.com/pal/servlet/Payment/v52` |
 
+> Note: Sometimes it's necessary to regenerate the `ADYEN_API_KEY` key, when you get `403 Forbidden error` from Adyen.
+
 ### commercetools
 
 If you don't have the commercetools OAuth credentials,[create a commercetools API Client](https://docs.commercetools.com/getting-started.html#create-an-api-client).
@@ -54,8 +56,6 @@ If you don't have the commercetools OAuth credentials,[create a commercetools AP
 |`API_EXTENSION_BASE_URL` | Publicly available URL of the Extension module. In case of any payment changes, [commercetools API extension](https://docs.commercetools.com/http-api-projects-api-extensions) will call this URL and pass the payment object in body. | YES | |
 |`KEEP_ALIVE_TIMEOUT` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_server_keepalivetimeout)). | NO | Node.js default (5 seconds)
 |`ENSURE_RESOURCES` | Set to `false` to disable the creation of required resources in commercetools (e.g. custom types) on startup. | NO | `true`
-
-> Note: Sometimes it's necessary to regenerate the `ADYEN_API_KEY` key, otherwise you'll get `403 Forbidden error` from Adyen.
 
 ## Requirements for the commercetools project
 Resources below are required for the extension module to operate correctly. Resources that ***will be automatically created*** by the extension module in your commercetools project.
