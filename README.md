@@ -35,4 +35,6 @@ Notification module is a publicly exposed service which receives asynchronous no
 Through notifications, Adyen provides asynchronously payment status changes like authorization, charge, or refund of the payment.
 The notification module will process the notification and update the matching commercetools payment accordingly.
 
-For more info, refer to the [Notification module](./notification/README.md) documentation.
+- Follow [Integration Guide](./notification/docs/IntegrationGuide.md) for information how to integrate with notification module.
+- Follow [Deployment Guide](./notification/docs/DeploymentGuide.md) to run notification module.
+- Follow [Development Guide](./notification/docs/DevelopmentGuide.md) if you want to contribute to it.
