@@ -29,7 +29,9 @@ Once [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api
 - Follow [Deployment Guide](./extension/docs/DeploymentGuide.md) to run extension module.
 - Follow [Development Guide](./extension/docs/DevelopmentGuide.md) if you want to contribute to it.
 
-## Notification module [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-notification)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-notification)
+## Notification module 
+
+[![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-notification)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-notification)
 
 Notification module is a publicly exposed service which receives asynchronous notifications sent by Adyen, 
 Through notifications, Adyen provides asynchronously payment status changes like authorization, charge, or refund of the payment.
