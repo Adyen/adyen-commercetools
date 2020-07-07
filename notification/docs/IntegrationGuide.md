@@ -91,7 +91,7 @@ Before you go live please follow the official Adyen [go-live checklist](https://
 Can I remove a subscription I created?
 
 - If you accidentally created a subscription you can edit it and uncheck the **Active** checkbox so Adyen doesn't
-send their notifications. Then you can contact the Adyen support and ask them to remove the subscription
+send notifications. Then you can contact the Adyen support and ask them to remove the subscription
 
 Will we lose a notification if it was not processed for some reason?
 - Adyen will queue notifications when the notification service was not reachable or it didn't return a success message and will try to send it later.
