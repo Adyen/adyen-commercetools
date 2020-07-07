@@ -106,6 +106,18 @@ function createAddTransactionActionByResponse (amount, currencyCode, response) {
   return null
 }
 
+function getChargeTransactionInitial (paymentObject) {
+  return getTransactionWithTypesAndStates(paymentObject,
+    ['Charge'],
+    ['Initial'])
+}
+
+function getChargeTransactionPending (paymentObject) {
+  return getTransactionWithTypesAndStates(paymentObject,
+    ['Charge'],
+    ['Pending'])
+}
+
 function getLatestInterfaceInteraction (interfaceInteractions, type) {
   return interfaceInteractions
     .filter(interaction => interaction.fields.type === type)
@@ -127,6 +139,8 @@ function isValidJSON (jsonString) {
 }
 
 module.exports = {
+  getChargeTransactionInitial,
+  getChargeTransactionPending,
   getAuthorizationTransactionSuccess,
   getCancelAuthorizationTransactionInit,
   getRefundTransactionInit,
