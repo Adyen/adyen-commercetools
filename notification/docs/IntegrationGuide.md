@@ -71,7 +71,7 @@ Notification module maps this `eventCode` and `success` pair to
 commercetools [transactionType](https://docs.commercetools.com/http-api-projects-payments#transactiontype)
 and [transactionState](https://docs.commercetools.com/http-api-projects-payments#transactionstate). 
 
-> All mappings can be found in the [adyen-events.json](./resources/adyen-events.json) file.
+> All mappings can be found in the [adyen-events.json](./../resources/adyen-events.json) file.
 
 After finding a mapping the notification module will find a proper payment on a commercetools project.
 
