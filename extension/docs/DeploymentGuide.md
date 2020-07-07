@@ -7,7 +7,7 @@
 - [Environment variables](#environment-variables)
   - [Adyen](#adyen)
   - [commercetools](#commercetools)
-  - [Others](#others)
+  - [Other Configurations](#other-configurations)
 - [Requirements for the commercetools project](#requirements-for-the-commercetools-project)
   - [Creating required resources manually](#creating-required-resources-manually)
 - [Deployment](#deployment)
@@ -47,7 +47,7 @@ If you don't have the commercetools OAuth credentials,[create a commercetools AP
 |`CTP_HOST` | The commercetools HTTP API is hosted at that URL. | NO | `https://api.europe-west1.gcp.commercetools.com` |
 |`CTP_AUTH_URL` | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO | `https://auth.europe-west1.gcp.commercetools.com` |
 
-### Others
+### Other Configurations
 
 | Name | Content | Required | Default value |
 | --- | --- | --- | --- |
