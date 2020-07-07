@@ -83,7 +83,7 @@ Please refer to our [Extension Draft](../resources/api-extension.json) for the s
 
 ## Deployment
 
-Extension module supports different deployment options, either could be hosted on-premises (run docker containers behind the load balancer) or deployed as a serverless application with AWS Lambda.
+Extension module supports different deployment options. It could be either hosted on-premises (run docker containers behind the load balancer) or deployed as a serverless application with AWS Lambda.
  
 ### Docker
 Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension/tags) page to see the latest releases and tags.
