@@ -1,103 +1,97 @@
-# Integration of payment into checkout process
+# Integration Guide
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Contents**
+**Table of Contents** 
 
-  - [Glossary](#glossary)
-  - [Requirements](#requirements)
-- [Deployment](#deployment)
-      - [Environment variables to configure the notification module:](#environment-variables-to-configure-the-notification-module)
-  - [Deployment using Docker image](#deployment-using-docker-image)
-      - [Pull the image](#pull-the-image)
-      - [Run the container](#run-the-container)
-  - [Deployment using AWS Lambda](#deployment-using-aws-lambda)
-      - [Deploying the Lambda Code](#deploying-the-lambda-code)
-      - [Deploying the API Gateway](#deploying-the-api-gateway)
-- [Configuration](#configuration)
-    - [Register the endpoint](#register-the-endpoint)
+- [Step 1: Set up notification webhook and generate HMAC signature](#step-1-set-up-notification-webhook-and-generate-hmac-signature)
+- [Step 2: Deploy the notification module](#step-2-deploy-the-notification-module)
+- [Step 3: Processing notifications](#step-3-processing-notifications)
+- [Test and go live](#test-and-go-live)
 - [FAQ](#faq)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-### Glossary
-In this process, there are 2 parties involved:
+Notification module is a publicly exposed service which receives asynchronous notifications sent by Adyen, 
+Through notifications, Adyen provides asynchronously payment status changes like authorization, charge, or refund of the payment.
+The notification module will process the notification and update the matching commercetools payment accordingly.
 
- - **Adyen** - the payment provider which will send notifications
- - **Notification module** - hosted service that receives notifications from Adyen,
-processes and stores them on a commercetools platform project.
+The following diagram shows the integration flow of the notification module based on [Adyen Notification webhooks](https://docs.adyen.com/development-resources/webhooks).
 
-### Requirements 
-Node.js version 8 LTS or higher is supported.
+![Flow](https://user-images.githubusercontent.com/3469524/86772029-85ede380-c053-11ea-8ca2-93703b3227c7.jpg)
 
-## Deployment
+## Step 1: Set up notification webhook and generate HMAC signature
+You have to register the Notification module `public URL` in the Adyen Customer Area in order to receive notifications.
+To protect your server from unauthorized notifications, we strongly recommend that you activate Hash-based message authentication code (HMAC) signatures during the setup.
 
-##### Environment variables to configure the notification module:
-Name | Content | Required | Default value
------------- | ------------- | ------------- | -------------
-CTP_PROJECT_KEY | commercetools project key (you can get in the commercetools Merchant Center) | **YES** |
-CTP_CLIENT_ID | commercetools client ID (you can get in the commercetools Merchant Center) | **YES** |
-CTP_CLIENT_SECRET | commercetools client secret (you can get in the commercetools Merchant Center) | **YES** |
-CTP_HOST | commercetools HTTP API is hosted at that URL| NO | https://api.europe-west1.gcp.commercetools.com
-CTP_AUTH_URL | commercetools’ OAuth 2.0 service is hosted at that URL | NO | https://auth.europe-west1.gcp.commercetools.com
-ADYEN_ENABLE_HMAC_SIGNATURE | Verify the integrity of notifications using [Adyen HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures) | NO | `true`
-ADYEN_SECRET_HMAC_KEY | The generated secret HMAC key that is linked to a Adyen **Standard Notification** endpoint | NO | 
-LOG_LEVEL | bunyan log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)| NO | `info` 
-PORT | port on which the application will run | NO | 443
-KEEP_ALIVE_TIMEOUT | milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_server_keepalivetimeout)) | NO | Node.js default
+Please follow the [instructions](https://docs.adyen.com/development-resources/webhooks#set-up-notifications-in-your-customer-area) described by Adyen to set up notifications in your live Customer Area.
 
-Check out the deployment [Best Practices documentation](../../docs/BEST_PRACTICES.md)
+> Note: HMAC verification is enabled by default. You could use "ADYEN_ENABLE_HMAC_SIGNATURE=false" environment variable to disable the verification feature.
 
+## Step 2: Deploy the notification module
+In order to make the extension module up and running, follow our [deployment guide](./DeploymentGuide.md).
 
-### Deployment using Docker image
-For easy deployment you can use the [Notification module docker image](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-notification/tags).
+## Step 3: Processing notifications
+Adyen sends notifications which look like this:
 
-##### Pull the image 
+``` json
+{
+  "live": "false",
+  "notificationItems": [
+    {
+      "NotificationRequestItem": {
+        "additionalData": {
+          "hmacSignature":"cjiTz03EI0jkkysGDdPJQdLbecRVVU/5jm12/DTFEHo="
+        },
+        "amount": {
+          "currency": "EUR",
+          "value": 10100
+        },
+        "eventCode": "AUTHORISATION",
+        "eventDate": "2019-01-30T18:16:22+01:00",
+        "merchantAccountCode": "XXX",
+        "merchantReference": "YYY",
+        "operations": [
+          "CANCEL",
+          "CAPTURE",
+          "REFUND"
+        ],
+        "paymentMethod": "visa",
+        "pspReference": "test_AUTHORISATION_1",
+        "success": "true"
+      }
+    }
+  ]
+}
+
 ```
-docker pull commercetools/commercetools-adyen-integration-notification:X.X.X
-```
-(replace X.X.X with a image tag)
 
-##### Run the container
+Each notification contains an `eventCode` that specifies which type of event triggered the notification. 
+Notification module maps this `eventCode` and `success` pair to
+commercetools [transactionType](https://docs.commercetools.com/http-api-projects-payments#transactiontype)
+and [transactionState](https://docs.commercetools.com/http-api-projects-payments#transactionstate). 
 
-Replace all `XXX` values and execute:
-```
-docker run -e CTP_PROJECT_KEY=XXX -e CTP_CLIENT_ID=XXX -e CTP_CLIENT_SECRET=XXX ctp-adyen-integration-notification:XXX
-```
+> All mappings can be found in the [adyen-events.json](./../resources/adyen-events.json) file.
 
-### Deployment using AWS Lambda
+After finding a mapping the notification module will find a proper payment on a commercetools project.
 
-##### Deploying the Lambda Code
-For deployment to lambda, zip the notification folder and specify `src/lambda.handler` as the entry point for the function
+If there is no transaction on the payment with the received `transactionType` 
+the notification module will create a transaction with the received `transactionType` and
+`transactionState`. Otherwise, it will update the existing transaction with a new `transactionState`.
 
-##### Deploying the API Gateway
-In order for Adyen to call the lambda, an API Gateway will need to be created which accepts the notifications from Adyen and invokes the lambda.
-API Gateway Documentation can be found [here](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html).
+Received notification will be stored on the [interfaceInteraction](https://docs.commercetools.com/http-api-projects-payments#add-interfaceinteraction) of the payment.
+If the mapping for the received notification not found then payment will be updated only with a new `interfaceInteraction`.
+If payment not found then the notification will be skipped from processing.
 
-## Configuration
-
-After deployment you have to register the Notification module public URL in the Adyen Customer Area in order to receive notifications.
-
-#### Register the endpoint
- 1. Go to your [Adyen Customer Area](https://ca-live.adyen.com/ca/ca/login.shtml)
- 1. Hover **Account** in the menu and select **Server communication**
-![image](https://user-images.githubusercontent.com/9251453/55414133-e5b13100-556a-11e9-89ac-a9ebbf72bfdf.png)
- 1. You will see the list of available notifications. Click on **add** button of the
-"Standard notification"
- 1. In the opened form change the **URL** under the **Transport** section to the one
- which exposes the notification module
- 1. Select the **Active** checkbox under the same section
- 1. Click on **Save Configuration** button below to complete subscription
- 
-Check out the Adyen documentation on how to set up notifications for more information: [Set up notifications](https://docs.adyen.com/developers/development-resources/notifications/set-up-notifications)
+## Test and go live
+Before you go live please follow the official Adyen [go-live checklist](https://docs.adyen.com/development-resources/webhooks#test-and-go-live).
 
 ## FAQ
 
 Can I remove a subscription I created?
 
 - If you accidentally created a subscription you can edit it and uncheck the **Active** checkbox so Adyen doesn't
-send there notifications. Then you can contact the Adyen support and ask them to remove the subscription
+send notifications. Then you can contact the Adyen support and ask them to remove the subscription
 
 Will we lose a notification if it was not processed for some reason?
-- Adyen will queue notifications when the notification service was not reachable or it didn't return a success message
-  and will try to send it later
+- Adyen will queue notifications when the notification service was not reachable or it didn't return a success message and will try to send it later.
