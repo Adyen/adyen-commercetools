@@ -7,7 +7,8 @@ function collectRequestData (request) {
     })
 
     request.on('end', () => {
-      resolve(data)
+      const dataStr = Buffer.concat(data).toString()
+      resolve(dataStr)
     })
   })
 }
