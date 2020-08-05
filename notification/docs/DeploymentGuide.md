@@ -42,7 +42,7 @@ If you don't have the commercetools OAuth credentials,[create a commercetools AP
 
 | Name | Content | Required | Default value |
 | --- | --- | --- | --- |
-|`PORT` | Th port number on which the application will run. | NO | 8080 |
+|`PORT` | Th port number on which the application will run. | NO | 443 |
 |`LOG_LEVEL` | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).| NO | `info` |
 |`KEEP_ALIVE_TIMEOUT` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_server_keepalivetimeout)). | NO | Node.js default (5 seconds)
 
