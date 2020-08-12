@@ -3,9 +3,11 @@ const _ = require('lodash')
 
 const { createClient } = require('@commercetools/sdk-client')
 const { createAuthMiddlewareForClientCredentialsFlow } = require('@commercetools/sdk-middleware-auth')
+const { createUserAgentMiddleware } = require('@commercetools/sdk-middleware-user-agent')
 const { createHttpMiddleware } = require('@commercetools/sdk-middleware-http')
 const { createQueueMiddleware } = require('@commercetools/sdk-middleware-queue')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
+const packageJson = require('../../package.json')
 
 const configLoader = require('../config/config')
 
@@ -24,6 +26,13 @@ function createCtpClient ({
     fetch
   })
 
+  const userAgentMiddleware = createUserAgentMiddleware({
+    libraryName: packageJson.name,
+    libraryVersion: packageJson.version,
+    contactUrl: packageJson.homepage,
+    contactEmail: packageJson.author.email
+  })
+
   const httpMiddleware = createHttpMiddleware({
     maskSensitiveHeaderData: true,
     host: config.ctp.apiUrl,
@@ -38,6 +47,7 @@ function createCtpClient ({
   return createClient({
     middlewares: [
       authMiddleware,
+      userAgentMiddleware,
       httpMiddleware,
       queueMiddleware
     ],
