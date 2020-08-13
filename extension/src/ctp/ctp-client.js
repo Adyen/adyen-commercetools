@@ -28,7 +28,7 @@ function createCtpClient ({
 
   const userAgentMiddleware = createUserAgentMiddleware({
     libraryName: packageJson.name,
-    libraryVersion: packageJson.version,
+    libraryVersion: `${packageJson.version}-extension`,
     contactUrl: packageJson.homepage,
     contactEmail: packageJson.author.email
   })
