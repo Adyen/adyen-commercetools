@@ -7,9 +7,9 @@ const { createUserAgentMiddleware } = require('@commercetools/sdk-middleware-use
 const { createHttpMiddleware } = require('@commercetools/sdk-middleware-http')
 const { createQueueMiddleware } = require('@commercetools/sdk-middleware-queue')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
-const packageJson = require('../../package.json')
+const packageJson = require('../package.json')
 
-const configLoader = require('../config/config')
+const configLoader = require('./config/config')
 
 const config = configLoader.load()
 

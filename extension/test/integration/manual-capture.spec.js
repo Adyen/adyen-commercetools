@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 
 const iTSetUp = require('./integration-test-set-up')
-const ctpClientBuilder = require('../../src/ctp/ctp-client')
+const ctpClientBuilder = require('../../src/ctp')
 const {
   CTP_ADYEN_INTEGRATION, CTP_INTERACTION_TYPE_MANUAL_CAPTURE, CTP_PAYMENT_CUSTOM_TYPE_KEY
 } = require('../../src/config/constants')
