@@ -8,7 +8,7 @@ const paymentErrorResponse = require('./fixtures/adyen-make-payment-error-respon
 const paymentRefusedResponse = require('./fixtures/adyen-make-payment-refused-response')
 const paymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
 const paymentValidationFailedResponse = require('./fixtures/adyen-make-payment-validation-failed-response')
-const ctpPayment = require('../fixtures/ctp-payment')
+const ctpPayment = require('./fixtures/ctp-payment.json')
 
 describe('make-payment::execute', () => {
   const config = configLoader.load()

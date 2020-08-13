@@ -4,7 +4,7 @@ const _ = require('lodash')
 const configLoader = require('../../src/config/config')
 const { execute } = require('../../src/paymentHandler/klarna-make-payment.handler')
 const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
-const ctpPayment = require('../fixtures/ctp-payment')
+const ctpPayment = require('./fixtures/ctp-payment.json')
 const ctpCart = require('./fixtures/ctp-cart')
 
 describe('klarna-make-payment::execute', () => {
