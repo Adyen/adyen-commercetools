@@ -181,7 +181,7 @@ function getAddTransactionUpdateAction (type, state, amount, currency) {
 
 async function getPaymentByMerchantReference (merchantReference, ctpClient) {
   try {
-    const query = ctpClient.builder.payments.where(`custom(fields(merchantReference="${merchantReference}"))`)
+    const query = ctpClient.builder.payments.where(`key="${merchantReference}"`)
     const result = await ctpClient.fetch(query)
     return _.get(result, 'body.results[0]', null)
   } catch (err) {
