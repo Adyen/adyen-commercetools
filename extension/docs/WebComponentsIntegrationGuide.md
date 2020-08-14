@@ -223,8 +223,11 @@ Pass the `origin key` to your front end. Origin key is required to render an Ady
 After the shopper submits their payment details or chooses to pay with a payment method that requires a redirection,
 the Adyen Web Components will generate a `makePaymentRequest`. 
 
-**NOTE:** `payment.amountPlanned` CANNOT be changed once `makePaymentRequest` has been set and processed.
+**Restrictions:**
+- `makePaymentRequest` must have a unique `reference` value per payment. Reference may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and maximum length of 80 characters.
+- `payment.amountPlanned` CANNOT be changed once `makePaymentRequest` has been set and processed.
 This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
+
 
 Make payment request generated from Adyen Web Components for credit card payment.
 > Refer Adyen's [/payments](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) request to check all possible request payload parameters.
