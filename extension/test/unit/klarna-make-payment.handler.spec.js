@@ -65,6 +65,7 @@ describe('klarna-make-payment::execute', () => {
       .reply(200, paymentSuccessResponse)
 
     const klarnaMakePaymentRequest = {
+      reference: 'YOUR_ORDER_NUMBER',
       paymentMethod: {
         type: 'klarna'
       },
@@ -93,7 +94,7 @@ describe('klarna-make-payment::execute', () => {
       custom: {
         fields: {
           languageCode: 'nonExistingLanguageCode',
-          makePaymentRequest: '{}'
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
         }
       }
     }
@@ -122,7 +123,7 @@ describe('klarna-make-payment::execute', () => {
       custom: {
         fields: {
           languageCode: 'nonExistingLanguageCode',
-          makePaymentRequest: '{}'
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
         }
       }
     }
@@ -154,7 +155,7 @@ describe('klarna-make-payment::execute', () => {
       custom: {
         fields: {
           languageCode: 'de',
-          makePaymentRequest: '{}'
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
         }
       }
     }
@@ -185,7 +186,7 @@ describe('klarna-make-payment::execute', () => {
       amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
       custom: {
         fields: {
-          makePaymentRequest: '{}'
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
         }
       }
     }
@@ -215,7 +216,7 @@ describe('klarna-make-payment::execute', () => {
       amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
       custom: {
         fields: {
-          makePaymentRequest: '{}'
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
         }
       }
     }
@@ -240,7 +241,7 @@ describe('klarna-make-payment::execute', () => {
         scope: 'manage_project:xxx'
       })
     ctpApiScope
-      .get('/adyen-integration-test/carts')
+      .get(`/${config.ctp.projectKey}/carts`)
       .query(true)
       .reply(200, { results: [mockCart] })
   }
