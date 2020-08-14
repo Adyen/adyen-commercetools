@@ -41,6 +41,9 @@ describe('Validator builder', () => {
         centAmount: 10,
         fractionDigits: 2
       },
+      custom: {
+        fields: {}
+      },
       interfaceInteractions: [
         {
           fields: {
