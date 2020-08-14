@@ -30,6 +30,7 @@ describe('klarna-make-payment::execute', () => {
       .reply(200, paymentSuccessResponse)
 
     const klarnaMakePaymentRequest = {
+      reference: 'YOUR_ORDER_NUMBER',
       paymentMethod: {
         type: 'klarna'
       }
