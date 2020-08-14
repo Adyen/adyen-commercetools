@@ -39,7 +39,7 @@ describe('klarna-make-payment::execute', () => {
     ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(klarnaMakePaymentRequest)
 
     const response = await execute(ctpPaymentClone)
-    expect(response.actions).to.have.lengthOf(3)
+    expect(response.actions).to.have.lengthOf(4)
     const makePaymentRequestInteraction = JSON.parse(
       response.actions.find(a => a.action === 'addInterfaceInteraction').fields.request
     )
@@ -74,7 +74,7 @@ describe('klarna-make-payment::execute', () => {
     ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(klarnaMakePaymentRequest)
 
     const response = await execute(ctpPaymentClone)
-    expect(response.actions).to.have.lengthOf(3)
+    expect(response.actions).to.have.lengthOf(4)
     const makePaymentRequestInteraction = JSON.parse(
       response.actions.find(a => a.action === 'addInterfaceInteraction').fields.request
     )

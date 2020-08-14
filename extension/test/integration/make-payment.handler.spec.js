@@ -18,13 +18,14 @@ describe('::makePayment::', () => {
 
   it('given a payment ' +
     'when makePayment custom field is set and response from Adyen is Authorised, ' +
-    'then it should set custom field makePaymentResponse, add transaction,  add interface interactions', async () => {
+    'then it should set key, "makePaymentResponse" custom field, interface interactions ' +
+    'and a successfully authorized transaction', async () => {
     const makePaymentRequestDraft = {
       amount: {
         currency: 'EUR',
         value: 1000
       },
-      reference: 'testReference',
+      reference: 'YOUR_ORDER_NUMBER',
       paymentMethod: {
         type: 'scheme',
         encryptedCardNumber: 'test_4111111111111111',
@@ -56,6 +57,8 @@ describe('::makePayment::', () => {
     const { statusCode, body: payment } = await ctpClient.create(ctpClient.builder.payments, paymentDraft)
 
     expect(statusCode).to.equal(201)
+
+    expect(payment.key).to.equal(makePaymentRequestDraft.reference)
 
     const { makePaymentResponse } = payment.custom.fields
     const interfaceInteraction = payment.interfaceInteractions

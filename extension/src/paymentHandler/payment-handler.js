@@ -19,7 +19,9 @@ async function handlePayment (paymentObject) {
 
   const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
     .validateRequestFields()
+    .validateReference()
     .validateAmountPlanned()
+
   if (paymentValidator.hasErrors())
     return {
       success: false,
