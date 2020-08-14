@@ -32,6 +32,9 @@ function withPayment (paymentObject) {
       return this
     },
     validateAmountPlanned () {
+      if (!paymentObject.custom)
+        return this
+
       const oldMakePaymentRequestObj = pU.getLatestInterfaceInteraction(
         paymentObject.interfaceInteractions, c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
       )
