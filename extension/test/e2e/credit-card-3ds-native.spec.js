@@ -1,6 +1,6 @@
 const nodeStatic = require('node-static')
 const iTSetUp = require('../integration/integration-test-set-up')
-const ctpClientBuilder = require('../../src/ctp/ctp-client')
+const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
 const configBuilder = require('../../src/config/config')
 const httpUtils = require('../../src/utils')

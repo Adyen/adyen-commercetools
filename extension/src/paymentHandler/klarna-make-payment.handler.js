@@ -1,4 +1,4 @@
-const ctpClientBuilder = require('../ctp/ctp-client')
+const ctpClientBuilder = require('../ctp')
 const makePaymentHandler = require('./make-payment.handler')
 
 const ADYEN_PERCENTAGE_MINOR_UNIT = 10000

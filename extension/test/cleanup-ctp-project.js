@@ -1,4 +1,4 @@
-const ctpClientBuilder = require('../src/ctp/ctp-client')
+const ctpClientBuilder = require('../src/ctp')
 const iTSetUp = require('./integration/integration-test-set-up')
 
 before(async () => {

@@ -1,7 +1,7 @@
 const server = require('./server.js').setupServer()
 const utils = require('./utils')
 const configLoader = require('./config/config')
-const ctpClientBuilder = require('./ctp/ctp-client')
+const ctpClientBuilder = require('./ctp')
 
 const config = configLoader.load()
 

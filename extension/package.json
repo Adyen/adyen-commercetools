@@ -30,7 +30,7 @@
   },
   "author": {
     "name": "commercetools Professional Services",
-    "email": "ps-dev@commercetools.de"
+    "email": "ps-dev@commercetools.com"
   },
   "engines": {
     "node": ">=12",
@@ -40,7 +40,7 @@
   "bugs": {
     "url": "https://github.com/commercetools/commercetools-adyen-integration/issues"
   },
-  "homepage": "https://github.com/commercetools/commercetools-adyen-integration#readme",
+  "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "chai": "^4.2.0",
@@ -68,6 +68,7 @@
     "@commercetools/sdk-middleware-http": "^6.0.7",
     "@commercetools/sdk-middleware-queue": "^2.1.4",
     "@commercetools/sync-actions": "^4.7.2",
+    "@commercetools/sdk-middleware-user-agent": "^2.1.5",
     "bluebird": "^3.7.2",
     "bunyan": "^1.8.12",
     "lockfile-lint": "^4.3.6",
