@@ -117,15 +117,4 @@ describe('Validator builder', () => {
 
     expect(errorObject.missingReference).to.equal(MAKE_PAYMENT_REQUEST_MISSING_REFERENCE)
   })
-
-  it('on missing custom field should pass the validation and should pass the validations', async () => {
-    const invalidPayment = {}
-    const hasErrors = ValidatorBuilder.withPayment(invalidPayment)
-      .validateRequestFields()
-      .validateReference()
-      .validateAmountPlanned()
-      .hasErrors()
-
-    expect(hasErrors).to.equal(false)
-  })
 })
