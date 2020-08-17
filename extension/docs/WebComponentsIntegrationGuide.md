@@ -224,7 +224,7 @@ After the shopper submits their payment details or chooses to pay with a payment
 the Adyen Web Components will generate a `makePaymentRequest`. 
 
 **Restrictions:**
-- `makePaymentRequest` must have a unique `reference` value per payment. Reference may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and maximum length of 80 characters.
+- `makePaymentRequest` must have a unique `reference` value for every payment object created in commercetools. Reference may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
 - `payment.amountPlanned` CANNOT be changed once `makePaymentRequest` has been set and processed.
 This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
 
