@@ -181,10 +181,10 @@ function getAddTransactionUpdateAction (type, state, amount, currency) {
 
 async function getPaymentByMerchantReference (merchantReference, ctpClient) {
   try {
-    const query = ctpClient.builder.payments.where(`key="${merchantReference}"`)
-    const result = await ctpClient.fetch(query)
-    return _.get(result, 'body.results[0]', null)
+    const result = await ctpClient.fetchByKey(ctpClient.builder.payments, merchantReference)
+    return result.body
   } catch (err) {
+    if (err.statusCode === 404) return null
     throw Error(`Failed to fetch a payment with merchantReference: ${merchantReference}. `
     + `Error: ${JSON.stringify(serializeError(err))}`)
   }
