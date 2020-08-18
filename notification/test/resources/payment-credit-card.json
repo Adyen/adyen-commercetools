@@ -1,5 +1,5 @@
 {
-  "key": "testReference",
+  "key": "YOUR_ORDER_NUMBER",
   "amountPlanned": {
     "type": "centPrecision",
     "currencyCode": "EUR",
