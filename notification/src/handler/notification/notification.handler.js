@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const {serializeError, deserializeError} = require('serialize-error')
+const { serializeError } = require('serialize-error')
 const ctp = require('../../utils/ctp')
 const adyenEvents = require('../../../resources/adyen-events')
 const logger = require('../../utils/logger').getLogger()
