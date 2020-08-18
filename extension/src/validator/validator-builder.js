@@ -21,6 +21,16 @@ function withPayment (paymentObject) {
           = errorMessages.SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
       return this
     },
+    validateReference () {
+      if (!paymentObject.custom || errors.makePaymentRequest)
+        return this
+      if (paymentObject.custom.fields.makePaymentRequest && !paymentObject.custom.fields.makePaymentResponse) {
+        const makePaymentRequestObj = JSON.parse(paymentObject.custom.fields.makePaymentRequest)
+        if (!makePaymentRequestObj.reference)
+          errors.missingReference = errorMessages.MAKE_PAYMENT_REQUEST_MISSING_REFERENCE
+      }
+      return this
+    },
     validateAmountPlanned () {
       const oldMakePaymentRequestObj = pU.getLatestInterfaceInteraction(
         paymentObject.interfaceInteractions, c.CTP_INTERACTION_TYPE_MAKE_PAYMENT

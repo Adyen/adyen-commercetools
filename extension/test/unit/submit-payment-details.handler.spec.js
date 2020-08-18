@@ -6,7 +6,7 @@ const submitPaymentDetailsChallengeResponse
   = require('./fixtures/adyen-submit-payment-details-challenge-shopper-response')
 const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
 const { execute } = require('../../src/paymentHandler/submit-payment-details.handler')
-const ctpPayment = require('../fixtures/ctp-payment')
+const ctpPayment = require('./fixtures/ctp-payment.json')
 const configLoader = require('../../src/config/config')
 const c = require('../../src/config/constants')
 

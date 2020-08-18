@@ -25,7 +25,7 @@ describe('::makePayment::', () => {
       riskData: {
         clientData: 'eyJ2ZXJzaW9uIjoiMS4wLjAiLCJkZXZpY2VGaW5nZXJwcmludCI6ImRmLXRpbWVkT3V0In0='
       },
-      reference: 'Klarna Pay later',
+      reference: 'YOUR_ORDER_NUMBER',
       paymentMethod: {
         type: 'klarna'
       },

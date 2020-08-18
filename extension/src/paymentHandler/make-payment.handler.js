@@ -12,6 +12,12 @@ async function execute (paymentObject) {
     pU.createSetCustomFieldAction(c.CTP_CUSTOM_FIELD_MAKE_PAYMENT_RESPONSE, response)
   ]
 
+  if (!paymentObject.key)
+    actions.push({
+      action: 'setKey',
+      key: request.reference.toString() // ensure the key is a string
+    })
+
   const addTransactionAction = pU.createAddTransactionActionByResponse(
     paymentObject.amountPlanned.centAmount,
     paymentObject.amountPlanned.currencyCode,

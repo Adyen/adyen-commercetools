@@ -4,7 +4,7 @@ const { expect } = require('chai')
 const { handlePayment } = require('../../src/paymentHandler/payment-handler')
 const submitPaymentDetailsChallengeResponse
   = require('./fixtures/adyen-submit-payment-details-challenge-shopper-response')
-const ctpPayment = require('../fixtures/ctp-payment')
+const ctpPayment = require('./fixtures/ctp-payment.json')
 const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
 const configLoader = require('../../src/config/config')
 const c = require('../../src/config/constants')

@@ -77,7 +77,7 @@
     "serialize-error": "^7.0.1"
   },
   "mocha": {
-    "timeout": 30000,
+    "timeout": 40000,
     "file": "./test/cleanup-ctp-project.js",
     "exit": true,
     "full-trace": true

@@ -4,7 +4,7 @@ const _ = require('lodash')
 const configLoader = require('../../src/config/config')
 const { execute } = require('../../src/paymentHandler/klarna-make-payment.handler')
 const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
-const ctpPayment = require('../fixtures/ctp-payment')
+const ctpPayment = require('./fixtures/ctp-payment.json')
 const ctpCart = require('./fixtures/ctp-cart')
 
 describe('klarna-make-payment::execute', () => {
@@ -30,6 +30,7 @@ describe('klarna-make-payment::execute', () => {
       .reply(200, paymentSuccessResponse)
 
     const klarnaMakePaymentRequest = {
+      reference: 'YOUR_ORDER_NUMBER',
       paymentMethod: {
         type: 'klarna'
       }
@@ -39,7 +40,7 @@ describe('klarna-make-payment::execute', () => {
     ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(klarnaMakePaymentRequest)
 
     const response = await execute(ctpPaymentClone)
-    expect(response.actions).to.have.lengthOf(3)
+    expect(response.actions).to.have.lengthOf(4)
     const makePaymentRequestInteraction = JSON.parse(
       response.actions.find(a => a.action === 'addInterfaceInteraction').fields.request
     )
@@ -64,6 +65,7 @@ describe('klarna-make-payment::execute', () => {
       .reply(200, paymentSuccessResponse)
 
     const klarnaMakePaymentRequest = {
+      reference: 'YOUR_ORDER_NUMBER',
       paymentMethod: {
         type: 'klarna'
       },
@@ -74,7 +76,7 @@ describe('klarna-make-payment::execute', () => {
     ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(klarnaMakePaymentRequest)
 
     const response = await execute(ctpPaymentClone)
-    expect(response.actions).to.have.lengthOf(3)
+    expect(response.actions).to.have.lengthOf(4)
     const makePaymentRequestInteraction = JSON.parse(
       response.actions.find(a => a.action === 'addInterfaceInteraction').fields.request
     )
@@ -92,7 +94,7 @@ describe('klarna-make-payment::execute', () => {
       custom: {
         fields: {
           languageCode: 'nonExistingLanguageCode',
-          makePaymentRequest: '{}'
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
         }
       }
     }
@@ -121,7 +123,7 @@ describe('klarna-make-payment::execute', () => {
       custom: {
         fields: {
           languageCode: 'nonExistingLanguageCode',
-          makePaymentRequest: '{}'
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
         }
       }
     }
@@ -153,7 +155,7 @@ describe('klarna-make-payment::execute', () => {
       custom: {
         fields: {
           languageCode: 'de',
-          makePaymentRequest: '{}'
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
         }
       }
     }
@@ -184,7 +186,7 @@ describe('klarna-make-payment::execute', () => {
       amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
       custom: {
         fields: {
-          makePaymentRequest: '{}'
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
         }
       }
     }
@@ -214,7 +216,7 @@ describe('klarna-make-payment::execute', () => {
       amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
       custom: {
         fields: {
-          makePaymentRequest: '{}'
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
         }
       }
     }
@@ -239,7 +241,7 @@ describe('klarna-make-payment::execute', () => {
         scope: 'manage_project:xxx'
       })
     ctpApiScope
-      .get('/adyen-integration-test/carts')
+      .get(`/${config.ctp.projectKey}/carts`)
       .query(true)
       .reply(200, { results: [mockCart] })
   }
