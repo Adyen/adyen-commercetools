@@ -1,4 +1,4 @@
-const serializeError = require('serialize-error')
+const { serializeError } = require('serialize-error')
 const httpUtils = require('../../utils')
 const paymentHandler = require('../../paymentHandler/payment-handler')
 
