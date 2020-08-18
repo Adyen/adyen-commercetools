@@ -1,7 +1,7 @@
 const logger = require('../../utils/logger').getLogger()
 
 const interfaceInteractionType = require('../../../resources/payment-interface-interaction-type.json')
-const config = require('../../config/config')()
+const config = require('../config')()
 
 async function ensureInterfaceInteractionCustomType (ctpClient) {
   try {

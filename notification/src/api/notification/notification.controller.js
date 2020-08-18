@@ -15,7 +15,6 @@ async function handleNotification (request, response) {
   const body = await httpUtils.collectRequestData(request)
   try {
     const notification = _.get(JSON.parse(body), 'notificationItems', [])
-    // TODO(ahmetoz) https://github.com/commercetools/commercetools-adyen-integration/issues/272
     await processNotifications(notification, ctpClient)
     return sendAcceptedResponse(response)
   } catch (err) {
