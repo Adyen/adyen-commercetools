@@ -63,7 +63,7 @@
     "start-server-and-test": "1.11.3"
   },
   "dependencies": {
-    "@commercetools/api-request-builder": "^5.6.2",
+    "@commercetools/api-request-builder": "^5.6.3",
     "@commercetools/sdk-client": "^2.1.2",
     "@commercetools/sdk-middleware-auth": "^6.1.4",
     "@commercetools/sdk-middleware-http": "^6.0.7",
