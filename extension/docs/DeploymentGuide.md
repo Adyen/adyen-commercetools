@@ -61,6 +61,7 @@ If you don't have the commercetools OAuth credentials,[create a commercetools AP
 Resources below are required for the extension module to operate correctly. Resources that ***will be automatically created*** by the extension module in your commercetools project.
 
 1. [The commercetools HTTP API Extension pointing to Adyen extension module](../resources/api-extension.json)
+> It's required that the HTTP API Extension timeout limit be increased to 10000 milliseconds (default is 2000). Please contact Support via the commercetools [support portal](https://support.commercetools.com/) and provide the region, project key, and use case to increase timeout to 10000.
 1. [Payment custom type](../resources/web-components-payment-type.json)
 1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
 
