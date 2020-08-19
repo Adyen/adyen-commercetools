@@ -16,8 +16,8 @@ function getCTPEnvCredentials () {
     projectKey: process.env.CTP_PROJECT_KEY,
     clientId: process.env.CTP_CLIENT_ID,
     clientSecret: process.env.CTP_CLIENT_SECRET,
-    apiUrl: 'https://api.sphere.io',
-    authUrl: 'https://auth.sphere.io'
+    apiUrl: process.env.CTP_HOST || 'https://api.europe-west1.gcp.commercetools.com',
+    authUrl: process.env.CTP_AUTH_URL || 'https://auth.europe-west1.gcp.commercetools.com'
   }
 }
 
@@ -25,8 +25,8 @@ function getAdyenCredentials () {
   return {
     merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
     apiKey: process.env.ADYEN_API_KEY,
-    apiBaseUrl: process.env.ADYEN_API_BASE_URL || 'https://checkout-test.adyen.com/v40',
-    legacyApiBaseUrl: process.env.ADYEN_LEGACY_API_BASE_URL || 'https://pal-test.adyen.com/pal/servlet/Payment/v40'
+    apiBaseUrl: process.env.ADYEN_API_BASE_URL || 'https://checkout-test.adyen.com/v52',
+    legacyApiBaseUrl: process.env.ADYEN_LEGACY_API_BASE_URL || 'https://pal-test.adyen.com/pal/servlet/Payment/v52'
   }
 }
 

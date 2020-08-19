@@ -19,6 +19,7 @@
     "no-param-reassign": 0,
     "no-unused-expressions": "off",
     "no-constant-condition": ["error", { "checkLoops": false }],
-    "no-prototype-builtins": "off"
+    "no-prototype-builtins": "off",
+    "arrow-parens": "off"
   }
 }

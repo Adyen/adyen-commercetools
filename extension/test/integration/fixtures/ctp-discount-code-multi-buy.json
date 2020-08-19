@@ -1,0 +1,16 @@
+{
+  "isActive": true,
+  "cartDiscounts": [
+    {
+      "typeId": "cart-discount",
+      "id": ""
+    }
+  ],
+  "name": {
+    "de": "10% Off Multi Buy discount code"
+  },
+  "description": {
+    "de": "10% Off Multi Buy discount code"
+  },
+  "code": "ctp-adyen-test-discount-code-multi-buy"
+}

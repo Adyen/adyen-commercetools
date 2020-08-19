@@ -1,13 +1,17 @@
 {
   "name": "commercetools-adyen-integration",
-  "version": "4.0.2",
+  "version": "5.0.0",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "scripts": {
-    "test": "npm run unit && npm run integration",
-    "unit": "nyc mocha --check-leaks --timeout 30000 --full-trace --recursive \"./test/unit/**/*.spec.js\"",
-    "integration": "nyc mocha --check-leaks --timeout 30000 --full-trace --recursive \"./test/integration/**/*.spec.js\"",
+    "check-coverage": "nyc check-coverage --statements 93",
+    "test": "npm run lint && npm run cover:unit && npm run cover:integration && npm run check-coverage",
+    "cover:unit": "nyc --silent npm run unit",
+    "cover:integration": "nyc --silent --no-clean npm run integration",
+    "unit": "nyc mocha --check-leaks --no-clean --timeout 30000 --full-trace --recursive \"./test/unit/**/*.spec.js\"",
+    "integration": "nyc mocha --check-leaks --no-clean --timeout 30000 --full-trace --recursive \"./test/integration/**/*.spec.js\"",
     "start": "node ./src/init.js",
-    "coverage": "nyc report"
+    "coverage": "nyc report",
+    "lint": "eslint ./src ./test"
   },
   "keywords": [
     "adyen",
@@ -23,7 +27,7 @@
   },
   "author": {
     "name": "commercetools Professional Services",
-    "email": "ps-dev@commercetools.de"
+    "email": "ps-dev@commercetools.com"
   },
   "engines": {
     "node": ">=12",
@@ -33,16 +37,19 @@
   "bugs": {
     "url": "https://github.com/commercetools/commercetools-adyen-integration/issues"
   },
-  "homepage": "https://github.com/commercetools/commercetools-adyen-integration#readme",
+  "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "dependencies": {
+    "@adyen/api-library": "^3.2.4",
     "@commercetools/api-request-builder": "^5.6.2",
     "@commercetools/sdk-client": "^2.1.2",
     "@commercetools/sdk-middleware-auth": "^6.1.4",
     "@commercetools/sdk-middleware-http": "^6.0.7",
     "@commercetools/sdk-middleware-queue": "^2.1.4",
     "@commercetools/sync-actions": "^4.8.2",
+    "@commercetools/sdk-middleware-user-agent": "^2.1.5",
     "bluebird": "^3.7.2",
     "bunyan": "^1.8.14",
+    "lockfile-lint": "^4.3.7",
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.0",
     "serialize-error": "^7.0.1"
@@ -50,6 +57,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "babel-eslint": "^10.1.0",
     "eslint": "^7.7.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-commercetools": "^6.0.0",

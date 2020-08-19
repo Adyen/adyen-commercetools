@@ -1,7 +1,7 @@
 {
-  "key": "ctp-adyen-integration-interaction",
+  "key": "ctp-adyen-integration-interaction-payment-type",
   "name": {
-    "en": "ctp-adyen-integration-interaction"
+    "en": "commercetools Adyen integration payment interface interaction type"
   },
   "resourceTypeIds": [
     "payment-interface-interaction"
@@ -57,17 +57,6 @@
         "en": "type"
       },
       "required": true,
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "SingleLine"
-    },
-    {
-      "name": "status",
-      "label": {
-        "en": "status"
-      },
-      "required": false,
       "type": {
         "name": "String"
       },

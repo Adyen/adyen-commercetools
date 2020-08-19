@@ -23,6 +23,7 @@ describe('notification module', () => {
   })
 
   beforeEach(async () => {
+    config.adyen.enableHmacSignature = false
     await iTSetUp.prepareProject(ctpClient)
   })
 
@@ -30,8 +31,8 @@ describe('notification module', () => {
     await iTSetUp.cleanupProject(ctpClient)
   })
 
-  it('should update the pending authorization transaction state to success state ' +
-    'when receives a successful AUTHORIZATION notification', async () => {
+  it('should update the pending authorization transaction state to success state '
+    + 'when receives a successful AUTHORIZATION notification', async () => {
     const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
@@ -66,15 +67,15 @@ describe('notification module', () => {
     expect(paymentBefore.transactions[0].state).to.equal('Pending')
     expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
 
-    //update payment transaction
+    // update payment transaction
     const actions = [{
-      action: "changeTransactionState",
-      state: "Success",
+      action: 'changeTransactionState',
+      state: 'Success',
       transactionId: paymentBefore.transactions[0].id
     }]
 
-    const { body: updatedPayment } =
-      await ctpClient.update(ctpClient.builder.payments, paymentBefore.id, paymentBefore.version, actions)
+    const { body: updatedPayment } = await ctpClient.update(ctpClient.builder.payments,
+      paymentBefore.id, paymentBefore.version, actions)
 
     expect(updatedPayment.transactions).to.have.lengthOf(1)
     expect(updatedPayment.transactions[0].type).to.equal('Authorization')
@@ -166,8 +167,8 @@ describe('notification module', () => {
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(0)
   })
 
-  it('should udpate the pending Refund transaction state to success state ' +
-    'when receives a successful CANCEL_OR_REFUND notification with refund action', async () => {
+  it('should udpate the pending Refund transaction state to success state '
+    + 'when receives a successful CANCEL_OR_REFUND notification with refund action', async () => {
     const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
@@ -176,8 +177,8 @@ describe('notification module', () => {
 
     const actions = [
       {
-        action: "changeTransactionState",
-        state: "Success",
+        action: 'changeTransactionState',
+        state: 'Success',
         transactionId: paymentBefore.transactions[0].id
       },
       {
@@ -193,8 +194,8 @@ describe('notification module', () => {
       }
     ]
 
-    const { body: updatedPayment } =
-      await ctpClient.update(ctpClient.builder.payments, paymentBefore.id, paymentBefore.version, actions)
+    const { body: updatedPayment } = await ctpClient.update(ctpClient.builder.payments,
+      paymentBefore.id, paymentBefore.version, actions)
 
     expect(updatedPayment.transactions).to.have.lengthOf(2)
     expect(updatedPayment.transactions[0].type).to.equal('Authorization')
@@ -205,7 +206,7 @@ describe('notification module', () => {
     const modifiedNotification = cloneDeep(notifications)
     modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode = 'CANCEL_OR_REFUND'
     modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
-        "modification.action": "refund"
+      'modification.action': 'refund'
     }
 
     // Simulating a notification from Adyen
@@ -232,8 +233,8 @@ describe('notification module', () => {
     expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(JSON.stringify(notification))
   })
 
-  it('should udpate the pending CancelAuthorization transaction state to success state ' +
-    'when receives a successful CANCEL_OR_REFUND notification with cancel action', async () => {
+  it('should udpate the pending CancelAuthorization transaction state to success state '
+    + 'when receives a successful CANCEL_OR_REFUND notification with cancel action', async () => {
     const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
@@ -254,8 +255,8 @@ describe('notification module', () => {
       }
     ]
 
-    const { body: updatedPayment } =
-      await ctpClient.update(ctpClient.builder.payments, paymentBefore.id, paymentBefore.version, actions)
+    const { body: updatedPayment } = await ctpClient.update(ctpClient.builder.payments,
+      paymentBefore.id, paymentBefore.version, actions)
 
     expect(updatedPayment.transactions).to.have.lengthOf(2)
     expect(updatedPayment.transactions[0].type).to.equal('Authorization')
@@ -266,7 +267,7 @@ describe('notification module', () => {
     const modifiedNotification = cloneDeep(notifications)
     modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode = 'CANCEL_OR_REFUND'
     modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
-      "modification.action": "cancel"
+      'modification.action': 'cancel'
     }
 
     // Simulating a notification from Adyen
@@ -291,5 +292,37 @@ describe('notification module', () => {
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
     const notification = modifiedNotification.notificationItems[0]
     expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(JSON.stringify(notification))
+  })
+
+  it('should not update payment '
+    + 'when the notification is unauthorised', async () => {
+    // enable hmac verification
+    config.adyen.enableHmacSignature = true
+    config.adyen.secretHmacKey = '44782DEF547AAA06C910C43932B1EB0C71FC68D9D0C057550C48EC2ACF6BA056'
+
+    const modifiedNotification = cloneDeep(notifications)
+
+    // Simulating a modification by a middle man during transmission
+    modifiedNotification.notificationItems[0].NotificationRequestItem.amount.value = 0
+
+    // Simulating a notification from Adyen
+    const response = await fetch(`http://${localhostIp}:8000`, {
+      method: 'post',
+      body: JSON.stringify(modifiedNotification),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    const { status } = response
+    const responseBody = await response.json()
+
+    expect(responseBody).to.deep.equal({ notificationResponse: '[accepted]' })
+    expect(status).to.equal(200)
+
+    const { body: { results: [ paymentAfter ] } } = await ctpClient.fetch(ctpClient.builder.payments)
+    expect(paymentAfter.transactions).to.have.lengthOf(1)
+    expect(paymentAfter.transactions[0].type).to.equal('Authorization')
+    expect(paymentAfter.transactions[0].state).to.equal('Pending')
+
+    // make sure that the notification is not polluting interactions
+    expect(paymentAfter.interfaceInteractions).to.have.lengthOf(0)
   })
 })

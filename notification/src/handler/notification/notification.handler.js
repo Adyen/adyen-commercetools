@@ -2,8 +2,10 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { serializeError } = require('serialize-error')
 const ctp = require('../../utils/ctp')
+const { hasValidHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
 const logger = require('../../utils/logger').getLogger()
+const config = require('../../config/config')()
 
 async function processNotifications (notifications, ctpClient) {
   await Promise.map(notifications,
@@ -12,6 +14,13 @@ async function processNotifications (notifications, ctpClient) {
 }
 
 async function processNotification (notification, ctpClient) {
+  if (config.adyen.enableHmacSignature && !hasValidHmacSignature(notification)) {
+    logger.error('Notification does not have a valid HMAC signature, '
+      + 'please confirm that the notification was sent by Adyen, '
+      + `and was not modified during transmission. Notification: ${JSON.stringify(notification)}`)
+    return
+  }
+
   const merchantReference = _.get(notification, 'NotificationRequestItem.merchantReference', null)
   if (merchantReference === null) {
     logger.error(`Can't extract merchantReference from the notification: ${JSON.stringify(notification)}`)
@@ -99,6 +108,9 @@ function getAddInterfaceInteractionUpdateAction (notification) {
   delete notification.additionalData
   delete notification.reason
 
+  const eventCode = _.isNil(notification.NotificationRequestItem.eventCode)
+    ? '' : notification.NotificationRequestItem.eventCode.toLowerCase()
+
   return {
     action: 'addInterfaceInteraction',
     type: {
@@ -107,7 +119,8 @@ function getAddInterfaceInteractionUpdateAction (notification) {
     },
     fields: {
       createdAt: new Date(),
-      status: notification.NotificationRequestItem.eventCode,
+      status: eventCode,
+      type: 'notification',
       notification: JSON.stringify(notification)
     }
   }
@@ -126,7 +139,7 @@ function getTransactionTypeAndStateOrNull (notificationRequestItem) {
   const adyenEventSuccess = notificationRequestItem.success
 
   // eslint-disable-next-line max-len
-  const adyenEvent = _.find(adyenEvents, adyenEvent => adyenEvent.eventCode === adyenEventCode && adyenEvent.success === adyenEventSuccess)
+  const adyenEvent = _.find(adyenEvents, e => e.eventCode === adyenEventCode && e.success === adyenEventSuccess)
   if (adyenEvent && adyenEventCode === 'CANCEL_OR_REFUND') {
     /* we need to get correct action from the additional data, for example:
      "NotificationRequestItem":{
@@ -136,20 +149,19 @@ function getTransactionTypeAndStateOrNull (notificationRequestItem) {
         ...
       }
      */
-    const modificationAction = notificationRequestItem.additionalData ?
-      notificationRequestItem.additionalData['modification.action'] : null;
-    if (modificationAction === 'refund') {
+    const modificationAction = notificationRequestItem.additionalData
+      ? notificationRequestItem.additionalData['modification.action'] : null
+    if (modificationAction === 'refund')
       adyenEvent.transactionType = 'Refund'
-    } else if (modificationAction === 'cancel') {
+    else if (modificationAction === 'cancel')
       adyenEvent.transactionType = 'CancelAuthorization'
-    }
   }
   return adyenEvent || {
-      eventCode: adyenEventCode,
-      success: adyenEventSuccess,
-      transactionType: null,
-      transactionState: null
-    }
+    eventCode: adyenEventCode,
+    success: adyenEventSuccess,
+    transactionType: null,
+    transactionState: null
+  }
 }
 
 function getAddTransactionUpdateAction (type, state, amount, currency) {
@@ -168,9 +180,10 @@ function getAddTransactionUpdateAction (type, state, amount, currency) {
 
 async function getPaymentByMerchantReference (merchantReference, ctpClient) {
   try {
-    const result = await ctpClient.fetch(ctpClient.builder.payments.where(`custom(fields(merchantReference="${merchantReference}"))`))
-    return _.get(result, 'body.results[0]', null)
+    const result = await ctpClient.fetchByKey(ctpClient.builder.payments, merchantReference)
+    return result.body
   } catch (err) {
+    if (err.statusCode === 404) return null
     throw Error(`Failed to fetch a payment with merchantReference: ${merchantReference}. `
     + `Error: ${JSON.stringify(serializeError(err))}`)
   }

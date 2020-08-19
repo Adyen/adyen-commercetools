@@ -2,7 +2,7 @@ const _ = require('lodash')
 const proxyquire = require('proxyquire')
 const { expect } = require('chai')
 
-const ctpPayment = require('../fixtures/ctp-payment')
+const ctpPayment = require('./fixtures/ctp-payment.json')
 const errorMessages = require('../../src/validator/error-messages')
 
 const utilsStub = {}
@@ -26,9 +26,10 @@ describe('Payment controller', () => {
       await paymentController.processRequest(mockRequest)
     })
 
-    it('on missing merchant reference should throw error', async () => {
+    it('on invalid web component request should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.merchantReference = ''
+      ctpPaymentClone.custom.fields.getOriginKeysRequest = '{'
+      ctpPaymentClone.custom.fields.getPaymentMethodsRequest = '{}'
 
       utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
       utilsStub.sendResponse = ({ statusCode, data }) => {
@@ -36,153 +37,11 @@ describe('Payment controller', () => {
         expect(data).to.deep.equal({
           errors: [{
             code: 'InvalidField',
-            message: errorMessages.MISSING_MERCHANT_REFERENCE
+            message: errorMessages.GET_ORIGIN_KEYS_REQUEST_INVALID_JSON
           }]
         })
       }
 
-      await paymentController.processRequest(mockRequest)
-    })
-
-    it('on wrong payment method should throw error', async () => {
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
-      ctpPaymentClone.paymentMethodInfo.method = 'wrong method'
-
-      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
-        expect(statusCode).to.equal(400)
-        expect(data).to.deep.equal({
-          errors: [{
-            code: 'InvalidField',
-            message: errorMessages.INVALID_PAYMENT_METHOD
-          }]
-        })
-      }
-
-      await paymentController.processRequest(mockRequest)
-    })
-
-    it('on missing params for make paypal payment should throw error', async () => {
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
-      ctpPaymentClone.paymentMethodInfo.method = 'paypal'
-      ctpPaymentClone.transactions[0].state = 'Initial'
-
-      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
-        expect(statusCode).to.equal(400)
-        expect(data).to.deep.equal({
-          errors: [{
-            code: 'InvalidField',
-            message: errorMessages.MISSING_RETURN_URL
-          }]
-        })
-      }
-
-      await paymentController.processRequest(mockRequest)
-    })
-
-    it('on missing params for complete paypal payment should throw error', async () => {
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
-      ctpPaymentClone.paymentMethodInfo.method = 'paypal'
-      ctpPaymentClone.transactions[0].state = 'Pending'
-
-      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
-        expect(statusCode).to.equal(200)
-        expect(data).to.deep.equal({ actions: [] })
-      }
-
-      await paymentController.processRequest(mockRequest)
-    })
-
-    it('on missing params for make credit card payment should throw error', async () => {
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
-      ctpPaymentClone.paymentMethodInfo.method = 'creditCard'
-      ctpPaymentClone.transactions[0].state = 'Initial'
-
-      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
-        expect(statusCode).to.equal(400)
-        expect(data).to.deep.equal({
-          errors: [
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_CARD_NUMBER
-            },
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_EXPIRY_MONTH
-            },
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_EXPIRY_YEAR
-            },
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_SECURITY_CODE
-            },
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_RETURN_URL
-            }
-          ]
-        })
-      }
-      await paymentController.processRequest(mockRequest)
-    })
-
-    it('on missing params for make 3ds payment should throw error', async () => {
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
-      ctpPaymentClone.paymentMethodInfo.method = 'creditCard_3d'
-      ctpPaymentClone.transactions[0].state = 'Initial'
-
-      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
-        expect(statusCode).to.equal(400)
-        expect(data).to.deep.equal({
-          errors: [
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_CARD_NUMBER
-            },
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_EXPIRY_MONTH
-            },
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_EXPIRY_YEAR
-            },
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_SECURITY_CODE
-            },
-            {
-              code: 'InvalidField',
-              message: errorMessages.MISSING_RETURN_URL
-            }
-          ]
-        })
-      }
-      await paymentController.processRequest(mockRequest)
-    })
-
-    it('on missing params for complete credit card payment should throw error', async () => {
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields = { merchantReference: 'paymentReferenceId' }
-      ctpPaymentClone.paymentMethodInfo.method = 'creditCard_3d'
-      ctpPaymentClone.transactions[0].state = 'Pending'
-
-      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
-        expect(statusCode).to.equal(200)
-        expect(data).to.deep.equal({ actions: [] })
-      }
       await paymentController.processRequest(mockRequest)
     })
   })

@@ -14,17 +14,25 @@ async function handleNotification (request, response) {
     return httpUtils.sendResponse(response)
   const body = await httpUtils.collectRequestData(request)
   try {
-    const notifications = _.get(JSON.parse(body), 'notificationItems', [])
-    await processNotifications(notifications, ctpClient)
-    return httpUtils.sendResponse(response,
-      200,
-      { 'Content-Type': 'application/json' },
-      JSON.stringify({ notificationResponse: '[accepted]' }))
+    const notification = _.get(JSON.parse(body), 'notificationItems', [])
+    await processNotifications(notification, ctpClient)
+    return sendAcceptedResponse(response)
   } catch (err) {
     logger.error({ adyenRequestBody: `${body}`, err },
       'Unexpected exception occurred.')
     return httpUtils.sendResponse(response, 500)
   }
+}
+
+function sendAcceptedResponse (response) {
+  // From the Adyen docs:
+  // To ensure that your server is properly accepting notifications,
+  // we require you to acknowledge every notification of any type with an [accepted] response.
+
+  return httpUtils.sendResponse(response,
+    200,
+    { 'Content-Type': 'application/json' },
+    JSON.stringify({ notificationResponse: '[accepted]' }))
 }
 
 module.exports = { handleNotification }

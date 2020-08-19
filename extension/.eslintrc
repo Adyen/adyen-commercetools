@@ -2,12 +2,8 @@
   "extends": "commercetools",
   "env": {
     "es6": true,
-    "node": true,
-    "cypress/globals": true
+    "node": true
   },
-  "plugins": [
-    "cypress"
-  ],
   "rules": {
     "nonblock-statement-body-position": "off",
     "comma-dangle": "off",
@@ -21,6 +17,11 @@
       "WithStatement"
     ],
     "no-param-reassign": 0,
-    "no-unused-expressions": "off"
+    "no-plusplus": 0,
+    "no-unused-expressions": "off",
+    "template-curly-spacing" : "off",
+    "indent": "off",
+    "operator-linebreak": "off",
+    "no-await-in-loop": "off"
   }
 }

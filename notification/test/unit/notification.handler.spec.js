@@ -1,6 +1,8 @@
 const sinon = require('sinon')
 const { expect } = require('chai')
 const { cloneDeep } = require('lodash')
+const config = require('../../src/config/config')()
+
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const notificationsMock = require('../resources/notification').notificationItems
 const concurrentModificationError = require('../resources/concurrent-modification-exception')
@@ -9,15 +11,10 @@ const paymentMock = require('../resources/payment-credit-card')
 
 const sandbox = sinon.createSandbox()
 
-const config = {
-  ctp: {
-    projectKey: 'test',
-    clientId: 'test',
-    clientSecret: 'test'
-  }
-}
-
 describe('notification module', () => {
+  before(() => {
+    config.adyen.enableHmacSignature = false
+  })
   afterEach(() => sandbox.restore())
 
   it(`given that ADYEN sends an "AUTHORISATION is successful" notification
@@ -28,40 +25,38 @@ describe('notification module', () => {
     const notifications = [{
       NotificationRequestItem: {
         amount: {
-          currency: "EUR",
+          currency: 'EUR',
           value: 10100
         },
-        eventCode: "AUTHORISATION",
-        eventDate: "2019-01-30T18:16:22+01:00",
-        merchantAccountCode: "CommercetoolsGmbHDE775",
-        merchantReference: "8313842560770001",
+        eventCode: 'AUTHORISATION',
+        eventDate: '2019-01-30T18:16:22+01:00',
+        merchantAccountCode: 'CommercetoolsGmbHDE775',
+        merchantReference: '8313842560770001',
         operations: [
-          "CANCEL",
-          "CAPTURE",
-          "REFUND"
+          'CANCEL',
+          'CAPTURE',
+          'REFUND'
         ],
-        paymentMethod: "visa",
-        pspReference: "test_AUTHORISATION_1",
-        success: "true"
+        paymentMethod: 'visa',
+        pspReference: 'test_AUTHORISATION_1',
+        success: 'true'
       }
     }]
     const payment = cloneDeep(paymentMock)
     payment.transactions.push({
-      id: "9ca92d05-ba63-47dc-8f83-95b08d539646",
-      type: "Authorization",
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Authorization',
       amount: {
-        type: "centPrecision",
-        currencyCode: "EUR",
+        type: 'centPrecision',
+        currencyCode: 'EUR',
         centAmount: 495,
         fractionDigits: 2
       },
-      state: "Initial"
+      state: 'Initial'
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
-      body: {
-        results: [payment]
-      }
+    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
+      body: payment
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     // process
@@ -74,18 +69,19 @@ describe('notification module', () => {
           typeId: 'type'
         },
         fields: {
-          status: 'AUTHORISATION',
+          status: 'authorisation',
+          type: 'notification',
           notification: JSON.stringify(notifications[0])
         }
       },
       {
-        action: "changeTransactionState",
-        state: "Success",
-        transactionId: "9ca92d05-ba63-47dc-8f83-95b08d539646"
+        action: 'changeTransactionState',
+        state: 'Success',
+        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646'
       }
     ]
 
-    //assert update actions
+    // assert update actions
     // createdAt is set to the current date during the update action calculation
     // We can't know what is set there
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
@@ -102,40 +98,38 @@ describe('notification module', () => {
     const notifications = [{
       NotificationRequestItem: {
         amount: {
-          currency: "EUR",
+          currency: 'EUR',
           value: 10100
         },
-        eventCode: "AUTHORISATION",
-        eventDate: "2019-01-30T18:16:22+01:00",
-        merchantAccountCode: "CommercetoolsGmbHDE775",
-        merchantReference: "8313842560770001",
+        eventCode: 'AUTHORISATION',
+        eventDate: '2019-01-30T18:16:22+01:00',
+        merchantAccountCode: 'CommercetoolsGmbHDE775',
+        merchantReference: '8313842560770001',
         operations: [
-          "CANCEL",
-          "CAPTURE",
-          "REFUND"
+          'CANCEL',
+          'CAPTURE',
+          'REFUND'
         ],
-        paymentMethod: "visa",
-        pspReference: "test_AUTHORISATION_1",
-        success: "false"
+        paymentMethod: 'visa',
+        pspReference: 'test_AUTHORISATION_1',
+        success: 'false'
       }
     }]
     const payment = cloneDeep(paymentMock)
     payment.transactions.push({
-      id: "9ca92d05-ba63-47dc-8f83-95b08d539646",
-      type: "Authorization",
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Authorization',
       amount: {
-        type: "centPrecision",
-        currencyCode: "EUR",
+        type: 'centPrecision',
+        currencyCode: 'EUR',
         centAmount: 495,
         fractionDigits: 2
       },
-      state: "Pending"
+      state: 'Pending'
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
-      body: {
-        results: [payment]
-      }
+    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
+      body: payment
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     // process
@@ -148,13 +142,14 @@ describe('notification module', () => {
           typeId: 'type'
         },
         fields: {
-          status: 'AUTHORISATION',
+          status: 'authorisation',
+          type: 'notification',
           notification: JSON.stringify(notifications[0])
         }
       }
     ]
 
-    //assert update actions
+    // assert update actions
     // createdAt is set to the current date during the update action calculation
     // We can't know what is set there
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
@@ -171,34 +166,34 @@ describe('notification module', () => {
     const notifications = [{
       NotificationRequestItem: {
         amount: {
-          currency: "EUR",
+          currency: 'EUR',
           value: 10100
         },
-        eventCode: "AUTHORISATION",
-        eventDate: "2019-01-30T18:16:22+01:00",
-        merchantAccountCode: "CommercetoolsGmbHDE775",
-        merchantReference: "8313842560770001",
+        eventCode: 'AUTHORISATION',
+        eventDate: '2019-01-30T18:16:22+01:00',
+        merchantAccountCode: 'CommercetoolsGmbHDE775',
+        merchantReference: '8313842560770001',
         operations: [
-          "CANCEL",
-          "CAPTURE",
-          "REFUND"
+          'CANCEL',
+          'CAPTURE',
+          'REFUND'
         ],
-        paymentMethod: "visa",
-        pspReference: "test_AUTHORISATION_1",
-        success: "true"
+        paymentMethod: 'visa',
+        pspReference: 'test_AUTHORISATION_1',
+        success: 'true'
       }
     }]
     const payment = cloneDeep(paymentMock)
     payment.transactions.push({
-      id: "9ca92d05-ba63-47dc-8f83-95b08d539646",
-      type: "Authorization",
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Authorization',
       amount: {
-        type: "centPrecision",
-        currencyCode: "EUR",
+        type: 'centPrecision',
+        currencyCode: 'EUR',
         centAmount: 495,
         fractionDigits: 2
       },
-      state: "Success"
+      state: 'Success'
     })
     payment.interfaceInteractions.push({
       type: {
@@ -212,10 +207,8 @@ describe('notification module', () => {
       }
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
-      body: {
-        results: [payment]
-      }
+    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
+      body: payment
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     // process
@@ -232,40 +225,38 @@ describe('notification module', () => {
     const notifications = [{
       NotificationRequestItem: {
         amount: {
-          currency: "EUR",
+          currency: 'EUR',
           value: 10100
         },
-        eventCode: "CANCELLATION",
-        eventDate: "2019-01-30T18:16:22+01:00",
-        merchantAccountCode: "CommercetoolsGmbHDE775",
-        merchantReference: "8313842560770001",
+        eventCode: 'CANCELLATION',
+        eventDate: '2019-01-30T18:16:22+01:00',
+        merchantAccountCode: 'CommercetoolsGmbHDE775',
+        merchantReference: '8313842560770001',
         operations: [
-          "CANCEL",
-          "CAPTURE",
-          "REFUND"
+          'CANCEL',
+          'CAPTURE',
+          'REFUND'
         ],
-        paymentMethod: "visa",
-        pspReference: "test_AUTHORISATION_1",
-        success: "true"
+        paymentMethod: 'visa',
+        pspReference: 'test_AUTHORISATION_1',
+        success: 'true'
       }
     }]
     const payment = cloneDeep(paymentMock)
     payment.transactions.push({
-      id: "9ca92d05-ba63-47dc-8f83-95b08d539646",
-      type: "Authorization",
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Authorization',
       amount: {
-        type: "centPrecision",
-        currencyCode: "EUR",
+        type: 'centPrecision',
+        currencyCode: 'EUR',
         centAmount: 495,
         fractionDigits: 2
       },
-      state: "Pending"
+      state: 'Pending'
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
-      body: {
-        results: [payment]
-      }
+    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
+      body: payment
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     // process
@@ -278,24 +269,25 @@ describe('notification module', () => {
           typeId: 'type'
         },
         fields: {
-          status: 'CANCELLATION',
+          status: 'cancellation',
+          type: 'notification',
           notification: JSON.stringify(notifications[0])
         }
       },
       {
-        action: "addTransaction",
+        action: 'addTransaction',
         transaction: {
           amount: {
             centAmount: 10100,
-            currencyCode: "EUR"
+            currencyCode: 'EUR'
           },
-          state: "Success",
-          type: "CancelAuthorization"
+          state: 'Success',
+          type: 'CancelAuthorization'
         }
       }
     ]
 
-    //assert update actions
+    // assert update actions
     // createdAt is set to the current date during the update action calculation
     // We can't know what is set there
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
@@ -312,40 +304,38 @@ describe('notification module', () => {
     const notifications = [{
       NotificationRequestItem: {
         amount: {
-          currency: "EUR",
+          currency: 'EUR',
           value: 10100
         },
-        eventCode: "CAPTURE",
-        eventDate: "2019-01-30T18:16:22+01:00",
-        merchantAccountCode: "CommercetoolsGmbHDE775",
-        merchantReference: "8313842560770001",
+        eventCode: 'CAPTURE',
+        eventDate: '2019-01-30T18:16:22+01:00',
+        merchantAccountCode: 'CommercetoolsGmbHDE775',
+        merchantReference: '8313842560770001',
         operations: [
-          "CANCEL",
-          "CAPTURE",
-          "REFUND"
+          'CANCEL',
+          'CAPTURE',
+          'REFUND'
         ],
-        paymentMethod: "visa",
-        pspReference: "test_AUTHORISATION_1",
-        success: "true"
+        paymentMethod: 'visa',
+        pspReference: 'test_AUTHORISATION_1',
+        success: 'true'
       }
     }]
     const payment = cloneDeep(paymentMock)
     payment.transactions.push({
-      id: "9ca92d05-ba63-47dc-8f83-95b08d539646",
-      type: "Authorization",
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Authorization',
       amount: {
-        type: "centPrecision",
-        currencyCode: "EUR",
+        type: 'centPrecision',
+        currencyCode: 'EUR',
         centAmount: 495,
         fractionDigits: 2
       },
-      state: "Success"
+      state: 'Success'
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
-      body: {
-        results: [payment]
-      }
+    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
+      body: payment
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     // process
@@ -358,24 +348,25 @@ describe('notification module', () => {
           typeId: 'type'
         },
         fields: {
-          status: 'CAPTURE',
+          status: 'capture',
+          type: 'notification',
           notification: JSON.stringify(notifications[0])
         }
       },
       {
-        action: "addTransaction",
+        action: 'addTransaction',
         transaction: {
           amount: {
             centAmount: 10100,
-            currencyCode: "EUR"
+            currencyCode: 'EUR'
           },
-          state: "Success",
-          type: "Charge"
+          state: 'Success',
+          type: 'Charge'
         }
       }
     ]
 
-    //assert update actions
+    // assert update actions
     // createdAt is set to the current date during the update action calculation
     // We can't know what is set there
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
@@ -392,40 +383,38 @@ describe('notification module', () => {
     const notifications = [{
       NotificationRequestItem: {
         amount: {
-          currency: "EUR",
+          currency: 'EUR',
           value: 10100
         },
-        eventCode: "CAPTURE_FAILED",
-        eventDate: "2019-01-30T18:16:22+01:00",
-        merchantAccountCode: "CommercetoolsGmbHDE775",
-        merchantReference: "8313842560770001",
+        eventCode: 'CAPTURE_FAILED',
+        eventDate: '2019-01-30T18:16:22+01:00',
+        merchantAccountCode: 'CommercetoolsGmbHDE775',
+        merchantReference: '8313842560770001',
         operations: [
-          "CANCEL",
-          "CAPTURE",
-          "REFUND"
+          'CANCEL',
+          'CAPTURE',
+          'REFUND'
         ],
-        paymentMethod: "visa",
-        pspReference: "test_AUTHORISATION_1",
-        success: "true"
+        paymentMethod: 'visa',
+        pspReference: 'test_AUTHORISATION_1',
+        success: 'true'
       }
     }]
     const payment = cloneDeep(paymentMock)
     payment.transactions.push({
-      id: "9ca92d05-ba63-47dc-8f83-95b08d539646",
-      type: "Authorization",
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Authorization',
       amount: {
-        type: "centPrecision",
-        currencyCode: "EUR",
+        type: 'centPrecision',
+        currencyCode: 'EUR',
         centAmount: 495,
         fractionDigits: 2
       },
-      state: "Success"
+      state: 'Success'
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
-      body: {
-        results: [payment]
-      }
+    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
+      body: payment
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     // process
@@ -438,24 +427,25 @@ describe('notification module', () => {
           typeId: 'type'
         },
         fields: {
-          status: 'CAPTURE_FAILED',
+          status: 'capture_failed',
+          type: 'notification',
           notification: JSON.stringify(notifications[0])
         }
       },
       {
-        action: "addTransaction",
+        action: 'addTransaction',
         transaction: {
           amount: {
             centAmount: 10100,
-            currencyCode: "EUR"
+            currencyCode: 'EUR'
           },
-          state: "Failure",
-          type: "Charge"
+          state: 'Failure',
+          type: 'Charge'
         }
       }
     ]
 
-    //assert update actions
+    // assert update actions
     // createdAt is set to the current date during the update action calculation
     // We can't know what is set there
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
@@ -478,10 +468,8 @@ describe('notification module', () => {
       }
     })
     const ctpClient = ctpClientMock.get(config)
-    sandbox.stub(ctpClient, 'fetch').callsFake(() => ({
-      body: {
-        results: [modifiedPaymentMock]
-      }
+    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
+      body: modifiedPaymentMock
     }))
     sandbox.stub(ctpClient, 'fetchById').callsFake(() => ({
       body: {
@@ -503,12 +491,12 @@ describe('notification module', () => {
 
   it('do not make any requests when merchantReference cannot be extracted from notification', async () => {
     const ctpClient = ctpClientMock.get(config)
-    const ctpClientFetchSpy = sandbox.spy(ctpClient, 'fetch')
+    const ctpClientFetchByKeySpy = sandbox.spy(ctpClient, 'fetchByKey')
     const ctpClientFetchByIdSpy = sandbox.spy(ctpClient, 'fetchById')
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     await notificationHandler.processNotifications([{ name: 'some wrong notification' }], ctpClient)
 
-    expect(ctpClientFetchSpy.callCount).to.equal(0)
+    expect(ctpClientFetchByKeySpy.callCount).to.equal(0)
     expect(ctpClientFetchByIdSpy.callCount).to.equal(0)
     expect(ctpClientUpdateSpy.callCount).to.equal(0)
   })

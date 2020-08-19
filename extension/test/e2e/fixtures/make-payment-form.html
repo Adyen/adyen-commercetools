@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Make Payment</title>
+        <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.8.1/adyen.css"
+              integrity="sha384-y1lKqffK5z+ENzddmGIfP3bcMRobxkjDt/9lyPAvV9H3JXbJYxCSD6L8TdyRMCGM"
+              crossorigin="anonymous">
+    </head>
+    <body>
+        <div>
+            Use following credit card to test
+            <p>
+                Card number: 5454 5454 5454 5454
+            </p>
+            <p>
+                Expiry date: 03/30
+            </p>
+            <p>
+                CVC: 737
+            </p>
+            <a target="_adyenCards"
+               href="https://docs.adyen.com/development-resources/test-cards/test-card-numbers#test-3d-secure-2-authentication">
+                More cards
+            </a>
+        </div>
+        <div>
+            <input type="text" id="adyen-origin-key" placeholder="Adyen origin key"/><br/>
+            <textarea id="adyen-make-payment-request">Make payment request will come here</textarea>
+        </div>
+        <br/>
+        <div id="component-container"></div>
+
+        <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.8.1/adyen.js"
+                integrity="sha384-rGkZxBRhUfCECwNuNrllGf8dOpeUsKTMqczAkphoWMne67C32+na/29lUGT3HVOB"
+                crossorigin="anonymous"></script>
+        <script type="application/javascript">
+          const configuration = {
+            locale: "en_US", // The shopper's locale. For a list of supported locales, see https://docs.adyen.com/checkout/components-web/localization-components.
+            environment: "test", // When you're ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
+            originKey: "", // Your website's Origin Key. To find out how to generate one, see https://docs.adyen.com/user-management/how-to-get-an-origin-key.
+            paymentMethodsResponse: {
+              "groups": [
+                {
+                  "name": "Gift Card",
+                  "types": [
+                    "givex",
+                    "svs"
+                  ]
+                },
+                {
+                  "name": "Credit Card",
+                  "types": [
+                    "mc",
+                    "visa",
+                    "amex",
+                    "maestro",
+                    "diners",
+                    "discover"
+                  ]
+                }
+              ],
+              "paymentMethods": [
+                {
+                  "details": [
+                    {
+                      "items": [
+                        {
+                          "id": "1121",
+                          "name": "Test Issuer"
+                        },
+                        {
+                          "id": "1154",
+                          "name": "Test Issuer 5"
+                        },
+                        {
+                          "id": "1153",
+                          "name": "Test Issuer 4"
+                        },
+                        {
+                          "id": "1152",
+                          "name": "Test Issuer 3"
+                        },
+                        {
+                          "id": "1151",
+                          "name": "Test Issuer 2"
+                        },
+                        {
+                          "id": "1162",
+                          "name": "Test Issuer Cancelled"
+                        },
+                        {
+                          "id": "1161",
+                          "name": "Test Issuer Pending"
+                        },
+                        {
+                          "id": "1160",
+                          "name": "Test Issuer Refused"
+                        },
+                        {
+                          "id": "1159",
+                          "name": "Test Issuer 10"
+                        },
+                        {
+                          "id": "1158",
+                          "name": "Test Issuer 9"
+                        },
+                        {
+                          "id": "1157",
+                          "name": "Test Issuer 8"
+                        },
+                        {
+                          "id": "1156",
+                          "name": "Test Issuer 7"
+                        },
+                        {
+                          "id": "1155",
+                          "name": "Test Issuer 6"
+                        }
+                      ],
+                      "key": "issuer",
+                      "type": "select"
+                    }
+                  ],
+                  "name": "iDEAL",
+                  "supportsRecurring": true,
+                  "type": "ideal"
+                },
+                {
+                  "brands": [
+                    "mc",
+                    "visa",
+                    "amex",
+                    "maestro",
+                    "diners",
+                    "discover"
+                  ],
+                  "details": [
+                    {
+                      "key": "encryptedCardNumber",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedSecurityCode",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryMonth",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryYear",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "holderName",
+                      "optional": true,
+                      "type": "text"
+                    }
+                  ],
+                  "name": "Credit Card",
+                  "type": "scheme"
+                },
+                {
+                  "name": "PayPal",
+                  "supportsRecurring": true,
+                  "type": "paypal"
+                },
+                {
+                  "details": [
+                    {
+                      "key": "sepa.ownerName",
+                      "type": "text"
+                    },
+                    {
+                      "key": "sepa.ibanNumber",
+                      "type": "text"
+                    }
+                  ],
+                  "name": "SEPA Direct Debit",
+                  "supportsRecurring": true,
+                  "type": "sepadirectdebit"
+                },
+                {
+                  "details": [
+                    {
+                      "key": "encryptedCardNumber",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedSecurityCode",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryMonth",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryYear",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedPassword",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "holderName",
+                      "optional": true,
+                      "type": "text"
+                    }
+                  ],
+                  "name": "Givex",
+                  "supportsRecurring": true,
+                  "type": "givex"
+                },
+                {
+                  "details": [
+                    {
+                      "key": "encryptedCardNumber",
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedSecurityCode",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryMonth",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedExpiryYear",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "encryptedPassword",
+                      "optional": true,
+                      "type": "cardToken"
+                    },
+                    {
+                      "key": "holderName",
+                      "optional": true,
+                      "type": "text"
+                    }
+                  ],
+                  "name": "SVS",
+                  "supportsRecurring": true,
+                  "type": "svs"
+                }
+              ]
+            }, // The payment methods response returned in step 1.
+            showPayButton: true,
+            onSubmit: handleOnSubmit
+          };
+
+          function handleOnSubmit (state, component) {
+            console.log('handleOnSubmit')
+            console.log(state)
+            console.log(component)
+            const makePaymentRequest = state.data
+            const orderReference = new Date().getMilliseconds()
+            makePaymentRequest.reference = orderReference
+            makePaymentRequest.amount = {
+              "currency": "EUR",
+              "value": 1000
+            }
+            makePaymentRequest.channel = "Web"
+            makePaymentRequest.origin = window.location.origin
+            makePaymentRequest.returnUrl = window.location.origin + '/return-url'
+
+            document.getElementById('adyen-make-payment-request').innerHTML = JSON.stringify(makePaymentRequest)
+          }
+
+          const originKeyElement = document.getElementById('adyen-origin-key');
+          originKeyElement.addEventListener('blur', () => {
+            configuration.originKey = originKeyElement.value;
+            const checkout = new AdyenCheckout(configuration);
+            checkout.create('card').mount('#component-container');
+          })
+        </script>
+    </body>
+</html>

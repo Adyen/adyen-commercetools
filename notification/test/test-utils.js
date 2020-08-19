@@ -1,6 +1,7 @@
 const Promise = require('bluebird')
 
 process.on('unhandledRejection', (reason) => {
+  /* eslint-disable no-console */
   console.error('Unhandled Rejection:', reason)
   process.exit(1)
 })

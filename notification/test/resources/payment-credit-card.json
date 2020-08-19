@@ -1,6 +1,5 @@
 {
-  "id": "123212321",
-  "version": "2",
+  "key": "YOUR_ORDER_NUMBER",
   "amountPlanned": {
     "type": "centPrecision",
     "currencyCode": "EUR",
@@ -8,22 +7,15 @@
     "fractionDigits": 2
   },
   "paymentMethodInfo": {
-    "paymentInterface": "ctp-adyen-integration",
-    "method": "creditCard"
+    "paymentInterface": "ctp-adyen-integration"
   },
   "custom": {
     "type": {
       "typeId": "type",
-      "key": "ctp-adyen-integration-payment-custom-type"
+      "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
-      "countryCode": "DE",
-      "merchantReference":"paymentReferenceId",
-      "encryptedCardNumber":"${encryptedCardNumber}",
-      "encryptedExpiryMonth":"${encryptedExpiryMonth}",
-      "encryptedExpiryYear":"${encryptedExpiryYear}",
-      "encryptedSecurityCode":"${encryptedSecurityCode}",
-      "returnUrl":"https://your-company.com/checkout/"
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":595},\"reference\":\"testReference\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/\"}"
     }
   },
   "paymentStatus": {},
