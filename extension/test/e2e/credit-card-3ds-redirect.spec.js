@@ -43,7 +43,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
           'Content-Type': 'text/html'
         },
         data: '<!DOCTYPE html><html><head></head>'
-          + `<body><div id=redirect-response>${body[0].toString()}</div></body></html>`
+          + `<body><div id=redirect-response>${body}</div></body></html>`
       })
     }
 
