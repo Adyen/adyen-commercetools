@@ -71,7 +71,7 @@
     "@commercetools/sync-actions": "^4.8.2",
     "bluebird": "^3.7.2",
     "bunyan": "^1.8.14",
-    "lockfile-lint": "^4.3.6",
+    "lockfile-lint": "^4.3.7",
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.1",
     "serialize-error": "^7.0.1"
