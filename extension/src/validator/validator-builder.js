@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const pU = require('../paymentHandler/payment-utils')
 const errorMessages = require('./error-messages')
-const c = require('../config/constants')
 
 function withPayment (paymentObject) {
   const errors = {}
@@ -32,12 +31,10 @@ function withPayment (paymentObject) {
       return this
     },
     validateAmountPlanned () {
-      const oldMakePaymentRequestObj = pU.getLatestInterfaceInteraction(
-        paymentObject.interfaceInteractions, c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
-      )
+      const makePaymentRequestString = paymentObject.custom.fields.makePaymentRequest
 
-      if (oldMakePaymentRequestObj) {
-        const { amount } = JSON.parse(oldMakePaymentRequestObj.fields.request)
+      if (makePaymentRequestString) {
+        const { amount } = JSON.parse(makePaymentRequestString)
         const oldAmount = amount.value
         const newAmount = paymentObject.amountPlanned.centAmount
         const oldCurrencyCode = amount.currency

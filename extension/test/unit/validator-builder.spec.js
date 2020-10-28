@@ -32,7 +32,7 @@ describe('Validator builder', () => {
       .to.equal(SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON)
   })
 
-  it('on changing amountPlanned when different amountPlanned exists in the interaction, ' +
+  it('when having a different amountPlanned and amount in makePaymentRequest, ' +
     'validateAmountPlanned() should return error object', async () => {
     const payment = {
       amountPlanned: {
@@ -42,46 +42,15 @@ describe('Validator builder', () => {
         fractionDigits: 2
       },
       custom: {
-        fields: {}
-      },
-      interfaceInteractions: [
-        {
-          fields: {
-            type: 'makePayment',
-            request: JSON.stringify({
-              amount: {
-                currency: 'EUR',
-                value: 10
-              }
-            }),
-            createdAt: '2018-05-14T07:18:37.560Z'
-          }
-        },
-        {
-          fields: {
-            type: 'makePayment',
-            request: JSON.stringify({
-              amount: {
-                currency: 'EUR',
-                value: 1000
-              }
-            }),
-            createdAt: '2020-05-14T07:18:37.560Z'
-          }
-        },
-        {
-          fields: {
-            type: 'makePayment',
-            request: JSON.stringify({
-              amount: {
-                currency: 'EUR',
-                value: 10
-              }
-            }),
-            createdAt: '2019-05-14T07:18:37.560Z'
-          }
+        fields: {
+          makePaymentRequest: JSON.stringify({
+            amount: {
+              currency: 'EUR',
+              value: 1000
+            }
+          })
         }
-      ]
+      }
     }
     const errorObject = ValidatorBuilder.withPayment(payment)
       .validateAmountPlanned()

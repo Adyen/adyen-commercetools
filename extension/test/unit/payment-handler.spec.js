@@ -139,17 +139,13 @@ describe('payment-handler::execute', () => {
       'then it should return errors', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.amountPlanned.centAmount = 0
-      ctpPaymentClone.interfaceInteractions = [{
-        fields: {
-          request: JSON.stringify({
+      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify({
+            reference: 'YOUR_ORDER_NUMBER',
             amount: {
               currency: 'EUR',
               value: 1000
             }
-          }),
-          type: 'makePayment'
-        }
-      }]
+          })
 
       const response = await handlePayment(ctpPaymentClone)
 
@@ -162,50 +158,12 @@ describe('payment-handler::execute', () => {
       'then it should ignore the update', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.amountPlanned.centAmount = 0
-      ctpPaymentClone.interfaceInteractions = []
+      ctpPaymentClone.custom.fields = []
 
       const response = await handlePayment(ctpPaymentClone)
 
       expect(response.success).to.equal(true)
       expect(response.data.actions).to.deep.equal([])
-    })
-
-    it('when amountPlanned is updated and multiple makePayment exists, ' +
-      'then it should check with the newest request', async () => {
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.amountPlanned.centAmount = 0
-      ctpPaymentClone.interfaceInteractions = [
-        {
-          fields: {
-            request: JSON.stringify({
-              amount: {
-                currency: 'EUR',
-                value: 0
-              }
-            }),
-            createdAt: '2019-05-12T07:37:36.241Z',
-            type: 'makePayment'
-          }
-        },
-        {
-          fields: {
-            request: JSON.stringify({
-              amount: {
-                currency: 'EUR',
-                value: 1000
-              }
-            }),
-            createdAt: '2020-05-12T07:37:36.241Z',
-            type: 'makePayment'
-          }
-        }
-      ]
-
-      const response = await handlePayment(ctpPaymentClone)
-
-      expect(response.success).to.equal(false)
-      expect(response.data.errors).to.have.lengthOf.above(0)
-      expect(response.data.errors[0].message).to.equal(errorMessage.AMOUNT_PLANNED_CHANGE_NOT_ALLOWED)
     })
   })
 })
