@@ -32,7 +32,8 @@ describe('Validator builder', () => {
       .to.equal(SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON)
   })
 
-  it('when having a different amountPlanned and amount in makePaymentRequest, ' +
+  it('payment has different amountPlanned and amount in makePaymentRequest custom field ' +
+    'and interface interaction is empty, ' +
     'validateAmountPlanned() should return error object', async () => {
     const payment = {
       amountPlanned: {
@@ -50,13 +51,80 @@ describe('Validator builder', () => {
             }
           })
         }
-      }
+      },
+      interfaceInteractions: []
     }
     const errorObject = ValidatorBuilder.withPayment(payment)
       .validateAmountPlanned()
       .getErrors()
     expect(errorObject.amountPlanned).to.equal(AMOUNT_PLANNED_NOT_SAME)
   })
+
+  it('payment has different amountPlanned and amount in makePaymentRequest interface interaction, ' +
+    'validateAmountPlanned() should return error object',
+    async () => {
+      const payment = {
+        amountPlanned: {
+          type: 'centPrecision',
+          currencyCode: 'EUR',
+          centAmount: 10,
+          fractionDigits: 2
+        },
+        custom: {
+          fields: {
+            makePaymentRequest: JSON.stringify({
+              amount: {
+                currency: 'EUR',
+                value: 10
+              }
+            })
+          }
+        },
+        interfaceInteractions: [
+          {
+            fields: {
+              type: 'makePayment',
+              request: JSON.stringify({
+                amount: {
+                  currency: 'EUR',
+                  value: 10
+                }
+              }),
+              createdAt: '2018-05-14T07:18:37.560Z'
+            }
+          },
+          {
+            fields: {
+              type: 'makePayment',
+              request: JSON.stringify({
+                amount: {
+                  currency: 'EUR',
+                  value: 1000
+                }
+              }),
+              createdAt: '2020-05-14T07:18:37.560Z'
+            }
+          },
+          {
+            fields: {
+              type: 'makePayment',
+              request: JSON.stringify({
+                amount: {
+                  currency: 'EUR',
+                  value: 10
+                }
+              }),
+              createdAt: '2019-05-14T07:18:37.560Z'
+            }
+          }
+        ]
+      }
+
+      const errorObject = ValidatorBuilder.withPayment(payment)
+        .validateAmountPlanned()
+        .getErrors()
+      expect(errorObject.amountPlanned).to.equal(AMOUNT_PLANNED_NOT_SAME)
+    })
 
   it('on missing reference in makePaymentRequest should return error object', async () => {
     const makePaymentRequestDraft = {
