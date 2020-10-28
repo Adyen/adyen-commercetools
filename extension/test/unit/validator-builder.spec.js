@@ -6,7 +6,7 @@ const {
   GET_PAYMENT_METHODS_REQUEST_INVALID_JSON,
   MAKE_PAYMENT_REQUEST_INVALID_JSON,
   SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON,
-  AMOUNT_PLANNED_CHANGE_NOT_ALLOWED,
+  AMOUNT_PLANNED_NOT_SAME,
   MAKE_PAYMENT_REQUEST_MISSING_REFERENCE
 } = require('../../src/validator/error-messages')
 
@@ -55,7 +55,7 @@ describe('Validator builder', () => {
     const errorObject = ValidatorBuilder.withPayment(payment)
       .validateAmountPlanned()
       .getErrors()
-    expect(errorObject.amountPlanned).to.equal(AMOUNT_PLANNED_CHANGE_NOT_ALLOWED)
+    expect(errorObject.amountPlanned).to.equal(AMOUNT_PLANNED_NOT_SAME)
   })
 
   it('on missing reference in makePaymentRequest should return error object', async () => {
