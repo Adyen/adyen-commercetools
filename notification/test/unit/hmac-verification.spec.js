@@ -31,7 +31,7 @@ describe('verify hmac signatures', () => {
   })
 
   it('given a sample signed notification '
-    + 'when notification does not have expected fields'
+    + 'when notification does not have additionalData field'
     + 'then verification should pass', () => {
     const modifiedNotification = cloneDeep(notification)
     modifiedNotification.NotificationRequestItem.additionalData = null
@@ -39,5 +39,17 @@ describe('verify hmac signatures', () => {
     const errorMessage = validateHmacSignature(modifiedNotification)
     expect(errorMessage).to.equal('Notification does not contain the required field ' +
       '"NotificationRequestItem.additionalData". Please check if HMAC is configured correctly or contact Adyen.')
+  })
+
+  it('given a sample signed notification '
+    + 'when notification does not have hmacSignature field'
+    + 'then verification should pass', () => {
+    const modifiedNotification = cloneDeep(notification)
+    modifiedNotification.NotificationRequestItem.additionalData.hmacSignature = null
+
+    const errorMessage = validateHmacSignature(modifiedNotification)
+    expect(errorMessage).to.equal('Notification does not contain the required field ' +
+      '"NotificationRequestItem.additionalData.hmacSignature". ' +
+      'Please check if HMAC is configured correctly or contact Adyen.')
   })
 })
