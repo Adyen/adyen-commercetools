@@ -43,7 +43,7 @@ function withPayment (paymentObject) {
           && paymentObject.custom.fields
           && paymentObject.custom.fields.makePaymentRequest
         if (makePaymentRequestString)
-          amount = JSON.parse(makePaymentRequestString)
+          amount = JSON.parse(makePaymentRequestString).amount
       }
       if (amount) {
         const amountInMakePaymentRequest = amount.value
