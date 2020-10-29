@@ -26,8 +26,8 @@ describe('verify hmac signatures', () => {
     modifiedNotification.NotificationRequestItem.amount.value = 0
 
     const errorMessage = validateHmacSignature(modifiedNotification)
-    expect(errorMessage).to.equal('Notification does not have a valid HMAC signature, ' +
-      'please confirm that the notification was sent by Adyen, and was not modified during transmission.')
+    expect(errorMessage).to.equal('Notification does not have a valid HMAC signature, '
+      + 'please confirm that the notification was sent by Adyen, and was not modified during transmission.')
   })
 
   it('given a sample signed notification '
@@ -37,8 +37,8 @@ describe('verify hmac signatures', () => {
     modifiedNotification.NotificationRequestItem.additionalData = null
 
     const errorMessage = validateHmacSignature(modifiedNotification)
-    expect(errorMessage).to.equal('Notification does not contain the required field ' +
-      '"NotificationRequestItem.additionalData". Please check if HMAC is configured correctly or contact Adyen.')
+    expect(errorMessage).to.equal('Notification does not contain the required field '
+      + '"NotificationRequestItem.additionalData". Please check if HMAC is configured correctly or contact Adyen.')
   })
 
   it('given a sample signed notification '
@@ -48,8 +48,8 @@ describe('verify hmac signatures', () => {
     modifiedNotification.NotificationRequestItem.additionalData.hmacSignature = null
 
     const errorMessage = validateHmacSignature(modifiedNotification)
-    expect(errorMessage).to.equal('Notification does not contain the required field ' +
-      '"NotificationRequestItem.additionalData.hmacSignature". ' +
-      'Please check if HMAC is configured correctly or contact Adyen.')
+    expect(errorMessage).to.equal('Notification does not contain the required field '
+      + '"NotificationRequestItem.additionalData.hmacSignature". '
+      + 'Please check if HMAC is configured correctly or contact Adyen.')
   })
 })
