@@ -1,6 +1,6 @@
 const { cloneDeep } = require('lodash')
 const { expect } = require('chai')
-const { hasValidHmacSignature } = require('../../src/utils/hmacValidator')
+const { validateHmacSignature } = require('../../src/utils/hmacValidator')
 const config = require('../../src/config/config')()
 const notificationRequest = require('../resources/notification.json')
 
@@ -15,8 +15,8 @@ describe('verify hmac signatures', () => {
   it('given a sample signed notification '
     + 'when matches with the stored HMAC key '
     + 'then verification should pass', () => {
-    const valid = hasValidHmacSignature(notification)
-    expect(valid).to.equal(true)
+    const errorMessage = validateHmacSignature(notification)
+    expect(errorMessage).to.equal(null)
   })
 
   it('given a sample signed notification '
@@ -25,7 +25,19 @@ describe('verify hmac signatures', () => {
     const modifiedNotification = cloneDeep(notification)
     modifiedNotification.NotificationRequestItem.amount.value = 0
 
-    const valid = hasValidHmacSignature(modifiedNotification)
-    expect(valid).to.equal(false)
+    const errorMessage = validateHmacSignature(modifiedNotification)
+    expect(errorMessage).to.equal('Notification does not have a valid HMAC signature, ' +
+      'please confirm that the notification was sent by Adyen, and was not modified during transmission.')
+  })
+
+  it('given a sample signed notification '
+    + 'when notification does not have expected fields'
+    + 'then verification should pass', () => {
+    const modifiedNotification = cloneDeep(notification)
+    modifiedNotification.NotificationRequestItem.additionalData = null
+
+    const errorMessage = validateHmacSignature(modifiedNotification)
+    expect(errorMessage).to.equal('Notification does not contain the required field ' +
+      '"NotificationRequestItem.additionalData". Please check if HMAC is configured correctly or contact Adyen.')
   })
 })
