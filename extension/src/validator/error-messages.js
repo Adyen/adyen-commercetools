@@ -5,6 +5,6 @@ module.exports = {
   // eslint-disable-next-line max-len
   SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON: 'submitAdditionalPaymentDetailsRequest does not contain valid JSON.',
   AMOUNT_PLANNED_NOT_SAME: 'amountPlanned field must be the same as the amount in '
-    + 'makePayment request in the interface interactions or in the custom field',
+    + 'makePaymentRequest in the interface interactions or makePaymentRequest  in the custom field',
   MAKE_PAYMENT_REQUEST_MISSING_REFERENCE: 'Required "reference" field is missing in makePaymentRequest.'
 }
