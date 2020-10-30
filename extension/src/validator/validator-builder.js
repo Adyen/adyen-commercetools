@@ -32,18 +32,27 @@ function withPayment (paymentObject) {
       return this
     },
     validateAmountPlanned () {
-      const oldMakePaymentRequestObj = pU.getLatestInterfaceInteraction(
+      let amount
+      const makePaymentRequestInterfaceInteraction = pU.getLatestInterfaceInteraction(
         paymentObject.interfaceInteractions, c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
       )
-
-      if (oldMakePaymentRequestObj) {
-        const { amount } = JSON.parse(oldMakePaymentRequestObj.fields.request)
-        const oldAmount = amount.value
-        const newAmount = paymentObject.amountPlanned.centAmount
-        const oldCurrencyCode = amount.currency
-        const newCurrencyCode = paymentObject.amountPlanned.currencyCode
-        if (oldAmount !== newAmount || oldCurrencyCode !== newCurrencyCode)
-          errors.amountPlanned = errorMessages.AMOUNT_PLANNED_CHANGE_NOT_ALLOWED
+      if (makePaymentRequestInterfaceInteraction)
+        amount = JSON.parse(makePaymentRequestInterfaceInteraction.fields.request).amount
+      else {
+        const makePaymentRequestString = paymentObject.custom
+          && paymentObject.custom.fields
+          && paymentObject.custom.fields.makePaymentRequest
+        if (makePaymentRequestString)
+          amount = JSON.parse(makePaymentRequestString).amount
+      }
+      if (amount) {
+        const amountInMakePaymentRequest = amount.value
+        const amountPlannedValue = paymentObject.amountPlanned.centAmount
+        const currencyInMakePaymentRequest = amount.currency
+        const currencyInAmountPlanned = paymentObject.amountPlanned.currencyCode
+        if (amountInMakePaymentRequest !== amountPlannedValue
+          || currencyInMakePaymentRequest !== currencyInAmountPlanned)
+          errors.amountPlanned = errorMessages.AMOUNT_PLANNED_NOT_SAME
       }
       return this
     },

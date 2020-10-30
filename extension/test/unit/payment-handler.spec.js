@@ -135,33 +135,31 @@ describe('payment-handler::execute', () => {
   })
 
   describe('amountPlanned', () => {
-    it('when amountPlanned is updated and makePayment request exists with a different amount, ' +
+    it('is different than the amount in makePayment request custom field and interface interaction is empty, ' +
       'then it should return errors', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.amountPlanned.centAmount = 0
-      ctpPaymentClone.interfaceInteractions = [{
-        fields: {
-          request: JSON.stringify({
+      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify({
+            reference: 'YOUR_ORDER_NUMBER',
             amount: {
               currency: 'EUR',
               value: 1000
             }
-          }),
-          type: 'makePayment'
-        }
-      }]
+          })
+      ctpPaymentClone.interfaceInteractions = []
 
       const response = await handlePayment(ctpPaymentClone)
 
       expect(response.success).to.equal(false)
       expect(response.data.errors).to.have.lengthOf.above(0)
-      expect(response.data.errors[0].message).to.equal(errorMessage.AMOUNT_PLANNED_CHANGE_NOT_ALLOWED)
+      expect(response.data.errors[0].message).to.equal(errorMessage.AMOUNT_PLANNED_NOT_SAME)
     })
 
-    it('when amountPlanned is updated and makePayment request does not exist, ' +
-      'then it should ignore the update', async () => {
+    it('is 10 and makePayment request does not exist and interface interaction is empty, ' +
+      'then it should not return errors', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.amountPlanned.centAmount = 0
+      ctpPaymentClone.amountPlanned.centAmount = 10
+      ctpPaymentClone.custom.fields = {}
       ctpPaymentClone.interfaceInteractions = []
 
       const response = await handlePayment(ctpPaymentClone)
@@ -170,33 +168,29 @@ describe('payment-handler::execute', () => {
       expect(response.data.actions).to.deep.equal([])
     })
 
-    it('when amountPlanned is updated and multiple makePayment exists, ' +
-      'then it should check with the newest request', async () => {
+    it('is different than makePayment interface interaction, then it should return errors', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.amountPlanned.centAmount = 0
+      ctpPaymentClone.amountPlanned.centAmount = 100
+      ctpPaymentClone.custom.fields = {
+        makePaymentRequest: JSON.stringify({
+          amount: {
+            currency: 'EUR',
+            value: 100
+          },
+          reference: 'YOUR_ORDER_NUMBER'
+        })
+      }
       ctpPaymentClone.interfaceInteractions = [
         {
           fields: {
+            type: 'makePayment',
             request: JSON.stringify({
               amount: {
                 currency: 'EUR',
-                value: 0
+                value: 10
               }
             }),
-            createdAt: '2019-05-12T07:37:36.241Z',
-            type: 'makePayment'
-          }
-        },
-        {
-          fields: {
-            request: JSON.stringify({
-              amount: {
-                currency: 'EUR',
-                value: 1000
-              }
-            }),
-            createdAt: '2020-05-12T07:37:36.241Z',
-            type: 'makePayment'
+            createdAt: '2018-05-14T07:18:37.560Z'
           }
         }
       ]
@@ -204,8 +198,7 @@ describe('payment-handler::execute', () => {
       const response = await handlePayment(ctpPaymentClone)
 
       expect(response.success).to.equal(false)
-      expect(response.data.errors).to.have.lengthOf.above(0)
-      expect(response.data.errors[0].message).to.equal(errorMessage.AMOUNT_PLANNED_CHANGE_NOT_ALLOWED)
+      expect(response.data.errors[0].message).to.equal(errorMessage.AMOUNT_PLANNED_NOT_SAME)
     })
   })
 })

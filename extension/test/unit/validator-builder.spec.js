@@ -6,7 +6,7 @@ const {
   GET_PAYMENT_METHODS_REQUEST_INVALID_JSON,
   MAKE_PAYMENT_REQUEST_INVALID_JSON,
   SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON,
-  AMOUNT_PLANNED_CHANGE_NOT_ALLOWED,
+  AMOUNT_PLANNED_NOT_SAME,
   MAKE_PAYMENT_REQUEST_MISSING_REFERENCE
 } = require('../../src/validator/error-messages')
 
@@ -32,7 +32,8 @@ describe('Validator builder', () => {
       .to.equal(SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON)
   })
 
-  it('on changing amountPlanned when different amountPlanned exists in the interaction, ' +
+  it('payment has different amountPlanned and amount in makePaymentRequest custom field ' +
+    'and interface interaction is empty, ' +
     'validateAmountPlanned() should return error object', async () => {
     const payment = {
       amountPlanned: {
@@ -42,7 +43,41 @@ describe('Validator builder', () => {
         fractionDigits: 2
       },
       custom: {
-        fields: {}
+        fields: {
+          makePaymentRequest: JSON.stringify({
+            amount: {
+              currency: 'EUR',
+              value: 1000
+            }
+          })
+        }
+      },
+      interfaceInteractions: []
+    }
+    const errorObject = ValidatorBuilder.withPayment(payment)
+      .validateAmountPlanned()
+      .getErrors()
+    expect(errorObject.amountPlanned).to.equal(AMOUNT_PLANNED_NOT_SAME)
+  })
+
+  it('payment has different amountPlanned and amount in makePaymentRequest interface interaction, ' +
+    'validateAmountPlanned() should return error object', async () => {
+    const payment = {
+      amountPlanned: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 10,
+        fractionDigits: 2
+      },
+      custom: {
+        fields: {
+          makePaymentRequest: JSON.stringify({
+            amount: {
+              currency: 'EUR',
+              value: 10
+            }
+          })
+        }
       },
       interfaceInteractions: [
         {
@@ -83,10 +118,11 @@ describe('Validator builder', () => {
         }
       ]
     }
+
     const errorObject = ValidatorBuilder.withPayment(payment)
       .validateAmountPlanned()
       .getErrors()
-    expect(errorObject.amountPlanned).to.equal(AMOUNT_PLANNED_CHANGE_NOT_ALLOWED)
+    expect(errorObject.amountPlanned).to.equal(AMOUNT_PLANNED_NOT_SAME)
   })
 
   it('on missing reference in makePaymentRequest should return error object', async () => {
