@@ -1,8 +1,10 @@
 const { expect } = require('chai')
+const _ = require('lodash')
 
 const ctpClientBuilder = require('../../src/ctp')
 const iTSetUp = require('./integration-test-set-up')
 const c = require('../../src/config/constants')
+const packageJson = require('../../package.json')
 
 describe('::getOriginKeys::', () => {
   let ctpClient
@@ -46,6 +48,18 @@ describe('::getOriginKeys::', () => {
     }
 
     const { statusCode, body: payment } = await ctpClient.create(ctpClient.builder.payments, paymentDraft)
+
+    const getOriginKeysRequestExtended = _.cloneDeep(getOriginKeysRequestDraft)
+    getOriginKeysRequestExtended.applicationInfo = {
+      merchantApplication: {
+        name: packageJson.name,
+        version: packageJson.version
+      },
+      externalPlatform: {
+        name: 'commercetools',
+        integrator: packageJson.author.name
+      }
+    }
     expect(statusCode).to.equal(201)
 
     const { getOriginKeysRequest, getOriginKeysResponse } = payment.custom.fields
@@ -58,7 +72,7 @@ describe('::getOriginKeys::', () => {
 
     expect(JSON.parse(interfaceInteraction.fields.request)).to.be.deep.equal({
       merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
-      ...getOriginKeysRequestDraft
+      ...getOriginKeysRequestExtended
     })
 
     const interfaceInteractionResponse = JSON.parse(interfaceInteraction.fields.response)
