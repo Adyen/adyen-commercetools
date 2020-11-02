@@ -129,7 +129,7 @@ describe('::creditCardPayment3dsNative::', () => {
     await redirectPaymentFormPage.goToThisPage()
     await redirectPaymentFormPage.redirectToAdyenPaymentPage(makePaymentResponse)
 
-    await browserTab.waitFor(2000)
+    await browserTab.waitForTimeout(2000)
 
     const additionalPaymentDetailsInput = await browserTab.$('#adyen-additional-payment-details')
     const additionalPaymentDetailsString = await browserTab.evaluate(el => el.value, additionalPaymentDetailsInput)
@@ -154,7 +154,7 @@ describe('::creditCardPayment3dsNative::', () => {
     await redirectPaymentFormPage.goToThisPage()
     await redirectPaymentFormPage.redirectToAdyenPaymentPage(submitAdditionalPaymentDetailsResponse1)
 
-    await browserTab.waitFor(2000)
+    await browserTab.waitForTimeout(2000)
 
     // Submit additional details 2
     const creditCardNativePage = new CreditCardNativePage(browserTab, baseUrl)
