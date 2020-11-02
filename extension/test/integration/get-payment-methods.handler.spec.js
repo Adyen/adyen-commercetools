@@ -1,8 +1,10 @@
 const { expect } = require('chai')
+const _ = require('lodash')
 
 const ctpClientBuilder = require('../../src/ctp')
 const iTSetUp = require('./integration-test-set-up')
 const c = require('../../src/config/constants')
+const packageJson = require('../../package.json')
 
 describe('::getPaymentMethods::', () => {
   let ctpClient
@@ -48,6 +50,18 @@ describe('::getPaymentMethods::', () => {
     }
 
     const { statusCode, body: payment } = await ctpClient.create(ctpClient.builder.payments, paymentDraft)
+
+    const getPaymentMethodsRequestExtended = _.cloneDeep(getPaymentMethodsRequestDraft)
+    getPaymentMethodsRequestExtended.applicationInfo = {
+      merchantApplication: {
+        name: packageJson.name,
+        version: packageJson.version
+      },
+      externalPlatform: {
+        name: 'commercetools',
+        integrator: packageJson.author.name
+      }
+    }
     expect(statusCode).to.equal(201)
 
     const { getPaymentMethodsRequest, getPaymentMethodsResponse } = payment.custom.fields
@@ -60,7 +74,7 @@ describe('::getPaymentMethods::', () => {
 
     expect(JSON.parse(interfaceInteraction.fields.request)).to.be.deep.equal({
       merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
-      ...getPaymentMethodsRequestDraft
+      ...getPaymentMethodsRequestExtended
     })
 
     const interfaceInteractionResponse = JSON.parse(interfaceInteraction.fields.response)
@@ -107,6 +121,30 @@ describe('::getPaymentMethods::', () => {
     }
 
     const { statusCode, body: payment } = await ctpClient.create(ctpClient.builder.payments, paymentDraft)
+
+    const getPaymentMethodsRequestExtended = _.cloneDeep(getPaymentMethodsRequestDraft)
+    getPaymentMethodsRequestExtended.applicationInfo = {
+      merchantApplication: {
+        name: packageJson.name,
+        version: packageJson.version
+      },
+      externalPlatform: {
+        name: 'commercetools',
+        integrator: packageJson.author.name
+      }
+    }
+    expect(statusCode).to.equal(201)
+    const getOriginKeysRequestExtended = _.cloneDeep(getOriginKeysRequestDraft)
+    getOriginKeysRequestExtended.applicationInfo = {
+      merchantApplication: {
+        name: packageJson.name,
+        version: packageJson.version
+      },
+      externalPlatform: {
+        name: 'commercetools',
+        integrator: packageJson.author.name
+      }
+    }
     expect(statusCode).to.equal(201)
 
     const {
@@ -123,7 +161,7 @@ describe('::getPaymentMethods::', () => {
 
     expect(JSON.parse(originKeysInteraction.fields.request)).to.be.deep.equal({
       merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
-      ...getOriginKeysRequestDraft
+      ...getOriginKeysRequestExtended
     })
     const originKeysInteractionResponse = JSON.parse(originKeysInteraction.fields.response)
     expect(originKeysInteractionResponse.originKeys).to.exist
@@ -135,7 +173,7 @@ describe('::getPaymentMethods::', () => {
 
     expect(JSON.parse(paymentMethodsInteraction.fields.request)).to.be.deep.equal({
       merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
-      ...getPaymentMethodsRequestDraft
+      ...getPaymentMethodsRequestExtended
     })
 
     const paymentMethodsInteractionResponse = JSON.parse(paymentMethodsInteraction.fields.response)
