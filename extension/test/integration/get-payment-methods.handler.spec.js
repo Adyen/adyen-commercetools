@@ -70,14 +70,9 @@ describe('::getPaymentMethods::', () => {
   })
 
   it('given a payment ' +
-    'when getOriginKeysRequest and getPaymentMethodsRequest custom fields are set and responses are not ' +
-    'then should set custom fields getOriginKeysResponse and getPaymentMethodsResponse ' +
-    'and interface interactions with type getPaymentMethods and getOriginKeys', async () => {
-    const getOriginKeysRequestDraft = {
-      originDomains: [
-        'http://localhost'
-      ]
-    }
+    'when getPaymentMethodsRequest custom fields is set and response is not ' +
+    'then should set custom field getPaymentMethodsResponse ' +
+    'and interface interaction with type getPaymentMethods', async () => {
     const getPaymentMethodsRequestDraft = {
       countryCode: 'DE',
       shopperLocale: 'de-DE',
@@ -100,7 +95,6 @@ describe('::getPaymentMethods::', () => {
           key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
         },
         fields: {
-          getOriginKeysRequest: JSON.stringify(getOriginKeysRequestDraft),
           getPaymentMethodsRequest: JSON.stringify(getPaymentMethodsRequestDraft)
         }
       }
@@ -110,23 +104,9 @@ describe('::getPaymentMethods::', () => {
     expect(statusCode).to.equal(201)
 
     const {
-      getOriginKeysRequest, getOriginKeysResponse,
       getPaymentMethodsRequest, getPaymentMethodsResponse
     } = payment.custom.fields
-    expect(getOriginKeysRequest).to.be.deep.equal(JSON.stringify(getOriginKeysRequestDraft))
     expect(getPaymentMethodsRequest).to.be.deep.equal(JSON.stringify(getPaymentMethodsRequestDraft))
-
-    const originKeysInteraction = payment.interfaceInteractions
-      .find(interaction => interaction.fields.type === c.CTP_INTERACTION_TYPE_GET_ORIGIN_KEYS)
-    expect(originKeysInteraction).to.not.undefined
-    expect(getOriginKeysResponse).to.be.deep.equal(originKeysInteraction.fields.response)
-
-    expect(JSON.parse(originKeysInteraction.fields.request)).to.be.deep.equal({
-      merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
-      ...getOriginKeysRequestDraft
-    })
-    const originKeysInteractionResponse = JSON.parse(originKeysInteraction.fields.response)
-    expect(originKeysInteractionResponse.originKeys).to.exist
 
     const paymentMethodsInteraction = payment.interfaceInteractions
       .find(interaction => interaction.fields.type === c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS)

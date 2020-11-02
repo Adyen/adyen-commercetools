@@ -3,10 +3,9 @@ const MakePaymentFormPage = require('./MakePaymentFormPage')
 
 module.exports = class CreditCardMakePaymentFormPage extends MakePaymentFormPage {
   async getMakePaymentRequest ({
-                                 getOriginKeysResponse,
-                                 creditCardNumber, creditCardDate, creditCardCvc
+                                 creditCardNumber, creditCardDate, creditCardCvc, clientKey
                                }) {
-    await this.generateAdyenMakePaymentForm(getOriginKeysResponse)
+    await this.generateAdyenMakePaymentForm(clientKey)
     await executeInAdyenIframe(this.page, '#encryptedCardNumber', el => el.type(creditCardNumber))
     await executeInAdyenIframe(this.page, '#encryptedExpiryDate', el => el.type(creditCardDate))
     await executeInAdyenIframe(this.page, '#encryptedSecurityCode', el => el.type(creditCardCvc))

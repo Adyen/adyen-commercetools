@@ -4,7 +4,7 @@ const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
 const configBuilder = require('../../src/config/config')
 const httpUtils = require('../../src/utils')
-const { assertPayment, createPaymentWithOriginKeyResponse, initPuppeteerBrowser } = require('./e2e-test-utils')
+const { assertPayment, createPayment, initPuppeteerBrowser } = require('./e2e-test-utils')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const CreditCardNativePage = require('./pageObjects/CreditCard3dsNativePage')
@@ -63,32 +63,31 @@ describe('::creditCardPayment3dsNative::', () => {
     it(`when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
       'then it should successfully finish the payment with 3DS native authentication flow',
       async () => {
-        const baseUrl = configBuilder.load().apiExtensionBaseUrl
-        const payment = await createPaymentWithOriginKeyResponse(ctpClient, baseUrl)
-        const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
-        const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
+        const config = configBuilder.load()
+        const baseUrl = config.apiExtensionBaseUrl
+        const clientKey = config.adyen.clientKey
+        const payment = await createPayment(ctpClient)
 
         const browserTab = await browser.newPage()
 
         const paymentAfterMakePayment = await makePayment({
           browserTab,
           baseUrl,
-          getOriginKeysResponse,
           creditCardNumber,
           creditCardDate,
           creditCardCvc,
-          payment
+          payment,
+          clientKey
         })
 
         const paymentAfterIdentifyShopper = await identifyShopper({
-          payment: paymentAfterMakePayment, browserTab, baseUrl, getOriginKeysResponse
+          payment: paymentAfterMakePayment, browserTab, baseUrl
         })
 
         const paymentAfterAuthentication = await performChallengeFlow({
           payment: paymentAfterIdentifyShopper,
           browserTab,
-          baseUrl,
-          getOriginKeysResponse
+          baseUrl
         })
 
         assertPayment(paymentAfterAuthentication)
@@ -96,18 +95,19 @@ describe('::creditCardPayment3dsNative::', () => {
   })
 
   async function makePayment ({
-                                browserTab, baseUrl, getOriginKeysResponse,
+                                browserTab, baseUrl,
                                 creditCardNumber,
                                 creditCardDate,
-                                creditCardCvc, payment
+                                creditCardCvc, payment,
+                                clientKey
                               }) {
     const makePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
     await makePaymentFormPage.goToThisPage()
     const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({
-      getOriginKeysResponse,
       creditCardNumber,
       creditCardDate,
-      creditCardCvc
+      creditCardCvc,
+      clientKey
     })
 
     const { body: updatedPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,
@@ -121,13 +121,13 @@ describe('::creditCardPayment3dsNative::', () => {
   }
 
   async function identifyShopper ({
-                                    payment, browserTab, baseUrl, getOriginKeysResponse
+                                    payment, browserTab, baseUrl
                                   }) {
     const { makePaymentResponse: makePaymentResponseString } = payment.custom.fields
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
     const redirectPaymentFormPage = new RedirectPaymentFormPage(browserTab, baseUrl)
     await redirectPaymentFormPage.goToThisPage()
-    await redirectPaymentFormPage.redirectToAdyenPaymentPage(getOriginKeysResponse, makePaymentResponse)
+    await redirectPaymentFormPage.redirectToAdyenPaymentPage(makePaymentResponse)
 
     await browserTab.waitFor(2000)
 
@@ -144,7 +144,7 @@ describe('::creditCardPayment3dsNative::', () => {
   }
 
   async function performChallengeFlow ({
-                                              payment, browserTab, baseUrl, getOriginKeysResponse
+                                              payment, browserTab, baseUrl
                                             }) {
     // Submit additional details 1
     const { submitAdditionalPaymentDetailsResponse: submitAdditionalPaymentDetailsResponseString }
@@ -152,9 +152,7 @@ describe('::creditCardPayment3dsNative::', () => {
     const submitAdditionalPaymentDetailsResponse1 = await JSON.parse(submitAdditionalPaymentDetailsResponseString)
     const redirectPaymentFormPage = new RedirectPaymentFormPage(browserTab, baseUrl)
     await redirectPaymentFormPage.goToThisPage()
-    await redirectPaymentFormPage.redirectToAdyenPaymentPage(
-      getOriginKeysResponse, submitAdditionalPaymentDetailsResponse1
-    )
+    await redirectPaymentFormPage.redirectToAdyenPaymentPage(submitAdditionalPaymentDetailsResponse1)
 
     await browserTab.waitFor(2000)
 

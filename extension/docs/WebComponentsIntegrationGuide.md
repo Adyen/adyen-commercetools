@@ -47,12 +47,10 @@ The following diagram shows checkout integration flow based on [Adyen Web Compon
 
 - [Step 1](#step-1-commercetools-checkout-validations) : Execute required checkout validations.
 - [Step 2](#step-2-get-available-payment-methods): Set `getPaymentMethodsRequest` custom field to commercetools payment to get the list of payment methods available for the checkout.
-- [Step 3](#step-3-add-components-to-your-payments-form): Set `getOriginKeysRequest` custom field to commercetools payment to get origin key and add the specific payment method Component to your checkout payments form.
+- [Step 3](#step-3-add-components-to-your-payments-form): generate Adyen Web Component to your checkout payments form.
 - [Step 4](#step-4-make-a-payment): Submit a payment request by setting `makePaymentRequest` payment custom field with the payment data returned by the Adyen web component.
 - [Step 5](#step-5-submit-additional-payment-details): Set `submitAdditionalPaymentDetailsRequest ` custom field to commercetools payment to submit additional payment details. 
 - [Step 6](#step-6-capture-payment-required-for-klarna): Add an optional `Charge` transaction to commercetools payment in order to manually capture the payment.
-
-> **Note** for Step 2 and Step 3: For a better performance `getOriginKeysRequest` can be supplied together with `getPaymentMethodsRequest` and the responses could be cached by the merchant server.
 
 ## Before you begin
 In order to make the extension module up and running, follow our [deployment guide](./DeploymentGuide.md).
@@ -166,57 +164,9 @@ Next, use the Adyen `Component` to render the payment method, and collect the re
 
 If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Components integration guide](https://docs.adyen.com/checkout/components-web#step-2-add-components).
 
-An `origin key` is a client-side key that is used to validate Adyen's JavaScript component library. It is required to render a Component.
+A `client key` is a client-side key that is used to validate Adyen's JavaScript component library. It is required to render a Component.
 
-In order to get the origin key [update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `getOriginKeysRequest` custom field. 
-Note: if you want to get both origin keys and payment methods at once, you can set both `getOriginKeysRequest` and `getPaymentMethodsRequest` to the commercetools payment object within a single update request or on payment creation.
-
-An [update action](https://docs.commercetools.com/http-api-projects-payments#set-customfield) to set `getOriginKeysRequest` custom field.
-> Refer Adyen's [/originKeys](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/v52/post/originKeys) request to check all possible request payload parameters.
-
-```
-{
-  "version": "PAYMENT_VERSION",
-  "actions": [  
-    {
-      "action": "setCustomField",
-      "name": "getOriginKeysRequest",
-      "value": "{\"originDomains\":[\"https://www.your-company1.com\",\"https://www.your-company2.com\"]}"
-    }
-  ]
-}
-```
-
-The response contains a list of origin keys for all requested domains. For each list item, the key is the domain, and the value is its associated origin key. For more info see also [origin keys](https://docs.adyen.com/user-management/how-to-get-an-origin-key) 
-
-``` json
-{
- "originKeys":{
-    "https://www.your-company1.com":"pub.v2.99...",
-    "https://www.your-company2.com":"pub.v2.99...",
- }
-}
-```
-
-The commercetools payment representation example:
-
-``` json
-{
-  "custom": {
-    "type": {
-      "typeId": "type",
-      "key": "ctp-adyen-integration-web-components-payment-type"
-    },
-    "fields": {
-      "getOriginKeysRequest": "{\"originDomains\":[\"https://www.your-company1.com\",\"https://www.your-company2.com\"]}",
-      "getOriginKeysResponse": "{\"originKeys\":{\"https://www.your-company1.com\":\"pub.v2.99...\",\"https://www.your-company2.com\":\"pub.v2.99...\"}}"
-    }
-  }
-}
-```
-
-Pass the `origin key` to your front end. Origin key is required to render an Adyen payment method Component.
- 
+In order to get a `client key`, follow the official [Adyen documentation](https://docs.adyen.com/development-resources/client-side-authentication#get-your-client-key).
 
 ## Step 4: Make a payment
 

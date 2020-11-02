@@ -6,7 +6,7 @@ const configBuilder = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
 const pU = require('../../src/paymentHandler/payment-utils')
-const { assertPayment, createPaymentWithOriginKeyResponse, initPuppeteerBrowser } = require('./e2e-test-utils')
+const { assertPayment, createPayment, initPuppeteerBrowser } = require('./e2e-test-utils')
 const KlarnaMakePaymentFormPage = require('./pageObjects/KlarnaMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const KlarnaPage = require('./pageObjects/KlarnaPage')
@@ -50,19 +50,19 @@ describe('::klarnaPayment::', () => {
     'then it should successfully finish the payment', async function () {
     this.timeout(60000)
 
-    const baseUrl = configBuilder.load().apiExtensionBaseUrl
-    const payment = await createPaymentWithOriginKeyResponse(ctpClient, baseUrl)
-    const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
-    const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
+    const config = configBuilder.load()
+    const baseUrl = config.apiExtensionBaseUrl
+    const clientKey = config.adyen.clientKey
+    const payment = await createPayment(ctpClient, baseUrl)
 
     const browserTab = await browser.newPage()
 
     const paymentAfterMakePayment = await makePayment({
-      browserTab, baseUrl, payment, getOriginKeysResponse
+      browserTab, baseUrl, payment, clientKey
     })
 
     const paymentAfterHandleRedirect = await handleRedirect({
-      browserTab, baseUrl, payment: paymentAfterMakePayment, getOriginKeysResponse
+      browserTab, baseUrl, payment: paymentAfterMakePayment
     })
 
     assertPayment(paymentAfterHandleRedirect)
@@ -74,11 +74,11 @@ describe('::klarnaPayment::', () => {
   })
 
   async function makePayment ({
-                                browserTab, baseUrl, payment, getOriginKeysResponse
+                                browserTab, baseUrl, payment, clientKey
                               }) {
     const makePaymentFormPage = new KlarnaMakePaymentFormPage(browserTab, baseUrl)
     await makePaymentFormPage.goToThisPage()
-    const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({ getOriginKeysResponse })
+    const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest(clientKey)
 
     const { body: updatedPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,
       payment.version, [{
@@ -91,7 +91,7 @@ describe('::klarnaPayment::', () => {
   }
 
   async function handleRedirect ({
-                                   browserTab, baseUrl, payment, getOriginKeysResponse
+                                   browserTab, baseUrl, payment
                                  }) {
     const { makePaymentResponse: makePaymentResponseString } = payment.custom.fields
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
@@ -100,7 +100,7 @@ describe('::klarnaPayment::', () => {
     const redirectPaymentFormPage = new RedirectPaymentFormPage(browserTab, baseUrl)
     await redirectPaymentFormPage.goToThisPage()
     await Promise.all([
-      redirectPaymentFormPage.redirectToAdyenPaymentPage(getOriginKeysResponse, makePaymentResponse),
+      redirectPaymentFormPage.redirectToAdyenPaymentPage(makePaymentResponse),
       browserTab.waitForSelector('#buy-button:not([disabled])')
     ])
 

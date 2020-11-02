@@ -5,7 +5,7 @@ const ctpClientBuilder = require('../../src/ctp')
 const configBuilder = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
-const { assertPayment, createPaymentWithOriginKeyResponse, initPuppeteerBrowser } = require('./e2e-test-utils')
+const { assertPayment, createPayment, initPuppeteerBrowser } = require('./e2e-test-utils')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const CreditCardRedirectPage = require('./pageObjects/CreditCard3dsRedirectPage')
@@ -64,25 +64,25 @@ describe('::creditCardPayment3dsRedirect::', () => {
     it(`when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
       'then it should successfully finish the payment with 3DS redirect flow',
       async () => {
-        const baseUrl = configBuilder.load().apiExtensionBaseUrl
-        const payment = await createPaymentWithOriginKeyResponse(ctpClient, baseUrl)
-        const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
-        const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
+        const config = configBuilder.load()
+        const baseUrl = config.apiExtensionBaseUrl
+        const clientKey = config.adyen.clientKey
+        const payment = await createPayment(ctpClient, baseUrl)
 
         const browserTab = await browser.newPage()
 
         const paymentAfterMakePayment = await makePayment({
           browserTab,
           baseUrl,
-          getOriginKeysResponse,
           creditCardNumber,
           creditCardDate,
           creditCardCvc,
-          payment
+          payment,
+          clientKey
         })
 
         const paymentAfterRedirect = await handleRedirect({
-          browserTab, baseUrl, payment: paymentAfterMakePayment, getOriginKeysResponse
+          browserTab, baseUrl, payment: paymentAfterMakePayment
         })
 
         assertPayment(paymentAfterRedirect)
@@ -90,18 +90,19 @@ describe('::creditCardPayment3dsRedirect::', () => {
   })
 
   async function makePayment ({
-                                browserTab, baseUrl, getOriginKeysResponse,
+                                browserTab, baseUrl,
                                 creditCardNumber,
                                 creditCardDate,
-                                creditCardCvc, payment
+                                creditCardCvc, payment,
+                                clientKey
                               }) {
     const makePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
     await makePaymentFormPage.goToThisPage()
     const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({
-      getOriginKeysResponse,
       creditCardNumber,
       creditCardDate,
-      creditCardCvc
+      creditCardCvc,
+      clientKey
     })
 
     const { body: updatedPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,
@@ -115,7 +116,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
   }
 
   async function handleRedirect ({
-                                   browserTab, baseUrl, payment, getOriginKeysResponse
+                                   browserTab, baseUrl, payment
                                  }) {
     const { makePaymentResponse: makePaymentResponseString } = payment.custom.fields
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
@@ -124,7 +125,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
     await redirectPaymentFormPage.goToThisPage()
 
     await Promise.all([
-      redirectPaymentFormPage.redirectToAdyenPaymentPage(getOriginKeysResponse, makePaymentResponse),
+      redirectPaymentFormPage.redirectToAdyenPaymentPage(makePaymentResponse),
       browserTab.waitForNavigation()
     ])
 
