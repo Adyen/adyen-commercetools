@@ -38,7 +38,7 @@ While developing project you can use some predefined commands for running tests,
 - Execute `npm run lint` to show lint errors in the code.
 
 > You need to set [environment variables](./DeploymentGuide.md#environment-variables) to be able to run integration and e2e tests.
- Additionally, there could be more environmental variables needed for tests. See the next sections of this documentatin.
+ Additionally, there could be more environmental variables needed for tests. See the next sections of this documentation.
 
 #### E2E tests
 Following additional environment variables must be provided in order to run the E2E tests.
