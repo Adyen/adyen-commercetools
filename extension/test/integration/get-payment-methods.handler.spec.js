@@ -128,18 +128,6 @@ describe('::getPaymentMethods::', () => {
       }
     }
     expect(statusCode).to.equal(201)
-    const getOriginKeysRequestExtended = _.cloneDeep(getOriginKeysRequestDraft)
-    getOriginKeysRequestExtended.applicationInfo = {
-      merchantApplication: {
-        name: packageJson.name,
-        version: packageJson.version
-      },
-      externalPlatform: {
-        name: 'commercetools',
-        integrator: packageJson.author.name
-      }
-    }
-    expect(statusCode).to.equal(201)
 
     const {
       getPaymentMethodsRequest, getPaymentMethodsResponse
