@@ -166,6 +166,8 @@ If you haven't created the payment forms already in your frontend, follow the of
 
 To be able to render an Adyen web component, a valid `clientKey` is needed. In order to get a `clientKey`, follow the official [Adyen documentation](https://docs.adyen.com/development-resources/client-side-authentication#get-your-client-key).
 
+> **Note** for Step 2 and Step 3: For a better performance `getPaymentMethodsResponse` could be cached by the merchant server.
+
 ## Step 4: Make a payment
 
 After the shopper submits their payment details or chooses to pay with a payment method that requires a redirection,
