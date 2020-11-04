@@ -5,11 +5,6 @@ const packageJson = require('../../package.json')
 
 const config = configLoader.load()
 
-function getOriginKeys (getOriginKeysRequestObj) {
-  return callAdyen(`${config.adyen.apiBaseUrl}/originKeys`,
-    extendRequestObjWithApplicationInfo(getOriginKeysRequestObj))
-}
-
 function getPaymentMethods (getPaymentMethodsRequestObj) {
   return callAdyen(`${config.adyen.apiBaseUrl}/paymentMethods`,
     extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj))
@@ -82,7 +77,6 @@ function buildRequest (requestObj) {
 }
 
 module.exports = {
-  getOriginKeys,
   getPaymentMethods,
   makePayment,
   submitAdditionalPaymentDetails,

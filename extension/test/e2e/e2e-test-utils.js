@@ -53,12 +53,7 @@ function assertPayment (payment, finalAdyenPaymentInteractionName = 'submitAddit
   expect(transaction.amount.currencyCode).to.equal(payment.amountPlanned.currencyCode)
 }
 
-async function createPaymentWithOriginKeyResponse (ctpClient, baseUrl) {
-  const getOriginKeysRequestDraft = {
-    originDomains: [
-      baseUrl
-    ]
-  }
+async function createPayment (ctpClient) {
   const paymentDraft = {
     amountPlanned: {
       currencyCode: 'EUR',
@@ -73,7 +68,6 @@ async function createPaymentWithOriginKeyResponse (ctpClient, baseUrl) {
         key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY
       },
       fields: {
-        getOriginKeysRequest: JSON.stringify(getOriginKeysRequestDraft)
       }
     }
   }
@@ -83,5 +77,5 @@ async function createPaymentWithOriginKeyResponse (ctpClient, baseUrl) {
 }
 
 module.exports = {
-  pasteValue, executeInAdyenIframe, assertPayment, createPaymentWithOriginKeyResponse, initPuppeteerBrowser
+  pasteValue, executeInAdyenIframe, assertPayment, createPayment, initPuppeteerBrowser
 }

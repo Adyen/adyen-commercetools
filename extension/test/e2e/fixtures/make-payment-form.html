@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>Make Payment</title>
-        <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.8.1/adyen.css"
-              integrity="sha384-y1lKqffK5z+ENzddmGIfP3bcMRobxkjDt/9lyPAvV9H3JXbJYxCSD6L8TdyRMCGM"
+        <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.17.0/adyen.css"
+              integrity="sha384-gbQyzqV1xX+snFEMrubEm0IpmYSufBjUnHzTaJZ+dcWCyxl0j94IZhnfC2gbxgeu"
               crossorigin="anonymous">
     </head>
     <body>
@@ -25,20 +25,20 @@
             </a>
         </div>
         <div>
-            <input type="text" id="adyen-origin-key" placeholder="Adyen origin key"/><br/>
+            <input type="text" id="adyen-client-key" placeholder="Adyen client key"/><br/>
             <textarea id="adyen-make-payment-request">Make payment request will come here</textarea>
         </div>
         <br/>
         <div id="component-container"></div>
 
-        <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.8.1/adyen.js"
-                integrity="sha384-rGkZxBRhUfCECwNuNrllGf8dOpeUsKTMqczAkphoWMne67C32+na/29lUGT3HVOB"
+        <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.17.0/adyen.js"
+                integrity="sha384-G9jkTAyCOIVdksXbtrNgdur2DyRi85ujYLXbqe5AvvH23rN21d7xiU7cRIqvsEaH"
                 crossorigin="anonymous"></script>
         <script type="application/javascript">
           const configuration = {
             locale: "en_US", // The shopper's locale. For a list of supported locales, see https://docs.adyen.com/checkout/components-web/localization-components.
             environment: "test", // When you're ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
-            originKey: "", // Your website's Origin Key. To find out how to generate one, see https://docs.adyen.com/user-management/how-to-get-an-origin-key.
+            clientKey: "test_WT5XD2TUYFH2TBJDE5UKLYDHF4U4W7XP", // Your client key. To find out how to generate one, see https://docs.adyen.com/development-resources/client-side-authentication.
             paymentMethodsResponse: {
               "groups": [
                 {
@@ -277,9 +277,9 @@
             document.getElementById('adyen-make-payment-request').innerHTML = JSON.stringify(makePaymentRequest)
           }
 
-          const originKeyElement = document.getElementById('adyen-origin-key');
-          originKeyElement.addEventListener('blur', () => {
-            configuration.originKey = originKeyElement.value;
+          const clientKeyElement = document.getElementById('adyen-client-key');
+          clientKeyElement.addEventListener('blur', () => {
+            configuration.clientKey = clientKeyElement.value;
             const checkout = new AdyenCheckout(configuration);
             checkout.create('card').mount('#component-container');
           })

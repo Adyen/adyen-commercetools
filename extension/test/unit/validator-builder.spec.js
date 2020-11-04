@@ -2,7 +2,6 @@ const { expect } = require('chai')
 
 const ValidatorBuilder = require('../../src/validator/validator-builder')
 const {
-  GET_ORIGIN_KEYS_REQUEST_INVALID_JSON,
   GET_PAYMENT_METHODS_REQUEST_INVALID_JSON,
   MAKE_PAYMENT_REQUEST_INVALID_JSON,
   SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON,
@@ -15,7 +14,6 @@ describe('Validator builder', () => {
     const invalidPayment = {
       custom: {
         fields: {
-          getOriginKeysRequest: '{"a"}',
           getPaymentMethodsRequest: '{"a"}',
           makePaymentRequest: '{"a"}',
           submitAdditionalPaymentDetailsRequest: '{"a"}'
@@ -25,7 +23,6 @@ describe('Validator builder', () => {
     const errorObject = ValidatorBuilder.withPayment(invalidPayment)
       .validateRequestFields()
       .getErrors()
-    expect(errorObject.getOriginKeysRequest).to.equal(GET_ORIGIN_KEYS_REQUEST_INVALID_JSON)
     expect(errorObject.getPaymentMethodsRequest).to.equal(GET_PAYMENT_METHODS_REQUEST_INVALID_JSON)
     expect(errorObject.makePaymentRequest).to.equal(MAKE_PAYMENT_REQUEST_INVALID_JSON)
     expect(errorObject.submitAdditionalPaymentDetailsRequest)

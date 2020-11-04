@@ -8,28 +8,6 @@
   ],
   "fieldDefinitions": [
     {
-      "name": "getOriginKeysRequest",
-      "label": {
-        "en": "getOriginKeysRequest"
-      },
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "MultiLine",
-      "required": false
-    },
-    {
-      "name": "getOriginKeysResponse",
-      "label": {
-        "en": "getOriginKeysResponse"
-      },
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "MultiLine",
-      "required": false
-    },
-    {
       "name": "getPaymentMethodsRequest",
       "label": {
         "en": "getPaymentMethodsRequest"

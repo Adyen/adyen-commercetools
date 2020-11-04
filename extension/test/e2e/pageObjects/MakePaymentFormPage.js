@@ -8,10 +8,10 @@ module.exports = class MakePaymentFormPage {
     await this.page.goto(`${this.baseUrl}/make-payment-form`)
   }
 
-  async generateAdyenMakePaymentForm (getOriginKeysResponse) {
-    await this.page.type('#adyen-origin-key', getOriginKeysResponse.originKeys[this.baseUrl])
-    await this.page.$eval('#adyen-origin-key', e => e.blur())
-    await this.page.waitFor(3000)
+  async generateAdyenMakePaymentForm (clientKey) {
+    await this.page.type('#adyen-client-key', clientKey)
+    await this.page.$eval('#adyen-client-key', e => e.blur())
+    await this.page.waitForTimeout(3000)
   }
 
   async getMakePaymentRequestTextAreaValue () {

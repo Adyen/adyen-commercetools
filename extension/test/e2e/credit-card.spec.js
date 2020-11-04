@@ -4,7 +4,7 @@ const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
 const configBuilder = require('../../src/config/config')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
-const { assertPayment, createPaymentWithOriginKeyResponse, initPuppeteerBrowser } = require('./e2e-test-utils')
+const { assertPayment, createPayment, initPuppeteerBrowser } = require('./e2e-test-utils')
 
 // Flow description: https://docs.adyen.com/checkout/components-web
 describe('::creditCardPayment::', () => {
@@ -39,10 +39,10 @@ describe('::creditCardPayment::', () => {
     it(`when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
       'then it should successfully finish the payment',
       async () => {
-        const baseUrl = configBuilder.load().apiExtensionBaseUrl
-        const payment = await createPaymentWithOriginKeyResponse(ctpClient, baseUrl)
-        const { getOriginKeysResponse: getOriginKeysResponseString } = payment.custom.fields
-        const getOriginKeysResponse = await JSON.parse(getOriginKeysResponseString)
+        const config = configBuilder.load()
+        const baseUrl = config.apiExtensionBaseUrl
+        const clientKey = config.adyen.clientKey
+        const payment = await createPayment(ctpClient, baseUrl)
 
         const browserTab = await browser.newPage()
 
@@ -50,10 +50,10 @@ describe('::creditCardPayment::', () => {
           browserTab,
           payment,
           baseUrl,
-          getOriginKeysResponse,
           creditCardNumber,
           creditCardDate,
-          creditCardCvc
+          creditCardCvc,
+          clientKey
         })
 
         assertPayment(paymentAfteMakePayment, 'makePayment')
@@ -61,18 +61,19 @@ describe('::creditCardPayment::', () => {
   })
 
   async function makePayment ({
-                                browserTab, payment, baseUrl, getOriginKeysResponse,
+                                browserTab, payment, baseUrl,
                                 creditCardNumber,
                                 creditCardDate,
-                                creditCardCvc
+                                creditCardCvc,
+                                clientKey
                               }) {
     const makePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
     await makePaymentFormPage.goToThisPage()
     const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({
-      getOriginKeysResponse,
       creditCardNumber,
       creditCardDate,
-      creditCardCvc
+      creditCardCvc,
+      clientKey
     })
 
     const { body: updatedPayment } = await ctpClient.update(ctpClient.builder.payments, payment.id,

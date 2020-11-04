@@ -1,8 +1,8 @@
 const MakePaymentFormPage = require('./MakePaymentFormPage')
 
 module.exports = class KlarnaMakePaymentFormPage extends MakePaymentFormPage {
-  async getMakePaymentRequest ({ getOriginKeysResponse }) {
-    await this.generateAdyenMakePaymentForm(getOriginKeysResponse)
+  async getMakePaymentRequest (clientKey) {
+    await this.generateAdyenMakePaymentForm(clientKey)
     return this.getMakePaymentRequestTextAreaValue()
   }
 }

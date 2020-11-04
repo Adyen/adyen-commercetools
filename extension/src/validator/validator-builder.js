@@ -10,8 +10,6 @@ function withPayment (paymentObject) {
     validateRequestFields () {
       if (!paymentObject.custom)
         return this
-      if (!pU.isValidJSON(paymentObject.custom.fields.getOriginKeysRequest))
-        errors.getOriginKeysRequest = errorMessages.GET_ORIGIN_KEYS_REQUEST_INVALID_JSON
       if (!pU.isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
         errors.getPaymentMethodsRequest = errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
       if (!pU.isValidJSON(paymentObject.custom.fields.makePaymentRequest))
