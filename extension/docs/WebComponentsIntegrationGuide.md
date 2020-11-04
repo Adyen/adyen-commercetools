@@ -164,9 +164,7 @@ Next, use the Adyen `Component` to render the payment method, and collect the re
 
 If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Components integration guide](https://docs.adyen.com/checkout/components-web#step-2-add-components).
 
-A `client key` is a client-side key that is used to validate Adyen's JavaScript component library. It is required to render a Component.
-
-In order to get a `client key`, follow the official [Adyen documentation](https://docs.adyen.com/development-resources/client-side-authentication#get-your-client-key).
+To be able to render an Adyen web component, a valid `clientKey` is needed. In order to get a `clientKey`, follow the official [Adyen documentation](https://docs.adyen.com/development-resources/client-side-authentication#get-your-client-key).
 
 ## Step 4: Make a payment
 
