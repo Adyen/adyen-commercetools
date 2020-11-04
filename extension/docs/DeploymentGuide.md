@@ -29,7 +29,7 @@ Following environment variables must be provided in order to run the extension m
 | --- | --- | --- | --- |
 |`ADYEN_MERCHANT_ACCOUNT` | The name of your merchant account. | YES | |
 |`ADYEN_API_KEY` | You'll be making API requests that are authenticated with an [API key](https://docs.adyen.com/user-management/how-to-get-the-api-key#page-introduction). | YES | |
-|`ADYEN_API_BASE_URL` | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen. | YES | `https://checkout-test.adyen.com/v52` |
+|`ADYEN_API_BASE_URL` | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen. | YES | `https://checkout-test.adyen.com/v65` |
 |`ADYEN_LEGACY_API_BASE_URL` | [Standart payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen. | YES | `https://pal-test.adyen.com/pal/servlet/Payment/v52` |
 
 > Note: Sometimes it's necessary to regenerate the `ADYEN_API_KEY` key, when you get `403 Forbidden error` from Adyen.

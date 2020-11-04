@@ -25,8 +25,8 @@ function getAdyenCredentials () {
   return {
     merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
     apiKey: process.env.ADYEN_API_KEY,
-    apiBaseUrl: process.env.ADYEN_API_BASE_URL || 'https://checkout-test.adyen.com/v52',
-    legacyApiBaseUrl: process.env.ADYEN_LEGACY_API_BASE_URL || 'https://pal-test.adyen.com/pal/servlet/Payment/v52',
+    apiBaseUrl: process.env.ADYEN_API_BASE_URL || 'https://checkout-test.adyen.com/v65',
+    legacyApiBaseUrl: process.env.ADYEN_LEGACY_API_BASE_URL || 'https://pal-test.adyen.com/pal/servlet/Payment/v64',
     clientKey: process.env.ADYEN_CLIENT_KEY || ''
   }
 }
