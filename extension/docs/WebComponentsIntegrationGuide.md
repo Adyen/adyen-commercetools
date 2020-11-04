@@ -47,7 +47,7 @@ The following diagram shows checkout integration flow based on [Adyen Web Compon
 
 - [Step 1](#step-1-commercetools-checkout-validations) : Execute required checkout validations.
 - [Step 2](#step-2-get-available-payment-methods): Set `getPaymentMethodsRequest` custom field to commercetools payment to get the list of payment methods available for the checkout.
-- [Step 3](#step-3-add-components-to-your-payments-form): generate Adyen Web Component to your checkout payments form.
+- [Step 3](#step-3-add-components-to-your-payments-form): Add Adyen Web Component to your checkout payments form.
 - [Step 4](#step-4-make-a-payment): Submit a payment request by setting `makePaymentRequest` payment custom field with the payment data returned by the Adyen web component.
 - [Step 5](#step-5-submit-additional-payment-details): Set `submitAdditionalPaymentDetailsRequest ` custom field to commercetools payment to submit additional payment details. 
 - [Step 6](#step-6-capture-payment-required-for-klarna): Add an optional `Charge` transaction to commercetools payment in order to manually capture the payment.
