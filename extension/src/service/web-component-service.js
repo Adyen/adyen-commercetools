@@ -1,19 +1,23 @@
 const fetch = require('node-fetch')
 const { serializeError } = require('serialize-error')
 const configLoader = require('../config/config')
+const packageJson = require('../../package.json')
 
 const config = configLoader.load()
 
 function getPaymentMethods (getPaymentMethodsRequestObj) {
-  return callAdyen(`${config.adyen.apiBaseUrl}/paymentMethods`, getPaymentMethodsRequestObj)
+  return callAdyen(`${config.adyen.apiBaseUrl}/paymentMethods`,
+    extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj))
 }
 
 function makePayment (makePaymentRequestObj) {
-  return callAdyen(`${config.adyen.apiBaseUrl}/payments`, makePaymentRequestObj)
+  return callAdyen(`${config.adyen.apiBaseUrl}/payments`,
+    extendRequestObjWithApplicationInfo(makePaymentRequestObj))
 }
 
 function submitAdditionalPaymentDetails (submitAdditionalPaymentDetailsRequestObj) {
-  return callAdyen(`${config.adyen.apiBaseUrl}/payments/details`, submitAdditionalPaymentDetailsRequestObj)
+  return callAdyen(`${config.adyen.apiBaseUrl}/payments/details`,
+    extendRequestObjWithApplicationInfo(submitAdditionalPaymentDetailsRequestObj))
 }
 
 function cancelOrRefund (cancelOrRefundRequestObj) {
@@ -22,6 +26,20 @@ function cancelOrRefund (cancelOrRefundRequestObj) {
 
 function manualCapture (manualCaptureRequestObj) {
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/capture`, manualCaptureRequestObj)
+}
+
+function extendRequestObjWithApplicationInfo (requestObj) {
+  requestObj.applicationInfo = {
+    merchantApplication: {
+      name: packageJson.name,
+      version: packageJson.version
+    },
+    externalPlatform: {
+      name: 'commercetools',
+      integrator: packageJson.author.name
+    }
+  }
+  return requestObj
 }
 
 async function callAdyen (url, request) {
