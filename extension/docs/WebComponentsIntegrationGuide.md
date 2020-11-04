@@ -41,7 +41,7 @@ Terms used in this guide:
 
 The following diagram shows checkout integration flow based on [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
 
-![Flow](https://user-images.githubusercontent.com/3469524/86238652-2c427080-bb9e-11ea-83cf-246bbc3a23f3.png)
+![Flow](https://user-images.githubusercontent.com/803826/98081637-c467a380-1e77-11eb-93ed-003f7e68b59a.png)
 
 ## How it works
 
