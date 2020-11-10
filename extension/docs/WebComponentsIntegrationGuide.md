@@ -177,9 +177,7 @@ the Adyen Web Components will generate a `makePaymentRequest`.
 
 **Restrictions:**
 - `makePaymentRequest` must have a unique `reference` value for every payment object created in commercetools. Reference may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
-- `payment.amountPlanned` CANNOT be changed if there is `makePayment` interface interaction present in the payment.
- If there is no `makePayment` interface interaction and `makePaymentRequest` custom field is added, `amount` value in this field must have the same value as `payment.amountPlanned`.
-This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
+- `payment.amountPlanned` CANNOT be changed if there is `makePayment` interface interaction present in the payment. The `amount` value in `makePaymentRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
 
 
 Make payment request generated from Adyen Web Components for credit card payment.
