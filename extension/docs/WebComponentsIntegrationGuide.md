@@ -160,15 +160,13 @@ The commercetools payment representation example:
 
 Pass the `getPaymentMethodsResponse` to your front end. You might use this in the next step to show which payment methods are available for the shopper.
 
+> **Note** for Step 2: For a better performance `getPaymentMethodsResponse` could be cached by the merchant server.
+
 ## Step 3: Add Components to your payments form
 
 Next, use the Adyen `Component` to render the payment method, and collect the required payment details from the shopper.
 
 If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Components integration guide](https://docs.adyen.com/checkout/components-web#step-2-add-components).
-
-To be able to render an Adyen web component, a valid `clientKey` is needed. In order to get a `clientKey`, follow the official [Adyen documentation](https://docs.adyen.com/development-resources/client-side-authentication#get-your-client-key).
-
-> **Note** for Step 2 and Step 3: For a better performance `getPaymentMethodsResponse` could be cached by the merchant server.
 
 ## Step 4: Make a payment
 
