@@ -20,10 +20,6 @@ function submitAdditionalPaymentDetails (submitAdditionalPaymentDetailsRequestOb
     extendRequestObjWithApplicationInfo(submitAdditionalPaymentDetailsRequestObj))
 }
 
-function cancelOrRefund (cancelOrRefundRequestObj) {
-  return callAdyen(`${config.adyen.legacyApiBaseUrl}/cancelOrRefund`, cancelOrRefundRequestObj)
-}
-
 function manualCapture (manualCaptureRequestObj) {
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/capture`, manualCaptureRequestObj)
 }
@@ -80,6 +76,5 @@ module.exports = {
   getPaymentMethods,
   makePayment,
   submitAdditionalPaymentDetails,
-  cancelOrRefund,
   manualCapture
 }
