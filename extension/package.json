@@ -54,7 +54,7 @@
     "eslint-plugin-react": "^7.21.5",
     "mocha": "^8.2.1",
     "ngrok": "^3.3.0",
-    "nock": "^13.0.4",
+    "nock": "^13.0.5",
     "node-static": "^0.7.11",
     "nyc": "^15.1.0",
     "proxyquire": "^2.1.3",
