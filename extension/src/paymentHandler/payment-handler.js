@@ -4,6 +4,8 @@ const makePaymentHandler = require('./make-payment.handler')
 const klarnaMakePaymentHandler = require('./klarna-make-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const manualCaptureHandler = require('./manual-capture.handler')
+const refundHandler = require('./refund-payment.handler')
+const pU = require('./payment-utils')
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 const { getChargeTransactionInitial, getAuthorizationTransactionSuccess } = require('./payment-utils')
 
@@ -36,7 +38,16 @@ async function handlePayment (paymentObject) {
   return { success: true, data: handlerResponse }
 }
 
+function _isRefund (paymentObject) {
+  return pU.listRefundTransactionsInit(paymentObject).length > 0
+    && pU.getChargeTransactionSuccess(paymentObject)
+}
+
 function _getPaymentHandlers (paymentObject) {
+  const isRefund = _isRefund(paymentObject)
+  if (isRefund)
+    return [refundHandler]
+
   // custom field on payment is not a mandatory field.
   if (!paymentObject.custom)
     return []
