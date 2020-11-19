@@ -2,7 +2,7 @@ const Promise = require('bluebird')
 const pU = require('./payment-utils')
 const { refund } = require('../service/web-component-service')
 const {
-  CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
+  CTP_INTERACTION_TYPE_REFUND,
 } = require('../config/constants')
 
 async function execute (paymentObject) {
@@ -22,11 +22,13 @@ async function execute (paymentObject) {
 
     const { request, response } = await refund(refundRequestObjects)
     const addInterfaceInteractionAction = pU.createAddInterfaceInteractionAction({
-      request, response, type: CTP_INTERACTION_TYPE_MANUAL_CAPTURE
+      request, response, type: CTP_INTERACTION_TYPE_REFUND
     })
     actions.push(addInterfaceInteractionAction)
-    if (!response.errorCode && response.pspReference)
+    if (!response.errorCode && response.pspReference) {
       actions.push(pU.createChangeTransactionStateAction(refundTransaction.id, 'Pending'))
+      actions.push(pU.createChangeTransactionInteractionId(refundTransaction.id, response.pspReference))
+    }
   })
 
   return {
