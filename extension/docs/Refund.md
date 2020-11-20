@@ -3,7 +3,7 @@
 ## Refund
 If you want to return the funds to your shopper, for example if they returned an item, you need to make a Refund request.
 
-### Make an API call to refund a payment:
+### Make an API call to refund a payment
 
 #### Prerequisites
 It is required that the payment has one `Charge` transaction with state `Success`. From this transaction, the `interactionId` field is being used as `pspReference` for the Adyen refund request.
