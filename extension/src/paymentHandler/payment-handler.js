@@ -4,6 +4,7 @@ const makePaymentHandler = require('./make-payment.handler')
 const klarnaMakePaymentHandler = require('./klarna-make-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const manualCaptureHandler = require('./manual-capture.handler')
+const cancelHandler = require('./cancel-handler')
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 const { getChargeTransactionInitial, getAuthorizationTransactionSuccess } = require('./payment-utils')
 
@@ -26,6 +27,10 @@ async function handlePayment (paymentObject) {
       data: paymentValidator.buildCtpErrorResponse()
     }
 
+  if(paymentValidator.isAllowedToCancelPayment(paymentObject)){
+    const cancelResponse = await cancelHandler.execute(paymentObject)
+    return { success: true, data: cancelResponse }
+  }
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(
     handlers.map(handler => handler.execute(paymentObject))

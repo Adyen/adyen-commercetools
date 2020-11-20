@@ -118,6 +118,12 @@ function getChargeTransactionPending (paymentObject) {
     ['Pending'])
 }
 
+function getChargeTransactionSuccess (paymentObject) {
+  return getTransactionWithTypesAndStates(paymentObject,
+    ['Charge'],
+    ['Success'])
+}
+
 function getLatestInterfaceInteraction (interfaceInteractions, type) {
   return interfaceInteractions
     .filter(interaction => interaction.fields.type === type)
@@ -151,5 +157,6 @@ module.exports = {
   createAddTransactionAction,
   createAddTransactionActionByResponse,
   getLatestInterfaceInteraction,
+  getChargeTransactionSuccess,
   isValidJSON
 }

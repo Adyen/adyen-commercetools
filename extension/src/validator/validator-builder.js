@@ -65,6 +65,10 @@ function withPayment (paymentObject) {
         message: value
       }))
       return { errors: errorArray }
+    },
+    isAllowedToCancelPayment(paymentObject) {
+      return _.isObject(pU.getChargeTransactionSuccess(paymentObject)) &&
+        !_.isObject(pU.getCancelAuthorizationTransactionInit(paymentObject))
     }
   }
 }
