@@ -101,7 +101,7 @@ The commercetools payment representation after a successful refund:
 }
 ```
 
-### Recommendations
+### Additional information
 1. Don't add too many `Refund` transactions at once because [API Extension endpoint has a time limit](https://docs.commercetools.com/api/projects/api-extensions#time-limits).
 By adding too many transactions at once, extension module will need more time to process all of them and this could lead to long requests and exceeding the time limit.
 1. Adyen processes the refunds asynchronously. Therefore the response from Adyen for extension module will always be `refund-received`.
