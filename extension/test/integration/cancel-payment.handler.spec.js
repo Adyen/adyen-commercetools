@@ -7,7 +7,7 @@ const {
 } = require('../../src/config/constants')
 const { createAddTransactionAction } = require('../../src/paymentHandler/payment-utils')
 
-describe('::refund::', () => {
+describe('::cancel::', () => {
   let ctpClient
   let payment
 
