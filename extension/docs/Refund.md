@@ -25,7 +25,7 @@ It is possible to add multiple `Refund` transactions and all of them will be pro
 }
 ```
 
-Extension module will update the transaction with `Pending` transaction state and `interactionId` field with value `pspReference` from the Adyen response:
+Extension module will update the transaction with `Pending` transaction state and `interactionId` field with the value `pspReference` from the Adyen response:
 
 ```json
 {
