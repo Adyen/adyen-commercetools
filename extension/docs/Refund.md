@@ -6,7 +6,7 @@ If you want to return the funds to your shopper, for example if they returned an
 ### Make an API call to refund a payment
 
 #### Prerequisites
-It is required that the payment has one `Charge` transaction with state `Success`. From this transaction, the `interactionId` field is being used as `pspReference` for the Adyen refund request.
+It is required that the payment has one `Charge` transaction with state `Success`. From this transaction, the `interactionId` field is being used as `originalReference` for the Adyen refund request.
 
 #### Steps
 To make a (partial) refund, [add **at least one** transaction](https://docs.commercetools.com/http-api-projects-payments#add-transaction) with type `Refund` and state `Initial` to the commercetools payment.
