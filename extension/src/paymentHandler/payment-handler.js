@@ -4,7 +4,7 @@ const makePaymentHandler = require('./make-payment.handler')
 const klarnaMakePaymentHandler = require('./klarna-make-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const manualCaptureHandler = require('./manual-capture.handler')
-const cancelHandler = require('./cancel-handler')
+const cancelHandler = require('./cancel-payment.handler')
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 const {
  getChargeTransactionInitial,
