@@ -24,6 +24,7 @@
     - [Shopper tries to pay a different amount than the actual order amount](#shopper-tries-to-pay-a-different-amount-than-the-actual-order-amount)
   - [Test and go live](#test-and-go-live)
 - [Manual Capture](#manual-capture)
+- [Cancel or refund](#cancel-or-refund)
 - [Bad Practices](#bad-practices)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -611,6 +612,14 @@ Additionally, follow the official Adyen [integration checklist](https://docs.ady
 By default, payments are captured immediately (or with [delay](https://docs.adyen.com/point-of-sale/capturing-payments/delayed-capture#set-up-delayed-capture)) after authorisation. For payment methods that support separate authorization and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This also allows you to cancel the payment/authorization.
 
 If you need to explicitly request a capture for each payment please follow our [manual capture documentation](./ManualCapture.md).
+
+# Cancel or refund
+If you want to return the funds to your shopper, use either Cancel or Refund functionalities.
+
+This will either:
+
+- [**Cancel**](CancelPayment.md) - cancel the authorisation on an uncaptured payment.
+- [**Refund**](RefundPayment.md) - (partially) refund a payment back to the shopper.
 
 # Bad Practices
 - **Never delete or un-assign** created payment objects during checkout from the cart. If required — clean up unused/obsolete payment objects by another asynchronous process instead.
