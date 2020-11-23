@@ -106,6 +106,7 @@ The commercetools payment representation after a successful refund:
 By adding too many transactions at once, extension module will need more time to process all of them and this could lead to long requests and exceeding the time limit.
 1. Adyen processes the refunds asynchronously. Therefore the response from Adyen for extension module will always be `refund-received`.
 However, the final response comes later for the notification module and it can also contain failure.
+1. [Unreferenced refund](https://docs.adyen.com/checkout/refund#unreferenced-refund) is not supported.
 
 ### Further resources
 1. [Adyen refund documentation](https://docs.adyen.com/checkout/refund)
