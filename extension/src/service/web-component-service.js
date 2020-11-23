@@ -24,6 +24,10 @@ function manualCapture (manualCaptureRequestObj) {
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/capture`, manualCaptureRequestObj)
 }
 
+function refund (refundRequestObj) {
+  return callAdyen(`${config.adyen.legacyApiBaseUrl}/refund`, refundRequestObj)
+}
+
 function extendRequestObjWithApplicationInfo (requestObj) {
   requestObj.applicationInfo = {
     merchantApplication: {
@@ -76,5 +80,6 @@ module.exports = {
   getPaymentMethods,
   makePayment,
   submitAdditionalPaymentDetails,
-  manualCapture
+  manualCapture,
+  refund
 }
