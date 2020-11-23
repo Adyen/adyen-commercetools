@@ -618,7 +618,7 @@ If you want to return the funds to your shopper, use either Cancel or Refund fun
 
 This will either:
 
-- [**Cancel**](CancelPayment.md) - cancel the authorisation on an uncaptured payment.
+- [**Cancel**](CancelPayment.md) - cancel the authorisation on an uncaptured payment(full payment).
 - [**Refund**](RefundPayment.md) - (partially) refund a payment back to the shopper.
 
 # Bad Practices
