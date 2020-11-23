@@ -26,7 +26,7 @@ with type `CancelAuthorization` and state `Initial` to the commercetools payment
   }
 }
 ```
-Extension module will update the transaction with `Pending` transaction state and `interactionId` field with value `pspReference` from the Adyen response:
+Extension module will update the commercetools transaction with `Pending` transaction state and `interactionId` field with value `pspReference` from the Adyen response:
 ```json
 {
   "id": "a4504b99-d46e-484e-1344-ee4c3b6de1a2",
