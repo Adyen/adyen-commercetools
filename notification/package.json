@@ -45,7 +45,7 @@
     "@commercetools/sdk-middleware-auth": "^6.1.4",
     "@commercetools/sdk-middleware-http": "^6.0.9",
     "@commercetools/sdk-middleware-queue": "^2.1.4",
-    "@commercetools/sync-actions": "^4.8.4",
+    "@commercetools/sync-actions": "^4.9.0",
     "@commercetools/sdk-middleware-user-agent": "^2.1.5",
     "bluebird": "^3.7.2",
     "bunyan": "^1.8.14",
