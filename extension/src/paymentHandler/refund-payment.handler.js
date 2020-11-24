@@ -17,7 +17,8 @@ async function execute (paymentObject) {
         value: refundTransaction.amount.centAmount,
         currency: refundTransaction.amount.currencyCode
       },
-      originalReference: chargeSuccessTransaction.interactionId
+      originalReference: chargeSuccessTransaction.interactionId,
+      reference: paymentObject.key
     }
 
     const { request, response } = await refund(refundRequestObjects)
