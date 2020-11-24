@@ -25,7 +25,6 @@ function validateHmacSignature (notification) {
     return 'Notification does not contain the required field '
       + '"NotificationRequestItem.additionalData.hmacSignature". '
       + 'Please check if HMAC is configured correctly or contact Adyen.'
-  const hmac = validator.calculateHmac(notificationRequestItem, config.adyen.secretHmacKey)
   const validationResult = validator.validateHMAC(notificationRequestItem, config.adyen.secretHmacKey)
   if (!validationResult)
     return 'Notification does not have a valid HMAC signature, '
