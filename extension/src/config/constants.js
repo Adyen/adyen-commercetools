@@ -10,4 +10,5 @@ module.exports = {
   CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS: 'submitAdditionalPaymentDetails',
   CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE: 'submitAdditionalPaymentDetailsResponse',
   CTP_INTERACTION_TYPE_MANUAL_CAPTURE: 'manualCapture',
+  CTP_INTERACTION_TYPE_REFUND: 'refund',
 }

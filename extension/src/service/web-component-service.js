@@ -28,6 +28,10 @@ function cancelPayment (cancelRequestObj) {
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/cancel`, cancelRequestObj)
 }
 
+function refund (refundRequestObj) {
+  return callAdyen(`${config.adyen.legacyApiBaseUrl}/refund`, refundRequestObj)
+}
+
 function extendRequestObjWithApplicationInfo (requestObj) {
   requestObj.applicationInfo = {
     merchantApplication: {
@@ -81,5 +85,6 @@ module.exports = {
   makePayment,
   submitAdditionalPaymentDetails,
   manualCapture,
+  refund,
   cancelPayment
 }
