@@ -163,6 +163,5 @@ module.exports = {
   createAddTransactionAction,
   createAddTransactionActionByResponse,
   getLatestInterfaceInteraction,
-  getChargeTransactionSuccess,
   isValidJSON
 }
