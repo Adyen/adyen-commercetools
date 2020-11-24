@@ -24,6 +24,10 @@ function manualCapture (manualCaptureRequestObj) {
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/capture`, manualCaptureRequestObj)
 }
 
+function cancelPayment (cancelRequestObj) {
+  return callAdyen(`${config.adyen.legacyApiBaseUrl}/cancel`, cancelRequestObj)
+}
+
 function refund (refundRequestObj) {
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/refund`, refundRequestObj)
 }
@@ -81,5 +85,6 @@ module.exports = {
   makePayment,
   submitAdditionalPaymentDetails,
   manualCapture,
-  refund
+  refund,
+  cancelPayment
 }

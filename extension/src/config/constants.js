@@ -2,6 +2,7 @@ module.exports = {
   CTP_ADYEN_INTEGRATION: 'ctp-adyen-integration',
   CTP_PAYMENT_INTERACTION_CUSTOM_TYPE_KEY: 'ctp-adyen-integration-interaction-payment-type',
   CTP_PAYMENT_CUSTOM_TYPE_KEY: 'ctp-adyen-integration-web-components-payment-type',
+  CTP_INTERACTION_TYPE_CANCEL_PAYMENT: 'cancelPayment',
   CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS: 'getPaymentMethods',
   CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE: 'getPaymentMethodsResponse',
   CTP_INTERACTION_TYPE_MAKE_PAYMENT: 'makePayment',
