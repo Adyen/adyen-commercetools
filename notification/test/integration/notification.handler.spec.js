@@ -83,6 +83,7 @@ describe('notification module', () => {
 
     const modifiedNotification = cloneDeep(notifications)
     modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode = 'CAPTURE'
+    modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = new Date().getTime().toString()
 
     // Simulating a notification from Adyen
     const response = await fetch(`http://${localhostIp}:8000`, {
@@ -167,14 +168,15 @@ describe('notification module', () => {
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(0)
   })
 
-  it('should udpate the pending Refund transaction state to success state '
-    + 'when receives a successful CANCEL_OR_REFUND notification with refund action', async () => {
+  it('should update the pending Refund transaction state to success state '
+    + 'when receives a successful REFUND notification with refund action', async () => {
     const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
     expect(paymentBefore.transactions[0].state).to.equal('Pending')
     expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
 
+    const refundInteractionId = new Date().getTime().toString()
     const actions = [
       {
         action: 'changeTransactionState',
@@ -189,7 +191,8 @@ describe('notification module', () => {
             currencyCode: paymentBefore.transactions[0].amount.currencyCode,
             centAmount: paymentBefore.transactions[0].amount.centAmount
           },
-          state: 'Pending'
+          state: 'Pending',
+          interactionId: refundInteractionId
         }
       }
     ]
@@ -204,10 +207,11 @@ describe('notification module', () => {
     expect(updatedPayment.transactions[1].state).to.equal('Pending')
 
     const modifiedNotification = cloneDeep(notifications)
-    modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode = 'CANCEL_OR_REFUND'
+    modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode = 'REFUND'
     modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
       'modification.action': 'refund'
     }
+    modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId
 
     // Simulating a notification from Adyen
     const response = await fetch(`http://${localhostIp}:8000`, {
@@ -233,14 +237,19 @@ describe('notification module', () => {
     expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(JSON.stringify(notification))
   })
 
-  it('should udpate the pending CancelAuthorization transaction state to success state '
-    + 'when receives a successful CANCEL_OR_REFUND notification with cancel action', async () => {
+  it('should update multiple pending Refund transaction states to success states '
+    + 'when receives multiple successful REFUND notifications with refund action', async () => {
+  })
+
+  it('should update the pending CancelAuthorization transaction state to success state '
+    + 'when receives a successful CANCEL notification with cancel action', async () => {
     const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
     expect(paymentBefore.transactions[0].state).to.equal('Pending')
     expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
 
+    const cancellationInteractionId = new Date().getTime().toString()
     const actions = [
       {
         action: 'addTransaction',
@@ -250,7 +259,8 @@ describe('notification module', () => {
             currencyCode: paymentBefore.transactions[0].amount.currencyCode,
             centAmount: paymentBefore.transactions[0].amount.centAmount
           },
-          state: 'Pending'
+          state: 'Pending',
+          interactionId: cancellationInteractionId
         }
       }
     ]
@@ -269,6 +279,7 @@ describe('notification module', () => {
     modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
       'modification.action': 'cancel'
     }
+    modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = cancellationInteractionId
 
     // Simulating a notification from Adyen
     const response = await fetch(`http://${localhostIp}:8000`, {

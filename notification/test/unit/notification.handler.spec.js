@@ -52,6 +52,7 @@ describe('notification module', () => {
         centAmount: 495,
         fractionDigits: 2
       },
+      interactionId: 'test_AUTHORISATION_1',
       state: 'Initial'
     })
     const ctpClient = ctpClientMock.get(config)
@@ -125,6 +126,7 @@ describe('notification module', () => {
         centAmount: 495,
         fractionDigits: 2
       },
+      interactionId: 'test_AUTHORISATION_1',
       state: 'Pending'
     })
     const ctpClient = ctpClientMock.get(config)
@@ -193,6 +195,7 @@ describe('notification module', () => {
         centAmount: 495,
         fractionDigits: 2
       },
+      interactionId: 'test_AUTHORISATION_1',
       state: 'Success'
     })
     payment.interfaceInteractions.push({
@@ -282,7 +285,8 @@ describe('notification module', () => {
             currencyCode: 'EUR'
           },
           state: 'Success',
-          type: 'CancelAuthorization'
+          type: 'CancelAuthorization',
+          interactionId: 'test_AUTHORISATION_1'
         }
       }
     ]
@@ -361,7 +365,8 @@ describe('notification module', () => {
             currencyCode: 'EUR'
           },
           state: 'Success',
-          type: 'Charge'
+          type: 'Charge',
+          interactionId: 'test_AUTHORISATION_1'
         }
       }
     ]
@@ -440,7 +445,8 @@ describe('notification module', () => {
             currencyCode: 'EUR'
           },
           state: 'Failure',
-          type: 'Charge'
+          type: 'Charge',
+          interactionId: 'test_AUTHORISATION_1'
         }
       }
     ]
@@ -472,9 +478,7 @@ describe('notification module', () => {
       body: modifiedPaymentMock
     }))
     sandbox.stub(ctpClient, 'fetchById').callsFake(() => ({
-      body: {
-        results: [modifiedPaymentMock]
-      }
+      body: modifiedPaymentMock
     }))
     const ctpClientUpdateSpy = sandbox.stub(ctpClient, 'update').callsFake(() => {
       throw concurrentModificationError
