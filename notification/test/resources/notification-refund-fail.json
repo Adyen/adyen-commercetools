@@ -1,0 +1,22 @@
+{
+  "live": "false",
+  "notificationItems": [
+    {
+      "NotificationRequestItem": {
+        "amount": {
+          "currency": "EUR",
+          "value": 200
+        },
+        "eventCode": "REFUND",
+        "eventDate": "2020-11-24T14:35:33+01:00",
+        "merchantAccountCode": "CommercetoolsGmbHDE775",
+        "merchantReference": "8313842560770001",
+        "originalReference": "883605782632488F",
+        "paymentMethod": "visa",
+        "pspReference": "883606224931332F",
+        "reason": "Insufficient balance on payment",
+        "success": "false"
+      }
+    }
+  ]
+}

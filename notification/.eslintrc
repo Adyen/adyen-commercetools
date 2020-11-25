@@ -20,6 +20,7 @@
     "no-unused-expressions": "off",
     "no-constant-condition": ["error", { "checkLoops": false }],
     "no-prototype-builtins": "off",
-    "arrow-parens": "off"
+    "arrow-parens": "off",
+    "no-await-in-loop": "off"
   }
 }

@@ -6,6 +6,7 @@ const ctpClientBuilder = require('../../src/utils/ctp')
 const iTSetUp = require('./integration-test-set-up')
 const config = require('../../src/config/config')()
 const notifications = require('../resources/notification')
+const notificationRefundFail = require('../resources/notification-refund-fail')
 
 // node-fetch package doesn't support requests to localhost, therefore
 // we need to provide the IP behind localhost
@@ -83,7 +84,7 @@ describe('notification module', () => {
 
     const modifiedNotification = cloneDeep(notifications)
     modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode = 'CAPTURE'
-    modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = new Date().getTime().toString()
+    modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = _generateRandomNumber()
 
     // Simulating a notification from Adyen
     const response = await fetch(`http://${localhostIp}:8000`, {
@@ -176,7 +177,7 @@ describe('notification module', () => {
     expect(paymentBefore.transactions[0].state).to.equal('Pending')
     expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
 
-    const refundInteractionId = new Date().getTime().toString()
+    const refundInteractionId = _generateRandomNumber()
     const actions = [
       {
         action: 'changeTransactionState',
@@ -237,8 +238,101 @@ describe('notification module', () => {
     expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(JSON.stringify(notification))
   })
 
-  it('should update multiple pending Refund transaction states to success states '
-    + 'when receives multiple successful REFUND notifications with refund action', async () => {
+  it('should update multiple pending Refund transaction states to corresponding states '
+    + 'when receives multiple REFUND notifications', async () => {
+    const { body: { results: [ paymentBefore ] } } = await ctpClient.fetch(ctpClient.builder.payments)
+    const refundInteractionId1 = _generateRandomNumber()
+    const refundInteractionId2 = _generateRandomNumber()
+    const refundInteractionId3 = _generateRandomNumber()
+    const actions = [
+      {
+        action: 'addTransaction',
+        transaction: {
+          type: 'Refund',
+          amount: {
+            currencyCode: paymentBefore.transactions[0].amount.currencyCode,
+            centAmount: 50
+          },
+          state: 'Pending',
+          interactionId: refundInteractionId1
+        }
+      },
+      {
+        action: 'addTransaction',
+        transaction: {
+          type: 'Refund',
+          amount: {
+            currencyCode: paymentBefore.transactions[0].amount.currencyCode,
+            centAmount: 60
+          },
+          state: 'Pending',
+          interactionId: refundInteractionId2
+        }
+      },
+      {
+        action: 'addTransaction',
+        transaction: {
+          type: 'Refund',
+          amount: {
+            currencyCode: paymentBefore.transactions[0].amount.currencyCode,
+            centAmount: 70
+          },
+          state: 'Pending',
+          interactionId: refundInteractionId3
+        }
+      }
+    ]
+    await ctpClient.update(ctpClient.builder.payments,
+      paymentBefore.id, paymentBefore.version, actions)
+
+    const successNotification1 = cloneDeep(notifications)
+    successNotification1.notificationItems[0].NotificationRequestItem.eventCode = 'REFUND'
+    successNotification1.notificationItems[0].NotificationRequestItem.additionalData = {
+      'modification.action': 'refund'
+    }
+    successNotification1.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId1
+
+    const successNotification2 = cloneDeep(successNotification1)
+    successNotification2.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId2
+
+    const failedNotification = cloneDeep(notificationRefundFail)
+    failedNotification.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId3
+
+    // Simulating notifications from Adyen
+    const responses = await Promise.all([
+      fetch(`http://${localhostIp}:8000`, {
+        method: 'post',
+        body: JSON.stringify(successNotification1),
+        headers: { 'Content-Type': 'application/json' },
+      }),
+      fetch(`http://${localhostIp}:8000`, {
+        method: 'post',
+        body: JSON.stringify(successNotification2),
+        headers: { 'Content-Type': 'application/json' },
+      }),
+      fetch(`http://${localhostIp}:8000`, {
+        method: 'post',
+        body: JSON.stringify(failedNotification),
+        headers: { 'Content-Type': 'application/json' },
+      })
+    ])
+
+    for (const response of responses) {
+      const { status } = response
+      const responseBody = await response.json()
+
+      expect(responseBody).to.deep.equal({ notificationResponse: '[accepted]' })
+      expect(status).to.equal(200)
+    }
+
+    const { body: paymentAfter } = await ctpClient.fetchById(ctpClient.builder.payments, paymentBefore.id)
+    expect(paymentAfter.transactions).to.have.lengthOf(4)
+    expect(paymentAfter.transactions[1].type).to.equal('Refund')
+    expect(paymentAfter.transactions[1].state).to.equal('Success')
+    expect(paymentAfter.transactions[2].type).to.equal('Refund')
+    expect(paymentAfter.transactions[2].state).to.equal('Success')
+    expect(paymentAfter.transactions[3].type).to.equal('Refund')
+    expect(paymentAfter.transactions[3].state).to.equal('Failure')
   })
 
   it('should update the pending CancelAuthorization transaction state to success state '
@@ -249,7 +343,7 @@ describe('notification module', () => {
     expect(paymentBefore.transactions[0].state).to.equal('Pending')
     expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
 
-    const cancellationInteractionId = new Date().getTime().toString()
+    const cancellationInteractionId = _generateRandomNumber()
     const actions = [
       {
         action: 'addTransaction',
@@ -336,4 +430,8 @@ describe('notification module', () => {
     // make sure that the notification is not polluting interactions
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(0)
   })
+
+  function _generateRandomNumber () {
+    return (new Date().getTime() + Math.floor((Math.random() * 100) + 1)).toString()
+  }
 })
