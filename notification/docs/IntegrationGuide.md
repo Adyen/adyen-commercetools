@@ -50,14 +50,14 @@ Adyen sends notifications which look like this:
         "eventCode": "AUTHORISATION",
         "eventDate": "2019-01-30T18:16:22+01:00",
         "merchantAccountCode": "XXX",
-        "merchantReference": "YYY",
+        "merchantReference": "YYY", // should match an existing payment key in commercetools
         "operations": [
           "CANCEL",
           "CAPTURE",
           "REFUND"
         ],
         "paymentMethod": "visa",
-        "pspReference": "test_AUTHORISATION_1",
+        "pspReference": "test_AUTHORISATION_1", // should match a transaction interactionId in commercetools
         "success": "true"
       }
     }
@@ -73,15 +73,17 @@ and [transactionState](https://docs.commercetools.com/http-api-projects-payments
 
 > All mappings can be found in the [adyen-events.json](./../resources/adyen-events.json) file.
 
-After finding a mapping the notification module will find a proper payment on a commercetools project.
+After finding a mapping the notification module will find a matching payment on a commercetools project.
+To find the matching payment, `merchantReference` field from the notification is used to find a payment by key
+and `pspReference` field from the notification is used to find a transaction by its interactionId.
 
-If there is no transaction on the payment with the received `transactionType` 
-the notification module will create a transaction with the received `transactionType` and
+If there is no transaction on the payment found,
+the notification module will create a new transaction with the received `transactionType` and
 `transactionState`. Otherwise, it will update the existing transaction with a new `transactionState`.
 
 Received notification will be stored on the [interfaceInteraction](https://docs.commercetools.com/http-api-projects-payments#add-interfaceinteraction) of the payment.
-If the mapping for the received notification not found then payment will be updated only with a new `interfaceInteraction`.
-If payment not found then the notification will be skipped from processing.
+If the mapping for the received notification is not found then payment will be updated only with a new `interfaceInteraction`.
+If payment is not found then the notification will be skipped from processing.
 
 ## Test and go live
 Before you go live please follow the official Adyen [go-live checklist](https://docs.adyen.com/development-resources/webhooks#test-and-go-live).
@@ -92,6 +94,11 @@ Can I remove a subscription I created?
 
 - If you accidentally created a subscription you can edit it and uncheck the **Active** checkbox so Adyen doesn't
 send notifications. Then you can contact the Adyen support and ask them to remove the subscription
+
+How does the notification module find a matching payment?
+
+- It first find a payment by key where `key=${merchantReference}` and then it find in this payment object a corresponding transaction
+by interactionId where `interactionId=${pspReference}`.
 
 Will we lose a notification if it was not processed for some reason?
 - Adyen will queue notifications when the notification service was not reachable or it didn't return a success message and will try to send it later.
