@@ -97,8 +97,8 @@ send notifications. Then you can contact the Adyen support and ask them to remov
 
 How does the notification module find a matching payment?
 
-- It first find a payment by key where `key=${merchantReference}` and then it find in this payment object a corresponding transaction
-by interactionId where `interactionId=${pspReference}`.
+- It first find the payment by `key` where `key=${merchantReference}` and then it finds in this payment the corresponding transaction
+by `interactionId` where `interactionId=${pspReference}`.
 
 Will we lose a notification if it was not processed for some reason?
 - Adyen will queue notifications when the notification service was not reachable or it didn't return a success message and will try to send it later.
