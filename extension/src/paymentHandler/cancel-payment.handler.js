@@ -8,7 +8,7 @@ async function execute (paymentObject) {
   const authorizationTransaction = pU.getAuthorizationTransactionSuccess(paymentObject)
   // "originalReference: The original pspReference of the payment that you want to cancel.
   // This reference is returned in the response to your payment request, and in the AUTHORISATION notification."
-  const cancelRequestObj = { originalReference: authorizationTransaction.interactionId }
+  const cancelRequestObj = { originalReference: authorizationTransaction.interactionId, reference: paymentObject.key }
 
   const { request, response } = await cancelPayment(cancelRequestObj)
 
