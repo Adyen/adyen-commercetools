@@ -10,7 +10,7 @@ Google Cloud Project. It requires to have:
 - an existing Kubernetes cluster in [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs/quickstart)
 
 
-Prerequisites:
+### Prerequisites:
 1. Configure both module specific configurations in yaml files that resides under `k8s` folders.
 
     Refer to `extension/docs/DeploymentGuide.md` and `notification/docs/DeploymentGuide.md` docs.
