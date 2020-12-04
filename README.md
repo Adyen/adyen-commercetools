@@ -39,4 +39,5 @@ The notification module will process the notification and update the matching co
 
 - Follow [Integration Guide](./notification/docs/IntegrationGuide.md) for information how to integrate with notification module.
 - Follow [Deployment Guide](./notification/docs/DeploymentGuide.md) to run notification module.
+- Follow [Continuous Deployment Guide](docs/CONTINUOUS_DEPLOYMENT_GUIDE.md) to configure deployment pipelines for both modules.
 - Follow [Development Guide](./notification/docs/DevelopmentGuide.md) if you want to contribute to it.
