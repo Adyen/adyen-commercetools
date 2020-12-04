@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const pU = require('../paymentHandler/payment-utils')
 const errorMessages = require('./error-messages')
 const c = require('../config/constants')
@@ -53,11 +52,6 @@ function withPayment (paymentObject) {
           errors.amountPlanned = errorMessages.AMOUNT_PLANNED_NOT_SAME
       }
       return this
-    },
-    isCancelOrRefund () {
-      return _.isObject(pU.getAuthorizationTransactionSuccess(paymentObject))
-        && (_.isObject(pU.getCancelAuthorizationTransactionInit(paymentObject))
-        || _.isObject(pU.getRefundTransactionInit(paymentObject)))
     },
     hasErrors () {
       return Object.keys(errors).length > 0

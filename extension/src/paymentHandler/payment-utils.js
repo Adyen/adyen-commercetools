@@ -13,14 +13,19 @@ function getCancelAuthorizationTransactionInit (paymentObject) {
     ['Initial'])
 }
 
-function getRefundTransactionInit (paymentObject) {
-  return getTransactionWithTypesAndStates(paymentObject,
+function listRefundTransactionsInit (paymentObject) {
+  return listTransactionsWithTypesAndStates(paymentObject,
     ['Refund'],
     ['Initial'])
 }
 
 function getTransactionWithTypesAndStates (paymentObject, types, states) {
   return paymentObject.transactions.find(t => types.includes(t.type)
+    && (states.includes(t.state)))
+}
+
+function listTransactionsWithTypesAndStates (paymentObject, types, states) {
+  return paymentObject.transactions.filter(t => types.includes(t.type)
     && (states.includes(t.state)))
 }
 
@@ -118,6 +123,12 @@ function getChargeTransactionPending (paymentObject) {
     ['Pending'])
 }
 
+function getChargeTransactionSuccess (paymentObject) {
+  return getTransactionWithTypesAndStates(paymentObject,
+    ['Charge'],
+    ['Success'])
+}
+
 function getLatestInterfaceInteraction (interfaceInteractions, type) {
   return interfaceInteractions
     .filter(interaction => interaction.fields.type === type)
@@ -142,8 +153,9 @@ module.exports = {
   getChargeTransactionInitial,
   getChargeTransactionPending,
   getAuthorizationTransactionSuccess,
+  getChargeTransactionSuccess,
   getCancelAuthorizationTransactionInit,
-  getRefundTransactionInit,
+  listRefundTransactionsInit,
   createAddInterfaceInteractionAction,
   createChangeTransactionStateAction,
   createSetCustomFieldAction,

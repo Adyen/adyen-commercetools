@@ -610,12 +610,12 @@ By default, payments are captured immediately (or with [delay](https://docs.adye
 If you need to explicitly request a capture for each payment please follow our [manual capture documentation](./ManualCapture.md).
 
 # Cancel or refund
-If you want to return the funds to your shopper, use the Cancel or Refund functionality. 
+If you want to return the funds to your shopper, use either Cancel or Refund functionalities.
 
-This will either: 
+This will either:
 
-- [**Cancel**](CancelRefundPayment.md#cancel-or-refund-a-payment) - cancel the authorisation on an uncaptured payment.
-- [**Refund**](CancelRefundPayment.md#cancel-or-refund-a-payment) - refund a payment back to the shopper.
+- [**Cancel**](CancelPayment.md) - cancel the authorisation on an uncaptured payment(full payment).
+- [**Refund**](RefundPayment.md) - (partially) refund a payment back to the shopper.
 
 # Bad Practices
 - **Never delete or un-assign** created payment objects during checkout from the cart. If required — clean up unused/obsolete payment objects by another asynchronous process instead.

@@ -3,10 +3,16 @@ const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const makePaymentHandler = require('./make-payment.handler')
 const klarnaMakePaymentHandler = require('./klarna-make-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
-const cancelOrRefundHandler = require('./cancel-or-refund.handler')
 const manualCaptureHandler = require('./manual-capture.handler')
+const cancelHandler = require('./cancel-payment.handler')
+const refundHandler = require('./refund-payment.handler')
+const pU = require('./payment-utils')
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
-const { getChargeTransactionInitial, getAuthorizationTransactionSuccess } = require('./payment-utils')
+const {
+ getChargeTransactionInitial,
+ getAuthorizationTransactionSuccess,
+ getCancelAuthorizationTransactionInit
+} = require('./payment-utils')
 
 const PAYMENT_METHOD_TYPE_KLARNA_METHODS = ['klarna', 'klarna_paynow', 'klarna_account']
 
@@ -27,12 +33,6 @@ async function handlePayment (paymentObject) {
       data: paymentValidator.buildCtpErrorResponse()
     }
 
-  const isCancelOrRefund = paymentValidator.isCancelOrRefund()
-  if (isCancelOrRefund) {
-    const cancelOrRefundResponse = await cancelOrRefundHandler.execute(paymentObject)
-    return { success: true, data: cancelOrRefundResponse }
-  }
-
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(
     handlers.map(handler => handler.execute(paymentObject))
@@ -43,7 +43,19 @@ async function handlePayment (paymentObject) {
   return { success: true, data: handlerResponse }
 }
 
+function _isRefund (paymentObject) {
+  return pU.listRefundTransactionsInit(paymentObject).length > 0
+    && (pU.getChargeTransactionSuccess(paymentObject)
+      || pU.getAuthorizationTransactionSuccess(paymentObject))
+}
+
 function _getPaymentHandlers (paymentObject) {
+  if (_isRefund(paymentObject))
+    return [refundHandler]
+
+  if (_isCancelPayment(paymentObject))
+    return [cancelHandler]
+
   // custom field on payment is not a mandatory field.
   if (!paymentObject.custom)
     return []
@@ -74,6 +86,11 @@ function _isAdyenPayment (paymentObject) {
 function _isKlarna (makePaymentRequestObj) {
   return makePaymentRequestObj.paymentMethod
     && PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(makePaymentRequestObj.paymentMethod.type)
+}
+
+function _isCancelPayment (paymentObject) {
+  return getAuthorizationTransactionSuccess(paymentObject) &&
+    getCancelAuthorizationTransactionInit(paymentObject)
 }
 
 module.exports = { handlePayment }

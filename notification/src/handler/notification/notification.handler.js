@@ -64,8 +64,8 @@ async function updatePaymentWithRepeater (payment, notification, ctpClient) {
           + ` max retries. Error: ${JSON.stringify(serializeError(err))}`)
       }
       /* eslint-disable-next-line no-await-in-loop */
-      currentPayment = await ctpClient.fetchById(ctpClient.builder.payments, currentPayment.id)
-      currentPayment = currentPayment.body.results[0] // eslint-disable-line prefer-destructuring
+      const response = await ctpClient.fetchById(ctpClient.builder.payments, currentPayment.id)
+      currentPayment = response.body // eslint-disable-line prefer-destructuring
       currentVersion = currentPayment.version
     }
   }
@@ -89,14 +89,16 @@ function calculateUpdateActionsForPayment (payment, notification) {
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
-    const oldTransaction = _.find(payment.transactions, transaction => transaction.type === transactionType)
+    const { pspReference } = notificationRequestItem
+    const oldTransaction = _.find(payment.transactions, transaction => transaction.interactionId === pspReference)
     if (_.isEmpty(oldTransaction))
-      updateActions.push(getAddTransactionUpdateAction(
-        transactionType,
-        transactionState,
-        notificationRequestItem.amount.value,
-        notificationRequestItem.amount.currency
-      ))
+      updateActions.push(getAddTransactionUpdateAction({
+        type: transactionType,
+        state: transactionState,
+        amount: notificationRequestItem.amount.value,
+        currency: notificationRequestItem.amount.currency,
+        interactionId: pspReference
+      }))
     else if (ctp.compareTransactionStates(oldTransaction.state, transactionState) > 0)
       updateActions.push(getChangeTransactionStateUpdateAction(oldTransaction.id, transactionState))
   }
@@ -164,7 +166,9 @@ function getTransactionTypeAndStateOrNull (notificationRequestItem) {
   }
 }
 
-function getAddTransactionUpdateAction (type, state, amount, currency) {
+function getAddTransactionUpdateAction ({
+  type, state, amount, currency, interactionId
+}) {
   return {
     action: 'addTransaction',
     transaction: {
@@ -173,7 +177,8 @@ function getAddTransactionUpdateAction (type, state, amount, currency) {
         currencyCode: currency,
         centAmount: amount
       },
-      state
+      state,
+      interactionId
     }
   }
 }
