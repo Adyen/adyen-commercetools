@@ -160,15 +160,13 @@ The commercetools payment representation example:
 
 Pass the `getPaymentMethodsResponse` to your front end. You might use this in the next step to show which payment methods are available for the shopper.
 
+> **Note** for Step 2: For a better performance `getPaymentMethodsResponse` could be cached by the merchant server.
+
 ## Step 3: Add Components to your payments form
 
 Next, use the Adyen `Component` to render the payment method, and collect the required payment details from the shopper.
 
 If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Components integration guide](https://docs.adyen.com/checkout/components-web#step-2-add-components).
-
-To be able to render an Adyen web component, a valid `clientKey` is needed. In order to get a `clientKey`, follow the official [Adyen documentation](https://docs.adyen.com/development-resources/client-side-authentication#get-your-client-key).
-
-> **Note** for Step 2 and Step 3: For a better performance `getPaymentMethodsResponse` could be cached by the merchant server.
 
 ## Step 4: Make a payment
 
@@ -177,9 +175,7 @@ the Adyen Web Components will generate a `makePaymentRequest`.
 
 **Restrictions:**
 - `makePaymentRequest` must have a unique `reference` value for every payment object created in commercetools. Reference may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
-- `payment.amountPlanned` CANNOT be changed if there is `makePayment` interface interaction present in the payment.
- If there is no `makePayment` interface interaction and `makePaymentRequest` custom field is added, `amount` value in this field must have the same value as `payment.amountPlanned`.
-This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
+- `payment.amountPlanned` CANNOT be changed if there is `makePayment` interface interaction present in the payment. The `amount` value in `makePaymentRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
 
 
 Make payment request generated from Adyen Web Components for credit card payment.
