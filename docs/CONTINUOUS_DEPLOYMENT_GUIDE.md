@@ -14,7 +14,7 @@ Google Cloud Project. It requires to have:
 1. Configure both module specific configurations in yaml files that resides under `k8s` folders.
 
     Refer to [`extension/docs/DeploymentGuide.md`](./../extension/docs/DeploymentGuide.md) and [`notification/docs/DeploymentGuide.md`](./../notification/docs/DeploymentGuide.md) docs.
-2. Configure the below values in `deploy-to-gcp.sh` file
+2. Configure the below values in [`deploy-to-gcp.sh`](./../deployment/deploy-to-gcp.sh) file
 3. Ensure the `secrets.yaml` files have encrypted using the `GCLOUD_KMS_KEY_NAME`
 
 | Name | Description | Required | Default value (only for test environment) |
