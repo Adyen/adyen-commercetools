@@ -1,6 +1,3 @@
-nonSensitiveEnvs:
-  CTP_PROJECT_KEY: adyen-integration-demo
-
 ingress:
   annotations:
     kubernetes.io/ingress.global-static-ip-name: 'ctp-adyen-integration-demo-notification-global-ip'

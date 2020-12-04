@@ -1,8 +1,3 @@
-nonSensitiveEnvs:
-  CTP_PROJECT_KEY: adyen-integration-demo
-  API_EXTENSION_BASE_URL: https://adyen-payment-demo-extension.ct-app.com
-  ADYEN_API_BASE_URL: https://checkout-test.adyen.com/v40
-
 ingress:
   annotations:
     kubernetes.io/ingress.global-static-ip-name: 'ctp-adyen-integration-demo-extension-global-ip'

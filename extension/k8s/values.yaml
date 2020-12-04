@@ -1,7 +1,7 @@
 fullnameOverride: 'ctp-adyen-integration-service-extension'
 
 image:
-  repository: 'eu.gcr.io/professionalserviceslabs/commercetools-adyen-integration-extension'
+  repository: 'eu.gcr.io/your-GCP-project/commercetools-adyen-integration-extension'
   tag: 'latest'
 
 service:

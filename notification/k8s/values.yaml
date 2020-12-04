@@ -1,7 +1,7 @@
 fullnameOverride: 'ctp-adyen-integration-service-notification'
 
 image:
-  repository: 'eu.gcr.io/professionalserviceslabs/commercetools-adyen-integration-notification'
+  repository: 'eu.gcr.io/your-GCP-project/commercetools-adyen-integration-notification'
   tag: 'latest'
 
 service:
