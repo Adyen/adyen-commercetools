@@ -7,7 +7,10 @@ const {
 
 async function execute (paymentObject) {
   const refundInitTransactions = pU.listRefundTransactionsInit(paymentObject)
-  const chargeSuccessTransaction = pU.getChargeTransactionSuccess(paymentObject)
+  let transaction = pU.getChargeTransactionSuccess(paymentObject)
+  if (!transaction)
+    transaction = pU.getAuthorizationTransactionSuccess(paymentObject)
+  const interactionId = transaction.interactionId
 
   const actions = []
 
@@ -17,7 +20,7 @@ async function execute (paymentObject) {
         value: refundTransaction.amount.centAmount,
         currency: refundTransaction.amount.currencyCode
       },
-      originalReference: chargeSuccessTransaction.interactionId,
+      originalReference: interactionId,
       reference: paymentObject.key
     }
 

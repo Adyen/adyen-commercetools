@@ -45,7 +45,8 @@ async function handlePayment (paymentObject) {
 
 function _isRefund (paymentObject) {
   return pU.listRefundTransactionsInit(paymentObject).length > 0
-    && pU.getChargeTransactionSuccess(paymentObject)
+    && (pU.getChargeTransactionSuccess(paymentObject)
+      || pU.getAuthorizationTransactionSuccess(paymentObject))
 }
 
 function _getPaymentHandlers (paymentObject) {
