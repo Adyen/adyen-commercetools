@@ -4,6 +4,7 @@ As a quick start, you can utilize the available bash script which is capable of 
 Google Cloud Project. It requires to have:
 
 - [gcloud sdk](https://cloud.google.com/sdk/docs/install)
+- [docker](https://docs.docker.com/get-docker/)
 - [helm](https://helm.sh/docs/intro/install/)
 - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - an existing Kubernetes cluster in [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs/quickstart)
