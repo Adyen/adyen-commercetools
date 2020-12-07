@@ -1,4 +1,4 @@
-## Deployment best practices
+#### Deployment best practices
 
 - Both modules should be deployed as a publicly exposed services.
 - Modules are **stateless** which makes running multiple instances in parallel possible.

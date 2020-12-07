@@ -1,0 +1,28 @@
+fullnameOverride: 'ctp-adyen-integration-service-extension'
+
+image:
+  repository: 'eu.gcr.io/your-GCP-project/commercetools-adyen-integration-extension'
+  tag: 'latest'
+
+service:
+  type: 'NodePort'
+
+# More on resources:
+# https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/resource-qos.md
+# https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+# https://cloud.google.com/compute/docs/machine-types
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: 'gce'
+    kubernetes.io/ingress.allow-http: 'true'
+
+livenessProbe:
+  httpGet:
+    path: ''
+
+
+readinessProbe:
+  httpGet:
+    path: ''

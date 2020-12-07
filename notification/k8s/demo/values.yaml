@@ -1,0 +1,6 @@
+ingress:
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: 'ctp-adyen-integration-demo-notification-global-ip'
+    ingress.gcp.kubernetes.io/pre-shared-cert: 'ct-app'
+  hosts:
+    - 'adyen-payment-demo-notification.ct-app.com'
