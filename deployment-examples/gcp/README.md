@@ -1,21 +1,29 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  
+<!-- *generated with [DocToc](https://github.com/thlorenz/doctoc)* -->
+
+- [Continuous Deployment Guide](#continuous-deployment-guide)
+  - [Prerequisites:](#prerequisites)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Continuous Deployment Guide
 
 As a quick start, you can utilize the available bash script which is capable of deploying both modules to a 
-Google Cloud Project. It requires to have:
+public cloud provider.
+
+### Prerequisites:
 
 - [gcloud sdk](https://cloud.google.com/sdk/docs/install)
 - [docker](https://docs.docker.com/get-docker/)
 - [helm](https://helm.sh/docs/intro/install/)
 - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- an existing Kubernetes cluster in [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs/quickstart)
-
-
-### Prerequisites:
-1. Configure both module specific configurations in yaml files that resides under `k8s` folders.
-
-    Refer to [`extension/docs/DeploymentGuide.md`](./../extension/docs/DeploymentGuide.md) and [`notification/docs/DeploymentGuide.md`](./../notification/docs/DeploymentGuide.md) docs.
-2. Configure the below values in [`deploy-to-gcp.sh`](./../deployment/deploy-to-gcp.sh) file.
-3. Ensure the `secrets.yaml` files ([extension](./../extension/k8s/demo/secrets.yaml) and [notification](./../notification/k8s/demo/secrets.yaml)) have encrypted using the `GCLOUD_KMS_KEY_NAME` key.
+- An existing Kubernetes cluster in [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs/quickstart)
+- Configure both module specific configurations in yaml files that resides under `k8s` folders.
+    Refer to [`extension/docs/DeploymentGuide.md`](../../extension/docs/HowToRun.md) and [`notification/docs/DeploymentGuide.md`](../../notification/docs/HowToRun.md) docs.
+- Configure the below values in [`deploy-to-gcp.sh`](deploy-to-gcp.sh) file.
+- Ensure the `secrets.yaml` files ([extension](extension/k8s/demo/secrets.yaml) and [notification](notification/k8s/demo/secrets.yaml)) have encrypted using the `GCLOUD_KMS_KEY_NAME` key.
 
 | Name | Description | Required | Default value (only for test environment) |
 | --- | --- | --- | --- |
