@@ -42,7 +42,8 @@ While developing project you can use some predefined commands for running tests,
 #### E2E tests (Extension module only)
 Following additional environment variables must be provided in order to run the E2E tests.
 
-| Name | Content | Required | Default value |
-|`ADYEN_CLIENT_KEY` | Client-side key that is required to render a Component. See [Adyen documentation](https://docs.adyen.com/development-resources/client-side-authentication#get-your-client-key). | YES | |
+| Name | Content | Required |
+| --- | --- | --- |
+|`ADYEN_CLIENT_KEY` | Client-side key that is required to render a Component. See [Adyen documentation](https://docs.adyen.com/development-resources/client-side-authentication#get-your-client-key). | YES |
 
 - Execute `npm run e2e` to run E2e tests.
