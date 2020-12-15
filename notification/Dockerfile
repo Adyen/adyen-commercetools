@@ -1,13 +1,9 @@
-FROM node:12.18.0-alpine
-MAINTAINER Professional Services <ps-dev@commercetools.de>
-
+FROM node:12 as build-env
+ADD . /app
 WORKDIR /app
+RUN npm ci --only=production
 
-RUN apk --update add make python
-
-RUN apk --update add git
-
-COPY . /app
-
-RUN npm ci --only=prod
-ENTRYPOINT ["npm", "run", "start"]
+FROM gcr.io/distroless/nodejs:12
+COPY --from=build-env /app /app
+WORKDIR /app
+CMD ["./src/init.js"]
