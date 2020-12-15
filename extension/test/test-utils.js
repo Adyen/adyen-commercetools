@@ -1,7 +1,7 @@
 global.window = {}
 global.navigator = {}
 
-const Promise = require('bluebird')
+const pMap = require('p-map')
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -37,7 +37,7 @@ function deleteAllResources (ctpClient, endpoint, condition) {
     requestBuilder = requestBuilder.where(condition)
 
   return ctpClient.fetchBatches(requestBuilder,
-    items => Promise.map(items, async (item) => {
+    items => pMap(items, async (item) => {
       if (endpoint === 'products' && item.masterData.published) {
         const { body } = await unpublish(ctpClient, item)
         item = body
