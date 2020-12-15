@@ -1,7 +1,7 @@
 ## Continuous Deployment Guide
 
 As a quick start, you can utilize the available bash script which is capable of deploying both modules to a 
-public cloud provider.
+Google Kubernetes Engine.
 
 ### Prerequisites:
 
@@ -27,7 +27,7 @@ public cloud provider.
 |`HELM_CHARTS_VERSION` | Intended release version of the helm charts repository | YES | `1.7.5` |
 |`ENVIRONMENT_NAME` | Folder name that contains secrets.yaml file in `extension/k8s` and `notification/k8s` | YES | `demo` |
 
-After configured all the required values, execute the `deploy-to-gcp.sh` script file.
+After configured all the required values, execute the [`deploy-to-gcp.sh`](deploy-to-gcp.sh) script file.
 ```
 ./deploy-to-gcp.sh
 ```
