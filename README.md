@@ -1,3 +1,9 @@
+# commercetools-adyen-integration
+[![Build Status](https://travis-ci.com/commercetools/commercetools-adyen-integration.svg?branch=master)](https://travis-ci.com/commercetools/commercetools-adyen-integration)
+
+`commercetools-adyen-integration` provides an integration between the commercetools and Adyen payment service provider based on the concept of [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
+Components are available for cards, wallets, and most local payment methods. For a list of all payment methods with an available component, refer to [Supported payment methods](https://docs.adyen.com/checkout/supported-payment-methods).
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  
@@ -10,12 +16,6 @@
   - [Contribution Guide](#contribution-guide)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-# commercetools-adyen-integration
-[![Build Status](https://travis-ci.com/commercetools/commercetools-adyen-integration.svg?branch=master)](https://travis-ci.com/commercetools/commercetools-adyen-integration)
-
-`commercetools-adyen-integration` provides an integration between the commercetools and Adyen payment service provider based on the concept of [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
-Components are available for cards, wallets, and most local payment methods. For a list of all payment methods with an available component, refer to [Supported payment methods](https://docs.adyen.com/checkout/supported-payment-methods).
 
 ## Overview
 This repository contains two standalone modules that interact with commercetools and Adyen.
