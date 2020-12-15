@@ -22,7 +22,7 @@ Google Kubernetes Engine.
 |`GCLOUD_CLUSTER_NAME` | Existing Google Kubernetes Engine cluster name | YES | `adyen-demo` |
 |`GCLOUD_KMS_KEYRING` | Google KMS [key-ring](https://cloud.google.com/kms/docs/resource-hierarchy#key_rings) which include the encrypted key for secret.yaml files | YES | `adyen-integration-deployment-demo` |
 |`GCLOUD_KMS_KEY_NAME` | Google KMS key name which used to encrypt the secret.yaml files | YES | `adyen-extension-module` |
-|`TAG` | Indented [release version](https://github.com/commercetools/commercetools-adyen-integration/releases) of commercetools-adyen-integration | YES | `v5.0.0` |
+|`TAG` | Indented [release version](https://github.com/commercetools/commercetools-adyen-integration/releases) of commercetools-adyen-integration | YES | `x.x.x` |
 |`HELM_CHARTS_REPO` | Github repository URL for helm charts | NO | `https://github.com/commercetools/k8s-charts.git` |
 |`HELM_CHARTS_VERSION` | Intended release version of the helm charts repository | YES | `1.7.5` |
 |`ENVIRONMENT_NAME` | Folder name that contains secrets.yaml file in `extension/k8s` and `notification/k8s` | YES | `demo` |
