@@ -1,10 +1,11 @@
-const nodeStatic = require('node-static')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
 const configBuilder = require('../../src/config/config')
 const httpUtils = require('../../src/utils')
-const { assertPayment, createPayment, initPuppeteerBrowser } = require('./e2e-test-utils')
+const {
+  assertPayment, createPayment, initPuppeteerBrowser, serveFile
+} = require('./e2e-test-utils')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const CreditCardNativePage = require('./pageObjects/CreditCard3dsNativePage')
@@ -27,12 +28,11 @@ describe('::creditCardPayment3dsNative::', () => {
   ]
 
   beforeEach(async () => {
-    const fileServer = new nodeStatic.Server()
     routes['/make-payment-form'] = async (request, response) => {
-      fileServer.serveFile('./test/e2e/fixtures/3ds-v2-make-payment-form.html', 200, {}, request, response)
+      serveFile('./test/e2e/fixtures/3ds-v2-make-payment-form.html', request, response)
     }
     routes['/redirect-payment-form'] = async (request, response) => {
-      fileServer.serveFile('./test/e2e/fixtures/redirect-payment-form.html', 200, {}, request, response)
+      serveFile('./test/e2e/fixtures/redirect-payment-form.html', request, response)
     }
     routes['/return-url'] = async (request, response) => {
       const body = await httpUtils.collectRequestData(request)
