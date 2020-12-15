@@ -53,7 +53,7 @@ The following diagram shows checkout integration flow based on [Adyen Web Compon
 - [Step 6](#step-6-capture-payment-required-for-klarna): Add an optional `Charge` transaction to commercetools payment in order to manually capture the payment.
 
 ## Before you begin
-In order to make the extension module up and running, follow our [deployment guide](docs/HowToRun.md). For the sake of readability,
+In order to make the extension module up and running, follow our [how to run guide](docs/HowToRun.md). For the sake of readability,
 the field [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is ommitted from all the examples in this document.
 In real requests, [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin)` is always added.
 
