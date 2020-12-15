@@ -2,25 +2,24 @@
 
 set -e
 
-echo "Login to gcloud SDK and select project"
+export GCLOUD_PROJECT_ID="xxx"
+export GCLOUD_ZONE="xxx"
+export GCLOUD_CLUSTER_NAME="xxx"
+export GCLOUD_KMS_KEYRING="xxx"
+export GCLOUD_KMS_KEY_NAME="xxx"
+export TAG="x.x.x"
+export HELM_CHARTS_VERSION="x.x.x"
+export SENSITIVE_ENVS_FILE="secrets.yaml"
+export PROJECT_NAME="commercetools-adyen-integration"
+export HELM_CHARTS_REPO="https://github.com/commercetools/k8s-charts.git"
+export ENVIRONMENT_NAME="demo"
 
 ## set Google Cloud Project settings
-GCLOUD_PROJECT_ID="xxx"
-GCLOUD_ZONE="xxx"
-GCLOUD_CLUSTER_NAME="xxx"
-GCLOUD_KMS_KEYRING="xxx"
-GCLOUD_KMS_KEY_NAME="xxx"
-TAG="x.x.x"
-HELM_CHARTS_VERSION="x.x.x"
-SENSITIVE_ENVS_FILE="secrets.yaml"
-PROJECT_NAME="commercetools-adyen-integration"
-HELM_CHARTS_REPO="https://github.com/commercetools/k8s-charts.git"
-ENVIRONMENT_NAME="demo"
-
+echo "Login to gcloud SDK and select project"
 gcloud config set project "$GCLOUD_PROJECT_ID"
 gcloud config set compute/zone "$GCLOUD_ZONE"
 
-echo "Build and push docker images to Google Container Registry"
+echo "Build and push docker images to Google Container Registry(eu.gcr.io)"
 # if required to use docker-hub, consider using -> gcloud auth configure-docker
 
 EXTENSION_IMAGE="${PROJECT_NAME}-extension"
