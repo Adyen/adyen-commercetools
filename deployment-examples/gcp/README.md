@@ -11,7 +11,7 @@ Google Kubernetes Engine.
 - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - An existing Kubernetes cluster in [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs/quickstart)
 - Configure both module specific configurations in yaml files that resides under `k8s` folders.
-    Refer to [`extension/docs/DeploymentGuide.md`](../../extension/docs/HowToRun.md) and [`notification/docs/DeploymentGuide.md`](../../notification/docs/HowToRun.md) docs.
+    Refer to [`extension/docs/HowToRun.md`](../../extension/docs/HowToRun.md) and [`notification/docs/HowToRun.md`](../../notification/docs/HowToRun.md) docs.
 - Configure the below values in [`deploy-to-gcp.sh`](deploy-to-gcp.sh) file.
 - Ensure the `secrets.yaml` files ([extension](extension/k8s/demo/secrets.yaml) and [notification](notification/k8s/demo/secrets.yaml)) have encrypted using the `GCLOUD_KMS_KEY_NAME` key.
 
