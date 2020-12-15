@@ -26,7 +26,7 @@ Google Kubernetes Engine.
 |`HELM_CHARTS_VERSION` | Intended release version of the helm charts repository | YES |
 |`ENVIRONMENT_NAME` | Folder name that contains secrets.yaml file in `extension/k8s` and `notification/k8s` | YES |
 
-After configured all the required values, execute the [`deploy-to-gcp.sh`](deploy-to-gcp.sh) script file.
+After configured all the required environment variables, execute the [`deploy-to-gcp.sh`](deploy-to-gcp.sh) script file.
 ```
 ./deploy-to-gcp.sh
 ```
