@@ -15,17 +15,16 @@ Google Kubernetes Engine.
 - Configure the below values in [`deploy-to-gcp.sh`](deploy-to-gcp.sh) file.
 - Ensure the `secrets.yaml` files ([extension](extension/k8s/demo/secrets.yaml) and [notification](notification/k8s/demo/secrets.yaml)) have encrypted using the `GCLOUD_KMS_KEY_NAME` key.
 
-| Name | Description | Required | Default value (only for test environment) |
-| --- | --- | --- | --- |
-|`GCLOUD_PROJECT_ID` | Google Cloud project ID | YES | |
-|`GCLOUD_ZONE` | Google Cloud [Zones](https://cloud.google.com/compute/docs/regions-zones#available) which cluster instances should be spawned. | YES | |
-|`GCLOUD_CLUSTER_NAME` | Existing Google Kubernetes Engine cluster name | YES | `adyen-demo` |
-|`GCLOUD_KMS_KEYRING` | Google KMS [key-ring](https://cloud.google.com/kms/docs/resource-hierarchy#key_rings) which include the encrypted key for secret.yaml files | YES | `adyen-integration-deployment-demo` |
-|`GCLOUD_KMS_KEY_NAME` | Google KMS key name which used to encrypt the secret.yaml files | YES | `adyen-extension-module` |
-|`TAG` | Indented [release version](https://github.com/commercetools/commercetools-adyen-integration/releases) of commercetools-adyen-integration | YES | |
-|`HELM_CHARTS_REPO` | Github repository URL for helm charts | NO | `https://github.com/commercetools/k8s-charts.git` |
-|`HELM_CHARTS_VERSION` | Intended release version of the helm charts repository | YES | `1.7.5` |
-|`ENVIRONMENT_NAME` | Folder name that contains secrets.yaml file in `extension/k8s` and `notification/k8s` | YES | `demo` |
+| Name | Description | Required |
+| --- | --- | --- |
+|`GCLOUD_PROJECT_ID` | Google Cloud project ID | YES |
+|`GCLOUD_ZONE` | Google Cloud [Zones](https://cloud.google.com/compute/docs/regions-zones#available) which cluster instances should be spawned. | YES |
+|`GCLOUD_CLUSTER_NAME` | Existing Google Kubernetes Engine cluster name | YES |
+|`GCLOUD_KMS_KEYRING` | Google KMS [key-ring](https://cloud.google.com/kms/docs/resource-hierarchy#key_rings) which include the encrypted key for secret.yaml files | YES |
+|`GCLOUD_KMS_KEY_NAME` | Google KMS key name which used to encrypt the secret.yaml files | YES |
+|`TAG` | Indented [release version](https://github.com/commercetools/commercetools-adyen-integration/releases) of commercetools-adyen-integration | YES |
+|`HELM_CHARTS_VERSION` | Intended release version of the helm charts repository | YES |
+|`ENVIRONMENT_NAME` | Folder name that contains secrets.yaml file in `extension/k8s` and `notification/k8s` | YES |
 
 After configured all the required values, execute the [`deploy-to-gcp.sh`](deploy-to-gcp.sh) script file.
 ```
