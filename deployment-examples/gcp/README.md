@@ -1,13 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  
-<!-- *generated with [DocToc](https://github.com/thlorenz/doctoc)* -->
-
-- [Continuous Deployment Guide](#continuous-deployment-guide)
-  - [Prerequisites:](#prerequisites)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## Continuous Deployment Guide
 
 As a quick start, you can utilize the available bash script which is capable of deploying both modules to a 
