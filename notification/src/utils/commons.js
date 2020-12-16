@@ -18,7 +18,23 @@ function sendResponse (response, statusCode = 200, headers, data) {
   response.end(data)
 }
 
+function getNotificationForTracking (notification) {
+  const notificationRequestItem = notification.NotificationRequestItem
+  if (notificationRequestItem) {
+    return {
+      eventCode: notificationRequestItem.eventCode,
+      eventDate: notificationRequestItem.eventDate,
+      pspReference: notificationRequestItem.pspReference,
+      success: notificationRequestItem.success,
+      // reason: notificationRequestItem.reason // not sure about that.
+    }
+  } else {
+    return notification
+  }
+}
+
 module.exports = {
   collectRequestData,
-  sendResponse
+  sendResponse,
+  getNotificationForTracking
 }
