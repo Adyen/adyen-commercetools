@@ -27,7 +27,7 @@ async function processNotification (notification, ctpClient) {
   const merchantReference = _.get(notification, 'NotificationRequestItem.merchantReference', null)
   if (merchantReference === null) {
     logger.error({ notification: getNotificationForTracking(notification) },
-      `Can't extract merchantReference from the notification`)
+      'Can\'t extract merchantReference from the notification')
     return
   }
 

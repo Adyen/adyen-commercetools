@@ -22,7 +22,7 @@ exports.handler = async function (event) {
     }
   } catch (e) {
     logger.error({ notification: getNotificationForTracking(event.notificationItems), err: e },
-      `Unexpected error when processing event`)
+      'Unexpected error when processing event')
     throw e
   }
 }

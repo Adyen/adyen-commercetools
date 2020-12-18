@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { sendResponse , collectRequestData, getNotificationForTracking} = require('../../utils/commons')
+const { sendResponse, collectRequestData, getNotificationForTracking } = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
 const { processNotifications } = require('../../handler/notification/notification.handler')
 const config = require('../../config/config')()
@@ -16,6 +16,7 @@ async function handleNotification (request, response) {
     await processNotifications(notification, ctpClient)
     return sendAcceptedResponse(response)
   } catch (err) {
+    const notification = _.get(JSON.parse(body), 'notificationItems', [])
     logger.error({ notification: getNotificationForTracking(notification), err },
       'Unexpected exception occurred.')
     return sendResponse(response, 500)

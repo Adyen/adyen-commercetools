@@ -20,7 +20,7 @@ function sendResponse (response, statusCode = 200, headers, data) {
 
 function getNotificationForTracking (notification) {
   const notificationRequestItem = notification.NotificationRequestItem
-  if (notificationRequestItem) {
+  if (notificationRequestItem)
     return {
       eventCode: notificationRequestItem.eventCode,
       eventDate: notificationRequestItem.eventDate,
@@ -28,9 +28,7 @@ function getNotificationForTracking (notification) {
       success: notificationRequestItem.success,
       // reason: notificationRequestItem.reason // not sure about that.
     }
-  } else {
-    return notification
-  }
+  return notification
 }
 
 module.exports = {
