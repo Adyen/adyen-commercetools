@@ -52,6 +52,6 @@ describe('Lambda handler', () => {
     const call = async () => handler(event)
 
     await expect(call()).to.be.rejectedWith(error)
-    assert(logSpy.calledWith(error, `Unexpected error when processing event ${JSON.stringify(event)}`))
+    assert(logSpy.calledWith({ notification: [], err: error }, `Unexpected error when processing event`))
   })
 })
