@@ -4,6 +4,19 @@
 `commercetools-adyen-integration` provides an integration between the commercetools and Adyen payment service provider based on the concept of [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
 Components are available for cards, wallets, and most local payment methods. For a list of all payment methods with an available component, refer to [Supported payment methods](https://docs.adyen.com/checkout/supported-payment-methods).
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  
+<!-- *generated with [DocToc](https://github.com/thlorenz/doctoc)* -->
+
+- [commercetools-adyen-integration](#commercetools-adyen-integration)
+  - [Overview](#overview)
+  - [Extension module](#extension-module)
+  - [Notification module](#notification-module)
+  - [Contribution Guide](#contribution-guide)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Overview
 This repository contains two standalone modules that interact with commercetools and Adyen.
 Complete integration requires running both of the modules.
@@ -26,8 +39,7 @@ The extension module is a publicly exposed service that acts as a middleware bet
 Once [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is configured to call Adyen extension module, for every payment create or update request an Adyen extension will be remotely called by the commercetools platform.
 
 - Follow [Integration Guide](./extension/docs/WebComponentsIntegrationGuide.md) for information how to integrate your shop with this module.
-- Follow [Deployment Guide](./extension/docs/DeploymentGuide.md) to run extension module.
-- Follow [Development Guide](./extension/docs/DevelopmentGuide.md) if you want to contribute to it.
+- Follow [How to run](extension/docs/HowToRun.md) the extension module.
 
 ## Notification module 
 
@@ -38,9 +50,8 @@ Through notifications, Adyen provides asynchronously payment status changes like
 The notification module will process the notification and update the matching commercetools payment accordingly.
 
 - Follow [Integration Guide](./notification/docs/IntegrationGuide.md) for information how to integrate with notification module.
-- Follow [Deployment Guide](./notification/docs/DeploymentGuide.md) to run notification module.
-- Follow [Development Guide](./notification/docs/DevelopmentGuide.md) if you want to contribute to it.
+- Follow [How to run](notification/docs/HowToRun.md) the notification module.
 
-## Continuous Deployment
+## Contribution Guide
 
-- Follow [Continuous Deployment Guide](docs/CONTINUOUS_DEPLOYMENT_GUIDE.md) to configure deployment pipelines for both modules.
+- Follow the [Contribution Guide](docs/ContributionGuide.md) if you would like to run modules locally.
