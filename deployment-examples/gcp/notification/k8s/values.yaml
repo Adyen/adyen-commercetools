@@ -1,8 +1,8 @@
 fullnameOverride: 'ctp-adyen-integration-service-notification'
 
 image:
-  repository: 'eu.gcr.io/your-GCP-project/commercetools-adyen-integration-notification'
-  tag: 'latest'
+  repository: 'eu.gcr.io/<<your-GCP-project-name>>/commercetools-adyen-integration-notification'
+  tag: 'x.x.x'
 
 service:
   type: 'NodePort'
