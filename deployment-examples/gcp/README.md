@@ -12,7 +12,7 @@ Google Kubernetes Engine.
 - An existing Kubernetes cluster in [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs/quickstart)
 - Configure both module specific configurations in yaml files that resides under `k8s` folders.
     Refer to [`extension/docs/HowToRun.md`](../../extension/docs/HowToRun.md) and [`notification/docs/HowToRun.md`](../../notification/docs/HowToRun.md) docs.
-- Configure the below environment variable values in [`deploy-to-gcp.sh`](deploy-to-gcp.sh) file.
+- Configure the below environment variable values in [`env-config.sh`](env-config.sh) file.
 
 | Name | Description |
 | --- | --- |
