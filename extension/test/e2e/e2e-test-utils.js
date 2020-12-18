@@ -2,6 +2,8 @@
 const { expect } = require('chai')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const puppeteer = require('puppeteer')
+const path = require('path')
+const fs = require('fs')
 const { getLatestInterfaceInteraction } = require('../../src/paymentHandler/payment-utils')
 const c = require('../../src/config/constants')
 
@@ -76,6 +78,24 @@ async function createPayment (ctpClient) {
   return payment
 }
 
+function serveFile (pathName, req, res) {
+  const resolvedBase = path.resolve(pathName)
+  const fileLoc = path.join(resolvedBase)
+
+  fs.readFile(fileLoc, (err, data) => {
+    if (err) {
+      res.writeHead(404, 'Not Found')
+      res.write('404: File Not Found!')
+      return res.end()
+    }
+
+    res.statusCode = 200
+
+    res.write(data)
+    return res.end()
+  })
+}
+
 module.exports = {
-  pasteValue, executeInAdyenIframe, assertPayment, createPayment, initPuppeteerBrowser
+  pasteValue, executeInAdyenIframe, assertPayment, createPayment, initPuppeteerBrowser, serveFile
 }
