@@ -12,19 +12,20 @@ Google Kubernetes Engine.
 - An existing Kubernetes cluster in [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs/quickstart)
 - Configure both module specific configurations in yaml files that resides under `k8s` folders.
     Refer to [`extension/docs/HowToRun.md`](../../extension/docs/HowToRun.md) and [`notification/docs/HowToRun.md`](../../notification/docs/HowToRun.md) docs.
-- Configure the below values in [`deploy-to-gcp.sh`](deploy-to-gcp.sh) file.
-- Ensure the `secrets.yaml` files ([extension](extension/k8s/demo/secrets.yaml) and [notification](notification/k8s/demo/secrets.yaml)) have encrypted using the `GCLOUD_KMS_KEY_NAME` key.
+- Configure the below environment variable values in [`deploy-to-gcp.sh`](deploy-to-gcp.sh) file.
 
-| Name | Description | Required |
-| --- | --- | --- |
-|`GCLOUD_PROJECT_ID` | Google Cloud project ID | YES |
-|`GCLOUD_ZONE` | Google Cloud [Zones](https://cloud.google.com/compute/docs/regions-zones#available) which cluster instances should be spawned. | YES |
-|`GCLOUD_CLUSTER_NAME` | Existing Google Kubernetes Engine cluster name | YES |
-|`GCLOUD_KMS_KEYRING` | Google KMS [key-ring](https://cloud.google.com/kms/docs/resource-hierarchy#key_rings) which include the encrypted key for secret.yaml files | YES |
-|`GCLOUD_KMS_KEY_NAME` | Google KMS key name which used to encrypt the secret.yaml files | YES |
-|`TAG` | Indented [release version](https://github.com/commercetools/commercetools-adyen-integration/releases) of commercetools-adyen-integration | YES |
-|`HELM_CHARTS_VERSION` | Intended release version of the helm charts repository | YES |
-|`ENVIRONMENT_NAME` | Folder name that contains secrets.yaml file in `extension/k8s` and `notification/k8s` | YES |
+| Name | Description |
+| --- | --- |
+|`GCLOUD_PROJECT_ID` | Google Cloud project ID |
+|`GCLOUD_ZONE` | Google Cloud [Zones](https://cloud.google.com/compute/docs/regions-zones#available) which cluster instances should be spawned. |
+|`GCLOUD_CLUSTER_NAME` | Existing Google Kubernetes Engine cluster name |
+|`GCLOUD_KMS_KEYRING` | Google KMS [key-ring](https://cloud.google.com/kms/docs/resource-hierarchy#key_rings) which include the encrypted key for secret.yaml files |
+|`GCLOUD_KMS_KEY_NAME` | Google KMS key name which used to encrypt the secret.yaml files |
+|`TAG` | Indented [release version](https://github.com/commercetools/commercetools-adyen-integration/releases) of commercetools-adyen-integration |
+|`HELM_CHARTS_VERSION` | Intended release version of the helm charts repository |
+|`ENVIRONMENT_NAME` | Folder name that contains secrets.yaml file in `extension/k8s` and `notification/k8s` |
+
+- Ensure the `secrets.yaml` files ([extension](extension/k8s/demo/secrets.yaml) and [notification](notification/k8s/demo/secrets.yaml)) have encrypted using the `GCLOUD_KMS_KEY_NAME` key.
 
 After configured all the required environment variables, execute the [`deploy-to-gcp.sh`](deploy-to-gcp.sh) script file.
 ```
