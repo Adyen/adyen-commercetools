@@ -49,14 +49,14 @@ Adyen sends notifications which look like this:
         },
         "eventCode": "AUTHORISATION",
         "eventDate": "2019-01-30T18:16:22+01:00",
-        "merchantAccountCode": "XXX",
-        "merchantReference": "YYY", // should match an existing payment key in commercetools
+        "merchantAccountCode": "YOUR_MERCHANT_ACCOUNT",
+        "merchantReference": "YOUR_REFERENCE", // should match an existing payment key in commercetools
         "operations": [
           "CANCEL",
           "CAPTURE",
           "REFUND"
         ],
-        "paymentMethod": "visa",
+        "paymentMethod": "visa", 
         "pspReference": "test_AUTHORISATION_1", // should match a transaction interactionId in commercetools
         "success": "true"
       }
