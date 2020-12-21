@@ -1,10 +1,11 @@
-const nodeStatic = require('node-static')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
 const configBuilder = require('../../src/config/config')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
-const { assertPayment, createPayment, initPuppeteerBrowser } = require('./e2e-test-utils')
+const {
+  assertPayment, createPayment, initPuppeteerBrowser, serveFile
+} = require('./e2e-test-utils')
 
 // Flow description: https://docs.adyen.com/checkout/components-web
 describe('::creditCardPayment::', () => {
@@ -18,9 +19,8 @@ describe('::creditCardPayment::', () => {
   ]
 
   beforeEach(async () => {
-    const fileServer = new nodeStatic.Server()
     routes['/make-payment-form'] = async (request, response) => {
-      fileServer.serveFile('./test/e2e/fixtures/make-payment-form.html', 200, {}, request, response)
+      serveFile('./test/e2e/fixtures/make-payment-form.html', request, response)
     }
     ctpClient = ctpClientBuilder.get()
     await iTSetUp.initServerAndExtension({ ctpClient, routes, testServerPort: 8080 })

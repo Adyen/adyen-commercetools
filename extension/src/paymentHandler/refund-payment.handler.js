@@ -1,4 +1,4 @@
-const Promise = require('bluebird')
+const pMap = require('p-map')
 const pU = require('./payment-utils')
 const { refund } = require('../service/web-component-service')
 const {
@@ -14,7 +14,7 @@ async function execute (paymentObject) {
 
   const actions = []
 
-  await Promise.map(refundInitTransactions, async (refundTransaction) => {
+  await pMap(refundInitTransactions, async (refundTransaction) => {
     const refundRequestObjects = {
       modificationAmount: {
         value: refundTransaction.amount.centAmount,

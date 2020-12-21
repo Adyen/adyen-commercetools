@@ -66,4 +66,4 @@ Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-a
 
 Notification module supports different deployment [options](/deployment-examples).
 It could be either hosted on-premises (run docker containers behind the load balancer) 
-or deployed as a serverless application (e.g: [AWS Lambda](/deployment-examples/aws/notification/README.md)).
+or deployed as a serverless application.

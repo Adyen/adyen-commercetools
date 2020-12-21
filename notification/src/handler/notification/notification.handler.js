@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const Promise = require('bluebird')
+const pMap = require('p-map')
 const { serializeError } = require('serialize-error')
 const ctp = require('../../utils/ctp')
 const { validateHmacSignature } = require('../../utils/hmacValidator')
@@ -8,7 +8,7 @@ const logger = require('../../utils/logger').getLogger()
 const config = require('../../config/config')()
 
 async function processNotifications (notifications, ctpClient) {
-  await Promise.map(notifications,
+  await pMap(notifications,
     notification => processNotification(notification, ctpClient),
     { concurrency: 10 })
 }

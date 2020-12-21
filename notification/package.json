@@ -1,6 +1,6 @@
 {
   "name": "commercetools-adyen-integration",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "scripts": {
     "check-coverage": "nyc check-coverage --statements 93",
@@ -45,13 +45,13 @@
     "@commercetools/sdk-middleware-auth": "^6.1.4",
     "@commercetools/sdk-middleware-http": "^6.0.9",
     "@commercetools/sdk-middleware-queue": "^2.1.4",
-    "@commercetools/sync-actions": "^4.9.0",
     "@commercetools/sdk-middleware-user-agent": "^2.1.5",
-    "bluebird": "^3.7.2",
+    "@commercetools/sync-actions": "^4.9.0",
     "bunyan": "^1.8.14",
     "lockfile-lint": "^4.3.7",
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.1",
+    "p-map": "^4.0.0",
     "serialize-error": "^7.0.1"
   },
   "devDependencies": {
@@ -67,6 +67,6 @@
     "ip": "^1.1.5",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
-    "sinon": "^9.2.1"
+    "sinon": "^9.2.2"
   }
 }
