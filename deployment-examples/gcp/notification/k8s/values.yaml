@@ -29,12 +29,3 @@ ingress:
     kubernetes.io/ingress.allow-http: 'true'
 
 containerPort: 443
-
-livenessProbe:
-  httpGet:
-    path: ''
-
-
-readinessProbe:
-  httpGet:
-    path: ''
