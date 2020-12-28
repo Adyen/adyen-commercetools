@@ -66,7 +66,10 @@ async function fetchAsync (url, requestObj) {
 }
 
 function buildRequest (requestObj) {
-  // ensure the merchantAccount is set with request, otherwise set.
+  // Note: ensure the merchantAccount is set with request, otherwise set.
+  // `makePaymentRequest` custom field will have the value in payload but the value
+  // also needed in the `cancel` and `capture` payment handler,
+  // because the request will be added as a commercetools transaction.
   if (!requestObj.merchantAccount)
     requestObj.merchantAccount = config.adyen.merchantAccount
 
