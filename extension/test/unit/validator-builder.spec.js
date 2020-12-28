@@ -6,8 +6,7 @@ const {
   MAKE_PAYMENT_REQUEST_INVALID_JSON,
   SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON,
   AMOUNT_PLANNED_NOT_SAME,
-  MAKE_PAYMENT_REQUEST_MISSING_REFERENCE,
-  REFERENCE_IS_NOT_SAME
+  MAKE_PAYMENT_REQUEST_MISSING_REFERENCE
 } = require('../../src/validator/error-messages')
 
 describe('Validator builder', () => {
@@ -143,45 +142,12 @@ describe('Validator builder', () => {
         fields: {
           makePaymentRequest: JSON.stringify(makePaymentRequestDraft)
         }
-      },
-      interfaceInteractions: []
+      }
     }
     const errorObject = ValidatorBuilder.withPayment(invalidPayment)
       .validateReference()
       .getErrors()
 
     expect(errorObject.missingReference).to.equal(MAKE_PAYMENT_REQUEST_MISSING_REFERENCE)
-  })
-
-  it('on mismatch between reference and payment key should return error object', async () => {
-    const makePaymentRequestDraft = {
-      paymentMethod: {
-        type: 'klarna'
-      },
-      amount: {
-        currency: 'EUR',
-        value: 1000
-      },
-      shopperLocale: 'de_DE',
-      countryCode: 'DE',
-      shopperEmail: 'youremail@email.com',
-      shopperReference: 'YOUR_UNIQUE_SHOPPER_ID',
-      returnUrl: 'https://www.yourshop.com/checkout/result',
-      reference: 'REFERENCE_1'
-    }
-    const invalidPayment = {
-      key: 'REFERENCE_2',
-      custom: {
-        fields: {
-          makePaymentRequest: JSON.stringify(makePaymentRequestDraft)
-        }
-      },
-      interfaceInteractions: []
-    }
-    const errorObject = ValidatorBuilder.withPayment(invalidPayment)
-      .validateReference()
-      .getErrors()
-
-    expect(errorObject.referenceIsNotSame).to.equal(REFERENCE_IS_NOT_SAME)
   })
 })
