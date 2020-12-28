@@ -92,12 +92,6 @@ and transaction type `Authorization` or `Charge`.
 When your shopper is ready to pay, get a list of the available payment methods based on their country and the payment amount.
 
 [Create/Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with `getPaymentMethodsRequest` custom field.  
-
-// note: key field should not be used, as it will be automatically set by the extension module during the makePayment request.
-// explain why we are using the key field. (optional) // a better explanation with an ADR is better for the decision of using the payment key for matching, explain the mypayment case 
-// uniquiness of the key and also why the custom fields is not considered, would be useful to have...
-
-
 > Refer Adyen's [/paymentMethods](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/paymentMethods) request to check all possible request payload parameters.
 
 Set `getPaymentMethodsRequest` custom field for a shopper in the Germany, for a payment of `10 EUR`: 
