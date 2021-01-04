@@ -16,7 +16,7 @@ describe('make-payment::execute', () => {
 
   /* eslint-disable max-len */
   const makePaymentRequest = {
-    reference: 'YOUR_ORDER_NUMBER',
+    reference: 'YOUR_REFERENCE',
     riskData: {
       clientData: 'eyJ2ZXJzaW9uIjoiMS4wLjAiLCJkZXZpY2VGaW5nZXJwcmludCI6ImRmLXRpbWVkT3V0In0='
     },

@@ -25,7 +25,7 @@ describe('::makePayment::', () => {
         currency: 'EUR',
         value: 1000
       },
-      reference: 'YOUR_ORDER_NUMBER',
+      reference: 'YOUR_REFERENCE',
       paymentMethod: {
         type: 'scheme',
         encryptedCardNumber: 'test_4111111111111111',

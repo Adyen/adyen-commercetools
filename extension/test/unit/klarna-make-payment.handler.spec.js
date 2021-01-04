@@ -30,7 +30,7 @@ describe('klarna-make-payment::execute', () => {
       .reply(200, paymentSuccessResponse)
 
     const klarnaMakePaymentRequest = {
-      reference: 'YOUR_ORDER_NUMBER',
+      reference: 'YOUR_REFERENCE',
       paymentMethod: {
         type: 'klarna'
       }
@@ -65,7 +65,7 @@ describe('klarna-make-payment::execute', () => {
       .reply(200, paymentSuccessResponse)
 
     const klarnaMakePaymentRequest = {
-      reference: 'YOUR_ORDER_NUMBER',
+      reference: 'YOUR_REFERENCE',
       paymentMethod: {
         type: 'klarna'
       },
@@ -94,7 +94,7 @@ describe('klarna-make-payment::execute', () => {
       custom: {
         fields: {
           languageCode: 'nonExistingLanguageCode',
-          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' })
         }
       }
     }
@@ -123,7 +123,7 @@ describe('klarna-make-payment::execute', () => {
       custom: {
         fields: {
           languageCode: 'nonExistingLanguageCode',
-          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' })
         }
       }
     }
@@ -155,7 +155,7 @@ describe('klarna-make-payment::execute', () => {
       custom: {
         fields: {
           languageCode: 'de',
-          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' })
         }
       }
     }
@@ -186,7 +186,7 @@ describe('klarna-make-payment::execute', () => {
       amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
       custom: {
         fields: {
-          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' })
         }
       }
     }
@@ -216,7 +216,7 @@ describe('klarna-make-payment::execute', () => {
       amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
       custom: {
         fields: {
-          makePaymentRequest: JSON.stringify({ reference: 'YOUR_ORDER_NUMBER' })
+          makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' })
         }
       }
     }

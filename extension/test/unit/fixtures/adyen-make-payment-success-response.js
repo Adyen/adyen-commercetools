@@ -14,5 +14,5 @@ module.exports = JSON.stringify({
     currency: 'EUR',
     value: 1000
   },
-  merchantReference: 'YOUR_ORDER_NUMBER'
+  merchantReference: 'YOUR_REFERENCE'
 })

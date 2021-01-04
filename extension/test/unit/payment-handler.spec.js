@@ -140,7 +140,7 @@ describe('payment-handler::execute', () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.amountPlanned.centAmount = 0
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify({
-            reference: 'YOUR_ORDER_NUMBER',
+            reference: 'YOUR_REFERENCE',
             amount: {
               currency: 'EUR',
               value: 1000
@@ -177,7 +177,7 @@ describe('payment-handler::execute', () => {
             currency: 'EUR',
             value: 100
           },
-          reference: 'YOUR_ORDER_NUMBER'
+          reference: 'YOUR_REFERENCE'
         })
       }
       ctpPaymentClone.interfaceInteractions = [

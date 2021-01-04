@@ -88,7 +88,7 @@ Cart's payment counts as successful if there is at least one payment object
 with successful transaction state (`Payment.Transaction.state=Success`) 
 and transaction type `Authorization` or `Charge`.
 
-## Step 2: Get available payment methods
+## Step 2: Get available payment methods (Optional)
 When your shopper is ready to pay, get a list of the available payment methods based on their country and the payment amount.
 
 [Create/Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with `getPaymentMethodsRequest` custom field.  
@@ -122,6 +122,29 @@ The commercetools payment representation example:
   }
 }
 ```
+
+If you are [creating a commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment), the payment draft have to contain the `paymentMethodInfo.paymentInterface = ctp-adyen-integration` and `amountPlanned` value, for example:
+
+````json
+{
+  "amountPlanned": {
+    "currencyCode": "EUR",
+    "centAmount": 1000
+  },
+  "paymentMethodInfo": {
+    "paymentInterface": "ctp-adyen-integration"
+  },
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "ctp-adyen-integration-web-components-payment-type"
+    },
+    "fields": {
+      "getPaymentMethodsRequest": "{\"countryCode\":\"DE\",\"shopperLocale\":\"de-DE\",\"amount\":{\"currency\":\"EUR\",\"value\":1000}}"
+    }
+  }
+}
+````
 
 The response includes the list of available payment methods:
 
@@ -173,10 +196,10 @@ If you haven't created the payment forms already in your frontend, follow the of
 After the shopper submits their payment details or chooses to pay with a payment method that requires a redirection,
 the Adyen Web Components will generate a `makePaymentRequest`. 
 
-**Restrictions:**
-- `makePaymentRequest` must have a unique `reference` value for every payment object created in commercetools. Reference may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
-- `payment.amountPlanned` CANNOT be changed if there is `makePayment` interface interaction present in the payment. The `amount` value in `makePaymentRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
+**Preconditions:**
+- `makePaymentRequest` must contain a unique payment `reference` value. The reference value cannot be duplicated in any commercetools payment and it's a required field by Adyen. The extension module uses `reference` value to set payment key, later it acts as a unique link between commercetools payment and Adyen payment(`merchantReference`). `Reference` may only contain alphanumeric characters, underscores, and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters. 
 
+- `payment.amountPlanned` CANNOT be changed if there is `makePayment` interface interaction present in the payment. The `amount` value in `makePaymentRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
 
 Make payment request generated from Adyen Web Components for credit card payment.
 > Refer Adyen's [/payments](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments) request to check all possible request payload parameters.
@@ -187,7 +210,7 @@ Make payment request generated from Adyen Web Components for credit card payment
     "currency": "EUR",
     "value": 1000
   },
-  "reference": "YOUR_ORDER_REFERENCE",
+  "reference": "YOUR_REFERENCE",
   "paymentMethod": {
     "type": "scheme",
     "encryptedCardNumber": "test_4111111111111111",
@@ -199,6 +222,7 @@ Make payment request generated from Adyen Web Components for credit card payment
   "merchantAccount": "YOUR_MERCHANT_ACCOUNT"
 }
 ``` 
+
 [Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with the request above.
 ```json
 {
@@ -207,12 +231,36 @@ Make payment request generated from Adyen Web Components for credit card payment
     {
       "action": "setCustomField",
       "name": "makePaymentRequest",
-      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_ORDER_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
+      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
     }
   ]
 }
 ```
-The response from Adyen is added to `makePaymentResponse` custom field. 
+
+If you are [creating a new commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment), the payment draft have to contain the `paymentMethodInfo.paymentInterface = ctp-adyen-integration` and `amountPlanned` value additional to the `makePaymentRequest` custom field, for example:
+
+````json
+{
+  "amountPlanned": {
+    "currencyCode": "EUR",
+    "centAmount": 1000
+  },
+  "paymentMethodInfo": {
+    "paymentInterface": "ctp-adyen-integration"
+  },
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "ctp-adyen-integration-web-components-payment-type"
+    },
+    "fields": {
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
+    }
+  }
+}
+````
+
+The commercetools payment `key` is set with the `reference` of the `makePaymentRequest` and response from Adyen is added to `makePaymentResponse` custom field. 
 The response contains information for the next steps of the payment process.
 For details, consult the [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-3-make-a-payment)
 
@@ -263,7 +311,7 @@ A commercetools payment example with `makePaymentResponse` field with the respon
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_ORDER_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
       "makePaymentResponse": "{\"resultCode\":\"RedirectShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\",\"data\":{\"MD\":\"aTZmV09...\",\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\"},\"method\":\"POST\",\"type\":\"redirect\"},\"details\":[{\"key\":\"MD\",\"type\":\"text\"},{\"key\":\"PaRes\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\",\"redirect\":{\"data\":{\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\",\"MD\":\"aTZmV09...\"},\"method\":\"POST\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\"}}"
     }
   }
@@ -280,7 +328,7 @@ See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-
     "currency": "EUR",
     "value": 1000
   },
-  "merchantReference": "YOUR_ORDER_REFERENCE"
+  "merchantReference": "YOUR_REFERENCE"
 }
 ```
 A commercetools payment with `makePaymentResponse` field with the response above.
@@ -300,8 +348,8 @@ and has `amount` taken from `amountPlanned`. `interactionId` is matching the `ma
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_ORDER_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
-      "makePaymentResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_ORDER_REFERENCE\"}"
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
+      "makePaymentResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_REFERENCE\"}"
     }
   },
   "transactions": [
@@ -329,7 +377,7 @@ Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` 
 ```json
 {
   "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
-  "reference": "YOUR_ORDER_REFERENCE",
+  "reference": "YOUR_REFERENCE",
   "paymentMethod": {
     "type": "klarna"
   },
@@ -364,7 +412,7 @@ Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` 
     {
       "action": "setCustomField",
       "name": "makePaymentRequest",
-      "value": "{\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\",\"reference\":\"YOUR_ORDER_REFERENCE\",\"paymentMethod\":{\"type\":\"klarna\"},\"amount\":{\"currency\":\"SEK\",\"value\":\"1000\"},\"shopperLocale\":\"en_US\",\"countryCode\":\"SE\",\"shopperEmail\":\"youremail@email.com\",\"shopperName\":{\"firstName\":\"Testperson-se\",\"gender\":\"UNKNOWN\",\"lastName\":\"Approved\"},\"shopperReference\":\"YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j\",\"billingAddress\":{\"city\":\"Ankeborg\",\"country\":\"SE\",\"houseNumberOrName\":\"1\",\"postalCode\":\"12345\",\"street\":\"Stargatan\"},\"returnUrl\":\"https://www.your-company.com/...\"}"
+      "value": "{\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\",\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"klarna\"},\"amount\":{\"currency\":\"SEK\",\"value\":\"1000\"},\"shopperLocale\":\"en_US\",\"countryCode\":\"SE\",\"shopperEmail\":\"youremail@email.com\",\"shopperName\":{\"firstName\":\"Testperson-se\",\"gender\":\"UNKNOWN\",\"lastName\":\"Approved\"},\"shopperReference\":\"YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j\",\"billingAddress\":{\"city\":\"Ankeborg\",\"country\":\"SE\",\"houseNumberOrName\":\"1\",\"postalCode\":\"12345\",\"street\":\"Stargatan\"},\"returnUrl\":\"https://www.your-company.com/...\"}"
     }
   ]
 }
@@ -374,7 +422,7 @@ Extension module will add line items to your `makePaymentRequest`
 ```json
 {
   "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
-  "reference": "YOUR_ORDER_REFERENCE",
+  "reference": "YOUR_REFERENCE",
   "paymentMethod": {
     "type": "klarna"
   },
@@ -519,7 +567,7 @@ Submit additional payment details response from Adyen for the case where you can
     "currency": "EUR",
     "value": 1000
   },
-  "merchantReference": "YOUR_ORDER_REFERENCE"
+  "merchantReference": "YOUR_REFERENCE"
 }
 ```
 A commercetools example payment with `submitAdditionalPaymentDetailsResponse` field with the response above.
@@ -540,7 +588,7 @@ and has `amount` taken from `amountPlanned`. `interactionId` is matching the `ma
     },
     "fields": {
       "submitPaymentDetailsRequest": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}",
-      "submitAdditionalPaymentDetailsResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_ORDER_REFERENCE\"}"
+      "submitAdditionalPaymentDetailsResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_REFERENCE\"}"
     }
   },
   "transactions": [
