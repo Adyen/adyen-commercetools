@@ -17,10 +17,10 @@ The alternative for that is the native payment `key` field.
 - We will use the native payment key for matching payment for notification.
 - The extension module will validate the reference field makePaymentRequest#reference before handling the payment to avoid unnecessary calls to Adyen.
 - The payment key will be set by the make payment handler, also makePaymentRequest#reference should be validated to avoid mismatches.
-- The notification will use the native payment key to fetch payment, It first finds the payment by `key` where `key=${merchantReference}` and then it finds in this payment the corresponding transaction
+- The notification will use the native payment key to fetch payment. It first finds the payment by `key` where `key=${merchantReference}` and then it finds in this payment the corresponding transaction
 by `interactionId` where `interactionId=${pspReference}`. 
 
 ## Consequences
 
 - It is easier to fetch a key rather than using a custom field, also a key is an indexed field, so with a key, it's more performant.
-- It's not possible to set key with my-payments endpoint, so avoids by default changing/removing the key accidentally which is secure than the custom field, because it might be changed my-payment endpoint. Check for more details: https://docs.commercetools.com/api/projects/me-payments
+- It's not possible to set key with my-payments endpoint. This prevents by default changing/removing the key accidentally. It is more secure than custom fields as the custom field might be changed with my-payment endpoint. Check for more details: https://docs.commercetools.com/api/projects/me-payments

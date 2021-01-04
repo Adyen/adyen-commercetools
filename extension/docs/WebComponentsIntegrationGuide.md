@@ -197,7 +197,7 @@ After the shopper submits their payment details or chooses to pay with a payment
 the Adyen Web Components will generate a `makePaymentRequest`. 
 
 **Preconditions:**
-- `makePaymentRequest` must contain a unique payment `reference` value. The reference value cannot be duplicated in any commercetools payment and it's a required field by Adyen. The extension module uses reference value to set payment key, later it acts as a unique link between commercetools payment and Adyen payment(`merchantReference`). Reference may only contain alphanumeric characters, underscores, and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters. 
+- `makePaymentRequest` must contain a unique payment `reference` value. The reference value cannot be duplicated in any commercetools payment and it's a required field by Adyen. The extension module uses `reference` value to set payment key, later it acts as a unique link between commercetools payment and Adyen payment(`merchantReference`). `Reference` may only contain alphanumeric characters, underscores, and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters. 
 
 - `payment.amountPlanned` CANNOT be changed if there is `makePayment` interface interaction present in the payment. The `amount` value in `makePaymentRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
 
