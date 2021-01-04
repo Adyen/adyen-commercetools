@@ -9,7 +9,7 @@ Date: 2020-12-18
 ## Context
 
 The Adyen notification needs to be matched by its commercetools payment equivalent.
-We are using the custom field for the merchantReference and fetching the commercetool payment object with query `custom(fields(merchantReference="${merchantReference}"))`.
+We are using the custom field for the merchantReference and fetching the commercetools payment object with query `custom(fields(merchantReference="${merchantReference}"))`.
 The alternative for that is the native payment field.
 
 ## Decision
