@@ -260,7 +260,7 @@ If you are [creating a new commercetools payment](https://docs.commercetools.com
 }
 ````
 
-The response from Adyen is added to `makePaymentResponse` custom field. 
+The commercetools payment `key` is set with the `reference` of the `makePaymentRequest` and response from Adyen is added to `makePaymentResponse` custom field. 
 The response contains information for the next steps of the payment process.
 For details, consult the [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-3-make-a-payment)
 
