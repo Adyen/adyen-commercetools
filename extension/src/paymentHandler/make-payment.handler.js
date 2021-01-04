@@ -1,5 +1,5 @@
 const { makePayment } = require('../service/web-component-service')
-  const pU = require('./payment-utils')
+const pU = require('./payment-utils')
 const c = require('../config/constants')
 
 async function execute (paymentObject) {
