@@ -1,4 +1,4 @@
-# 2. Mathcing Adyen Notification with commercetools payment.
+# 2. Matching Adyen Notification with commercetools payment.
 
 Date: 2020-12-18
 
