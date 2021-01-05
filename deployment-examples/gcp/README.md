@@ -3,6 +3,9 @@
 As a quick start, you can utilize the available bash script which is capable of deploying both modules to a 
 Google Kubernetes Engine.
 
+> Note: In the script we are using our [public-service](https://github.com/commercetools/k8s-charts/tree/master/charts/public-service) helm chart to be able deploy an 
+> instance of a publicly available service on a K8s cluster (via HTTP from outside the cluster).
+
 ### Prerequisites:
 
 - [gcloud sdk](https://cloud.google.com/sdk/docs/install)
