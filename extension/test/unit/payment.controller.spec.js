@@ -6,7 +6,10 @@ const ctpPayment = require('./fixtures/ctp-payment.json')
 const errorMessages = require('../../src/validator/error-messages')
 
 const utilsStub = {}
-const paymentController = proxyquire('../../src/api/payment/payment.controller', { '../../utils': utilsStub })
+const paymentController = proxyquire(
+  '../../src/api/payment/payment.controller',
+  { '../../utils': utilsStub }
+)
 
 describe('Payment controller', () => {
   describe('Validation', () => {
@@ -16,7 +19,8 @@ describe('Payment controller', () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.paymentMethodInfo.paymentInterface = ''
 
-      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
+      utilsStub.collectRequestData = () =>
+        JSON.stringify({ resource: { obj: ctpPaymentClone } })
       utilsStub.sendResponse = ({ statusCode, headers, data }) => {
         expect(statusCode).to.equal(200)
         expect(headers).to.not.exist
@@ -30,14 +34,17 @@ describe('Payment controller', () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.getPaymentMethodsRequest = '{'
 
-      utilsStub.collectRequestData = () => JSON.stringify({ resource: { obj: ctpPaymentClone } })
+      utilsStub.collectRequestData = () =>
+        JSON.stringify({ resource: { obj: ctpPaymentClone } })
       utilsStub.sendResponse = ({ statusCode, data }) => {
         expect(statusCode).to.equal(400)
         expect(data).to.deep.equal({
-          errors: [{
-            code: 'InvalidField',
-            message: errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
-          }]
+          errors: [
+            {
+              code: 'InvalidField',
+              message: errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON,
+            },
+          ],
         })
       }
 

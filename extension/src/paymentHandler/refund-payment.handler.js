@@ -1,11 +1,9 @@
 const pMap = require('p-map')
 const pU = require('./payment-utils')
 const { refund } = require('../service/web-component-service')
-const {
-  CTP_INTERACTION_TYPE_REFUND,
-} = require('../config/constants')
+const { CTP_INTERACTION_TYPE_REFUND } = require('../config/constants')
 
-async function execute (paymentObject) {
+async function execute(paymentObject) {
   const refundInitTransactions = pU.listRefundTransactionsInit(paymentObject)
   let transaction = pU.getChargeTransactionSuccess(paymentObject)
   if (!transaction)
@@ -18,25 +16,36 @@ async function execute (paymentObject) {
     const refundRequestObjects = {
       modificationAmount: {
         value: refundTransaction.amount.centAmount,
-        currency: refundTransaction.amount.currencyCode
+        currency: refundTransaction.amount.currencyCode,
       },
       originalReference: interactionId,
-      reference: paymentObject.key
+      reference: paymentObject.key,
     }
 
     const { request, response } = await refund(refundRequestObjects)
-    const addInterfaceInteractionAction = pU.createAddInterfaceInteractionAction({
-      request, response, type: CTP_INTERACTION_TYPE_REFUND
-    })
+    const addInterfaceInteractionAction = pU.createAddInterfaceInteractionAction(
+      {
+        request,
+        response,
+        type: CTP_INTERACTION_TYPE_REFUND,
+      }
+    )
     actions.push(addInterfaceInteractionAction)
     if (!response.errorCode && response.pspReference) {
-      actions.push(pU.createChangeTransactionStateAction(refundTransaction.id, 'Pending'))
-      actions.push(pU.createChangeTransactionInteractionId(refundTransaction.id, response.pspReference))
+      actions.push(
+        pU.createChangeTransactionStateAction(refundTransaction.id, 'Pending')
+      )
+      actions.push(
+        pU.createChangeTransactionInteractionId(
+          refundTransaction.id,
+          response.pspReference
+        )
+      )
     }
   })
 
   return {
-    actions
+    actions,
   }
 }
 

@@ -1,18 +1,21 @@
 const { pasteValue } = require('../e2e-test-utils')
 
 module.exports = class RedirectPaymentFormPage {
-  constructor (page, baseUrl) {
+  constructor(page, baseUrl) {
     this.page = page
     this.baseUrl = baseUrl
   }
 
-  async goToThisPage () {
+  async goToThisPage() {
     await this.page.goto(`${this.baseUrl}/redirect-payment-form`)
   }
 
-  async redirectToAdyenPaymentPage (paymentDetailsResponse) {
-    await pasteValue(this.page, '#adyen-make-payment-response-action-field',
-      JSON.stringify(paymentDetailsResponse.action))
+  async redirectToAdyenPaymentPage(paymentDetailsResponse) {
+    await pasteValue(
+      this.page,
+      '#adyen-make-payment-response-action-field',
+      JSON.stringify(paymentDetailsResponse.action)
+    )
     return this.page.click('#redirect-payment-button')
   }
 }

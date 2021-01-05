@@ -3,7 +3,7 @@ module.exports = JSON.stringify({
   resultCode: 'Authorised',
   amount: {
     currency: 'EUR',
-    value: 1000
+    value: 1000,
   },
-  merchantReference: '98'
+  merchantReference: '98',
 })
