@@ -1,8 +1,8 @@
 fullnameOverride: 'ctp-adyen-integration-service-extension'
 
 image:
-  repository: 'eu.gcr.io/your-GCP-project/commercetools-adyen-integration-extension'
-  tag: 'latest'
+  repository: 'eu.gcr.io/<<your-GCP-project-name>>/commercetools-adyen-integration-extension'
+  tag: 'x.x.x'
 
 service:
   type: 'NodePort'

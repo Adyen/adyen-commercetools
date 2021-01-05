@@ -1,4 +1,4 @@
-# Deployment Guide
+# How to run
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -8,12 +8,12 @@
   - [Adyen](#adyen)
   - [commercetools](#commercetools)
   - [Other Configurations](#other-configurations)
-- [Requirements for the commercetools project](#requirements-for-the-commercetools-project)
+- [Commercetools project requirements](#commercetools-project-requirements)
   - [Creating required resources manually](#creating-required-resources-manually)
-- [Deployment](#deployment)
+- [Running](#running)
   - [Docker](#docker)
     - [Running the Docker image](#running-the-docker-image)
-  - [AWS Lambda](#aws-lambda)
+- [Deployment](#deployment)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -57,7 +57,7 @@ If you don't have the commercetools OAuth credentials,[create a commercetools AP
 |`KEEP_ALIVE_TIMEOUT` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_server_keepalivetimeout)). | NO | Node.js default (5 seconds)
 |`ENSURE_RESOURCES` | Set to `false` to disable the creation of required resources in commercetools (e.g. custom types) on startup. | NO | `true`
 
-## Requirements for the commercetools project
+## Commercetools project requirements
 Resources below are required for the extension module to operate correctly. Resources that ***will be automatically created*** by the extension module in your commercetools project.
 
 1. [The commercetools HTTP API Extension pointing to Adyen extension module](../resources/api-extension.json)
@@ -82,10 +82,8 @@ You can create these by running the command `npm run create-custom-types` as bel
 You will also need [create the commercetools HTTP API extension manually](https://docs.commercetools.com/http-api-projects-api-extensions#create-an-extension) for payment resource.
 Please refer to our [Extension Draft](../resources/api-extension.json) for the sample extension draft and replace `${ctpAdyenIntegrationBaseUrl}` with your publicly available HTTPs URL endpoint.
 
-## Deployment
+## Running
 
-Extension module supports different deployment options. It could be either hosted on-premises (run docker containers behind the load balancer) or deployed as a serverless application with AWS Lambda.
- 
 ### Docker
 Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension/tags) page to see the latest releases and tags.
 
@@ -102,7 +100,8 @@ Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-a
     commercetools/commercetools-adyen-integration-extension
 ```
 
-### AWS Lambda
+## Deployment
 
-1. For deployment to AWS Lambda, zip the extensions folder and specify `src/lambda.handler` as the entry point for the AWS Lambda function.
-2. When the extension module is run as AWS Lambda **it will NOT create** the required resources like custom types or commercetools API extension for you. Please follow the [manual resource creation guide](#creating-resources-manually) instead. 
+Extension module supports different deployment [options](/deployment-examples). 
+It could be either hosted on-premises (run docker containers behind the load balancer) or 
+deployed as a serverless application.

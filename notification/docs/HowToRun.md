@@ -8,10 +8,10 @@
   - [Adyen](#adyen)
   - [commercetools](#commercetools)
   - [Other Configurations](#other-configurations)
-- [Deployment](#deployment)
+- [Running](#running)
   - [Docker](#docker)
     - [Running the Docker image](#running-the-docker-image)
-  - [AWS Lambda](#aws-lambda)
+- [Deployment](#deployment)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -46,10 +46,8 @@ If you don't have the commercetools OAuth credentials,[create a commercetools AP
 |`LOG_LEVEL` | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).| NO | `info` |
 |`KEEP_ALIVE_TIMEOUT` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_server_keepalivetimeout)). | NO | Node.js default (5 seconds)
 
-## Deployment
+## Running
 
-Notification module supports different deployment options. It could be either hosted on-premises (run docker containers behind the load balancer) or deployed as a serverless application with AWS Lambda.
- 
 ### Docker
 Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-notification/tags) page to see the latest releases and tags.
 
@@ -64,6 +62,8 @@ Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-a
     commercetools/commercetools-adyen-integration-notification
 ```
 
-### AWS Lambda
+## Deployment
 
-For deployment to AWS Lambda, zip the `notification` folder and specify `src/lambda.js` as the entry point for the AWS Lambda function.
+Notification module supports different deployment [options](/deployment-examples).
+It could be either hosted on-premises (run docker containers behind the load balancer) 
+or deployed as a serverless application.
