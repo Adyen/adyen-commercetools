@@ -54,6 +54,8 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.21.5",
+    "husky": "^4.3.6",
+    "lint-staged": "^10.5.3",
     "mocha": "^8.2.1",
     "ngrok": "^3.3.0",
     "nock": "^13.0.5",
@@ -83,5 +85,14 @@
     "file": "./test/cleanup-ctp-project.js",
     "exit": true,
     "full-trace": true
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   }
 }
