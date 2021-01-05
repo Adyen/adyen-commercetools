@@ -7,10 +7,7 @@
   "triggers": [
     {
       "resourceTypeId": "payment",
-      "actions": [
-        "Create",
-        "Update"
-      ]
+      "actions": ["Create", "Update"]
     }
   ],
   "timeoutInMs": 10000

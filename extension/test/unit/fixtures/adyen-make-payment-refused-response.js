@@ -4,11 +4,11 @@ module.exports = JSON.stringify({
     avsResult: '4 AVS not supported for this card type',
     authorisationMid: '1000',
     cardHolderName: 'Checkout Shopper PlaceHolder',
-    acquirerAccountCode: 'TestPmmAcquirerAccount'
+    acquirerAccountCode: 'TestPmmAcquirerAccount',
   },
   pspReference: '882587368372271B',
   refusalReason: 'Expired Card',
   resultCode: 'Refused',
   refusalReasonCode: '6',
-  merchantReference: '933'
+  merchantReference: '933',
 })

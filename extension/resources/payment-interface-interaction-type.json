@@ -3,9 +3,7 @@
   "name": {
     "en": "commercetools Adyen integration payment interface interaction type"
   },
-  "resourceTypeIds": [
-    "payment-interface-interaction"
-  ],
+  "resourceTypeIds": ["payment-interface-interaction"],
   "fieldDefinitions": [
     {
       "name": "createdAt",

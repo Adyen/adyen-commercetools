@@ -11,7 +11,8 @@
     "integration": "nyc mocha --check-leaks --no-clean --timeout 30000 --full-trace --recursive \"./test/integration/**/*.spec.js\"",
     "start": "node ./src/init.js",
     "coverage": "nyc report",
-    "lint": "eslint ./src ./test"
+    "lint": "eslint ./src ./test",
+    "format": "prettier --write ."
   },
   "keywords": [
     "adyen",
@@ -55,18 +56,31 @@
     "serialize-error": "^7.0.1"
   },
   "devDependencies": {
+    "babel-eslint": "^10.1.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "babel-eslint": "^10.1.0",
     "eslint": "^7.17.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-commercetools": "^6.0.0",
+    "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.22.0",
+    "husky": "^4.3.6",
     "ip": "^1.1.5",
+    "lint-staged": "^10.5.3",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
+    "prettier": "2.2.1",
     "sinon": "^9.2.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   }
 }

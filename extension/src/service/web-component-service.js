@@ -5,48 +5,61 @@ const packageJson = require('../../package.json')
 
 const config = configLoader.load()
 
-function getPaymentMethods (getPaymentMethodsRequestObj) {
-  return callAdyen(`${config.adyen.apiBaseUrl}/paymentMethods`,
-    extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj))
+function getPaymentMethods(getPaymentMethodsRequestObj) {
+  return callAdyen(
+    `${config.adyen.apiBaseUrl}/paymentMethods`,
+    extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj)
+  )
 }
 
-function makePayment (makePaymentRequestObj) {
-  return callAdyen(`${config.adyen.apiBaseUrl}/payments`,
-    extendRequestObjWithApplicationInfo(makePaymentRequestObj))
+function makePayment(makePaymentRequestObj) {
+  return callAdyen(
+    `${config.adyen.apiBaseUrl}/payments`,
+    extendRequestObjWithApplicationInfo(makePaymentRequestObj)
+  )
 }
 
-function submitAdditionalPaymentDetails (submitAdditionalPaymentDetailsRequestObj) {
-  return callAdyen(`${config.adyen.apiBaseUrl}/payments/details`,
-    extendRequestObjWithApplicationInfo(submitAdditionalPaymentDetailsRequestObj))
+function submitAdditionalPaymentDetails(
+  submitAdditionalPaymentDetailsRequestObj
+) {
+  return callAdyen(
+    `${config.adyen.apiBaseUrl}/payments/details`,
+    extendRequestObjWithApplicationInfo(
+      submitAdditionalPaymentDetailsRequestObj
+    )
+  )
 }
 
-function manualCapture (manualCaptureRequestObj) {
-  return callAdyen(`${config.adyen.legacyApiBaseUrl}/capture`, manualCaptureRequestObj)
+function manualCapture(manualCaptureRequestObj) {
+  return callAdyen(
+    `${config.adyen.legacyApiBaseUrl}/capture`,
+    manualCaptureRequestObj
+  )
 }
 
-function cancelPayment (cancelRequestObj) {
+function cancelPayment(cancelRequestObj) {
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/cancel`, cancelRequestObj)
 }
 
-function refund (refundRequestObj) {
+function refund(refundRequestObj) {
   return callAdyen(`${config.adyen.legacyApiBaseUrl}/refund`, refundRequestObj)
 }
 
-function extendRequestObjWithApplicationInfo (requestObj) {
+function extendRequestObjWithApplicationInfo(requestObj) {
   requestObj.applicationInfo = {
     merchantApplication: {
       name: packageJson.name,
-      version: packageJson.version
+      version: packageJson.version,
     },
     externalPlatform: {
       name: 'commercetools',
-      integrator: packageJson.author.name
-    }
+      integrator: packageJson.author.name,
+    },
   }
   return requestObj
 }
 
-async function callAdyen (url, request) {
+async function callAdyen(url, request) {
   let response
   try {
     response = await fetchAsync(url, request)
@@ -56,7 +69,7 @@ async function callAdyen (url, request) {
   return { request, response }
 }
 
-async function fetchAsync (url, requestObj) {
+async function fetchAsync(url, requestObj) {
   const request = buildRequest(requestObj)
   const response = await fetch(url, request)
   const responseBody = await response.json()
@@ -65,7 +78,7 @@ async function fetchAsync (url, requestObj) {
   return responseBody
 }
 
-function buildRequest (requestObj) {
+function buildRequest(requestObj) {
   // Note: ensure the merchantAccount is set with request, otherwise set.
   // `makePaymentRequest` custom field will have the value in payload but the value
   // also needed in the `cancel` and `capture` payment handler,
@@ -78,8 +91,8 @@ function buildRequest (requestObj) {
     body: JSON.stringify(requestObj),
     headers: {
       'Content-Type': 'application/json',
-      'X-Api-Key': config.adyen.apiKey
-    }
+      'X-Api-Key': config.adyen.apiKey,
+    },
   }
 }
 
@@ -89,5 +102,5 @@ module.exports = {
   submitAdditionalPaymentDetails,
   manualCapture,
   refund,
-  cancelPayment
+  cancelPayment,
 }

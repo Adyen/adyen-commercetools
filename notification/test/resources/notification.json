@@ -4,7 +4,7 @@
     {
       "NotificationRequestItem": {
         "additionalData": {
-          "hmacSignature":"cjiTz03EI0jkkysGDdPJQdLbecRVVU/5jm12/DTFEHo="
+          "hmacSignature": "cjiTz03EI0jkkysGDdPJQdLbecRVVU/5jm12/DTFEHo="
         },
         "amount": {
           "currency": "EUR",
@@ -14,11 +14,7 @@
         "eventDate": "2019-01-30T18:16:22+01:00",
         "merchantAccountCode": "CommercetoolsGmbHDE775",
         "merchantReference": "8313842560770001",
-        "operations": [
-          "CANCEL",
-          "CAPTURE",
-          "REFUND"
-        ],
+        "operations": ["CANCEL", "CAPTURE", "REFUND"],
         "paymentMethod": "visa",
         "pspReference": "test_AUTHORISATION_1",
         "success": "true"

@@ -5,7 +5,7 @@ const config = configLoader.load()
 
 let logger
 
-function collectRequestData (request) {
+function collectRequestData(request) {
   return new Promise((resolve) => {
     const data = []
 
@@ -20,19 +20,17 @@ function collectRequestData (request) {
   })
 }
 
-function sendResponse ({
-  response, statusCode = 200, headers, data
-}) {
+function sendResponse({ response, statusCode = 200, headers, data }) {
   response.writeHead(statusCode, headers)
   response.end(JSON.stringify(data))
 }
 
-function getLogger () {
+function getLogger() {
   if (!logger)
     logger = bunyan.createLogger({
       name: 'ctp-adyen-integration-extension',
       stream: process.stderr,
-      level: config.logLevel || bunyan.INFO
+      level: config.logLevel || bunyan.INFO,
     })
   return logger
 }
@@ -40,5 +38,5 @@ function getLogger () {
 module.exports = {
   collectRequestData,
   sendResponse,
-  getLogger
+  getLogger,
 }

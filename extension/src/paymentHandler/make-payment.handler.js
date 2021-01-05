@@ -2,14 +2,21 @@ const { makePayment } = require('../service/web-component-service')
 const pU = require('./payment-utils')
 const c = require('../config/constants')
 
-async function execute (paymentObject) {
-  const makePaymentRequestObj = JSON.parse(paymentObject.custom.fields.makePaymentRequest)
+async function execute(paymentObject) {
+  const makePaymentRequestObj = JSON.parse(
+    paymentObject.custom.fields.makePaymentRequest
+  )
   const { request, response } = await makePayment(makePaymentRequestObj)
   const actions = [
     pU.createAddInterfaceInteractionAction({
-      request, response, type: c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+      request,
+      response,
+      type: c.CTP_INTERACTION_TYPE_MAKE_PAYMENT,
     }),
-    pU.createSetCustomFieldAction(c.CTP_CUSTOM_FIELD_MAKE_PAYMENT_RESPONSE, response)
+    pU.createSetCustomFieldAction(
+      c.CTP_CUSTOM_FIELD_MAKE_PAYMENT_RESPONSE,
+      response
+    ),
   ]
 
   const paymentKey = paymentObject.key
@@ -20,7 +27,7 @@ async function execute (paymentObject) {
   if (reference !== paymentKey)
     actions.push({
       action: 'setKey',
-      key: reference
+      key: reference,
     })
 
   const addTransactionAction = pU.createAddTransactionActionByResponse(
@@ -29,11 +36,10 @@ async function execute (paymentObject) {
     response
   )
 
-  if (addTransactionAction)
-    actions.push(addTransactionAction)
+  if (addTransactionAction) actions.push(addTransactionAction)
 
   return {
-    actions
+    actions,
   }
 }
 

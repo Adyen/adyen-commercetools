@@ -2,10 +2,10 @@ const { serializeError } = require('serialize-error')
 const httpUtils = require('../../utils')
 const paymentHandler = require('../../paymentHandler/payment-handler')
 
-async function processRequest (request, response) {
+async function processRequest(request, response) {
   if (request.method !== 'POST')
-  // API extensions always calls this endpoint with POST, so if we got GET, we don't process further
-  // https://docs.commercetools.com/http-api-projects-api-extensions#input
+    // API extensions always calls this endpoint with POST, so if we got GET, we don't process further
+    // https://docs.commercetools.com/http-api-projects-api-extensions#input
     return httpUtils.sendResponse({ response })
 
   const paymentObject = await _getPaymentObject(request)
@@ -14,18 +14,20 @@ async function processRequest (request, response) {
   return httpUtils.sendResponse({
     response,
     statusCode: paymentResult.success ? 200 : 400,
-    data: paymentResult.data
+    data: paymentResult.data,
   })
 }
 
-async function _getPaymentObject (request) {
+async function _getPaymentObject(request) {
   const body = await httpUtils.collectRequestData(request)
   try {
     const requestBody = JSON.parse(body)
     return requestBody.resource.obj
   } catch (err) {
-    throw new Error(`Error during parsing CTP request: '${body}'. Ending the process. `
-      + `Error: ${JSON.stringify(serializeError(err))}`)
+    throw new Error(
+      `Error during parsing CTP request: '${body}'. Ending the process. ` +
+        `Error: ${JSON.stringify(serializeError(err))}`
+    )
   }
 }
 

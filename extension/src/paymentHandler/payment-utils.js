@@ -1,39 +1,43 @@
 const _ = require('lodash')
 const c = require('../config/constants')
 
-function getAuthorizationTransactionSuccess (paymentObject) {
-  return getTransactionWithTypesAndStates(paymentObject,
+function getAuthorizationTransactionSuccess(paymentObject) {
+  return getTransactionWithTypesAndStates(
+    paymentObject,
     ['Authorization'],
-    ['Success'])
+    ['Success']
+  )
 }
 
-function getCancelAuthorizationTransactionInit (paymentObject) {
-  return getTransactionWithTypesAndStates(paymentObject,
+function getCancelAuthorizationTransactionInit(paymentObject) {
+  return getTransactionWithTypesAndStates(
+    paymentObject,
     ['CancelAuthorization'],
-    ['Initial'])
+    ['Initial']
+  )
 }
 
-function listRefundTransactionsInit (paymentObject) {
-  return listTransactionsWithTypesAndStates(paymentObject,
+function listRefundTransactionsInit(paymentObject) {
+  return listTransactionsWithTypesAndStates(
+    paymentObject,
     ['Refund'],
-    ['Initial'])
+    ['Initial']
+  )
 }
 
-function getTransactionWithTypesAndStates (paymentObject, types, states) {
-  return paymentObject.transactions.find(t => types.includes(t.type)
-    && (states.includes(t.state)))
+function getTransactionWithTypesAndStates(paymentObject, types, states) {
+  return paymentObject.transactions.find(
+    (t) => types.includes(t.type) && states.includes(t.state)
+  )
 }
 
-function listTransactionsWithTypesAndStates (paymentObject, types, states) {
-  return paymentObject.transactions.filter(t => types.includes(t.type)
-    && (states.includes(t.state)))
+function listTransactionsWithTypesAndStates(paymentObject, types, states) {
+  return paymentObject.transactions.filter(
+    (t) => types.includes(t.type) && states.includes(t.state)
+  )
 }
 
-function createAddInterfaceInteractionAction (
-  {
-    request, response, type
-  }
-) {
+function createAddInterfaceInteractionAction({ request, response, type }) {
   return {
     action: 'addInterfaceInteraction',
     type: { key: c.CTP_PAYMENT_INTERACTION_CUSTOM_TYPE_KEY },
@@ -41,37 +45,41 @@ function createAddInterfaceInteractionAction (
       createdAt: new Date().toISOString(),
       response: JSON.stringify(response),
       request: JSON.stringify(request),
-      type
-    }
+      type,
+    },
   }
 }
 
-function createChangeTransactionStateAction (transactionId, transactionState) {
+function createChangeTransactionStateAction(transactionId, transactionState) {
   return {
     action: 'changeTransactionState',
     transactionId,
-    state: _.capitalize(transactionState)
+    state: _.capitalize(transactionState),
   }
 }
 
-function createSetCustomFieldAction (name, response) {
+function createSetCustomFieldAction(name, response) {
   return {
     action: 'setCustomField',
     name,
-    value: JSON.stringify(response)
+    value: JSON.stringify(response),
   }
 }
 
-function createChangeTransactionInteractionId (transactionId, interactionId) {
+function createChangeTransactionInteractionId(transactionId, interactionId) {
   return {
     action: 'changeTransactionInteractionId',
     transactionId,
-    interactionId
+    interactionId,
   }
 }
 
-function createAddTransactionAction ({
- type, state, amount, currency, interactionId
+function createAddTransactionAction({
+  type,
+  state,
+  amount,
+  currency,
+  interactionId,
 }) {
   return {
     action: 'addTransaction',
@@ -79,15 +87,15 @@ function createAddTransactionAction ({
       type,
       amount: {
         currencyCode: currency,
-        centAmount: amount
+        centAmount: amount,
       },
       state,
-      interactionId
-    }
+      interactionId,
+    },
   }
 }
 
-function createAddTransactionActionByResponse (amount, currencyCode, response) {
+function createAddTransactionActionByResponse(amount, currencyCode, response) {
   // eslint-disable-next-line default-case
   switch (response.resultCode) {
     case 'Authorised':
@@ -96,7 +104,7 @@ function createAddTransactionActionByResponse (amount, currencyCode, response) {
         state: 'Success',
         amount,
         currency: currencyCode,
-        interactionId: response.pspReference
+        interactionId: response.pspReference,
       })
     case 'Refused':
     case 'Error':
@@ -105,44 +113,48 @@ function createAddTransactionActionByResponse (amount, currencyCode, response) {
         state: 'Failure',
         amount,
         currency: currencyCode,
-        interactionId: response.pspReference
+        interactionId: response.pspReference,
       })
   }
   return null
 }
 
-function getChargeTransactionInitial (paymentObject) {
-  return getTransactionWithTypesAndStates(paymentObject,
+function getChargeTransactionInitial(paymentObject) {
+  return getTransactionWithTypesAndStates(
+    paymentObject,
     ['Charge'],
-    ['Initial'])
+    ['Initial']
+  )
 }
 
-function getChargeTransactionPending (paymentObject) {
-  return getTransactionWithTypesAndStates(paymentObject,
+function getChargeTransactionPending(paymentObject) {
+  return getTransactionWithTypesAndStates(
+    paymentObject,
     ['Charge'],
-    ['Pending'])
+    ['Pending']
+  )
 }
 
-function getChargeTransactionSuccess (paymentObject) {
-  return getTransactionWithTypesAndStates(paymentObject,
+function getChargeTransactionSuccess(paymentObject) {
+  return getTransactionWithTypesAndStates(
+    paymentObject,
     ['Charge'],
-    ['Success'])
+    ['Success']
+  )
 }
 
-function getLatestInterfaceInteraction (interfaceInteractions, type) {
+function getLatestInterfaceInteraction(interfaceInteractions, type) {
   return interfaceInteractions
-    .filter(interaction => interaction.fields.type === type)
+    .filter((interaction) => interaction.fields.type === type)
     .sort((i1, i2) => i1.fields.createdAt.localeCompare(i2.fields.createdAt))
     .pop()
 }
 
-function isValidJSON (jsonString) {
-  if (typeof jsonString === 'undefined')
-    return true
+function isValidJSON(jsonString) {
+  if (typeof jsonString === 'undefined') return true
   try {
     const o = JSON.parse(jsonString)
-    if (o && typeof o === 'object')
-      return true
+    if (o && typeof o === 'object') return true
   } catch (e) {
     // continue regardless of error
   }
@@ -163,5 +175,5 @@ module.exports = {
   createAddTransactionAction,
   createAddTransactionActionByResponse,
   getLatestInterfaceInteraction,
-  isValidJSON
+  isValidJSON,
 }

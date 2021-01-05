@@ -26,58 +26,28 @@
     "headers": {
       "Accept": "application/json",
       "Content-Type": "application/json",
-      "Authorization": [
-        "Bearer ********"
-      ]
+      "Authorization": ["Bearer ********"]
     }
   },
   "retryCount": 0,
   "headers": {
-    "server": [
-      "nginx"
-    ],
-    "date": [
-      "Thu, 07 Mar 2019 23:11:49 GMT"
-    ],
-    "content-type": [
-      "application/json; charset=utf-8"
-    ],
-    "content-length": [
-      "322"
-    ],
-    "server-timing": [
-      "projects;dur=6"
-    ],
-    "x-correlation-id": [
-      "projects-433dda8c-0703-4b62-a75c-2f939bc5df62"
-    ],
-    "x-served-by": [
-      "api-xxx.commercetools.de"
-    ],
-    "x-served-config": [
-      "sphere-projects-ws-1.0"
-    ],
-    "access-control-allow-origin": [
-      "*"
-    ],
+    "server": ["nginx"],
+    "date": ["Thu, 07 Mar 2019 23:11:49 GMT"],
+    "content-type": ["application/json; charset=utf-8"],
+    "content-length": ["322"],
+    "server-timing": ["projects;dur=6"],
+    "x-correlation-id": ["projects-433dda8c-0703-4b62-a75c-2f939bc5df62"],
+    "x-served-by": ["api-xxx.commercetools.de"],
+    "x-served-config": ["sphere-projects-ws-1.0"],
+    "access-control-allow-origin": ["*"],
     "access-control-allow-headers": [
       "Accept, Authorization, Content-Type, Origin, User-Agent"
     ],
-    "access-control-allow-methods": [
-      "GET, POST, DELETE, OPTIONS"
-    ],
-    "access-control-max-age": [
-      "299"
-    ],
-    "via": [
-      "1.1 google"
-    ],
-    "alt-svc": [
-      "clear"
-    ],
-    "connection": [
-      "close"
-    ]
+    "access-control-allow-methods": ["GET, POST, DELETE, OPTIONS"],
+    "access-control-max-age": ["299"],
+    "via": ["1.1 google"],
+    "alt-svc": ["clear"],
+    "connection": ["close"]
   },
   "body": {
     "statusCode": 409,
