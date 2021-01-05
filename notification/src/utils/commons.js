@@ -1,4 +1,4 @@
-function collectRequestData (request) {
+function collectRequestData(request) {
   return new Promise((resolve) => {
     const data = []
 
@@ -13,12 +13,12 @@ function collectRequestData (request) {
   })
 }
 
-function sendResponse (response, statusCode = 200, headers, data) {
+function sendResponse(response, statusCode = 200, headers, data) {
   response.writeHead(statusCode, headers)
   response.end(data)
 }
 
 module.exports = {
   collectRequestData,
-  sendResponse
+  sendResponse,
 }

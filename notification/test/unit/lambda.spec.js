@@ -13,7 +13,9 @@ describe('Lambda handler', () => {
   let ensureResourcesStub
 
   beforeEach(() => {
-    ensureResourcesStub = sinon.stub(setup, 'ensureInterfaceInteractionCustomType').returns(undefined)
+    ensureResourcesStub = sinon
+      .stub(setup, 'ensureInterfaceInteractionCustomType')
+      .returns(undefined)
   })
 
   afterEach(() => {
@@ -22,7 +24,7 @@ describe('Lambda handler', () => {
   })
 
   const event = {
-    notificationItems: []
+    notificationItems: [],
   }
 
   it('only calls ensureResources once', async () => {
@@ -52,6 +54,11 @@ describe('Lambda handler', () => {
     const call = async () => handler(event)
 
     await expect(call()).to.be.rejectedWith(error)
-    assert(logSpy.calledWith(error, `Unexpected error when processing event ${JSON.stringify(event)}`))
+    assert(
+      logSpy.calledWith(
+        error,
+        `Unexpected error when processing event ${JSON.stringify(event)}`
+      )
+    )
   })
 })

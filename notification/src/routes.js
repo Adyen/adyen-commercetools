@@ -1,7 +1,7 @@
 const notificationController = require('./api/notification/notification.controller')
 
 const routes = {
-  '/': notificationController.handleNotification
+  '/': notificationController.handleNotification,
 }
 
 module.exports = { routes }

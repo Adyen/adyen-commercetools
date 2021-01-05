@@ -4,33 +4,37 @@ const configPath = process.env.CONFIG_PATH
 
 let config
 
-function getEnvConfig () {
+function getEnvConfig() {
   return {
     logLevel: process.env.LOG_LEVEL,
-    keepAliveTimeout: !Number.isNaN(process.env.KEEP_ALIVE_TIMEOUT) ? parseFloat(process.env.KEEP_ALIVE_TIMEOUT, 10)
+    keepAliveTimeout: !Number.isNaN(process.env.KEEP_ALIVE_TIMEOUT)
+      ? parseFloat(process.env.KEEP_ALIVE_TIMEOUT, 10)
       : undefined,
-    ensureResources: process.env.ENSURE_RESOURCES !== 'false'
+    ensureResources: process.env.ENSURE_RESOURCES !== 'false',
   }
 }
 
-function getCTPEnvCredentials () {
+function getCTPEnvCredentials() {
   return {
     projectKey: process.env.CTP_PROJECT_KEY,
     clientId: process.env.CTP_CLIENT_ID,
     clientSecret: process.env.CTP_CLIENT_SECRET,
-    apiUrl: process.env.CTP_HOST || 'https://api.europe-west1.gcp.commercetools.com',
-    authUrl: process.env.CTP_AUTH_URL || 'https://auth.europe-west1.gcp.commercetools.com'
+    apiUrl:
+      process.env.CTP_HOST || 'https://api.europe-west1.gcp.commercetools.com',
+    authUrl:
+      process.env.CTP_AUTH_URL ||
+      'https://auth.europe-west1.gcp.commercetools.com',
   }
 }
 
-function getAdyenCredentials () {
+function getAdyenCredentials() {
   return {
     secretHmacKey: process.env.ADYEN_SECRET_HMAC_KEY,
-    enableHmacSignature: process.env.ADYEN_ENABLE_HMAC_SIGNATURE !== 'false'
+    enableHmacSignature: process.env.ADYEN_ENABLE_HMAC_SIGNATURE !== 'false',
   }
 }
 
-function getFileConfig () {
+function getFileConfig() {
   let fileConfig = {}
   try {
     fileConfig = require(configPath) // eslint-disable-line
@@ -41,7 +45,7 @@ function getFileConfig () {
   return fileConfig
 }
 
-module.exports = function load () {
+module.exports = function load() {
   /**
    * Load configuration from several sources in this order (last has highest priority):
    * - default config
@@ -58,13 +62,19 @@ module.exports = function load () {
       getFileConfig()
     )
 
-    if (!config.ctp.projectKey || !config.ctp.clientId || !config.ctp.clientSecret)
+    if (
+      !config.ctp.projectKey ||
+      !config.ctp.clientId ||
+      !config.ctp.clientSecret
+    )
       throw new Error('CTP project credentials are missing')
 
     if (config.adyen.enableHmacSignature && isEmpty(config.adyen.secretHmacKey))
-      throw new Error('The "ADYEN_SECRET_HMAC_KEY" environment variable is missing to be able to verify notifications, '
-        + 'please generate a secret HMAC key in Adyen Customer Area '
-        + 'or set "ADYEN_ENABLE_HMAC_SIGNATURE=false" to disable the verification feature.')
+      throw new Error(
+        'The "ADYEN_SECRET_HMAC_KEY" environment variable is missing to be able to verify notifications, ' +
+          'please generate a secret HMAC key in Adyen Customer Area ' +
+          'or set "ADYEN_ENABLE_HMAC_SIGNATURE=false" to disable the verification feature.'
+      )
   }
 
   return config

@@ -2,62 +2,59 @@ const { merge } = require('lodash')
 const { createClient } = require('@commercetools/sdk-client')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
 
-function createCtpClient () {
-  const httpMockSuccessMiddleware = next => (request, response) => {
+function createCtpClient() {
+  const httpMockSuccessMiddleware = (next) => (request, response) => {
     next(request, { ...response, body: { foo: 'bar' } })
   }
 
-
   return createClient({
-    middlewares: [
-      httpMockSuccessMiddleware
-    ],
+    middlewares: [httpMockSuccessMiddleware],
   })
 }
 
-function setUpClient (config) {
+function setUpClient(config) {
   const ctpClient = createCtpClient(config.ctp)
   const customMethods = {
-    get builder () {
+    get builder() {
       return getRequestBuilder(config.ctp.projectKey)
     },
 
-    delete () {
+    delete() {
       return this
     },
 
-    create () {
+    create() {
       return this
     },
 
-    update () {
+    update() {
       return this
     },
 
-    fetch () {
+    fetch() {
       return this
     },
 
-    fetchById () {
+    fetchById() {
       return this
     },
 
-    fetchByKey () {
+    fetchByKey() {
       return this
     },
 
-    fetchBatches () {
+    fetchBatches() {
       return this
     },
 
-    buildRequestOptions () {
+    buildRequestOptions() {
       return this
-    }
+    },
   }
   return merge(customMethods, ctpClient)
 }
 
-function getRequestBuilder (projectKey) {
+function getRequestBuilder(projectKey) {
   return createRequestBuilder({ projectKey })
 }
 
@@ -70,16 +67,21 @@ function getRequestBuilder (projectKey) {
  * 0 if newState is the same as currentState
  * @throws Error when newState and/or currentState is a wrong transaction state
  * */
-function compareTransactionStates (currentState, newState) {
+function compareTransactionStates(currentState, newState) {
   const transactionStateFlow = {
     Initial: 0,
     Pending: 1,
     Success: 2,
-    Failure: 2
+    Failure: 2,
   }
-  if (!transactionStateFlow.hasOwnProperty(currentState) || !transactionStateFlow.hasOwnProperty(newState))
-    throw Error('Wrong transaction state passed. '
-      + `currentState: ${currentState}, newState: ${newState}`)
+  if (
+    !transactionStateFlow.hasOwnProperty(currentState) ||
+    !transactionStateFlow.hasOwnProperty(newState)
+  )
+    throw Error(
+      'Wrong transaction state passed. ' +
+        `currentState: ${currentState}, newState: ${newState}`
+    )
   if (transactionStateFlow[currentState] < transactionStateFlow[newState])
     return 1
   if (transactionStateFlow[currentState] > transactionStateFlow[newState])
@@ -87,8 +89,7 @@ function compareTransactionStates (currentState, newState) {
   return 0
 }
 
-
 module.exports = {
-  get: config => setUpClient(config),
-  compareTransactionStates
+  get: (config) => setUpClient(config),
+  compareTransactionStates,
 }
