@@ -18,9 +18,9 @@ function setupServer(routes = defaultRoutes) {
           err,
           `Unexpected error when processing URL ${JSON.stringify(parts)}`
         )
-        utils.sendResponse(response, 500)
+        utils.sendResponse({response, statusCode: 500})
       }
-    else utils.sendResponse(response, 404)
+    else utils.sendResponse({response, statusCode: 404})
   })
 }
 
