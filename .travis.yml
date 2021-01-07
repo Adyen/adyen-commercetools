@@ -1,15 +1,11 @@
 language: node_js
 node_js:
   - '12'
-env:
-  - TEST_DIR=notification
-  - TEST_DIR=extension
 before_install:
   - npm i -g npm@^6.4.1
 services:
   - docker
 script:
-#  - cd $TEST_DIR
   - npm ci
   - npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" "file:" --allowed-hosts npm github.com
   - npm run test
