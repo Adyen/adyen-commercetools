@@ -1,8 +1,8 @@
 const sinon = require('sinon')
 const chai = require('chai')
+const { utils } = require('commercetools-adyen-integration-commons')
 const { handler } = require('../../src/lambda')
 const paymentHandler = require('../../src/paymentHandler/payment-handler')
-const utils = require('../../src/utils')
 
 const { expect, assert } = chai
 

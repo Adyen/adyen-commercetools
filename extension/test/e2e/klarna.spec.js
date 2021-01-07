@@ -1,9 +1,9 @@
 const { expect } = require('chai')
+const { utils } = require('commercetools-adyen-integration-commons')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const configBuilder = require('../../src/config/config')
 const { routes } = require('../../src/routes')
-const httpUtils = require('../../src/utils')
 const pU = require('../../src/paymentHandler/payment-utils')
 const {
   assertPayment,
@@ -39,7 +39,7 @@ describe('::klarnaPayment::', () => {
       )
     }
     routes['/return-url'] = async (request, response) =>
-      httpUtils.sendResponse({
+      utils.sendResponse({
         response,
         headers: {
           'Content-Type': 'text/html',
