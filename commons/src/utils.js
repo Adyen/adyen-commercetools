@@ -1,5 +1,5 @@
 const bunyan = require('bunyan')
-const configLoader = require('./config/config')
+const configLoader = require('./config')
 
 const config = configLoader.load()
 
