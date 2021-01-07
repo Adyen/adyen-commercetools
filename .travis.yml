@@ -9,9 +9,9 @@ before_install:
 services:
   - docker
 script:
-  - cd $TEST_DIR
+#  - cd $TEST_DIR
   - npm ci
-  - npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+  - npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" "file:" --allowed-hosts npm github.com
   - npm run test
   - cd $TRAVIS_BUILD_DIR
 

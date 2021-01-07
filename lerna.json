@@ -1,0 +1,6 @@
+{
+  "packages": [
+    "extension", "notification"
+  ],
+  "version": "0.0.0"
+}

@@ -23,6 +23,7 @@
     "indent": "off",
     "operator-linebreak": "off",
     "no-await-in-loop": "off",
-    "prefer-destructuring": "off"
+    "prefer-destructuring": "off",
+    "import/no-extraneous-dependencies": "off"
   }
 }

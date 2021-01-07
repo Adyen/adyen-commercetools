@@ -3,7 +3,7 @@ const {
   ensureInterfaceInteractionCustomType,
 } = require('./ensure-interface-interaction-custom-type')
 const { ensureApiExtensions } = require('./ensure-api-extensions')
-const configLoader = require('../../config/config')
+const configLoader = require("../config")
 
 function ensureCustomTypes(ctpClient) {
   return Promise.all([

@@ -1,5 +1,5 @@
 const utils = require('./utils')
-const paymentHandler = require('../src/paymentHandler/payment-handler')
+const paymentHandler = require("./paymentHandler/payment-handler")
 
 const logger = utils.getLogger()
 
