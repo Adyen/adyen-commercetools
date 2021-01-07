@@ -1,6 +1,6 @@
 {
   "packages": [
-    "extension", "notification"
+    "extension", "notification", "commons"
   ],
   "version": "0.0.0"
 }

@@ -50,6 +50,9 @@
     "nyc": "^15.1.0",
     "prettier": "2.2.1"
   },
+  "dependencies": {
+    "commercetools-adyen-integration-commons": "1.0.0"
+  },
   "mocha": {
     "timeout": 40000,
     "file": "./test/cleanup-ctp-project.js",

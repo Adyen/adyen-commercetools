@@ -1,7 +1,7 @@
-const httpUtils = require('../../utils')
+const { utils } = require('commercetools-adyen-integration-commons')
 
 function processRequest(request, response) {
-  httpUtils.sendResponse({ response, statusCode: 200 })
+  utils.sendResponse({ response, statusCode: 200 })
 }
 
 module.exports = { processRequest }

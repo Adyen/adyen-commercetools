@@ -1,6 +1,6 @@
 const http = require('http')
 const url = require('url')
-const utils = require('./utils')
+const { utils } = require('commercetools-adyen-integration-commons')
 const { routes: defaultRoutes } = require('./routes')
 
 const logger = utils.getLogger()

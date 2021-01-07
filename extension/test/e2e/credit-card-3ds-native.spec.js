@@ -1,8 +1,8 @@
+const { utils } = require('commercetools-adyen-integration-commons')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
 const configBuilder = require('../../src/config/config')
-const httpUtils = require('../../src/utils')
 const {
   assertPayment,
   createPayment,
@@ -46,8 +46,8 @@ describe('::creditCardPayment3dsNative::', () => {
       )
     }
     routes['/return-url'] = async (request, response) => {
-      const body = await httpUtils.collectRequestData(request)
-      return httpUtils.sendResponse({
+      const body = await utils.collectRequestData(request)
+      return utils.sendResponse({
         response,
         headers: {
           'Content-Type': 'text/html',

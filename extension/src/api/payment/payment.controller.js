@@ -1,17 +1,17 @@
 const { serializeError } = require('serialize-error')
-const httpUtils = require('../../utils')
+const {utils} = require('commercetools-adyen-integration-commons')
 const paymentHandler = require('../../paymentHandler/payment-handler')
 
 async function processRequest(request, response) {
   if (request.method !== 'POST')
     // API extensions always calls this endpoint with POST, so if we got GET, we don't process further
     // https://docs.commercetools.com/http-api-projects-api-extensions#input
-    return httpUtils.sendResponse({ response })
+    return utils.sendResponse({ response })
 
   const paymentObject = await _getPaymentObject(request)
   const paymentResult = await paymentHandler.handlePayment(paymentObject)
 
-  return httpUtils.sendResponse({
+  return utils.sendResponse({
     response,
     statusCode: paymentResult.success ? 200 : 400,
     data: paymentResult.data,
@@ -19,7 +19,7 @@ async function processRequest(request, response) {
 }
 
 async function _getPaymentObject(request) {
-  const body = await httpUtils.collectRequestData(request)
+  const body = await utils.collectRequestData(request)
   try {
     const requestBody = JSON.parse(body)
     return requestBody.resource.obj

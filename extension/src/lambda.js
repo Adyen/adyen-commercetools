@@ -1,4 +1,4 @@
-const utils = require('./utils')
+const {utils} = require('commercetools-adyen-integration-commons')
 const paymentHandler = require("./paymentHandler/payment-handler")
 
 const logger = utils.getLogger()

@@ -40,7 +40,8 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "dependencies": {
-    "@adyen/api-library": "^6.0.3"
+    "@adyen/api-library": "^6.0.3",
+    "commercetools-adyen-integration-commons": "1.0.0"
   },
   "devDependencies": {
     "eslint": "^7.17.0",

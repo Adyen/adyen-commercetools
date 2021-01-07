@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const utils = require('../../utils')
+const {utils} = require('commercetools-adyen-integration-commons')
 
 const apiExtensionTemplate = require('../../../resources/api-extension.json')
 

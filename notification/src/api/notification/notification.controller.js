@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const httpUtils = require('../../utils/commons')
+const { utils } = require('commercetools-adyen-integration-commons')
 const ctp = require('../../utils/ctp')
 const {
   processNotifications,
@@ -12,8 +12,8 @@ const ctpClient = ctp.get(config)
 // TODO: add JSON schema validation:
 // https://github.com/commercetools/commercetools-adyen-integration/issues/9
 async function handleNotification(request, response) {
-  if (request.method !== 'POST') return httpUtils.sendResponse(response)
-  const body = await httpUtils.collectRequestData(request)
+  if (request.method !== 'POST') return utils.sendResponse(response)
+  const body = await utils.collectRequestData(request)
   try {
     const notification = _.get(JSON.parse(body), 'notificationItems', [])
     await processNotifications(notification, ctpClient)
@@ -23,7 +23,7 @@ async function handleNotification(request, response) {
       { adyenRequestBody: `${body}`, err },
       'Unexpected exception occurred.'
     )
-    return httpUtils.sendResponse(response, 500)
+    return utils.sendResponse(response, 500)
   }
 }
 
@@ -32,7 +32,7 @@ function sendAcceptedResponse(response) {
   // To ensure that your server is properly accepting notifications,
   // we require you to acknowledge every notification of any type with an [accepted] response.
 
-  return httpUtils.sendResponse(
+  return utils.sendResponse(
     response,
     200,
     { 'Content-Type': 'application/json' },

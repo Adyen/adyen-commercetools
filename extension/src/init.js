@@ -1,5 +1,5 @@
+const { utils } = require('commercetools-adyen-integration-commons')
 const server = require('./server.js').setupServer()
-const utils = require('./utils')
 const configLoader = require('./config/config')
 const ctpClientBuilder = require('./ctp')
 

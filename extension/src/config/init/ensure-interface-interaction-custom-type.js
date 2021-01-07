@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+const {utils} = require('commercetools-adyen-integration-commons')
 
 const interfaceInteractionType = require('../../../resources/payment-interface-interaction-type.json')
 

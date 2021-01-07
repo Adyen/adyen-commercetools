@@ -1,6 +1,5 @@
+const {utils} = require('commercetools-adyen-integration-commons')
 const paymentCustomType = require('../../../resources/web-components-payment-type.json')
-
-const utils = require('../../utils')
 
 const logger = utils.getLogger()
 
