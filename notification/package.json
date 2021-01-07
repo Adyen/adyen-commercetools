@@ -55,6 +55,12 @@
     "p-map": "^4.0.0",
     "serialize-error": "^7.0.1"
   },
+  "devDependencies": {
+    "eslint": "^7.17.0",
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0",
+    "prettier": "2.2.1"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"

@@ -32,7 +32,8 @@
     "sinon": "^9.2.3"
   },
   "scripts": {
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "install": "lerna bootstrap --hoist"
   },
   "repository": {
     "type": "git",
@@ -43,9 +44,5 @@
   "bugs": {
     "url": "https://github.com/commercetools/commercetools-adyen-integration/issues"
   },
-  "homepage": "https://github.com/commercetools/commercetools-adyen-integration#readme",
-  "dependencies": {
-    "commercetools-adyen-integration-extension": "file:extension",
-    "commercetools-adyen-integration-notification": "file:notification"
-  }
+  "homepage": "https://github.com/commercetools/commercetools-adyen-integration#readme"
 }
