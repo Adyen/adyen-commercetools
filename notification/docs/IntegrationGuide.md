@@ -32,7 +32,7 @@ Please follow the [instructions](https://docs.adyen.com/development-resources/we
 
 ## Step 2: Deploy the notification module
 
-In order to make the extension module up and running, follow our [how to run guide](docs/HowToRun.md).
+In order to make the extension module up and running, follow our [how to run guide](./HowToRun.md).
 
 ## Step 3: Processing notifications
 

@@ -41,4 +41,4 @@ While developing project you can use some predefined commands for running tests,
 - Execute `npm run integration` to run [Integration tests](../test/integration)
 - Execute `npm run lint` to show lint errors in the code.
 
-> You need to set [environment variables](docs/HowToRun.md#environment-variables) to be able to run integration tests.
+> You need to set [environment variables](./HowToRun.md#environment-variables) to be able to run integration tests.
