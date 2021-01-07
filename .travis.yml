@@ -10,7 +10,6 @@ services:
   - docker
 script:
   - cd $TEST_DIR
-  - npm ci
   - npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" "file:" --allowed-hosts npm github.com
   - npm run test
   - cd $TRAVIS_BUILD_DIR
