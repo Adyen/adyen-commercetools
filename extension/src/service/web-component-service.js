@@ -71,12 +71,10 @@ async function callAdyen(url, request) {
 
 async function fetchAsync(url, requestObj) {
   const request = buildRequest(requestObj)
-  console.log(request.body)
   const response = await fetch(url, request)
   const responseBody = await response.json()
   // strip away sensitive data from the adyen response.
   delete responseBody.additionalData
-  console.log(responseBody)
   return responseBody
 }
 
