@@ -8,12 +8,11 @@ on: [push]
 jobs:
   docker_notification_module:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: notification
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          path: notification
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -37,12 +36,11 @@ jobs:
 
   docker_extension_module:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: extension
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          path: extension
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
