@@ -30,7 +30,6 @@ jobs:
           ADYEN_API_KEY: ${{ secrets.ADYEN_API_KEY }}
           ADYEN_CLIENT_KEY: ${{ secrets.ADYEN_CLIENT_KEY }}
           ADYEN_MERCHANT_ACCOUNT: ${{ secrets.ADYEN_MERCHANT_ACCOUNT }}
-          ADYEN_SECRET_HMAC_KEY: ${{ secrets.ADYEN_SECRET_HMAC_KEY }}
           CTP_PROJECT_KEY: ${{ secrets.CTP_PROJECT_KEY }}
           CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
           CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}

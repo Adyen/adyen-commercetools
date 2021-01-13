@@ -89,8 +89,6 @@ describe('::getPaymentMethods::', () => {
       expect(getPaymentMethodsResponse).to.be.deep.equal(
         interfaceInteraction.fields.response
       )
-      console.log(getPaymentMethodsRequest)
-      console.log(getPaymentMethodsResponse)
 
       expect(JSON.parse(interfaceInteraction.fields.request)).to.be.deep.equal({
         merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
