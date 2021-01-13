@@ -6,8 +6,34 @@ name: CI
 on: [push]
 
 jobs:
+  notification_build:
+    name: Notification Module
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: notification
+    steps:
+      - uses: actions/checkout@v2
+      - name: serializing workflow runs
+        uses: softprops/turnstyle@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm ci
+      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - run: npm run test
+        env:
+          ADYEN_SECRET_HMAC_KEY: ${{ secrets.ADYEN_SECRET_HMAC_KEY }}
+          CTP_PROJECT_KEY: adyen-integration-test
+          CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
+          CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
+
   extension_build:
     name: Extension Module
+    needs: notification_build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -30,32 +56,6 @@ jobs:
           ADYEN_MERCHANT_ACCOUNT: CommercetoolsGmbHDE775
           ADYEN_API_KEY: ${{ secrets.ADYEN_API_KEY }}
           ADYEN_CLIENT_KEY: ${{ secrets.ADYEN_CLIENT_KEY }}
-          CTP_PROJECT_KEY: adyen-integration-test
-          CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
-          CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
-
-  notification_build:
-    name: Notification Module
-    needs: extension_build
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: notification
-    steps:
-      - uses: actions/checkout@v2
-      - name: serializing workflow runs
-        uses: softprops/turnstyle@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Use Node.js 12.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12.x'
-      - run: npm ci
-      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
-      - run: npm run test
-        env:
-          ADYEN_SECRET_HMAC_KEY: ${{ secrets.ADYEN_SECRET_HMAC_KEY }}
           CTP_PROJECT_KEY: adyen-integration-test
           CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
           CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
