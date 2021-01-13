@@ -26,7 +26,7 @@ jobs:
         id: docker_build_extension
         uses: docker/build-push-action@v2
         with:
-          context: extension
+          context: ../extension
           file: ./Dockerfile
           push: false
           tags: commercetools/commercetools-adyen-integration-extension:latest
@@ -38,7 +38,7 @@ jobs:
         id: docker_build_notification
         uses: docker/build-push-action@v2
         with:
-          context: notification
+          context: ../notification
           file: ./Dockerfile
           push: false
           tags: commercetools/commercetools-adyen-integration-notification:latest
