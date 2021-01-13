@@ -34,9 +34,6 @@ jobs:
           push: false
           tags: commercetools/commercetools-adyen-integration-extension:latest
       -
-        name: Image digest extension module
-        run: echo ${{ steps.docker_build_extension.outputs.digest }}
-      -
         name: Build and push notification module
         id: docker_build_notification
         uses: docker/build-push-action@v2
@@ -45,6 +42,3 @@ jobs:
           file: ./notification/Dockerfile
           push: false
           tags: commercetools/commercetools-adyen-integration-notification:latest
-      -
-        name: Image digest notification module
-        run: echo ${{ steps.docker_build_notification.outputs.digest }}
