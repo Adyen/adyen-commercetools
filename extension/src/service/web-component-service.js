@@ -1,48 +1,59 @@
 const fetch = require('node-fetch')
 const { serializeError } = require('serialize-error')
-const configLoader = require('../config/config')
+const config = require('../config/config')
 const packageJson = require('../../package.json')
 
-const config = configLoader.load()
-
-function getPaymentMethods(getPaymentMethodsRequestObj) {
+function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
+  const adyenCredentials = config.getAdyenCredentials(merchantAccount)
   return callAdyen(
-    `${config.adyen.apiBaseUrl}/paymentMethods`,
+    `${adyenCredentials.apiBaseUrl}/paymentMethods`,
     extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj)
   )
 }
 
-function makePayment(makePaymentRequestObj) {
+function makePayment(merchantAccount, makePaymentRequestObj) {
+  const adyenCredentials = config.getAdyenCredentials(merchantAccount)
   return callAdyen(
-    `${config.adyen.apiBaseUrl}/payments`,
+    `${adyenCredentials}/payments`,
     extendRequestObjWithApplicationInfo(makePaymentRequestObj)
   )
 }
 
 function submitAdditionalPaymentDetails(
+  merchantAccount,
   submitAdditionalPaymentDetailsRequestObj
 ) {
+  const adyenCredentials = config.getAdyenCredentials(merchantAccount)
   return callAdyen(
-    `${config.adyen.apiBaseUrl}/payments/details`,
+    `${adyenCredentials.apiBaseUrl}/payments/details`,
     extendRequestObjWithApplicationInfo(
       submitAdditionalPaymentDetailsRequestObj
     )
   )
 }
 
-function manualCapture(manualCaptureRequestObj) {
+function manualCapture(merchantAccount, manualCaptureRequestObj) {
+  const adyenCredentials = config.getAdyenCredentials(merchantAccount)
   return callAdyen(
-    `${config.adyen.legacyApiBaseUrl}/capture`,
+    `${adyenCredentials.legacyApiBaseUrl}/capture`,
     manualCaptureRequestObj
   )
 }
 
-function cancelPayment(cancelRequestObj) {
-  return callAdyen(`${config.adyen.legacyApiBaseUrl}/cancel`, cancelRequestObj)
+function cancelPayment(merchantAccount, cancelRequestObj) {
+  const adyenCredentials = config.getAdyenCredentials(merchantAccount)
+  return callAdyen(
+    `${adyenCredentials.legacyApiBaseUrl}/cancel`,
+    cancelRequestObj
+  )
 }
 
-function refund(refundRequestObj) {
-  return callAdyen(`${config.adyen.legacyApiBaseUrl}/refund`, refundRequestObj)
+function refund(merchantAccount, refundRequestObj) {
+  const adyenCredentials = config.getAdyenCredentials(merchantAccount)
+  return callAdyen(
+    `${adyenCredentials.legacyApiBaseUrl}/refund`,
+    refundRequestObj
+  )
 }
 
 function extendRequestObjWithApplicationInfo(requestObj) {
