@@ -1,3 +1,4 @@
+const pMap = require('p-map')
 const { ensurePaymentCustomType } = require('./ensure-payment-custom-type')
 const {
   ensureInterfaceInteractionCustomType,
@@ -14,11 +15,15 @@ function ensureCustomTypes(ctpClient) {
 
 function ensureResources(ctpClient) {
   const config = configLoader.load()
+  // todo: is it sth project level ?
   if (!config.ensureResources) return Promise.resolve()
-  return Promise.all([
-    ensureCustomTypes(ctpClient),
-    ensureApiExtensions(ctpClient, config.apiExtensionBaseUrl),
-  ])
+
+  return pMap([config.ctp.projectKey], () =>
+    Promise.all([
+      ensureCustomTypes(ctpClient),
+      ensureApiExtensions(ctpClient, config.apiExtensionBaseUrl),
+    ])
+  )
 }
 
 module.exports = {

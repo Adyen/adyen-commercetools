@@ -30,6 +30,8 @@ describe('get-payment-methods::execute::', () => {
         key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
       },
       fields: {
+        commercetoolsProjectKey: 'commercetoolsProjectKey',
+        adyenMerchantAccount: 'adyenMerchantAccount',
         getPaymentMethodsRequest: JSON.stringify(getPaymentMethodsRequest),
       },
     },
