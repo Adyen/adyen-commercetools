@@ -1,7 +1,7 @@
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
-const configBuilder = require('../../src/config/config')
+const config = require('../../src/config/config')
 const httpUtils = require('../../src/utils')
 const {
   assertPayment,
@@ -17,6 +17,7 @@ const CreditCardNativePage = require('./pageObjects/CreditCard3dsNativePage')
 describe('::creditCardPayment3dsNative::', () => {
   let browser
   let ctpClient
+  const adyenMerchantAccount = process.env.TEST_ADYEN_MERCHANT_ACCOUNT
 
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
@@ -84,9 +85,8 @@ describe('::creditCardPayment3dsNative::', () => {
         `when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
           'then it should successfully finish the payment with 3DS native authentication flow',
         async () => {
-          const config = configBuilder.load()
-          const baseUrl = config.apiExtensionBaseUrl
-          const clientKey = config.adyen.clientKey
+          const baseUrl = config.getEnvConfig().apiExtensionBaseUrl
+          const clientKey = config.getAdyenCredentials(adyenMerchantAccount).clientKey
           const payment = await createPayment(ctpClient)
 
           const browserTab = await browser.newPage()

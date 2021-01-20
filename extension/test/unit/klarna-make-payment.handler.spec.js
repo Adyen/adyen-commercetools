@@ -1,7 +1,7 @@
 const nock = require('nock')
 const { expect } = require('chai')
 const _ = require('lodash')
-const configLoader = require('../../src/config/config')
+const config = require('../../src/config/config')
 const {
   execute,
 } = require('../../src/paymentHandler/klarna-make-payment.handler')
@@ -13,7 +13,6 @@ describe('klarna-make-payment::execute', () => {
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
   const DEFAULT_PAYMENT_LANGUAGE = 'en'
   const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
-  const config = configLoader.load()
   let scope
 
   /* eslint-enable max-len */

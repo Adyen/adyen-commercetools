@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
-const configBuilder = require('../../src/config/config')
+const config = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
 const pU = require('../../src/paymentHandler/payment-utils')
@@ -22,6 +22,7 @@ const {
 describe('::klarnaPayment::', () => {
   let browser
   let ctpClient
+  const adyenMerchantAccount = process.env.TEST_ADYEN_MERCHANT_ACCOUNT
 
   beforeEach(async () => {
     routes['/make-payment-form'] = async (request, response) => {
@@ -71,9 +72,8 @@ describe('::klarnaPayment::', () => {
     async function () {
       this.timeout(60000)
 
-      const config = configBuilder.load()
-      const baseUrl = config.apiExtensionBaseUrl
-      const clientKey = config.adyen.clientKey
+      const baseUrl = config.getEnvConfig().apiExtensionBaseUrl
+      const clientKey = config.getAdyenCredentials(adyenMerchantAccount).clientKey
       const payment = await createPayment(ctpClient, baseUrl)
 
       const browserTab = await browser.newPage()
