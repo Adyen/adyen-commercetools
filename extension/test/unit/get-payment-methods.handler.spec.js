@@ -7,6 +7,9 @@ const {
 } = require('../../src/paymentHandler/get-payment-methods.handler')
 
 describe('get-payment-methods::execute::', () => {
+  const adyenMerchantAccount = Object.keys(
+    JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG).adyen
+  )[0]
   const getPaymentMethodsRequest = {
     countryCode: 'DE',
     shopperLocale: 'de-DE',
@@ -31,6 +34,7 @@ describe('get-payment-methods::execute::', () => {
       },
       fields: {
         getPaymentMethodsRequest: JSON.stringify(getPaymentMethodsRequest),
+        adyenMerchantAccount
       },
     },
   }

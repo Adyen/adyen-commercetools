@@ -14,31 +14,34 @@ function getEnvConfig() {
 
 function getCTPEnvCredentials(ctpProjectKey) {
   const ctpConfig = config.commercetools[ctpProjectKey]
-
+  if (!ctpConfig)
+    throw new Error(`Configuration for adyenMerchantAccount ${ctpProjectKey} is not provided.`
+        + 'Please update the configuration.')
   return {
-    projectKey: ctpConfig.ctpProjectKey,
-    clientId: ctpConfig.ctpClientId,
-    clientSecret: ctpConfig.ctpClientSecret,
+    clientId: ctpConfig.clientId,
+    clientSecret: ctpConfig.clientSecret,
+    projectKey: ctpProjectKey,
     apiUrl:
-      ctpConfig.ctpHost || 'https://api.europe-west1.gcp.commercetools.com',
+      ctpConfig.host || 'https://api.europe-west1.gcp.commercetools.com',
     authUrl:
-      ctpConfig.ctpAuthUrl ||
+      ctpConfig.authUrl ||
       'https://auth.europe-west1.gcp.commercetools.com',
   }
 }
 
 function getAdyenCredentials(adyenMerchantAccount) {
   const adyenConfig = config.adyen[adyenMerchantAccount]
-
+  if (!adyenConfig)
+    throw new Error(`Configuration for adyenMerchantAccount ${JSON.stringify(adyenMerchantAccount)} is not provided.`
+     + 'Please update the configuration.')
   return {
-    merchantAccount: adyenConfig.adyenMerchantAccount,
-    apiKey: adyenConfig.adyenApiKey,
+    apiKey: adyenConfig.apiKey,
     apiBaseUrl:
-      adyenConfig.adyenApiBaseUrl || 'https://checkout-test.adyen.com/v52',
+      adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v52',
     legacyApiBaseUrl:
-      adyenConfig.adyenLegacyApiBaseUrl ||
+      adyenConfig.legacyApiBaseUrl ||
       'https://pal-test.adyen.com/pal/servlet/Payment/v52',
-    clientKey: adyenConfig.adyenClientKey || '',
+    clientKey: adyenConfig.clientKey || '',
   }
 }
 

@@ -7,6 +7,8 @@ function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
   const adyenCredentials = config.getAdyenCredentials(merchantAccount)
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/paymentMethods`,
+    merchantAccount,
+    adyenCredentials.apiKey,
     extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj)
   )
 }
@@ -14,18 +16,22 @@ function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
 function makePayment(merchantAccount, makePaymentRequestObj) {
   const adyenCredentials = config.getAdyenCredentials(merchantAccount)
   return callAdyen(
-    `${adyenCredentials}/payments`,
+    `${adyenCredentials.apiBaseUrl}/payments`,
+    merchantAccount,
+    adyenCredentials.apiKey,
     extendRequestObjWithApplicationInfo(makePaymentRequestObj)
   )
 }
 
 function submitAdditionalPaymentDetails(
-    merchantAccount,
+  merchantAccount,
   submitAdditionalPaymentDetailsRequestObj
 ) {
   const adyenCredentials = config.getAdyenCredentials(merchantAccount)
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/payments/details`,
+    merchantAccount,
+    adyenCredentials.apiKey,
     extendRequestObjWithApplicationInfo(
       submitAdditionalPaymentDetailsRequestObj
     )
@@ -36,18 +42,30 @@ function manualCapture(merchantAccount, manualCaptureRequestObj) {
   const adyenCredentials = config.getAdyenCredentials(merchantAccount)
   return callAdyen(
     `${adyenCredentials.legacyApiBaseUrl}/capture`,
+    merchantAccount,
+    adyenCredentials.apiKey,
     manualCaptureRequestObj
   )
 }
 
 function cancelPayment(merchantAccount, cancelRequestObj) {
   const adyenCredentials = config.getAdyenCredentials(merchantAccount)
-  return callAdyen(`${adyenCredentials.legacyApiBaseUrl}/cancel`, cancelRequestObj)
+  return callAdyen(
+    `${adyenCredentials.legacyApiBaseUrl}/cancel`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    cancelRequestObj
+  )
 }
 
 function refund(merchantAccount, refundRequestObj) {
   const adyenCredentials = config.getAdyenCredentials(merchantAccount)
-  return callAdyen(`${adyenCredentials.legacyApiBaseUrl}/refund`, refundRequestObj)
+  return callAdyen(
+    `${adyenCredentials.legacyApiBaseUrl}/refund`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    refundRequestObj
+  )
 }
 
 function extendRequestObjWithApplicationInfo(requestObj) {
@@ -64,18 +82,18 @@ function extendRequestObjWithApplicationInfo(requestObj) {
   return requestObj
 }
 
-async function callAdyen(url, request) {
+async function callAdyen(url, adyenMerchantAccount, adyenApiKey, request) {
   let response
   try {
-    response = await fetchAsync(url, request)
+    response = await fetchAsync(url, adyenMerchantAccount, adyenApiKey, request)
   } catch (err) {
     response = serializeError(err)
   }
   return { request, response }
 }
 
-async function fetchAsync(url, requestObj) {
-  const request = buildRequest(requestObj)
+async function fetchAsync(url, adyenMerchantAccount, adyenApiKey, requestObj) {
+  const request = buildRequest(adyenMerchantAccount, adyenApiKey, requestObj)
   const response = await fetch(url, request)
   const responseBody = await response.json()
   // strip away sensitive data from the adyen response.
@@ -83,20 +101,18 @@ async function fetchAsync(url, requestObj) {
   return responseBody
 }
 
-function buildRequest(requestObj) {
-  // Note: ensure the merchantAccount is set with request, otherwise set.
-  // `makePaymentRequest` custom field will have the value in payload but the value
-  // also needed in the `cancel` and `capture` payment handler,
-  // because the request will be added as a commercetools transaction.
+function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj) {
+  // Note: ensure the merchantAccount is set with request, otherwise set
+  // it with the value from adyenMerchantAccount payment custom field
   if (!requestObj.merchantAccount)
-    requestObj.merchantAccount = config.adyen.merchantAccount
+    requestObj.merchantAccount = adyenMerchantAccount
 
   return {
     method: 'POST',
     body: JSON.stringify(requestObj),
     headers: {
       'Content-Type': 'application/json',
-      'X-Api-Key': config.adyen.apiKey,
+      'X-Api-Key': adyenApiKey,
     },
   }
 }

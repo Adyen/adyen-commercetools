@@ -8,11 +8,10 @@ const {
   execute,
 } = require('../../src/paymentHandler/submit-payment-details.handler')
 const ctpPayment = require('./fixtures/ctp-payment.json')
-const configLoader = require('../../src/config/config')
+const config = require('../../src/config/config')
 const c = require('../../src/config/constants')
 
 describe('submit-additional-payment-details::execute', () => {
-  const config = configLoader.load()
   let scope
   /* eslint-disable max-len */
   const submitPaymentDetailsRequest = {
@@ -24,9 +23,13 @@ describe('submit-additional-payment-details::execute', () => {
     },
   }
   /* eslint-enable max-len */
+  const adyenMerchantAccount = Object.keys(
+    JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG).adyen
+  )[0]
 
   beforeEach(() => {
-    scope = nock(`${config.adyen.apiBaseUrl}`)
+    const adyenConfig = config.getAdyenCredentials(adyenMerchantAccount)
+    scope = nock(`${adyenConfig.apiBaseUrl}`)
   })
 
   afterEach(() => {
@@ -48,6 +51,7 @@ describe('submit-additional-payment-details::execute', () => {
       ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
         makePaymentRedirectResponse
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
 
@@ -76,9 +80,7 @@ describe('submit-additional-payment-details::execute', () => {
         submitPaymentDetailsRequest.browserInfo
       )
       expect(request.amount).to.deep.equal(submitPaymentDetailsRequest.amount)
-      expect(request.merchantAccount).to.equal(
-        process.env.ADYEN_MERCHANT_ACCOUNT
-      )
+      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -121,6 +123,7 @@ describe('submit-additional-payment-details::execute', () => {
       ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
         makePaymentRedirectResponse
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
 
@@ -150,9 +153,7 @@ describe('submit-additional-payment-details::execute', () => {
         submitPaymentDetailsRequest.browserInfo
       )
       expect(request.amount).to.deep.equal(submitPaymentDetailsRequest.amount)
-      expect(request.merchantAccount).to.equal(
-        process.env.ADYEN_MERCHANT_ACCOUNT
-      )
+      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -186,6 +187,7 @@ describe('submit-additional-payment-details::execute', () => {
         requestWithoutPaymentData
       )
       ctpPaymentClone.custom.fields.makePaymentResponse = makePaymentRedirectResponse
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
 
@@ -216,6 +218,7 @@ describe('submit-additional-payment-details::execute', () => {
         requestWithoutPaymentData
       )
       ctpPaymentClone.custom.fields.makePaymentResponse = makePaymentRedirectResponse
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
 
