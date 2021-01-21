@@ -8,40 +8,52 @@ function getEnvConfig() {
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
-    ensureResources: config.ensureResources !== 'false',
   }
 }
 
-function getCTPEnvCredentials(ctpProjectKey) {
+function getCtpConfig(ctpProjectKey) {
   const ctpConfig = config.commercetools[ctpProjectKey]
   if (!ctpConfig)
-    throw new Error(`Configuration for adyenMerchantAccount ${ctpProjectKey} is not provided.`
-        + 'Please update the configuration.')
+    throw new Error(
+      `Configuration for ctpProjectKey is not provided. Please update the configuration. ${JSON.stringify(
+        ctpProjectKey
+      )}`
+    )
   return {
     clientId: ctpConfig.clientId,
     clientSecret: ctpConfig.clientSecret,
     projectKey: ctpProjectKey,
-    apiUrl:
-      ctpConfig.host || 'https://api.europe-west1.gcp.commercetools.com',
+    apiUrl: ctpConfig.host || 'https://api.europe-west1.gcp.commercetools.com',
     authUrl:
       ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
+    ensureResources: config.ensureResources !== 'false',
   }
 }
 
-function getAdyenCredentials(adyenMerchantAccount) {
+function getAdyenConfig(adyenMerchantAccount) {
   const adyenConfig = config.adyen[adyenMerchantAccount]
   if (!adyenConfig)
-    throw new Error(`Configuration for adyenMerchantAccount ${JSON.stringify(adyenMerchantAccount)} is not provided.`
-     + 'Please update the configuration.')
+    throw new Error(
+      `Configuration for adyenMerchantAccount is not provided. Please update the configuration: ${JSON.stringify(
+        adyenMerchantAccount
+      )}`
+    )
   return {
     apiKey: adyenConfig.apiKey,
-    apiBaseUrl:
-      adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v52',
+    apiBaseUrl: adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v52',
     legacyApiBaseUrl:
       adyenConfig.legacyApiBaseUrl ||
       'https://pal-test.adyen.com/pal/servlet/Payment/v52',
     clientKey: adyenConfig.clientKey || '',
   }
+}
+
+function getAllCtpProjectKeys() {
+  return Object.keys(config.commercetools)
+}
+
+function getAllAdyenMerchantAccounts() {
+  return Object.keys(config.adyen)
 }
 
 function loadAndValidateConfig() {
@@ -68,6 +80,8 @@ loadAndValidateConfig()
 
 module.exports = {
   getEnvConfig,
-  getCTPEnvCredentials,
-  getAdyenCredentials,
+  getCtpConfig,
+  getAdyenConfig,
+  getAllCtpProjectKeys,
+  getAllAdyenMerchantAccounts,
 }

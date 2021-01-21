@@ -1,3 +1,5 @@
+const pMap = require('p-map')
+
 const server = require('./server.js').setupServer()
 const utils = require('./utils')
 const config = require('./config/config')
@@ -13,6 +15,14 @@ const logger = utils.getLogger()
 if (envConfig.keepAliveTimeout !== undefined)
   server.keepAliveTimeout = envConfig.keepAliveTimeout
 server.listen(port, async () => {
-  await ensureResources(ctpClientBuilder.get())
+  const ctpProjectKeys = config.getAllCtpProjectKeys()
+  await pMap(ctpProjectKeys, async (ctpProjectKey) => {
+    const ctpConfig = config.getCtpConfig(ctpProjectKey)
+    if (ctpConfig.ensureResources) {
+      ctpClientBuilder.get(ctpProjectKey)
+      await ensureResources()
+    }
+  })
+
   logger.info(`Extension module is running at http://localhost:${port}/`)
 })

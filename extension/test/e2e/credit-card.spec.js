@@ -53,7 +53,7 @@ describe('::creditCardPayment::', () => {
           'then it should successfully finish the payment',
         async () => {
           const baseUrl = config.getEnvConfig().apiExtensionBaseUrl
-          const clientKey = config.getAdyenCredentials(adyenMerchantAccount)
+          const clientKey = config.getAdyenConfig(adyenMerchantAccount)
             .clientKey
           const payment = await createPayment(ctpClient, baseUrl)
 

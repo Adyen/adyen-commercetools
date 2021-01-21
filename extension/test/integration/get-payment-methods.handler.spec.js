@@ -8,9 +8,15 @@ const packageJson = require('../../package.json')
 
 describe('::getPaymentMethods::', () => {
   let ctpClient
+  const adyenMerchantAccount = Object.keys(
+    JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG).adyen
+  )[0]
+  const commercetoolsProjectKey = Object.keys(
+    JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG).commercetools
+  )[0]
 
   before(async () => {
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(commercetoolsProjectKey)
     await iTSetUp.initServerAndExtension({ ctpClient })
   })
 
@@ -49,6 +55,8 @@ describe('::getPaymentMethods::', () => {
             getPaymentMethodsRequest: JSON.stringify(
               getPaymentMethodsRequestDraft
             ),
+            commercetoolsProjectKey,
+            adyenMerchantAccount,
           },
         },
       }
@@ -91,7 +99,7 @@ describe('::getPaymentMethods::', () => {
       )
 
       expect(JSON.parse(interfaceInteraction.fields.request)).to.be.deep.equal({
-        merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
+        merchantAccount: adyenMerchantAccount,
         ...getPaymentMethodsRequestExtended,
       })
 
@@ -137,6 +145,7 @@ describe('::getPaymentMethods::', () => {
             getPaymentMethodsRequest: JSON.stringify(
               getPaymentMethodsRequestDraft
             ),
+            adyenMerchantAccount
           },
         },
       }
@@ -181,7 +190,7 @@ describe('::getPaymentMethods::', () => {
       expect(
         JSON.parse(paymentMethodsInteraction.fields.request)
       ).to.be.deep.equal({
-        merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
+        merchantAccount: adyenMerchantAccount,
         ...getPaymentMethodsRequestExtended,
       })
 

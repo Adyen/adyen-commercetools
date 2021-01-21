@@ -73,7 +73,7 @@ describe('::klarnaPayment::', () => {
       this.timeout(60000)
 
       const baseUrl = config.getEnvConfig().apiExtensionBaseUrl
-      const clientKey = config.getAdyenCredentials(adyenMerchantAccount)
+      const clientKey = config.getAdyenConfig(adyenMerchantAccount)
         .clientKey
       const payment = await createPayment(ctpClient, baseUrl)
 

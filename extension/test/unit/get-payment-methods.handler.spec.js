@@ -5,11 +5,10 @@ const c = require('../../src/config/constants')
 const {
   execute,
 } = require('../../src/paymentHandler/get-payment-methods.handler')
+const config = require('../../src/config/config')
 
 describe('get-payment-methods::execute::', () => {
-  const adyenMerchantAccount = Object.keys(
-    JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG).adyen
-  )[0]
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const getPaymentMethodsRequest = {
     countryCode: 'DE',
     shopperLocale: 'de-DE',

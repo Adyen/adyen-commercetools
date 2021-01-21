@@ -10,14 +10,16 @@ const {
 const {
   createAddTransactionAction,
 } = require('../../src/paymentHandler/payment-utils')
+const config = require('../../src/config/config')
 
 describe('::manualCapture::', () => {
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
   let ctpClient
-
   let payment
 
   beforeEach(async () => {
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.cleanupCtpResources(ctpClient)
     await iTSetUp.initServerAndExtension({ ctpClient })
     const paymentDraft = {
@@ -33,7 +35,9 @@ describe('::manualCapture::', () => {
           typeId: 'type',
           key: CTP_PAYMENT_CUSTOM_TYPE_KEY,
         },
-        fields: {},
+        fields: {
+          adyenMerchantAccount
+        },
       },
       transactions: [
         {

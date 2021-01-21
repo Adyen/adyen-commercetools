@@ -23,12 +23,10 @@ describe('submit-additional-payment-details::execute', () => {
     },
   }
   /* eslint-enable max-len */
-  const adyenMerchantAccount = Object.keys(
-    JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG).adyen
-  )[0]
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
   beforeEach(() => {
-    const adyenConfig = config.getAdyenCredentials(adyenMerchantAccount)
+    const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     scope = nock(`${adyenConfig.apiBaseUrl}`)
   })
 

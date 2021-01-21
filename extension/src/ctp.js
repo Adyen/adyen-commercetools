@@ -62,7 +62,7 @@ function createCtpClient({
 }
 
 function setUpClient(ctpProjectKey) {
-  const ctpConfig = config.getCTPEnvCredentials(ctpProjectKey)
+  const ctpConfig = config.getCtpConfig(ctpProjectKey)
   const ctpClient = createCtpClient(ctpConfig)
   const customMethods = {
     get builder() {

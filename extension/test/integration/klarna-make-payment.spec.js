@@ -1,13 +1,15 @@
 const { expect } = require('chai')
 
 const ctpClientBuilder = require('../../src/ctp')
+const config = require('../../src/config/config')
 const iTSetUp = require('./integration-test-set-up')
 
-describe('::makePayment::', () => {
+describe('::klarnaMakePayment::', () => {
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
   let ctpClient
 
   beforeEach(async () => {
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.cleanupCtpResources(ctpClient)
     await iTSetUp.initServerAndExtension({ ctpClient })
   })

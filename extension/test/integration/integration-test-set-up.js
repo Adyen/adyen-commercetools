@@ -16,9 +16,12 @@ const ctpDiscountCodeShipping = require('./fixtures/ctp-discount-code-shipping')
 const serverBuilder = require('../../src/server')
 const { routes: defaultRoutes } = require('../../src/routes')
 const { ensureResources } = require('../../src/config/init/ensure-resources')
+const config = require('../../src/config/config')
 const testUtils = require('../test-utils')
 
 let server
+const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
+const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
 async function initServerAndExtension({
   ctpClient,
@@ -30,13 +33,13 @@ async function initServerAndExtension({
   // 429 Too Many Requests error. This is due to the limit of maximum opened HTTP connections,
   // which is 40 connections at the same time as we're using Free program (https://ngrok.com/pricing).
   const ngrokUrl = await ngrok.connect(testServerPort)
-  process.env.API_EXTENSION_BASE_URL = ngrokUrl
+
   await testUtils.deleteAllResources(ctpClient, 'payments')
   await testUtils.deleteAllResources(ctpClient, 'types')
   await testUtils.deleteAllResources(ctpClient, 'extensions')
   return new Promise((resolve) => {
     server.listen(testServerPort, async () => {
-      await ensureResources(ctpClient)
+      await ensureResources(ctpClient, ngrokUrl)
       /* eslint-disable no-console */
       console.log(
         `Extension module is running at http://localhost:${testServerPort}/`
@@ -255,8 +258,11 @@ async function _ensurePayment(ctpClient) {
   const { body } = await ctpClient.fetch(
     ctpClient.builder.payments.where(`key="${ctpPayment.key}"`)
   )
-  if (body.results.length === 0)
+  if (body.results.length === 0) {
+    ctpPayment.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+    ctpPayment.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
     return ctpClient.create(ctpClient.builder.payments, ctpPayment)
+  }
   return { body: body.results[0] }
 }
 

@@ -14,16 +14,12 @@ describe('klarna-make-payment::execute', () => {
   const DEFAULT_PAYMENT_LANGUAGE = 'en'
   const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
   let scope
-  const adyenMerchantAccount = Object.keys(
-    JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG).adyen
-  )[0]
-  const commercetoolsProjectKey = Object.keys(
-    JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG).commercetools
-  )[0]
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
 
   /* eslint-enable max-len */
   beforeEach(() => {
-    const adyenConfig = config.getAdyenCredentials(adyenMerchantAccount)
+    const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     scope = nock(`${adyenConfig.apiBaseUrl}`)
   })
 
@@ -280,7 +276,7 @@ describe('klarna-make-payment::execute', () => {
   )
 
   function _mockCtpCartsEndpoint(mockCart = ctpCart) {
-    const ctpConfig = config.getCTPEnvCredentials(commercetoolsProjectKey)
+    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     const ctpApiScope = nock(`${ctpConfig.apiUrl}`)
     const ctpAuthScope = nock(`${ctpConfig.authUrl}`)
     ctpAuthScope.post('/oauth/token').reply(200, {
