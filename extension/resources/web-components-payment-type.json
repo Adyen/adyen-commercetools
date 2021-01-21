@@ -6,6 +6,28 @@
   "resourceTypeIds": ["payment"],
   "fieldDefinitions": [
     {
+      "name": "commercetoolsProjectKey",
+      "label": {
+        "en": "commercetoolsProjectKey"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine",
+      "required": false
+    },
+    {
+      "name": "adyenMerchantAccount",
+      "label": {
+        "en": "adyenMerchantAccount"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine",
+      "required": false
+    },
+    {
       "name": "getPaymentMethodsRequest",
       "label": {
         "en": "getPaymentMethodsRequest"

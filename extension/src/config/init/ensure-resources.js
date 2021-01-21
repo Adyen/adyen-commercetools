@@ -1,3 +1,4 @@
+const pMap = require('p-map')
 const { ensurePaymentCustomType } = require('./ensure-payment-custom-type')
 const {
   ensureInterfaceInteractionCustomType,
@@ -13,12 +14,15 @@ function ensureCustomTypes(ctpClient) {
 }
 
 function ensureResources(ctpClient) {
-  const envConfig = config.getEnvConfig();
+  const envConfig = config.getEnvConfig()
   if (!envConfig.ensureResources) return Promise.resolve()
-  return Promise.all([
-    ensureCustomTypes(ctpClient),
-    ensureApiExtensions(ctpClient, envConfig.apiExtensionBaseUrl),
-  ])
+
+  return pMap([config.ctp.projectKey], () =>
+    Promise.all([
+      ensureCustomTypes(ctpClient),
+      ensureApiExtensions(ctpClient, envConfig.apiExtensionBaseUrl),
+    ])
+  )
 }
 
 module.exports = {
