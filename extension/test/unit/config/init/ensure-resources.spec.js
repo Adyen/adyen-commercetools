@@ -3,11 +3,11 @@ const sinon = require('sinon')
 const _ = require('lodash')
 const {
   ensureResources,
-} = require('../../src/config/init/ensure-resources')
+} = require('../../../../src/config/init/ensure-resources')
 
-const webComponentsPaymentType = require('../../resources/web-components-payment-type.json')
-const apiExtension = require('../../resources/api-extension.json')
-const interfaceInteractionType = require('../../resources/payment-interface-interaction-type.json')
+const webComponentsPaymentType = require('../../../../resources/web-components-payment-type.json')
+const apiExtension = require('../../../../resources/api-extension.json')
+const interfaceInteractionType = require('../../../../resources/payment-interface-interaction-type.json')
 
 describe('Ensure resources', () => {
   const mockClient = {
