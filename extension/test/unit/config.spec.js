@@ -22,7 +22,7 @@ describe('::config::', () => {
       },
       logLevel: 'DEBUG',
     })
-    const config = requireUncached('../../../src/config/config')
+    const config = requireUncached('../../src/config/config')
 
     expect(config.getAllCtpProjectKeys()).to.eql(['ctpProjectKey1'])
     expect(config.getAllAdyenMerchantAccounts()).to.eql([
@@ -60,7 +60,7 @@ describe('::config::', () => {
       },
       logLevel: 'DEBUG',
     })
-    const config = requireUncached('../../../src/config/config')
+    const config = requireUncached('../../src/config/config')
 
     expect(config.getAllCtpProjectKeys()).to.eql(['ctpProjectKey1'])
     expect(config.getAllAdyenMerchantAccounts()).to.eql([
@@ -85,7 +85,7 @@ describe('::config::', () => {
   it('when whole config is missing, it should throw error', () => {
     delete process.env.ADYEN_INTEGRATION_CONFIG
     try {
-      requireUncached('../../../src/config/config')
+      requireUncached('../../src/config/config')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain('configuration is not provided')
@@ -106,7 +106,7 @@ describe('::config::', () => {
       logLevel: 'DEBUG',
     })
     try {
-      requireUncached('../../../src/config/config')
+      requireUncached('../../src/config/config')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain('add at least one commercetools project')
@@ -128,7 +128,7 @@ describe('::config::', () => {
       logLevel: 'DEBUG',
     })
     try {
-      requireUncached('../../../src/config/config')
+      requireUncached('../../src/config/config')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain('add at least one Adyen merchant account')
