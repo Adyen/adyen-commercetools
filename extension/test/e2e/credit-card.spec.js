@@ -14,7 +14,8 @@ const {
 describe('::creditCardPayment::', () => {
   let browser
   let ctpClient
-  const adyenMerchantAccount = process.env.TEST_ADYEN_MERCHANT_ACCOUNT
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
@@ -26,7 +27,7 @@ describe('::creditCardPayment::', () => {
     routes['/make-payment-form'] = async (request, response) => {
       serveFile('./test/e2e/fixtures/make-payment-form.html', request, response)
     }
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.initServerAndExtension({
       ctpClient,
       routes,
@@ -55,7 +56,7 @@ describe('::creditCardPayment::', () => {
           const baseUrl = config.getEnvConfig().apiExtensionBaseUrl
           const clientKey = config.getAdyenConfig(adyenMerchantAccount)
             .clientKey
-          const payment = await createPayment(ctpClient, baseUrl)
+          const payment = await createPayment(ctpClient, adyenMerchantAccount)
 
           const browserTab = await browser.newPage()
 

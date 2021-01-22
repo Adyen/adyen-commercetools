@@ -18,7 +18,8 @@ const CreditCardRedirectPage = require('./pageObjects/CreditCard3dsRedirectPage'
 describe('::creditCardPayment3dsRedirect::', () => {
   let browser
   let ctpClient
-  const adyenMerchantAccount = process.env.TEST_ADYEN_MERCHANT_ACCOUNT
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
 
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
@@ -56,7 +57,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
       })
     }
 
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.initServerAndExtension({
       ctpClient,
       routes,
@@ -85,7 +86,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
           const baseUrl = config.getEnvConfig().apiExtensionBaseUrl
           const clientKey = config.getAdyenConfig(adyenMerchantAccount)
             .clientKey
-          const payment = await createPayment(ctpClient, baseUrl)
+          const payment = await createPayment(ctpClient, adyenMerchantAccount)
 
           const browserTab = await browser.newPage()
 

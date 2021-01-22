@@ -17,7 +17,8 @@ const CreditCardNativePage = require('./pageObjects/CreditCard3dsNativePage')
 describe('::creditCardPayment3dsNative::', () => {
   let browser
   let ctpClient
-  const adyenMerchantAccount = process.env.TEST_ADYEN_MERCHANT_ACCOUNT
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
 
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
@@ -59,7 +60,7 @@ describe('::creditCardPayment3dsNative::', () => {
       })
     }
 
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.initServerAndExtension({
       ctpClient,
       routes,
@@ -88,7 +89,7 @@ describe('::creditCardPayment3dsNative::', () => {
           const baseUrl = config.getEnvConfig().apiExtensionBaseUrl
           const clientKey = config.getAdyenConfig(adyenMerchantAccount)
             .clientKey
-          const payment = await createPayment(ctpClient)
+          const payment = await createPayment(ctpClient, adyenMerchantAccount)
 
           const browserTab = await browser.newPage()
 

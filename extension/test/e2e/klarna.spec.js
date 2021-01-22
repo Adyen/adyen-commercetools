@@ -22,7 +22,8 @@ const {
 describe('::klarnaPayment::', () => {
   let browser
   let ctpClient
-  const adyenMerchantAccount = process.env.TEST_ADYEN_MERCHANT_ACCOUNT
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
 
   beforeEach(async () => {
     routes['/make-payment-form'] = async (request, response) => {
@@ -52,7 +53,7 @@ describe('::klarnaPayment::', () => {
           '</body></html>',
       })
 
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.initServerAndExtension({
       ctpClient,
       routes,
@@ -75,7 +76,7 @@ describe('::klarnaPayment::', () => {
       const baseUrl = config.getEnvConfig().apiExtensionBaseUrl
       const clientKey = config.getAdyenConfig(adyenMerchantAccount)
         .clientKey
-      const payment = await createPayment(ctpClient, baseUrl)
+      const payment = await createPayment(ctpClient, adyenMerchantAccount)
 
       const browserTab = await browser.newPage()
 

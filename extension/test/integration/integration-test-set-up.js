@@ -23,6 +23,15 @@ let server
 const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
 const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
+function _overrideApiExtensionBaseUrlConfig(ngrokUrl) {
+  const envConfig = config.getEnvConfig()
+  envConfig.apiExtensionBaseUrl = ngrokUrl
+  config.getEnvConfig = function () {
+    return envConfig
+  }
+  module.exports = config
+}
+
 async function initServerAndExtension({
   ctpClient,
   testServerPort = 8000,
@@ -33,6 +42,7 @@ async function initServerAndExtension({
   // 429 Too Many Requests error. This is due to the limit of maximum opened HTTP connections,
   // which is 40 connections at the same time as we're using Free program (https://ngrok.com/pricing).
   const ngrokUrl = await ngrok.connect(testServerPort)
+  _overrideApiExtensionBaseUrlConfig(ngrokUrl)
 
   await testUtils.deleteAllResources(ctpClient, 'payments')
   await testUtils.deleteAllResources(ctpClient, 'types')
