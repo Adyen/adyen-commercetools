@@ -7,11 +7,11 @@ const config = require('../../src/config/config')
 
 describe('::makePayment::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
-  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
+  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
   let ctpClient
 
   beforeEach(async () => {
-    ctpClient = ctpClientBuilder.get(ctpProjectKey)
+    ctpClient = ctpClientBuilder.get(commercetoolsProjectKey)
     await iTSetUp.initServerAndExtension({ ctpClient })
   })
 
@@ -55,7 +55,8 @@ describe('::makePayment::', () => {
           },
           fields: {
             makePaymentRequest: JSON.stringify(makePaymentRequestDraft),
-            adyenMerchantAccount
+            adyenMerchantAccount,
+            commercetoolsProjectKey
           },
         },
       }
