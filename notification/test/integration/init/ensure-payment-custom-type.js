@@ -4,9 +4,11 @@ const utils = require('../../../src/utils/logger')
 
 const logger = utils.getLogger()
 
-async function ensurePaymentCustomType (ctpClient) {
+async function ensurePaymentCustomType(ctpClient) {
   try {
-    const { body } = await ctpClient.fetch(ctpClient.builder.types.where(`key="${webComponentsPaymentType.key}"`))
+    const { body } = await ctpClient.fetch(
+      ctpClient.builder.types.where(`key="${webComponentsPaymentType.key}"`)
+    )
     if (body.results.length === 0) {
       await ctpClient.create(ctpClient.builder.types, webComponentsPaymentType)
       logger.info('Successfully created payment custom type')
@@ -17,5 +19,5 @@ async function ensurePaymentCustomType (ctpClient) {
 }
 
 module.exports = {
-  ensurePaymentCustomType
+  ensurePaymentCustomType,
 }

@@ -1,5 +1,5 @@
 {
-  "key": "YOUR_ORDER_NUMBER",
+  "key": "YOUR_REFERENCE",
   "amountPlanned": {
     "type": "centPrecision",
     "currencyCode": "EUR",
@@ -20,6 +20,5 @@
   },
   "paymentStatus": {},
   "transactions": [],
-  "interfaceInteractions": [
-  ]
+  "interfaceInteractions": []
 }

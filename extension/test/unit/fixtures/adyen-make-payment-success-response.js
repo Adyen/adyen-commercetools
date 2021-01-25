@@ -6,13 +6,13 @@ module.exports = JSON.stringify({
     cardHolderName: 'Checkout Shopper PlaceHolder',
     paymentMethod: 'visa',
     authorisationMid: '1000',
-    acquirerAccountCode: 'TestPmmAcquirerAccount'
+    acquirerAccountCode: 'TestPmmAcquirerAccount',
   },
   pspReference: '853587031437598F',
   resultCode: 'Authorised',
   amount: {
     currency: 'EUR',
-    value: 1000
+    value: 1000,
   },
-  merchantReference: 'YOUR_ORDER_NUMBER'
+  merchantReference: 'YOUR_REFERENCE',
 })

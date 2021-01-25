@@ -1,4 +1,4 @@
-function collectRequestData (request) {
+function collectRequestData(request) {
   return new Promise((resolve) => {
     const data = []
 
@@ -13,12 +13,12 @@ function collectRequestData (request) {
   })
 }
 
-function sendResponse (response, statusCode = 200, headers, data) {
+function sendResponse(response, statusCode = 200, headers, data) {
   response.writeHead(statusCode, headers)
   response.end(data)
 }
 
-function getNotificationForTracking (notification) {
+function getNotificationForTracking(notification) {
   const notificationRequestItem = notification.NotificationRequestItem
   if (notificationRequestItem)
     return {
@@ -34,5 +34,5 @@ function getNotificationForTracking (notification) {
 module.exports = {
   collectRequestData,
   sendResponse,
-  getNotificationForTracking
+  getNotificationForTracking,
 }

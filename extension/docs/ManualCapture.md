@@ -1,11 +1,26 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+**Table of Contents**
+
+<!-- *generated with [DocToc](https://github.com/thlorenz/doctoc)* -->
+
+- [Manual Capture](#manual-capture)
+  - [Make an API call to capture a payment:](#make-an-api-call-to-capture-a-payment)
+    - [More info](#more-info)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 **Please see [Integration Guide](WebComponentsIntegrationGuide.md) first before continuing with this document.**
 
 ## Manual Capture
-By default, payments are captured immediately after authorisation. For payment methods that support separate authorisation and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This allows you to cancel the payment in case of any issues with the shipment. 
+
+By default, payments are captured immediately after authorisation. For payment methods that support separate authorisation and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This allows you to cancel the payment in case of any issues with the shipment.
 
 ### Make an API call to capture a payment:
+
 To capture a payment manually, [add a transaction](https://docs.commercetools.com/http-api-projects-payments#add-transaction) with type `Charge` and state `Initial` to the commercetools payment.
- 
+
 ```json
 {
   "action": "addTransaction",
@@ -89,4 +104,5 @@ The commercetools payment representation after a successful capture:
 Once Adyen have processed your capture request, Adyen will send a notification to our [Notification module](./../../notification/README.md).
 
 #### More info
+
 For more detailed information from Adyen's perspective, see [Adyen's documentation](https://docs.adyen.com/checkout/capture#manual-capture).

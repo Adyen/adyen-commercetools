@@ -18,11 +18,16 @@ exports.handler = async function (event) {
 
     await handler.processNotifications(event.notificationItems, ctpClient)
     return {
-      notificationResponse: '[accepted]'
+      notificationResponse: '[accepted]',
     }
   } catch (e) {
-    logger.error({ notification: getNotificationForTracking(event.notificationItems), err: e },
-      'Unexpected error when processing event')
+    logger.error(
+      {
+        notification: getNotificationForTracking(event.notificationItems),
+        err: e,
+      },
+      'Unexpected error when processing event'
+    )
     throw e
   }
 }

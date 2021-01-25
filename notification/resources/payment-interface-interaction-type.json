@@ -3,9 +3,7 @@
   "name": {
     "en": "ctp-adyen-integration-interaction-notification"
   },
-  "resourceTypeIds": [
-    "payment-interface-interaction"
-  ],
+  "resourceTypeIds": ["payment-interface-interaction"],
   "fieldDefinitions": [
     {
       "name": "createdAt",

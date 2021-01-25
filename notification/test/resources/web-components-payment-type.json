@@ -3,9 +3,7 @@
   "name": {
     "en": "commercetools Adyen integration payment custom type based on web components"
   },
-  "resourceTypeIds": [
-    "payment"
-  ],
+  "resourceTypeIds": ["payment"],
   "fieldDefinitions": [
     {
       "name": "getPaymentMethodsRequest",

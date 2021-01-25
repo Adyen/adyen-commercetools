@@ -1,15 +1,20 @@
 const _ = require('lodash')
-const { sendResponse, collectRequestData, getNotificationForTracking } = require('../../utils/commons')
+const {
+  sendResponse,
+  collectRequestData,
+  getNotificationForTracking,
+} = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
-const { processNotifications } = require('../../handler/notification/notification.handler')
+const {
+  processNotifications,
+} = require('../../handler/notification/notification.handler')
 const config = require('../../config/config')()
 const logger = require('../../utils/logger').getLogger()
 
 const ctpClient = ctp.get(config)
 
-async function handleNotification (request, response) {
-  if (request.method !== 'POST')
-    return sendResponse(response)
+async function handleNotification(request, response) {
+  if (request.method !== 'POST') return sendResponse(response)
   const body = await collectRequestData(request)
   try {
     const notification = _.get(JSON.parse(body), 'notificationItems', [])
@@ -17,21 +22,25 @@ async function handleNotification (request, response) {
     return sendAcceptedResponse(response)
   } catch (err) {
     const notification = _.get(JSON.parse(body), 'notificationItems', [])
-    logger.error({ notification: getNotificationForTracking(notification), err },
-      'Unexpected exception occurred.')
+    logger.error(
+      { notification: getNotificationForTracking(notification), err },
+      'Unexpected exception occurred.'
+    )
     return sendResponse(response, 500)
   }
 }
 
-function sendAcceptedResponse (response) {
+function sendAcceptedResponse(response) {
   // From the Adyen docs:
   // To ensure that your server is properly accepting notifications,
   // we require you to acknowledge every notification of any type with an [accepted] response.
 
-  return sendResponse(response,
+  return sendResponse(
+    response,
     200,
     { 'Content-Type': 'application/json' },
-    JSON.stringify({ notificationResponse: '[accepted]' }))
+    JSON.stringify({ notificationResponse: '[accepted]' })
+  )
 }
 
 module.exports = { handleNotification }

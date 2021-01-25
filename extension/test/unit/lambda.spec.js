@@ -14,13 +14,14 @@ describe('Lambda handler', () => {
   })
 
   const event = {
-    resource:
-      { obj: {} }
+    resource: { obj: {} },
   }
 
   it('returns correct success response', async () => {
-    const actions = [ { some: 'action' }]
-    sinon.stub(paymentHandler, 'handlePayment').returns({ success: true, data: { actions } })
+    const actions = [{ some: 'action' }]
+    sinon
+      .stub(paymentHandler, 'handlePayment')
+      .returns({ success: true, data: { actions } })
 
     const result = await handler(event)
 
@@ -30,8 +31,10 @@ describe('Lambda handler', () => {
   })
 
   it('returns correct failed response', async () => {
-    const errors = [ { some: 'error' }]
-    sinon.stub(paymentHandler, 'handlePayment').returns({ success: false, data: { errors } })
+    const errors = [{ some: 'error' }]
+    sinon
+      .stub(paymentHandler, 'handlePayment')
+      .returns({ success: false, data: { errors } })
 
     const result = await handler(event)
 
@@ -41,7 +44,9 @@ describe('Lambda handler', () => {
   })
 
   it('does not throw unhandled exception when handlePayment data is null', async () => {
-    sinon.stub(paymentHandler, 'handlePayment').returns({ success: true, data: null })
+    sinon
+      .stub(paymentHandler, 'handlePayment')
+      .returns({ success: true, data: null })
 
     const result = await handler(event)
 
@@ -60,6 +65,11 @@ describe('Lambda handler', () => {
     const call = async () => handler(event)
 
     await expect(call()).to.be.rejectedWith(error)
-    assert(logSpy.calledWith(error, `Unexpected error when processing event ${JSON.stringify(event)}`))
+    assert(
+      logSpy.calledWith(
+        error,
+        `Unexpected error when processing event ${JSON.stringify(event)}`
+      )
+    )
   })
 })

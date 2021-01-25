@@ -6,7 +6,7 @@
     "centAmount": 795,
     "fractionDigits": 2
   },
-  "paymentMethodInfo" : {
+  "paymentMethodInfo": {
     "paymentInterface": "ctp-adyen-integration"
   },
   "custom": {
