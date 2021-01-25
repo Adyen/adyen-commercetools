@@ -79,7 +79,7 @@ function loadAndValidateConfig() {
 loadAndValidateConfig()
 
 module.exports = {
-  getModuleConfig: getModuleConfig,
+  getModuleConfig,
   getCtpConfig,
   getAdyenConfig,
   getAllCtpProjectKeys,
