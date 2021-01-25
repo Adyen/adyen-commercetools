@@ -28,7 +28,7 @@ function getLogger() {
     logger = bunyan.createLogger({
       name: 'ctp-adyen-integration-extension',
       stream: process.stderr,
-      level: config.getEnvConfig().logLevel || bunyan.INFO,
+      level: config.getModuleConfig().logLevel || bunyan.INFO,
     })
   return logger
 }

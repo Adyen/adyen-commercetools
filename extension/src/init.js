@@ -5,7 +5,7 @@ const utils = require('./utils')
 const config = require('./config/config')
 const ctpClientBuilder = require('./ctp')
 
-const envConfig = config.getEnvConfig()
+const envConfig = config.getModuleConfig()
 
 const { ensureResources } = require('./config/init/ensure-resources')
 

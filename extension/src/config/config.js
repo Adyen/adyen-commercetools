@@ -1,6 +1,6 @@
 let config
 
-function getEnvConfig() {
+function getModuleConfig() {
   return {
     port: config.port,
     logLevel: config.logLevel,
@@ -79,7 +79,7 @@ function loadAndValidateConfig() {
 loadAndValidateConfig()
 
 module.exports = {
-  getEnvConfig,
+  getModuleConfig: getModuleConfig,
   getCtpConfig,
   getAdyenConfig,
   getAllCtpProjectKeys,
