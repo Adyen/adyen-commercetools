@@ -175,7 +175,7 @@ describe('Validator builder', () => {
       },
     }
     const errorObject = ValidatorBuilder.withPayment(invalidPayment)
-      .validateRequiredFields()
+      .validateMetadataFields()
       .getErrors()
 
     expect(errorObject.missingRequiredCtpProjectKey).to.equal(
@@ -192,7 +192,7 @@ describe('Validator builder', () => {
       },
     }
     const errorObject = ValidatorBuilder.withPayment(invalidPayment)
-      .validateRequiredFields()
+      .validateMetadataFields()
       .getErrors()
 
     expect(errorObject.missingRequiredAdyenMerchantAcc).to.equal(
@@ -204,13 +204,13 @@ describe('Validator builder', () => {
     const invalidPayment = {
       custom: {
         fields: {
-          commercetoolsProjectKey: "",
-          adyenMerchantAccount: ""
+          commercetoolsProjectKey: " ",
+          adyenMerchantAccount: " "
         },
       },
     }
     const errorObject = ValidatorBuilder.withPayment(invalidPayment)
-      .validateRequiredFields()
+      .validateMetadataFields()
       .getErrors()
 
     expect(errorObject.missingRequiredAdyenMerchantAcc).to.equal(
