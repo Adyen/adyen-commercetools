@@ -19,8 +19,8 @@ server.listen(port, async () => {
   await pMap(ctpProjectKeys, async (ctpProjectKey) => {
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
     if (ctpConfig.ensureResources) {
-      ctpClientBuilder.get(ctpProjectKey)
-      await ensureResources()
+      const ctpClient = ctpClientBuilder.get(ctpProjectKey)
+      await ensureResources(ctpClient)
     }
   })
 
