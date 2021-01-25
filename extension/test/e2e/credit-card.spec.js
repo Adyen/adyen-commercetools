@@ -56,7 +56,7 @@ describe('::creditCardPayment::', () => {
           const baseUrl = config.getEnvConfig().apiExtensionBaseUrl
           const clientKey = config.getAdyenConfig(adyenMerchantAccount)
             .clientKey
-          const payment = await createPayment(ctpClient, adyenMerchantAccount)
+          const payment = await createPayment(ctpClient, adyenMerchantAccount, ctpProjectKey)
 
           const browserTab = await browser.newPage()
 
