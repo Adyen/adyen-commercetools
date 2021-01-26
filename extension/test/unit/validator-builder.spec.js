@@ -204,7 +204,7 @@ describe('Validator builder', () => {
     const invalidPayment = {
       custom: {
         fields: {
-          commercetoolsProjectKey: " ",
+          commercetoolsProjectKey: " white spaced projectKey",
           adyenMerchantAccount: " "
         },
       },

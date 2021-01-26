@@ -7,20 +7,17 @@ function withPayment(paymentObject) {
 
   return {
     validateMetadataFields() {
-      if (!paymentObject.custom && !paymentObject.custom.fields) return this
-      if (!paymentObject.custom.fields.commercetoolsProjectKey ||
-          paymentObject.custom.fields.commercetoolsProjectKey === ' ')
+      if (!paymentObject.custom) return this
+      if (!pU.isValidMetadata(paymentObject.custom.fields.commercetoolsProjectKey))
         errors.missingRequiredCtpProjectKey =
             errorMessages.MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
-      if (!paymentObject.custom.fields.adyenMerchantAccount ||
-          paymentObject.custom.fields.adyenMerchantAccount === ' ')
+      if (!pU.isValidMetadata(paymentObject.custom.fields.adyenMerchantAccount))
         errors.missingRequiredAdyenMerchantAcc =
             errorMessages.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
       return this
     },
     validateRequestFields() {
-      if (!paymentObject.custom || errors.missingRequiredCtpProjectKey || errors.missingRequiredAdyenMerchantAcc)
-        return this
+      if (!paymentObject.custom) return this
       if (!pU.isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
         errors.getPaymentMethodsRequest =
           errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
