@@ -24,7 +24,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-          same-branch-only: false
       - run: npm ci
       - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
       - run: npm run test
@@ -54,7 +53,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-          same-branch-only: false
       - run: npm ci
       - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
       - run: npm run test
