@@ -125,6 +125,15 @@ function getRequestBuilder(projectKey) {
   return createRequestBuilder({ projectKey })
 }
 
+const clientCache = new Map()
+
 module.exports = {
-  get: (ctpProjectKey) => setUpClient(ctpProjectKey),
+  get: (ctpProjectKey) => {
+    let client = clientCache.get(ctpProjectKey)
+    if (!client) {
+      client = setUpClient(ctpProjectKey)
+      clientCache.set(ctpProjectKey, client)
+    }
+    return client
+  },
 }
