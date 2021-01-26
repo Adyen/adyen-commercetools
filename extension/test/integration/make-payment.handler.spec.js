@@ -2,13 +2,16 @@ const { expect } = require('chai')
 
 const ctpClientBuilder = require('../../src/ctp')
 const iTSetUp = require('./integration-test-set-up')
-const c = require('../../src/config/constants')
+const constants = require('../../src/config/constants')
+const config = require('../../src/config/config')
 
 describe('::makePayment::', () => {
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
   let ctpClient
 
   beforeEach(async () => {
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.initServerAndExtension({ ctpClient })
   })
 
@@ -43,15 +46,16 @@ describe('::makePayment::', () => {
           centAmount: 1000,
         },
         paymentMethodInfo: {
-          paymentInterface: c.CTP_ADYEN_INTEGRATION,
+          paymentInterface: constants.CTP_ADYEN_INTEGRATION,
         },
         custom: {
           type: {
             typeId: 'type',
-            key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
+            key: constants.CTP_PAYMENT_CUSTOM_TYPE_KEY,
           },
           fields: {
             makePaymentRequest: JSON.stringify(makePaymentRequestDraft),
+            adyenMerchantAccount
           },
         },
       }
@@ -68,7 +72,7 @@ describe('::makePayment::', () => {
       const { makePaymentResponse } = payment.custom.fields
       const interfaceInteraction = payment.interfaceInteractions.find(
         (interaction) =>
-          interaction.fields.type === c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+          interaction.fields.type === constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
       )
       expect(makePaymentResponse).to.be.deep.equal(
         interfaceInteraction.fields.response

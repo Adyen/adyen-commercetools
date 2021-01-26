@@ -1,7 +1,7 @@
 const querystring = require('querystring')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
-const configBuilder = require('../../src/config/config')
+const config = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
 const {
@@ -18,6 +18,8 @@ const CreditCardRedirectPage = require('./pageObjects/CreditCard3dsRedirectPage'
 describe('::creditCardPayment3dsRedirect::', () => {
   let browser
   let ctpClient
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
 
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
@@ -55,7 +57,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
       })
     }
 
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.initServerAndExtension({
       ctpClient,
       routes,
@@ -81,10 +83,10 @@ describe('::creditCardPayment3dsRedirect::', () => {
         `when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
           'then it should successfully finish the payment with 3DS redirect flow',
         async () => {
-          const config = configBuilder.load()
-          const baseUrl = config.apiExtensionBaseUrl
-          const clientKey = config.adyen.clientKey
-          const payment = await createPayment(ctpClient, baseUrl)
+          const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+          const clientKey = config.getAdyenConfig(adyenMerchantAccount)
+            .clientKey
+          const payment = await createPayment(ctpClient, adyenMerchantAccount)
 
           const browserTab = await browser.newPage()
 

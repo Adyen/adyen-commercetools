@@ -10,12 +10,15 @@ const {
 const {
   createAddTransactionAction,
 } = require('../../src/paymentHandler/payment-utils')
+const config = require('../../src/config/config')
 
 describe('::refund::', () => {
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   let ctpClient
 
   beforeEach(async () => {
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.cleanupCtpResources(ctpClient)
     await iTSetUp.initServerAndExtension({ ctpClient })
   })
@@ -44,7 +47,9 @@ describe('::refund::', () => {
             typeId: 'type',
             key: CTP_PAYMENT_CUSTOM_TYPE_KEY,
           },
-          fields: {},
+          fields: {
+            adyenMerchantAccount
+          },
         },
         transactions: [
           {
@@ -138,7 +143,9 @@ describe('::refund::', () => {
             typeId: 'type',
             key: CTP_PAYMENT_CUSTOM_TYPE_KEY,
           },
-          fields: {},
+          fields: {
+            adyenMerchantAccount
+          },
         },
         transactions: [
           {

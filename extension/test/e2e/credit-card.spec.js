@@ -1,7 +1,7 @@
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
-const configBuilder = require('../../src/config/config')
+const config = require('../../src/config/config')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
 const {
   assertPayment,
@@ -14,6 +14,8 @@ const {
 describe('::creditCardPayment::', () => {
   let browser
   let ctpClient
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
@@ -25,7 +27,7 @@ describe('::creditCardPayment::', () => {
     routes['/make-payment-form'] = async (request, response) => {
       serveFile('./test/e2e/fixtures/make-payment-form.html', request, response)
     }
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.initServerAndExtension({
       ctpClient,
       routes,
@@ -51,14 +53,14 @@ describe('::creditCardPayment::', () => {
         `when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
           'then it should successfully finish the payment',
         async () => {
-          const config = configBuilder.load()
-          const baseUrl = config.apiExtensionBaseUrl
-          const clientKey = config.adyen.clientKey
-          const payment = await createPayment(ctpClient, baseUrl)
+          const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+          const clientKey = config.getAdyenConfig(adyenMerchantAccount)
+            .clientKey
+          const payment = await createPayment(ctpClient, adyenMerchantAccount)
 
           const browserTab = await browser.newPage()
 
-          const paymentAfteMakePayment = await makePayment({
+          const paymentAfterMakePayment = await makePayment({
             browserTab,
             payment,
             baseUrl,
@@ -68,7 +70,7 @@ describe('::creditCardPayment::', () => {
             clientKey,
           })
 
-          assertPayment(paymentAfteMakePayment, 'makePayment')
+          assertPayment(paymentAfterMakePayment, 'makePayment')
         }
       )
     }

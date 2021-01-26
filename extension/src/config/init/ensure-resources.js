@@ -3,7 +3,7 @@ const {
   ensureInterfaceInteractionCustomType,
 } = require('./ensure-interface-interaction-custom-type')
 const { ensureApiExtensions } = require('./ensure-api-extensions')
-const configLoader = require('../../config/config')
+
 
 function ensureCustomTypes(ctpClient) {
   return Promise.all([
@@ -12,13 +12,11 @@ function ensureCustomTypes(ctpClient) {
   ])
 }
 
-function ensureResources(ctpClient) {
-  const config = configLoader.load()
-  if (!config.ensureResources) return Promise.resolve()
-  return Promise.all([
-    ensureCustomTypes(ctpClient),
-    ensureApiExtensions(ctpClient, config.apiExtensionBaseUrl),
-  ])
+function ensureResources(ctpClient, apiExtensionBaseUrl) {
+    return Promise.all([
+      ensureCustomTypes(ctpClient),
+      ensureApiExtensions(ctpClient, apiExtensionBaseUrl),
+    ])
 }
 
 module.exports = {

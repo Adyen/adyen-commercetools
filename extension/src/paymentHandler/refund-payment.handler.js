@@ -9,6 +9,7 @@ async function execute(paymentObject) {
   if (!transaction)
     transaction = pU.getAuthorizationTransactionSuccess(paymentObject)
   const interactionId = transaction.interactionId
+  const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
 
   const actions = []
 
@@ -22,7 +23,7 @@ async function execute(paymentObject) {
       reference: paymentObject.key,
     }
 
-    const { request, response } = await refund(refundRequestObjects)
+    const { request, response } = await refund(adyenMerchantAccount, refundRequestObjects)
     const addInterfaceInteractionAction = pU.createAddInterfaceInteractionAction(
       {
         request,

@@ -13,24 +13,35 @@ const { createQueueMiddleware } = require('@commercetools/sdk-middleware-queue')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
 const packageJson = require('../package.json')
 
-const configLoader = require('./config/config')
+const config = require('./config/config')
 
-const config = configLoader.load()
+const tokenCache = {
+  store: {},
+  get(tokenCacheOptions) {
+    return this.store[tokenCacheOptions.projectKey]
+  },
+  set(cache, tokenCacheOptions) {
+    this.store[tokenCacheOptions.projectKey] = cache
+  }
+}
 
 function createCtpClient({
   clientId,
   clientSecret,
   projectKey,
+  authUrl,
+  apiUrl,
   concurrency = 10,
 }) {
   const authMiddleware = createAuthMiddlewareForClientCredentialsFlow({
-    host: config.ctp.authUrl,
+    host: authUrl,
     projectKey,
     credentials: {
       clientId,
       clientSecret,
     },
     fetch,
+    tokenCache
   })
 
   const userAgentMiddleware = createUserAgentMiddleware({
@@ -42,7 +53,7 @@ function createCtpClient({
 
   const httpMiddleware = createHttpMiddleware({
     maskSensitiveHeaderData: true,
-    host: config.ctp.apiUrl,
+    host: apiUrl,
     enableRetry: true,
     fetch,
   })
@@ -61,11 +72,12 @@ function createCtpClient({
   })
 }
 
-function setUpClient() {
-  const ctpClient = createCtpClient(config.ctp)
+function setUpClient(ctpProjectKey) {
+  const ctpConfig = config.getCtpConfig(ctpProjectKey)
+  const ctpClient = createCtpClient(ctpConfig)
   const customMethods = {
     get builder() {
-      return getRequestBuilder(config.ctp.projectKey)
+      return getRequestBuilder(ctpProjectKey)
     },
 
     delete(uri, id, version) {
@@ -125,5 +137,5 @@ function getRequestBuilder(projectKey) {
 }
 
 module.exports = {
-  get: () => setUpClient(),
+  get: (ctpProjectKey) => setUpClient(ctpProjectKey),
 }
