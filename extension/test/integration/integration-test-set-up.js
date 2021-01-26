@@ -24,9 +24,9 @@ const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
 const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
 function _overrideApiExtensionBaseUrlConfig(ngrokUrl) {
-  const envConfig = config.getEnvConfig()
+  const envConfig = config.getModuleConfig()
   envConfig.apiExtensionBaseUrl = ngrokUrl
-  config.getEnvConfig = function () {
+  config.getModuleConfig = function () {
     return envConfig
   }
   module.exports = config

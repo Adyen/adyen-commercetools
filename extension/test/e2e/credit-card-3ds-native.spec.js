@@ -86,7 +86,7 @@ describe('::creditCardPayment3dsNative::', () => {
         `when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
           'then it should successfully finish the payment with 3DS native authentication flow',
         async () => {
-          const baseUrl = config.getEnvConfig().apiExtensionBaseUrl
+          const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
           const clientKey = config.getAdyenConfig(adyenMerchantAccount)
             .clientKey
           const payment = await createPayment(ctpClient, adyenMerchantAccount, ctpProjectKey)
