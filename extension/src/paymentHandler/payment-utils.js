@@ -161,6 +161,12 @@ function isValidJSON(jsonString) {
   return false
 }
 
+function isValidMetadata(str) {
+  if (!str) return false
+  if (str.indexOf(' ') >= 0) return false
+  return true
+}
+
 module.exports = {
   getChargeTransactionInitial,
   getChargeTransactionPending,
@@ -176,4 +182,5 @@ module.exports = {
   createAddTransactionActionByResponse,
   getLatestInterfaceInteraction,
   isValidJSON,
+  isValidMetadata,
 }
