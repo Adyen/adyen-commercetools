@@ -6,6 +6,16 @@ function withPayment(paymentObject) {
   const errors = {}
 
   return {
+    validateMetadataFields() {
+      if (!paymentObject.custom) return this
+      if (!pU.isValidMetadata(paymentObject.custom.fields.commercetoolsProjectKey))
+        errors.missingRequiredCtpProjectKey =
+            errorMessages.MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
+      if (!pU.isValidMetadata(paymentObject.custom.fields.adyenMerchantAccount))
+        errors.missingRequiredAdyenMerchantAcc =
+            errorMessages.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
+      return this
+    },
     validateRequestFields() {
       if (!paymentObject.custom) return this
       if (!pU.isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))

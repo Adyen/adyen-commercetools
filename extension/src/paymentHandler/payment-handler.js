@@ -26,6 +26,7 @@ async function handlePayment(paymentObject) {
     return { success: true, data: null }
 
   const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
+    .validateMetadataFields()
     .validateRequestFields()
     .validateReference()
     .validateAmountPlanned()
