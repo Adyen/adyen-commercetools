@@ -64,4 +64,28 @@ describe('Lambda handler', () => {
       )
     )
   })
+
+  it('throws error if no notificationItems were received and logs properly', async () => {
+    const logSpy = sinon.spy()
+    sinon.stub(notificationHandler, 'processNotifications').returns(undefined)
+    logger.getLogger().error = logSpy
+
+    const error = new Error('No notification received.')
+
+    const emptyEvent = {}
+    const call = async () => handler(emptyEvent)
+
+    await expect(call()).to.be.rejectedWith(error.message)
+    assert(
+      logSpy.calledWith(
+        sinon.match({
+          notification: undefined,
+          err: sinon.match
+            .instanceOf(Error)
+            .and(sinon.match.has('message', error.message)),
+        }),
+        `Unexpected error when processing event`
+      )
+    )
+  })
 })

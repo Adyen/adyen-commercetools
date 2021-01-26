@@ -10,20 +10,24 @@ const ctpClient = ctp.get(config)
 let initialised = false
 
 exports.handler = async function (event) {
+  const { notificationItems } = event
   try {
     if (!initialised) {
       await setup.ensureInterfaceInteractionCustomType(ctpClient)
       initialised = true
     }
+    if (!notificationItems) {
+      throw new Error('No notification received.')
+    }
 
-    await handler.processNotifications(event.notificationItems, ctpClient)
+    await handler.processNotifications(notificationItems, ctpClient)
     return {
       notificationResponse: '[accepted]',
     }
   } catch (e) {
     logger.error(
       {
-        notification: getNotificationForTracking(event.notificationItems),
+        notification: getNotificationForTracking(notificationItems),
         err: e,
       },
       'Unexpected error when processing event'

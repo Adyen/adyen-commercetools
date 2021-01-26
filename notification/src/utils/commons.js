@@ -19,7 +19,7 @@ function sendResponse(response, statusCode = 200, headers, data) {
 }
 
 function getNotificationForTracking(notification) {
-  const notificationRequestItem = notification.NotificationRequestItem
+  const notificationRequestItem = notification?.NotificationRequestItem
   if (notificationRequestItem)
     return {
       eventCode: notificationRequestItem.eventCode,
