@@ -1,58 +1,87 @@
-const _ = require('lodash')
+let config
 
-function getEnvConfig() {
+function getModuleConfig() {
   return {
-    port: process.env.PORT,
-    logLevel: process.env.LOG_LEVEL,
-    apiExtensionBaseUrl: process.env.API_EXTENSION_BASE_URL,
-    keepAliveTimeout: !Number.isNaN(process.env.KEEP_ALIVE_TIMEOUT)
-      ? parseFloat(process.env.KEEP_ALIVE_TIMEOUT, 10)
+    port: config.port,
+    logLevel: config.logLevel,
+    apiExtensionBaseUrl: config.apiExtensionBaseUrl,
+    keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
+      ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
-    ensureResources: process.env.ENSURE_RESOURCES !== 'false',
   }
 }
 
-function getCTPEnvCredentials() {
+function getCtpConfig(ctpProjectKey) {
+  const ctpConfig = config.commercetools[ctpProjectKey]
+  if (!ctpConfig)
+    throw new Error(
+      `Configuration for ctpProjectKey is not provided. Please update the configuration. ${JSON.stringify(
+        ctpProjectKey
+      )}`
+    )
   return {
-    projectKey: process.env.CTP_PROJECT_KEY,
-    clientId: process.env.CTP_CLIENT_ID,
-    clientSecret: process.env.CTP_CLIENT_SECRET,
-    apiUrl:
-      process.env.CTP_HOST || 'https://api.europe-west1.gcp.commercetools.com',
+    clientId: ctpConfig.clientId,
+    clientSecret: ctpConfig.clientSecret,
+    projectKey: ctpProjectKey,
+    apiUrl: ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
     authUrl:
-      process.env.CTP_AUTH_URL ||
-      'https://auth.europe-west1.gcp.commercetools.com',
+      ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
+    ensureResources: config.ensureResources !== 'false',
   }
 }
 
-function getAdyenCredentials() {
+function getAdyenConfig(adyenMerchantAccount) {
+  const adyenConfig = config.adyen[adyenMerchantAccount]
+  if (!adyenConfig)
+    throw new Error(
+      `Configuration for adyenMerchantAccount is not provided. Please update the configuration: ${JSON.stringify(
+        adyenMerchantAccount
+      )}`
+    )
   return {
-    merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
-    apiKey: process.env.ADYEN_API_KEY,
-    apiBaseUrl:
-      process.env.ADYEN_API_BASE_URL || 'https://checkout-test.adyen.com/v52',
+    apiKey: adyenConfig.apiKey,
+    apiBaseUrl: adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v52',
     legacyApiBaseUrl:
-      process.env.ADYEN_LEGACY_API_BASE_URL ||
+      adyenConfig.legacyApiBaseUrl ||
       'https://pal-test.adyen.com/pal/servlet/Payment/v52',
-    clientKey: process.env.ADYEN_CLIENT_KEY || '',
+    clientKey: adyenConfig.clientKey || '',
   }
 }
 
-module.exports.load = () => {
-  /**
-   * Load configuration from several sources in this order (last has highest priority):
-   * - default config
-   * - file config
-   * - ctp credentials from env variables
-   * - ctp config
-   * - env config
-   */
+function getAllCtpProjectKeys() {
+  return Object.keys(config.commercetools)
+}
 
-  const config = _.merge(
-    getEnvConfig(),
-    { ctp: getCTPEnvCredentials() },
-    { adyen: getAdyenCredentials() }
-  )
+function getAllAdyenMerchantAccounts() {
+  return Object.keys(config.adyen)
+}
 
-  return config
+function loadAndValidateConfig() {
+  try {
+    config = JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
+  } catch (e) {
+    throw new Error(
+      'Adyen integration configuration is not provided in the JSON format'
+    )
+  }
+  const numberOfCtpConfigs = Object.keys(config.commercetools).length
+  const numberOfAdyenConfigs = Object.keys(config.adyen).length
+  if (numberOfCtpConfigs === 0)
+    throw new Error(
+      'Please add at least one commercetools project to the config'
+    )
+  if (numberOfAdyenConfigs === 0)
+    throw new Error(
+      'Please add at least one Adyen merchant account to the config'
+    )
+}
+
+loadAndValidateConfig()
+
+module.exports = {
+  getModuleConfig,
+  getCtpConfig,
+  getAdyenConfig,
+  getAllCtpProjectKeys,
+  getAllAdyenMerchantAccounts,
 }

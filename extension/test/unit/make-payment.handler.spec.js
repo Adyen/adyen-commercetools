@@ -1,7 +1,7 @@
 const nock = require('nock')
 const { expect } = require('chai')
 const _ = require('lodash')
-const configLoader = require('../../src/config/config')
+const config = require('../../src/config/config')
 const { execute } = require('../../src/paymentHandler/make-payment.handler')
 const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
 const paymentErrorResponse = require('./fixtures/adyen-make-payment-error-response')
@@ -11,7 +11,6 @@ const paymentValidationFailedResponse = require('./fixtures/adyen-make-payment-v
 const ctpPayment = require('./fixtures/ctp-payment.json')
 
 describe('make-payment::execute', () => {
-  const config = configLoader.load()
   let scope
 
   /* eslint-disable max-len */
@@ -48,10 +47,11 @@ describe('make-payment::execute', () => {
       value: 1000,
     },
   }
-  /* eslint-enable max-len */
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
   beforeEach(() => {
-    scope = nock(`${config.adyen.apiBaseUrl}`)
+    const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
+    scope = nock(`${adyenConfig.apiBaseUrl}`)
   })
 
   it(
@@ -64,6 +64,7 @@ describe('make-payment::execute', () => {
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
         makePaymentRequest
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
 
@@ -85,9 +86,7 @@ describe('make-payment::execute', () => {
       )
       expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
       expect(request.amount).to.deep.equal(makePaymentRequest.amount)
-      expect(request.merchantAccount).to.equal(
-        process.env.ADYEN_MERCHANT_ACCOUNT
-      )
+      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -123,6 +122,7 @@ describe('make-payment::execute', () => {
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
         makePaymentRequest
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
 
@@ -144,9 +144,7 @@ describe('make-payment::execute', () => {
       )
       expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
       expect(request.amount).to.deep.equal(makePaymentRequest.amount)
-      expect(request.merchantAccount).to.equal(
-        process.env.ADYEN_MERCHANT_ACCOUNT
-      )
+      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -172,6 +170,7 @@ describe('make-payment::execute', () => {
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
         makePaymentRequest
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
 
@@ -193,9 +192,7 @@ describe('make-payment::execute', () => {
       )
       expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
       expect(request.amount).to.deep.equal(makePaymentRequest.amount)
-      expect(request.merchantAccount).to.equal(
-        process.env.ADYEN_MERCHANT_ACCOUNT
-      )
+      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -222,6 +219,7 @@ describe('make-payment::execute', () => {
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
         makePaymentRequest
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
 
@@ -243,9 +241,7 @@ describe('make-payment::execute', () => {
       )
       expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
       expect(request.amount).to.deep.equal(makePaymentRequest.amount)
-      expect(request.merchantAccount).to.equal(
-        process.env.ADYEN_MERCHANT_ACCOUNT
-      )
+      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -282,6 +278,7 @@ describe('make-payment::execute', () => {
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
         makePaymentRequest
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
 
@@ -303,9 +300,7 @@ describe('make-payment::execute', () => {
       )
       expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
       expect(request.amount).to.deep.equal(makePaymentRequest.amount)
-      expect(request.merchantAccount).to.equal(
-        process.env.ADYEN_MERCHANT_ACCOUNT
-      )
+      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'

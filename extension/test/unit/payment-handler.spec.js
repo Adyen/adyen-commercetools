@@ -5,12 +5,11 @@ const { handlePayment } = require('../../src/paymentHandler/payment-handler')
 const submitPaymentDetailsChallengeRes = require('./fixtures/adyen-submit-payment-details-challenge-shopper-response')
 const ctpPayment = require('./fixtures/ctp-payment.json')
 const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
-const configLoader = require('../../src/config/config')
+const config = require('../../src/config/config')
 const c = require('../../src/config/constants')
 const errorMessage = require('../../src/validator/error-messages')
 
 describe('payment-handler::execute', () => {
-  const config = configLoader.load()
   let scope
   /* eslint-disable max-len */
   const submitPaymentDetailsRequest = {
@@ -22,9 +21,11 @@ describe('payment-handler::execute', () => {
     },
   }
   /* eslint-enable max-len */
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
   beforeEach(() => {
-    scope = nock(`${config.adyen.apiBaseUrl}`)
+    const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
+    scope = nock(`${adyenConfig.apiBaseUrl}`)
   })
 
   afterEach(() => {
@@ -46,6 +47,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest = JSON.stringify(
         submitPaymentDetailsRequest
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await handlePayment(ctpPaymentClone)
 
@@ -65,6 +67,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest = JSON.stringify(
         submitPaymentDetailsRequest
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await handlePayment(ctpPaymentClone)
 
@@ -104,6 +107,8 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest = JSON.stringify(
         submitPaymentDetailsRequest
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
       const response = await handlePayment(ctpPaymentClone)
 
       expect(response.data.actions).to.have.lengthOf(0)
@@ -140,6 +145,7 @@ describe('payment-handler::execute', () => {
           },
         }
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       const response = await handlePayment(ctpPaymentClone)
 
       expect(response.data.actions).to.have.lengthOf.above(0)
@@ -165,6 +171,7 @@ describe('payment-handler::execute', () => {
           },
         }
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       const response = await handlePayment(ctpPaymentClone)
       expect(response.data.actions).to.have.lengthOf.above(0)
     }
@@ -185,6 +192,7 @@ describe('payment-handler::execute', () => {
           },
         })
         ctpPaymentClone.interfaceInteractions = []
+        ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
         const response = await handlePayment(ctpPaymentClone)
 
@@ -204,6 +212,7 @@ describe('payment-handler::execute', () => {
         ctpPaymentClone.amountPlanned.centAmount = 10
         ctpPaymentClone.custom.fields = {}
         ctpPaymentClone.interfaceInteractions = []
+        ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
         const response = await handlePayment(ctpPaymentClone)
 
@@ -238,6 +247,7 @@ describe('payment-handler::execute', () => {
           },
         },
       ]
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await handlePayment(ctpPaymentClone)
 

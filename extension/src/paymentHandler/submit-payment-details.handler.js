@@ -13,6 +13,7 @@ async function execute(paymentObject) {
   const submitAdditionalDetailsRequestObj = JSON.parse(
     paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
   )
+  const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   if (!submitAdditionalDetailsRequestObj.paymentData) {
     const makePaymentResponseObj = JSON.parse(
       paymentObject.custom.fields.makePaymentResponse
@@ -22,7 +23,7 @@ async function execute(paymentObject) {
   }
   if (_isNewRequest(submitAdditionalDetailsRequestObj, paymentObject)) {
     const { request, response } = await submitAdditionalPaymentDetails(
-      submitAdditionalDetailsRequestObj
+      adyenMerchantAccount, submitAdditionalDetailsRequestObj
     )
     actions.push(
       pU.createAddInterfaceInteractionAction({

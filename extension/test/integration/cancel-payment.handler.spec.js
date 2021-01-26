@@ -10,13 +10,16 @@ const {
 const {
   createAddTransactionAction,
 } = require('../../src/paymentHandler/payment-utils')
+const config = require('../../src/config/config')
 
 describe('::cancel::', () => {
   let ctpClient
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
   let payment
 
   beforeEach(async () => {
-    ctpClient = ctpClientBuilder.get()
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.cleanupCtpResources(ctpClient)
     await iTSetUp.initServerAndExtension({ ctpClient })
     const paymentDraft = {
@@ -32,7 +35,9 @@ describe('::cancel::', () => {
           typeId: 'type',
           key: CTP_PAYMENT_CUSTOM_TYPE_KEY,
         },
-        fields: {},
+        fields: {
+          adyenMerchantAccount
+        },
       },
       transactions: [
         {

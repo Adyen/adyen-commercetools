@@ -1,7 +1,7 @@
 const nock = require('nock')
 const { expect } = require('chai')
 const _ = require('lodash')
-const configLoader = require('../../src/config/config')
+const config = require('../../src/config/config')
 const {
   execute,
 } = require('../../src/paymentHandler/klarna-make-payment.handler')
@@ -13,12 +13,14 @@ describe('klarna-make-payment::execute', () => {
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
   const DEFAULT_PAYMENT_LANGUAGE = 'en'
   const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
-  const config = configLoader.load()
   let scope
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
 
   /* eslint-enable max-len */
   beforeEach(() => {
-    scope = nock(`${config.adyen.apiBaseUrl}`)
+    const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
+    scope = nock(`${adyenConfig.apiBaseUrl}`)
   })
 
   afterEach(() => {
@@ -43,6 +45,8 @@ describe('klarna-make-payment::execute', () => {
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
         klarnaMakePaymentRequest
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
 
       const response = await execute(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf(4)
@@ -94,6 +98,7 @@ describe('klarna-make-payment::execute', () => {
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
         klarnaMakePaymentRequest
       )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf(4)
@@ -120,6 +125,8 @@ describe('klarna-make-payment::execute', () => {
           fields: {
             languageCode: 'nonExistingLanguageCode',
             makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
+            adyenMerchantAccount,
+            commercetoolsProjectKey
           },
         },
       }
@@ -154,6 +161,8 @@ describe('klarna-make-payment::execute', () => {
           fields: {
             languageCode: 'nonExistingLanguageCode',
             makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
+            adyenMerchantAccount,
+            commercetoolsProjectKey
           },
         },
       }
@@ -186,6 +195,8 @@ describe('klarna-make-payment::execute', () => {
         fields: {
           languageCode: 'de',
           makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
+          adyenMerchantAccount,
+          commercetoolsProjectKey
         },
       },
     }
@@ -217,6 +228,8 @@ describe('klarna-make-payment::execute', () => {
         custom: {
           fields: {
             makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
+            adyenMerchantAccount,
+            commercetoolsProjectKey
           },
         },
       }
@@ -248,6 +261,8 @@ describe('klarna-make-payment::execute', () => {
         custom: {
           fields: {
             makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
+            adyenMerchantAccount,
+            commercetoolsProjectKey
           },
         },
       }
@@ -261,8 +276,9 @@ describe('klarna-make-payment::execute', () => {
   )
 
   function _mockCtpCartsEndpoint(mockCart = ctpCart) {
-    const ctpApiScope = nock(`${config.ctp.apiUrl}`)
-    const ctpAuthScope = nock(`${config.ctp.authUrl}`)
+    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+    const ctpApiScope = nock(`${ctpConfig.apiUrl}`)
+    const ctpAuthScope = nock(`${ctpConfig.authUrl}`)
     ctpAuthScope.post('/oauth/token').reply(200, {
       access_token: 'xxx',
       token_type: 'Bearer',
@@ -270,7 +286,7 @@ describe('klarna-make-payment::execute', () => {
       scope: 'manage_project:xxx',
     })
     ctpApiScope
-      .get(`/${config.ctp.projectKey}/carts`)
+      .get(`/${ctpConfig.projectKey}/carts`)
       .query(true)
       .reply(200, { results: [mockCart] })
   }

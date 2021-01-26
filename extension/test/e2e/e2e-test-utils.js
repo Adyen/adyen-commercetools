@@ -80,7 +80,7 @@ function assertPayment(
   )
 }
 
-async function createPayment(ctpClient) {
+async function createPayment(ctpClient, adyenMerchantAccount) {
   const paymentDraft = {
     amountPlanned: {
       currencyCode: 'EUR',
@@ -94,7 +94,9 @@ async function createPayment(ctpClient) {
         typeId: 'type',
         key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
       },
-      fields: {},
+      fields: {
+        adyenMerchantAccount
+      },
     },
   }
 

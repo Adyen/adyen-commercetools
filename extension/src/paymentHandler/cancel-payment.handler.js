@@ -12,8 +12,9 @@ async function execute(paymentObject) {
     originalReference: authorizationTransaction.interactionId,
     reference: paymentObject.key,
   }
+  const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
 
-  const { request, response } = await cancelPayment(cancelRequestObj)
+  const { request, response } = await cancelPayment(adyenMerchantAccount, cancelRequestObj)
 
   const addInterfaceInteractionAction = pU.createAddInterfaceInteractionAction({
     request,

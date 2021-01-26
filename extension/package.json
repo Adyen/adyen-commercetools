@@ -9,9 +9,9 @@
     "cover:unit": "nyc --silent npm run unit",
     "cover:integration": "nyc --silent --no-clean npm run integration",
     "cover:e2e": "nyc --silent --no-clean npm run e2e",
-    "unit": "nyc mocha test/unit/**/*.spec.js",
-    "integration": "nyc mocha test/integration/**/*.spec.js",
-    "e2e": "nyc mocha test/e2e/**/*.spec.js",
+    "unit": "nyc mocha \"test/unit/**/*.spec.js\"",
+    "integration": "nyc mocha --file ./test/cleanup-ctp-project.js \"test/integration/**/*.spec.js\"",
+    "e2e": "nyc mocha --file ./test/cleanup-ctp-project.js \"test/e2e/**/*.spec.js\"",
     "start": "node ./src/init.js",
     "lint": "eslint ./src ./test",
     "create-custom-types": "node -e 'require(\"./src/config/init/ensure-resources.js\").ensureCustomTypes()'",
@@ -82,7 +82,6 @@
   },
   "mocha": {
     "timeout": 40000,
-    "file": "./test/cleanup-ctp-project.js",
     "exit": true,
     "full-trace": true
   },

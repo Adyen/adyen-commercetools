@@ -15,7 +15,8 @@ async function execute(paymentObject) {
     originalReference: authorizationSuccessTransaction.interactionId,
   }
 
-  const { request, response } = await manualCapture(manualCaptureRequestObj)
+  const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
+  const { request, response } = await manualCapture(adyenMerchantAccount, manualCaptureRequestObj)
 
   const actions = [
     pU.createAddInterfaceInteractionAction({

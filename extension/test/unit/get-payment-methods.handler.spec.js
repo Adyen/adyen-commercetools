@@ -5,8 +5,10 @@ const c = require('../../src/config/constants')
 const {
   execute,
 } = require('../../src/paymentHandler/get-payment-methods.handler')
+const config = require('../../src/config/config')
 
 describe('get-payment-methods::execute::', () => {
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const getPaymentMethodsRequest = {
     countryCode: 'DE',
     shopperLocale: 'de-DE',
@@ -30,7 +32,9 @@ describe('get-payment-methods::execute::', () => {
         key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
       },
       fields: {
+        commercetoolsProjectKey: 'commercetoolsProjectKey',
         getPaymentMethodsRequest: JSON.stringify(getPaymentMethodsRequest),
+        adyenMerchantAccount
       },
     },
   }
