@@ -15,6 +15,16 @@ const packageJson = require('../package.json')
 
 const config = require('./config/config')
 
+const tokenCache = {
+  store: {},
+  get(tokenCacheOptions) {
+    return this.store[tokenCacheOptions.projectKey]
+  },
+  set(cache, tokenCacheOptions) {
+    this.store[tokenCacheOptions.projectKey] = cache
+  }
+}
+
 function createCtpClient({
   clientId,
   clientSecret,
@@ -31,6 +41,7 @@ function createCtpClient({
       clientSecret,
     },
     fetch,
+    tokenCache
   })
 
   const userAgentMiddleware = createUserAgentMiddleware({
