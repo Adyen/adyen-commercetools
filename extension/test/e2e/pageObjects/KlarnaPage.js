@@ -9,8 +9,8 @@ module.exports = class KlarnaPage {
       .frames()
       .find((f) => f.name() === 'klarna-hpp-instance-fullscreen')
     await confirmationFrame.waitForSelector(
-      '#paynow-aligned-content__button__0'
+      '#mandate-review__confirmation-button'
     )
-    return confirmationFrame.click('#paynow-aligned-content__button__0')
+    return confirmationFrame.click('#mandate-review__confirmation-button')
   }
 }
