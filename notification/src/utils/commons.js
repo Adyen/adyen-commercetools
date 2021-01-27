@@ -19,8 +19,8 @@ function sendResponse(response, statusCode = 200, headers, data) {
 }
 
 function getNotificationForTracking(notification) {
-  const notificationRequestItem = notification?.NotificationRequestItem
-  if (notificationRequestItem)
+  if (notification && notification.NotificationRequestItem) {
+    const notificationRequestItem = notification.NotificationRequestItem
     return {
       eventCode: notificationRequestItem.eventCode,
       eventDate: notificationRequestItem.eventDate,
@@ -28,6 +28,7 @@ function getNotificationForTracking(notification) {
       success: notificationRequestItem.success,
       // reason: notificationRequestItem.reason // not sure about that.
     }
+  }
   return notification
 }
 
