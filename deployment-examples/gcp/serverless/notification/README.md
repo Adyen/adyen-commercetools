@@ -1,6 +1,8 @@
 ## Deploy as GCP Cloud Function
 
-1. For deployment to GCP Cloud Function, bundle the following files and folders into a .zip file and upload it in GCP console.
+1. Rename index.googleFunction.js to index.js
+
+2. For deployment to GCP Cloud Function, bundle the following files and folders into a .zip file and upload it in GCP console.
 
 - src
 - resources
