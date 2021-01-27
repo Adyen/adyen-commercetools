@@ -17,6 +17,6 @@ httpUtils.collectRequestData = (request) => {
 }
 exports.httpUtils = httpUtils
 
-exports.extensionTrigger = (async (request, response) => {
+exports.extensionTrigger = async (request, response) => {
   await paymentController.processRequest(request, response)
-})
+}
