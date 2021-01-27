@@ -26,7 +26,6 @@ function getNotificationForTracking(notification) {
       eventDate: notificationRequestItem.eventDate,
       pspReference: notificationRequestItem.pspReference,
       success: notificationRequestItem.success,
-      // reason: notificationRequestItem.reason // not sure about that.
     }
   }
   return notification
