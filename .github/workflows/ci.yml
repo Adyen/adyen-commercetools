@@ -18,6 +18,8 @@ jobs:
         uses: softprops/turnstyle@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          same-branch-only: false
       - name: Use Node.js 12.x
         uses: actions/setup-node@v1
         with:
@@ -45,6 +47,8 @@ jobs:
         uses: softprops/turnstyle@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          same-branch-only: false
       - name: Use Node.js 12.x
         uses: actions/setup-node@v1
         with:
