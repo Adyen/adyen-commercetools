@@ -3,32 +3,32 @@ process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
     ctpProjectKey1: {
       clientId: 'clientId',
       clientSecret: 'clientSecret',
-      ensureResources: true
+      ensureResources: true,
     },
     ctpProjectKey2: {
       clientId: 'clientId2',
       clientSecret: 'clientSecret2',
-      ensureResources: true
+      ensureResources: true,
     },
     ctpProjectKey3: {
       clientId: 'clientId3',
       clientSecret: 'clientSecret3',
-      ensureResources: true
-    }
+      ensureResources: true,
+    },
   },
   adyen: {
     adyenMerchantAccount1: {
       apiKey: 'apiKey',
-      clientKey: 'clientKey'
+      clientKey: 'clientKey',
     },
     adyenMerchantAccount2: {
       apiKey: 'apiKey2',
-      clientKey: 'clientKey2'
+      clientKey: 'clientKey2',
     },
     adyenMerchantAccount3: {
       apiKey: 'apiKey3',
-      clientKey: 'clientKey3'
-    }
+      clientKey: 'clientKey3',
+    },
   },
   logLevel: 'DEBUG',
 })
