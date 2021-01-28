@@ -4,7 +4,6 @@ const {
 } = require('./ensure-interface-interaction-custom-type')
 const { ensureApiExtensions } = require('./ensure-api-extensions')
 
-
 function ensureCustomTypes(ctpClient) {
   return Promise.all([
     ensurePaymentCustomType(ctpClient),
@@ -13,10 +12,10 @@ function ensureCustomTypes(ctpClient) {
 }
 
 function ensureResources(ctpClient, apiExtensionBaseUrl) {
-    return Promise.all([
-      ensureCustomTypes(ctpClient),
-      ensureApiExtensions(ctpClient, apiExtensionBaseUrl),
-    ])
+  return Promise.all([
+    ensureCustomTypes(ctpClient),
+    ensureApiExtensions(ctpClient, apiExtensionBaseUrl),
+  ])
 }
 
 module.exports = {

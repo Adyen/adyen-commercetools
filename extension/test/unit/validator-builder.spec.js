@@ -170,7 +170,7 @@ describe('Validator builder', () => {
     const invalidPayment = {
       custom: {
         fields: {
-          adyenMerchantAccount: "foo"
+          adyenMerchantAccount: 'foo',
         },
       },
     }
@@ -187,7 +187,7 @@ describe('Validator builder', () => {
     const invalidPayment = {
       custom: {
         fields: {
-          commercetoolsProjectKey: "bar"
+          commercetoolsProjectKey: 'bar',
         },
       },
     }
@@ -204,8 +204,8 @@ describe('Validator builder', () => {
     const invalidPayment = {
       custom: {
         fields: {
-          commercetoolsProjectKey: " white spaced projectKey",
-          adyenMerchantAccount: " "
+          commercetoolsProjectKey: ' white spaced projectKey',
+          adyenMerchantAccount: ' ',
         },
       },
     }

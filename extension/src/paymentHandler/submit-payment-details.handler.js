@@ -23,7 +23,8 @@ async function execute(paymentObject) {
   }
   if (_isNewRequest(submitAdditionalDetailsRequestObj, paymentObject)) {
     const { request, response } = await submitAdditionalPaymentDetails(
-      adyenMerchantAccount, submitAdditionalDetailsRequestObj
+      adyenMerchantAccount,
+      submitAdditionalDetailsRequestObj
     )
     actions.push(
       pU.createAddInterfaceInteractionAction({
