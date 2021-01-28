@@ -14,7 +14,8 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
     adyenMerchantAccount2,
   ] = config.getAllAdyenMerchantAccounts()
 
-  let ctpClientProject1; let ctpClientProject2
+  let ctpClientProject1
+  let ctpClientProject2
 
   beforeEach(async () => {
     await iTSetUp.initServer()
