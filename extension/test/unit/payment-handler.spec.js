@@ -22,6 +22,7 @@ describe('payment-handler::execute', () => {
   }
   /* eslint-enable max-len */
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
@@ -48,6 +49,7 @@ describe('payment-handler::execute', () => {
         submitPaymentDetailsRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
       const response = await handlePayment(ctpPaymentClone)
 
@@ -68,6 +70,7 @@ describe('payment-handler::execute', () => {
         submitPaymentDetailsRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
       const response = await handlePayment(ctpPaymentClone)
 
@@ -108,6 +111,7 @@ describe('payment-handler::execute', () => {
         submitPaymentDetailsRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
       const response = await handlePayment(ctpPaymentClone)
 
@@ -146,6 +150,8 @@ describe('payment-handler::execute', () => {
         }
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
+
       const response = await handlePayment(ctpPaymentClone)
 
       expect(response.data.actions).to.have.lengthOf.above(0)
@@ -172,8 +178,29 @@ describe('payment-handler::execute', () => {
         }
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
+
       const response = await handlePayment(ctpPaymentClone)
       expect(response.data.actions).to.have.lengthOf.above(0)
+    }
+  )
+
+  it(
+    'when "commercetoolsProjectKey" and "adyenMerchantAccount" are missing, ' +
+      'then it should fail to create payment and return errors',
+    async () => {
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+
+      const response = await handlePayment(ctpPaymentClone)
+
+      expect(response.success).to.equal(false)
+      expect(response.data.errors).to.have.lengthOf(2)
+      expect(response.data.errors[0].message).to.equal(
+        errorMessage.MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
+      )
+      expect(response.data.errors[1].message).to.equal(
+        errorMessage.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
+      )
     }
   )
 
@@ -193,6 +220,7 @@ describe('payment-handler::execute', () => {
         })
         ctpPaymentClone.interfaceInteractions = []
         ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+        ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
         const response = await handlePayment(ctpPaymentClone)
 
@@ -213,6 +241,7 @@ describe('payment-handler::execute', () => {
         ctpPaymentClone.custom.fields = {}
         ctpPaymentClone.interfaceInteractions = []
         ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+        ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
         const response = await handlePayment(ctpPaymentClone)
 
@@ -248,6 +277,7 @@ describe('payment-handler::execute', () => {
         },
       ]
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
       const response = await handlePayment(ctpPaymentClone)
 

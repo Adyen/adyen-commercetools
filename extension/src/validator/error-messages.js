@@ -11,4 +11,8 @@ module.exports = {
     'makePaymentRequest in the interface interactions or makePaymentRequest  in the custom field',
   MAKE_PAYMENT_REQUEST_MISSING_REFERENCE:
     'Required "reference" field is missing in makePaymentRequest.',
+  MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY:
+    'Required field "commercetoolsProjectKey" is missing or empty.',
+  MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT:
+    'Required field "adyenMerchantAccount" is missing or empty.',
 }

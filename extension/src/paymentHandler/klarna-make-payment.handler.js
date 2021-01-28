@@ -9,9 +9,13 @@ async function execute(paymentObject) {
   const makePaymentRequestObj = JSON.parse(
     paymentObject.custom.fields.makePaymentRequest
   )
-  const commercetoolsProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
+  const commercetoolsProjectKey =
+    paymentObject.custom.fields.commercetoolsProjectKey
   if (!makePaymentRequestObj.lineItems) {
-    const ctpCart = await _fetchMatchingCart(paymentObject, commercetoolsProjectKey)
+    const ctpCart = await _fetchMatchingCart(
+      paymentObject,
+      commercetoolsProjectKey
+    )
     if (ctpCart) {
       makePaymentRequestObj.lineItems = createLineItems(paymentObject, ctpCart)
       paymentObject.custom.fields.makePaymentRequest = JSON.stringify(

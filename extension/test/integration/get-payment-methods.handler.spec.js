@@ -145,7 +145,8 @@ describe('::getPaymentMethods::', () => {
             getPaymentMethodsRequest: JSON.stringify(
               getPaymentMethodsRequestDraft
             ),
-            adyenMerchantAccount
+            adyenMerchantAccount,
+            commercetoolsProjectKey,
           },
         },
       }

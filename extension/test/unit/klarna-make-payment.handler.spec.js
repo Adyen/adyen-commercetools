@@ -126,7 +126,7 @@ describe('klarna-make-payment::execute', () => {
             languageCode: 'nonExistingLanguageCode',
             makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
             adyenMerchantAccount,
-            commercetoolsProjectKey
+            commercetoolsProjectKey,
           },
         },
       }
@@ -162,7 +162,7 @@ describe('klarna-make-payment::execute', () => {
             languageCode: 'nonExistingLanguageCode',
             makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
             adyenMerchantAccount,
-            commercetoolsProjectKey
+            commercetoolsProjectKey,
           },
         },
       }
@@ -196,7 +196,7 @@ describe('klarna-make-payment::execute', () => {
           languageCode: 'de',
           makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
           adyenMerchantAccount,
-          commercetoolsProjectKey
+          commercetoolsProjectKey,
         },
       },
     }
@@ -229,7 +229,7 @@ describe('klarna-make-payment::execute', () => {
           fields: {
             makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
             adyenMerchantAccount,
-            commercetoolsProjectKey
+            commercetoolsProjectKey,
           },
         },
       }
@@ -262,7 +262,7 @@ describe('klarna-make-payment::execute', () => {
           fields: {
             makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
             adyenMerchantAccount,
-            commercetoolsProjectKey
+            commercetoolsProjectKey,
           },
         },
       }

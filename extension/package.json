@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "check-coverage": "nyc check-coverage --statements 97",
-    "test": "npm run lint && npm run cover:unit && npm run cover:integration && npm run cover:e2e && npm run check-coverage",
+    "test": "npm run check && npm run cover:unit && npm run cover:integration && npm run cover:e2e && npm run check-coverage",
     "cover:unit": "nyc --silent npm run unit",
     "cover:integration": "nyc --silent --no-clean npm run integration",
     "cover:e2e": "nyc --silent --no-clean npm run e2e",
@@ -14,6 +14,7 @@
     "e2e": "nyc mocha --file ./test/cleanup-ctp-project.js \"test/e2e/**/*.spec.js\"",
     "start": "node ./src/init.js",
     "lint": "eslint ./src ./test",
+    "check": "npm run lint && prettier --check .",
     "create-custom-types": "node -e 'require(\"./src/config/init/ensure-resources.js\").ensureCustomTypes()'",
     "doctoc": "doctoc . --github",
     "format": "prettier --write ."

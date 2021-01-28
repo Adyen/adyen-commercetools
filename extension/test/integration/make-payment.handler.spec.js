@@ -7,11 +7,11 @@ const config = require('../../src/config/config')
 
 describe('::makePayment::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
-  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
+  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
   let ctpClient
 
   beforeEach(async () => {
-    ctpClient = ctpClientBuilder.get(ctpProjectKey)
+    ctpClient = ctpClientBuilder.get(commercetoolsProjectKey)
     await iTSetUp.initServerAndExtension({ ctpClient })
   })
 
@@ -55,7 +55,8 @@ describe('::makePayment::', () => {
           },
           fields: {
             makePaymentRequest: JSON.stringify(makePaymentRequestDraft),
-            adyenMerchantAccount
+            adyenMerchantAccount,
+            commercetoolsProjectKey,
           },
         },
       }
@@ -72,7 +73,8 @@ describe('::makePayment::', () => {
       const { makePaymentResponse } = payment.custom.fields
       const interfaceInteraction = payment.interfaceInteractions.find(
         (interaction) =>
-          interaction.fields.type === constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+          interaction.fields.type ===
+          constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
       )
       expect(makePaymentResponse).to.be.deep.equal(
         interfaceInteraction.fields.response
