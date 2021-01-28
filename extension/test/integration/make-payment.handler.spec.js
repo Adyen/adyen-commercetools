@@ -11,7 +11,8 @@ describe('::makePayment::', () => {
   let ctpClient
 
   beforeEach(async () => {
-    ctpClient = ctpClientBuilder.get(commercetoolsProjectKey)
+    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+    ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.initServerAndExtension({ ctpClient })
   })
 

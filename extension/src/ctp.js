@@ -1,6 +1,5 @@
 const fetch = require('node-fetch')
-const _ = require('lodash')
-
+const { merge } = require('lodash')
 const { createClient } = require('@commercetools/sdk-client')
 const {
   createAuthMiddlewareForClientCredentialsFlow,
@@ -12,8 +11,6 @@ const { createHttpMiddleware } = require('@commercetools/sdk-middleware-http')
 const { createQueueMiddleware } = require('@commercetools/sdk-middleware-queue')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
 const packageJson = require('../package.json')
-
-const config = require('./config/config')
 
 const tokenCache = {
   store: {},
@@ -72,12 +69,11 @@ function createCtpClient({
   })
 }
 
-function setUpClient(ctpProjectKey) {
-  const ctpConfig = config.getCtpConfig(ctpProjectKey)
-  const ctpClient = createCtpClient(ctpConfig)
+function setUpClient(config) {
+  const ctpClient = createCtpClient(config)
   const customMethods = {
     get builder() {
-      return getRequestBuilder(ctpProjectKey)
+      return getRequestBuilder(config.projectKey)
     },
 
     delete(uri, id, version) {
@@ -129,7 +125,7 @@ function setUpClient(ctpProjectKey) {
       }
     },
   }
-  return _.merge(customMethods, ctpClient)
+  return merge(customMethods, ctpClient)
 }
 
 function getRequestBuilder(projectKey) {
@@ -137,5 +133,5 @@ function getRequestBuilder(projectKey) {
 }
 
 module.exports = {
-  get: (ctpProjectKey) => setUpClient(ctpProjectKey),
+  get: (config) => setUpClient(config),
 }

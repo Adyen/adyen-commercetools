@@ -5,11 +5,12 @@ const config = require('../../src/config/config')
 const iTSetUp = require('./integration-test-set-up')
 
 describe('::klarnaMakePayment::', () => {
-  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
+  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
   let ctpClient
 
   beforeEach(async () => {
-    ctpClient = ctpClientBuilder.get(ctpProjectKey)
+    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+    ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.cleanupCtpResources(ctpClient)
     await iTSetUp.initServerAndExtension({ ctpClient })
   })

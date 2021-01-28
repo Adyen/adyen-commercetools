@@ -53,7 +53,8 @@ describe('::klarnaPayment::', () => {
           '</body></html>',
       })
 
-    ctpClient = ctpClientBuilder.get(ctpProjectKey)
+    const ctpConfig = config.getCtpConfig(ctpProjectKey)
+    ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.initServerAndExtension({
       ctpClient,
       routes,
