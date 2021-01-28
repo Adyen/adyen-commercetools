@@ -59,7 +59,7 @@ describe('notification module', () => {
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     // process
-    await notificationHandler.processNotifications(notifications, ctpClient)
+    await notificationHandler.processNotification(notifications[0], ctpClient)
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -133,7 +133,7 @@ describe('notification module', () => {
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     // process
-    await notificationHandler.processNotifications(notifications, ctpClient)
+    await notificationHandler.processNotification(notifications[0], ctpClient)
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -213,7 +213,7 @@ describe('notification module', () => {
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     // process
-    await notificationHandler.processNotifications(notifications, ctpClient)
+    await notificationHandler.processNotification(notifications[0], ctpClient)
     // assert
     expect(ctpClientUpdateSpy.args[0][3]).to.have.lengthOf(0)
   })

@@ -20,7 +20,7 @@ describe('Lambda handler', () => {
 
   afterEach(() => {
     setup.ensureInterfaceInteractionCustomType.restore()
-    notificationHandler.processNotifications.restore()
+    notificationHandler.processNotification.restore()
   })
 
   const event = {

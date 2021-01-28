@@ -12,22 +12,33 @@ const { createQueueMiddleware } = require('@commercetools/sdk-middleware-queue')
 const { createRequestBuilder } = require('@commercetools/api-request-builder')
 const packageJson = require('../../package.json')
 
+const tokenCache = {
+  store: {},
+  get(tokenCacheOptions) {
+    return this.store[tokenCacheOptions.projectKey]
+  },
+  set(cache, tokenCacheOptions) {
+    this.store[tokenCacheOptions.projectKey] = cache
+  },
+}
+
 function createCtpClient({
   clientId,
   clientSecret,
   projectKey,
+  authUrl,
+  apiUrl,
   concurrency = 10,
 }) {
-  const AUTH_HOST = 'https://auth.commercetools.com'
-  const API_HOST = 'https://api.commercetools.com'
   const authMiddleware = createAuthMiddlewareForClientCredentialsFlow({
-    host: AUTH_HOST,
+    host: authUrl,
     projectKey,
     credentials: {
       clientId,
       clientSecret,
     },
     fetch,
+    tokenCache,
   })
 
   const userAgentMiddleware = createUserAgentMiddleware({
@@ -39,7 +50,7 @@ function createCtpClient({
 
   const httpMiddleware = createHttpMiddleware({
     maskSensitiveHeaderData: true,
-    host: API_HOST,
+    host: apiUrl,
     enableRetry: true,
     fetch,
   })
@@ -59,10 +70,10 @@ function createCtpClient({
 }
 
 function setUpClient(config) {
-  const ctpClient = createCtpClient(config.ctp)
+  const ctpClient = createCtpClient(config)
   const customMethods = {
     get builder() {
-      return getRequestBuilder(config.ctp.projectKey)
+      return getRequestBuilder(config.projectKey)
     },
 
     delete(uri, id, version) {
@@ -129,35 +140,6 @@ function getRequestBuilder(projectKey) {
   return createRequestBuilder({ projectKey })
 }
 
-/**
- * Compares transaction states
- * @param currentState state of the transaction from the CT platform
- * @param newState state of the transaction from the Adyen notification
- * @return number 1 if newState can appear after currentState
- * -1 if newState cannot appear after currentState
- * 0 if newState is the same as currentState
- * @throws Error when newState and/or currentState is a wrong transaction state
- * */
-function compareTransactionStates(currentState, newState) {
-  const transactionStateFlow = {
-    Initial: 0,
-    Pending: 1,
-    Success: 2,
-    Failure: 2,
-  }
-  if (
-    !transactionStateFlow.hasOwnProperty(currentState) ||
-    !transactionStateFlow.hasOwnProperty(newState)
-  )
-    throw Error(
-      'Wrong transaction state passed. ' +
-        `currentState: ${currentState}, newState: ${newState}`
-    )
-
-  return transactionStateFlow[newState] - transactionStateFlow[currentState]
-}
-
 module.exports = {
-  get: (config) => setUpClient(config),
-  compareTransactionStates,
+  get: (config) => setUpClient(config)
 }

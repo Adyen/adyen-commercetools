@@ -2,12 +2,10 @@ const _ = require('lodash')
 const httpUtils = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
 const {
-  processNotifications,
+  processNotification,
 } = require('../../handler/notification/notification.handler')
-const config = require('../../config/config')()
+const config = require('../../config/config')
 const logger = require('../../utils/logger').getLogger()
-
-const ctpClient = ctp.get(config)
 
 // TODO: add JSON schema validation:
 // https://github.com/commercetools/commercetools-adyen-integration/issues/9
@@ -15,8 +13,19 @@ async function handleNotification(request, response) {
   if (request.method !== 'POST') return httpUtils.sendResponse(response)
   const body = await httpUtils.collectRequestData(request)
   try {
-    const notification = _.get(JSON.parse(body), 'notificationItems', [])
-    await processNotifications(notification, ctpClient)
+    const notifications = _.get(JSON.parse(body), 'notificationItems', [])
+    for (const notification of notifications) {
+      const ctpProjectKey =
+        notification.NotificationRequestItem.additionalData[
+          'metadata.commercetoolsProjectKey'
+        ]
+      const adyenMerchantAccount = notification.NotificationRequestItem.merchantAccountCode
+      const ctpProjectConfig = config.getCtpConfig(ctpProjectKey)
+      const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
+      const ctpClient = ctp.get(ctpProjectConfig)
+
+      await processNotification(notification, adyenConfig.enableHmacSignature, ctpClient)
+    }
     return sendAcceptedResponse(response)
   } catch (err) {
     logger.error(
