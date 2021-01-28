@@ -35,8 +35,8 @@ describe('manual-capture.handler::execute::', () => {
       },
     ],
     custom: {
-      fields: {}
-    }
+      fields: {},
+    },
   }
   /* eslint-enable */
 

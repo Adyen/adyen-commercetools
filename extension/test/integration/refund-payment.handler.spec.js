@@ -50,7 +50,7 @@ describe('::refund::', () => {
           },
           fields: {
             adyenMerchantAccount,
-            commercetoolsProjectKey
+            commercetoolsProjectKey,
           },
         },
         transactions: [
@@ -147,7 +147,7 @@ describe('::refund::', () => {
           },
           fields: {
             adyenMerchantAccount,
-            commercetoolsProjectKey
+            commercetoolsProjectKey,
           },
         },
         transactions: [

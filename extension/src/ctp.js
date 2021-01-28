@@ -19,7 +19,7 @@ const tokenCache = {
   },
   set(cache, tokenCacheOptions) {
     this.store[tokenCacheOptions.projectKey] = cache
-  }
+  },
 }
 
 function createCtpClient({
@@ -38,7 +38,7 @@ function createCtpClient({
       clientSecret,
     },
     fetch,
-    tokenCache
+    tokenCache,
   })
 
   const userAgentMiddleware = createUserAgentMiddleware({

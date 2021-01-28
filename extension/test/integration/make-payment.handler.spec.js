@@ -57,7 +57,7 @@ describe('::makePayment::', () => {
           fields: {
             makePaymentRequest: JSON.stringify(makePaymentRequestDraft),
             adyenMerchantAccount,
-            commercetoolsProjectKey
+            commercetoolsProjectKey,
           },
         },
       }
@@ -74,7 +74,8 @@ describe('::makePayment::', () => {
       const { makePaymentResponse } = payment.custom.fields
       const interfaceInteraction = payment.interfaceInteractions.find(
         (interaction) =>
-          interaction.fields.type === constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+          interaction.fields.type ===
+          constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
       )
       expect(makePaymentResponse).to.be.deep.equal(
         interfaceInteraction.fields.response

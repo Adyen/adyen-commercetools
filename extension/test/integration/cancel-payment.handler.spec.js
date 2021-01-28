@@ -38,7 +38,7 @@ describe('::cancel::', () => {
         },
         fields: {
           adyenMerchantAccount,
-          commercetoolsProjectKey
+          commercetoolsProjectKey,
         },
       },
       transactions: [

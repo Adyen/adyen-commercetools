@@ -38,7 +38,7 @@ describe('::manualCapture::', () => {
         },
         fields: {
           adyenMerchantAccount,
-          commercetoolsProjectKey
+          commercetoolsProjectKey,
         },
       },
       transactions: [

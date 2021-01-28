@@ -148,7 +148,7 @@ describe('::getPaymentMethods::', () => {
               getPaymentMethodsRequestDraft
             ),
             adyenMerchantAccount,
-            commercetoolsProjectKey
+            commercetoolsProjectKey,
           },
         },
       }
