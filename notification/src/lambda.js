@@ -17,8 +17,9 @@ exports.handler = async function (event) {
       const ctpProjectKey =
         notification.NotificationRequestItem.additionalData[
           'metadata.commercetoolsProjectKey'
-          ]
-      const adyenMerchantAccount = notification.NotificationRequestItem.merchantAccountCode
+        ]
+      const adyenMerchantAccount =
+        notification.NotificationRequestItem.merchantAccountCode
       const ctpProjectConfig = config.getCtpConfig(ctpProjectKey)
       const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
       const ctpClient = ctp.get(ctpProjectConfig)
@@ -27,7 +28,11 @@ exports.handler = async function (event) {
         await setup.ensureInterfaceInteractionCustomType(ctpClient)
         initialised = true
       }
-      await handler.processNotification(notification, adyenConfig.enableHmacSignature, ctpClient)
+      await handler.processNotification(
+        notification,
+        adyenConfig.enableHmacSignature,
+        ctpClient
+      )
     }
     return {
       notificationResponse: '[accepted]',

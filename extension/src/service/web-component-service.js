@@ -13,7 +13,11 @@ function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
   )
 }
 
-function makePayment(merchantAccount, commercetoolsProjectKey, makePaymentRequestObj) {
+function makePayment(
+  merchantAccount,
+  commercetoolsProjectKey,
+  makePaymentRequestObj
+) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(makePaymentRequestObj, commercetoolsProjectKey)
   extendRequestObjWithApplicationInfo(makePaymentRequestObj)
@@ -26,14 +30,16 @@ function makePayment(merchantAccount, commercetoolsProjectKey, makePaymentReques
 }
 
 function submitAdditionalPaymentDetails(
-  merchantAccount, commercetoolsProjectKey,
+  merchantAccount,
+  commercetoolsProjectKey,
   submitAdditionalPaymentDetailsRequestObj
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
-  extendRequestObjWithMetadata(submitAdditionalPaymentDetailsRequestObj, commercetoolsProjectKey)
-  extendRequestObjWithApplicationInfo(
-    submitAdditionalPaymentDetailsRequestObj
+  extendRequestObjWithMetadata(
+    submitAdditionalPaymentDetailsRequestObj,
+    commercetoolsProjectKey
   )
+  extendRequestObjWithApplicationInfo(submitAdditionalPaymentDetailsRequestObj)
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/payments/details`,
     merchantAccount,
@@ -42,7 +48,11 @@ function submitAdditionalPaymentDetails(
   )
 }
 
-function manualCapture(merchantAccount, commercetoolsProjectKey, manualCaptureRequestObj) {
+function manualCapture(
+  merchantAccount,
+  commercetoolsProjectKey,
+  manualCaptureRequestObj
+) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(manualCaptureRequestObj, commercetoolsProjectKey)
   return callAdyen(
@@ -53,7 +63,11 @@ function manualCapture(merchantAccount, commercetoolsProjectKey, manualCaptureRe
   )
 }
 
-function cancelPayment(merchantAccount, commercetoolsProjectKey, cancelRequestObj) {
+function cancelPayment(
+  merchantAccount,
+  commercetoolsProjectKey,
+  cancelRequestObj
+) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(cancelRequestObj)
   return callAdyen(
@@ -91,7 +105,7 @@ function extendRequestObjWithApplicationInfo(requestObj) {
 
 function extendRequestObjWithMetadata(requestObj, commercetoolsProjectKey) {
   requestObj.metadata = {
-    commercetoolsProjectKey
+    commercetoolsProjectKey,
   }
 }
 

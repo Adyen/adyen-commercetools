@@ -141,5 +141,5 @@ function getRequestBuilder(projectKey) {
 }
 
 module.exports = {
-  get: (config) => setUpClient(config)
+  get: (config) => setUpClient(config),
 }

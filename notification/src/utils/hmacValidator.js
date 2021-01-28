@@ -29,7 +29,8 @@ function validateHmacSignature(notification) {
       '"NotificationRequestItem.additionalData.hmacSignature". ' +
       'Please check if HMAC is configured correctly or contact Adyen.'
     )
-  const adyenMerchantAccount = notification.NotificationRequestItem.merchantAccountCode
+  const adyenMerchantAccount =
+    notification.NotificationRequestItem.merchantAccountCode
   const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
   const validationResult = validator.validateHMAC(
     notificationRequestItem,

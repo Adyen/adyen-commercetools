@@ -75,6 +75,16 @@ function loadAndValidateConfig() {
     throw new Error(
       'Please add at least one Adyen merchant account to the config'
     )
+
+  for (const [ctpProjectKey, ctpConfig] of Object.entries(
+    config.commercetools
+  )) {
+    if (!ctpConfig.clientId || !ctpConfig.clientSecret)
+      throw new Error(
+        `[${ctpProjectKey}]: CTP project credentials are missing. ` +
+          'Please verify that all projects have projectKey, clientId and clientSecret'
+      )
+  }
 }
 
 loadAndValidateConfig()

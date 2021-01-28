@@ -19,12 +19,17 @@ async function handleNotification(request, response) {
         notification.NotificationRequestItem.additionalData[
           'metadata.commercetoolsProjectKey'
         ]
-      const adyenMerchantAccount = notification.NotificationRequestItem.merchantAccountCode
+      const adyenMerchantAccount =
+        notification.NotificationRequestItem.merchantAccountCode
       const ctpProjectConfig = config.getCtpConfig(ctpProjectKey)
       const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
       const ctpClient = ctp.get(ctpProjectConfig)
 
-      await processNotification(notification, adyenConfig.enableHmacSignature, ctpClient)
+      await processNotification(
+        notification,
+        adyenConfig.enableHmacSignature,
+        ctpClient
+      )
     }
     return sendAcceptedResponse(response)
   } catch (err) {

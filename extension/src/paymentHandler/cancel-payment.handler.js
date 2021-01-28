@@ -13,7 +13,8 @@ async function execute(paymentObject) {
     reference: paymentObject.key,
   }
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
-  const commercetoolsProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
+  const commercetoolsProjectKey =
+    paymentObject.custom.fields.commercetoolsProjectKey
 
   const { request, response } = await cancelPayment(
     adyenMerchantAccount,

@@ -4,7 +4,11 @@ const { validateHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
 const logger = require('../../utils/logger').getLogger()
 
-async function processNotification(notification, enableHmacSignature, ctpClient) {
+async function processNotification(
+  notification,
+  enableHmacSignature,
+  ctpClient
+) {
   if (enableHmacSignature) {
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
@@ -165,7 +169,7 @@ function compareTransactionStates(currentState, newState) {
   )
     throw Error(
       'Wrong transaction state passed. ' +
-      `currentState: ${currentState}, newState: ${newState}`
+        `currentState: ${currentState}, newState: ${newState}`
     )
 
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
