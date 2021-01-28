@@ -10,6 +10,7 @@ async function execute(paymentObject) {
     transaction = pU.getAuthorizationTransactionSuccess(paymentObject)
   const interactionId = transaction.interactionId
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
+  const commercetoolsProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
 
   const actions = []
 
@@ -23,7 +24,7 @@ async function execute(paymentObject) {
       reference: paymentObject.key,
     }
 
-    const { request, response } = await refund(adyenMerchantAccount, refundRequestObjects)
+    const { request, response } = await refund(adyenMerchantAccount, commercetoolsProjectKey, refundRequestObjects)
     const addInterfaceInteractionAction = pU.createAddInterfaceInteractionAction(
       {
         request,
