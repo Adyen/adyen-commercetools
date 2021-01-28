@@ -7,7 +7,10 @@ async function execute(paymentObject) {
     paymentObject.custom.fields.makePaymentRequest
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
-  const { request, response } = await makePayment(adyenMerchantAccount, makePaymentRequestObj)
+  const { request, response } = await makePayment(
+    adyenMerchantAccount,
+    makePaymentRequestObj
+  )
   const actions = [
     pU.createAddInterfaceInteractionAction({
       request,

@@ -68,7 +68,8 @@ describe('Payment controller', () => {
             },
             {
               code: 'InvalidField',
-              message: errorMessages.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT,
+              message:
+                errorMessages.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT,
             },
           ],
         })
