@@ -196,11 +196,11 @@ describe('payment-handler::execute', () => {
       expect(response.success).to.equal(false)
       expect(response.data.errors).to.have.lengthOf(2)
       expect(response.data.errors[0].message).to.equal(
-          errorMessage.MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
-        )
+        errorMessage.MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
+      )
       expect(response.data.errors[1].message).to.equal(
-          errorMessage.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
-        )
+        errorMessage.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
+      )
     }
   )
 

@@ -23,7 +23,10 @@ async function execute(paymentObject) {
       reference: paymentObject.key,
     }
 
-    const { request, response } = await refund(adyenMerchantAccount, refundRequestObjects)
+    const { request, response } = await refund(
+      adyenMerchantAccount,
+      refundRequestObjects
+    )
     const addInterfaceInteractionAction = pU.createAddInterfaceInteractionAction(
       {
         request,

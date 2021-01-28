@@ -8,7 +8,8 @@ async function execute(paymentObject) {
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const { request, response } = await getPaymentMethods(
-      adyenMerchantAccount, getPaymentMethodsRequestObj
+    adyenMerchantAccount,
+    getPaymentMethodsRequestObj
   )
   return {
     actions: [

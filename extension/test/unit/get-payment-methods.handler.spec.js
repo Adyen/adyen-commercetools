@@ -34,7 +34,7 @@ describe('get-payment-methods::execute::', () => {
       fields: {
         commercetoolsProjectKey: 'commercetoolsProjectKey',
         getPaymentMethodsRequest: JSON.stringify(getPaymentMethodsRequest),
-        adyenMerchantAccount
+        adyenMerchantAccount,
       },
     },
   }
