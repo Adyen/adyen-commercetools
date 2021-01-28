@@ -21,8 +21,6 @@ const testUtils = require('../test-utils')
 const logger = require('../../src/utils').getLogger()
 
 let server
-const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
-const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
 function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   const moduleConfig = config.getModuleConfig()
@@ -79,7 +77,11 @@ async function cleanupCtpResources(ctpClient) {
   await testUtils.deleteAllResources(ctpClient, 'cartDiscounts')
 }
 
-async function _ensureCtpResources(ctpClient) {
+async function _ensureCtpResources({
+  ctpClient,
+  adyenMerchantAccount,
+  commercetoolsProjectKey,
+}) {
   const {
     body: { id: zoneId },
   } = await _ensureZones(ctpClient)
@@ -113,7 +115,11 @@ async function _ensureCtpResources(ctpClient) {
   const {
     body: { id: productId },
   } = await _ensureProducts(ctpClient, productTypeId, taxCategoryId)
-  const { body: paymentResponse } = await _ensurePayment(ctpClient)
+  const { body: paymentResponse } = await _ensurePayment({
+    ctpClient,
+    adyenMerchantAccount,
+    commercetoolsProjectKey,
+  })
   const paymentId = paymentResponse.id
   await _createCart(ctpClient, productId, paymentId, shippingMethodId, [
     discountCode,
@@ -269,7 +275,11 @@ async function _ensureProducts(ctpClient, productTypeId, taxCategoryId) {
   return { body: body.results[0] }
 }
 
-async function _ensurePayment(ctpClient) {
+async function _ensurePayment({
+  ctpClient,
+  adyenMerchantAccount,
+  commercetoolsProjectKey,
+}) {
   const { body } = await ctpClient.fetch(
     ctpClient.builder.payments.where(`key="${ctpPayment.key}"`)
   )
@@ -306,8 +316,16 @@ async function _createCart(
   )
 }
 
-async function initPaymentWithCart(ctpClient) {
-  const payment = await _ensureCtpResources(ctpClient)
+async function initPaymentWithCart({
+  ctpClient,
+  adyenMerchantAccount,
+  commercetoolsProjectKey,
+}) {
+  const payment = await _ensureCtpResources({
+    ctpClient,
+    adyenMerchantAccount,
+    commercetoolsProjectKey,
+  })
   return payment
 }
 
