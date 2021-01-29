@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const httpUtils = require('../../utils/commons')
-const ctp = require('../../utils/ctp')
 const {
   processNotification,
 } = require('../../handler/notification/notification.handler')
@@ -23,12 +22,11 @@ async function handleNotification(request, response) {
         notification.NotificationRequestItem.merchantAccountCode
       const ctpProjectConfig = config.getCtpConfig(ctpProjectKey)
       const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-      const ctpClient = ctp.get(ctpProjectConfig)
 
       await processNotification(
         notification,
         adyenConfig.enableHmacSignature,
-        ctpClient
+        ctpProjectConfig
       )
     }
     return sendAcceptedResponse(response)

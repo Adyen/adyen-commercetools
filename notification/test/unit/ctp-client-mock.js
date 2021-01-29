@@ -13,10 +13,10 @@ function createCtpClient() {
 }
 
 function setUpClient(config) {
-  const ctpClient = createCtpClient(config.ctp)
+  const ctpClient = createCtpClient(config)
   const customMethods = {
     get builder() {
-      return getRequestBuilder(config.ctp.projectKey)
+      return getRequestBuilder(config.projectKey)
     },
 
     delete() {

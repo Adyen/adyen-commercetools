@@ -2,13 +2,18 @@ const _ = require('lodash')
 const { serializeError } = require('serialize-error')
 const { validateHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
-const logger = require('../../utils/logger').getLogger()
+const ctp = require('../../utils/ctp')
+const mainLogger = require('../../utils/logger').getLogger()
 
 async function processNotification(
   notification,
   enableHmacSignature,
-  ctpClient
+  ctpProjectConfig
 ) {
+  const logger = mainLogger.child({
+    commercetools_project_key: ctpProjectConfig.projectKey,
+  })
+
   if (enableHmacSignature) {
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
@@ -35,19 +40,26 @@ async function processNotification(
     return
   }
 
+  const ctpClient = ctp.get(ctpProjectConfig)
+
   const payment = await getPaymentByMerchantReference(
     merchantReference,
     ctpClient
   )
   if (payment !== null)
-    await updatePaymentWithRepeater(payment, notification, ctpClient)
+    await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
   else
     logger.error(
       `Payment with merchantReference: ${merchantReference} was not found`
     )
 }
 
-async function updatePaymentWithRepeater(payment, notification, ctpClient) {
+async function updatePaymentWithRepeater(
+  payment,
+  notification,
+  ctpClient,
+  logger
+) {
   const maxRetry = 20
   let currentPayment = payment
   let currentVersion = payment.version

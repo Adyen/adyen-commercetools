@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const ctp = require('./utils/ctp')
 const handler = require('./handler/notification/notification.handler')
 const config = require('./config/config')
 const logger = require('./utils/logger').getLogger()
@@ -11,37 +10,36 @@ let initialised = false
 // TODO: add JSON schema validation:
 // https://github.com/commercetools/commercetools-adyen-integration/issues/9
 exports.handler = async function (event) {
-  try {
-    const notifications = _.get(event, 'notificationItems', [])
-    for (const notification of notifications) {
-      const ctpProjectKey =
+  const notifications = _.get(event, 'notificationItems', [])
+  for (const notification of notifications) {
+    try {
+      const commercetoolsProjectKey =
         notification.NotificationRequestItem.additionalData[
           'metadata.commercetoolsProjectKey'
         ]
       const adyenMerchantAccount =
         notification.NotificationRequestItem.merchantAccountCode
-      const ctpProjectConfig = config.getCtpConfig(ctpProjectKey)
+      const ctpProjectConfig = config.getCtpConfig(commercetoolsProjectKey)
       const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-      const ctpClient = ctp.get(ctpProjectConfig)
 
       if (!initialised) {
-        await setup.ensureInterfaceInteractionCustomType(ctpClient)
+        await setup.ensureInterfaceInteractionCustomType(ctpProjectConfig)
         initialised = true
       }
       await handler.processNotification(
         notification,
         adyenConfig.enableHmacSignature,
-        ctpClient
+        ctpProjectConfig
       )
+    } catch (e) {
+      logger.error(
+        e,
+        `Unexpected error when processing event ${JSON.stringify(event)}`
+      )
+      throw e
     }
-    return {
-      notificationResponse: '[accepted]',
-    }
-  } catch (e) {
-    logger.error(
-      e,
-      `Unexpected error when processing event ${JSON.stringify(event)}`
-    )
-    throw e
+  }
+  return {
+    notificationResponse: '[accepted]',
   }
 }
