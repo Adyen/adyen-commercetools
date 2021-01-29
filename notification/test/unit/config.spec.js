@@ -14,8 +14,8 @@ describe('::config::', () => {
       },
       adyen: {
         adyenMerchantAccount1: {
-          enableHmacSignature: 'true'
-        }
+          enableHmacSignature: 'true',
+        },
       },
       logLevel: 'DEBUG',
     })
@@ -23,7 +23,9 @@ describe('::config::', () => {
       requireUncached('../../src/config/config')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
-      expect(e.message).to.contain('The "secretHmacKey" config variable is missing to be able to verify notifications')
+      expect(e.message).to.contain(
+        'The "secretHmacKey" config variable is missing to be able to verify notifications'
+      )
     }
   })
 
