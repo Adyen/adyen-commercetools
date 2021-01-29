@@ -26,6 +26,7 @@ jobs:
           node-version: '12.x'
       - run: npm ci
       - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - run: npm run format
       - run: npm run test
         env:
           ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
@@ -52,6 +53,7 @@ jobs:
           node-version: '12.x'
       - run: npm ci
       - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - run: npm run format
       - run: npm run test
         env:
           ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
