@@ -16,9 +16,13 @@ const { getNotificationForTracking } = require('./src/utils/commons')
 const ctpClient = ctp.get(config)
 
 exports.notificationTrigger = async (request, response) => {
+  const { notificationItems } = request.body;
   try {
+    if (!notificationItems) {
+      throw new Error('No notification received.')
+    }
     await handler.processNotifications(
-      request.body.notificationItems,
+      notificationItems,
       ctpClient
     )
     response.status(200).send({
@@ -28,7 +32,7 @@ exports.notificationTrigger = async (request, response) => {
     logger.error(
       {
         notification: getNotificationForTracking(
-          request.body.notificationItems
+          notificationItems
         ),
         err: e,
       },
