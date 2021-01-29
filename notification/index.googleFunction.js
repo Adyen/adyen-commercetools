@@ -16,20 +16,19 @@ const { getNotificationForTracking } = require('./src/utils/commons')
 const ctpClient = ctp.get(config)
 
 exports.notificationTrigger = async (request, response) => {
+  const { notificationItems } = request.body
   try {
-    await handler.processNotifications(
-      request.body.notificationItems,
-      ctpClient
-    )
+    if (!notificationItems) {
+      throw new Error('No notification received.')
+    }
+    await handler.processNotifications(notificationItems, ctpClient)
     response.status(200).send({
       notificationResponse: '[accepted]',
     })
   } catch (e) {
     logger.error(
       {
-        notification: getNotificationForTracking(
-          request.body.notificationItems
-        ),
+        notification: getNotificationForTracking(notificationItems),
         err: e,
       },
       'Unexpected error when processing event'
