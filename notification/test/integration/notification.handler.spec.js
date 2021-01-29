@@ -7,6 +7,7 @@ const iTSetUp = require('./integration-test-set-up')
 const config = require('../../src/config/config')
 const notifications = require('../resources/notification')
 const notificationRefundFail = require('../resources/notification-refund-fail')
+const { overrideAdyenConfig } = require('../test-utils')
 
 // node-fetch package doesn't support requests to localhost, therefore
 // we need to provide the IP behind localhost
@@ -523,7 +524,7 @@ describe('notification module', () => {
 
   it('should not update payment when the notification is unauthorised', async () => {
     // enable hmac verification
-    _overrideAdyenConfigConfig({
+    overrideAdyenConfig({
       enableHmacSignature: true,
       secretHmacKey:
         '44782DEF547AAA06C910C43932B1EB0C71FC68D9D0C057550C48EC2ACF6BA056',
@@ -563,12 +564,5 @@ describe('notification module', () => {
     return (
       new Date().getTime() + Math.floor(Math.random() * 100 + 1)
     ).toString()
-  }
-
-  function _overrideAdyenConfigConfig(newAdyenConfig) {
-    config.getAdyenConfig = function () {
-      return newAdyenConfig
-    }
-    module.exports = config
   }
 })

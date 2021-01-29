@@ -5,7 +5,7 @@ const {
 const logger = require('./utils/logger').getLogger()
 const config = require('./config/config')
 
-const PORT = process.env.PORT || 443
+const PORT = config.getModuleConfig().port || 443
 
 if (config.getModuleConfig().keepAliveTimeout !== undefined)
   server.keepAliveTimeout = config.getModuleConfig().keepAliveTimeout

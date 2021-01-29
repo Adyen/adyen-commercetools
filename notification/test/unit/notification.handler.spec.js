@@ -9,6 +9,7 @@ const concurrentModificationError = require('../resources/concurrent-modificatio
 const ctpClientMock = require('./ctp-client-mock')
 const paymentMock = require('../resources/payment-credit-card')
 const ctp = require('../../src/utils/ctp')
+const { overrideAdyenConfig } = require('../test-utils')
 
 const sandbox = sinon.createSandbox()
 
@@ -17,7 +18,7 @@ describe('notification module', () => {
   const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
 
   before(() => {
-    _overrideAdyenConfig({
+    overrideAdyenConfig({
       enableHmacSignature: false,
     })
   })
@@ -586,11 +587,4 @@ describe('notification module', () => {
     expect(ctpClientFetchByIdSpy.callCount).to.equal(0)
     expect(ctpClientUpdateSpy.callCount).to.equal(0)
   })
-
-  function _overrideAdyenConfig(newAdyenConfig) {
-    config.getAdyenConfig = function () {
-      return newAdyenConfig
-    }
-    module.exports = config
-  }
 })

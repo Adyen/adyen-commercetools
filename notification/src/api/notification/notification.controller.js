@@ -14,10 +14,19 @@ async function handleNotification(request, response) {
   try {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
     for (const notification of notifications) {
-      const ctpProjectKey =
-        notification.NotificationRequestItem.additionalData[
-          'metadata.commercetoolsProjectKey'
-        ]
+      let ctpProjectKey
+      try {
+        ctpProjectKey =
+          notification.NotificationRequestItem.additionalData[
+            'metadata.commercetoolsProjectKey'
+          ]
+      } catch {
+        logger.error(
+          { adyenRequestNotification: `${JSON.stringify(notification)}` },
+          'Notification does not contain the field `metadata.commercetoolsProjectKey`.'
+        )
+        break
+      }
       const adyenMerchantAccount =
         notification.NotificationRequestItem.merchantAccountCode
       const ctpProjectConfig = config.getCtpConfig(ctpProjectKey)
