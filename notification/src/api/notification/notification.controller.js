@@ -6,6 +6,14 @@ const {
 const config = require('../../config/config')
 const logger = require('../../utils/logger').getLogger()
 
+class ValidationError extends Error {
+  constructor(details, message) {
+    super()
+    this.details = details
+    this.message = message
+  }
+}
+
 // TODO: add JSON schema validation:
 // https://github.com/commercetools/commercetools-adyen-integration/issues/9
 async function handleNotification(request, response) {
@@ -14,23 +22,17 @@ async function handleNotification(request, response) {
   try {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
     for (const notification of notifications) {
-      let ctpProjectKey
+      let ctpProjectConfig
+      let adyenConfig
       try {
-        ctpProjectKey =
-          notification.NotificationRequestItem.additionalData[
-            'metadata.commercetoolsProjectKey'
-          ]
-      } catch {
-        logger.error(
-          { adyenRequestNotification: `${JSON.stringify(notification)}` },
-          'Notification does not contain the field `metadata.commercetoolsProjectKey`.'
-        )
-        break
+        ctpProjectConfig = getCtpProjectConfig(notification)
+        adyenConfig = getAdyenConfig(notification)
+      } catch (e) {
+        if (e instanceof ValidationError) {
+          logger.error(e.details, e.message)
+          break
+        }
       }
-      const adyenMerchantAccount =
-        notification.NotificationRequestItem.merchantAccountCode
-      const ctpProjectConfig = config.getCtpConfig(ctpProjectKey)
-      const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
 
       await processNotification(
         notification,
@@ -46,6 +48,52 @@ async function handleNotification(request, response) {
     )
     return httpUtils.sendResponse(response, 500)
   }
+}
+
+function getCtpProjectConfig(notification) {
+  let commercetoolsProjectKey
+  try {
+    commercetoolsProjectKey =
+      notification.NotificationRequestItem.additionalData[
+        'metadata.commercetoolsProjectKey'
+      ]
+  } catch {
+    throw new ValidationError(
+      { adyenRequestNotification: `${JSON.stringify(notification)}` },
+      'Notification does not contain the field `metadata.commercetoolsProjectKey`.'
+    )
+  }
+  const ctpProjectConfig = config.getCtpConfig(commercetoolsProjectKey)
+
+  if (!ctpProjectConfig) {
+    throw new ValidationError(
+      {
+        adyenRequestNotification: JSON.stringify(notification),
+        commercetoolsProjectKey,
+      },
+      `commercetools project does not exist.`
+    )
+  }
+
+  return ctpProjectConfig
+}
+
+function getAdyenConfig(notification) {
+  const adyenMerchantAccount =
+    notification.NotificationRequestItem.merchantAccountCode
+  const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
+
+  if (!adyenConfig) {
+    throw new ValidationError(
+      {
+        adyenRequestNotification: JSON.stringify(notification),
+        adyenMerchantAccount,
+      },
+      `Adyen config does not exist.`
+    )
+  }
+
+  return adyenConfig
 }
 
 function sendAcceptedResponse(response) {
