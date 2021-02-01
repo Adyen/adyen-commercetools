@@ -5,6 +5,7 @@ const ctp = require('../../utils/ctp')
 const { validateHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
 const logger = require('../../utils/logger').getLogger()
+const { getNotificationForTracking } = require('../../utils/commons')
 const config = require('../../config/config')()
 
 async function processNotifications(notifications, ctpClient) {
@@ -20,9 +21,8 @@ async function processNotification(notification, ctpClient) {
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
       logger.error(
-        `HMAC validation failed. Reason: "${errorMessage}". Notification: ${JSON.stringify(
-          notification
-        )}`
+        { notification: getNotificationForTracking(notification) },
+        `HMAC validation failed. Reason: "${errorMessage}"`
       )
       return
     }
@@ -35,9 +35,8 @@ async function processNotification(notification, ctpClient) {
   )
   if (merchantReference === null) {
     logger.error(
-      `Can't extract merchantReference from the notification: ${JSON.stringify(
-        notification
-      )}`
+      { notification: getNotificationForTracking(notification) },
+      "Can't extract merchantReference from the notification"
     )
     return
   }
