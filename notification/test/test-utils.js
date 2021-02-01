@@ -61,5 +61,5 @@ module.exports = {
   unpublish,
   deleteAllResources,
   overrideAdyenConfig,
-  restoreAdyenConfig
+  restoreAdyenConfig,
 }
