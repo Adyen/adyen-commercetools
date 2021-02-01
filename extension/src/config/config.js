@@ -15,9 +15,9 @@ function getCtpConfig(ctpProjectKey) {
   const ctpConfig = config.commercetools[ctpProjectKey]
   if (!ctpConfig)
     throw new Error(
-      `Configuration for ctpProjectKey is not provided. Please update the configuration. ${JSON.stringify(
+      `Configuration is not provided. Please update the configuration. ctpProjectKey: [${JSON.stringify(
         ctpProjectKey
-      )}`
+      )}]`
     )
   return {
     clientId: ctpConfig.clientId,

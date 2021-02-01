@@ -2,7 +2,7 @@ const { cloneDeep } = require('lodash')
 const { expect } = require('chai')
 const { validateHmacSignature } = require('../../src/utils/hmacValidator')
 const notificationRequest = require('../resources/notification.json')
-const { overrideAdyenConfig } = require('../test-utils')
+const { overrideAdyenConfig, restoreAdyenConfig } = require('../test-utils')
 
 const notification = notificationRequest.notificationItems[0]
 
@@ -16,7 +16,7 @@ describe('verify hmac signatures', () => {
   })
 
   after(() => {
-    _invalidateCachedModule('../../src/config/config')
+    restoreAdyenConfig()
   })
 
   it(
@@ -77,8 +77,4 @@ describe('verify hmac signatures', () => {
       )
     }
   )
-
-  function _invalidateCachedModule(modulePath) {
-    delete require.cache[require.resolve(modulePath)]
-  }
 })

@@ -4,17 +4,22 @@ const { expect } = require('chai')
 const config = require('../../src/config/config')
 const notificationController = require('../../src/api/notification/notification.controller.js')
 const httpUtils = require('../../src/utils/commons')
+const logger = require('../../src/utils/logger')
 
 const sandbox = sinon.createSandbox()
 describe('notification controller', () => {
   let originalCollectRequestDataFn
+  let originalLogErrorFn
+  let logSpy
 
   before(() => {
     originalCollectRequestDataFn = httpUtils.collectRequestData
+    originalLogErrorFn = logger.getLogger().error
   })
 
   afterEach(() => {
     httpUtils.collectRequestData = originalCollectRequestDataFn
+    logger.getLogger().error = originalLogErrorFn
     module.exports = httpUtils
     sandbox.restore()
   })
@@ -73,4 +78,115 @@ describe('notification controller', () => {
       expect(configGetCtpConfigSpy.called).to.be.false
     }
   )
+
+  it('when adyenMerchantAccount is not configured, it should log error and return 500 status', async () => {
+    // prepare:
+    const requestMock = {
+      method: 'POST',
+    }
+    const responseMock = {
+      writeHead: () => {},
+      end: () => {},
+    }
+    const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+    httpUtils.collectRequestData = function () {
+      return JSON.stringify({
+        live: 'false',
+        notificationItems: [
+          {
+            NotificationRequestItem: {
+              amount: {
+                currency: 'EUR',
+                value: 10100,
+              },
+              additionalData: {
+                'metadata.commercetoolsProjectKey': 'testKey',
+              },
+              eventCode: 'AUTHORISATION',
+              eventDate: '2019-01-30T18:16:22+01:00',
+              merchantAccountCode: 'nonExistingMerchantAccount',
+              merchantReference: '8313842560770001',
+              operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+              paymentMethod: 'visa',
+              pspReference: 'test_AUTHORISATION_1',
+              success: 'true',
+            },
+          },
+        ],
+      })
+    }
+    module.exports = httpUtils
+
+    const configGetCtpConfigSpy = sandbox
+      .stub(config, 'getCtpConfig')
+      .callsFake(() => ({}))
+    config.getCtpConfig = configGetCtpConfigSpy
+    module.exports = config
+
+    logSpy = sinon.spy()
+    logger.getLogger().error = logSpy
+
+    // test:
+    await notificationController.handleNotification(requestMock, responseMock)
+
+    // expect:
+    expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(500)
+    expect(logSpy.calledOnce).to.be.true
+    expect(logSpy.firstCall.args[0].err.message).to.equal(
+      // eslint-disable-next-line max-len
+      'Configuration for adyenMerchantAccount is not provided. Please update the configuration: "nonExistingMerchantAccount"'
+    )
+  })
+
+  it('when commercetools project is not configured, it should log error and return 500 status', async () => {
+    // prepare:
+    const requestMock = {
+      method: 'POST',
+    }
+    const responseMock = {
+      writeHead: () => {},
+      end: () => {},
+    }
+    const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+    httpUtils.collectRequestData = function () {
+      return JSON.stringify({
+        live: 'false',
+        notificationItems: [
+          {
+            NotificationRequestItem: {
+              amount: {
+                currency: 'EUR',
+                value: 10100,
+              },
+              additionalData: {
+                'metadata.commercetoolsProjectKey': 'testKey',
+              },
+              eventCode: 'AUTHORISATION',
+              eventDate: '2019-01-30T18:16:22+01:00',
+              merchantAccountCode: 'nonExistingMerchantAccount',
+              merchantReference: '8313842560770001',
+              operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+              paymentMethod: 'visa',
+              pspReference: 'test_AUTHORISATION_1',
+              success: 'true',
+            },
+          },
+        ],
+      })
+    }
+    module.exports = httpUtils
+
+    logSpy = sinon.spy()
+    logger.getLogger().error = logSpy
+
+    // test:
+    await notificationController.handleNotification(requestMock, responseMock)
+
+    // expect:
+    expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(500)
+    expect(logSpy.calledOnce).to.be.true
+    expect(logSpy.firstCall.args[0].err.message).to.equal(
+      'Configuration is not provided. Please update the configuration. ctpProjectKey: ["testKey"]'
+    )
+  })
 })

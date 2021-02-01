@@ -7,10 +7,12 @@ const config = require('../../config/config')
 const logger = require('../../utils/logger').getLogger()
 
 class ValidationError extends Error {
-  constructor(details, message) {
+  constructor({ stack, message, notification, isRecoverable }) {
     super()
-    this.details = details
+    this.stack = stack
     this.message = message
+    this.notification = JSON.stringify(notification)
+    this.isRecoverable = isRecoverable
   }
 }
 
@@ -22,17 +24,8 @@ async function handleNotification(request, response) {
   try {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
     for (const notification of notifications) {
-      let ctpProjectConfig
-      let adyenConfig
-      try {
-        ctpProjectConfig = getCtpProjectConfig(notification)
-        adyenConfig = getAdyenConfig(notification)
-      } catch (e) {
-        if (e instanceof ValidationError) {
-          logger.error(e.details, e.message)
-          break
-        }
-      }
+      const ctpProjectConfig = getCtpProjectConfig(notification)
+      const adyenConfig = getAdyenConfig(notification)
 
       await processNotification(
         notification,
@@ -46,7 +39,10 @@ async function handleNotification(request, response) {
       { adyenRequestBody: `${body}`, err },
       'Unexpected exception occurred.'
     )
-    return httpUtils.sendResponse(response, 500)
+    if (err.isRecoverable) {
+      return httpUtils.sendResponse(response, 500)
+    }
+    return sendAcceptedResponse(response)
   }
 }
 
@@ -57,42 +53,44 @@ function getCtpProjectConfig(notification) {
       notification.NotificationRequestItem.additionalData[
         'metadata.commercetoolsProjectKey'
       ]
-  } catch {
-    throw new ValidationError(
-      { adyenRequestNotification: `${JSON.stringify(notification)}` },
-      'Notification does not contain the field `metadata.commercetoolsProjectKey`.'
-    )
-  }
-  const ctpProjectConfig = config.getCtpConfig(commercetoolsProjectKey)
-
-  if (!ctpProjectConfig) {
-    throw new ValidationError(
-      {
-        adyenRequestNotification: JSON.stringify(notification),
-        commercetoolsProjectKey,
-      },
-      `commercetools project does not exist.`
-    )
+  } catch (e) {
+    throw new ValidationError({
+      stack: e.stack,
+      notification,
+      message:
+        'Notification does not contain the field `metadata.commercetoolsProjectKey`.',
+      isRecoverable: false,
+    })
   }
 
+  let ctpProjectConfig
+  try {
+    ctpProjectConfig = config.getCtpConfig(commercetoolsProjectKey)
+  } catch (e) {
+    throw new ValidationError({
+      stack: e.stack,
+      message: e.message,
+      notification,
+      isRecoverable: true,
+    })
+  }
   return ctpProjectConfig
 }
 
 function getAdyenConfig(notification) {
   const adyenMerchantAccount =
     notification.NotificationRequestItem.merchantAccountCode
-  const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-
-  if (!adyenConfig) {
-    throw new ValidationError(
-      {
-        adyenRequestNotification: JSON.stringify(notification),
-        adyenMerchantAccount,
-      },
-      `Adyen config does not exist.`
-    )
+  let adyenConfig
+  try {
+    adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
+  } catch (e) {
+    throw new ValidationError({
+      stack: e.stack,
+      message: e.message,
+      notification,
+      isRecoverable: true,
+    })
   }
-
   return adyenConfig
 }
 

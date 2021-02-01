@@ -9,13 +9,14 @@ const concurrentModificationError = require('../resources/concurrent-modificatio
 const ctpClientMock = require('./ctp-client-mock')
 const paymentMock = require('../resources/payment-credit-card')
 const ctp = require('../../src/utils/ctp')
-const { overrideAdyenConfig } = require('../test-utils')
+const { overrideAdyenConfig, restoreAdyenConfig } = require('../test-utils')
 
 const sandbox = sinon.createSandbox()
 
 describe('notification module', () => {
   const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
   const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+  let originalCtpGetFn
 
   before(() => {
     overrideAdyenConfig({
@@ -23,7 +24,19 @@ describe('notification module', () => {
     })
   })
 
-  afterEach(() => sandbox.restore())
+  after(() => {
+    restoreAdyenConfig()
+  })
+
+  beforeEach(() => {
+    originalCtpGetFn = ctp.get
+  })
+
+  afterEach(() => {
+    ctp.get = originalCtpGetFn
+    module.exports = ctp
+    sandbox.restore()
+  })
 
   it(`given that ADYEN sends an "AUTHORISATION is successful" notification
       when payment has a pending authorization transaction 
