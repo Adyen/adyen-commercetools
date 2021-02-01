@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const sinon = require('sinon')
 const { expect } = require('chai')
 
@@ -8,6 +9,28 @@ const logger = require('../../src/utils/logger')
 
 const sandbox = sinon.createSandbox()
 describe('notification controller', () => {
+  const mockNotificationJson = {
+    live: 'false',
+    notificationItems: [
+      {
+        NotificationRequestItem: {
+          amount: {
+            currency: 'EUR',
+            value: 10100,
+          },
+          eventCode: 'AUTHORISATION',
+          eventDate: '2019-01-30T18:16:22+01:00',
+          merchantAccountCode: 'CommercetoolsGmbHDE775',
+          merchantReference: '8313842560770001',
+          operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+          paymentMethod: 'visa',
+          pspReference: 'test_AUTHORISATION_1',
+          success: 'true',
+        },
+      },
+    ],
+  }
+
   let originalCollectRequestDataFn
   let originalLogErrorFn
   let logSpy
@@ -38,29 +61,8 @@ describe('notification controller', () => {
       }
       const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
       const responseEndSpy = sandbox.spy(responseMock, 'end')
-      httpUtils.collectRequestData = function () {
-        return JSON.stringify({
-          live: 'false',
-          notificationItems: [
-            {
-              NotificationRequestItem: {
-                amount: {
-                  currency: 'EUR',
-                  value: 10100,
-                },
-                eventCode: 'AUTHORISATION',
-                eventDate: '2019-01-30T18:16:22+01:00',
-                merchantAccountCode: 'CommercetoolsGmbHDE775',
-                merchantReference: '8313842560770001',
-                operations: ['CANCEL', 'CAPTURE', 'REFUND'],
-                paymentMethod: 'visa',
-                pspReference: 'test_AUTHORISATION_1',
-                success: 'true',
-              },
-            },
-          ],
-        })
-      }
+      const notificationJson = _.cloneDeep(mockNotificationJson)
+      httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
       module.exports = httpUtils
 
       const configGetCtpConfigSpy = sandbox.spy(config, 'getCtpConfig')
@@ -89,31 +91,15 @@ describe('notification controller', () => {
       end: () => {},
     }
     const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+
+    const notificationJson = _.cloneDeep(mockNotificationJson)
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
+      'metadata.commercetoolsProjectKey': 'testKey',
+    }
+    notificationJson.notificationItems[0].NotificationRequestItem.merchantAccountCode =
+      'nonExistingMerchantAccount'
     httpUtils.collectRequestData = function () {
-      return JSON.stringify({
-        live: 'false',
-        notificationItems: [
-          {
-            NotificationRequestItem: {
-              amount: {
-                currency: 'EUR',
-                value: 10100,
-              },
-              additionalData: {
-                'metadata.commercetoolsProjectKey': 'testKey',
-              },
-              eventCode: 'AUTHORISATION',
-              eventDate: '2019-01-30T18:16:22+01:00',
-              merchantAccountCode: 'nonExistingMerchantAccount',
-              merchantReference: '8313842560770001',
-              operations: ['CANCEL', 'CAPTURE', 'REFUND'],
-              paymentMethod: 'visa',
-              pspReference: 'test_AUTHORISATION_1',
-              success: 'true',
-            },
-          },
-        ],
-      })
+      return JSON.stringify(notificationJson)
     }
     module.exports = httpUtils
 
@@ -148,31 +134,12 @@ describe('notification controller', () => {
       end: () => {},
     }
     const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+    const notificationJson = _.cloneDeep(mockNotificationJson)
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
+      'metadata.commercetoolsProjectKey': 'nonExistingCtpProjectKey',
+    }
     httpUtils.collectRequestData = function () {
-      return JSON.stringify({
-        live: 'false',
-        notificationItems: [
-          {
-            NotificationRequestItem: {
-              amount: {
-                currency: 'EUR',
-                value: 10100,
-              },
-              additionalData: {
-                'metadata.commercetoolsProjectKey': 'testKey',
-              },
-              eventCode: 'AUTHORISATION',
-              eventDate: '2019-01-30T18:16:22+01:00',
-              merchantAccountCode: 'nonExistingMerchantAccount',
-              merchantReference: '8313842560770001',
-              operations: ['CANCEL', 'CAPTURE', 'REFUND'],
-              paymentMethod: 'visa',
-              pspReference: 'test_AUTHORISATION_1',
-              success: 'true',
-            },
-          },
-        ],
-      })
+      return JSON.stringify(notificationJson)
     }
     module.exports = httpUtils
 
@@ -186,7 +153,7 @@ describe('notification controller', () => {
     expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(500)
     expect(logSpy.calledOnce).to.be.true
     expect(logSpy.firstCall.args[0].err.message).to.equal(
-      'Configuration is not provided. Please update the configuration. ctpProjectKey: ["testKey"]'
+      'Configuration is not provided. Please update the configuration. ctpProjectKey: ["nonExistingCtpProjectKey"]'
     )
   })
 })
