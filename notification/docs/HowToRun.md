@@ -113,7 +113,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 
 ### Other Configurations
 
-Other configurations can be set as direct child attributes in the JSON config.
+Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION_CONFIG`.
 
 ```
 {
