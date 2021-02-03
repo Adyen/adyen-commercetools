@@ -27,7 +27,8 @@ describe('::creditCardPayment::', () => {
     routes['/make-payment-form'] = async (request, response) => {
       serveFile('./test/e2e/fixtures/make-payment-form.html', request, response)
     }
-    ctpClient = ctpClientBuilder.get(ctpProjectKey)
+    const ctpConfig = config.getCtpConfig(ctpProjectKey)
+    ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.initServerAndExtension({
       ctpClient,
       routes,

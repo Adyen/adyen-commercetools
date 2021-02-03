@@ -19,7 +19,8 @@ describe('::manualCapture::', () => {
   let payment
 
   beforeEach(async () => {
-    ctpClient = ctpClientBuilder.get(commercetoolsProjectKey)
+    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+    ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.cleanupCtpResources(ctpClient)
     await iTSetUp.initServerAndExtension({ ctpClient })
     const paymentDraft = {

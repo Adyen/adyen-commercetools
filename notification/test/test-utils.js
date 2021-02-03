@@ -1,4 +1,5 @@
 const pMap = require('p-map')
+const config = require('../src/config/config')
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -41,7 +42,24 @@ async function deleteAllResources(ctpClient, endpoint, condition) {
   )
 }
 
+let originalGetAdyenConfigFn
+
+function overrideAdyenConfig(newAdyenConfig) {
+  originalGetAdyenConfigFn = config.getAdyenConfig
+  config.getAdyenConfig = function () {
+    return newAdyenConfig
+  }
+  module.exports = config
+}
+
+function restoreAdyenConfig() {
+  config.getAdyenConfig = originalGetAdyenConfigFn
+  module.exports = config
+}
+
 module.exports = {
   unpublish,
   deleteAllResources,
+  overrideAdyenConfig,
+  restoreAdyenConfig,
 }

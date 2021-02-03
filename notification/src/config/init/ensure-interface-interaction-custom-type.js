@@ -1,11 +1,24 @@
-const logger = require('../../utils/logger').getLogger()
+const mainLogger = require('../../utils/logger').getLogger()
 
 const interfaceInteractionType = require('../../../resources/payment-interface-interaction-type.json')
-const config = require('../config')()
+const config = require('../config')
+const ctp = require('../../utils/ctp')
 
-async function ensureInterfaceInteractionCustomType(ctpClient) {
+async function ensureInterfaceInteractionCustomTypeForAllProjects() {
+  const commercetoolsProjectKeys = config.getAllCtpProjectKeys()
+  for (const commercetoolsProjectKey of commercetoolsProjectKeys) {
+    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+    if (ctpConfig.ensureResources)
+      await ensureInterfaceInteractionCustomType(ctpConfig)
+  }
+}
+
+async function ensureInterfaceInteractionCustomType(ctpProjectConfig) {
+  const logger = mainLogger.child({
+    commercetools_project_key: ctpProjectConfig.projectKey,
+  })
   try {
-    if (!config.ensureResources) return
+    const ctpClient = ctp.get(ctpProjectConfig)
     logger.debug('Ensuring interfaceInteraction')
     const { body } = await ctpClient.fetch(
       ctpClient.builder.types.where(`key="${interfaceInteractionType.key}"`)
@@ -24,5 +37,6 @@ async function ensureInterfaceInteractionCustomType(ctpClient) {
 }
 
 module.exports = {
+  ensureInterfaceInteractionCustomTypeForAllProjects,
   ensureInterfaceInteractionCustomType,
 }
