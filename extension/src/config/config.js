@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 let config
 
 function getModuleConfig() {
@@ -65,6 +67,10 @@ function loadAndValidateConfig() {
       'Adyen integration configuration is not provided in the JSON format'
     )
   }
+
+  if (_.isEmpty(config.apiExtensionBaseUrl))
+    throw new Error('apiExtensionBaseUrl attribute must be set!')
+
   const numberOfCtpConfigs = Object.keys(config.commercetools).length
   const numberOfAdyenConfigs = Object.keys(config.adyen).length
   if (numberOfCtpConfigs === 0)
