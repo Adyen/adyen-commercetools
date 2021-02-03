@@ -52,6 +52,7 @@ The JSON structure will be described in details in the next sections of this doc
 - For **live environment** follow the official Adyen [documentation](https://docs.adyen.com/user-management/get-started-with-adyen#step-2-apply-for-your-live-account) for details.
 
 Multiple child attributes can be provided in the `adyen` attribute. Each direct child attribute must represent 1 adyen merchant account like in the following example:
+
 ```
 {
   "adyen": {
@@ -67,11 +68,11 @@ Multiple child attributes can be provided in the `adyen` attribute. Each direct 
 }
 ```
 
-| Name                        | Content                                                                                                                                                  | Required | Default value (only for test environment)            |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------- |
-| `apiKey`             | You'll be making API requests that are authenticated with an [API key](https://docs.adyen.com/user-management/how-to-get-the-api-key#page-introduction). | YES      |                                                      |
-| `apiBaseUrl`        | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO      | `https://checkout-test.adyen.com/v52`                |
-| `legacyApiBaseUrl` | [Standart payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                           | NO      | `https://pal-test.adyen.com/pal/servlet/Payment/v52` |
+| Name               | Content                                                                                                                                                  | Required | Default value (only for test environment)            |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------- |
+| `apiKey`           | You'll be making API requests that are authenticated with an [API key](https://docs.adyen.com/user-management/how-to-get-the-api-key#page-introduction). | YES      |                                                      |
+| `apiBaseUrl`       | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO       | `https://checkout-test.adyen.com/v52`                |
+| `legacyApiBaseUrl` | [Standart payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                           | NO       | `https://pal-test.adyen.com/pal/servlet/Payment/v52` |
 
 > Note: Sometimes it's necessary to regenerate the `ADYEN_API_KEY` key, when you get `403 Forbidden error` from Adyen.
 
@@ -82,6 +83,7 @@ If you don't have the commercetools OAuth credentials,[create a commercetools AP
 > Extension module's recommended [scope](https://docs.commercetools.com/http-api-scopes#manage_projectprojectkey) is `manage_project`.
 
 Multiple child attributes can be provided in the `commercetools` attribute. Each direct child attribute must represent 1 commercetools project like in the following example:
+
 ```
 {
   "commercetools": {
@@ -100,13 +102,13 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 }
 ```
 
-| Name                | Content                                                      | Required | Default value                                     |
-| ------------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------- |
-| `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.     | YES      |                                                   |
-| `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token. | YES      |                                                   |
-| `ensureResources` | Set to `false` to disable the creation of required resources in commercetools (e.g. custom types) on startup. | NO      | `true`                                                  |
-| `host`          | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
-| `authUrl`      | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
+| Name              | Content                                                                                                       | Required | Default value                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------- |
+| `clientId`        | OAuth 2.0 `client_id` and can be used to obtain a token.                                                      | YES      |                                                   |
+| `clientSecret`    | OAuth 2.0 `client_secret` and can be used to obtain a token.                                                  | YES      |                                                   |
+| `ensureResources` | Set to `false` to disable the creation of required resources in commercetools (e.g. custom types) on startup. | NO       | `true`                                            |
+| `host`            | The commercetools HTTP API is hosted at that URL.                                                             | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `authUrl`         | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                   | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
 
 ### Other Configurations
 
@@ -123,12 +125,12 @@ Other configurations can be set as direct child attributes in the JSON config.
 }
 ```
 
-| Name                     | Content                                                                                                                                                                                                                                | Required | Default value               |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------- |
-| `port`                   | The port number on which the application will run.                                                                                                                                                                                     | NO       | 8080                        |
-| `logLevel`              | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                                                                    | NO       | `info`                      |
+| Name                  | Content                                                                                                                                                                                                                                | Required | Default value               |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------- |
+| `port`                | The port number on which the application will run.                                                                                                                                                                                     | NO       | 8080                        |
+| `logLevel`            | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                                                                    | NO       | `info`                      |
 | `apiExtensionBaseUrl` | Publicly available URL of the Extension module. In case of any payment changes, [commercetools API extension](https://docs.commercetools.com/http-api-projects-api-extensions) will call this URL and pass the payment object in body. | YES      |                             |
-| `keepAliveTimeout`     | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_server_keepalivetimeout)).                                                                    | NO       | Node.js default (5 seconds) |
+| `keepAliveTimeout`    | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_server_keepalivetimeout)).                                                                    | NO       | Node.js default (5 seconds) |
 
 ## Commercetools project requirements
 

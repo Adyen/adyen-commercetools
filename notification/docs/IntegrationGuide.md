@@ -46,7 +46,7 @@ Adyen sends notifications which look like this:
       "NotificationRequestItem": {
         "additionalData": {
           "hmacSignature": "cjiTz03EI0jkkysGDdPJQdLbecRVVU/5jm12/DTFEHo=",
-          "metadata.commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY"  // should match a project key in ADYEN_INTEGRATION_CONFIG
+          "metadata.commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY" // should match a project key in ADYEN_INTEGRATION_CONFIG
         },
         "amount": {
           "currency": "EUR",

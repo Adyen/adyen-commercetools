@@ -724,6 +724,7 @@ This will either:
 - [**Refund**](RefundPayment.md) - (partially) refund a payment back to the shopper.
 
 # Multi-tenancy
+
 `commercetools-adyen-integration` supports multi-tenancy to serve multiple Adyen merchant accounts/commercetools projects
 with one application instance. This architectural style leverages sharing and scalability to provide cost-efficient hosting.
 
@@ -735,7 +736,6 @@ In order for `commercetools-adyen-integration` to know which project it should c
 In case any of those fields are not provided, payment creation will be rejected.
 
 > `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.commercetoolsProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in the every notification from Adyen to help with matching the correct commercetools project.
-
 
 # Bad Practices
 

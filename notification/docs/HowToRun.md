@@ -6,12 +6,12 @@
 **Table of Contents**
 
 - [Environment variables](#environment-variables)
-    - [Adyen](#adyen)
-    - [commercetools](#commercetools)
-    - [Other Configurations](#other-configurations)
+  - [Adyen](#adyen)
+  - [commercetools](#commercetools)
+  - [Other Configurations](#other-configurations)
 - [Running](#running)
-    - [Docker](#docker)
-        - [Running the Docker image](#running-the-docker-image)
+  - [Docker](#docker)
+    - [Running the Docker image](#running-the-docker-image)
 - [Deployment](#deployment)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -69,11 +69,11 @@ merchant account like in the following example:
 }
 ```
 
-| Name                          | Content                                                                                                                                            | Required | Default value |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------- |
-| `enableHmacSignature` | Verify the integrity of notifications using [Adyen HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures). | NO       | `true`        |
-| `secretHmacKey`       | The generated secret HMAC key that is linked to a Adyen **Standard
-Notification** endpoint                                                         | NO       |               |
+| Name                      | Content                                                                                                                                            | Required | Default value |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------- |
+| `enableHmacSignature`     | Verify the integrity of notifications using [Adyen HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures). | NO       | `true`        |
+| `secretHmacKey`           | The generated secret HMAC key that is linked to a Adyen \*\*Standard                                                                               |
+| Notification\*\* endpoint | NO                                                                                                                                                 |          |
 
 ### commercetools
 
@@ -103,13 +103,13 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 }
 ```
 
-| Name                | Content                                                      | Required | Default value                                     |
-| ------------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------- |
-| `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.     | YES      |                                                   |
-| `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token. | YES      |                                                   |
-| `ensureResources` | Set to `false` to disable the creation of required resources in commercetools (e.g. interface interactions) on startup. | NO      | `true`                                                  |
-| `host`          | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
-| `authUrl`      | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
+| Name              | Content                                                                                                                 | Required | Default value                                     |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------- |
+| `clientId`        | OAuth 2.0 `client_id` and can be used to obtain a token.                                                                | YES      |                                                   |
+| `clientSecret`    | OAuth 2.0 `client_secret` and can be used to obtain a token.                                                            | YES      |                                                   |
+| `ensureResources` | Set to `false` to disable the creation of required resources in commercetools (e.g. interface interactions) on startup. | NO       | `true`                                            |
+| `host`            | The commercetools HTTP API is hosted at that URL.                                                                       | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `authUrl`         | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                             | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
 
 ### Other Configurations
 
@@ -125,10 +125,10 @@ Other configurations can be set as direct child attributes in the JSON config.
 }
 ```
 
-| Name                 | Content                                                                                                                                                             | Required | Default value               |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------- |
-| `port`               | Th port number on which the application will run.                                                                                                                   | NO       | 443                         |
-| `logLevel`          | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                 | NO       | `info`                      |
+| Name               | Content                                                                                                                                                             | Required | Default value               |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------- |
+| `port`             | Th port number on which the application will run.                                                                                                                   | NO       | 443                         |
+| `logLevel`         | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                 | NO       | `info`                      |
 | `keepAliveTimeout` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_server_keepalivetimeout)). | NO       | Node.js default (5 seconds) |
 
 ## Running
@@ -150,5 +150,6 @@ to see the latest releases and tags.
 ```
 
 ## Deployment
+
 Notification module supports different deployment [options](/deployment-examples). It could be either hosted
 on-premises (run docker containers behind the load balancer) or deployed as a serverless application.
