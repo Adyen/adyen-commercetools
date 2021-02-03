@@ -5,7 +5,7 @@ const config = require('../../src/config/config')
 const constants = require('../../src/config/constants')
 const iTSetUp = require('./integration-test-set-up')
 
-describe('::make-payment with multiple store use case::', () => {
+describe('::make-payment with multiple adyen accounts use case::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
   const [
     adyenMerchantAccount1,
