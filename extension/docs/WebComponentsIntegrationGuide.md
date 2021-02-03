@@ -37,7 +37,7 @@ Terms used in this guide:
 - **Shopper** - a person that's using the shop.
 - **Browser** - frontend part of the checkout UI (web shop).
 - **Merchant server** - backend part of the checkout.
-- **Extension module** - extension module configured as [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is handling checkout steps by intercepting payment modifications and executing communication with Adyen API.
+- **Extension module** - extension module configured as [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is handling checkout steps by intercepting payment modifications and communicating with Adyen API.
 - **Notification module** - [notification module](./../../notification/README.md) processes asynchronous notifications from Adyen and stores payment state changes in commercetools payment object.
 
 The following diagram shows checkout integration flow based on [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
@@ -135,7 +135,7 @@ The commercetools payment representation example:
 }
 ```
 
-If you are [creating a commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment), the payment draft have to contain the `paymentMethodInfo.paymentInterface = ctp-adyen-integration`, `amountPlanned` value, `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields additional to the `getPaymentMethodsRequest` custom field, for example:
+If you are [creating a commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment), the payment draft have to contain the `paymentMethodInfo.paymentInterface = ctp-adyen-integration`, `amountPlanned` value, `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields additionally to the `getPaymentMethodsRequest` custom field, for example:
 
 ```json
 {
@@ -343,7 +343,7 @@ A commercetools payment example with `makePaymentResponse` field with the respon
 }
 ```
 
-Response from Adyen for the case where you can present the payment result to your shopper.
+Response from Adyen in case you can present the payment result to your shopper.
 See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-present-payment-result) for more information how to present the results.
 
 ```json
@@ -724,14 +724,18 @@ This will either:
 - [**Refund**](RefundPayment.md) - (partially) refund a payment back to the shopper.
 
 # Multi-tenancy
-
 `commercetools-adyen-integration` supports multi-tenancy to serve multiple Adyen merchant accounts/commercetools projects
-with one application instance. This architectural style leverages sharing and economies of scale to provide cost efficient hosting.
+with one application instance. This architectural style leverages sharing and scalability to provide cost-efficient hosting.
 
-Integration requires 2 tenant fields, in case any of both is not provided payment creation will be rejected.
+In order for `commercetools-adyen-integration` to know which project it should communicate with, this information must be provided. Payment object must contain the following 2 custom fields:
 
 - Provide merchantAccount as a custom field called `adyenMerchantAccount` on create payment.
 - Provide commercetools project key as a custom field called `commercetoolsProjectKey` on create payment.
+
+In case any of those fields are not provided, payment creation will be rejected.
+
+> `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.commercetoolsProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in the every notification from Adyen to help with matching the correct commercetools project.
+
 
 # Bad Practices
 
