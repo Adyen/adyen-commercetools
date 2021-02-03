@@ -16,13 +16,17 @@ if (moduleConfig.keepAliveTimeout !== undefined)
   server.keepAliveTimeout = moduleConfig.keepAliveTimeout
 server.listen(port, async () => {
   const ctpProjectKeys = config.getAllCtpProjectKeys()
-  await pMap(ctpProjectKeys, async (ctpProjectKey) => {
-    const ctpConfig = config.getCtpConfig(ctpProjectKey)
-    if (ctpConfig.ensureResources) {
-      const ctpClient = ctpClientBuilder.get(ctpProjectKey)
-      await ensureResources(ctpClient, moduleConfig.apiExtensionBaseUrl)
-    }
-  })
+  await pMap(
+    ctpProjectKeys,
+    async (ctpProjectKey) => {
+      const ctpConfig = config.getCtpConfig(ctpProjectKey)
+      if (ctpConfig.ensureResources) {
+        const ctpClient = ctpClientBuilder.get(ctpConfig)
+        await ensureResources(ctpClient, moduleConfig.apiExtensionBaseUrl)
+      }
+    },
+    { concurrency: 5 }
+  )
 
   logger.info(`Extension module is running at http://localhost:${port}/`)
 })

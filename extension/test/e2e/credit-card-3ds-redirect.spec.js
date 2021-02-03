@@ -57,7 +57,8 @@ describe('::creditCardPayment3dsRedirect::', () => {
       })
     }
 
-    ctpClient = ctpClientBuilder.get(ctpProjectKey)
+    const ctpConfig = config.getCtpConfig(ctpProjectKey)
+    ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.initServerAndExtension({
       ctpClient,
       routes,
@@ -75,7 +76,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
     ({
       name,
       creditCardNumber,
-      creditCardDate = '10/20',
+      creditCardDate = '03/30',
       creditCardCvc = '737',
     }) => {
       // eslint-disable-next-line no-template-curly-in-string
