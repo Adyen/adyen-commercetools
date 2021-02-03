@@ -32,14 +32,16 @@ describe('::make-payment with multiple store use case::', () => {
       'should set key, "makePaymentResponse" custom field, interface interactions ' +
       'and a successfully authorized transaction',
     async () => {
-      await makePayment({
-        reference: 'paymentFromMerchant1',
-        adyenMerchantAccount: adyenMerchantAccount1,
-      })
-      await makePayment({
-        reference: 'paymentFromMerchant2',
-        adyenMerchantAccount: adyenMerchantAccount2,
-      })
+      await Promise.all([
+        makePayment({
+          reference: 'paymentFromMerchant1',
+          adyenMerchantAccount: adyenMerchantAccount1,
+        }),
+        makePayment({
+          reference: 'paymentFromMerchant2',
+          adyenMerchantAccount: adyenMerchantAccount2,
+        }),
+      ])
     }
   )
 
