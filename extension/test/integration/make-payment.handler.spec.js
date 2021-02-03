@@ -15,7 +15,8 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
   let ctpClient
 
   beforeEach(async () => {
-    ctpClient = ctpClientBuilder.get(commercetoolsProjectKey)
+    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+    ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.cleanupCtpResources(ctpClient)
     await iTSetUp.initServerAndExtension({ ctpClient })
   })
@@ -91,11 +92,18 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
 
     expect(payment.key).to.equal(reference)
 
-    const { makePaymentResponse } = payment.custom.fields
     const interfaceInteraction = payment.interfaceInteractions.find(
       (interaction) =>
         interaction.fields.type === constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
     )
+    const makePaymentRequest = JSON.parse(interfaceInteraction.fields.request)
+    expect(makePaymentRequest.metadata).to.deep.equal({
+      commercetoolsProjectKey,
+    })
+    expect(makePaymentRequest.merchantAccount).to.be.equal(adyenMerchantAccount)
+
+    const { makePaymentResponse } = payment.custom.fields
+
     expect(makePaymentResponse).to.be.deep.equal(
       interfaceInteraction.fields.response
     )

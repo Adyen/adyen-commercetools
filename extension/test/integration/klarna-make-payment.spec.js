@@ -19,12 +19,14 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
 
   beforeEach(async () => {
     await iTSetUp.initServer()
-    ctpClientProject1 = ctpClientBuilder.get(commercetoolsProjectKey1)
+    const ctpConfig1 = config.getCtpConfig(commercetoolsProjectKey1)
+    ctpClientProject1 = ctpClientBuilder.get(ctpConfig1)
 
     await iTSetUp.cleanupCtpResources(ctpClientProject1)
     await iTSetUp.initExtension(ctpClientProject1)
 
-    ctpClientProject2 = ctpClientBuilder.get(commercetoolsProjectKey2)
+    const ctpConfig2 = config.getCtpConfig(commercetoolsProjectKey2)
+    ctpClientProject2 = ctpClientBuilder.get(ctpConfig2)
 
     await iTSetUp.cleanupCtpResources(ctpClientProject2)
     await iTSetUp.initExtension(ctpClientProject2)
@@ -109,6 +111,11 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
       updatedPayment.interfaceInteractions[0].fields
     const makePaymentRequest = JSON.parse(makePaymentInteraction.request)
     const makePaymentResponse = JSON.parse(makePaymentInteraction.response)
+
+    expect(makePaymentRequest.metadata).to.deep.equal({
+      commercetoolsProjectKey,
+    })
+    expect(makePaymentRequest.merchantAccount).to.be.equal(adyenMerchantAccount)
 
     expect(makePaymentRequest.lineItems).to.have.lengthOf(3)
     expect(makePaymentResponse.resultCode).to.be.equal('RedirectShopper')
