@@ -33,7 +33,13 @@ server.listen(port, async () => {
   )
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
 
-  logger.info(`Extension module is running at http://localhost:${port}/. `
-    + `Configured commercetools project keys are: ${JSON.stringify(ctpProjectKeys)}. `
-    + `Configured adyen merchant accounts are: ${JSON.stringify(adyenMerchantAccounts)}`)
+  logger.info(
+    `Extension module is running at http://localhost:${port}/. ` +
+      `Configured commercetools project keys are: ${JSON.stringify(
+        ctpProjectKeys
+      )}. ` +
+      `Configured adyen merchant accounts are: ${JSON.stringify(
+        adyenMerchantAccounts
+      )}`
+  )
 })
