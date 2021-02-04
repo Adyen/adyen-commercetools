@@ -7,8 +7,6 @@ const setup = require('./config/init/ensure-interface-interaction-custom-type')
 
 let initialised = false
 
-// TODO: add JSON schema validation:
-// https://github.com/commercetools/commercetools-adyen-integration/issues/9
 exports.handler = async function (event) {
   const notifications = _.get(event, 'notificationItems', [])
   for (const notification of notifications) {
