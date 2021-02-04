@@ -35,7 +35,9 @@ function getNotificationForTracking(notification) {
   if (notification && Array.isArray(notification)) {
     const notificationListForTracking = []
     notification.forEach((notificationElement) => {
-      notificationListForTracking.push(convertNotificationForTracking(notificationElement))
+      notificationListForTracking.push(
+        convertNotificationForTracking(notificationElement)
+      )
     })
     return notificationListForTracking
   }
