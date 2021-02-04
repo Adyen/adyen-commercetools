@@ -11,7 +11,7 @@ const ctp = require('./src/utils/ctp')
 const handler = require('./src/handler/notification/notification.handler')
 const config = require('./src/config/config')()
 const logger = require('./src/utils/logger').getLogger()
-const { getNotificationListForTracking } = require('./src/utils/commons')
+const { getNotificationForTracking } = require('./src/utils/commons')
 
 const ctpClient = ctp.get(config)
 
@@ -28,7 +28,7 @@ exports.notificationTrigger = async (request, response) => {
   } catch (e) {
     logger.error(
       {
-        notification: getNotificationListForTracking(notificationItems),
+        notification: getNotificationForTracking(notificationItems),
         err: e,
       },
       'Unexpected error when processing event'
