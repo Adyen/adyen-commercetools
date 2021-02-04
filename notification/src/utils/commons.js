@@ -18,7 +18,7 @@ function sendResponse(response, statusCode = 200, headers, data) {
   response.end(data)
 }
 
-function getNotificationForTracking(notification) {
+function convertNotificationForTracking(notification) {
   if (notification && notification.NotificationRequestItem) {
     const notificationRequestItem = notification.NotificationRequestItem
     return {
@@ -29,6 +29,17 @@ function getNotificationForTracking(notification) {
     }
   }
   return notification
+}
+
+function getNotificationForTracking(notification) {
+  if (notification && Array.isArray(notification)) {
+    const notificationListForTracking = []
+    notification.forEach((notificationElement) => {
+      notificationListForTracking.push(convertNotificationForTracking(notificationElement))
+    })
+    return notificationListForTracking
+  }
+  return convertNotificationForTracking(notification)
 }
 
 module.exports = {
