@@ -2,8 +2,6 @@
  * If you are deploying extension module as a serverless function,
  * this will be the main javascript file.
  *
- * This function has tested as Google Cloud Function
- *
  * Entry point: extensionTrigger
  */
 const paymentHandler = require('./src/paymentHandler/payment-handler')
