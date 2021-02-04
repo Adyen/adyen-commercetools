@@ -71,7 +71,7 @@ describe('::klarnaPayment::', () => {
   it(
     'when payment method is klarna and process is done correctly, ' +
       'then it should successfully finish the payment',
-    async function () {
+    async function func() {
       this.timeout(60000)
 
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl

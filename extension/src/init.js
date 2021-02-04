@@ -5,15 +5,15 @@ const utils = require('./utils')
 const config = require('./config/config')
 const ctpClientBuilder = require('./ctp')
 
-const envConfig = config.getModuleConfig()
+const moduleConfig = config.getModuleConfig()
 
 const { ensureResources } = require('./config/init/ensure-resources')
 
-const port = parseInt(envConfig.port || 8080, 10)
+const port = parseInt(moduleConfig.port || 8080, 10)
 const logger = utils.getLogger()
 
-if (envConfig.keepAliveTimeout !== undefined)
-  server.keepAliveTimeout = envConfig.keepAliveTimeout
+if (moduleConfig.keepAliveTimeout !== undefined)
+  server.keepAliveTimeout = moduleConfig.keepAliveTimeout
 server.listen(port, async () => {
   const ctpProjectKeys = config.getAllCtpProjectKeys()
   await pMap(
@@ -22,7 +22,7 @@ server.listen(port, async () => {
       const ctpConfig = config.getCtpConfig(ctpProjectKey)
       if (ctpConfig.ensureResources) {
         const ctpClient = ctpClientBuilder.get(ctpConfig)
-        await ensureResources(ctpClient)
+        await ensureResources(ctpClient, moduleConfig.apiExtensionBaseUrl)
       }
     },
     { concurrency: 5 }
