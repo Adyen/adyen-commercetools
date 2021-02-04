@@ -1,5 +1,3 @@
-const pMap = require('p-map')
-
 const server = require('./server.js').setupServer()
 const utils = require('./utils')
 const config = require('./config/config')
@@ -16,9 +14,8 @@ if (moduleConfig.keepAliveTimeout !== undefined)
   server.keepAliveTimeout = moduleConfig.keepAliveTimeout
 server.listen(port, async () => {
   const ctpProjectKeys = config.getAllCtpProjectKeys()
-  await pMap(
-    ctpProjectKeys,
-    async (ctpProjectKey) => {
+  await Promise.all(
+    ctpProjectKeys.map(async (ctpProjectKey) => {
       const ctpConfig = config.getCtpConfig(ctpProjectKey)
       if (ctpConfig.ensureResources) {
         const ctpClient = ctpClientBuilder.get(ctpConfig)
@@ -28,8 +25,7 @@ server.listen(port, async () => {
           moduleConfig.apiExtensionBaseUrl
         )
       }
-    },
-    { concurrency: 5 }
+    })
   )
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
 
