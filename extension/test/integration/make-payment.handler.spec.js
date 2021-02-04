@@ -18,7 +18,10 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.cleanupCtpResources(ctpClient)
-    await iTSetUp.initServerAndExtension({ ctpClient })
+    await iTSetUp.initServerAndExtension({
+      ctpClient,
+      ctpProjectKey: ctpConfig.projectKey,
+    })
   })
 
   afterEach(async () => {

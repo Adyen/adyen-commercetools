@@ -22,7 +22,10 @@ describe('::manualCapture::', () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.cleanupCtpResources(ctpClient)
-    await iTSetUp.initServerAndExtension({ ctpClient })
+    await iTSetUp.initServerAndExtension({
+      ctpClient,
+      ctpProjectKey: ctpConfig.projectKey,
+    })
     const paymentDraft = {
       amountPlanned: {
         currencyCode: 'EUR',

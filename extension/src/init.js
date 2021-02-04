@@ -22,7 +22,11 @@ server.listen(port, async () => {
       const ctpConfig = config.getCtpConfig(ctpProjectKey)
       if (ctpConfig.ensureResources) {
         const ctpClient = ctpClientBuilder.get(ctpConfig)
-        await ensureResources(ctpClient, moduleConfig.apiExtensionBaseUrl)
+        await ensureResources(
+          ctpClient,
+          ctpConfig.projectKey,
+          moduleConfig.apiExtensionBaseUrl
+        )
       }
     },
     { concurrency: 5 }

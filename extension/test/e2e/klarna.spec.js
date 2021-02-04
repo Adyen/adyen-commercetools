@@ -57,8 +57,7 @@ describe('::klarnaPayment::', () => {
     ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.initServerAndExtension({
       ctpClient,
-      routes,
-      testServerPort: 8080,
+      ctpProjectKey: ctpConfig.projectKey,
     })
     browser = await initPuppeteerBrowser()
   })

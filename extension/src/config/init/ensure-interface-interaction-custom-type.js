@@ -2,9 +2,12 @@ const utils = require('../../utils')
 
 const interfaceInteractionType = require('../../../resources/payment-interface-interaction-type.json')
 
-const logger = utils.getLogger()
+const mainLogger = utils.getLogger()
 
-async function ensureInterfaceInteractionCustomType(ctpClient) {
+async function ensureInterfaceInteractionCustomType(ctpClient, ctpProjectKey) {
+  const logger = mainLogger.child({
+    commercetools_project_key: ctpProjectKey,
+  })
   const { body } = await ctpClient.fetch(
     ctpClient.builder.types.where(`key="${interfaceInteractionType.key}"`)
   )

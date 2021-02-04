@@ -31,9 +31,9 @@ function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   module.exports = config
 }
 
-async function initServerAndExtension({ ctpClient }) {
+async function initServerAndExtension({ ctpClient, ctpProjectKey }) {
   await initServer()
-  await initExtension(ctpClient)
+  await initExtension(ctpClient, ctpProjectKey)
 }
 
 async function initServer() {
@@ -54,12 +54,12 @@ async function initServer() {
   })
 }
 
-async function initExtension(ctpClient) {
+async function initExtension(ctpClient, ctpProjectKey) {
   await testUtils.deleteAllResources(ctpClient, 'payments')
   await testUtils.deleteAllResources(ctpClient, 'types')
   await testUtils.deleteAllResources(ctpClient, 'extensions')
   const { apiExtensionBaseUrl } = config.getModuleConfig()
-  await ensureResources(ctpClient, apiExtensionBaseUrl)
+  await ensureResources(ctpClient, ctpProjectKey, apiExtensionBaseUrl)
 }
 
 async function cleanupCtpResources(ctpClient) {
