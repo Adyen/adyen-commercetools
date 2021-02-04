@@ -11,5 +11,9 @@ if (config.getModuleConfig().keepAliveTimeout !== undefined)
   server.keepAliveTimeout = config.getModuleConfig().keepAliveTimeout
 server.listen(PORT, async () => {
   await ensureInterfaceInteractionCustomTypeForAllProjects()
-  logger.info(`Server started on ${PORT} port`)
+  const ctpProjectKeys = config.getAllCtpProjectKeys()
+  const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
+  logger.info(`Server started on ${PORT} port. `
+    + `Configured commercetools project keys are: ${JSON.stringify(ctpProjectKeys)}. `
+    + `Configured adyen merchant accounts are: ${JSON.stringify(adyenMerchantAccounts)}`)
 })
