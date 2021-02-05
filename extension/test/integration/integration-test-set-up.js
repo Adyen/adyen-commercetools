@@ -14,49 +14,52 @@ const ctpDiscountCode = require('./fixtures/ctp-discount-code')
 const ctpDiscountCodeMultiBuy = require('./fixtures/ctp-discount-code-multi-buy')
 const ctpDiscountCodeShipping = require('./fixtures/ctp-discount-code-shipping')
 const serverBuilder = require('../../src/server')
-const { routes: defaultRoutes } = require('../../src/routes')
+const { routes } = require('../../src/routes')
 const { ensureResources } = require('../../src/config/init/ensure-resources')
 const config = require('../../src/config/config')
 const testUtils = require('../test-utils')
+const logger = require('../../src/utils').getLogger()
 
 let server
-const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
-const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
-function _overrideApiExtensionBaseUrlConfig(ngrokUrl) {
-  const envConfig = config.getModuleConfig()
-  envConfig.apiExtensionBaseUrl = ngrokUrl
-  config.getModuleConfig = function () {
-    return envConfig
+function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
+  const moduleConfig = config.getModuleConfig()
+  moduleConfig.apiExtensionBaseUrl = apiExtensionBaseUrl
+  config.getModuleConfig = function getModuleConfig() {
+    return moduleConfig
   }
   module.exports = config
 }
 
-async function initServerAndExtension({
-  ctpClient,
-  testServerPort = 8000,
-  routes = defaultRoutes,
-}) {
+async function initServerAndExtension({ ctpClient, ctpProjectKey }) {
+  await initServer()
+  await initExtension(ctpClient, ctpProjectKey)
+}
+
+async function initServer() {
+  const port = config.getModuleConfig().port || 8000
   server = serverBuilder.setupServer(routes)
   // note: ngrok should be restarted for every test case, otherwise there will be
   // 429 Too Many Requests error. This is due to the limit of maximum opened HTTP connections,
   // which is 40 connections at the same time as we're using Free program (https://ngrok.com/pricing).
-  const ngrokUrl = await ngrok.connect(testServerPort)
-  _overrideApiExtensionBaseUrlConfig(ngrokUrl)
-
-  await testUtils.deleteAllResources(ctpClient, 'payments')
-  await testUtils.deleteAllResources(ctpClient, 'types')
-  await testUtils.deleteAllResources(ctpClient, 'extensions')
+  const apiExtensionBaseUrl = await ngrok.connect(port)
+  _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
   return new Promise((resolve) => {
-    server.listen(testServerPort, async () => {
-      await ensureResources(ctpClient, ngrokUrl)
-      /* eslint-disable no-console */
-      console.log(
-        `Extension module is running at http://localhost:${testServerPort}/`
+    server.listen(port, async () => {
+      logger.debug(
+        `Extension server is running at ${apiExtensionBaseUrl}:${port}/`
       )
       resolve()
     })
   })
+}
+
+async function initExtension(ctpClient, ctpProjectKey) {
+  await testUtils.deleteAllResources(ctpClient, 'payments')
+  await testUtils.deleteAllResources(ctpClient, 'types')
+  await testUtils.deleteAllResources(ctpClient, 'extensions')
+  const { apiExtensionBaseUrl } = config.getModuleConfig()
+  await ensureResources(ctpClient, ctpProjectKey, apiExtensionBaseUrl)
 }
 
 async function cleanupCtpResources(ctpClient) {
@@ -74,7 +77,11 @@ async function cleanupCtpResources(ctpClient) {
   await testUtils.deleteAllResources(ctpClient, 'cartDiscounts')
 }
 
-async function _ensureCtpResources(ctpClient) {
+async function _ensureCtpResources({
+  ctpClient,
+  adyenMerchantAccount,
+  commercetoolsProjectKey,
+}) {
   const {
     body: { id: zoneId },
   } = await _ensureZones(ctpClient)
@@ -108,7 +115,11 @@ async function _ensureCtpResources(ctpClient) {
   const {
     body: { id: productId },
   } = await _ensureProducts(ctpClient, productTypeId, taxCategoryId)
-  const { body: paymentResponse } = await _ensurePayment(ctpClient)
+  const { body: paymentResponse } = await _ensurePayment({
+    ctpClient,
+    adyenMerchantAccount,
+    commercetoolsProjectKey,
+  })
   const paymentId = paymentResponse.id
   await _createCart(ctpClient, productId, paymentId, shippingMethodId, [
     discountCode,
@@ -264,7 +275,11 @@ async function _ensureProducts(ctpClient, productTypeId, taxCategoryId) {
   return { body: body.results[0] }
 }
 
-async function _ensurePayment(ctpClient) {
+async function _ensurePayment({
+  ctpClient,
+  adyenMerchantAccount,
+  commercetoolsProjectKey,
+}) {
   const { body } = await ctpClient.fetch(
     ctpClient.builder.payments.where(`key="${ctpPayment.key}"`)
   )
@@ -301,8 +316,16 @@ async function _createCart(
   )
 }
 
-async function initPaymentWithCart(ctpClient) {
-  const payment = await _ensureCtpResources(ctpClient)
+async function initPaymentWithCart({
+  ctpClient,
+  adyenMerchantAccount,
+  commercetoolsProjectKey,
+}) {
+  const payment = await _ensureCtpResources({
+    ctpClient,
+    adyenMerchantAccount,
+    commercetoolsProjectKey,
+  })
   return payment
 }
 
@@ -316,4 +339,6 @@ module.exports = {
   stopRunningServers,
   initPaymentWithCart,
   cleanupCtpResources,
+  initServer,
+  initExtension,
 }

@@ -4,17 +4,17 @@ const {
 } = require('./ensure-interface-interaction-custom-type')
 const { ensureApiExtensions } = require('./ensure-api-extensions')
 
-function ensureCustomTypes(ctpClient) {
+function ensureCustomTypes(ctpClient, ctpProjectKey) {
   return Promise.all([
-    ensurePaymentCustomType(ctpClient),
-    ensureInterfaceInteractionCustomType(ctpClient),
+    ensurePaymentCustomType(ctpClient, ctpProjectKey),
+    ensureInterfaceInteractionCustomType(ctpClient, ctpProjectKey),
   ])
 }
 
-function ensureResources(ctpClient, apiExtensionBaseUrl) {
+function ensureResources(ctpClient, ctpProjectKey, apiExtensionBaseUrl) {
   return Promise.all([
-    ensureCustomTypes(ctpClient),
-    ensureApiExtensions(ctpClient, apiExtensionBaseUrl),
+    ensureCustomTypes(ctpClient, ctpProjectKey),
+    ensureApiExtensions(ctpClient, ctpProjectKey, apiExtensionBaseUrl),
   ])
 }
 
