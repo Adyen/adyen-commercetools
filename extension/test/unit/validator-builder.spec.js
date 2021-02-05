@@ -220,21 +220,4 @@ describe('Validator builder', () => {
       MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
     )
   })
-
-  it('on having one random custom field should return error object', () => {
-    const invalidPayment = {
-      custom: {
-        fields: {
-          randomCustomField: 'bar',
-        },
-      },
-    }
-    const errorObject = ValidatorBuilder.withPayment(invalidPayment)
-      .validateMetadataFields()
-      .getErrors()
-
-    expect(errorObject.missingRequiredCtpProjectKey).to.equal(
-      MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
-    )
-  })
 })
