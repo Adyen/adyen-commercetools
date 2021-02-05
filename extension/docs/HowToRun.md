@@ -101,13 +101,13 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 }
 ```
 
-| Name              | Content                                                                                                       | Required | Default value                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------- |
-| `clientId`        | OAuth 2.0 `client_id` and can be used to obtain a token.                                                      | YES      |                                                   |
-| `clientSecret`    | OAuth 2.0 `client_secret` and can be used to obtain a token.                                                  | YES      |                                                   |
-| `ensureResources` | Set to `false` to disable the creation of required resources in commercetools (e.g. custom types) on startup. | NO       | `true`                                            |
-| `host`            | The commercetools HTTP API is hosted at that URL.                                                             | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
-| `authUrl`         | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                   | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
+| Name              | Content                                                                                                                                              | Required | Default value                                     |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------- |
+| `clientId`        | OAuth 2.0 `client_id` and can be used to obtain a token.                                                                                             | YES      |                                                   |
+| `clientSecret`    | OAuth 2.0 `client_secret` and can be used to obtain a token.                                                                                         | YES      |                                                   |
+| `ensureResources` | Set to `false` to disable the creation of required resources in commercetools (e.g. custom types) on startup. Not used in the serverless deployment. | NO       | `true`                                            |
+| `host`            | The commercetools HTTP API is hosted at that URL.                                                                                                    | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `authUrl`         | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                                                          | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
 
 ### Other Configurations
 
