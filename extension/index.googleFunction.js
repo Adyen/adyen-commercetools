@@ -4,32 +4,31 @@
  *
  * Entry point: extensionTrigger
  */
+const { serializeError } = require('serialize-error')
 const paymentHandler = require('./src/paymentHandler/payment-handler')
 const utils = require('./src/utils')
 
 const logger = utils.getLogger()
 
 exports.extensionTrigger = async (request, response) => {
-  const { obj } = request.body.resource
-
-  if (!obj) {
-    const errorMessage = 'No payment object is found.'
-    const noPaymentErrorJson = {
-      errors: [
-        {
-          code: 'InvalidInput',
-          message: errorMessage,
-        },
-      ],
-    }
-    logger.error(errorMessage)
-    response.status(400).send(noPaymentErrorJson)
-  } else {
+  try {
+    const { obj } = request.body.resource
     const paymentResult = await paymentHandler.handlePayment(obj)
     if (paymentResult.success) {
-      response.status(200).send(paymentResult.data)
+      response.status(200).send({
+        actions: paymentResult.data ? paymentResult.data.actions : [],
+      })
     } else {
-      response.status(400).send(paymentResult.data)
+      response.status(400).send({
+        errors: paymentResult.data ? paymentResult.data.errors : undefined,
+      })
     }
+  } catch (err) {
+    const errorMessage = `Unexpected error: ${JSON.stringify(
+      serializeError(err)
+    )}`
+    logger.error(errorMessage)
+
+    response.status(400).send('Unexpected error happened, check the logs.')
   }
 }
