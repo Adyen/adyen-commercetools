@@ -3,9 +3,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-**Table of Contents**
-
-- [Environment variables](#environment-variables)
+- [Environment variable](#environment-variable)
   - [Adyen](#adyen)
   - [commercetools](#commercetools)
   - [Other Configurations](#other-configurations)
