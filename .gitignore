@@ -23,3 +23,5 @@ secrets.yaml
 
 # NYC test coverage
 .nyc_output/
+
+*.zip
