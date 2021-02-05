@@ -1,4 +1,3 @@
-const pMap = require('p-map')
 const pU = require('./payment-utils')
 const { refund } = require('../service/web-component-service')
 const { CTP_INTERACTION_TYPE_REFUND } = require('../config/constants')
@@ -15,9 +14,8 @@ async function execute(paymentObject) {
 
   const actions = []
 
-  await pMap(
-    refundInitTransactions,
-    async (refundTransaction) => {
+  await Promise.all(
+    refundInitTransactions.map(async (refundTransaction) => {
       const refundRequestObjects = {
         modificationAmount: {
           value: refundTransaction.amount.centAmount,
@@ -51,8 +49,7 @@ async function execute(paymentObject) {
           )
         )
       }
-    },
-    { concurrency: 10 }
+    })
   )
 
   return {

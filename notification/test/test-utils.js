@@ -1,4 +1,3 @@
-const pMap = require('p-map')
 const config = require('../src/config/config')
 
 process.on('unhandledRejection', (reason) => {
@@ -29,17 +28,30 @@ async function deleteAllResources(ctpClient, endpoint, condition) {
   if (condition) requestBuilder = requestBuilder.where(condition)
 
   return ctpClient.fetchBatches(requestBuilder, (items) =>
-    pMap(
-      items,
-      async (item) => {
+    Promise.all(
+      items.map(async (item) => {
         if (endpoint === 'products' && item.masterData.published)
           item = await unpublish(ctpClient, item)
 
         return deleteResource(ctpClient, endpoint, item)
-      },
-      { concurrency: 10 }
+      })
     )
   )
+}
+
+let originalGetAdyenConfigFn
+
+function overrideAdyenConfig(newAdyenConfig) {
+  originalGetAdyenConfigFn = config.getAdyenConfig
+  config.getAdyenConfig = function () {
+    return newAdyenConfig
+  }
+  module.exports = config
+}
+
+function restoreAdyenConfig() {
+  config.getAdyenConfig = originalGetAdyenConfigFn
+  module.exports = config
 }
 
 let originalGetAdyenConfigFn

@@ -19,7 +19,10 @@ describe('::getPaymentMethods::', () => {
   before(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
-    await iTSetUp.initServerAndExtension({ ctpClient })
+    await iTSetUp.initServerAndExtension({
+      ctpClient,
+      ctpProjectKey: ctpConfig.projectKey,
+    })
   })
 
   after(async () => {

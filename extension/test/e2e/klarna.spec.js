@@ -57,8 +57,7 @@ describe('::klarnaPayment::', () => {
     ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.initServerAndExtension({
       ctpClient,
-      routes,
-      testServerPort: 8080,
+      ctpProjectKey: ctpConfig.projectKey,
     })
     browser = await initPuppeteerBrowser()
   })
@@ -71,7 +70,7 @@ describe('::klarnaPayment::', () => {
   it(
     'when payment method is klarna and process is done correctly, ' +
       'then it should successfully finish the payment',
-    async function () {
+    async function func() {
       this.timeout(60000)
 
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
