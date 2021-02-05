@@ -1,37 +1,46 @@
-const ctp = require('./utils/ctp')
+const _ = require('lodash')
 const handler = require('./handler/notification/notification.handler')
-const config = require('./config/config')()
+const config = require('./config/config')
 const logger = require('./utils/logger').getLogger()
 const { getNotificationForTracking } = require('./utils/commons')
 const setup = require('./config/init/ensure-interface-interaction-custom-type')
 
-const ctpClient = ctp.get(config)
-
 let initialised = false
 
 exports.handler = async function (event) {
-  const { notificationItems } = event
-  try {
-    if (!initialised) {
-      await setup.ensureInterfaceInteractionCustomType(ctpClient)
-      initialised = true
-    }
-    if (!notificationItems) {
-      throw new Error('No notification received.')
-    }
+  const notifications = _.get(event, 'notificationItems', [])
+  for (const notification of notifications) {
+    try {
+      const commercetoolsProjectKey =
+        notification.NotificationRequestItem.additionalData[
+          'metadata.commercetoolsProjectKey'
+        ]
+      const adyenMerchantAccount =
+        notification.NotificationRequestItem.merchantAccountCode
+      const ctpProjectConfig = config.getCtpConfig(commercetoolsProjectKey)
+      const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
 
-    await handler.processNotifications(notificationItems, ctpClient)
-    return {
-      notificationResponse: '[accepted]',
+      if (!initialised) {
+        await setup.ensureInterfaceInteractionCustomType(ctpProjectConfig)
+        initialised = true
+      }
+      await handler.processNotification(
+        notification,
+        adyenConfig.enableHmacSignature,
+        ctpProjectConfig
+      )
+    } catch (e) {
+      logger.error(
+        {
+          notification: getNotificationForTracking(notifications),
+          err: e,
+        },
+        'Unexpected error when processing event'
+      )
+      throw e
     }
-  } catch (e) {
-    logger.error(
-      {
-        notification: getNotificationForTracking(notificationItems),
-        err: e,
-      },
-      'Unexpected error when processing event'
-    )
-    throw e
+  }
+  return {
+    notificationResponse: '[accepted]',
   }
 }

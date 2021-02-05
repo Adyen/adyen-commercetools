@@ -1,21 +1,42 @@
 const sinon = require('sinon')
 const { expect } = require('chai')
 const { cloneDeep } = require('lodash')
-const config = require('../../src/config/config')()
+const config = require('../../src/config/config')
 
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const notificationsMock = require('../resources/notification').notificationItems
 const concurrentModificationError = require('../resources/concurrent-modification-exception')
 const ctpClientMock = require('./ctp-client-mock')
 const paymentMock = require('../resources/payment-credit-card')
+const ctp = require('../../src/utils/ctp')
+const { overrideAdyenConfig, restoreAdyenConfig } = require('../test-utils')
 
 const sandbox = sinon.createSandbox()
 
 describe('notification module', () => {
+  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
+  const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+  let originalCtpGetFn
+
   before(() => {
-    config.adyen.enableHmacSignature = false
+    overrideAdyenConfig({
+      enableHmacSignature: false,
+    })
   })
-  afterEach(() => sandbox.restore())
+
+  after(() => {
+    restoreAdyenConfig()
+  })
+
+  beforeEach(() => {
+    originalCtpGetFn = ctp.get
+  })
+
+  afterEach(() => {
+    ctp.get = originalCtpGetFn
+    module.exports = ctp
+    sandbox.restore()
+  })
 
   it(`given that ADYEN sends an "AUTHORISATION is successful" notification
       when payment has a pending authorization transaction 
@@ -28,6 +49,9 @@ describe('notification module', () => {
           amount: {
             currency: 'EUR',
             value: 10100,
+          },
+          additionalData: {
+            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
           },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -53,13 +77,20 @@ describe('notification module', () => {
       interactionId: 'test_AUTHORISATION_1',
       state: 'Initial',
     })
-    const ctpClient = ctpClientMock.get(config)
+    const ctpClient = ctpClientMock.get(ctpConfig)
     sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
       body: payment,
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+    module.exports = ctp
+
     // process
-    await notificationHandler.processNotifications(notifications, ctpClient)
+    await notificationHandler.processNotification(
+      notifications[0],
+      false,
+      config
+    )
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -103,6 +134,9 @@ describe('notification module', () => {
             currency: 'EUR',
             value: 10100,
           },
+          additionalData: {
+            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+          },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
           merchantAccountCode: 'CommercetoolsGmbHDE775',
@@ -127,13 +161,20 @@ describe('notification module', () => {
       interactionId: 'test_AUTHORISATION_1',
       state: 'Pending',
     })
-    const ctpClient = ctpClientMock.get(config)
+    const ctpClient = ctpClientMock.get(ctpConfig)
     sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
       body: payment,
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+    module.exports = ctp
+
     // process
-    await notificationHandler.processNotifications(notifications, ctpClient)
+    await notificationHandler.processNotification(
+      notifications[0],
+      false,
+      config
+    )
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -172,6 +213,9 @@ describe('notification module', () => {
             currency: 'EUR',
             value: 10100,
           },
+          additionalData: {
+            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+          },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
           merchantAccountCode: 'CommercetoolsGmbHDE775',
@@ -207,13 +251,20 @@ describe('notification module', () => {
         createdAt: '2019-02-05T12:29:36.028Z',
       },
     })
-    const ctpClient = ctpClientMock.get(config)
+    const ctpClient = ctpClientMock.get(ctpConfig)
     sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
       body: payment,
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+    module.exports = ctp
+
     // process
-    await notificationHandler.processNotifications(notifications, ctpClient)
+    await notificationHandler.processNotification(
+      notifications[0],
+      false,
+      config
+    )
     // assert
     expect(ctpClientUpdateSpy.args[0][3]).to.have.lengthOf(0)
   })
@@ -229,6 +280,9 @@ describe('notification module', () => {
           amount: {
             currency: 'EUR',
             value: 10100,
+          },
+          additionalData: {
+            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
           },
           eventCode: 'CANCELLATION',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -253,13 +307,20 @@ describe('notification module', () => {
       },
       state: 'Pending',
     })
-    const ctpClient = ctpClientMock.get(config)
+    const ctpClient = ctpClientMock.get(ctpConfig)
     sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
       body: payment,
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+    module.exports = ctp
+
     // process
-    await notificationHandler.processNotifications(notifications, ctpClient)
+    await notificationHandler.processNotification(
+      notifications[0],
+      false,
+      config
+    )
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -310,6 +371,9 @@ describe('notification module', () => {
             currency: 'EUR',
             value: 10100,
           },
+          additionalData: {
+            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+          },
           eventCode: 'CAPTURE',
           eventDate: '2019-01-30T18:16:22+01:00',
           merchantAccountCode: 'CommercetoolsGmbHDE775',
@@ -333,13 +397,20 @@ describe('notification module', () => {
       },
       state: 'Success',
     })
-    const ctpClient = ctpClientMock.get(config)
+    const ctpClient = ctpClientMock.get(ctpConfig)
     sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
       body: payment,
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+    module.exports = ctp
+
     // process
-    await notificationHandler.processNotifications(notifications, ctpClient)
+    await notificationHandler.processNotification(
+      notifications[0],
+      false,
+      config
+    )
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -390,6 +461,9 @@ describe('notification module', () => {
             currency: 'EUR',
             value: 10100,
           },
+          additionalData: {
+            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+          },
           eventCode: 'CAPTURE_FAILED',
           eventDate: '2019-01-30T18:16:22+01:00',
           merchantAccountCode: 'CommercetoolsGmbHDE775',
@@ -413,13 +487,20 @@ describe('notification module', () => {
       },
       state: 'Success',
     })
-    const ctpClient = ctpClientMock.get(config)
+    const ctpClient = ctpClientMock.get(ctpConfig)
     sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
       body: payment,
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+    module.exports = ctp
+
     // process
-    await notificationHandler.processNotifications(notifications, ctpClient)
+    await notificationHandler.processNotification(
+      notifications[0],
+      false,
+      config
+    )
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -471,7 +552,7 @@ describe('notification module', () => {
         status: 'SUCCESS',
       },
     })
-    const ctpClient = ctpClientMock.get(config)
+    const ctpClient = ctpClientMock.get(ctpConfig)
     sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
       body: modifiedPaymentMock,
     }))
@@ -483,12 +564,16 @@ describe('notification module', () => {
       .callsFake(() => {
         throw concurrentModificationError
       })
+    ctp.get = () => ctpClient
+    module.exports = ctp
+
+    // process
     try {
-      await notificationHandler.processNotifications(
-        notificationsMock,
-        ctpClient
+      await notificationHandler.processNotification(
+        notificationsMock[0],
+        false,
+        config
       )
-      // eslint-disable-next-line no-empty
     } catch (e) {
       // we check retry logic here and it should throw after certain amount
       // of retries. So the error is expected
@@ -497,13 +582,18 @@ describe('notification module', () => {
   })
 
   it('do not make any requests when merchantReference cannot be extracted from notification', async () => {
-    const ctpClient = ctpClientMock.get(config)
+    const ctpClient = ctpClientMock.get(ctpConfig)
     const ctpClientFetchByKeySpy = sandbox.spy(ctpClient, 'fetchByKey')
     const ctpClientFetchByIdSpy = sandbox.spy(ctpClient, 'fetchById')
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
-    await notificationHandler.processNotifications(
-      [{ name: 'some wrong notification' }],
-      ctpClient
+    ctp.get = () => ctpClient
+    module.exports = ctp
+
+    // process
+    await notificationHandler.processNotification(
+      { name: 'some wrong notification' },
+      false,
+      config
     )
 
     expect(ctpClientFetchByKeySpy.callCount).to.equal(0)

@@ -16,8 +16,11 @@ async function execute(paymentObject) {
   }
 
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
+  const commercetoolsProjectKey =
+    paymentObject.custom.fields.commercetoolsProjectKey
   const { request, response } = await manualCapture(
     adyenMerchantAccount,
+    commercetoolsProjectKey,
     manualCaptureRequestObj
   )
 
