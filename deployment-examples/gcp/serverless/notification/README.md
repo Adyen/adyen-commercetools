@@ -9,3 +9,4 @@
       - package.json
 
 2. Specify the `notificationTrigger` as the entry point function in your GCP Cloud Function configuration.
+3. By default, the deployed cloud function is not allowed to be called without permission. It returns 403 http status when it is called. Please add desired user groups into 'Cloud Functions Invoker'.
