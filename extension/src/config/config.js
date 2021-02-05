@@ -68,9 +68,6 @@ function loadAndValidateConfig() {
     )
   }
 
-  if (_.isEmpty(config.apiExtensionBaseUrl))
-    throw new Error('apiExtensionBaseUrl attribute must be set!')
-
   const numberOfCtpConfigs = Object.keys(config.commercetools).length
   const numberOfAdyenConfigs = Object.keys(config.adyen).length
   if (numberOfCtpConfigs === 0)
@@ -89,6 +86,11 @@ function loadAndValidateConfig() {
       throw new Error(
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
           'Please verify that all projects have projectKey, clientId and clientSecret'
+      )
+    if (ctpConfig.ensureResources && _.isEmpty(config.apiExtensionBaseUrl))
+      throw new Error(
+        `apiExtensionBaseUrl attribute must be set because ` +
+          `commercetools project '${ctpProjectKey}' has ensureResources=true.`
       )
   }
 }
