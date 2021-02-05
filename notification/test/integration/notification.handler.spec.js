@@ -4,28 +4,16 @@ const { address } = require('ip')
 const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const iTSetUp = require('./integration-test-set-up')
-const config = require('../../src/config/config')
+const config = require('../../src/config/config')()
 const notifications = require('../resources/notification')
 const notificationRefundFail = require('../resources/notification-refund-fail')
-const { overrideAdyenConfig } = require('../test-utils')
 
 // node-fetch package doesn't support requests to localhost, therefore
 // we need to provide the IP behind localhost
 const localhostIp = address()
 
 describe('notification module', () => {
-  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
-  const ctpClient = ctpClientBuilder.get(
-    config.getCtpConfig(commercetoolsProjectKey)
-  )
-  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
-  const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-  notifications.notificationItems[0].NotificationRequestItem.additionalData[
-    'metadata.commercetoolsProjectKey'
-  ] = commercetoolsProjectKey
-  notificationRefundFail.notificationItems[0].NotificationRequestItem.additionalData[
-    'metadata.commercetoolsProjectKey'
-  ] = commercetoolsProjectKey
+  const ctpClient = ctpClientBuilder.get(config)
 
   before(async () => {
     await iTSetUp.startServer()
@@ -36,7 +24,7 @@ describe('notification module', () => {
   })
 
   beforeEach(async () => {
-    adyenConfig.enableHmacSignature = false
+    config.adyen.enableHmacSignature = false
     await iTSetUp.prepareProject(ctpClient)
   })
 
@@ -287,7 +275,6 @@ describe('notification module', () => {
         'REFUND'
       modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
         'modification.action': 'refund',
-        'metadata.commercetoolsProjectKey': commercetoolsProjectKey,
       }
       modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId
 
@@ -384,7 +371,6 @@ describe('notification module', () => {
         'REFUND'
       successNotification1.notificationItems[0].NotificationRequestItem.additionalData = {
         'modification.action': 'refund',
-        'metadata.commercetoolsProjectKey': commercetoolsProjectKey,
       }
       successNotification1.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId1
 
@@ -487,7 +473,6 @@ describe('notification module', () => {
         'CANCEL_OR_REFUND'
       modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
         'modification.action': 'cancel',
-        'metadata.commercetoolsProjectKey': commercetoolsProjectKey,
       }
       modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = cancellationInteractionId
 
@@ -524,11 +509,9 @@ describe('notification module', () => {
 
   it('should not update payment when the notification is unauthorised', async () => {
     // enable hmac verification
-    overrideAdyenConfig({
-      enableHmacSignature: true,
-      secretHmacKey:
-        '44782DEF547AAA06C910C43932B1EB0C71FC68D9D0C057550C48EC2ACF6BA056',
-    })
+    config.adyen.enableHmacSignature = true
+    config.adyen.secretHmacKey =
+      '44782DEF547AAA06C910C43932B1EB0C71FC68D9D0C057550C48EC2ACF6BA056'
 
     const modifiedNotification = cloneDeep(notifications)
 

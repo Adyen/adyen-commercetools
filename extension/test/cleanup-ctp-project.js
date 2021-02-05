@@ -4,11 +4,8 @@ const config = require('../src/config/config')
 
 before(async () => {
   const ctpProjectKeys = config.getAllCtpProjectKeys()
-  await Promise.all(
-    ctpProjectKeys.map(async (ctpProjectKey) => {
-      const ctpConfig = config.getCtpConfig(ctpProjectKey)
-      const ctpClient = ctpClientBuilder.get(ctpConfig)
-      await iTSetUp.cleanupCtpResources(ctpClient)
-    })
-  )
+  for (const projectKey of ctpProjectKeys) {
+    const ctpClient = ctpClientBuilder.get(projectKey)
+    await iTSetUp.cleanupCtpResources(ctpClient)
+  }
 })

@@ -1,21 +1,23 @@
 const _ = require('lodash')
+const pMap = require('p-map')
 const { serializeError } = require('serialize-error')
+const ctp = require('../../utils/ctp')
 const { validateHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
-const ctp = require('../../utils/ctp')
+const logger = require('../../utils/logger').getLogger()
 const { getNotificationForTracking } = require('../../utils/commons')
-const mainLogger = require('../../utils/logger').getLogger()
+const config = require('../../config/config')()
 
-async function processNotification(
-  notification,
-  enableHmacSignature,
-  ctpProjectConfig
-) {
-  const logger = mainLogger.child({
-    commercetools_project_key: ctpProjectConfig.projectKey,
-  })
+async function processNotifications(notifications, ctpClient) {
+  await pMap(
+    notifications,
+    (notification) => processNotification(notification, ctpClient),
+    { concurrency: 10 }
+  )
+}
 
-  if (enableHmacSignature) {
+async function processNotification(notification, ctpClient) {
+  if (config.adyen.enableHmacSignature) {
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
       logger.error(
@@ -39,26 +41,19 @@ async function processNotification(
     return
   }
 
-  const ctpClient = ctp.get(ctpProjectConfig)
-
   const payment = await getPaymentByMerchantReference(
     merchantReference,
     ctpClient
   )
   if (payment !== null)
-    await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
+    await updatePaymentWithRepeater(payment, notification, ctpClient)
   else
     logger.error(
       `Payment with merchantReference: ${merchantReference} was not found`
     )
 }
 
-async function updatePaymentWithRepeater(
-  payment,
-  notification,
-  ctpClient,
-  logger
-) {
+async function updatePaymentWithRepeater(payment, notification, ctpClient) {
   const maxRetry = 20
   let currentPayment = payment
   let currentVersion = payment.version
@@ -146,7 +141,7 @@ function calculateUpdateActionsForPayment(payment, notification) {
         })
       )
     else if (
-      compareTransactionStates(oldTransaction.state, transactionState) > 0
+      ctp.compareTransactionStates(oldTransaction.state, transactionState) > 0
     )
       updateActions.push(
         getChangeTransactionStateUpdateAction(
@@ -156,34 +151,6 @@ function calculateUpdateActionsForPayment(payment, notification) {
       )
   }
   return updateActions
-}
-
-/**
- * Compares transaction states
- * @param currentState state of the transaction from the CT platform
- * @param newState state of the transaction from the Adyen notification
- * @return number 1 if newState can appear after currentState
- * -1 if newState cannot appear after currentState
- * 0 if newState is the same as currentState
- * @throws Error when newState and/or currentState is a wrong transaction state
- * */
-function compareTransactionStates(currentState, newState) {
-  const transactionStateFlow = {
-    Initial: 0,
-    Pending: 1,
-    Success: 2,
-    Failure: 2,
-  }
-  if (
-    !transactionStateFlow.hasOwnProperty(currentState) ||
-    !transactionStateFlow.hasOwnProperty(newState)
-  )
-    throw Error(
-      'Wrong transaction state passed. ' +
-        `currentState: ${currentState}, newState: ${newState}`
-    )
-
-  return transactionStateFlow[newState] - transactionStateFlow[currentState]
 }
 
 function getAddInterfaceInteractionUpdateAction(notification) {
@@ -293,4 +260,4 @@ async function getPaymentByMerchantReference(merchantReference, ctpClient) {
   }
 }
 
-module.exports = { processNotification }
+module.exports = { processNotifications }

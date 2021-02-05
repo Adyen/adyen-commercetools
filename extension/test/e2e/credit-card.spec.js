@@ -27,11 +27,11 @@ describe('::creditCardPayment::', () => {
     routes['/make-payment-form'] = async (request, response) => {
       serveFile('./test/e2e/fixtures/make-payment-form.html', request, response)
     }
-    const ctpConfig = config.getCtpConfig(ctpProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.initServerAndExtension({
       ctpClient,
-      ctpProjectKey: ctpConfig.projectKey,
+      routes,
+      testServerPort: 8080,
     })
     browser = await initPuppeteerBrowser()
   })

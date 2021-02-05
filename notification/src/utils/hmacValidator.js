@@ -1,5 +1,5 @@
 const { hmacValidator } = require('@adyen/api-library')
-const config = require('../config/config')
+const config = require('../config/config')()
 
 /* eslint-disable new-cap */
 const validator = new hmacValidator()
@@ -29,12 +29,9 @@ function validateHmacSignature(notification) {
       '"NotificationRequestItem.additionalData.hmacSignature". ' +
       'Please check if HMAC is configured correctly or contact Adyen.'
     )
-  const adyenMerchantAccount =
-    notification.NotificationRequestItem.merchantAccountCode
-  const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
   const validationResult = validator.validateHMAC(
     notificationRequestItem,
-    adyenConfig.secretHmacKey
+    config.adyen.secretHmacKey
   )
   if (!validationResult)
     return (

@@ -1,109 +1,81 @@
-const { isEmpty } = require('lodash')
+const { merge, isEmpty } = require('lodash')
+
+const configPath = process.env.CONFIG_PATH
 
 let config
 
-function getModuleConfig() {
+function getEnvConfig() {
   return {
-    port: config.port,
-    logLevel: config.logLevel,
-    keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
-      ? parseFloat(config.keepAliveTimeout, 10)
+    logLevel: process.env.LOG_LEVEL,
+    keepAliveTimeout: !Number.isNaN(process.env.KEEP_ALIVE_TIMEOUT)
+      ? parseFloat(process.env.KEEP_ALIVE_TIMEOUT, 10)
       : undefined,
+    ensureResources: process.env.ENSURE_RESOURCES !== 'false',
   }
 }
 
-function getCtpConfig(ctpProjectKey) {
-  const ctpConfig = config.commercetools[ctpProjectKey]
-  if (!ctpConfig)
-    throw new Error(
-      `Configuration is not provided. Please update the configuration. ctpProjectKey: [${JSON.stringify(
-        ctpProjectKey
-      )}]`
-    )
+function getCTPEnvCredentials() {
   return {
-    clientId: ctpConfig.clientId,
-    clientSecret: ctpConfig.clientSecret,
-    projectKey: ctpProjectKey,
+    projectKey: process.env.CTP_PROJECT_KEY,
+    clientId: process.env.CTP_CLIENT_ID,
+    clientSecret: process.env.CTP_CLIENT_SECRET,
     apiUrl:
-      ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
+      process.env.CTP_HOST || 'https://api.europe-west1.gcp.commercetools.com',
     authUrl:
-      ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
-    ensureResources: config.ensureResources !== 'false',
+      process.env.CTP_AUTH_URL ||
+      'https://auth.europe-west1.gcp.commercetools.com',
   }
 }
 
-function getAdyenConfig(adyenMerchantAccount) {
-  const adyenConfig = config.adyen[adyenMerchantAccount]
-  if (!adyenConfig)
-    throw new Error(
-      `Configuration for adyenMerchantAccount is not provided. Please update the configuration: ${JSON.stringify(
-        adyenMerchantAccount
-      )}`
-    )
+function getAdyenCredentials() {
   return {
-    secretHmacKey: adyenConfig.secretHmacKey,
-    enableHmacSignature: adyenConfig.enableHmacSignature !== 'false',
+    secretHmacKey: process.env.ADYEN_SECRET_HMAC_KEY,
+    enableHmacSignature: process.env.ADYEN_ENABLE_HMAC_SIGNATURE !== 'false',
   }
 }
 
-function getAllCtpProjectKeys() {
-  return Object.keys(config.commercetools)
-}
-
-function getAllAdyenMerchantAccounts() {
-  return Object.keys(config.adyen)
-}
-
-function loadAndValidateConfig() {
+function getFileConfig() {
+  let fileConfig = {}
   try {
-    config = JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
-  } catch (e) {
-    throw new Error(
-      'Adyen integration configuration is not provided in the JSON format'
-    )
-  }
-  const numberOfCtpConfigs = Object.keys(config.commercetools).length
-  const numberOfAdyenConfigs = Object.keys(config.adyen).length
-  if (numberOfCtpConfigs === 0)
-    throw new Error(
-      'Please add at least one commercetools project to the config'
-    )
-  if (numberOfAdyenConfigs === 0)
-    throw new Error(
-      'Please add at least one Adyen merchant account to the config'
-    )
-
-  for (const [ctpProjectKey, ctpConfig] of Object.entries(
-    config.commercetools
-  )) {
-    if (!ctpConfig.clientId || !ctpConfig.clientSecret)
-      throw new Error(
-        `[${ctpProjectKey}]: CTP project credentials are missing. ` +
-          'Please verify that all projects have projectKey, clientId and clientSecret'
-      )
+    fileConfig = require(configPath) // eslint-disable-line
+  } catch (err) {
+    // config file was not provided
   }
 
-  for (const [adyenMerchantAccount, adyenConfig] of Object.entries(
-    config.adyen
-  )) {
-    if (
-      adyenConfig.enableHmacSignature !== 'false' &&
-      isEmpty(adyenConfig.secretHmacKey)
-    )
-      throw new Error(
-        `[${adyenMerchantAccount}]: The "secretHmacKey" config variable is missing to be able to verify ` +
-          `notifications, please generate a secret HMAC key in Adyen Customer Area ` +
-          `or set "enableHmacSignature=false" to disable the verification feature.`
-      )
-  }
+  return fileConfig
 }
 
-loadAndValidateConfig()
+module.exports = function load() {
+  /**
+   * Load configuration from several sources in this order (last has highest priority):
+   * - default config
+   * - file config
+   * - ctp credentials from env variables
+   * - ctp config
+   * - env config
+   */
+  if (config === undefined) {
+    config = merge(
+      getEnvConfig(),
+      { ctp: getCTPEnvCredentials() },
+      { adyen: getAdyenCredentials() },
+      getFileConfig()
+    )
 
-module.exports = {
-  getModuleConfig,
-  getCtpConfig,
-  getAdyenConfig,
-  getAllCtpProjectKeys,
-  getAllAdyenMerchantAccounts,
+    if (
+      !config.ctp.projectKey ||
+      !config.ctp.clientId ||
+      !config.ctp.clientSecret
+    )
+      throw new Error('CTP project credentials are missing')
+
+    if (config.adyen.enableHmacSignature && isEmpty(config.adyen.secretHmacKey))
+      throw new Error(
+        'The "ADYEN_SECRET_HMAC_KEY" environment variable is missing to be able to verify notifications, ' +
+          'please generate a secret HMAC key in Adyen Customer Area ' +
+          'or set "ADYEN_ENABLE_HMAC_SIGNATURE=false" to disable the verification feature.'
+      )
+  }
+
+  return config
 }

@@ -15,10 +15,7 @@
         "paymentMethod": "visa",
         "pspReference": "883606224931332F",
         "reason": "Insufficient balance on payment",
-        "success": "false",
-        "additionalData": {
-          "metadata.commercetoolsProjectKey": "adyen-integration-test"
-        }
+        "success": "false"
       }
     }
   ]

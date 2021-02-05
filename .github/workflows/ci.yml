@@ -28,7 +28,10 @@ jobs:
       - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
       - run: npm run test
         env:
-          ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
+          ADYEN_SECRET_HMAC_KEY: ${{ secrets.ADYEN_SECRET_HMAC_KEY }}
+          CTP_PROJECT_KEY: adyen-integration-test
+          CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
+          CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
 
   extension_build:
     name: Extension Module

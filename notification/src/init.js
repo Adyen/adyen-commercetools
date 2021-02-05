@@ -1,25 +1,18 @@
 const server = require('./server.js').setupServer()
 const {
-  ensureInterfaceInteractionCustomTypeForAllProjects,
+  ensureInterfaceInteractionCustomType,
 } = require('./config/init/ensure-interface-interaction-custom-type')
+const ctp = require('./utils/ctp')
 const logger = require('./utils/logger').getLogger()
-const config = require('./config/config')
+const config = require('./config/config')()
 
-const PORT = config.getModuleConfig().port || 443
+const ctpClient = ctp.get(config)
 
-if (config.getModuleConfig().keepAliveTimeout !== undefined)
-  server.keepAliveTimeout = config.getModuleConfig().keepAliveTimeout
+const PORT = process.env.PORT || 443
+
+if (config.keepAliveTimeout !== undefined)
+  server.keepAliveTimeout = config.keepAliveTimeout
 server.listen(PORT, async () => {
-  await ensureInterfaceInteractionCustomTypeForAllProjects()
-  const ctpProjectKeys = config.getAllCtpProjectKeys()
-  const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
-  logger.info(
-    `Server started on ${PORT} port. ` +
-      `Configured commercetools project keys are: ${JSON.stringify(
-        ctpProjectKeys
-      )}. ` +
-      `Configured adyen merchant accounts are: ${JSON.stringify(
-        adyenMerchantAccounts
-      )}`
-  )
+  await ensureInterfaceInteractionCustomType(ctpClient)
+  logger.info(`Server started on ${PORT} port`)
 })

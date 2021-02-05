@@ -20,24 +20,15 @@ describe('Lambda handler', () => {
 
   afterEach(() => {
     setup.ensureInterfaceInteractionCustomType.restore()
-    notificationHandler.processNotification.restore()
+    notificationHandler.processNotifications.restore()
   })
 
   const event = {
-    notificationItems: [
-      {
-        NotificationRequestItem: {
-          additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
-          },
-          merchantAccountCode: 'CommercetoolsGmbHDE775',
-        },
-      },
-    ],
+    notificationItems: [],
   }
 
   it('only calls ensureResources once', async () => {
-    sinon.stub(notificationHandler, 'processNotification').returns(undefined)
+    sinon.stub(notificationHandler, 'processNotifications').returns(undefined)
 
     await handler(event)
     await handler(event)
@@ -46,7 +37,7 @@ describe('Lambda handler', () => {
   })
 
   it('returns correct success response', async () => {
-    sinon.stub(notificationHandler, 'processNotification').returns(undefined)
+    sinon.stub(notificationHandler, 'processNotifications').returns(undefined)
 
     const result = await handler(event)
 
@@ -54,29 +45,24 @@ describe('Lambda handler', () => {
   })
 
   it('logs and throws unhandled exceptions', async () => {
-    const originalChildFn = logger.getLogger().child
-    try {
-      const logSpy = sinon.spy()
-      logger.getLogger().error = logSpy
-      logger.getLogger().child = () => ({
-        error: logSpy,
-      })
+    const logSpy = sinon.spy()
+    logger.getLogger().error = logSpy
 
-      const error = new Error('some error')
-      sinon.stub(notificationHandler, 'processNotification').throws(error)
+    const error = new Error('some error')
+    sinon.stub(notificationHandler, 'processNotifications').throws(error)
 
-      const call = async () => handler(event)
+    const call = async () => handler(event)
 
-      await expect(call()).to.be.rejectedWith(error)
-      assert(
-        logSpy.calledWith(
-          error,
-          `Unexpected error when processing event ${JSON.stringify(event)}`
-        )
+    await expect(call()).to.be.rejectedWith(error)
+    assert(
+      logSpy.calledWith(
+        {
+          notification: [],
+          err: error,
+        },
+        `Unexpected error when processing event`
       )
-    } finally {
-      logger.getLogger().child = originalChildFn
-    }
+    )
   })
 
   it('throws error if no notificationItems were received and logs properly', async () => {

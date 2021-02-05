@@ -21,7 +21,6 @@
     "no-constant-condition": ["error", { "checkLoops": false }],
     "no-prototype-builtins": "off",
     "arrow-parens": "off",
-    "no-await-in-loop": "off",
-    "import/no-extraneous-dependencies": "off"
+    "no-await-in-loop": "off"
   }
 }

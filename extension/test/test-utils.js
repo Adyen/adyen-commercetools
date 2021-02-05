@@ -1,6 +1,8 @@
 global.window = {}
 global.navigator = {}
 
+const pMap = require('p-map')
+
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
   console.error('Unhandled Rejection:', reason)
@@ -38,15 +40,17 @@ function deleteAllResources(ctpClient, endpoint, condition) {
   if (condition) requestBuilder = requestBuilder.where(condition)
 
   return ctpClient.fetchBatches(requestBuilder, (items) =>
-    Promise.all(
-      items.map(async (item) => {
+    pMap(
+      items,
+      async (item) => {
         if (endpoint === 'products' && item.masterData.published) {
           const { body } = await unpublish(ctpClient, item)
           item = body
         }
 
-        await deleteResource(ctpClient, endpoint, item)
-      })
+        return deleteResource(ctpClient, endpoint, item)
+      },
+      { concurrency: 10 }
     )
   )
 }

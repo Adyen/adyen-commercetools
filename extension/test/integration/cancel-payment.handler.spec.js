@@ -19,13 +19,9 @@ describe('::cancel::', () => {
   let payment
 
   beforeEach(async () => {
-    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = ctpClientBuilder.get(commercetoolsProjectKey)
     await iTSetUp.cleanupCtpResources(ctpClient)
-    await iTSetUp.initServerAndExtension({
-      ctpClient,
-      ctpProjectKey: ctpConfig.projectKey,
-    })
+    await iTSetUp.initServerAndExtension({ ctpClient })
     const paymentDraft = {
       amountPlanned: {
         currencyCode: 'EUR',

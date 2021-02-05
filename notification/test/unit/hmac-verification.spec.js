@@ -1,22 +1,16 @@
 const { cloneDeep } = require('lodash')
 const { expect } = require('chai')
 const { validateHmacSignature } = require('../../src/utils/hmacValidator')
+const config = require('../../src/config/config')()
 const notificationRequest = require('../resources/notification.json')
-const { overrideAdyenConfig, restoreAdyenConfig } = require('../test-utils')
 
 const notification = notificationRequest.notificationItems[0]
 
 describe('verify hmac signatures', () => {
   before(() => {
-    overrideAdyenConfig({
-      enableHmacSignature: true, // default
-      secretHmacKey:
-        '44782DEF547AAA06C910C43932B1EB0C71FC68D9D0C057550C48EC2ACF6BA056', // Sample HMAC key
-    })
-  })
-
-  after(() => {
-    restoreAdyenConfig()
+    config.adyen.enableHmacSignature = true // default
+    config.adyen.secretHmacKey =
+      '44782DEF547AAA06C910C43932B1EB0C71FC68D9D0C057550C48EC2ACF6BA056' // Sample HMAC key
   })
 
   it(

@@ -4,8 +4,7 @@
     {
       "NotificationRequestItem": {
         "additionalData": {
-          "hmacSignature": "cjiTz03EI0jkkysGDdPJQdLbecRVVU/5jm12/DTFEHo=",
-          "metadata.commercetoolsProjectKey": "adyen-integration-test"
+          "hmacSignature": "cjiTz03EI0jkkysGDdPJQdLbecRVVU/5jm12/DTFEHo="
         },
         "amount": {
           "currency": "EUR",

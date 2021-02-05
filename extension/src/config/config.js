@@ -15,9 +15,9 @@ function getCtpConfig(ctpProjectKey) {
   const ctpConfig = config.commercetools[ctpProjectKey]
   if (!ctpConfig)
     throw new Error(
-      `Configuration is not provided. Please update the configuration. ctpProjectKey: [${JSON.stringify(
+      `Configuration for ctpProjectKey is not provided. Please update the configuration. ${JSON.stringify(
         ctpProjectKey
-      )}]`
+      )}`
     )
   return {
     clientId: ctpConfig.clientId,
@@ -75,16 +75,6 @@ function loadAndValidateConfig() {
     throw new Error(
       'Please add at least one Adyen merchant account to the config'
     )
-
-  for (const [ctpProjectKey, ctpConfig] of Object.entries(
-    config.commercetools
-  )) {
-    if (!ctpConfig.clientId || !ctpConfig.clientSecret)
-      throw new Error(
-        `[${ctpProjectKey}]: CTP project credentials are missing. ` +
-          'Please verify that all projects have projectKey, clientId and clientSecret'
-      )
-  }
 }
 
 loadAndValidateConfig()

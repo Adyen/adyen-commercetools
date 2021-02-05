@@ -60,11 +60,11 @@ describe('::creditCardPayment3dsNative::', () => {
       })
     }
 
-    const ctpConfig = config.getCtpConfig(ctpProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = ctpClientBuilder.get(ctpProjectKey)
     await iTSetUp.initServerAndExtension({
       ctpClient,
-      ctpProjectKey: ctpConfig.projectKey,
+      routes,
+      testServerPort: 8080,
     })
     browser = await initPuppeteerBrowser()
   })

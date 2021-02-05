@@ -1,5 +1,5 @@
 const bunyan = require('bunyan')
-const { logLevel } = require('../config/config').getModuleConfig()
+const { logLevel } = require('../config/config')()
 
 let obj
 
