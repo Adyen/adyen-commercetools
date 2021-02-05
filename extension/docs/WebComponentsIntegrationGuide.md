@@ -104,7 +104,7 @@ When your shopper is ready to pay, get a list of the available payment methods b
 
 > Refer Adyen's [/paymentMethods](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/paymentMethods) request to check all possible request payload parameters.
 
-Set `getPaymentMethodsRequest` custom field for a shopper in the Germany, for a payment of `10 EUR`:
+Here's an example of the value of `getPaymentMethodsRequest` custom field for a shopper in the Germany, for a payment of `10 EUR`:
 
 ```json
 {
