@@ -25,12 +25,12 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
 {
   "commercetools": {
     "commercetoolsProjectKey1": {
-      "clientId": "xxx1",
-      "clientSecret": "xxx1"
+      "clientId": "xxx",
+      "clientSecret": "xxx"
     },
     "commercetoolsProjectKey2": {
-      "clientId": "xxx2",
-      "clientSecret": "xxx2"
+      "clientId": "xxx",
+      "clientSecret": "xxx"
     }
   },
   "adyen": {
@@ -89,12 +89,12 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 {
   "commercetools": {
     "commercetoolsProjectKey1": {
-      "clientId": "xxx1",
-      "clientSecret": "xxx1"
+      "clientId": "xxx",
+      "clientSecret": "xxx"
     },
     "commercetoolsProjectKey2": {
-      "clientId": "xxx2",
-      "clientSecret": "xxx2"
+      "clientId": "xxx",
+      "clientSecret": "xxx"
       "ensureResources": false,
       "host": "https://api.us-east-2.aws.commercetools.com/"
       "authUrl": "https://auth.us-east-2.aws.commercetools.com/"

@@ -26,15 +26,15 @@ Extension module requires 1 environment variable to start. This environment vari
 {
   "commercetools": {
     "commercetoolsProjectKey1": {
-      "clientId": "xxx1",
-      "clientSecret": "xxx1",
+      "clientId": "xxx",
+      "clientSecret": "xxx",
       "ensureResources": true
     }
   },
   "adyen": {
     "adyenMerchantAccount1": {
-      "apiKey": "xxx2",
-      "clientKey": "xxx2"
+      "apiKey": "xxx",
+      "clientKey": "xxx"
     }
   },
   "logLevel": "DEBUG",
