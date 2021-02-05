@@ -31,6 +31,6 @@ exports.notificationTrigger = async (request, response) => {
       },
       'Unexpected error when processing event'
     )
-    throw e
+    response.status(500).send('Unexpected error when processing event')
   }
 }
