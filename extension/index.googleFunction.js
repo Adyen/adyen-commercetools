@@ -27,13 +27,9 @@ exports.extensionTrigger = async (request, response) => {
   } else {
     const paymentResult = await paymentHandler.handlePayment(obj)
     if (paymentResult.success) {
-      response.status(200).send({
-        data: paymentResult.data,
-      })
+      response.status(200).send(paymentResult.data)
     } else {
-      response.status(400).send({
-        data: paymentResult.data,
-      })
+      response.status(400).send(paymentResult.data)
     }
   }
 }
