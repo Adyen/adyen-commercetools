@@ -33,8 +33,7 @@ Extension module requires 1 environment variable to start. This environment vari
   },
   "adyen": {
     "adyenMerchantAccount1": {
-      "apiKey": "xxx",
-      "clientKey": "xxx"
+      "apiKey": "xxx"
     }
   },
   "logLevel": "DEBUG",
