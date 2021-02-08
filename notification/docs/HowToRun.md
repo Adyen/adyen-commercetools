@@ -48,7 +48,7 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
 }
 ```
 
-The JSON structure will be described in details in the next sections of this documentation.
+The JSON structure will be described in detail in the next sections of this documentation.
 
 ### Adyen
 
