@@ -12,11 +12,11 @@ exports.handler = async function (event) {
   if (!notificationItems) {
     const error = new Error('No notification received.')
     logger.error(
-        {
-          notification: getNotificationForTracking(notificationItems),
-          err: error,
-        },
-        'Unexpected error when processing event'
+      {
+        notification: getNotificationForTracking(notificationItems),
+        err: error,
+      },
+      'Unexpected error when processing event'
     )
     throw error
   }
@@ -42,11 +42,11 @@ exports.handler = async function (event) {
       )
     } catch (e) {
       logger.error(
-          {
-            notification: getNotificationForTracking(notification),
-            err: e,
-          },
-          'Unexpected error when processing event'
+        {
+          notification: getNotificationForTracking(notification),
+          err: e,
+        },
+        'Unexpected error when processing event'
       )
       throw e
     }
