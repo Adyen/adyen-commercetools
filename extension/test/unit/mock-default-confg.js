@@ -31,4 +31,5 @@ process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
     },
   },
   logLevel: 'DEBUG',
+  apiExtensionBaseUrl: 'apiExtensionBaseUrl',
 })

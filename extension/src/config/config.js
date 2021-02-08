@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 let config
 
 function getModuleConfig() {
@@ -65,6 +67,7 @@ function loadAndValidateConfig() {
       'Adyen integration configuration is not provided in the JSON format'
     )
   }
+
   const numberOfCtpConfigs = Object.keys(config.commercetools).length
   const numberOfAdyenConfigs = Object.keys(config.adyen).length
   if (numberOfCtpConfigs === 0)
@@ -83,6 +86,11 @@ function loadAndValidateConfig() {
       throw new Error(
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
           'Please verify that all projects have projectKey, clientId and clientSecret'
+      )
+    if (ctpConfig.ensureResources && _.isEmpty(config.apiExtensionBaseUrl))
+      throw new Error(
+        `apiExtensionBaseUrl attribute must be set because ` +
+          `commercetools project '${ctpProjectKey}' has ensureResources=true.`
       )
   }
 }

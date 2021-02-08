@@ -3,8 +3,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-**Table of Contents**
-
 - [Web Components integration guide](#web-components-integration-guide)
   - [How it works](#how-it-works)
   - [Before you begin](#before-you-begin)
@@ -13,7 +11,7 @@
     - [Recalculate cart](#recalculate-cart)
     - [Validate payment](#validate-payment)
     - [Validate payment transaction](#validate-payment-transaction)
-  - [Step 2: Get available payment methods](#step-2-get-available-payment-methods)
+  - [Step 2: Get available payment methods (Optional)](#step-2-get-available-payment-methods-optional)
   - [Step 3: Add Components to your payments form](#step-3-add-components-to-your-payments-form)
   - [Step 4: Make a payment](#step-4-make-a-payment)
     - [Klarna payment](#klarna-payment)
@@ -27,6 +25,7 @@
   - [Test and go live](#test-and-go-live)
 - [Manual Capture](#manual-capture)
 - [Cancel or refund](#cancel-or-refund)
+- [Multi-tenancy](#multi-tenancy)
 - [Bad Practices](#bad-practices)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -38,7 +37,7 @@ Terms used in this guide:
 - **Shopper** - a person that's using the shop.
 - **Browser** - frontend part of the checkout UI (web shop).
 - **Merchant server** - backend part of the checkout.
-- **Extension module** - extension module configured as [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is handling checkout steps by intercepting payment modifications and executing communication with Adyen API.
+- **Extension module** - extension module configured as [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is handling checkout steps by intercepting payment modifications and communicating with Adyen API.
 - **Notification module** - [notification module](./../../notification/README.md) processes asynchronous notifications from Adyen and stores payment state changes in commercetools payment object.
 
 The following diagram shows checkout integration flow based on [Adyen Web Components](https://docs.adyen.com/checkout/components-web).
@@ -101,11 +100,11 @@ and transaction type `Authorization` or `Charge`.
 
 When your shopper is ready to pay, get a list of the available payment methods based on their country and the payment amount.
 
-[Create/Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with `getPaymentMethodsRequest` custom field.
+[Create/Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with `getPaymentMethodsRequest`, `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields.
 
 > Refer Adyen's [/paymentMethods](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/paymentMethods) request to check all possible request payload parameters.
 
-Set `getPaymentMethodsRequest` custom field for a shopper in the Germany, for a payment of `10 EUR`:
+Here's an example of the value of `getPaymentMethodsRequest` custom field for a shopper in the Germany, for a payment of `10 EUR`:
 
 ```json
 {
@@ -128,13 +127,15 @@ The commercetools payment representation example:
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
+      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
+      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
       "getPaymentMethodsRequest": "{\"countryCode\":\"DE\",\"shopperLocale\":\"de-DE\",\"amount\":{\"currency\":\"EUR\",\"value\":1000}}"
     }
   }
 }
 ```
 
-If you are [creating a commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment), the payment draft have to contain the `paymentMethodInfo.paymentInterface = ctp-adyen-integration` and `amountPlanned` value, for example:
+If you are [creating a commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment), the payment draft have to contain the `paymentMethodInfo.paymentInterface = ctp-adyen-integration`, `amountPlanned` value, `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields additionally to the `getPaymentMethodsRequest` custom field, for example:
 
 ```json
 {
@@ -151,6 +152,8 @@ If you are [creating a commercetools payment](https://docs.commercetools.com/htt
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
+      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
+      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
       "getPaymentMethodsRequest": "{\"countryCode\":\"DE\",\"shopperLocale\":\"de-DE\",\"amount\":{\"currency\":\"EUR\",\"value\":1000}}"
     }
   }
@@ -184,6 +187,8 @@ The commercetools payment representation example:
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
+      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
+      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
       "getPaymentMethodsRequest": "{\"countryCode\":\"DE\",\"shopperLocale\":\"de-DE\",\"amount\":{\"currency\":\"EUR\",\"value\":1000}}",
       "getPaymentMethodsResponse": "{\"groups\":[{\"name\":\"Gift Card\",\"types\":[\"givex\",\"svs\"]},{\"name\":\"Credit Card\",\"types\":[\"visa\",\"mc\",\"amex\",\"maestro\",\"uatp\",\"cup\",\"diners\",\"discover\",\"hipercard\",\"jcb\"]}],\"paymentMethods\":[{\"name\":\"PayPal\",\"supportsRecurring\":true,\"type\":\"paypal\"},{\"brands\":[\"visa\",\"mc\",\"amex\",\"maestro\",\"uatp\",\"cup\",\"diners\",\"discover\",\"hipercard\",\"jcb\"],\"details\":[{\"key\":\"encryptedCardNumber\",\"type\":\"cardToken\"},{\"key\":\"encryptedSecurityCode\",\"type\":\"cardToken\"},{\"key\":\"encryptedExpiryMonth\",\"type\":\"cardToken\"},{\"key\":\"encryptedExpiryYear\",\"type\":\"cardToken\"},{\"key\":\"holderName\",\"optional\":true,\"type\":\"text\"}],\"name\":\"Kreditkarte\",\"type\":\"scheme\"},{\"name\":\"Sofort.\",\"supportsRecurring\":true,\"type\":\"directEbanking\"},{\"details\":[{\"key\":\"sepa.ownerName\",\"type\":\"text\"},{\"key\":\"sepa.ibanNumber\",\"type\":\"text\"}],\"name\":\"SEPA Lastschrift\",\"supportsRecurring\":true,\"type\":\"sepadirectdebit\"},{\"name\":\"Rechnung mit Klarna.\",\"supportsRecurring\":true,\"type\":\"klarna\"},{\"details\":[{\"key\":\"bic\",\"optional\":true,\"type\":\"text\"}],\"name\":\"GiroPay\",\"supportsRecurring\":true,\"type\":\"giropay\"},{\"name\":\"Ratenkauf mit Klarna.\",\"supportsRecurring\":true,\"type\":\"klarna_account\"},{\"details\":[{\"key\":\"encryptedCardNumber\",\"type\":\"cardToken\"},{\"key\":\"encryptedSecurityCode\",\"type\":\"cardToken\"},{\"key\":\"encryptedExpiryMonth\",\"type\":\"cardToken\"},{\"key\":\"encryptedExpiryYear\",\"type\":\"cardToken\"},{\"key\":\"holderName\",\"optional\":true,\"type\":\"text\"},{\"key\":\"telephoneNumber\",\"optional\":true,\"type\":\"text\"}],\"name\":\"ExpressPay\",\"supportsRecurring\":true,\"type\":\"cup\"},{\"details\":[{\"key\":\"encryptedCardNumber\",\"type\":\"cardToken\"},{\"key\":\"encryptedSecurityCode\",\"optional\":true,\"type\":\"cardToken\"},{\"key\":\"encryptedExpiryMonth\",\"optional\":true,\"type\":\"cardToken\"},{\"key\":\"encryptedExpiryYear\",\"optional\":true,\"type\":\"cardToken\"},{\"key\":\"encryptedPassword\",\"optional\":true,\"type\":\"cardToken\"},{\"key\":\"holderName\",\"optional\":true,\"type\":\"text\"}],\"name\":\"Givex\",\"supportsRecurring\":true,\"type\":\"givex\"},{\"name\":\"Pay now with Klarna.\",\"supportsRecurring\":true,\"type\":\"klarna_paynow\"},{\"details\":[{\"key\":\"encryptedCardNumber\",\"type\":\"cardToken\"},{\"key\":\"encryptedSecurityCode\",\"optional\":true,\"type\":\"cardToken\"},{\"key\":\"encryptedExpiryMonth\",\"optional\":true,\"type\":\"cardToken\"},{\"key\":\"encryptedExpiryYear\",\"optional\":true,\"type\":\"cardToken\"},{\"key\":\"encryptedPassword\",\"optional\":true,\"type\":\"cardToken\"},{\"key\":\"holderName\",\"optional\":true,\"type\":\"text\"}],\"name\":\"SVS\",\"supportsRecurring\":true,\"type\":\"svs\"}]}"
     }
@@ -250,7 +255,7 @@ Make payment request generated from Adyen Web Components for credit card payment
 }
 ```
 
-If you are [creating a new commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment), the payment draft have to contain the `paymentMethodInfo.paymentInterface = ctp-adyen-integration` and `amountPlanned` value additional to the `makePaymentRequest` custom field, for example:
+If you are [creating a commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment), the payment draft have to contain the `paymentMethodInfo.paymentInterface = ctp-adyen-integration`, `amountPlanned` value, `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields additional to the `makePaymentRequest` custom field, for example:
 
 ```json
 {
@@ -267,6 +272,8 @@ If you are [creating a new commercetools payment](https://docs.commercetools.com
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
+      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
+      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
       "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
     }
   }
@@ -327,6 +334,8 @@ A commercetools payment example with `makePaymentResponse` field with the respon
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
+      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
+      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
       "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
       "makePaymentResponse": "{\"resultCode\":\"RedirectShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\",\"data\":{\"MD\":\"aTZmV09...\",\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\"},\"method\":\"POST\",\"type\":\"redirect\"},\"details\":[{\"key\":\"MD\",\"type\":\"text\"},{\"key\":\"PaRes\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\",\"redirect\":{\"data\":{\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\",\"MD\":\"aTZmV09...\"},\"method\":\"POST\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\"}}"
     }
@@ -334,7 +343,7 @@ A commercetools payment example with `makePaymentResponse` field with the respon
 }
 ```
 
-Response from Adyen for the case where you can present the payment result to your shopper.
+Response from Adyen in case you can present the payment result to your shopper.
 See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-present-payment-result) for more information how to present the results.
 
 ```json
@@ -367,6 +376,8 @@ and has `amount` taken from `amountPlanned`. `interactionId` is matching the `ma
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
+      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
+      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
       "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
       "makePaymentResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_REFERENCE\"}"
     }
@@ -560,6 +571,10 @@ A commercetools example payment with `submitAdditionalPaymentDetailsResponse` fi
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
+      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
+      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
+      "makePaymentResponse": "{\"resultCode\":\"RedirectShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\",\"data\":{\"MD\":\"aTZmV09...\",\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\"},\"method\":\"POST\",\"type\":\"redirect\"},\"details\":[{\"key\":\"MD\",\"type\":\"text\"},{\"key\":\"PaRes\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\",\"redirect\":{\"data\":{\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\",\"MD\":\"aTZmV09...\"},\"method\":\"POST\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\"}}",
       "submitPaymentDetailsRequest": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}",
       "submitAdditionalPaymentDetailsResponse": "{\"resultCode\":\"ChallengeShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"token\":\"eyJhY3...\",\"type\":\"threeDS2Challenge\"},\"authentication\":{\"threeds2.challengeToken\":\"eyJhY3...\"},\"details\":[{\"key\":\"threeds2.challengeResult\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\"}"
     }
@@ -620,6 +635,10 @@ and has `amount` taken from `amountPlanned`. `interactionId` is matching the `ma
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
+      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
+      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
+      "makePaymentResponse": "{\"resultCode\":\"RedirectShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\",\"data\":{\"MD\":\"aTZmV09...\",\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\"},\"method\":\"POST\",\"type\":\"redirect\"},\"details\":[{\"key\":\"MD\",\"type\":\"text\"},{\"key\":\"PaRes\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\",\"redirect\":{\"data\":{\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\",\"MD\":\"aTZmV09...\"},\"method\":\"POST\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\"}}",
       "submitPaymentDetailsRequest": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}",
       "submitAdditionalPaymentDetailsResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_REFERENCE\"}"
     }
@@ -703,6 +722,20 @@ This will either:
 
 - [**Cancel**](CancelPayment.md) - cancel the authorisation on an uncaptured payment(full payment).
 - [**Refund**](RefundPayment.md) - (partially) refund a payment back to the shopper.
+
+# Multi-tenancy
+
+`commercetools-adyen-integration` supports multi-tenancy to serve multiple Adyen merchant accounts/commercetools projects
+with one application instance. This architectural style leverages sharing and scalability to provide cost-efficient hosting.
+
+In order for `commercetools-adyen-integration` to know which project it should communicate with, this information must be provided. Payment object must contain the following 2 custom fields:
+
+- Provide merchantAccount as a custom field called `adyenMerchantAccount` on create payment.
+- Provide commercetools project key as a custom field called `commercetoolsProjectKey` on create payment.
+
+In case any of those fields are not provided, payment creation will be rejected.
+
+> `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.commercetoolsProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in the every notification from Adyen to help with matching the correct commercetools project.
 
 # Bad Practices
 
