@@ -2,9 +2,12 @@ const paymentCustomType = require('../../../resources/web-components-payment-typ
 
 const utils = require('../../utils')
 
-const logger = utils.getLogger()
+const mainLogger = utils.getLogger()
 
-async function ensurePaymentCustomType(ctpClient) {
+async function ensurePaymentCustomType(ctpClient, ctpProjectKey) {
+  const logger = mainLogger.child({
+    commercetools_project_key: ctpProjectKey,
+  })
   const { body } = await ctpClient.fetch(
     ctpClient.builder.types.where(`key="${paymentCustomType.key}"`)
   )

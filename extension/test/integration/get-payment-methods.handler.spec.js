@@ -4,6 +4,7 @@ const _ = require('lodash')
 const ctpClientBuilder = require('../../src/ctp')
 const iTSetUp = require('./integration-test-set-up')
 const c = require('../../src/config/constants')
+const config = require('../../src/config/config')
 const packageJson = require('../../package.json')
 
 describe('::getPaymentMethods::', () => {
@@ -16,8 +17,12 @@ describe('::getPaymentMethods::', () => {
   )[0]
 
   before(async () => {
-    ctpClient = ctpClientBuilder.get(commercetoolsProjectKey)
-    await iTSetUp.initServerAndExtension({ ctpClient })
+    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+    ctpClient = ctpClientBuilder.get(ctpConfig)
+    await iTSetUp.initServerAndExtension({
+      ctpClient,
+      ctpProjectKey: ctpConfig.projectKey,
+    })
   })
 
   after(async () => {

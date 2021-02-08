@@ -14,7 +14,7 @@
     "lint": "eslint ./src ./test",
     "check": "npm run lint && prettier --check .",
     "format": "prettier --write .",
-    "rename-indexfile" : "cp index.googleFunction.js index.js",
+    "rename-indexfile": "cp index.googleFunction.js index.js",
     "zip-serverless": "cp index.googleFunction.js index.js && zip -r notification-module.zip src resources index.js package.json && rm index.js"
   },
   "keywords": [
@@ -55,7 +55,6 @@
     "lockfile-lint": "^4.3.7",
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.1",
-    "p-map": "^4.0.0",
     "serialize-error": "^8.0.1"
   },
   "devDependencies": {

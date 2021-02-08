@@ -1,37 +1,57 @@
-const ctp = require('./utils/ctp')
 const handler = require('./handler/notification/notification.handler')
-const config = require('./config/config')()
+const config = require('./config/config')
 const logger = require('./utils/logger').getLogger()
-const { getNotificationForTracking } = require('./utils/commons')
 const setup = require('./config/init/ensure-interface-interaction-custom-type')
 
-const ctpClient = ctp.get(config)
+const { getNotificationForTracking } = require('./utils/commons')
 
 let initialised = false
 
 exports.handler = async function (event) {
   const { notificationItems } = event
-  try {
-    if (!initialised) {
-      await setup.ensureInterfaceInteractionCustomType(ctpClient)
-      initialised = true
-    }
-    if (!notificationItems) {
-      throw new Error('No notification received.')
-    }
-
-    await handler.processNotifications(notificationItems, ctpClient)
-    return {
-      notificationResponse: '[accepted]',
-    }
-  } catch (e) {
+  if (!notificationItems) {
+    const error = new Error('No notification received.')
     logger.error(
-      {
-        notification: getNotificationForTracking(notificationItems),
-        err: e,
-      },
-      'Unexpected error when processing event'
+        {
+          notification: getNotificationForTracking(notificationItems),
+          err: error,
+        },
+        'Unexpected error when processing event'
     )
-    throw e
+    throw error
+  }
+  for (const notification of notificationItems) {
+    try {
+      const commercetoolsProjectKey =
+        notification.NotificationRequestItem.additionalData[
+          'metadata.commercetoolsProjectKey'
+        ]
+      const adyenMerchantAccount =
+        notification.NotificationRequestItem.merchantAccountCode
+      const ctpProjectConfig = config.getCtpConfig(commercetoolsProjectKey)
+      const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
+
+      if (!initialised) {
+        await setup.ensureInterfaceInteractionCustomType(ctpProjectConfig)
+        initialised = true
+      }
+      await handler.processNotification(
+        notification,
+        adyenConfig.enableHmacSignature,
+        ctpProjectConfig
+      )
+    } catch (e) {
+      logger.error(
+          {
+            notification: getNotificationForTracking(notification),
+            err: e,
+          },
+          'Unexpected error when processing event'
+      )
+      throw e
+    }
+  }
+  return {
+    notificationResponse: '[accepted]',
   }
 }

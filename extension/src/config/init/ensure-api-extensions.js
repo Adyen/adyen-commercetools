@@ -3,9 +3,16 @@ const utils = require('../../utils')
 
 const apiExtensionTemplate = require('../../../resources/api-extension.json')
 
-const logger = utils.getLogger()
+const mainLogger = utils.getLogger()
 
-async function ensureApiExtensions(ctpClient, ctpAdyenIntegrationBaseUrl) {
+async function ensureApiExtensions(
+  ctpClient,
+  ctpProjectKey,
+  ctpAdyenIntegrationBaseUrl
+) {
+  const logger = mainLogger.child({
+    commercetools_project_key: ctpProjectKey,
+  })
   const extensionDraft = _.template(JSON.stringify(apiExtensionTemplate))({
     ctpAdyenIntegrationBaseUrl,
   })
