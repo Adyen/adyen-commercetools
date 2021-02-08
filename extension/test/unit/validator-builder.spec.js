@@ -12,7 +12,7 @@ const {
 } = require('../../src/validator/error-messages')
 
 describe('Validator builder', () => {
-  it('on invalid JSON validateRequestFields() should return error object', async () => {
+  it('on invalid JSON validateRequestFields() should return error object', () => {
     const invalidPayment = {
       custom: {
         fields: {
@@ -40,7 +40,7 @@ describe('Validator builder', () => {
     'payment has different amountPlanned and amount in makePaymentRequest custom field ' +
       'and interface interaction is empty, ' +
       'validateAmountPlanned() should return error object',
-    async () => {
+    () => {
       const payment = {
         amountPlanned: {
           type: 'centPrecision',
@@ -70,7 +70,7 @@ describe('Validator builder', () => {
   it(
     'payment has different amountPlanned and amount in makePaymentRequest interface interaction, ' +
       'validateAmountPlanned() should return error object',
-    async () => {
+    () => {
       const payment = {
         amountPlanned: {
           type: 'centPrecision',
@@ -135,7 +135,7 @@ describe('Validator builder', () => {
     }
   )
 
-  it('on missing reference in makePaymentRequest should return error object', async () => {
+  it('on missing reference in makePaymentRequest should return error object', () => {
     const makePaymentRequestDraft = {
       paymentMethod: {
         type: 'klarna',
@@ -166,7 +166,7 @@ describe('Validator builder', () => {
     )
   })
 
-  it('on missing commercetoolsProjectKey in custom fields should return error object', async () => {
+  it('on missing commercetoolsProjectKey in custom fields should return error object', () => {
     const invalidPayment = {
       custom: {
         fields: {
@@ -183,7 +183,7 @@ describe('Validator builder', () => {
     )
   })
 
-  it('on missing adyenMerchantAccount in custom fields should return error object', async () => {
+  it('on missing adyenMerchantAccount in custom fields should return error object', () => {
     const invalidPayment = {
       custom: {
         fields: {
@@ -200,7 +200,7 @@ describe('Validator builder', () => {
     )
   })
 
-  it('on missing required custom fields should return error object', async () => {
+  it('on missing required custom fields should return error object', () => {
     const invalidPayment = {
       custom: {
         fields: {
