@@ -29,6 +29,13 @@ exports.extensionTrigger = async (request, response) => {
     )}`
     logger.error(errorMessage)
 
-    response.status(400).send('Unexpected error happened, check the logs.')
+    response.status(400).send({
+      errors: [
+        {
+          code: 'InvalidOperation',
+          message: errorMessage,
+        },
+      ],
+    })
   }
 }
