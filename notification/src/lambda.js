@@ -13,7 +13,7 @@ exports.handler = async function (event) {
     const error = new Error('No notification received.')
     logger.error(
       {
-        notification: getNotificationForTracking(notificationItems),
+        notification: undefined,
         err: error,
       },
       'Unexpected error when processing event'
