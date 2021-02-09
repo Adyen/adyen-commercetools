@@ -21,6 +21,7 @@ describe('::config::', () => {
         },
       },
       logLevel: 'DEBUG',
+      apiExtensionBaseUrl: 'apiExtensionBaseUrl',
     })
     const config = requireUncached('../../../src/config/config')
 
@@ -59,6 +60,7 @@ describe('::config::', () => {
         },
       },
       logLevel: 'DEBUG',
+      apiExtensionBaseUrl: 'apiExtensionBaseUrl',
     })
     const config = requireUncached('../../../src/config/config')
 
@@ -104,6 +106,7 @@ describe('::config::', () => {
         },
       },
       logLevel: 'DEBUG',
+      apiExtensionBaseUrl: 'apiExtensionBaseUrl',
     })
     try {
       requireUncached('../../../src/config/config')
@@ -126,6 +129,7 @@ describe('::config::', () => {
       },
       adyen: {},
       logLevel: 'DEBUG',
+      apiExtensionBaseUrl: 'apiExtensionBaseUrl',
     })
     try {
       requireUncached('../../../src/config/config')
@@ -133,6 +137,60 @@ describe('::config::', () => {
     } catch (e) {
       expect(e.message).to.contain('add at least one Adyen merchant account')
     }
+  })
+
+  it('when no apiExtensionBaseUrl is provided and ensureResources=true, it should throw error', () => {
+    process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+      commercetools: {
+        ctpProjectKey1: {
+          clientId: 'clientId',
+          clientSecret: 'clientSecret',
+          ensureResources: true,
+          apiUrl: 'host',
+          authUrl: 'authUrl',
+        },
+      },
+      adyen: {
+        adyenMerchantAccount1: {
+          apiBaseUrl: 'apiBaseUrl',
+          apiKey: 'apiKey',
+          clientKey: 'clientKey',
+          legacyApiBaseUrl: 'legacyApiBaseUrl',
+        },
+      },
+      logLevel: 'DEBUG',
+    })
+    try {
+      requireUncached('../../../src/config/config')
+      expect.fail('This test should throw an error, but it did not')
+    } catch (e) {
+      expect(e.message).to.contain('apiExtensionBaseUrl attribute must be set')
+    }
+  })
+
+  it('when no apiExtensionBaseUrl is NOT provided and ensureResource=false, it should load config', () => {
+    process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+      commercetools: {
+        ctpProjectKey1: {
+          clientId: 'clientId',
+          clientSecret: 'clientSecret',
+          ensureResources: false,
+          apiUrl: 'host',
+          authUrl: 'authUrl',
+        },
+      },
+      adyen: {
+        adyenMerchantAccount1: {
+          apiBaseUrl: 'apiBaseUrl',
+          apiKey: 'apiKey',
+          clientKey: 'clientKey',
+          legacyApiBaseUrl: 'legacyApiBaseUrl',
+        },
+      },
+      logLevel: 'DEBUG',
+    })
+    const config = requireUncached('../../../src/config/config')
+    expect(config.getAllCtpProjectKeys()).to.deep.equal(['ctpProjectKey1'])
   })
 
   function requireUncached(module) {
