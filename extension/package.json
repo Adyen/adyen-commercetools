@@ -17,7 +17,8 @@
     "check": "npm run lint && prettier --check .",
     "create-custom-types": "node -e 'require(\"./src/config/init/ensure-resources.js\").ensureCustomTypes()'",
     "doctoc": "doctoc . --github",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "zip-serverless": "cp index.googleFunction.js index.js && zip -r extension-module.zip src resources index.js package.json && rm index.js"
   },
   "keywords": [
     "Adyen",

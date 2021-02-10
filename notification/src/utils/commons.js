@@ -18,7 +18,34 @@ function sendResponse(response, statusCode = 200, headers, data) {
   response.end(data)
 }
 
+function convertNotificationForTracking(notification) {
+  if (notification && notification.NotificationRequestItem) {
+    const notificationRequestItem = notification.NotificationRequestItem
+    return {
+      eventCode: notificationRequestItem.eventCode,
+      eventDate: notificationRequestItem.eventDate,
+      pspReference: notificationRequestItem.pspReference,
+      success: notificationRequestItem.success,
+    }
+  }
+  return notification
+}
+
+function getNotificationForTracking(notification) {
+  if (notification && Array.isArray(notification)) {
+    const notificationListForTracking = []
+    notification.forEach((notificationElement) => {
+      notificationListForTracking.push(
+        convertNotificationForTracking(notificationElement)
+      )
+    })
+    return notificationListForTracking
+  }
+  return convertNotificationForTracking(notification)
+}
+
 module.exports = {
   collectRequestData,
   sendResponse,
+  getNotificationForTracking,
 }

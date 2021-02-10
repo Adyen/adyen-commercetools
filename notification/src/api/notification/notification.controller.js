@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const httpUtils = require('../../utils/commons')
+
 const {
   processNotification,
 } = require('../../handler/notification/notification.handler')
@@ -33,8 +34,9 @@ async function handleNotification(request, response) {
     }
     return sendAcceptedResponse(response)
   } catch (err) {
+    const notification = _.get(JSON.parse(body), 'notificationItems', [])
     logger.error(
-      { adyenRequestBody: `${body}`, err },
+      { notification: httpUtils.getNotificationForTracking(notification), err },
       'Unexpected exception occurred.'
     )
     if (err.isRecoverable) {

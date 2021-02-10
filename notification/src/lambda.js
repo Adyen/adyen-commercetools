@@ -1,15 +1,26 @@
-const _ = require('lodash')
 const handler = require('./handler/notification/notification.handler')
 const config = require('./config/config')
 const logger = require('./utils/logger').getLogger()
-
 const setup = require('./config/init/ensure-interface-interaction-custom-type')
+
+const { getNotificationForTracking } = require('./utils/commons')
 
 let initialised = false
 
 exports.handler = async function (event) {
-  const notifications = _.get(event, 'notificationItems', [])
-  for (const notification of notifications) {
+  const { notificationItems } = event
+  if (!notificationItems) {
+    const error = new Error('No notification received.')
+    logger.error(
+      {
+        notification: undefined,
+        err: error,
+      },
+      'Unexpected error when processing event'
+    )
+    throw error
+  }
+  for (const notification of notificationItems) {
     try {
       const commercetoolsProjectKey =
         notification.NotificationRequestItem.additionalData[
@@ -31,8 +42,11 @@ exports.handler = async function (event) {
       )
     } catch (e) {
       logger.error(
-        e,
-        `Unexpected error when processing event ${JSON.stringify(event)}`
+        {
+          notification: getNotificationForTracking(notification),
+          err: e,
+        },
+        'Unexpected error when processing event'
       )
       throw e
     }
