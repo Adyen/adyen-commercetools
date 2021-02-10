@@ -2,6 +2,7 @@ const _ = require('lodash')
 const { serializeError } = require('serialize-error')
 const { validateHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
+const { getNotificationForTracking } = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
 const mainLogger = require('../../utils/logger').getLogger()
 
@@ -18,9 +19,8 @@ async function processNotification(
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
       logger.error(
-        `HMAC validation failed. Reason: "${errorMessage}". Notification: ${JSON.stringify(
-          notification
-        )}`
+        { notification: getNotificationForTracking(notification) },
+        `HMAC validation failed. Reason: "${errorMessage}"`
       )
       return
     }
@@ -33,9 +33,8 @@ async function processNotification(
   )
   if (merchantReference === null) {
     logger.error(
-      `Can't extract merchantReference from the notification: ${JSON.stringify(
-        notification
-      )}`
+      { notification: getNotificationForTracking(notification) },
+      "Can't extract merchantReference from the notification"
     )
     return
   }
