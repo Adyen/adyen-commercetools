@@ -2,7 +2,7 @@
 
 set -e
 
-bash ./env-config.sh
+source ./env-config.sh
 
 ## set Google Cloud Project settings
 echo "Login to gcloud SDK and select project"
@@ -19,11 +19,11 @@ EXTENSION_IMAGE_FULL="${GCR_PATH}/${EXTENSION_IMAGE}"
 NOTIFICATION_IMAGE_FULL="${GCR_PATH}/${NOTIFICATION_IMAGE}"
 
 ## 1. Build and Push Docker images
-docker build -t "$EXTENSION_IMAGE" ./../../extension
+docker build -t "$EXTENSION_IMAGE" ./../../../extension
 docker tag "$EXTENSION_IMAGE" "$EXTENSION_IMAGE_FULL:$TAG"
 docker push -- "$EXTENSION_IMAGE_FULL"
 
-docker build -t "$NOTIFICATION_IMAGE" ./../../notification
+docker build -t "$NOTIFICATION_IMAGE" ./../../../notification
 docker tag "$NOTIFICATION_IMAGE" "$NOTIFICATION_IMAGE_FULL:$TAG"
 docker push -- "$NOTIFICATION_IMAGE_FULL"
 
@@ -40,15 +40,15 @@ gcloud kms decrypt \
           --location="global" \
           --keyring="${GCLOUD_KMS_KEYRING}" \
           --key="${GCLOUD_KMS_KEY_NAME}" \
-          --ciphertext-file="./extension/k8s/${ENVIRONMENT_NAME}/${SENSITIVE_ENVS_FILE}.enc" \
-          --plaintext-file="./extension/k8s/${ENVIRONMENT_NAME}/${SENSITIVE_ENVS_FILE}"
+          --ciphertext-file="./extension/${ENVIRONMENT_NAME}/${SENSITIVE_ENVS_FILE}.enc" \
+          --plaintext-file="./extension/${ENVIRONMENT_NAME}/${SENSITIVE_ENVS_FILE}"
 
 gcloud kms decrypt \
           --location="global" \
           --keyring="${GCLOUD_KMS_KEYRING}" \
           --key="${GCLOUD_KMS_KEY_NAME}" \
-          --ciphertext-file="./notification/k8s/${ENVIRONMENT_NAME}/${SENSITIVE_ENVS_FILE}.enc" \
-          --plaintext-file="./notification/k8s/${ENVIRONMENT_NAME}/${SENSITIVE_ENVS_FILE}"
+          --ciphertext-file="./notification/${ENVIRONMENT_NAME}/${SENSITIVE_ENVS_FILE}.enc" \
+          --plaintext-file="./notification/${ENVIRONMENT_NAME}/${SENSITIVE_ENVS_FILE}"
 
 ## 5. Deploying to both modules to kubernetes using helm charts
 cd k8s-charts/charts/public-service
@@ -56,18 +56,18 @@ echo "Upgrading helm for extension module"
 helm upgrade --install \
     --namespace $ENVIRONMENT_NAME \
     commercetools-adyen-integration-extension \
-    -f ./../../../extension/k8s/values.yaml \
-    -f ./../../../extension/k8s/$ENVIRONMENT_NAME/values.yaml \
-    -f ./../../../extension/k8s/$ENVIRONMENT_NAME/${SENSITIVE_ENVS_FILE} \
+    -f ./../../../extension/values.yaml \
+    -f ./../../../extension/$ENVIRONMENT_NAME/values.yaml \
+    -f ./../../../extension/$ENVIRONMENT_NAME/${SENSITIVE_ENVS_FILE} \
     .
 
 echo "Upgrading helm for notification module"
 helm upgrade --install \
     --namespace $ENVIRONMENT_NAME \
     commercetools-adyen-integration-notification \
-    -f ./../../../notification/k8s/values.yaml \
-    -f ./../../../notification/k8s/$ENVIRONMENT_NAME/values.yaml \
-    -f ./../../../notification/k8s/$ENVIRONMENT_NAME/${SENSITIVE_ENVS_FILE} \
+    -f ./../../../notification/values.yaml \
+    -f ./../../../notification/$ENVIRONMENT_NAME/values.yaml \
+    -f ./../../../notification/$ENVIRONMENT_NAME/${SENSITIVE_ENVS_FILE} \
     .
 
 # Consider executing following 3 commands, if Tiller agent is not available in your kubernetes cluster:
