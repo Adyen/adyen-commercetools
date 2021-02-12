@@ -29,7 +29,7 @@ exports.extensionTrigger = async (request, response) => {
     )}`
     logger.error(errorMessage)
 
-    response.status(400).send({
+    response.status(500).send({
       errors: [
         {
           code: 'InvalidOperation',

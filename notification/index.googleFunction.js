@@ -13,7 +13,7 @@ const { getCtpProjectConfig, getAdyenConfig } = require('./src/utils/parser')
 exports.notificationTrigger = async (request, response) => {
   const { notificationItems } = request.body
   if (!notificationItems) {
-    response.status(500).send('No notification received.')
+    response.status(400).send('No notification received.')
   }
   try {
     for (const notification of notificationItems) {
@@ -32,7 +32,7 @@ exports.notificationTrigger = async (request, response) => {
       'Unexpected exception occurred.'
     )
     if (err.isRecoverable) {
-      return response.status(500).send(err.message)
+      return response.status(400).send(err.message)
     }
   }
 
