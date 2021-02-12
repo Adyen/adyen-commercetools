@@ -105,6 +105,10 @@ function setUpClient(config) {
       return ctpClient.execute(this.buildRequestOptions(uri.build()))
     },
 
+    fetchByKey(uri, key) {
+      return ctpClient.execute(this.buildRequestOptions(uri.byKey(key).build()))
+    },
+
     fetchBatches(uri, callback, opts = { accumulate: false }) {
       return this.process(
         this.buildRequestOptions(uri.build()),
