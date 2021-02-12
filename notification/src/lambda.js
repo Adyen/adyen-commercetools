@@ -27,8 +27,7 @@ exports.handler = async function (event) {
         ctpProjectConfig
       )
     }
-  }
-  catch (err) {
+  } catch (err) {
     logger.error(
       { notification: getNotificationForTracking(notificationItems), err },
       'Unexpected exception occurred.'
