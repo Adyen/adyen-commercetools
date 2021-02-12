@@ -98,9 +98,7 @@ describe('notification controller', () => {
     }
     notificationJson.notificationItems[0].NotificationRequestItem.merchantAccountCode =
       'nonExistingMerchantAccount'
-    httpUtils.collectRequestData = function () {
-      return JSON.stringify(notificationJson)
-    }
+    httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
     module.exports = httpUtils
 
     const configGetCtpConfigSpy = sandbox
@@ -138,9 +136,7 @@ describe('notification controller', () => {
     notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
       'metadata.commercetoolsProjectKey': 'nonExistingCtpProjectKey',
     }
-    httpUtils.collectRequestData = function () {
-      return JSON.stringify(notificationJson)
-    }
+    httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
     module.exports = httpUtils
 
     logSpy = sinon.spy()

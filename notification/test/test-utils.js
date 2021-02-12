@@ -43,9 +43,7 @@ let originalGetAdyenConfigFn
 
 function overrideAdyenConfig(newAdyenConfig) {
   originalGetAdyenConfigFn = config.getAdyenConfig
-  config.getAdyenConfig = function () {
-    return newAdyenConfig
-  }
+  config.getAdyenConfig = () => newAdyenConfig
   module.exports = config
 }
 

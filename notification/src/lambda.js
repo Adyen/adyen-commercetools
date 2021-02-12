@@ -3,7 +3,7 @@ const logger = require('./utils/logger').getLogger()
 const { getNotificationForTracking } = require('./utils/commons')
 const { getCtpProjectConfig, getAdyenConfig } = require('./utils/parser')
 
-exports.handler = async function (event) {
+exports.handler = async (event) => {
   const { notificationItems } = event
   if (!notificationItems) {
     const error = new Error('No notification received.')
