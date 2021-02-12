@@ -17,7 +17,8 @@
     "check": "npm run lint && prettier --check .",
     "doctoc": "doctoc . --github",
     "format": "prettier --write .",
-    "zip-serverless": "cp index.googleFunction.js index.js && zip -r extension-module.zip src resources index.js package.json && rm index.js"
+    "zip-serverless": "cp index.googleFunction.js index.js && zip -r extension-module.zip src resources index.js package.json && rm index.js",
+    "create-resources": "node -e 'require(\"./src/setup.js\").setupExtensionResources()'"
   },
   "keywords": [
     "Adyen",

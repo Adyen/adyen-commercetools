@@ -131,28 +131,26 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 
 ## Commercetools project requirements
 
-Resources below are required for the extension module to operate correctly. Resources that **_will be automatically created_** by the extension module in your commercetools project.
+Resources below are required for the extension module to operate correctly.
 
 1. [The commercetools HTTP API Extension pointing to Adyen extension module](../resources/api-extension.json)
    > It's required that the HTTP API Extension timeout limit is increased to 10000 milliseconds (default is 2000). Please contact Support via the commercetools [support portal](https://support.commercetools.com/) and provide the region, project key, and use case to increase the timeout to 10000 ms. Additionally, after the limit increased, timeout might be updated over API with [setTimeoutInMs](https://docs.commercetools.com/http-api-projects-api-extensions#set-timeoutinms) action.
 1. [Payment custom type](../resources/web-components-payment-type.json)
 1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
 
-> Set `ENSURE_RESOURCES` environment variable to `false` to disable the automatic creation of required resources.
+Resources **_will be automatically ensured_** by the extension module in your commercetools project by default on docker deployment.
+
+> Set `ensureResources` option on commercetools config to `false` to disable the automatic creation of required resources on docker deployment.
+
+When the extension module is running as serverless function the resources **will NOT be created** by extension module.
 
 ### Creating required resources manually
 
-You can create these by running the command `npm run create-custom-types` as below:
+You can create these by running the command `npm run create-resources` as below, the command requires the `ADYEN_INTEGRATION_CONFIG` to be set as an environment variable.
 
 ```bash
-    CTP_PROJECT_KEY="xxxxxx" \
-    CTP_CLIENT_ID="xxxxxx" \
-    CTP_CLIENT_SECRET="xxxxxx" \
-    npm run create-custom-types
+ADYEN_INTEGRATION_CONFIG=xxxx npm run create-resources
 ```
-
-You will also need to [create the commercetools HTTP API extension manually](https://docs.commercetools.com/http-api-projects-api-extensions#create-an-extension) for payment resource.
-Please refer to our [Extension Draft](../resources/api-extension.json) for the sample extension draft and replace `${ctpAdyenIntegrationBaseUrl}` with your publicly available HTTPs URL endpoint.
 
 ## Running
 
