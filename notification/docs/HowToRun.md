@@ -3,12 +3,12 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-**Table of Contents**
-
-- [Environment variables](#environment-variables)
+- [Environment variable](#environment-variable)
   - [Adyen](#adyen)
   - [commercetools](#commercetools)
   - [Other Configurations](#other-configurations)
+- [Commercetools project requirements](#commercetools-project-requirements)
+  - [Creating required resources manually](#creating-required-resources-manually)
 - [Running](#running)
   - [Docker](#docker)
     - [Running the Docker image](#running-the-docker-image)
@@ -130,6 +130,26 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 | `port`             | Th port number on which the application will run.                                                                                                                   | NO       | 443                         |
 | `logLevel`         | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                 | NO       | `info`                      |
 | `keepAliveTimeout` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_server_keepalivetimeout)). | NO       | Node.js default (5 seconds) |
+
+## Commercetools project requirements
+
+Resources below are required for the notification module to operate correctly.
+
+1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
+
+Resources **_will be automatically ensured_** by the notification module in your commercetools project by default on docker deployment.
+
+> Set `ensureResources` option on commercetools config to `false` to disable the automatic creation of required resources on docker deployment.
+
+When the notification module is running as serverless function the resources **will NOT be created** automatically.
+
+### Creating required resources manually
+
+You can create these by running the command `npm run create-resources` as below, the command requires the `ADYEN_INTEGRATION_CONFIG` to be set as an environment variable.
+
+```bash
+ADYEN_INTEGRATION_CONFIG=xxxx npm run create-resources
+```
 
 ## Running
 

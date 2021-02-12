@@ -142,7 +142,7 @@ Resources **_will be automatically ensured_** by the extension module in your co
 
 > Set `ensureResources` option on commercetools config to `false` to disable the automatic creation of required resources on docker deployment.
 
-When the extension module is running as serverless function the resources **will NOT be created** by extension module.
+When the extension module is running as serverless function the resources **will NOT be created** automatically.
 
 ### Creating required resources manually
 
