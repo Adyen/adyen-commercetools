@@ -142,10 +142,7 @@ to see the latest releases and tags.
 
 ```bash
     docker run \
-    -e ADYEN_SECRET_HMAC_KEY=xxxxxx \
-    -e CTP_PROJECT_KEY=xxxxxx \
-    -e CTP_CLIENT_ID=xxxxxx \
-    -e CTP_CLIENT_SECRET=xxxxxx \
+    -e ADYEN_INTEGRATION_CONFIG=xxxxxx \
     commercetools/commercetools-adyen-integration-notification
 ```
 

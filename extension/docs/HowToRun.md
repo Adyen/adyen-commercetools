@@ -164,12 +164,7 @@ Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-a
 
 ```bash
     docker run \
-    -e ADYEN_MERCHANT_ACCOUNT=xxxxxx \
-    -e ADYEN_API_KEY=xxxxxx \
-    -e CTP_PROJECT_KEY=xxxxxx \
-    -e CTP_CLIENT_ID=xxxxxx \
-    -e CTP_CLIENT_SECRET=xxxxxx \
-    -e API_EXTENSION_BASE_URL=xxxxxx \
+    -e ADYEN_INTEGRATION_CONFIG=xxxxxx \
     commercetools/commercetools-adyen-integration-extension
 ```
 
