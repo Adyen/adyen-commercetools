@@ -8,7 +8,6 @@
   - [commercetools](#commercetools)
   - [Other Configurations](#other-configurations)
 - [Commercetools project requirements](#commercetools-project-requirements)
-  - [Creating required resources manually](#creating-required-resources-manually)
 - [Running](#running)
   - [Docker](#docker)
     - [Running the Docker image](#running-the-docker-image)
@@ -25,19 +24,21 @@ Extension module requires 1 environment variable to start. This environment vari
   "commercetools": {
     "commercetoolsProjectKey1": {
       "clientId": "xxx",
-      "clientSecret": "xxx",
-      "ensureResources": true
+      "clientSecret": "xxx"
+    },
+    "commercetoolsProjectKey1": {
+      "clientId": "xxx",
+      "clientSecret": "xxx"
     }
   },
   "adyen": {
     "adyenMerchantAccount1": {
       "apiKey": "xxx"
+    },
+    "adyenMerchantAccount2": {
+      "apiKey": "xxx"
     }
-  },
-  "logLevel": "DEBUG",
-  "port": 8080,
-  "apiExtensionBaseUrl": "url-where-the-extension-module-is-deployed",
-  "keepAliveTimeout": 10000
+  }
 }
 ```
 
@@ -71,7 +72,7 @@ Multiple child attributes can be provided in the `adyen` attribute. Each direct 
 | `apiBaseUrl`       | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO       | `https://checkout-test.adyen.com/v52`                |
 | `legacyApiBaseUrl` | [Standart payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                           | NO       | `https://pal-test.adyen.com/pal/servlet/Payment/v52` |
 
-> Note: Sometimes it's necessary to regenerate the `ADYEN_API_KEY` key, when you get `403 Forbidden error` from Adyen.
+> Note: Sometimes it's necessary to regenerate the `apiKey`, when you get `403 Forbidden error` from Adyen.
 
 ### commercetools
 
@@ -87,11 +88,10 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
     "commercetoolsProjectKey1": { // commercetools project key of the first project
       "clientId": "xxx",
       "clientSecret": "xxx",
-      "ensureResources": false,
       "host": "https://api.us-east-2.aws.commercetools.com/"
       "authUrl": "https://auth.us-east-2.aws.commercetools.com/"
     },
-    "commercetoolsProjectKey1": { // commercetools project key of the second project
+    "commercetoolsProjectKey2": { // commercetools project key of the second project
       "clientId": "xxx",
       "clientSecret": "xxx"
     }
@@ -99,13 +99,12 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 }
 ```
 
-| Name              | Content                                                                                                                                              | Required | Default value                                     |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------- |
-| `clientId`        | OAuth 2.0 `client_id` and can be used to obtain a token.                                                                                             | YES      |                                                   |
-| `clientSecret`    | OAuth 2.0 `client_secret` and can be used to obtain a token.                                                                                         | YES      |                                                   |
-| `ensureResources` | Set to `false` to disable the creation of required resources in commercetools (e.g. custom types) on startup. Not used in the serverless deployment. | NO       | `true`                                            |
-| `host`            | The commercetools HTTP API is hosted at that URL.                                                                                                    | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
-| `authUrl`         | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                                                          | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
+| Name           | Content                                                      | Required | Default value                                     |
+| -------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------- |
+| `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.     | YES      |                                                   |
+| `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token. | YES      |                                                   |
+| `host`         | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `authUrl`      | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
 
 ### Other Configurations
 
@@ -117,7 +116,6 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
   "adyen": {...},
   "logLevel": "DEBUG",
   "port": 8080,
-  "apiExtensionBaseUrl": "url-where-the-extension-module-is-deployed",
   "keepAliveTimeout": 10000
 }
 ```
@@ -138,18 +136,14 @@ Resources below are required for the extension module to operate correctly.
 1. [Payment custom type](../resources/web-components-payment-type.json)
 1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
 
-Resources **_will be automatically ensured_** by the extension module in your commercetools project by default on docker deployment.
+First, you will need to configure [ExtensionDraft](../resources/api-extension.json) destination according to your deployment,
+A destination contains all info necessary for the commercetools platform to call the extension module. Please follow the [commercetools HTTP API Extension](https://docs.commercetools.com/api/projects/api-extensions#destination) documentation for details.
 
-> Set `ensureResources` option on commercetools config to `false` to disable the automatic creation of required resources on docker deployment.
-
-When the extension module is running as serverless function the resources **will NOT be created** automatically.
-
-### Creating required resources manually
-
-You can create these by running the command `npm run create-resources` as below, the command requires the `ADYEN_INTEGRATION_CONFIG` to be set as an environment variable.
+After you change the destination, you can set up required resources in your commercetools projects by running the script `npm run setup-resources`, the script requires the `ADYEN_INTEGRATION_CONFIG` to be set as an environment variable.
 
 ```bash
-ADYEN_INTEGRATION_CONFIG=xxxx npm run create-resources
+export ADYEN_INTEGRATION_CONFIG=xxxx
+npm run setup-resources
 ```
 
 ## Running

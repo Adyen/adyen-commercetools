@@ -1,5 +1,3 @@
-const _ = require('lodash')
-
 let config
 
 function getModuleConfig() {
@@ -29,7 +27,6 @@ function getCtpConfig(ctpProjectKey) {
       ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
     authUrl:
       ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
-    ensureResources: config.ensureResources !== 'false',
   }
 }
 
@@ -86,11 +83,6 @@ function loadAndValidateConfig() {
       throw new Error(
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
           'Please verify that all projects have projectKey, clientId and clientSecret'
-      )
-    if (ctpConfig.ensureResources && _.isEmpty(config.apiExtensionBaseUrl))
-      throw new Error(
-        `apiExtensionBaseUrl attribute must be set because ` +
-          `commercetools project '${ctpProjectKey}' has ensureResources=true.`
       )
   }
 }
