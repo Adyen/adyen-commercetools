@@ -56,7 +56,6 @@ function getAllAdyenMerchantAccounts() {
 
 function loadAndValidateConfig() {
   try {
-    console.log(process.env.ADYEN_INTEGRATION_CONFIG)
     config = JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
   } catch (e) {
     throw new Error(
