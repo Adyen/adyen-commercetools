@@ -68,7 +68,7 @@ describe('Ensure resources', () => {
     try {
       await ensureResources(mockClient)
     } catch (e) {
-      expect(e.name).to.equal('test error')
+      expect(e.message).to.contain('test error')
       return
     }
     throw new Error('ensureResources should throw an error but did not')
