@@ -17,10 +17,7 @@ exports.handler = async (event) => {
       actions: paymentResult.data ? paymentResult.data.actions : [],
     }
   } catch (e) {
-    logger.error(
-      e,
-      `Unexpected error when processing event`
-    )
+    logger.error(e, `Unexpected error when processing event`)
     throw e
   }
 }
