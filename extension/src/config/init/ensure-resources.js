@@ -1,7 +1,7 @@
-const { ensurePaymentCustomType } = require('./ensure-payment-custom-type')
 const {
+  ensurePaymentCustomType,
   ensureInterfaceInteractionCustomType,
-} = require('./ensure-interface-interaction-custom-type')
+} = require('./ensure-custom-type')
 const { ensureApiExtensions } = require('./ensure-api-extensions')
 
 function ensureCustomTypes(ctpClient, ctpProjectKey) {
