@@ -73,4 +73,16 @@ describe('Ensure resources', () => {
     }
     throw new Error('ensureResources should throw an error but did not')
   })
+
+  it('should fail when there is error on resource fetching', async () => {
+    sinon.stub(mockClient, 'fetchByKey').throws({ statusCode: 500 })
+
+    try {
+      await ensureResources(mockClient)
+    } catch (e) {
+      expect(e.message).to.contain('500')
+      return
+    }
+    throw new Error('ensureResources should throw an error but did not')
+  })
 })
