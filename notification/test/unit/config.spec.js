@@ -7,7 +7,6 @@ describe('::config::', () => {
         ctpProjectKey1: {
           clientId: 'clientId',
           clientSecret: 'clientSecret',
-          ensureResources: true,
           apiUrl: 'host',
           authUrl: 'authUrl',
         },
