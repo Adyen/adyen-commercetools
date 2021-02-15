@@ -4,7 +4,7 @@ const { handler } = require('../../index.lambda')
 const paymentHandler = require('../../src/paymentHandler/payment-handler')
 const utils = require('../../src/utils')
 
-const { expect, assert } = chai
+const { expect } = chai
 
 chai.use(require('chai-as-promised'))
 
@@ -65,11 +65,9 @@ describe('Lambda handler', () => {
     const call = async () => handler(event)
 
     await expect(call()).to.be.rejectedWith(error)
-    assert(
-      logSpy.calledWith(
-        error,
-        `Unexpected error when processing event ${JSON.stringify(event)}`
-      )
+    logSpy.calledWith(
+      error,
+      `Unexpected error when processing event ${JSON.stringify(error)}`
     )
   })
 })
