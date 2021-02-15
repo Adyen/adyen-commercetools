@@ -1,10 +1,11 @@
-const handler = require('./handler/notification/notification.handler')
-const logger = require('./utils/logger').getLogger()
-const { getNotificationForTracking } = require('./utils/commons')
-const { getCtpProjectConfig, getAdyenConfig } = require('./utils/parser')
+const handler = require('./src/handler/notification/notification.handler')
+const logger = require('./src/utils/logger').getLogger()
+const { getNotificationForTracking } = require('./src/utils/commons')
+const { getCtpProjectConfig, getAdyenConfig } = require('./src/utils/parser')
 
 exports.handler = async (event) => {
-  const { notificationItems } = event
+  const body = event.body ? JSON.parse(event.body) : event
+  const { notificationItems } = body
   if (!notificationItems) {
     const error = new Error('No notification received.')
     logger.error(

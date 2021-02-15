@@ -1,11 +1,12 @@
-const utils = require('./utils')
-const paymentHandler = require('../src/paymentHandler/payment-handler')
+const utils = require('./src/utils')
+const paymentHandler = require('./src/paymentHandler/payment-handler')
 
 const logger = utils.getLogger()
 
 exports.handler = async (event) => {
   try {
-    const paymentResult = await paymentHandler.handlePayment(event.resource.obj)
+    const body = event.body ? JSON.parse(event.body) : event
+    const paymentResult = await paymentHandler.handlePayment(body.resource.obj)
 
     return {
       responseType: paymentResult.success
@@ -18,7 +19,7 @@ exports.handler = async (event) => {
   } catch (e) {
     logger.error(
       e,
-      `Unexpected error when processing event ${JSON.stringify(event)}`
+      `Unexpected error when processing event`
     )
     throw e
   }
