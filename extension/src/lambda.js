@@ -3,7 +3,7 @@ const paymentHandler = require('../src/paymentHandler/payment-handler')
 
 const logger = utils.getLogger()
 
-exports.handler = async function (event) {
+exports.handler = async (event) => {
   try {
     const paymentResult = await paymentHandler.handlePayment(event.resource.obj)
 

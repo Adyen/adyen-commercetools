@@ -5,32 +5,38 @@
  * Entry point: notificationTrigger
  */
 
-const ctp = require('./src/utils/ctp')
 const handler = require('./src/handler/notification/notification.handler')
-const config = require('./src/config/config')()
 const logger = require('./src/utils/logger').getLogger()
 const { getNotificationForTracking } = require('./src/utils/commons')
-
-const ctpClient = ctp.get(config)
+const { getCtpProjectConfig, getAdyenConfig } = require('./src/utils/parser')
 
 exports.notificationTrigger = async (request, response) => {
   const { notificationItems } = request.body
-  try {
-    if (!notificationItems) {
-      throw new Error('No notification received.')
-    }
-    await handler.processNotifications(notificationItems, ctpClient)
-    response.status(200).send({
-      notificationResponse: '[accepted]',
-    })
-  } catch (e) {
-    logger.error(
-      {
-        notification: getNotificationForTracking(notificationItems),
-        err: e,
-      },
-      'Unexpected error when processing event'
-    )
-    response.status(500).send('Unexpected error when processing event')
+  if (!notificationItems) {
+    response.status(400).send('No notification received.')
   }
+  try {
+    for (const notification of notificationItems) {
+      const ctpProjectConfig = getCtpProjectConfig(notification)
+      const adyenConfig = getAdyenConfig(notification)
+
+      await handler.processNotification(
+        notification,
+        adyenConfig.enableHmacSignature,
+        ctpProjectConfig
+      )
+    }
+  } catch (err) {
+    logger.error(
+      { notification: getNotificationForTracking(notificationItems), err },
+      'Unexpected exception occurred.'
+    )
+    if (err.isRecoverable) {
+      return response.status(400).send(err.message)
+    }
+  }
+
+  response.status(200).send({
+    notificationResponse: '[accepted]',
+  })
 }
