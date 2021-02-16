@@ -1,11 +1,10 @@
 const server = require('./server.js').setupServer()
-const utils = require('./utils')
+const logger = require('./utils').getLogger()
 const config = require('./config/config')
 
 const moduleConfig = config.getModuleConfig()
 
-const port = parseInt(moduleConfig.port || 8080, 10)
-const logger = utils.getLogger()
+const port = moduleConfig.port || 8080
 
 if (moduleConfig.keepAliveTimeout !== undefined)
   server.keepAliveTimeout = moduleConfig.keepAliveTimeout
