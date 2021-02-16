@@ -8,14 +8,11 @@ Components are available for cards, wallets, and most local payment methods. For
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  
-<!-- *generated with [DocToc](https://github.com/thlorenz/doctoc)* -->
 
-- [commercetools-adyen-integration](#commercetools-adyen-integration)
-  - [Overview](#overview)
-  - [Extension module](#extension-module)
-  - [Notification module](#notification-module)
-  - [Contribution Guide](#contribution-guide)
+- [Overview](#overview)
+- [Extension module](#extension-module)
+- [Notification module](#notification-module)
+- [Contribution Guide](#contribution-guide)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
