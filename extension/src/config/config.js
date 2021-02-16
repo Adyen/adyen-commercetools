@@ -4,7 +4,7 @@ function getModuleConfig() {
   return {
     port: config.port,
     logLevel: config.logLevel,
-    apiExtensionBaseUrl: config.apiExtensionBaseUrl,
+    apiExtensionBaseUrl: config.apiExtensionBaseUrl, // used only for development purpose
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
@@ -44,7 +44,7 @@ function getAdyenConfig(adyenMerchantAccount) {
     legacyApiBaseUrl:
       adyenConfig.legacyApiBaseUrl ||
       'https://pal-test.adyen.com/pal/servlet/Payment/v52',
-    clientKey: adyenConfig.clientKey || '',
+    clientKey: adyenConfig.clientKey || '', // used only for development purpose
   }
 }
 

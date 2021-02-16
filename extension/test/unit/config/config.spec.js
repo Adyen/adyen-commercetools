@@ -20,7 +20,6 @@ describe('::config::', () => {
         },
       },
       logLevel: 'DEBUG',
-      apiExtensionBaseUrl: 'apiExtensionBaseUrl',
     })
     const config = requireUncached('../../../src/config/config')
 
@@ -58,7 +57,6 @@ describe('::config::', () => {
         },
       },
       logLevel: 'DEBUG',
-      apiExtensionBaseUrl: 'apiExtensionBaseUrl',
     })
     const config = requireUncached('../../../src/config/config')
 
@@ -103,7 +101,6 @@ describe('::config::', () => {
         },
       },
       logLevel: 'DEBUG',
-      apiExtensionBaseUrl: 'apiExtensionBaseUrl',
     })
     try {
       requireUncached('../../../src/config/config')
@@ -125,7 +122,6 @@ describe('::config::', () => {
       },
       adyen: {},
       logLevel: 'DEBUG',
-      apiExtensionBaseUrl: 'apiExtensionBaseUrl',
     })
     try {
       requireUncached('../../../src/config/config')
