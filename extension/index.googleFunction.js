@@ -1,9 +1,3 @@
-/**
- * Main javascript file for GCP serverless function.
- * For more details, please refers to : https://cloud.google.com/functions
- *
- * Entry point: extensionTrigger
- */
 const { serializeError } = require('serialize-error')
 const paymentHandler = require('./src/paymentHandler/payment-handler')
 const utils = require('./src/utils')

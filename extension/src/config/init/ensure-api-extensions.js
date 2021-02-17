@@ -14,27 +14,24 @@ async function ensureApiExtensions(
     const logger = mainLogger.child({
       commercetools_project_key: ctpProjectKey,
     })
-    const extensionDraft = _.template(JSON.stringify(apiExtensionTemplate))({
-      ctpAdyenIntegrationBaseUrl,
-    })
+    const extensionDraft = JSON.parse(
+      _.template(JSON.stringify(apiExtensionTemplate))({
+        ctpAdyenIntegrationBaseUrl,
+      })
+    )
     const existingExtension = await fetchExtensionByKey(
       ctpClient,
       apiExtensionTemplate.key
     )
     if (existingExtension === null) {
-      await ctpClient.create(
-        ctpClient.builder.extensions,
-        JSON.parse(extensionDraft)
-      )
+      await ctpClient.create(ctpClient.builder.extensions, extensionDraft)
       logger.info(
         'Successfully created an API extension for payment resource type ' +
-          `(key=${apiExtensionTemplate.key}, url=${ctpAdyenIntegrationBaseUrl})`
+          `(key=${apiExtensionTemplate.key})`
       )
     } else if (
-      hasDifferentDestinationUrl(existingExtension, ctpAdyenIntegrationBaseUrl)
+      !_.isEqual(existingExtension.destination, extensionDraft.destination)
     ) {
-      existingExtension.destination.url = ctpAdyenIntegrationBaseUrl
-
       await ctpClient.update(
         ctpClient.builder.extensions,
         existingExtension.id,
@@ -42,31 +39,21 @@ async function ensureApiExtensions(
         [
           {
             action: 'changeDestination',
-            destination: existingExtension.destination,
+            destination: extensionDraft.destination,
           },
         ]
       )
       logger.info(
         'Successfully updated the API extension for payment resource type ' +
-          `(key=${apiExtensionTemplate.key}, url=${ctpAdyenIntegrationBaseUrl})`
+          `(key=${apiExtensionTemplate.key})`
       )
     }
   } catch (err) {
     throw Error(
-      `Failed to sync API extension (key=${apiExtensionTemplate.key}, url=${ctpAdyenIntegrationBaseUrl}). ` +
+      `Failed to sync API extension (key=${apiExtensionTemplate.key}). ` +
         `Error: ${JSON.stringify(serializeError(err))}`
     )
   }
-}
-
-function hasDifferentDestinationUrl(
-  existingExtension,
-  ctpAdyenIntegrationBaseUrl
-) {
-  if (existingExtension.destination.type === 'HTTP') {
-    return existingExtension.destination.url !== ctpAdyenIntegrationBaseUrl
-  }
-  return false
 }
 
 async function fetchExtensionByKey(ctpClient, key) {

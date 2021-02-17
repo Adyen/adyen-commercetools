@@ -11,14 +11,12 @@ async function setupExtensionResources() {
   await Promise.all(
     ctpProjectKeys.map(async (ctpProjectKey) => {
       const ctpConfig = config.getCtpConfig(ctpProjectKey)
-      if (ctpConfig.ensureResources) {
-        const ctpClient = ctpClientBuilder.get(ctpConfig)
-        await ensureResources(
-          ctpClient,
-          ctpConfig.projectKey,
-          moduleConfig.apiExtensionBaseUrl
-        )
-      }
+      const ctpClient = ctpClientBuilder.get(ctpConfig)
+      await ensureResources(
+        ctpClient,
+        ctpConfig.projectKey,
+        moduleConfig.apiExtensionBaseUrl
+      )
     })
   )
 
