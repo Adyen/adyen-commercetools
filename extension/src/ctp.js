@@ -13,6 +13,7 @@ const { createRequestBuilder } = require('@commercetools/api-request-builder')
 const packageJson = require('../package.json')
 
 /**
+
 The token projectKeyToAuthResultMap caches the access tokens (based on projectKey) obtained through
  the client credentials flow between different clients.
 
