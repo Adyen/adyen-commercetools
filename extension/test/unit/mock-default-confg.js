@@ -3,17 +3,14 @@ process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
     ctpProjectKey1: {
       clientId: 'clientId',
       clientSecret: 'clientSecret',
-      ensureResources: true,
     },
     ctpProjectKey2: {
       clientId: 'clientId2',
       clientSecret: 'clientSecret2',
-      ensureResources: true,
     },
     ctpProjectKey3: {
       clientId: 'clientId3',
       clientSecret: 'clientSecret3',
-      ensureResources: true,
     },
   },
   adyen: {
@@ -31,5 +28,4 @@ process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
     },
   },
   logLevel: 'DEBUG',
-  apiExtensionBaseUrl: 'apiExtensionBaseUrl',
 })

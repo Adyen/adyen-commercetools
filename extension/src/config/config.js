@@ -1,12 +1,10 @@
-const _ = require('lodash')
-
 let config
 
 function getModuleConfig() {
   return {
     port: config.port,
     logLevel: config.logLevel,
-    apiExtensionBaseUrl: config.apiExtensionBaseUrl,
+    apiExtensionBaseUrl: config.apiExtensionBaseUrl, // used only for development purpose
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
@@ -29,7 +27,6 @@ function getCtpConfig(ctpProjectKey) {
       ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
     authUrl:
       ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
-    ensureResources: config.ensureResources !== 'false',
   }
 }
 
@@ -47,7 +44,7 @@ function getAdyenConfig(adyenMerchantAccount) {
     legacyApiBaseUrl:
       adyenConfig.legacyApiBaseUrl ||
       'https://pal-test.adyen.com/pal/servlet/Payment/v52',
-    clientKey: adyenConfig.clientKey || '',
+    clientKey: adyenConfig.clientKey || '', // used only for development purpose
   }
 }
 
@@ -86,11 +83,6 @@ function loadAndValidateConfig() {
       throw new Error(
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
           'Please verify that all projects have projectKey, clientId and clientSecret'
-      )
-    if (ctpConfig.ensureResources && _.isEmpty(config.apiExtensionBaseUrl))
-      throw new Error(
-        `apiExtensionBaseUrl attribute must be set because ` +
-          `commercetools project '${ctpProjectKey}' has ensureResources=true.`
       )
   }
 }

@@ -11,11 +11,7 @@ async function ensureInterfaceInteractionCustomTypeForAllProjects() {
   for (const commercetoolsProjectKey of commercetoolsProjectKeys) {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     const ctpClient = ctp.get(ctpConfig)
-    if (ctpConfig.ensureResources)
-      await ensureInterfaceInteractionCustomType(
-        ctpClient,
-        ctpConfig.projectKey
-      )
+    await ensureInterfaceInteractionCustomType(ctpClient, ctpConfig.projectKey)
   }
 }
 
