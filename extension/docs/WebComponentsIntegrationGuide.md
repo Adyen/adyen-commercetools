@@ -698,7 +698,21 @@ If you want to return the funds to your shopper, use either Cancel or Refund fun
 This will either:
 
 - [**Cancel**](CancelPayment.md) - cancel the authorisation on an uncaptured payment(full payment).
-- [**Refund**](RefundPayment.md) - (partially) refund a payment back to the shopper.
+- [**Refund**](Refund.md) - (partially) refund a payment back to the shopper.
+
+# Multi-tenancy
+
+`commercetools-adyen-integration` supports multi-tenancy to serve multiple Adyen merchant accounts/commercetools projects
+with one application instance. This architectural style leverages sharing and scalability to provide cost-efficient hosting.
+
+In order for `commercetools-adyen-integration` to know which project it should communicate with, this information must be provided. Payment object must contain the following 2 custom fields:
+
+- Provide merchantAccount as a custom field called `adyenMerchantAccount` on create payment.
+- Provide commercetools project key as a custom field called `commercetoolsProjectKey` on create payment.
+
+In case any of those fields are not provided, payment creation will be rejected.
+
+> `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.commercetoolsProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in the every notification from Adyen to help with matching the correct commercetools project.
 
 # Multi-tenancy
 

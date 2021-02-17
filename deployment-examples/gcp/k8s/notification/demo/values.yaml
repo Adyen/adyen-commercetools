@@ -1,12 +1,6 @@
 ingress:
   annotations:
     kubernetes.io/ingress.global-static-ip-name: 'ctp-adyen-integration-demo-notification-global-ip'
-    ingress.gcp.kubernetes.io/pre-shared-cert: 'domain-a.com'
+    ingress.gcp.kubernetes.io/pre-shared-cert: 'ct-app'
   hosts:
-    - 'adyen-payment-demo-notification.domain-a.com'
-
-# domain-a.com given as a example, you need to configure the certificate of your domain.
-
-# More on ingress:
-# https://cloud.google.com/kubernetes-engine/docs/how-to/load-balance-ingress
-# https://cloud.google.com/kubernetes-engine/docs/concepts/ingress-xlb#static_ip_addresses_for_https_load_balancers
+    - 'adyen-payment-demo-notification.ct-app.com'
