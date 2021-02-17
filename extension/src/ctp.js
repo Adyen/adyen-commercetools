@@ -13,11 +13,12 @@ const { createRequestBuilder } = require('@commercetools/api-request-builder')
 const packageJson = require('../package.json')
 
 /**
-The token projectKeyToAuthResultMap is caches the access tokens (based on projectKey) obtained through
+
+The token projectKeyToAuthResultMap caches the access tokens (based on projectKey) obtained through
  the client credentials flow between different clients.
 
 The projectKeyToAuthResultMap is used by middleware to avoid authentication each time when
- it's need to create an authentication token.
+ it's needed to create an authentication token.
 
  When the token expires the sdk-middleware-auth is refreshing the token.
 
