@@ -1,14 +1,14 @@
 ## Deploy as GCP Cloud Function
 
-1. Run 'npm run zip-google-function'. It helps to execute following steps
-   - Rename index.googleFunction.js to index.js
-   - For deployment to GCP Cloud Function, bundle the following files and folders into a .zip file and upload it in GCP console.
-      - src
-      - resources
-      - index.js
-      - package.json
-      
-2. Specify the `extensionTrigger` as the entry point function in your GCP Cloud Function configuration.
-3. When the extension module is running as GCP Cloud Function **it will NOT create** the required resources like custom 
-types or commercetools API extension for you. Please follow the [manual resource creation guide](../../../../extension/docs/HowToRun.md#creating-required-resources-manually) instead. 
-4. By default, the deployed cloud function is not allowed to be called without permission. It returns 403 http status when it is called. Please add desired user groups into 'Cloud Functions Invoker'. 
+1. In order to setup the extension module config, follow our [how to run guide](../../../../extension/docs/HowToRun.md).
+2. Extension module requires `ADYEN_INTEGRATION_CONFIG` as `Runtime environment variable`.
+3. Deployments work by uploading an archive containing your function's source code to a Google Cloud Storage bucket.
+To bundle the extension module, navigate to in `extension` folder run `npm run zip-google-function`. 
+4. Specify the `extensionTrigger` as the entry point function in your GCP Cloud Function configuration.
+5. Please check our [best practices](../../../../docs/BEST_PRACTICES.md) for your deployment.
+
+### Helpful Links: 
+- [commercetools HTTP API Extension](https://docs.commercetools.com/api/projects/api-extensions#http-destination)
+- [Official Node.js Quickstart Guide](https://cloud.google.com/functions/docs/quickstart-nodejs)
+- [Deplpoying Cloud Functions](https://cloud.google.com/functions/docs/deploying)
+- [Deploying from Cloud Console](https://cloud.google.com/functions/docs/deploying/console)

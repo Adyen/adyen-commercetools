@@ -69,11 +69,10 @@ merchant account like in the following example:
 }
 ```
 
-| Name                      | Content                                                                                                                                            | Required | Default value |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------- |
-| `enableHmacSignature`     | Verify the integrity of notifications using [Adyen HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures). | NO       | `true`        |
-| `secretHmacKey`           | The generated secret HMAC key that is linked to a Adyen \*\*Standard                                                                               |
-| Notification\*\* endpoint | NO                                                                                                                                                 |          |
+| Name                  | Content                                                                                                                                            | Required | Default value |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------- |
+| `enableHmacSignature` | Verify the integrity of notifications using [Adyen HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures). | NO       | `true`        |
+| `secretHmacKey`       | The generated secret HMAC key that is linked to a Adyen **Standard Notification** endpoint                                                         | NO       |               |
 
 ### commercetools
 
@@ -95,7 +94,6 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
     "commercetoolsProjectKey2": {
       "clientId": "xxx",
       "clientSecret": "xxx"
-      "ensureResources": false,
       "host": "https://api.us-east-2.aws.commercetools.com/"
       "authUrl": "https://auth.us-east-2.aws.commercetools.com/"
     }
@@ -103,13 +101,12 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 }
 ```
 
-| Name              | Content                                                                                                                                                         | Required | Default value                                     |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------- |
-| `clientId`        | OAuth 2.0 `client_id` and can be used to obtain a token.                                                                                                        | YES      |                                                   |
-| `clientSecret`    | OAuth 2.0 `client_secret` and can be used to obtain a token.                                                                                                    | YES      |                                                   |
-| `ensureResources` | Set to `false` to disable the creation of required resources in commercetools (e.g. `interfaceInteractions`) on startup. Not used in the serverless deployment. | NO       | `true`                                            |
-| `host`            | The commercetools HTTP API is hosted at that URL.                                                                                                               | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
-| `authUrl`         | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                                                                     | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
+| Name           | Content                                                      | Required | Default value                                     |
+| -------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------- |
+| `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.     | YES      |                                                   |
+| `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token. | YES      |                                                   |
+| `host`         | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `authUrl`      | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
 
 ### Other Configurations
 
@@ -137,18 +134,11 @@ Resources below are required for the notification module to operate correctly.
 
 1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
 
-Resources **_will be automatically ensured_** by the notification module in your commercetools project by default on docker deployment.
-
-> Set `ensureResources` option on commercetools config to `false` to disable the automatic creation of required resources on docker deployment.
-
-When the notification module is running as serverless function the resources **will NOT be created** automatically.
-
-### Creating required resources manually
-
-You can create these by running the command `npm run create-resources` as below, the command requires the `ADYEN_INTEGRATION_CONFIG` to be set as an environment variable.
+You can create these by running the command `npm run setup-resources` as below, the command requires the `ADYEN_INTEGRATION_CONFIG` to be set as an environment variable.
 
 ```bash
-ADYEN_INTEGRATION_CONFIG=xxxx npm run create-resources
+export ADYEN_INTEGRATION_CONFIG=xxxx
+npm run setup-resources
 ```
 
 ## Running

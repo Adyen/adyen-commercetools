@@ -1,13 +1,13 @@
 const server = require('./server.js').setupServer()
 const logger = require('./utils/logger').getLogger()
 const config = require('./config/config')
-const { setupNotificationResources } = require('./setup')
 
-const PORT = config.getModuleConfig().port || 443
+const moduleConfig = config.getModuleConfig()
 
-if (config.getModuleConfig().keepAliveTimeout !== undefined)
-  server.keepAliveTimeout = config.getModuleConfig().keepAliveTimeout
-server.listen(PORT, async () => {
-  await setupNotificationResources()
-  logger.info(`Server started on ${PORT} port.`)
+const port = moduleConfig.port || 443
+
+if (moduleConfig.keepAliveTimeout !== undefined)
+  server.keepAliveTimeout = moduleConfig.keepAliveTimeout
+server.listen(port, async () => {
+  logger.info(`Notification module is running at http://localhost:${port}`)
 })

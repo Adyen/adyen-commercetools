@@ -1,10 +1,3 @@
-/**
- * Main javascript file for GCP serverless function.
- * For more details, please refers to : https://cloud.google.com/functions
- *
- * Entry point: notificationTrigger
- */
-
 const handler = require('./src/handler/notification/notification.handler')
 const logger = require('./src/utils/logger').getLogger()
 const { getNotificationForTracking } = require('./src/utils/commons')
@@ -13,7 +6,7 @@ const { getCtpProjectConfig, getAdyenConfig } = require('./src/utils/parser')
 exports.notificationTrigger = async (request, response) => {
   const { notificationItems } = request.body
   if (!notificationItems) {
-    response.status(400).send('No notification received.')
+    return response.status(400).send('No notification received.')
   }
   try {
     for (const notification of notificationItems) {
@@ -36,7 +29,7 @@ exports.notificationTrigger = async (request, response) => {
     }
   }
 
-  response.status(200).send({
+  return response.status(200).send({
     notificationResponse: '[accepted]',
   })
 }
