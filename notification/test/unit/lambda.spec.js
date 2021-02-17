@@ -1,6 +1,6 @@
 const sinon = require('sinon')
 const chai = require('chai')
-const { handler } = require('../../src/lambda')
+const { handler } = require('../../index.lambda')
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const logger = require('../../src/utils/logger')
 
