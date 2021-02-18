@@ -46,10 +46,8 @@ The following diagram shows checkout integration flow based on [Adyen Web Compon
 
 ## How it works
 
-On this page we describe the checkout integration steps between extension module and Adyen Web Components:
-
-- [Step 1](#step-1-create-commercetools-payment) Creating a commercetools payment object from the merchant server.
-- [Step 2 - Optional](#step-2-get-available-payment-methods-optional): Set `getPaymentMethodsRequest` custom field to commercetools payment to get the list of payment methods available for the checkout.
+- [Step 1](#step-1-commercetools-checkout-validations) : Execute required checkout validations.
+- [Step 2](#step-2-get-available-payment-methods): Set `getPaymentMethodsRequest` custom field to commercetools payment to get the list of payment methods available for the checkout.
 - [Step 3](#step-3-add-components-to-your-payments-form): Add Adyen Web Component to your checkout payments form.
 - [Step 4](#step-4-make-a-payment): Submit a payment request by setting `makePaymentRequest` payment custom field with the payment data returned by the Adyen web component.
 - [Step 5](#step-5-submit-additional-payment-details): Set `submitAdditionalPaymentDetailsRequest ` custom field to commercetools payment to submit additional payment details.
@@ -57,21 +55,46 @@ On this page we describe the checkout integration steps between extension module
 
 ## Before you begin
 
-The extension module is a publicly exposed service that acts as a middleware between the commercetools platform and Adyen. 
-In order to make the extension module up and running, follow our [how to run guide](./HowToRun.md). 
+In order to make the extension module up and running, follow our [how to run guide](./HowToRun.md). For the sake of readability,
+the field [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is ommitted from all the examples in this document.
+In real requests, [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin)` is always added.
 
-> For the sake of readability, the field [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is ommitted from all the examples in this document.
-In real requests, [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin)` is always added automatically by the extension module.
+## Step 1: commercetools checkout validations
 
-## Step 1: Create commercetools payment
+[merchant server](#web-components-integration-guide) should execute the following validations:
 
-Once [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is configured to call Adyen extension module, for every payment create or update request an Adyen extension will be remotely called by the commercetools platform.
-A commercetools payment hold information about the current state of receiving and/or refunding money. The actual financial process is not done by the commercetools platform instead it's done by Adyen Payment Service Provider (PSP), which is connected via extension module implementation. 
+1. On each checkout step [validate cart state](#validate-cart-state)
+1. Before starting a new payment process make sure there are no paid payments on the cart already:
+   - [Recalculate cart](#recalculate-cart)
+   - [Validate payment](#validate-payment)
+   - [Validate payment transaction](#validate-payment-transaction)
 
-From the merchant server, make a POST request to commercetools API, specifying:
+If all the above validations passed then the order can be created right away and order confirmation page shown.
+Otherwise, the shopper might continue with further payment steps.
 
- | Field name | Description |
- |            |             | 
+### Validate cart state
+
+Check if [current cart has been ordered already](https://docs.commercetools.com/http-api-projects-carts#cartstate) (`Cart.cartState = Ordered`).
+In this case, load order by ordered cart ID and show order confirmation page.
+This might happen if the cart has been already ordered in a different tab (edge case)
+or by an optional asynchronous process like [commercetools-payment-to-order-processor job](https://github.com/commercetools/commercetools-payment-to-order-processor).
+
+### Recalculate cart
+
+[Execute cart recalculate](https://docs.commercetools.com/http-api-projects-carts#recalculate) to ensure:
+
+- Cart totals are always up-to-date
+- Time-limited discounts are eventually removed from the cart (discounts are validated on re-calculate and order creation only).
+
+### Validate payment
+
+There must be at least one commercetools payment object of type Adyen (`Payment.paymentMethodInfo.paymentInterface = ctp-adyen-integration`).
+
+### Validate payment transaction
+
+Cart's payment counts as successful if there is at least one payment object
+with successful transaction state (`Payment.Transaction.state=Success`)
+and transaction type `Authorization` or `Charge`.
 
 ## Step 2: Get available payment methods (Optional)
 
@@ -698,7 +721,7 @@ If you want to return the funds to your shopper, use either Cancel or Refund fun
 This will either:
 
 - [**Cancel**](CancelPayment.md) - cancel the authorisation on an uncaptured payment(full payment).
-- [**Refund**](Refund.md) - (partially) refund a payment back to the shopper.
+- [**Refund**](RefundPayment.md) - (partially) refund a payment back to the shopper.
 
 # Multi-tenancy
 
@@ -713,57 +736,6 @@ In order for `commercetools-adyen-integration` to know which project it should c
 In case any of those fields are not provided, payment creation will be rejected.
 
 > `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.commercetoolsProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in the every notification from Adyen to help with matching the correct commercetools project.
-
-# Multi-tenancy
-
-`commercetools-adyen-integration` supports multi-tenancy to serve multiple Adyen merchant accounts/commercetools projects
-with one application instance. This architectural style leverages sharing and scalability to provide cost-efficient hosting.
-
-In order for `commercetools-adyen-integration` to know which project it should communicate with, this information must be provided. Payment object must contain the following 2 custom fields:
-
-- Provide merchantAccount as a custom field called `adyenMerchantAccount` on create payment.
-- Provide commercetools project key as a custom field called `commercetoolsProjectKey` on create payment.
-
-In case any of those fields are not provided, payment creation will be rejected.
-
-> `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.commercetoolsProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in the every notification from Adyen to help with matching the correct commercetools project.
-
-# commercetools checkout validations
-
-We suggest following validations on your [merchant server](#web-components-integration-guide): 
-
-1. On each checkout step [validate cart state](#validate-cart-state).
-1. Before starting a new payment process make sure there are no paid payments on the cart already:
-   - [Recalculate cart](#recalculate-cart)
-   - [Validate payment](#validate-payment)
-   - [Validate payment transaction](#validate-payment-transaction)
-
-If all the above validations passed then the order can be created right away and order confirmation page shown.
-Otherwise, the shopper might continue with further payment steps.
-
-### Validate cart state
-
-Check if [current cart has been ordered already](https://docs.commercetools.com/http-api-projects-carts#cartstate) (`Cart.cartState = Ordered`).
-In this case, load order by ordered cart ID and show order confirmation page.
-This might happen if the cart has been already ordered in a different tab (edge case)
-or by an optional asynchronous process like [commercetools-payment-to-order-processor job](https://github.com/commercetools/commercetools-payment-to-order-processor).
-
-### Recalculate cart
-
-[Execute cart recalculate](https://docs.commercetools.com/http-api-projects-carts#recalculate) to ensure:
-
-- Cart totals are always up-to-date
-- Time-limited discounts are eventually removed from the cart (discounts are validated on re-calculate and order creation only).
-
-### Validate payment
-
-There must be at least one commercetools payment object of type Adyen (`Payment.paymentMethodInfo.paymentInterface = ctp-adyen-integration`).
-
-### Validate payment transaction
-
-Cart's payment counts as successful if there is at least one payment object
-with successful transaction state (`Payment.Transaction.state=Success`)
-and transaction type `Authorization` or `Charge`.
 
 # Bad Practices
 
