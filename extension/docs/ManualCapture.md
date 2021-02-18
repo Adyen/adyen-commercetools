@@ -10,7 +10,7 @@
 **Please see [Integration Guide](WebComponentsIntegrationGuide.md) first before continuing with this document.**
 
 ## Manual Capture
-By default, payments are captured immediately (or with [delay](https://docs.adyen.com/point-of-sale/capturing-payments/delayed-capture#set-up-delayed-capture)) after authorisation. For payment methods that support separate authorization and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This also allows you to cancel the payment/authorization.
+By default, payments are captured immediately (or with [delay](https://docs.adyen.com/online-payments/capture#capture-delay)) after authorisation. For payment methods that support separate authorization and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This also allows you to cancel the payment/authorization.
 
 ### Make an API call to capture a payment:
 
