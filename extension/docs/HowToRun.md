@@ -26,7 +26,7 @@ Extension module requires 1 environment variable to start. This environment vari
       "clientId": "xxx",
       "clientSecret": "xxx"
     },
-    "commercetoolsProjectKey1": {
+    "commercetoolsProjectKey2": {
       "clientId": "xxx",
       "clientSecret": "xxx"
     }
