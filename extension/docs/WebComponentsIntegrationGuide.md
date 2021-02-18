@@ -106,8 +106,8 @@ and transaction type `Authorization` or `Charge`.
 
 ## Step 2: Creating a commercetools payment
 
-In the commercetools platform, payment is just a container of the current state of receiving and/or refunding money. 
- The actual financial process is done by Adyen, which is connected with our extension module implementation. The commercetools [payment](https://docs.commercetools.com/api/projects/payments#payment) does not contain payment method-specific fields, so those are added as custom fields via a payment method-specific payment type.
+In the commercetools platform, payment is just a container of the current state of receiving and/or refunding money.
+The actual financial process is done by Adyen, which is connected with our extension module implementation. The commercetools [payment](https://docs.commercetools.com/api/projects/payments#payment) does not contain payment method-specific fields, so those are added as custom fields via a payment method-specific payment type.
 
 Specifying the **required** fields:
 
