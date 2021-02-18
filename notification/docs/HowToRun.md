@@ -153,7 +153,7 @@ to see the latest releases and tags.
 ```bash
     docker run \
     -e ADYEN_INTEGRATION_CONFIG=xxxxxx \
-    commercetools/commercetools-adyen-integration-notification
+    commercetools/commercetools-adyen-integration-notification:vX.X.X
 ```
 
 ## Deployment
