@@ -33,8 +33,19 @@ function getLogger() {
   return logger
 }
 
+function isAuthEnabled(ctpProjectKey) {
+  if (!ctpProjectKey) return false
+
+  const ctpConfig = config.getCtpConfig(ctpProjectKey)
+  if (ctpConfig) {
+    return ctpConfig.isAuthEnabled
+  }
+  return false
+}
+
 module.exports = {
   collectRequestData,
   sendResponse,
   getLogger,
+  isAuthEnabled,
 }

@@ -9,6 +9,9 @@ describe('::config::', () => {
           clientSecret: 'clientSecret',
           apiUrl: 'host',
           authUrl: 'authUrl',
+          isAuthEnabled: false,
+          username: 'username',
+          password: 'password',
         },
       },
       adyen: {
@@ -33,6 +36,9 @@ describe('::config::', () => {
       clientSecret: 'clientSecret',
       authUrl: 'authUrl',
       projectKey: 'ctpProjectKey1',
+      isAuthEnabled: false,
+      username: 'username',
+      password: 'password',
     })
     expect(config.getAdyenConfig('adyenMerchantAccount1')).to.eql({
       apiBaseUrl: 'apiBaseUrl',
@@ -70,6 +76,9 @@ describe('::config::', () => {
       clientId: 'clientId',
       clientSecret: 'clientSecret',
       projectKey: 'ctpProjectKey1',
+      isAuthEnabled: false,
+      username: '',
+      password: '',
     })
     expect(config.getAdyenConfig('adyenMerchantAccount1')).to.eql({
       apiBaseUrl: 'https://checkout-test.adyen.com/v52',

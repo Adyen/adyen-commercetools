@@ -7,12 +7,16 @@ const manualCaptureHandler = require('./manual-capture.handler')
 const cancelHandler = require('./cancel-payment.handler')
 const refundHandler = require('./refund-payment.handler')
 const pU = require('./payment-utils')
+const utils = require('../utils')
+const errorMessages = require('../validator/error-messages')
+
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 const {
   getChargeTransactionInitial,
   getAuthorizationTransactionSuccess,
   getCancelAuthorizationTransactionInit,
 } = require('./payment-utils')
+const config = require('../config/config')
 
 const PAYMENT_METHOD_TYPE_KLARNA_METHODS = [
   'klarna',
@@ -20,7 +24,7 @@ const PAYMENT_METHOD_TYPE_KLARNA_METHODS = [
   'klarna_account',
 ]
 
-async function handlePayment(paymentObject) {
+async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
     // if it's not adyen payment, ignore the payment
     return { success: true, data: null }
@@ -36,6 +40,23 @@ async function handlePayment(paymentObject) {
       success: false,
       data: paymentValidator.buildCtpErrorResponse(),
     }
+
+  const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
+  const isAuthEnabled = utils.isAuthEnabled(ctpProjectKey)
+  if (isAuthEnabled && _isNotAuthorized(paymentObject, authToken)) {
+    console.error('Unauthorized request')
+    return {
+      success: false,
+      data: {
+        errors: [
+          {
+            code: 'InvalidOperation',
+            message: errorMessages.UNAUTHORIZED_REQUEST,
+          },
+        ],
+      },
+    }
+  }
 
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(
@@ -98,6 +119,26 @@ function _isAdyenPayment(paymentObject) {
   return (
     paymentObject.paymentMethodInfo.paymentInterface === CTP_ADYEN_INTEGRATION
   )
+}
+
+function _isNotAuthorized(paymentObject, authTokenString) {
+  const commercetoolsProjectKey =
+    paymentObject.custom.fields.commercetoolsProjectKey
+
+  const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+  const storedUsername = ctpConfig.username
+  const storedPassword = ctpConfig.password
+  // Split on a space, the original auth looks like  "Basic Y2hhcmxlczoxMjM0NQ==" and we need the 2nd part
+  const encodedAuthToken = authTokenString.split(' ')
+
+  // create a buffer and tell it the data coming in is base64
+  const decodedAuthToken = Buffer.from(encodedAuthToken[1], 'base64').toString()
+
+  const credentialString = decodedAuthToken.split(':')
+  const username = credentialString[0]
+  const password = credentialString[1]
+
+  return storedUsername !== username || storedPassword !== password
 }
 
 function _isKlarna(makePaymentRequestObj) {

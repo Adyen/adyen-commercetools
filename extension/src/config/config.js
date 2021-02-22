@@ -27,6 +27,9 @@ function getCtpConfig(ctpProjectKey) {
       ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
     authUrl:
       ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
+    isAuthEnabled: ctpConfig.isAuthEnabled || false,
+    username: ctpConfig.username || '',
+    password: ctpConfig.password || '',
   }
 }
 
@@ -60,6 +63,7 @@ function loadAndValidateConfig() {
   try {
     config = JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
   } catch (e) {
+    console.error(e)
     throw new Error(
       'Adyen integration configuration is not provided in the JSON format'
     )
