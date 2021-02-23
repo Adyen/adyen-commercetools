@@ -43,9 +43,15 @@ function isAuthEnabled(ctpProjectKey) {
   return false
 }
 
+function getAuthorizationHeader(request) {
+  if (request.header) return request.header['authorization']
+  return ''
+}
+
 module.exports = {
   collectRequestData,
   sendResponse,
   getLogger,
   isAuthEnabled,
+  getAuthorizationHeader,
 }
