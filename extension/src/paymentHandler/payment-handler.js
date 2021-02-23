@@ -128,7 +128,7 @@ function _isNotAuthorized(paymentObject, authTokenString) {
   const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
   const storedUsername = ctpConfig.username
   const storedPassword = ctpConfig.password
-  // Split on a space, the original auth looks like  "Basic Y2hhcmxlczoxMjM0NQ==" and we need the 2nd part
+  // Split on a space, the original auth looks like  "Basic *********" and we need the 2nd part
   const encodedAuthToken = authTokenString.split(' ')
 
   // create a buffer and tell it the data coming in is base64

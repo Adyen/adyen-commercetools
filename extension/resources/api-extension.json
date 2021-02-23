@@ -2,7 +2,11 @@
   "key": "ctp-adyen-integration-payment-extension",
   "destination": {
     "type": "HTTP",
-    "url": "${ctpAdyenIntegrationBaseUrl}"
+    "url": "${ctpAdyenIntegrationBaseUrl}",
+    "authentication": {
+      "type": "AuthorizationHeader",
+      "headerValue": "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" // username = 'Aladdin', password = 'open sesame'
+    }
   },
   "triggers": [
     {

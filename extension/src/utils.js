@@ -44,7 +44,7 @@ function isAuthEnabled(ctpProjectKey) {
 }
 
 function getAuthorizationHeader(request) {
-  if (request.header) return request.header['authorization']
+  if (request.headers) return request.headers['authorization']
   return ''
 }
 
