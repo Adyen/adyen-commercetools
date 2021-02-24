@@ -3,7 +3,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Web Components integration guide](#web-components-integration-guide)
   - [How it works](#how-it-works)
   - [Before you begin](#before-you-begin)
@@ -19,9 +18,12 @@
     - [Request](#request)
     - [Response](#response)
       - [Authorised Response](#authorised-response)
-      - [Redirect Response](#redirect-response)
+      - [Action Response](#action-response)
     - [Klarna payment](#klarna-payment)
   - [Step 6: Submit additional payment details](#step-6-submit-additional-payment-details)
+    - [Response](#response-1)
+      - [Authorised Response](#authorised-response-1)
+      - [Action Response](#action-response-1)
   - [Step 7: Capture payment (required for Klarna)](#step-7-capture-payment-required-for-klarna)
   - [Error handling](#error-handling)
     - [Extension module errors](#extension-module-errors)
@@ -259,6 +261,7 @@ If you haven't created the payment forms already in your frontend, follow the of
 ## Step 5: Make a payment
 
 When a shopper selects a payment method, enters payment details into the web component form, and then submits payment with a `Pay` button, the Adyen web component will trigger an `onSubmit` component event with a generated "make payment" JSON data that the merchant server needs to pass to the commercetools payment for further processing.
+
 > For details, consult the [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-3-make-a-payment)
 
 ### Request
@@ -338,6 +341,7 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
 ### Response
 
 The payment response contains information for the next steps of the payment process. On a successful payment response, commercetools payment `key` is set with the `reference` of the `makePaymentRequest`, and the response from Adyen is set to `makePaymentResponse` custom field.
+Your next steps depend on whether the `makePaymentResponse` custom fields contains an action object.
 
 #### Authorised Response
 
@@ -397,11 +401,12 @@ For some payment methods (e.g. Visa, Mastercard, and SEPA Direct Debits) you'll 
 
 </details>
 
-> See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-present-payment-result) for more information how to present the results.
+> See [Adyen documentation](https://docs.adyen.com/online-payments/components-web#step-6-present-payment-result) for more information how to present the results.
 
-#### Redirect Response
+#### Action Response
 
-For other payment methods, you'll receive `RedirectShopper` as `resultCode` together with a `redirectUrl`. In this case, the shopper must finalize the payment on the page behind the `redirectUrl`.
+Some payment methods require additional action from the shopper such as: to scan a QR code, to authenticate a payment with 3D Secure, or to log in to their bank's website to complete the payment.
+In this case you'll receive an `action` object (e.g. redirect, threeDS2Fingerprint, qrCode etc).
 
 Here an example response from Adyen where the user has to be redirected to a payment provider page:
 
@@ -442,6 +447,10 @@ Here an example response from Adyen where the user has to be redirected to a pay
   }
 }
 ```
+
+Pass the action object to your front end. The Adyen web component uses this to handle the required action.
+
+> See [Adyen documentation](https://docs.adyen.com/online-payments/components-web#step-4-additional-front-end) for more information how to perform additional front end actions.
 
 ### Klarna payment
 
@@ -572,95 +581,26 @@ Pass the generated component data to your merchant server, the data is available
 }
 ```
 
-Extension module will extend `submitAdditionalPaymentDetailsRequest` with `paymentData` attribute if the attribute is missing. In this case, `paymentData` will be taken from the previous `makePaymentRequest`.
-After update, you will receive `submitAdditionalPaymentDetailsResponse` in the returned commercetools payment. The next steps depend on the existence of an action object within `submitAdditionalPaymentDetailsResponse`.
-If you received an action object, [pass the action object to your front end](https://docs.adyen.com/checkout/components-web/#step-4-additional-front-end) and perform Step 4 again. Submit additional payment details response from Adyen for the case where you need to pass the action object to your front end:
+> Refer Adyen's [/payments/details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments/details) request to check all possible request payload parameters.
 
-```json
-{
-  "resultCode": "ChallengeShopper",
-  "action": {
-    "paymentData": "Ab02b4c0!...",
-    "paymentMethodType": "scheme",
-    "token": "eyJhY3...",
-    "type": "threeDS2Challenge"
-  },
-  "authentication": {
-    "threeds2.challengeToken": "eyJhY3..."
-  },
-  "details": [
-    {
-      "key": "threeds2.challengeResult",
-      "type": "text"
-    }
-  ],
-  "paymentData": "Ab02b4c0!..."
-}
-```
+### Response
+
+After update, you will receive `submitAdditionalPaymentDetailsResponse` in the returned commercetools payment.
+
+Depending on the payment result, you receive a response containing:
+
+- resultCode: Provides information about the result of the request.
+- pspReference: Our unique identifier for the transaction.
+- action: If you receive this object, you need to perform step 4 again.
+
+#### Authorised Response
+
+If the response does not contain an action object, you can present the payment result to your shopper.
+
+> See [Adyen documentation](https://docs.adyen.com/online-payments/components-web#step-6-present-payment-result) for more information how to present the results.
 
 <details>
-<summary>Here an example commercetools payment with submitAdditionalPaymentDetailsResponse field with the response above. Click to expand. </summary>
-
-```json
-{
-  "custom": {
-    "type": {
-      "typeId": "type",
-      "key": "ctp-adyen-integration-web-components-payment-type"
-    },
-    "fields": {
-      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
-      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
-      "makePaymentResponse": "{\"resultCode\":\"RedirectShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\",\"data\":{\"MD\":\"aTZmV09...\",\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\"},\"method\":\"POST\",\"type\":\"redirect\"},\"details\":[{\"key\":\"MD\",\"type\":\"text\"},{\"key\":\"PaRes\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\",\"redirect\":{\"data\":{\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\",\"MD\":\"aTZmV09...\"},\"method\":\"POST\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\"}}",
-      "submitPaymentDetailsRequest": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}",
-      "submitAdditionalPaymentDetailsResponse": "{\"resultCode\":\"ChallengeShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"token\":\"eyJhY3...\",\"type\":\"threeDS2Challenge\"},\"authentication\":{\"threeds2.challengeToken\":\"eyJhY3...\"},\"details\":[{\"key\":\"threeds2.challengeResult\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\"}"
-    }
-  }
-}
-```
-
-</details>
-
-If you received an action object you need to repeat `submitAdditionalPaymentDetailsRequest` step. In order to do so remove the existing `submitAdditionalPaymentDetailsResponse` custom field. This can be done in a single payment update request as follows:
-
-```json
-{
-  "version": "PAYMENT_VERSION",
-  "actions": [
-    {
-      "action": "setCustomField",
-      "name": "submitAdditionalPaymentDetailsRequest",
-      "value": "{\"details\":{\"threeds2.challengeResult\":\"eyJ0cmFuc1...\"}}"
-    },
-    {
-      "action": "setCustomField",
-      "name": "submitAdditionalPaymentDetailsResponse"
-    }
-  ]
-}
-```
-
-If you did not get an action object, you can present the payment result to your shopper.
-
-> See [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-6-present-payment-result) for more information how to present the results.
-
-Submit additional payment details response from Adyen for the case where you can present the result:
-
-```json
-{
-  "pspReference": "853592567856061C",
-  "resultCode": "Authorised",
-  "amount": {
-    "currency": "EUR",
-    "value": 1000
-  },
-  "merchantReference": "YOUR_REFERENCE"
-}
-```
-
-<details>
-<summary>A commercetools example payment with submitAdditionalPaymentDetailsResponse field with the response above. Click to expand.</summary>
+<summary>A commercetools example payment with submitAdditionalPaymentDetailsResponse field. Click to expand.</summary>
 
 ```json
 {
@@ -703,7 +643,54 @@ Submit additional payment details response from Adyen for the case where you can
 
 </details>
 
-Notice that a transaction is added to the payment. The transaction is of type `Authorization` and has `amount` taken from `amountPlanned`. `interactionId` is matching the `makePaymentResponse`
+Notice that a transaction added to the commercetools payment. The transaction is of type `Authorization` and has `amount` taken from `amountPlanned`. `interactionId` is matching the `makePaymentResponse`.
+
+#### Action Response
+
+If you received an action object you need to repeat `submitAdditionalPaymentDetailsRequest` step.
+
+<details>
+<summary>Here an example commercetools payment with submitAdditionalPaymentDetailsResponse field with the action object. Click to expand. </summary>
+
+```json
+{
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "ctp-adyen-integration-web-components-payment-type"
+    },
+    "fields": {
+      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
+      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
+      "makePaymentResponse": "{\"resultCode\":\"RedirectShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\",\"data\":{\"MD\":\"aTZmV09...\",\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\"},\"method\":\"POST\",\"type\":\"redirect\"},\"details\":[{\"key\":\"MD\",\"type\":\"text\"},{\"key\":\"PaRes\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\",\"redirect\":{\"data\":{\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\",\"MD\":\"aTZmV09...\"},\"method\":\"POST\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\"}}",
+      "submitPaymentDetailsRequest": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}",
+      "submitAdditionalPaymentDetailsResponse": "{\"resultCode\":\"ChallengeShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"token\":\"eyJhY3...\",\"type\":\"threeDS2Challenge\"},\"authentication\":{\"threeds2.challengeToken\":\"eyJhY3...\"},\"details\":[{\"key\":\"threeds2.challengeResult\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\"}"
+    }
+  }
+}
+```
+
+</details>
+
+In order to do so remove the existing `submitAdditionalPaymentDetailsResponse` custom field. This can be done in a single payment update request as follows:
+
+```json
+{
+  "version": "PAYMENT_VERSION",
+  "actions": [
+    {
+      "action": "setCustomField",
+      "name": "submitAdditionalPaymentDetailsRequest",
+      "value": "{\"details\":{\"threeds2.challengeResult\":\"eyJ0cmFuc1...\"}}"
+    },
+    {
+      "action": "setCustomField",
+      "name": "submitAdditionalPaymentDetailsResponse"
+    }
+  ]
+}
+```
 
 ## Step 7: Capture payment (required for Klarna)
 
@@ -773,7 +760,8 @@ This will either:
 `commercetools-adyen-integration` supports multi-tenancy to serve multiple Adyen merchant accounts/commercetools projects
 with one application instance. This architectural style leverages sharing and scalability to provide cost-efficient hosting.
 
-In order for `commercetools-adyen-integration` to know which project it should communicate with, `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields must be provided on payment creation. 
+In order for `commercetools-adyen-integration` to know which project it should communicate with, `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields must be provided on payment creation.
+
 > `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.commercetoolsProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in every notification from Adyen to help with matching the correct commercetools project.
 
 # Bad Practices
