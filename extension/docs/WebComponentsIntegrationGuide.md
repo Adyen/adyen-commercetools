@@ -3,6 +3,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Web Components integration guide](#web-components-integration-guide)
   - [How it works](#how-it-works)
   - [Before you begin](#before-you-begin)
@@ -15,8 +16,8 @@
   - [Step 3: Get available payment methods (Optional)](#step-3-get-available-payment-methods-optional)
   - [Step 4: Add Components to your payments form](#step-4-add-components-to-your-payments-form)
   - [Step 5: Make a payment](#step-5-make-a-payment)
-    - [Payment request](#payment-request)
-    - [Payment response](#payment-response)
+    - [Request](#request)
+    - [Response](#response)
       - [Authorised Response](#authorised-response)
       - [Redirect Response](#redirect-response)
     - [Klarna payment](#klarna-payment)
@@ -781,13 +782,7 @@ This will either:
 `commercetools-adyen-integration` supports multi-tenancy to serve multiple Adyen merchant accounts/commercetools projects
 with one application instance. This architectural style leverages sharing and scalability to provide cost-efficient hosting.
 
-In order for `commercetools-adyen-integration` to know which project it should communicate with, this information must be provided. The payment object must contain the following 2 custom fields:
-
-- Provide merchant account as a custom field called `adyenMerchantAccount` on creating a payment.
-- Provide commercetools project key as a custom field called `commercetoolsProjectKey` on creating a payment.
-
-In case any of those fields are not provided, payment creation will be rejected.
-
+In order for `commercetools-adyen-integration` to know which project it should communicate with, `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields must be provided on payment creation. 
 > `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.commercetoolsProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in every notification from Adyen to help with matching the correct commercetools project.
 
 # Bad Practices
