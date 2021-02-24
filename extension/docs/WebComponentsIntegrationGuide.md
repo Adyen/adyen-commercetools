@@ -644,7 +644,7 @@ If the response does not contain an action object, you can present the payment r
 
 </details>
 
-Notice that a transaction added to the commercetools payment. The transaction is of type `Authorization` and has `amount` taken from `amountPlanned`. `interactionId` is matching the `makePaymentResponse`.
+Notice that a transaction added to the commercetools payment. The transaction is of type `Authorization` and has `amount` taken from `amountPlanned`. `interactionId` is matching the `submitAdditionalPaymentDetailsResponse`.
 
 #### Action Response
 
