@@ -68,8 +68,6 @@ On this page we describe the checkout integration steps between the extension mo
 
 In order to make the extension module up and running, follow our [how to run guide](./HowToRun.md).
 
-> For the sake of readability, the field [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is ommitted from all the examples in this document. In real requests, [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is always added.
-
 ## Step 1: commercetools checkout validations
 
 [merchant server](#web-components-integration-guide) should execute the following validations:
@@ -335,6 +333,8 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
 }
 ```
 </details>
+
+> For the sake of readability, the field [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is ommitted from all the examples in this document. In real requests, [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is always added.
 
 ### Response
 
