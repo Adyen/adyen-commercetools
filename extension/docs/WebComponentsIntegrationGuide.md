@@ -107,8 +107,11 @@ and transaction type `Authorization` or `Charge`.
 ## Step 2: Creating a commercetools payment
 
 Before the actual payment process, commercetools payment resource needs to be created by the merchant server.
+
 In the commercetools platform, payment represents just a container of the current state of receiving and/or refunding money.
-The actual financial process is performed behind the scenes by the extension module which processes commercetools payment payload supplied by the merchant server and exchanges it with Adyen API. The commercetools [payment](https://docs.commercetools.com/api/projects/payments#payment) does not contain by default all the required Adyen specific fields, so those have to be set as custom fields via a payment method-specific payment type.
+The actual financial process is performed behind the scenes by the extension module which processes commercetools payment payload supplied by the merchant server and exchanges it with Adyen API. 
+
+The commercetools [payment](https://docs.commercetools.com/api/projects/payments#payment) does not contain by default all the required Adyen specific fields, so those have to be set as custom fields via a payment method-specific payment type.
 
 Specifying the **required** fields:
 
@@ -120,7 +123,7 @@ Specifying the **required** fields:
 | `custom.fields.adyenMerchantAccount`    | Adyen merchant account as a custom field called `adyenMerchantAccount`.                                                    |
 | `custom.fields.commercetoolsProjectKey` | commercetools project key as a custom field called `commercetoolsProjectKey`.                                              |
 
-In case of the absence of any of the required fields above, payment creation **will be rejected**.
+In case of the absence of the required fields above, payment creation **will be rejected**.
 
 Here's an example of how you would create a commercetools payment draft from scratch:
 
@@ -340,6 +343,8 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
 The payment response contains information for the next steps of the payment process. On a successful payment response, commercetools payment `key` is set with the `reference` of the `makePaymentRequest`, and the response from Adyen is set to `makePaymentResponse` custom field.
 
 Next steps depend on whether the `makePaymentResponse` custom field contains an action object.
+
+> Refer our [error handling](#error-handling) section, in case you encounter errors in your integration.
 
 #### Authorised Response
 
@@ -583,6 +588,8 @@ Pass the generated component data to your merchant server, the data is available
 ```
 
 > Refer Adyen's [/payments/details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments/details) request to check all possible request payload parameters.
+
+> Refer our [error handling](#error-handling) section, in case you encounter errors in your integration.
 
 ### Response
 
