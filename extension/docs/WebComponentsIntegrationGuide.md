@@ -569,6 +569,7 @@ By default, the extension module will populate `lineItems` for you but in case y
 ## Step 6: Submit additional payment details
 
 If the shopper performed an additional action (e.g. redirect, threeDS2Fingerprint) in the [Step-5](#step-5-make-a-payment), you need to make `submitAdditionalPaymentDetailsRequest` in order to complete the payment.
+
 Pass the generated component data to your merchant server, the data is available either in `state.data` from the `onAdditionalDetails` event or, for redirects, the parameters you received when the shopper redirected back to your website.
 
 ```json
@@ -594,7 +595,7 @@ Depending on the payment result, you receive a response containing:
 
 - resultCode: Provides information about the result of the request.
 - pspReference: Our unique identifier for the transaction.
-- action: If you receive this object, you need to perform step 4 again.
+- action: If you receive this object, you need to perform [Step-5](#step-5-make-a-payment) again.
 
 #### Authorised Response
 
@@ -650,7 +651,7 @@ Notice that a transaction added to the commercetools payment. The transaction is
 
 #### Action Response
 
-If you received an action object you need to repeat `submitAdditionalPaymentDetailsRequest` step.
+If you received an action object you need to repeat [Step-6](#step-6-submit-additional-payment-details) again.
 
 <details>
 <summary>Here an example commercetools payment with submitAdditionalPaymentDetailsResponse field with the action object. Click to expand. </summary>
@@ -763,7 +764,7 @@ This will either:
 `commercetools-adyen-integration` supports multi-tenancy to serve multiple Adyen merchant accounts/commercetools projects
 with one application instance. This architectural style leverages sharing and scalability to provide cost-efficient hosting.
 
-In order for `commercetools-adyen-integration` to know which project it should communicate with, `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields must be provided on payment creation.
+In order for `commercetools-adyen-integration` to know which project and merchant account it should communicate with, so `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields must be provided on payment creation.
 
 > `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.commercetoolsProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in every notification from Adyen to help with matching the correct commercetools project.
 
