@@ -259,9 +259,6 @@ If you haven't created the payment forms already in your frontend, follow the of
 ## Step 5: Make a payment
 
 When a shopper selects a payment method, enters payment details into the web component form, and then submits payment with a `Pay` button, the Adyen web component will trigger an `onSubmit` component event with a generated "make payment" JSON data that the merchant server needs to pass to the commercetools payment for further processing.
-
-First, you need to trigger the make payment process with our integration, then you need to process the next steps on checkout integration flow based on the result of the payment request.
-
 > For details, consult the [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-3-make-a-payment)
 
 ### Request
