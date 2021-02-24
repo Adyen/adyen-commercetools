@@ -341,11 +341,12 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
 ### Response
 
 The payment response contains information for the next steps of the payment process. On a successful payment response, commercetools payment `key` is set with the `reference` of the `makePaymentRequest`, and the response from Adyen is set to `makePaymentResponse` custom field.
-Your next steps depend on whether the `makePaymentResponse` custom fields contains an action object.
+
+Next steps depend on whether the `makePaymentResponse` custom field contains an action object.
 
 #### Authorised Response
 
-For some payment methods (e.g. Visa, Mastercard, and SEPA Direct Debits) you'll get a final state in the `resultCode` (e.g. Authorised or Refused). Notice that on an `Authorised` (successful) result, the integration will automatically add a transaction to the commercetools payment. The transaction will be of type `Authorization`, its' `amount` will match the `amountPlanned` and `interactionId` will be matching the unique Adyen's `pspReference` from `makePaymentResponse`.
+For some payment methods (e.g. Visa, Mastercard, and SEPA Direct Debits) you'll get a final state in the `resultCode` (e.g. Authorised or Refused). 
 
 ```json
 {
@@ -400,6 +401,8 @@ For some payment methods (e.g. Visa, Mastercard, and SEPA Direct Debits) you'll 
 ```
 
 </details>
+
+Notice that on an `Authorised` (successful) result, the integration will automatically add a transaction to the commercetools payment. The transaction will be of type `Authorization`, its' `amount` will match the `amountPlanned` and `interactionId` will be matching the unique Adyen's `pspReference` from `makePaymentResponse`.
 
 > See [Adyen documentation](https://docs.adyen.com/online-payments/components-web#step-6-present-payment-result) for more information how to present the results.
 
