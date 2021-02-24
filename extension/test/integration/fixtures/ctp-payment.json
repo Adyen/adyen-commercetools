@@ -12,8 +12,8 @@
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
-      "commercetoolsProjectKey" : "adyen-integration-test",
-      "adyenMerchantAccount" : "CommercetoolsGmbHDE775"
-    } 
+      "commercetoolsProjectKey": "adyen-integration-test",
+      "adyenMerchantAccount": "CommercetoolsGmbHDE775"
+    }
   }
 }
