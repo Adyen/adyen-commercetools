@@ -163,8 +163,7 @@ function isValidJSON(jsonString) {
 
 function isValidMetadata(str) {
   if (!str) return false
-  if (str.indexOf(' ') >= 0) return false
-  return true
+  return str.indexOf(' ') < 0
 }
 
 module.exports = {
