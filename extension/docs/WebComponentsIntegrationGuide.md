@@ -3,6 +3,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Web Components integration guide](#web-components-integration-guide)
   - [How it works](#how-it-works)
   - [Before you begin](#before-you-begin)
@@ -15,7 +16,6 @@
   - [Step 3: Get available payment methods (Optional)](#step-3-get-available-payment-methods-optional)
   - [Step 4: Add Components to your payments form](#step-4-add-components-to-your-payments-form)
   - [Step 5: Make a payment](#step-5-make-a-payment)
-    - [Request](#request)
     - [Response](#response)
       - [Authorised Response](#authorised-response)
       - [Action Response](#action-response)
@@ -263,8 +263,6 @@ If you haven't created the payment forms already in your frontend, follow the of
 When a shopper selects a payment method, enters payment details into the web component form, and then submits payment with a `Pay` button, the Adyen web component will trigger an `onSubmit` component event with a generated "make payment" JSON data that the merchant server needs to pass to the commercetools payment for further processing.
 
 > For details, consult the [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-3-make-a-payment)
-
-### Request
 
 To make payment via our integration, you need to set the `makePaymentRequest` custom field to existing commercetools payment with generated component data from the Adyen web component.
 
