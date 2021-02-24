@@ -106,8 +106,9 @@ and transaction type `Authorization` or `Charge`.
 
 ## Step 2: Creating a commercetools payment
 
-In the commercetools platform, payment is just a container of the current state of receiving and/or refunding money.
-The actual financial process is done by Adyen, which is connected with our extension module implementation. The commercetools [payment](https://docs.commercetools.com/api/projects/payments#payment) does not contain payment method-specific fields, so those are added as custom fields via a payment method-specific payment type.
+Before the actual payment process, commercetools payment resource needs to be created by the merchant server.
+In the commercetools platform, payment represents just a container of the current state of receiving and/or refunding money.
+The actual financial process is performed behind the scenes by the extension module which processes commercetools payment payload supplied by the merchant server and exchanges it with Adyen API. The commercetools [payment](https://docs.commercetools.com/api/projects/payments#payment) does not contain by default all the required Adyen specific fields, so those have to be set as custom fields via a payment method-specific payment type.
 
 Specifying the **required** fields:
 
@@ -119,7 +120,7 @@ Specifying the **required** fields:
 | `custom.fields.adyenMerchantAccount`    | Adyen merchant account as a custom field called `adyenMerchantAccount`.                                                    |
 | `custom.fields.commercetoolsProjectKey` | commercetools project key as a custom field called `commercetoolsProjectKey`.                                              |
 
-In case any of those fields not provided, payment creation **will be rejected**.
+In case of the absence of any of the required fields above, payment creation **will be rejected**.
 
 Here's an example of how you would create a commercetools payment draft from scratch:
 
@@ -145,23 +146,23 @@ Here's an example of how you would create a commercetools payment draft from scr
 }
 ```
 
-After you prepare the payment draft on your merchant server, [create a commercetools payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) using the commercetools API. Because of our integration concept, a merchant server communicates only with the commercetools API, and every payment creation or update request to API will remotely trigger the extension module.
+Create a [payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with commercetools API.
 
-When the payment creation is successful, then you need to [add the payment to the commercetools cart](https://docs.commercetools.com/api/projects/carts#add-payment) in their PaymentInfo object.
+After successful payment creation always [add](https://docs.commercetools.com/api/projects/carts#add-payment) it to the appropriate cart.
 
 In the next checkout steps, we will provide more details on using other payment-related custom fields and how to integrate them within your checkout.
 
 ## Step 3: Get available payment methods (Optional)
 
-When your shopper is ready to pay, you need to get a list of the available payment methods based on the transaction context (like amount, country, and currency) and show available payment methods to the shopper in your frontend.
+When your shopper is ready to pay, you may request through the integration a list of the available payment methods based on the transaction context (like amount, country, and currency) and use it to render web-components based Adyen payment input forms.
 
-> Adyen highly recommends using this step to ensure you are always offering the most up-to-date list of payment methods in your checkout page, its usage is optional. You can, for example, also cache the response and update it once a week.
+> This step is optional but Adyen recommends to use it so that merchant server can always serve latest list of payment methods. During checkout you might also want to cache the list instead of requesting it every time a customer attempts to pay.
 
-To be able to fetch available payment methods via our integration you need to set the `getPaymentMethodsRequest` custom field to your existing commercetools payment.
+To get available payment methods via our integration, you need to set the `getPaymentMethodsRequest` custom field to your existing commercetools payment or create a payment right away with the custom fieldset.
 
 > See [creating a new commercetools payment](#step-2-creating-a-commercetools-payment) and set `getPaymentMethodsRequest` custom field together with other required fields.
 
-Here's an example of the value of the `getPaymentMethodsRequest` custom field for a shopper in Germany, for payment of `10 EUR`:
+Here's an example of the `getPaymentMethodsRequest` custom field value for a German shopper and payment amount of `10 EUR`:
 
 ```json
 {
@@ -220,10 +221,10 @@ The response includes the list of available payment methods:
 }
 ```
 
-Pass the `getPaymentMethodsResponse` to your front end. You might use this in the next step to show which payment methods are available for the shopper.
+Pass the `getPaymentMethodsResponse` custom field value to your front end. You might use this in the next step to show which payment methods are available for the shopper.
 
 <details>
-  <summary>The commercetools payment representation example with respond. Click to expand.</summary>
+  <summary>The commercetools payment representation example with response. Click to expand.</summary>
     
 ```json
 {
@@ -258,22 +259,22 @@ If you haven't created the payment forms already in your frontend, follow the of
 
 ## Step 5: Make a payment
 
-When your shopper selects a payment method, enters payment details into the web component, and then submits payment with a `Pay` button, the Adyen web component will trigger the `onSubmit` component event with a generated component data that you need to pass to your merchant server from your frontend.
+When a shopper selects a payment method, enters payment details into the web component form, and then submits payment with a `Pay` button, the Adyen web component will trigger an `onSubmit` component event with a generated "make payment" JSON data that the merchant server needs to pass to the commercetools payment for further processing.
 
 First, you need to trigger the make payment process with our integration, then you need to process the next steps on checkout integration flow based on the result of the payment request.
 
 > For details, consult the [Adyen documentation](https://docs.adyen.com/checkout/components-web#step-3-make-a-payment)
 
-### Payment request
+### Request
 
-To be able to make payment via our integration you need to set the `makePaymentRequest` custom field for your existing commercetools payment with generated component data from the Adyen web component.
+To make payment via our integration, you need to set the `makePaymentRequest` custom field to existing commercetools payment with generated component data from the Adyen web component.
 
 > If you don't have a payment object, check [creating a new commercetools payment](#step-2-creating-a-commercetools-payment) and set `makePaymentRequest` custom field together with other required fields.
 
 **Preconditions**
 
-- `makePaymentRequest` must contain a unique payment `reference` value. The reference value cannot be duplicated in any commercetools payment and it's a required field by Adyen. The extension module uses the `reference` value to set the payment key, later it acts as a unique link between commercetools payment and Adyen payment(`merchantReference`). `Reference` may only contain alphanumeric characters, underscores, and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
-- `payment.amountPlanned` CANNOT be changed if there is `makePayment` interface interaction present in the payment. The `amount` value in `makePaymentRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
+- `makePaymentRequest` must contain a unique payment `reference` value. The reference value cannot be duplicated in any commercetools payment and it's a required field by Adyen. The extension module uses the `reference` value to set the payment key, later it acts as a unique link between commercetools payment and Adyen payment(`merchantReference`). `Reference` may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
+- `payment.amountPlanned` can not be changed if there is a `makePayment` interface interaction present in the commercetools payment object. The `amount` value in `makePaymentRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
 
 Here's an example of the value of the `makePaymentRequest` custom field, with generated component data from Adyen Web Components for a credit card payment:
 
@@ -338,13 +339,13 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
 ```
 </details>
 
-### Payment response
+### Response
 
-The payment response contains information for the next steps of the payment process. On a successful payment response, commercetools payment `key` is set with the `reference` of the `makePaymentRequest` and response from Adyen added to `makePaymentResponse` custom field.
+The payment response contains information for the next steps of the payment process. On a successful payment response, commercetools payment `key` is set with the `reference` of the `makePaymentRequest`, and the response from Adyen is set to `makePaymentResponse` custom field.
 
 #### Authorised Response
 
-For some payment methods (e.g. Visa, Mastercard, and SEPA Direct Debits) you'll get a final state in the `resultCode` (e.g. Authorised or Refused). Notice that on an `Authorised` result a transaction added to the commercetools payment. The transaction is of type `Authorization` and has `amount` taken from `amountPlanned`, `interactionId` is matching the `makePaymentResponse`.
+For some payment methods (e.g. Visa, Mastercard, and SEPA Direct Debits) you'll get a final state in the `resultCode` (e.g. Authorised or Refused). Notice that on an `Authorised` (successful) result, the integration will automatically add a transaction to the commercetools payment. The transaction will be of type `Authorization`, its' `amount` will match the `amountPlanned` and `interactionId` will be matching the unique Adyen's `pspReference` from `makePaymentResponse`.
 
 ```json
 {
@@ -559,7 +560,7 @@ By default, the extension module will populate `lineItems` for you but in case y
 
 ## Step 6: Submit additional payment details
 
-If the shopper performed additional action (e.g. redirect) in the previous step, you need to make `submitAdditionalPaymentDetailsRequest` to either complete the payment, or to check the payment result.
+If the shopper performed additional action (e.g. redirect) in the previous step, you need to make `submitAdditionalPaymentDetailsRequest` in order to complete the payment.
 
 Collect information from the previous step and [update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with `submitAdditionalPaymentDetailsRequest` custom field.
 The information is available either in `state.data.details` from the `onAdditionalDetails` event or, for redirects, the parameters you received when the shopper was redirected back to your website.
