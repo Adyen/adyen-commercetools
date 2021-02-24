@@ -5,7 +5,7 @@
     "url": "${ctpAdyenIntegrationBaseUrl}",
     "authentication": {
       "type": "AuthorizationHeader",
-      "headerValue": "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" 
+      "headerValue": "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="
     }
   },
   "triggers": [
