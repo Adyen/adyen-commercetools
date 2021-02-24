@@ -151,8 +151,6 @@ Create a [payment](https://docs.commercetools.com/http-api-projects-payments#cre
 
 After successful payment creation always [add](https://docs.commercetools.com/api/projects/carts#add-payment) it to the appropriate cart.
 
-In the next checkout steps, we will provide more details on using other payment-related custom fields and how to integrate them within your checkout.
-
 ## Step 3: Get available payment methods (Optional)
 
 When your shopper is ready to pay, you may request through the integration a list of the available payment methods based on the transaction context (like amount, country, and currency) and use it to render web-components based Adyen payment input forms.
