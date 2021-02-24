@@ -2,7 +2,7 @@ fullnameOverride: 'ctp-adyen-integration-service-extension'
 
 image:
   repository: 'eu.gcr.io/<<your-GCP-project-name>>/commercetools-adyen-integration-extension'
-  tag: 'x.x.x'
+  tag: '<<version-tag>>'
 
 service:
   type: 'NodePort'
@@ -16,4 +16,4 @@ ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: 'gce'
-    kubernetes.io/ingress.allow-http: 'true'
+    kubernetes.io/ingress.allow-http: 'false'

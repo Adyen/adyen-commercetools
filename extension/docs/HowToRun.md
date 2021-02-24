@@ -26,7 +26,7 @@ Extension module requires 1 environment variable to start. This environment vari
       "clientId": "xxx",
       "clientSecret": "xxx"
     },
-    "commercetoolsProjectKey1": {
+    "commercetoolsProjectKey2": {
       "clientId": "xxx",
       "clientSecret": "xxx"
     }
@@ -156,7 +156,7 @@ Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-a
 ```bash
     docker run \
     -e ADYEN_INTEGRATION_CONFIG=xxxxxx \
-    commercetools/commercetools-adyen-integration-extension
+    commercetools/commercetools-adyen-integration-extension:vX.X.X
 ```
 
 ## Deployment
