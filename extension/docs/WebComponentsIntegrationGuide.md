@@ -57,12 +57,12 @@ The following diagram shows checkout integration flow based on [Adyen Web Compon
 On this page we describe the checkout integration steps between the extension module and Adyen Web Components:
 
 - [Step 1](#step-1-commercetools-checkout-validations) : Execute required checkout validations.
-- [Step 2](#step-2-create-commercetools-payment) Create the commercetools payment object.
-- [Step 3 - Optional](#step-3-get-available-payment-methods-optional): Set `getPaymentMethodsRequest` custom field to commercetools payment to get the list of payment methods available for the checkout.
-- [Step 4](#step-4-add-components-to-your-payments-form): Add Adyen Web Component to your checkout payments form.
-- [Step 5](#step-5-make-a-payment): Submit a payment request by setting `makePaymentRequest` payment custom field with the payment data returned by the Adyen web component.
-- [Step 6](#step-6-submit-additional-payment-details): Set `submitAdditionalPaymentDetailsRequest ` custom field to commercetools payment to submit additional payment details.
-- [Step 7](#step-7-capture-payment-required-for-klarna): Add an optional `Charge` transaction to commercetools payment in order to manually capture the payment.
+- [Step 2](#step-2-create-commercetools-payment) : Create the commercetools payment object.
+- [Step 3 - Optional](#step-3-get-available-payment-methods-optional) : Set `getPaymentMethodsRequest` custom field to commercetools payment to get the list of payment methods available for the checkout.
+- [Step 4](#step-4-add-components-to-your-payments-form) : Add Adyen Web Component to your checkout payments form.
+- [Step 5](#step-5-make-a-payment) : Submit a payment request by setting `makePaymentRequest` payment custom field with the payment data returned by the Adyen web component.
+- [Step 6](#step-6-submit-additional-payment-details) : Set `submitAdditionalPaymentDetailsRequest ` custom field to commercetools payment to submit additional payment details.
+- [Step 7](#step-7-capture-payment-required-for-klarna) : Add an optional `Charge` transaction to commercetools payment in order to manually capture the payment.
 
 ## Before you begin
 
