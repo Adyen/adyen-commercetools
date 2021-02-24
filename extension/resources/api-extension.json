@@ -5,7 +5,7 @@
     "url": "${ctpAdyenIntegrationBaseUrl}",
     "authentication": {
       "type": "AuthorizationHeader",
-      "headerValue": "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" // username = 'Aladdin', password = 'open sesame'
+      "headerValue": "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" 
     }
   },
   "triggers": [
