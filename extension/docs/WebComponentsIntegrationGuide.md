@@ -600,7 +600,6 @@ Depending on the payment result, you receive a response containing:
 - action: If you receive this object, you need to perform [Step-5](#step-5-make-a-payment) again.
 
 > Refer our [error handling](#error-handling) section, in case you encounter errors in your integration.
-
 #### Authorised Response
 
 If the response does not contain an action object, you can present the payment result to your shopper.
