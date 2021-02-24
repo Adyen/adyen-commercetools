@@ -748,7 +748,7 @@ an order can still be asynchronously created.
 
 For redirect payments payment amount is bound to `redirectUrl`.
 After redirect and before the actual finalization of the payment at the provider's page, the shopper is still able to change the cart's amount within the second tab.
-If the shopper decides to change the cart's amount within the second tab and finalize payment within the first tab, then according to payment amount validation an error
+If the shopper decides to change the cart's amount within the second tab and finalize payment within the first tab, then according to payment amount [validation](#step-1-commercetools-checkout-validations) an error
 has to be shown and order creation must be declined. In such a case, it might be reasonable to [cancel or refund](#cancel-or-refund) the invalid payment.
 
 ## Test and go live
