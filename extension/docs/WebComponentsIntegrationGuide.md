@@ -45,8 +45,8 @@ Terms used in this guide:
 - **Shopper** - a person that's using the shop.
 - **Browser** - frontend part of the checkout UI (webshop).
 - **Merchant server** - backend part of the checkout.
-- **Extension module** - [extension module](./../README.md#extension-module) configured as [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is handling checkout steps by intercepting payment modifications and communicating with Adyen API.
-- **Notification module** - [notification module](./../README.md#notification-module) processes asynchronous notifications from Adyen and stores payment state changes in commercetools payment object.
+- **Extension module** - [extension module](https://github.com/commercetools/commercetools-adyen-integration/tree/update-integration-docs#extension-module) configured as [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is handling checkout steps by intercepting payment modifications and communicating with Adyen API.
+- **Notification module** - [notification module](https://github.com/commercetools/commercetools-adyen-integration/tree/update-integration-docs#notification-module) processes asynchronous notifications from Adyen and stores payment state changes in commercetools payment object.
 
 The following diagram shows checkout integration flow based on [Adyen Web Components](https://docs.adyen.com/online-payments/components-web).
 
@@ -57,7 +57,7 @@ The following diagram shows checkout integration flow based on [Adyen Web Compon
 On this page we describe the checkout integration steps between the extension module and Adyen Web Components:
 
 - [Step 1](#step-1-commercetools-checkout-validations) : Execute required checkout validations.
-- [Step 2](#step-2-create-commercetools-payment) : Create the commercetools payment object.
+- [Step 2](#step-2-creating-a-commercetools-payment) : Create the commercetools payment object.
 - [Step 3 - Optional](#step-3-get-available-payment-methods-optional) : Set `getPaymentMethodsRequest` custom field to commercetools payment to get the list of payment methods available for the checkout.
 - [Step 4](#step-4-add-components-to-your-payments-form) : Add Adyen Web Component to your checkout payments form.
 - [Step 5](#step-5-make-a-payment) : Submit a payment request by setting `makePaymentRequest` payment custom field with the payment data returned by the Adyen web component.
@@ -70,7 +70,7 @@ In order to make the extension module up and running, follow our [how to run gui
 
 ## Step 1: commercetools checkout validations
 
-[merchant server](#web-components-integration-guide) should execute the following validations:
+The merchant server should execute the following validations:
 
 1. On each checkout step [validate cart state](#validate-cart-state)
 1. Before starting a new payment process make sure there are no paid payments on the cart already:
