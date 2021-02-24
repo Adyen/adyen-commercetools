@@ -109,7 +109,7 @@ and transaction type `Authorization` or `Charge`.
 Before the actual payment process, commercetools payment resource needs to be created by the merchant server.
 
 In the commercetools platform, payment represents just a container of the current state of receiving and/or refunding money.
-The actual financial process is performed behind the scenes by the extension module which processes commercetools payment payload supplied by the merchant server and exchanges it with Adyen API. 
+The actual financial process is performed behind the scenes by the extension module which processes commercetools payment payload supplied by the merchant server and exchanges it with Adyen API.
 
 The commercetools [payment](https://docs.commercetools.com/api/projects/payments#payment) does not contain by default all the required Adyen specific fields, so those have to be set as custom fields via a payment method-specific payment type.
 
