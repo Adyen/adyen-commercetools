@@ -8,7 +8,6 @@ const ctpPayment = require('./fixtures/ctp-payment.json')
 const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
 const errorMessage = require('../../src/validator/error-messages')
 const config = require('../../src/config/config')
-const utils = require('../../src/utils')
 
 describe('payment-handler-authorization::execute', () => {
   let scope
@@ -24,7 +23,15 @@ describe('payment-handler-authorization::execute', () => {
   /* eslint-enable max-len */
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
-
+  const ctpDummyConfig = {
+    clientId: 'clientId',
+    clientSecret: 'clientSecret',
+    projectKey: 'ctpProjectKey1',
+    apiUrl: 'https://api.europe-west1.gcp.commercetools.com',
+    authUrl: 'https://auth.europe-west1.gcp.commercetools.com',
+    username: 'Aladdin',
+    password: 'open sesame',
+  }
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     scope = nock(`${adyenConfig.apiBaseUrl}`)
@@ -53,7 +60,7 @@ describe('payment-handler-authorization::execute', () => {
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
       const sandbox = sinon.createSandbox()
-      sandbox.stub(utils, 'isAuthEnabled').returns(true)
+      sandbox.stub(config, 'getCtpConfig').returns(ctpDummyConfig)
       const response = await handlePayment(
         ctpPaymentClone,
         'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
@@ -81,7 +88,7 @@ describe('payment-handler-authorization::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
       const sandbox = sinon.createSandbox()
-      sandbox.stub(utils, 'isAuthEnabled').returns(true)
+      sandbox.stub(config, 'getCtpConfig').returns(ctpDummyConfig)
       const response = await handlePayment(ctpPaymentClone, 'Basic xxxyyyzzz')
 
       expect(response.success).to.equal(false)

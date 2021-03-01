@@ -2,24 +2,15 @@ process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
   commercetools: {
     ctpProjectKey1: {
       clientId: 'clientId',
-      clientSecret: 'clientSecret',
-      isAuthEnabled: false,
-      username: 'Aladdin',
-      password: 'open sesame',
+      clientSecret: 'clientSecret'
     },
     ctpProjectKey2: {
       clientId: 'clientId2',
-      clientSecret: 'clientSecret2',
-      isAuthEnabled: false,
-      username: 'Aladdin',
-      password: 'open sesame',
+      clientSecret: 'clientSecret2'
     },
     ctpProjectKey3: {
       clientId: 'clientId3',
-      clientSecret: 'clientSecret3',
-      isAuthEnabled: false,
-      username: 'Aladdin',
-      password: 'open sesame',
+      clientSecret: 'clientSecret3'
     },
   },
   adyen: {

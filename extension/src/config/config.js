@@ -27,9 +27,8 @@ function getCtpConfig(ctpProjectKey) {
       ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
     authUrl:
       ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
-    isAuthEnabled: ctpConfig.isAuthEnabled || false,
-    username: ctpConfig.username || '',
-    password: ctpConfig.password || '',
+    username: ctpConfig.username,
+    password: ctpConfig.password,
   }
 }
 
