@@ -121,6 +121,7 @@ describe('payment-handler-authorization::execute', () => {
       const response = await handlePayment(ctpPaymentClone, 'Basic xxxyyyzzz')
 
       expect(response.data.actions).to.have.lengthOf.above(0)
+      expect(response.success).to.equal(true)
     }
   )
 })
