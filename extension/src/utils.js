@@ -38,7 +38,7 @@ function isAuthEnabled(ctpProjectKey) {
 
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
   if (ctpConfig) {
-    return (ctpConfig.username !== undefined) && (ctpConfig.password !== undefined)
+    return ctpConfig.username !== undefined && ctpConfig.password !== undefined
   }
   return false
 }
