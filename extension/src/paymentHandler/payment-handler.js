@@ -44,7 +44,6 @@ async function handlePayment(paymentObject, authToken) {
   const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
   const isAuthEnabled = utils.isAuthEnabled(ctpProjectKey)
   if (isAuthEnabled && _isNotAuthorized(paymentObject, authToken)) {
-    console.error('Unauthorized request')
     return {
       success: false,
       data: {
