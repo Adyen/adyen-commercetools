@@ -63,7 +63,6 @@ function loadAndValidateConfig() {
   try {
     config = JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
   } catch (e) {
-    console.error(e)
     throw new Error(
       'Adyen integration configuration is not provided in the JSON format'
     )
