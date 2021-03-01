@@ -43,7 +43,7 @@ async function handlePayment(paymentObject, authToken) {
 
   const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
   const isAuthEnabled = utils.isAuthEnabled(ctpProjectKey)
-  if (isAuthEnabled && _isNotAuthorized(paymentObject, authToken)) {
+  if (isAuthEnabled && _isNotAuthorized(paymentObject, authToken, ctpProjectKey)) {
     return {
       success: false,
       data: {
@@ -120,11 +120,8 @@ function _isAdyenPayment(paymentObject) {
   )
 }
 
-function _isNotAuthorized(paymentObject, authTokenString) {
-  const commercetoolsProjectKey =
-    paymentObject.custom.fields.commercetoolsProjectKey
-
-  const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+function _isNotAuthorized(paymentObject, authTokenString, ctpProjectKey) {
+  const ctpConfig = config.getCtpConfig(ctpProjectKey)
   const storedUsername = ctpConfig.username
   const storedPassword = ctpConfig.password
   // Split on a space, the original auth looks like  "Basic *********" and we need the 2nd part
