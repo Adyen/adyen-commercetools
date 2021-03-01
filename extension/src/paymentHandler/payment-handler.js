@@ -43,7 +43,7 @@ async function handlePayment(paymentObject, authToken) {
 
   const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
   const isAuthEnabled = utils.isAuthEnabled(ctpProjectKey)
-  if (isAuthEnabled && _isNotAuthorized(paymentObject, authToken, ctpProjectKey)) {
+  if (isAuthEnabled && !_isAuthorized(paymentObject, authToken, ctpProjectKey)) {
     return {
       success: false,
       data: {
@@ -120,7 +120,7 @@ function _isAdyenPayment(paymentObject) {
   )
 }
 
-function _isNotAuthorized(paymentObject, authTokenString, ctpProjectKey) {
+function _isAuthorized(paymentObject, authTokenString, ctpProjectKey) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
   const storedUsername = ctpConfig.username
   const storedPassword = ctpConfig.password
@@ -134,7 +134,7 @@ function _isNotAuthorized(paymentObject, authTokenString, ctpProjectKey) {
   const username = credentialString[0]
   const password = credentialString[1]
 
-  return storedUsername !== username || storedPassword !== password
+  return storedUsername === username && storedPassword === password
 }
 
 function _isKlarna(makePaymentRequestObj) {
