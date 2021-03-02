@@ -1,7 +1,6 @@
 const config = require('./config/config')
 const ctpClientBuilder = require('./ctp')
 const logger = require('./utils').getLogger()
-const utils = require('./utils')
 const { ensureResources } = require('./config/init/ensure-resources')
 
 function _generateAuthorizationHeaderValue(ctpProjectKey) {
