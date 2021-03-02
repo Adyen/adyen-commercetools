@@ -43,6 +43,18 @@ function isAuthEnabled(ctpProjectKey) {
   return false
 }
 
+function generateAuthorizationHeaderValue(ctpProjectKey) {
+  const ctpConfig = config.getCtpConfig(ctpProjectKey)
+  if (ctpConfig && ctpConfig.username && ctpConfig.password) {
+    const username = ctpConfig.username
+    const password = ctpConfig.password
+
+    const decodeAuthToken = `${username}:${password}`
+    return `Basic ${Buffer.from(decodeAuthToken).toString('base64')}`
+  }
+  return null
+}
+
 function getAuthorizationHeader(request) {
   if (request.headers) return request.headers['authorization']
   return ''
@@ -54,4 +66,5 @@ module.exports = {
   getLogger,
   isAuthEnabled,
   getAuthorizationHeader,
+  generateAuthorizationHeaderValue,
 }

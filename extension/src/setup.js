@@ -1,6 +1,7 @@
 const config = require('./config/config')
 const ctpClientBuilder = require('./ctp')
 const logger = require('./utils').getLogger()
+const utils = require('./utils')
 const { ensureResources } = require('./config/init/ensure-resources')
 
 async function setupExtensionResources() {
@@ -15,7 +16,8 @@ async function setupExtensionResources() {
       await ensureResources(
         ctpClient,
         ctpConfig.projectKey,
-        moduleConfig.apiExtensionBaseUrl
+        moduleConfig.apiExtensionBaseUrl,
+        utils.generateAuthorizationHeaderValue(ctpConfig.projectKey)
       )
     })
   )

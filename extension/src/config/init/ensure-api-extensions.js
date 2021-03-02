@@ -8,7 +8,8 @@ const mainLogger = utils.getLogger()
 async function ensureApiExtensions(
   ctpClient,
   ctpProjectKey,
-  ctpAdyenIntegrationBaseUrl
+  ctpAdyenIntegrationBaseUrl,
+  ctpAuthHeaderValue
 ) {
   try {
     const logger = mainLogger.child({
@@ -19,6 +20,14 @@ async function ensureApiExtensions(
         ctpAdyenIntegrationBaseUrl,
       })
     )
+    if (ctpAuthHeaderValue) {
+      extensionDraft.destination.authentication = JSON.parse(
+        `{` +
+          `      "type": "AuthorizationHeader",` +
+          `      "headerValue": "${ctpAuthHeaderValue}"` +
+          `    }`
+      )
+    }
     const existingExtension = await fetchExtensionByKey(
       ctpClient,
       apiExtensionTemplate.key

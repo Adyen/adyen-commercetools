@@ -2,11 +2,7 @@
   "key": "ctp-adyen-integration-payment-extension",
   "destination": {
     "type": "HTTP",
-    "url": "${ctpAdyenIntegrationBaseUrl}",
-    "authentication": {
-      "type": "AuthorizationHeader",
-      "headerValue": "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="
-    }
+    "url": "${ctpAdyenIntegrationBaseUrl}"
   },
   "triggers": [
     {

@@ -11,10 +11,20 @@ function ensureCustomTypes(ctpClient, ctpProjectKey) {
   ])
 }
 
-function ensureResources(ctpClient, ctpProjectKey, apiExtensionBaseUrl) {
+function ensureResources(
+  ctpClient,
+  ctpProjectKey,
+  apiExtensionBaseUrl,
+  authHeaderValue
+) {
   return Promise.all([
     ensureCustomTypes(ctpClient, ctpProjectKey),
-    ensureApiExtensions(ctpClient, ctpProjectKey, apiExtensionBaseUrl),
+    ensureApiExtensions(
+      ctpClient,
+      ctpProjectKey,
+      apiExtensionBaseUrl,
+      authHeaderValue
+    ),
   ])
 }
 
