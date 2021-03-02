@@ -178,7 +178,9 @@ describe('::config::', () => {
       config.getCtpConfig('ctpProjectKey1')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
-      expect(e.message).to.contain('Authentication is not properly configured. Please update the configuration')
+      expect(e.message).to.contain(
+        'Authentication is not properly configured. Please update the configuration'
+      )
     }
   })
 
@@ -191,7 +193,7 @@ describe('::config::', () => {
           apiUrl: 'host',
           authUrl: 'authUrl',
           authentication: {
-            scheme : 'test',
+            scheme: 'test',
             username: 'username',
             password: 'password',
           },
@@ -212,7 +214,9 @@ describe('::config::', () => {
       config.getCtpConfig('ctpProjectKey1')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
-      expect(e.message).to.contain('Authentication is not properly configured. Please update the configuration')
+      expect(e.message).to.contain(
+        'Authentication is not properly configured. Please update the configuration'
+      )
     }
   })
 })
