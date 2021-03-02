@@ -123,10 +123,11 @@ function _isAdyenPayment(paymentObject) {
   )
 }
 
-function _isAuthorized(authTokenString, ctpProjectKey) {
+function _isAuthorized(paymentObject, authTokenString, ctpProjectKey) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
   const storedUsername = ctpConfig.username
   const storedPassword = ctpConfig.password
+  console.log('token : ', authTokenString)
   // Split on a space, the original auth looks like  "Basic *********" and we need the 2nd part
   const encodedAuthToken = authTokenString.split(' ')
 
