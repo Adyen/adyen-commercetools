@@ -9,8 +9,11 @@ describe('::config::', () => {
           clientSecret: 'clientSecret',
           apiUrl: 'host',
           authUrl: 'authUrl',
-          username: 'username',
-          password: 'password',
+          authentication: {
+            scheme: 'basic',
+            username: 'username',
+            password: 'password',
+          },
         },
       },
       adyen: {
@@ -29,12 +32,14 @@ describe('::config::', () => {
     expect(config.getAllAdyenMerchantAccounts()).to.eql([
       'adyenMerchantAccount1',
     ])
+
     expect(config.getCtpConfig('ctpProjectKey1')).to.eql({
       apiUrl: 'host',
       clientId: 'clientId',
       clientSecret: 'clientSecret',
       authUrl: 'authUrl',
       projectKey: 'ctpProjectKey1',
+      authScheme: 'basic',
       username: 'username',
       password: 'password',
     })
@@ -74,6 +79,7 @@ describe('::config::', () => {
       clientId: 'clientId',
       clientSecret: 'clientSecret',
       projectKey: 'ctpProjectKey1',
+      authScheme: undefined,
       username: undefined,
       password: undefined,
     })

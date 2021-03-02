@@ -11,6 +11,25 @@ function getModuleConfig() {
   }
 }
 
+function _isValidAuthenticationConfig(ctpConfig) {
+  if (ctpConfig.authentication) {
+    if (
+      !ctpConfig.authentication.scheme ||
+      !ctpConfig.authentication.username ||
+      !ctpConfig.authentication.password
+    ) {
+      // scheme, username and password must be all provided if authentication object exists
+      return false
+    }
+    if (ctpConfig.authentication.scheme.toLowerCase() !== 'basic') {
+      // Accept basic authentication only
+      return false
+    }
+    return true
+  }
+  return true
+}
+
 function getCtpConfig(ctpProjectKey) {
   const ctpConfig = config.commercetools[ctpProjectKey]
   if (!ctpConfig)
@@ -19,6 +38,14 @@ function getCtpConfig(ctpProjectKey) {
         ctpProjectKey
       )}]`
     )
+  if (!_isValidAuthenticationConfig(ctpConfig)) {
+    throw new Error(
+      `Authentication is not properly configured. Please update the configuration. ctpProjectKey: [${JSON.stringify(
+        ctpProjectKey
+      )}]`
+    )
+  }
+
   return {
     clientId: ctpConfig.clientId,
     clientSecret: ctpConfig.clientSecret,
@@ -27,8 +54,15 @@ function getCtpConfig(ctpProjectKey) {
       ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
     authUrl:
       ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
-    username: ctpConfig.username,
-    password: ctpConfig.password,
+    authScheme: ctpConfig.authentication
+      ? ctpConfig.authentication.scheme
+      : undefined,
+    username: ctpConfig.authentication
+      ? ctpConfig.authentication.username
+      : undefined,
+    password: ctpConfig.authentication
+      ? ctpConfig.authentication.password
+      : undefined,
   }
 }
 

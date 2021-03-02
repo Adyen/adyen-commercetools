@@ -29,6 +29,7 @@ describe('payment-handler-authorization::execute', () => {
     projectKey: 'ctpProjectKey1',
     apiUrl: 'https://api.europe-west1.gcp.commercetools.com',
     authUrl: 'https://auth.europe-west1.gcp.commercetools.com',
+    authScheme: 'basic',
     username: 'Aladdin',
     password: 'open sesame',
   }
