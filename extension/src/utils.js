@@ -42,5 +42,5 @@ module.exports = {
   collectRequestData,
   sendResponse,
   getLogger,
-  getAuthorizationHeader
+  getAuthorizationHeader,
 }
