@@ -33,16 +33,6 @@ function getLogger() {
   return logger
 }
 
-function isAuthEnabled(ctpProjectKey) {
-  if (!ctpProjectKey) return false
-
-  const ctpConfig = config.getCtpConfig(ctpProjectKey)
-  if (ctpConfig) {
-    return ctpConfig.authScheme !== undefined
-  }
-  return false
-}
-
 function generateAuthorizationHeaderValue(ctpProjectKey) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
   if (ctpConfig && ctpConfig.username && ctpConfig.password) {
@@ -64,7 +54,6 @@ module.exports = {
   collectRequestData,
   sendResponse,
   getLogger,
-  isAuthEnabled,
   getAuthorizationHeader,
   generateAuthorizationHeaderValue,
 }

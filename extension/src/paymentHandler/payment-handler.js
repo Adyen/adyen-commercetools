@@ -7,7 +7,7 @@ const manualCaptureHandler = require('./manual-capture.handler')
 const cancelHandler = require('./cancel-payment.handler')
 const refundHandler = require('./refund-payment.handler')
 const pU = require('./payment-utils')
-const utils = require('../utils')
+const auth = require('../validator/authentication-validator')
 const errorMessages = require('../validator/error-messages')
 
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
@@ -16,7 +16,6 @@ const {
   getAuthorizationTransactionSuccess,
   getCancelAuthorizationTransactionInit,
 } = require('./payment-utils')
-const config = require('../config/config')
 
 const PAYMENT_METHOD_TYPE_KLARNA_METHODS = [
   'klarna',
@@ -41,9 +40,7 @@ async function handlePayment(paymentObject, authToken) {
       data: paymentValidator.buildCtpErrorResponse(),
     }
 
-  const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
-  const isAuthEnabled = utils.isAuthEnabled(ctpProjectKey)
-  if (isAuthEnabled && !_isAuthorized(authToken, ctpProjectKey)) {
+  if (!auth.isAuthorized(paymentObject, authToken)) {
     return {
       success: false,
       data: {
@@ -118,23 +115,6 @@ function _isAdyenPayment(paymentObject) {
   return (
     paymentObject.paymentMethodInfo.paymentInterface === CTP_ADYEN_INTEGRATION
   )
-}
-
-function _isAuthorized(authTokenString, ctpProjectKey) {
-  const ctpConfig = config.getCtpConfig(ctpProjectKey)
-  const storedUsername = ctpConfig.username
-  const storedPassword = ctpConfig.password
-  // Split on a space, the original auth looks like  "Basic *********" and we need the 2nd part
-  const encodedAuthToken = authTokenString.split(' ')
-
-  // create a buffer and tell it the data coming in is base64
-  const decodedAuthToken = Buffer.from(encodedAuthToken[1], 'base64').toString()
-
-  const credentialString = decodedAuthToken.split(':')
-  const username = credentialString[0]
-  const password = credentialString[1]
-
-  return storedUsername === username && storedPassword === password
 }
 
 function _isKlarna(makePaymentRequestObj) {
