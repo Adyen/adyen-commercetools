@@ -365,7 +365,7 @@ async function stopRunningServers() {
 async function restoreConfig(ctpProjectKey) {
   if (originalCtpConfig[ctpProjectKey]) {
     config.getCtpConfig = () => {
-      return originalCtpConfig[ctpProjectKey]
+      originalCtpConfig[ctpProjectKey]
     }
   }
   module.exports = config
