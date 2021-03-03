@@ -22,11 +22,11 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     await iTSetUp.initServerAndExtension({
       ctpClient,
       ctpProjectKey: ctpConfig.projectKey,
-      authentication: {
-        authScheme: 'basic',
-        username: 'Aladdin',
-        password: 'open sesame',
-      },
+    })
+    await iTSetUp.addAuthConfig(commercetoolsProjectKey, {
+      authScheme: 'basic',
+      username: 'Aladdin',
+      password: 'open sesame',
     })
   })
   beforeEach(async () => {

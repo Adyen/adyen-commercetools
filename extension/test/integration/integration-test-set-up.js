@@ -21,10 +21,10 @@ const testUtils = require('../test-utils')
 const logger = require('../../src/utils').getLogger()
 
 let server
-const originalCtpConfig = []
-function _addAuthObjectToServerConfig(ctpProjectKey, authentication) {
+let originalCtpConfig
+function addAuthConfig(ctpProjectKey, authentication) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
-  originalCtpConfig[ctpProjectKey] = ctpConfig
+  originalCtpConfig = ctpConfig
   config.getCtpConfig = function getCtpConfig() {
     return {
       clientId: ctpConfig.clientId,
@@ -51,16 +51,9 @@ function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   module.exports = config
 }
 
-async function initServerAndExtension({
-  ctpClient,
-  ctpProjectKey,
-  authentication,
-}) {
+async function initServerAndExtension({ ctpClient, ctpProjectKey }) {
   await initServer()
   await initExtension(ctpClient, ctpProjectKey)
-  if (authentication && ctpProjectKey) {
-    _addAuthObjectToServerConfig(ctpProjectKey, authentication)
-  }
 }
 
 async function initServer() {
@@ -362,12 +355,8 @@ async function stopRunningServers() {
   await ngrok.kill()
 }
 
-async function restoreConfig(ctpProjectKey) {
-  if (originalCtpConfig[ctpProjectKey]) {
-    config.getCtpConfig = () => {
-      originalCtpConfig[ctpProjectKey]
-    }
-  }
+async function restoreConfig() {
+  config.getCtpConfig = () => originalCtpConfig
   module.exports = config
 }
 
@@ -378,5 +367,6 @@ module.exports = {
   cleanupCtpResources,
   initServer,
   initExtension,
+  addAuthConfig,
   restoreConfig,
 }
