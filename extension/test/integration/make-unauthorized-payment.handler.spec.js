@@ -5,7 +5,7 @@ const config = require('../../src/config/config')
 const constants = require('../../src/config/constants')
 const iTSetUp = require('./integration-test-set-up')
 
-describe('::make-payment with multiple adyen accounts use case::', () => {
+describe('::unauthorized make-payment request use case::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
   const [
     adyenMerchantAccount1,
@@ -41,8 +41,8 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
   })
 
   it(
-    'given a single commercetools project without extension module authorization and payments ' +
-      'when sending payment to extension module which enabled authentication, ' +
+    'given a single commercetools project with enabled authorization for extenstion module and payments ' +
+      'when sending payments with incorrect authorization header, ' +
       'then it should fail to authenticate ',
     async () => {
       await Promise.all([

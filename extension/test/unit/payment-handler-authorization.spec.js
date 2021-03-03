@@ -102,7 +102,7 @@ describe('payment-handler-authorization::execute', () => {
   )
 
   it(
-    'when endpoint authorization is disabled set and unauthorized request is sent' +
+    'when endpoint authorization is disabled and unauthorized request is sent' +
       'then it should call /payments/details on Adyen',
     async () => {
       scope
