@@ -33,14 +33,14 @@ function getLogger() {
   return logger
 }
 
-function getAuthorizationHeader(request) {
+function getAuthorizationRequestHeader(request) {
   if (request.headers) return request.headers['authorization']
-  return ''
+  return undefined
 }
 
 module.exports = {
   collectRequestData,
   sendResponse,
   getLogger,
-  getAuthorizationHeader,
+  getAuthorizationRequestHeader,
 }

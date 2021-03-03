@@ -8,8 +8,7 @@ async function processRequest(request, response) {
     // https://docs.commercetools.com/http-api-projects-api-extensions#input
     return httpUtils.sendResponse({ response })
 
-  const authToken = httpUtils.getAuthorizationHeader(request)
-
+  const authToken = httpUtils.getAuthorizationRequestHeader(request)
   const paymentObject = await _getPaymentObject(request)
   const paymentResult = await paymentHandler.handlePayment(
     paymentObject,

@@ -5,6 +5,8 @@ function isAuthorized(paymentObject, authTokenString) {
   const isAuthEnabled = _isAuthEnabled(ctpProjectKey)
 
   if (isAuthEnabled) {
+    if (!authTokenString || authTokenString.indexOf(' ') < 0) return false
+
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
     const storedUsername = ctpConfig.username
     const storedPassword = ctpConfig.password

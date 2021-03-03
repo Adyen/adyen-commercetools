@@ -6,7 +6,7 @@ const logger = utils.getLogger()
 
 exports.extensionTrigger = async (request, response) => {
   try {
-    const authToken = utils.getAuthorizationHeader(request)
+    const authToken = utils.getAuthorizationRequestHeader(request)
     const { obj } = request.body.resource
     const paymentResult = await paymentHandler.handlePayment(obj, authToken)
     if (paymentResult.success) {
