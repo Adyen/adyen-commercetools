@@ -2,18 +2,7 @@ const config = require('./config/config')
 const ctpClientBuilder = require('./ctp')
 const logger = require('./utils').getLogger()
 const { ensureResources } = require('./config/init/ensure-resources')
-
-function _generateAuthorizationHeaderValue(ctpProjectKey) {
-  const ctpConfig = config.getCtpConfig(ctpProjectKey)
-  if (ctpConfig && ctpConfig.username && ctpConfig.password) {
-    const username = ctpConfig.username
-    const password = ctpConfig.password
-
-    const decodeAuthToken = `${username}:${password}`
-    return `Basic ${Buffer.from(decodeAuthToken).toString('base64')}`
-  }
-  return null
-}
+const auth = require('./validator/authentication')
 
 async function setupExtensionResources() {
   const moduleConfig = config.getModuleConfig()
@@ -28,7 +17,7 @@ async function setupExtensionResources() {
         ctpClient,
         ctpConfig.projectKey,
         moduleConfig.apiExtensionBaseUrl,
-        _generateAuthorizationHeaderValue(ctpConfig.projectKey)
+        auth.generateBasicAuthorizationHeaderValue(ctpConfig.projectKey)
       )
     })
   )

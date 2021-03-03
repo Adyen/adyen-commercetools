@@ -1,12 +1,13 @@
 const { serializeError } = require('serialize-error')
 const paymentHandler = require('./src/paymentHandler/payment-handler')
 const utils = require('./src/utils')
+const auth = require('./src/validator/authentication')
 
 const logger = utils.getLogger()
 
 exports.extensionTrigger = async (request, response) => {
   try {
-    const authToken = utils.getAuthorizationRequestHeader(request)
+    const authToken = auth.getAuthorizationRequestHeader(request)
     const { obj } = request.body.resource
     const paymentResult = await paymentHandler.handlePayment(obj, authToken)
     if (paymentResult.success) {

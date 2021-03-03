@@ -1,7 +1,6 @@
 const config = require('../config/config')
 
-function isAuthorized(paymentObject, authTokenString) {
-  const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
+function hasValidAuthorizationHeader(ctpProjectKey, authTokenString) {
   const isAuthEnabled = _isAuthEnabled(ctpProjectKey)
 
   if (isAuthEnabled) {
@@ -38,6 +37,25 @@ function _isAuthEnabled(ctpProjectKey) {
   return false
 }
 
+function getAuthorizationRequestHeader(request) {
+  if (request.headers) return request.headers['authorization']
+  return undefined
+}
+
+function generateBasicAuthorizationHeaderValue(ctpProjectKey) {
+  const ctpConfig = config.getCtpConfig(ctpProjectKey)
+  if (!ctpConfig && ctpConfig.username && ctpConfig.password) {
+    const username = ctpConfig.username
+    const password = ctpConfig.password
+
+    const decodeAuthToken = `${username}:${password}`
+    return `Basic ${Buffer.from(decodeAuthToken).toString('base64')}`
+  }
+  return null
+}
+
 module.exports = {
-  isAuthorized,
+  hasValidAuthorizationHeader,
+  getAuthorizationRequestHeader,
+  generateBasicAuthorizationHeaderValue,
 }
