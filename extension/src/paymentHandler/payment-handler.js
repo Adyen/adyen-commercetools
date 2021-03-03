@@ -7,7 +7,7 @@ const manualCaptureHandler = require('./manual-capture.handler')
 const cancelHandler = require('./cancel-payment.handler')
 const refundHandler = require('./refund-payment.handler')
 const pU = require('./payment-utils')
-const auth = require('../validator/authentication-validator')
+const auth = require('../validator/authentication')
 const errorMessages = require('../validator/error-messages')
 
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
@@ -40,7 +40,8 @@ async function handlePayment(paymentObject, authToken) {
       data: paymentValidator.buildCtpErrorResponse(),
     }
 
-  if (!auth.isAuthorized(paymentObject, authToken)) {
+  const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
+  if (!auth.hasValidAuthorizationHeader(ctpProjectKey, authToken)) {
     return {
       success: false,
       data: {
