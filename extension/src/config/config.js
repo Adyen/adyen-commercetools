@@ -38,13 +38,6 @@ function getCtpConfig(ctpProjectKey) {
         ctpProjectKey
       )}]`
     )
-  if (!_isValidAuthenticationConfig(ctpConfig)) {
-    throw new Error(
-      `Authentication is not properly configured. Please update the configuration. ctpProjectKey: [${JSON.stringify(
-        ctpProjectKey
-      )}]`
-    )
-  }
 
   return {
     clientId: ctpConfig.clientId,
@@ -120,6 +113,13 @@ function loadAndValidateConfig() {
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
           'Please verify that all projects have projectKey, clientId and clientSecret'
       )
+    if (!_isValidAuthenticationConfig(ctpConfig)) {
+      throw new Error(
+        `Authentication is not properly configured. Please update the configuration. ctpProjectKey: [${JSON.stringify(
+          ctpProjectKey
+        )}]`
+      )
+    }
   }
 }
 
