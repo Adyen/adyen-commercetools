@@ -13,23 +13,31 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
   ] = config.getAllAdyenMerchantAccounts()
 
   let ctpClient
+  let originalCtpConfig
+  let ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
 
-  beforeEach(async () => {
-    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+  before(async () => {
     ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.cleanupCtpResources(ctpClient)
-    await iTSetUp.initServerAndExtension(
-      {
-        ctpClient,
-        ctpProjectKey: ctpConfig.projectKey,
+    await iTSetUp.initServerAndExtension({
+      ctpClient,
+      ctpProjectKey: ctpConfig.projectKey,
+      authentication: {
+        authScheme: 'basic',
+        username: 'Aladdin',
+        password: 'open sesame',
       },
-      true
-    )
+    })
+  })
+  beforeEach(async () => {
+    originalCtpConfig = ctpConfig
   })
 
   afterEach(async () => {
+    ctpConfig = originalCtpConfig
     await iTSetUp.stopRunningServers()
     await iTSetUp.cleanupCtpResources(ctpClient)
+    await iTSetUp.restoreConfig(commercetoolsProjectKey)
   })
 
   it(

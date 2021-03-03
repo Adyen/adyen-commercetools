@@ -21,9 +21,10 @@ const testUtils = require('../test-utils')
 const logger = require('../../src/utils').getLogger()
 
 let server
-
-function _addAuthObjectToServerConfig(ctpProjectKey) {
+const originalCtpConfig = []
+function _addAuthObjectToServerConfig(ctpProjectKey, authentication) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
+  originalCtpConfig[ctpProjectKey] = ctpConfig
   config.getCtpConfig = function getCtpConfig() {
     return {
       clientId: ctpConfig.clientId,
@@ -33,9 +34,9 @@ function _addAuthObjectToServerConfig(ctpProjectKey) {
         ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
       authUrl:
         ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
-      authScheme: 'basic',
-      username: 'Aladdin',
-      password: 'open sesame',
+      authScheme: authentication.authScheme,
+      username: authentication.username,
+      password: authentication.password,
     }
   }
   module.exports = config
@@ -50,15 +51,19 @@ function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   module.exports = config
 }
 
-async function initServerAndExtension(
-  { ctpClient, ctpProjectKey },
-  isServerAuthEnabled
-) {
-  await initServer(ctpProjectKey, isServerAuthEnabled)
+async function initServerAndExtension({
+  ctpClient,
+  ctpProjectKey,
+  authentication,
+}) {
+  await initServer()
   await initExtension(ctpClient, ctpProjectKey)
+  if (authentication && ctpProjectKey) {
+    _addAuthObjectToServerConfig(ctpProjectKey, authentication)
+  }
 }
 
-async function initServer(ctpProjectKey, isServerAuthEnabled) {
+async function initServer() {
   const port = config.getModuleConfig().port || 8000
   server = serverBuilder.setupServer(routes)
   // note: ngrok should be restarted for every test case, otherwise there will be
@@ -66,14 +71,7 @@ async function initServer(ctpProjectKey, isServerAuthEnabled) {
   // which is 40 connections at the same time as we're using Free program (https://ngrok.com/pricing).
   const apiExtensionBaseUrl = await ngrok.connect(port)
   _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
-  console.log('######')
-  console.log(ctpProjectKey)
-  console.log(isServerAuthEnabled)
-  if (isServerAuthEnabled && ctpProjectKey) {
-    console.log('add config')
-    _addAuthObjectToServerConfig(ctpProjectKey)
-  }
-  console.log('no config')
+
   return new Promise((resolve) => {
     server.listen(port, async () => {
       logger.debug(
@@ -364,6 +362,15 @@ async function stopRunningServers() {
   await ngrok.kill()
 }
 
+async function restoreConfig(ctpProjectKey) {
+  if (originalCtpConfig[ctpProjectKey]) {
+    config.getCtpConfig = () => {
+      return originalCtpConfig[ctpProjectKey]
+    }
+  }
+  module.exports = config
+}
+
 module.exports = {
   initServerAndExtension,
   stopRunningServers,
@@ -371,4 +378,5 @@ module.exports = {
   cleanupCtpResources,
   initServer,
   initExtension,
+  restoreConfig,
 }
