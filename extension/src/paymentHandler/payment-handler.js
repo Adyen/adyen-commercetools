@@ -41,6 +41,7 @@ async function handlePayment(paymentObject, authToken) {
     }
 
   if (!auth.isAuthorized(paymentObject, authToken)) {
+    console.log('unauthorized ...')
     return {
       success: false,
       data: {
