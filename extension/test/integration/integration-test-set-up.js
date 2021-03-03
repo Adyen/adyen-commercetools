@@ -66,9 +66,14 @@ async function initServer(ctpProjectKey, isServerAuthEnabled) {
   // which is 40 connections at the same time as we're using Free program (https://ngrok.com/pricing).
   const apiExtensionBaseUrl = await ngrok.connect(port)
   _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
+  console.log('######')
+  console.log(ctpProjectKey)
+  console.log(isServerAuthEnabled)
   if (isServerAuthEnabled && ctpProjectKey) {
+    console.log('add config')
     _addAuthObjectToServerConfig(ctpProjectKey)
   }
+  console.log('no config')
   return new Promise((resolve) => {
     server.listen(port, async () => {
       logger.debug(
