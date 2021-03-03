@@ -4,7 +4,6 @@ function isAuthorized(paymentObject, authTokenString) {
   const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
   const isAuthEnabled = _isAuthEnabled(ctpProjectKey)
 
-  console.log(`isAuthEnabled : ${isAuthEnabled}`)
   if (isAuthEnabled) {
     if (!authTokenString || authTokenString.indexOf(' ') < 0) return false
 
