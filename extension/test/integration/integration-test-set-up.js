@@ -22,6 +22,25 @@ const logger = require('../../src/utils').getLogger()
 
 let server
 
+function _addAuthObjectToServerConfig(ctpProjectKey) {
+  const ctpConfig = config.getCtpConfig(ctpProjectKey)
+  config.getCtpConfig = function getCtpConfig() {
+    return {
+      clientId: ctpConfig.clientId,
+      clientSecret: ctpConfig.clientSecret,
+      projectKey: ctpProjectKey,
+      apiUrl:
+        ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
+      authUrl:
+        ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
+      authScheme: 'basic',
+      username: 'Aladdin',
+      password: 'open sesame',
+    }
+  }
+  module.exports = config
+}
+
 function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   const moduleConfig = config.getModuleConfig()
   moduleConfig.apiExtensionBaseUrl = apiExtensionBaseUrl
@@ -31,12 +50,15 @@ function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   module.exports = config
 }
 
-async function initServerAndExtension({ ctpClient, ctpProjectKey }) {
-  await initServer()
+async function initServerAndExtension(
+  { ctpClient, ctpProjectKey },
+  isServerAuthEnabled
+) {
+  await initServer(ctpProjectKey, isServerAuthEnabled)
   await initExtension(ctpClient, ctpProjectKey)
 }
 
-async function initServer() {
+async function initServer(ctpProjectKey, isServerAuthEnabled) {
   const port = config.getModuleConfig().port || 8000
   server = serverBuilder.setupServer(routes)
   // note: ngrok should be restarted for every test case, otherwise there will be
@@ -44,6 +66,9 @@ async function initServer() {
   // which is 40 connections at the same time as we're using Free program (https://ngrok.com/pricing).
   const apiExtensionBaseUrl = await ngrok.connect(port)
   _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
+  if (isServerAuthEnabled && ctpProjectKey) {
+    _addAuthObjectToServerConfig(ctpProjectKey)
+  }
   return new Promise((resolve) => {
     server.listen(port, async () => {
       logger.debug(

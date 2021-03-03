@@ -14,21 +14,17 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
 
   let ctpClient
 
-  function initAuthConfig(ctpConfig) {
-    ctpConfig.authScheme = 'basic'
-    ctpConfig.username = 'Aladdin'
-    ctpConfig.password = 'open sesame'
-  }
-
   beforeEach(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
-    initAuthConfig(ctpConfig)
     ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.cleanupCtpResources(ctpClient)
-    await iTSetUp.initServerAndExtension({
-      ctpClient,
-      ctpProjectKey: ctpConfig.projectKey,
-    })
+    await iTSetUp.initServerAndExtension(
+      {
+        ctpClient,
+        ctpProjectKey: ctpConfig.projectKey,
+      },
+      true
+    )
   })
 
   afterEach(async () => {
@@ -92,6 +88,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     }
     try {
       await ctpClient.create(ctpClient.builder.payments, paymentDraft)
+      expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.statusCode).to.equal(400)
       expect(e.message).to.equal('The request is unauthorized.')
