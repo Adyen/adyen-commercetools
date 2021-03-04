@@ -38,8 +38,7 @@ function getCtpConfig(ctpProjectKey) {
         ctpProjectKey
       )}]`
     )
-
-  return {
+  const result = {
     clientId: ctpConfig.clientId,
     clientSecret: ctpConfig.clientSecret,
     projectKey: ctpProjectKey,
@@ -47,16 +46,21 @@ function getCtpConfig(ctpProjectKey) {
       ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
     authUrl:
       ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
-    authScheme: ctpConfig.authentication
-      ? ctpConfig.authentication.scheme
-      : undefined,
-    username: ctpConfig.authentication
-      ? ctpConfig.authentication.username
-      : undefined,
-    password: ctpConfig.authentication
-      ? ctpConfig.authentication.password
-      : undefined,
   }
+  if (ctpConfig.authentication) {
+    result.authentication = {
+      scheme: ctpConfig.authentication
+        ? ctpConfig.authentication.scheme
+        : undefined,
+      username: ctpConfig.authentication
+        ? ctpConfig.authentication.username
+        : undefined,
+      password: ctpConfig.authentication
+        ? ctpConfig.authentication.password
+        : undefined,
+    }
+  }
+  return result
 }
 
 function getAdyenConfig(adyenMerchantAccount) {

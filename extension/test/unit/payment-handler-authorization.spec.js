@@ -29,9 +29,11 @@ describe('payment-handler-authorization::execute', () => {
     projectKey: 'ctpProjectKey1',
     apiUrl: 'https://api.europe-west1.gcp.commercetools.com',
     authUrl: 'https://auth.europe-west1.gcp.commercetools.com',
-    authScheme: 'basic',
-    username: 'Aladdin',
-    password: 'open sesame',
+    authentication: {
+      scheme: 'basic',
+      username: 'Aladdin',
+      password: 'open sesame',
+    },
   }
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
@@ -118,7 +120,6 @@ describe('payment-handler-authorization::execute', () => {
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
-
       const response = await handlePayment(ctpPaymentClone, 'Basic xxxyyyzzz')
 
       expect(response.data.actions).to.have.lengthOf.above(0)

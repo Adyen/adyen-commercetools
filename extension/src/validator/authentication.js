@@ -7,8 +7,8 @@ function hasValidAuthorizationHeader(ctpProjectKey, authTokenString) {
     if (!authTokenString || authTokenString.indexOf(' ') < 0) return false
 
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
-    const storedUsername = ctpConfig.username
-    const storedPassword = ctpConfig.password
+    const storedUsername = ctpConfig.authentication.username
+    const storedPassword = ctpConfig.authentication.password
     // Split on a space, the original auth looks like  "Basic *********" and we need the 2nd part
     const encodedAuthToken = authTokenString.split(' ')
 
@@ -32,7 +32,7 @@ function _isAuthEnabled(ctpProjectKey) {
 
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
   if (ctpConfig) {
-    return ctpConfig.authScheme !== undefined
+    return ctpConfig.authentication !== undefined
   }
   return false
 }
@@ -44,9 +44,14 @@ function getAuthorizationRequestHeader(request) {
 
 function generateBasicAuthorizationHeaderValue(ctpProjectKey) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
-  if (ctpConfig && ctpConfig.username && ctpConfig.password) {
-    const username = ctpConfig.username
-    const password = ctpConfig.password
+  if (
+    ctpConfig &&
+    ctpConfig.authentication &&
+    ctpConfig.authentication.username &&
+    ctpConfig.authentication.password
+  ) {
+    const username = ctpConfig.authentication.username
+    const password = ctpConfig.authentication.password
 
     const decodeAuthToken = `${username}:${password}`
     return `Basic ${Buffer.from(decodeAuthToken).toString('base64')}`

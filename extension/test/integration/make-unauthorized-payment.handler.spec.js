@@ -24,7 +24,7 @@ describe('::unauthorized make-payment request use case::', () => {
       ctpProjectKey: ctpConfig.projectKey,
     })
     await iTSetUp.addAuthConfig(commercetoolsProjectKey, {
-      authScheme: 'basic',
+      scheme: 'basic',
       username: 'Aladdin',
       password: 'open sesame',
     })

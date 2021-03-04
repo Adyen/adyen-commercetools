@@ -34,9 +34,11 @@ function addAuthConfig(ctpProjectKey, authentication) {
         ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
       authUrl:
         ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
-      authScheme: authentication.authScheme,
-      username: authentication.username,
-      password: authentication.password,
+      authentication: {
+        scheme: authentication.authScheme,
+        username: authentication.username,
+        password: authentication.password,
+      },
     }
   }
   module.exports = config
