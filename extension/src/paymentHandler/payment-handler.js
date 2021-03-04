@@ -43,7 +43,7 @@ async function handlePayment(paymentObject, authToken) {
       data: {
         errors: [
           {
-            code: 'InvalidOperation',
+            code: 'Unauthorized',
             message: errorMessages.UNAUTHORIZED_REQUEST,
           },
         ],
