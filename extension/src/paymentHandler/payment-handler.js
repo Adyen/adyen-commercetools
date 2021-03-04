@@ -28,8 +28,9 @@ async function handlePayment(paymentObject, authToken) {
     // if it's not adyen payment, ignore the payment
     return { success: true, data: null }
 
-  let paymentValidator = ValidatorBuilder.withPayment(paymentObject)
-    .validateMetadataFields()
+  let paymentValidator = ValidatorBuilder.withPayment(
+    paymentObject
+  ).validateMetadataFields()
   if (paymentValidator.hasErrors())
     return {
       success: false,
@@ -51,7 +52,7 @@ async function handlePayment(paymentObject, authToken) {
     }
   }
 
-   paymentValidator = paymentValidator
+  paymentValidator = paymentValidator
     .validateRequestFields()
     .validateReference()
     .validateAmountPlanned()
@@ -61,8 +62,6 @@ async function handlePayment(paymentObject, authToken) {
       success: false,
       data: paymentValidator.buildCtpErrorResponse(),
     }
-
-
 
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(

@@ -93,7 +93,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
       "authentication" : {
         "scheme": "basic",
         "username": "xxx",
-        "password": "xxx"  
+        "password": "xxx"
       }
     },
     "commercetoolsProjectKey2": { // commercetools project key of the second project
@@ -102,21 +102,20 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
       "authentication" : {
         "scheme": "basic",
         "username": "xxx",
-        "password": "xxx"  
+        "password": "xxx"
       }
     }
   }
 }
 ```
 
-| Name           | Content                                                         | Required | Default value                                     |
-| -------------- | --------------------------------------------------------------- | -------- | ------------------------------------------------- |
-| `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.        | YES      |                                                   |
-| `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token.    | YES      |                                                   |
-| `host`         | The commercetools HTTP API is hosted at that URL.               | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
-| `authUrl`      | The commercetools’ OAuth 2.0 service is hosted at that URL.     | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
-| `authetication`| Enable authentication mechanism to prevent unauthorized access. If it is provided, it must contains `scheme` attribute which supports `basic` type, `username` attribute and `password` attribute defined by user. | NO       |                                                   |
-
+| Name            | Content                                                                                                                                                                                                            | Required | Default value                                     |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ------------------------------------------------- |
+| `clientId`      | OAuth 2.0 `client_id` and can be used to obtain a token.                                                                                                                                                           | YES      |                                                   |
+| `clientSecret`  | OAuth 2.0 `client_secret` and can be used to obtain a token.                                                                                                                                                       | YES      |                                                   |
+| `host`          | The commercetools HTTP API is hosted at that URL.                                                                                                                                                                  | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `authUrl`       | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                                                                                                                        | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
+| `authetication` | Enable authentication mechanism to prevent unauthorized access. If it is provided, it must contains `scheme` attribute which supports `basic` type, `username` attribute and `password` attribute defined by user. | NO       |                                                   |
 
 ### Other Configurations
 
