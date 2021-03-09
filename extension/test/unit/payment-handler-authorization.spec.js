@@ -23,7 +23,10 @@ describe('payment-handler-authorization::execute', () => {
   /* eslint-enable max-len */
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
-  const ctpDummyConfig = {
+  const dummyModuleConfig = {
+    basicAuth: true,
+  }
+  const dummyCtpConfig = {
     clientId: 'clientId',
     clientSecret: 'clientSecret',
     projectKey: 'ctpProjectKey1',
@@ -63,7 +66,8 @@ describe('payment-handler-authorization::execute', () => {
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
       const sandbox = sinon.createSandbox()
-      sandbox.stub(config, 'getCtpConfig').returns(ctpDummyConfig)
+      sandbox.stub(config, 'getModuleConfig').returns(dummyModuleConfig)
+      sandbox.stub(config, 'getCtpConfig').returns(dummyCtpConfig)
       const response = await handlePayment(
         ctpPaymentClone,
         'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
@@ -91,7 +95,8 @@ describe('payment-handler-authorization::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
       const sandbox = sinon.createSandbox()
-      sandbox.stub(config, 'getCtpConfig').returns(ctpDummyConfig)
+      sandbox.stub(config, 'getModuleConfig').returns(dummyModuleConfig)
+      sandbox.stub(config, 'getCtpConfig').returns(dummyCtpConfig)
       const response = await handlePayment(ctpPaymentClone, 'Basic xxxyyyzzz')
 
       expect(response.success).to.equal(false)

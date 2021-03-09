@@ -44,6 +44,15 @@ function addAuthConfig(ctpProjectKey, authentication) {
   module.exports = config
 }
 
+function overrideBasicAuthFlag(isEnable) {
+  const moduleConfig = config.getModuleConfig()
+  moduleConfig.basicAuth = isEnable
+  config.getModuleConfig = function getModuleConfig() {
+    return moduleConfig
+  }
+  module.exports = config
+}
+
 function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   const moduleConfig = config.getModuleConfig()
   moduleConfig.apiExtensionBaseUrl = apiExtensionBaseUrl
@@ -357,7 +366,7 @@ async function stopRunningServers() {
   await ngrok.kill()
 }
 
-async function restoreConfig() {
+async function restoreCtpConfig() {
   config.getCtpConfig = () => originalCtpConfig
   module.exports = config
 }
@@ -370,5 +379,6 @@ module.exports = {
   initServer,
   initExtension,
   addAuthConfig,
-  restoreConfig,
+  restoreCtpConfig,
+  overrideBasicAuthFlag,
 }

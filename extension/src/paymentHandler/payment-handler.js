@@ -28,40 +28,45 @@ async function handlePayment(paymentObject, authToken) {
     // if it's not adyen payment, ignore the payment
     return { success: true, data: null }
 
-  let paymentValidator = ValidatorBuilder.withPayment(
-    paymentObject
-  ).validateMetadataFields()
-  if (paymentValidator.hasErrors())
-    return {
-      success: false,
-      data: paymentValidator.buildCtpErrorResponse(),
-    }
-
-  const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
-  if (!auth.hasValidAuthorizationHeader(ctpProjectKey, authToken)) {
-    return {
-      success: false,
-      data: {
-        errors: [
-          {
-            code: 'Unauthorized',
-            message: errorMessages.UNAUTHORIZED_REQUEST,
-          },
-        ],
-      },
+  if (!auth.isBasicAuthEnabled()) {
+    console.log('isNotBasicAuthEnabled')
+    const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
+      .validateMetadataFields()
+      .validateRequestFields()
+      .validateReference()
+      .validateAmountPlanned()
+    if (paymentValidator.hasErrors())
+      return {
+        success: false,
+        data: paymentValidator.buildCtpErrorResponse(),
+      }
+  } else {
+    console.log('isBasicAuthEnabled')
+    const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
+      .validateMetadataFields()
+      .validateRequestFields()
+      .validateReference()
+      .validateAmountPlanned()
+    if (paymentValidator.hasErrors())
+      return {
+        success: false,
+        data: paymentValidator.buildCtpErrorResponse(),
+      }
+    const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
+    if (!auth.hasValidAuthorizationHeader(ctpProjectKey, authToken)) {
+      return {
+        success: false,
+        data: {
+          errors: [
+            {
+              code: 'Unauthorized',
+              message: errorMessages.UNAUTHORIZED_REQUEST,
+            },
+          ],
+        },
+      }
     }
   }
-
-  paymentValidator = paymentValidator
-    .validateRequestFields()
-    .validateReference()
-    .validateAmountPlanned()
-
-  if (paymentValidator.hasErrors())
-    return {
-      success: false,
-      data: paymentValidator.buildCtpErrorResponse(),
-    }
 
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(

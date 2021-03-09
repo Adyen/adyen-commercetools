@@ -23,6 +23,7 @@ describe('::unauthorized make-payment request use case::', () => {
       ctpClient,
       ctpProjectKey: ctpConfig.projectKey,
     })
+    await iTSetUp.overrideBasicAuthFlag(true)
     await iTSetUp.addAuthConfig(commercetoolsProjectKey, {
       scheme: 'basic',
       username: 'Aladdin',
@@ -37,7 +38,8 @@ describe('::unauthorized make-payment request use case::', () => {
     ctpConfig = originalCtpConfig
     await iTSetUp.stopRunningServers()
     await iTSetUp.cleanupCtpResources(ctpClient)
-    await iTSetUp.restoreConfig(commercetoolsProjectKey)
+    await iTSetUp.overrideBasicAuthFlag(false)
+    await iTSetUp.restoreCtpConfig(commercetoolsProjectKey)
   })
 
   it(

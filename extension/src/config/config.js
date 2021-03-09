@@ -5,6 +5,7 @@ function getModuleConfig() {
     port: config.port,
     logLevel: config.logLevel,
     apiExtensionBaseUrl: config.apiExtensionBaseUrl, // used only for development purpose
+    basicAuth: config.basicAuth || false,
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
@@ -49,15 +50,9 @@ function getCtpConfig(ctpProjectKey) {
   }
   if (ctpConfig.authentication) {
     result.authentication = {
-      scheme: ctpConfig.authentication
-        ? ctpConfig.authentication.scheme
-        : undefined,
-      username: ctpConfig.authentication
-        ? ctpConfig.authentication.username
-        : undefined,
-      password: ctpConfig.authentication
-        ? ctpConfig.authentication.password
-        : undefined,
+      scheme: ctpConfig.authentication?.scheme,
+      username: ctpConfig.authentication?.username,
+      password: ctpConfig.authentication?.password,
     }
   }
   return result
