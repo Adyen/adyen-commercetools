@@ -1,11 +1,20 @@
 const config = require('../config/config')
 
-function hasValidAuthorizationHeader(ctpProjectKey, authTokenString) {
+function getStoredCredential(ctpProjectKey) {
+  const ctpConfig = config.getCtpConfig(ctpProjectKey)
+  let storedCredential = null
+    if (ctpConfig.authentication) {
+      storedCredential = {
+        username: ctpConfig.authentication.username,
+        password: ctpConfig.authentication.password,
+      }
+    }
+    return storedCredential
+}
+
+function hasValidAuthorizationHeader(storedCredential, authTokenString) {
   if (!authTokenString || authTokenString.indexOf(' ') < 0) return false
 
-  const ctpConfig = config.getCtpConfig(ctpProjectKey)
-  const storedUsername = ctpConfig.authentication.username
-  const storedPassword = ctpConfig.authentication.password
   // Split on a space, the original auth looks like  "Basic *********" and we need the 2nd part
   const encodedAuthToken = authTokenString.split(' ')
 
@@ -16,7 +25,10 @@ function hasValidAuthorizationHeader(ctpProjectKey, authTokenString) {
   const username = credentialString[0]
   const password = credentialString[1]
 
-  return storedUsername === username && storedPassword === password
+  return (
+    storedCredential.username === username &&
+    storedCredential.password === password
+  )
 }
 
 function isBasicAuthEnabled() {
@@ -47,4 +59,5 @@ module.exports = {
   getAuthorizationRequestHeader,
   generateBasicAuthorizationHeaderValue,
   isBasicAuthEnabled,
+  getStoredCredential,
 }

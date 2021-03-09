@@ -8,7 +8,6 @@ const cancelHandler = require('./cancel-payment.handler')
 const refundHandler = require('./refund-payment.handler')
 const pU = require('./payment-utils')
 const auth = require('../validator/authentication')
-const errorMessages = require('../validator/error-messages')
 
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 const {
@@ -29,7 +28,6 @@ async function handlePayment(paymentObject, authToken) {
     return { success: true, data: null }
 
   if (!auth.isBasicAuthEnabled()) {
-    console.log('isNotBasicAuthEnabled')
     const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
       .validateMetadataFields()
       .validateRequestFields()
@@ -41,31 +39,31 @@ async function handlePayment(paymentObject, authToken) {
         data: paymentValidator.buildCtpErrorResponse(),
       }
   } else {
-    console.log('isBasicAuthEnabled')
     const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
-      .validateMetadataFields()
-      .validateRequestFields()
-      .validateReference()
-      .validateAmountPlanned()
+    paymentValidator.validateMetadataFields()
     if (paymentValidator.hasErrors())
       return {
         success: false,
         data: paymentValidator.buildCtpErrorResponse(),
       }
-    const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
-    if (!auth.hasValidAuthorizationHeader(ctpProjectKey, authToken)) {
+
+    paymentValidator.validateAuthorizationHeader(authToken)
+    if (paymentValidator.hasErrors())
       return {
         success: false,
-        data: {
-          errors: [
-            {
-              code: 'Unauthorized',
-              message: errorMessages.UNAUTHORIZED_REQUEST,
-            },
-          ],
-        },
+        data: paymentValidator.buildCtpErrorResponse(),
       }
-    }
+
+    paymentValidator
+      .validateRequestFields()
+      .validateReference()
+      .validateAmountPlanned()
+
+    if (paymentValidator.hasErrors())
+      return {
+        success: false,
+        data: paymentValidator.buildCtpErrorResponse(),
+      }
   }
 
   const handlers = _getPaymentHandlers(paymentObject)
