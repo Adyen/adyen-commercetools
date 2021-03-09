@@ -38,17 +38,14 @@ function _isAuthEnabled(ctpProjectKey) {
 }
 
 function getAuthorizationRequestHeader(request) {
-  if (request.headers) return request.headers['authorization']
-  return undefined
+  return request?.headers?.['authorization']
 }
 
 function generateBasicAuthorizationHeaderValue(ctpProjectKey) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
   if (
-    ctpConfig &&
-    ctpConfig.authentication &&
-    ctpConfig.authentication.username &&
-    ctpConfig.authentication.password
+    ctpConfig?.authentication?.username &&
+    ctpConfig?.authentication?.password
   ) {
     const username = ctpConfig.authentication.username
     const password = ctpConfig.authentication.password
