@@ -128,10 +128,7 @@ describe('payment-handler-authorization::execute', () => {
       const sandbox = sinon.createSandbox()
       sandbox.stub(config, 'getModuleConfig').returns(dummyModuleConfig)
 
-      await handlePayment(
-        ctpPaymentClone,
-        'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
-      )
+      await handlePayment(ctpPaymentClone, 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==')
       sandbox.restore()
     }
   )

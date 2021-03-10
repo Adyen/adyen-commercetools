@@ -3,13 +3,13 @@ const config = require('../config/config')
 function getStoredCredential(ctpProjectKey) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
   let storedCredential = null
-    if (ctpConfig.authentication) {
-      storedCredential = {
-        username: ctpConfig.authentication.username,
-        password: ctpConfig.authentication.password,
-      }
+  if (ctpConfig.authentication) {
+    storedCredential = {
+      username: ctpConfig.authentication.username,
+      password: ctpConfig.authentication.password,
     }
-    return storedCredential
+  }
+  return storedCredential
 }
 
 function hasValidAuthorizationHeader(storedCredential, authTokenString) {
