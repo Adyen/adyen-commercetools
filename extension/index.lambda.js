@@ -1,13 +1,14 @@
 const utils = require('./src/utils')
 const paymentHandler = require('./src/paymentHandler/payment-handler')
+const auth = require('./src/validator/authentication')
 
 const logger = utils.getLogger()
 
 exports.handler = async (event) => {
   try {
     const body = event.body ? JSON.parse(event.body) : event
-    const paymentResult = await paymentHandler.handlePayment(body.resource.obj)
-
+    const authToken = auth.getAuthorizationRequestHeader(event)
+    const paymentResult = await paymentHandler.handlePayment(body.resource.obj, authToken)
     return {
       responseType: paymentResult.success
         ? 'UpdateRequest'
