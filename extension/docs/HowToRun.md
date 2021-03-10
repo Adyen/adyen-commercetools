@@ -127,7 +127,8 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
   "adyen": {...},
   "logLevel": "DEBUG",
   "port": 8080,
-  "keepAliveTimeout": 10000
+  "keepAliveTimeout": 10000,
+  "basicAuth" : true
 }
 ```
 
@@ -136,6 +137,7 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 | `port`             | The port number on which the application will run.                                                                                                                  | NO       | 8080                        |
 | `logLevel`         | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                 | NO       | `info`                      |
 | `keepAliveTimeout` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_server_keepalivetimeout)). | NO       | Node.js default (5 seconds) |
+| `basicAuth`        | Boolean attribute to enable/disable basic authentication to prevent unauthorized 3rd-party from accessing extension endpoint                                        | NO       | false                       |
 
 ## Commercetools project requirements
 
