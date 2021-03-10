@@ -30,7 +30,7 @@ describe('Payment controller', () => {
       await paymentController.processRequest(mockRequest)
     })
 
-    it.skip('on invalid web component request should throw error', async () => {
+    it('on invalid web component request should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = 'foo'
       ctpPaymentClone.custom.fields.adyenMerchantAccount = 'bar'
