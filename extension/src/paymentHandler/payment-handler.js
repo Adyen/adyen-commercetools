@@ -22,11 +22,7 @@ const PAYMENT_METHOD_TYPE_KLARNA_METHODS = [
   'klarna_account',
 ]
 
-async function handlePayment(paymentObject, authToken) {
-  if (!_isAdyenPayment(paymentObject))
-    // if it's not adyen payment, ignore the payment
-    return { success: true, data: null }
-
+function _validatePaymentRequest(paymentObject, authToken) {
   if (!auth.isBasicAuthEnabled()) {
     const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
       .validateMetadataFields()
@@ -65,6 +61,19 @@ async function handlePayment(paymentObject, authToken) {
         data: paymentValidator.buildCtpErrorResponse(),
       }
   }
+  return null
+}
+
+async function handlePayment(paymentObject, authToken) {
+  if (!_isAdyenPayment(paymentObject))
+    // if it's not adyen payment, ignore the payment
+    return { success: true, data: null }
+
+  const validatePaymentErrors = _validatePaymentRequest(
+    paymentObject,
+    authToken
+  )
+  if (validatePaymentErrors) return validatePaymentErrors
 
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(
