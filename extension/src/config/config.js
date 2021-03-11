@@ -46,9 +46,9 @@ function getCtpConfig(ctpProjectKey) {
   }
   if (ctpConfig.authentication) {
     result.authentication = {
-      scheme: ctpConfig.authentication?.scheme,
-      username: ctpConfig.authentication?.username,
-      password: ctpConfig.authentication?.password,
+      scheme: ctpConfig.authentication.scheme,
+      username: ctpConfig.authentication.username,
+      password: ctpConfig.authentication.password,
     }
   }
   return result
