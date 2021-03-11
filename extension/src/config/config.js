@@ -15,15 +15,11 @@ function getModuleConfig() {
 function _isValidAuthenticationConfig(ctpConfig) {
   if (ctpConfig.authentication) {
     if (
-      !ctpConfig.authentication.scheme ||
+      ctpConfig.authentication.scheme?.toLowerCase() !== 'basic' ||
       !ctpConfig.authentication.username ||
       !ctpConfig.authentication.password
     ) {
-      // scheme, username and password must be all provided if authentication object exists
-      return false
-    }
-    if (ctpConfig.authentication.scheme.toLowerCase() !== 'basic') {
-      // Accept basic authentication only
+      // scheme must be basic type, and username and password must be all provided if authentication object exists
       return false
     }
     return true
