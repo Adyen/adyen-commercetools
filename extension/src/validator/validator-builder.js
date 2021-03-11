@@ -109,8 +109,11 @@ function withPayment(paymentObject) {
 }
 
 function _getErrorResponseCode(value) {
-  if (value === errorMessages.UNAUTHORIZED_REQUEST) return 'Unauthorized'
-  if (value === errorMessages.MISSING_CREDENTIAL) return 'Unauthorized'
+  if (
+    value === errorMessages.UNAUTHORIZED_REQUEST ||
+    value === errorMessages.MISSING_CREDENTIAL
+  )
+    return 'Unauthorized'
   return 'InvalidField'
 }
 
