@@ -48,8 +48,8 @@ function generateBasicAuthorizationHeaderValue(ctpProjectKey) {
     const username = ctpConfig.authentication.username
     const password = ctpConfig.authentication.password
 
-    const decodeAuthToken = `${username}:${password}`
-    return `Basic ${Buffer.from(decodeAuthToken).toString('base64')}`
+    const decodedAuthToken = `${username}:${password}`
+    return `Basic ${Buffer.from(decodedAuthToken).toString('base64')}`
   }
   return null
 }
