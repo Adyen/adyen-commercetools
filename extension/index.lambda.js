@@ -8,7 +8,10 @@ exports.handler = async (event) => {
   try {
     const body = event.body ? JSON.parse(event.body) : event
     const authToken = auth.getAuthorizationRequestHeader(event)
-    const paymentResult = await paymentHandler.handlePayment(body.resource.obj, authToken)
+    const paymentResult = await paymentHandler.handlePayment(
+      body.resource.obj,
+      authToken
+    )
     return {
       responseType: paymentResult.success
         ? 'UpdateRequest'
