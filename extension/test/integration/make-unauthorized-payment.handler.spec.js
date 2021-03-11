@@ -49,11 +49,11 @@ describe(':: Test case for make-payment request with authentication process enab
       try {
         await Promise.all([
           makePayment({
-            reference: 'paymentFromMerchant1',
+            reference: 'paymentFromMerchant1_1',
             adyenMerchantAccount: adyenMerchantAccount1,
           }),
           makePayment({
-            reference: 'paymentFromMerchant2',
+            reference: 'paymentFromMerchant2_1',
             adyenMerchantAccount: adyenMerchantAccount2,
           }),
         ])
@@ -73,19 +73,19 @@ describe(':: Test case for make-payment request with authentication process enab
       await setup.setupExtensionResources()
       const response = await Promise.all([
         makePayment({
-          reference: 'paymentFromMerchant3',
+          reference: 'paymentFromMerchant1_2',
           adyenMerchantAccount: adyenMerchantAccount1,
         }),
         makePayment({
-          reference: 'paymentFromMerchant4',
+          reference: 'paymentFromMerchant2_2',
           adyenMerchantAccount: adyenMerchantAccount2,
         }),
       ])
       expect(response.length).to.equal(2)
       expect(response[0].statusCode).to.equal(201)
       expect(response[1].statusCode).to.equal(201)
-      expect(response[0].body.key).to.equal('paymentFromMerchant3')
-      expect(response[1].body.key).to.equal('paymentFromMerchant4')
+      expect(response[0].body.key).to.equal('paymentFromMerchant1_2')
+      expect(response[1].body.key).to.equal('paymentFromMerchant2_2')
     }
   )
 
