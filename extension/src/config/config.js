@@ -13,6 +13,9 @@ function getModuleConfig() {
 }
 
 function _isValidAuthenticationConfig(ctpConfig) {
+  if (getModuleConfig().basicAuth === true && !ctpConfig.authentication)
+    return false
+
   if (ctpConfig.authentication) {
     if (
       ctpConfig.authentication.scheme?.toLowerCase() !== 'basic' ||
