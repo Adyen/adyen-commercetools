@@ -78,6 +78,37 @@ describe('payment-handler-authorization::execute', () => {
   )
 
   it(
+    'when endpoint authorization is enabled and request contains no authorization header value' +
+      'then it should fail to call /payments/details on Adyen',
+    async () => {
+      scope
+        .post('/payments/details')
+        .reply(200, submitPaymentDetailsChallengeRes)
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
+        makePaymentRedirectResponse
+      )
+      ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest = JSON.stringify(
+        submitPaymentDetailsRequest
+      )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
+      const sandbox = sinon.createSandbox()
+      sandbox.stub(config, 'getModuleConfig').returns(dummyModuleConfig)
+      sandbox.stub(config, 'getCtpConfig').returns(dummyCtpConfig)
+      const response = await handlePayment(ctpPaymentClone)
+
+      expect(response.success).to.equal(false)
+      expect(response.data.errors).to.have.lengthOf(1)
+      expect(response.data.errors[0].message).to.equal(
+        errorMessage.UNAUTHORIZED_REQUEST
+      )
+      sandbox.restore()
+    }
+  )
+
+  it(
     'when endpoint authorization is enabled and request is not authorized' +
       'then it should fail to call /payments/details on Adyen',
     async () => {
