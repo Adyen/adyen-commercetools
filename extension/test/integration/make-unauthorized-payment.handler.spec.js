@@ -38,49 +38,17 @@ describe(':: Test case for make-payment request with authentication process enab
   })
 
   it(
-      'given a single commercetools project with enabled authorization for extenstion module and payments ' +
+    'given a single commercetools project with enabled authorization for extenstion module and payments ' +
       'when sending payments with incorrect authorization header, ' +
       'then it should fail to authenticate ',
-      async () => {
+    async () => {
+      await iTSetUp.initServerAndExtension({
+        ctpClient,
+        ctpProjectKey: ctpConfig.projectKey,
+      })
 
-        await iTSetUp.initServerAndExtension({
-          ctpClient,
-          ctpProjectKey: ctpConfig.projectKey,
-        })
-
-        try {
-          await Promise.all([
-            makePayment({
-              reference: 'paymentFromMerchant1',
-              adyenMerchantAccount: adyenMerchantAccount1,
-            }),
-            makePayment({
-              reference: 'paymentFromMerchant2',
-              adyenMerchantAccount: adyenMerchantAccount2,
-            }),
-          ])
-          expect.fail('This test should throw an error, but it did not')
-        } catch (e) {
-          expect(e.statusCode).to.equal(400)
-          expect(e.message).to.equal('The request is unauthorized.')
-        }
-      }
-  )
-
-  it(
-      'given a single commercetools project with enabled authorization for extenstion module and payments ' +
-      'when sending payments with correct authorization header, ' +
-      'then it should success to make payment ',
-      async () => {
-        const authHeaderValue = auth.generateBasicAuthorizationHeaderValue(ctpConfig.projectKey)
-
-        await iTSetUp.initServerAndExtension({
-          ctpClient,
-          ctpProjectKey: ctpConfig.projectKey,
-          authHeaderValue
-        })
-
-        const response = await Promise.all([
+      try {
+        await Promise.all([
           makePayment({
             reference: 'paymentFromMerchant1',
             adyenMerchantAccount: adyenMerchantAccount1,
@@ -90,12 +58,45 @@ describe(':: Test case for make-payment request with authentication process enab
             adyenMerchantAccount: adyenMerchantAccount2,
           }),
         ])
-        expect(response.length).to.equal(2)
-        expect(response[0].statusCode).to.equal(201)
-        expect(response[1].statusCode).to.equal(201)
-        expect(response[0].body.key).to.equal('paymentFromMerchant1')
-        expect(response[1].body.key).to.equal('paymentFromMerchant2')
+        expect.fail('This test should throw an error, but it did not')
+      } catch (e) {
+        expect(e.statusCode).to.equal(400)
+        expect(e.message).to.equal('The request is unauthorized.')
       }
+    }
+  )
+
+  it(
+    'given a single commercetools project with enabled authorization for extenstion module and payments ' +
+      'when sending payments with correct authorization header, ' +
+      'then it should success to make payment ',
+    async () => {
+      const authHeaderValue = auth.generateBasicAuthorizationHeaderValue(
+        ctpConfig.projectKey
+      )
+
+      await iTSetUp.initServerAndExtension({
+        ctpClient,
+        ctpProjectKey: ctpConfig.projectKey,
+        authHeaderValue,
+      })
+
+      const response = await Promise.all([
+        makePayment({
+          reference: 'paymentFromMerchant1',
+          adyenMerchantAccount: adyenMerchantAccount1,
+        }),
+        makePayment({
+          reference: 'paymentFromMerchant2',
+          adyenMerchantAccount: adyenMerchantAccount2,
+        }),
+      ])
+      expect(response.length).to.equal(2)
+      expect(response[0].statusCode).to.equal(201)
+      expect(response[1].statusCode).to.equal(201)
+      expect(response[0].body.key).to.equal('paymentFromMerchant1')
+      expect(response[1].body.key).to.equal('paymentFromMerchant2')
+    }
   )
 
   async function makePayment({ reference, adyenMerchantAccount }) {
@@ -135,8 +136,8 @@ describe(':: Test case for make-payment request with authentication process enab
       },
     }
     const response = await ctpClient.create(
-        ctpClient.builder.payments,
-        paymentDraft
+      ctpClient.builder.payments,
+      paymentDraft
     )
     return response
   }
