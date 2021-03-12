@@ -4,8 +4,12 @@
 name: CI
 
 on:
+  push:
+    branches:
+      - master
+
   schedule:
-  - cron: "*/5 * * * *"
+    - cron: '*/5 * * * *'
 
 jobs:
   notification_build:
