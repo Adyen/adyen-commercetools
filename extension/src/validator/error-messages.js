@@ -15,4 +15,7 @@ module.exports = {
     'Required field "commercetoolsProjectKey" is missing or empty.',
   MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT:
     'Required field "adyenMerchantAccount" is missing or empty.',
+  UNAUTHORIZED_REQUEST: 'The request is unauthorized.',
+  MISSING_CREDENTIAL:
+    'Credential is missing in required project configuration.',
 }

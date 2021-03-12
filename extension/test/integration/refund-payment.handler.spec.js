@@ -73,7 +73,6 @@ describe('::refund::', () => {
         ctpClient.builder.payments,
         paymentDraft
       )
-
       const { statusCode, body: refundPayment } = await ctpClient.update(
         ctpClient.builder.payments,
         payment.id,

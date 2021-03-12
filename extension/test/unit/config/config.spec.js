@@ -9,6 +9,11 @@ describe('::config::', () => {
           clientSecret: 'clientSecret',
           apiUrl: 'host',
           authUrl: 'authUrl',
+          authentication: {
+            scheme: 'basic',
+            username: 'username',
+            password: 'password',
+          },
         },
       },
       adyen: {
@@ -27,12 +32,18 @@ describe('::config::', () => {
     expect(config.getAllAdyenMerchantAccounts()).to.eql([
       'adyenMerchantAccount1',
     ])
+
     expect(config.getCtpConfig('ctpProjectKey1')).to.eql({
       apiUrl: 'host',
       clientId: 'clientId',
       clientSecret: 'clientSecret',
       authUrl: 'authUrl',
       projectKey: 'ctpProjectKey1',
+      authentication: {
+        scheme: 'basic',
+        username: 'username',
+        password: 'password',
+      },
     })
     expect(config.getAdyenConfig('adyenMerchantAccount1')).to.eql({
       apiBaseUrl: 'apiBaseUrl',
@@ -136,4 +147,107 @@ describe('::config::', () => {
     // eslint-disable-next-line global-require,import/no-dynamic-require
     return require(module)
   }
+
+  it('when basicAuth is true but authetication object is not provided, it should throw error', () => {
+    process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+      commercetools: {
+        ctpProjectKey1: {
+          clientId: 'clientId',
+          clientSecret: 'clientSecret',
+          apiUrl: 'host',
+          authUrl: 'authUrl',
+        },
+      },
+      adyen: {
+        adyenMerchantAccount1: {
+          apiBaseUrl: 'apiBaseUrl',
+          apiKey: 'apiKey',
+          clientKey: 'clientKey',
+          legacyApiBaseUrl: 'legacyApiBaseUrl',
+        },
+      },
+      logLevel: 'DEBUG',
+      basicAuth: true,
+    })
+    try {
+      const config = requireUncached('../../../src/config/config')
+      config.getCtpConfig('ctpProjectKey1')
+      expect.fail('This test should throw an error, but it did not')
+    } catch (e) {
+      expect(e.message).to.contain(
+        'Authentication is not properly configured. Please update the configuration'
+      )
+    }
+  })
+
+  it('when authetication object is provided by scheme is absent in it, it should throw error', () => {
+    process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+      commercetools: {
+        ctpProjectKey1: {
+          clientId: 'clientId',
+          clientSecret: 'clientSecret',
+          apiUrl: 'host',
+          authUrl: 'authUrl',
+          authentication: {
+            username: 'username',
+            password: 'password',
+          },
+        },
+      },
+      adyen: {
+        adyenMerchantAccount1: {
+          apiBaseUrl: 'apiBaseUrl',
+          apiKey: 'apiKey',
+          clientKey: 'clientKey',
+          legacyApiBaseUrl: 'legacyApiBaseUrl',
+        },
+      },
+      logLevel: 'DEBUG',
+    })
+    try {
+      const config = requireUncached('../../../src/config/config')
+      config.getCtpConfig('ctpProjectKey1')
+      expect.fail('This test should throw an error, but it did not')
+    } catch (e) {
+      expect(e.message).to.contain(
+        'Authentication is not properly configured. Please update the configuration'
+      )
+    }
+  })
+
+  it('when authetication object is provided by scheme is not valid, it should throw error', () => {
+    process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+      commercetools: {
+        ctpProjectKey1: {
+          clientId: 'clientId',
+          clientSecret: 'clientSecret',
+          apiUrl: 'host',
+          authUrl: 'authUrl',
+          authentication: {
+            scheme: 'test',
+            username: 'username',
+            password: 'password',
+          },
+        },
+      },
+      adyen: {
+        adyenMerchantAccount1: {
+          apiBaseUrl: 'apiBaseUrl',
+          apiKey: 'apiKey',
+          clientKey: 'clientKey',
+          legacyApiBaseUrl: 'legacyApiBaseUrl',
+        },
+      },
+      logLevel: 'DEBUG',
+    })
+    try {
+      const config = requireUncached('../../../src/config/config')
+      config.getCtpConfig('ctpProjectKey1')
+      expect.fail('This test should throw an error, but it did not')
+    } catch (e) {
+      expect(e.message).to.contain(
+        'Authentication is not properly configured. Please update the configuration'
+      )
+    }
+  })
 })

@@ -5,21 +5,39 @@ function getModuleConfig() {
     port: config.port,
     logLevel: config.logLevel,
     apiExtensionBaseUrl: config.apiExtensionBaseUrl, // used only for development purpose
+    basicAuth: config.basicAuth || false,
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
   }
 }
 
+function _validateAuthenticationConfig(ctpConfig) {
+  if (getModuleConfig().basicAuth === true && !ctpConfig.authentication) {
+    return 'Basic authentication is enabled but authentication setting is missing.'
+  }
+
+  if (ctpConfig.authentication) {
+    if (
+      ctpConfig.authentication.scheme?.toLowerCase() !== 'basic' ||
+      !ctpConfig.authentication.username ||
+      !ctpConfig.authentication.password
+    ) {
+      // scheme must be basic type, and username and password must be all provided if authentication object exists
+      return 'Attributes (scheme, username or password) is missing in authentication setting.'
+    }
+    return null
+  }
+  return null
+}
+
 function getCtpConfig(ctpProjectKey) {
   const ctpConfig = config.commercetools[ctpProjectKey]
   if (!ctpConfig)
     throw new Error(
-      `Configuration is not provided. Please update the configuration. ctpProjectKey: [${JSON.stringify(
-        ctpProjectKey
-      )}]`
+      `Configuration is not provided. Please update the configuration. ctpProjectKey: [${ctpProjectKey}]`
     )
-  return {
+  const result = {
     clientId: ctpConfig.clientId,
     clientSecret: ctpConfig.clientSecret,
     projectKey: ctpProjectKey,
@@ -28,6 +46,14 @@ function getCtpConfig(ctpProjectKey) {
     authUrl:
       ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
   }
+  if (ctpConfig.authentication) {
+    result.authentication = {
+      scheme: ctpConfig.authentication.scheme,
+      username: ctpConfig.authentication.username,
+      password: ctpConfig.authentication.password,
+    }
+  }
+  return result
 }
 
 function getAdyenConfig(adyenMerchantAccount) {
@@ -84,6 +110,13 @@ function loadAndValidateConfig() {
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
           'Please verify that all projects have projectKey, clientId and clientSecret'
       )
+    const errorMessage = _validateAuthenticationConfig(ctpConfig)
+    if (errorMessage) {
+      throw new Error(
+        `Authentication is not properly configured. Please update the configuration. error : [${errorMessage}] 
+        ctpProjectKey: [${ctpProjectKey}]`
+      )
+    }
   }
 }
 

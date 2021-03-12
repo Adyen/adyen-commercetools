@@ -1,6 +1,7 @@
 const pU = require('../paymentHandler/payment-utils')
 const errorMessages = require('./error-messages')
 const c = require('../config/constants')
+const auth = require('./authentication')
 
 function withPayment(paymentObject) {
   const errors = {}
@@ -16,6 +17,16 @@ function withPayment(paymentObject) {
       if (!pU.isValidMetadata(paymentObject.custom.fields.adyenMerchantAccount))
         errors.missingRequiredAdyenMerchantAcc =
           errorMessages.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
+      return this
+    },
+    validateAuthorizationHeader(authToken) {
+      const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
+      const storedCredential = auth.getStoredCredential(ctpProjectKey)
+      if (!storedCredential)
+        errors.missingCredentials = errorMessages.MISSING_CREDENTIAL
+      else if (!auth.hasValidAuthorizationHeader(storedCredential, authToken)) {
+        errors.unauthorizedRequest = errorMessages.UNAUTHORIZED_REQUEST
+      }
       return this
     },
     validateRequestFields() {
@@ -89,12 +100,21 @@ function withPayment(paymentObject) {
     },
     buildCtpErrorResponse() {
       const errorArray = Object.entries(errors).map(([, value]) => ({
-        code: 'InvalidField',
+        code: _getErrorResponseCode(value),
         message: value,
       }))
       return { errors: errorArray }
     },
   }
+}
+
+function _getErrorResponseCode(value) {
+  if (
+    value === errorMessages.UNAUTHORIZED_REQUEST ||
+    value === errorMessages.MISSING_CREDENTIAL
+  )
+    return 'Unauthorized'
+  return 'InvalidField'
 }
 
 module.exports = { withPayment }

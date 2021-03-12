@@ -21,6 +21,37 @@ const testUtils = require('../test-utils')
 const logger = require('../../src/utils').getLogger()
 
 let server
+let originalCtpConfig
+function addAuthConfig(ctpProjectKey, authentication) {
+  const ctpConfig = config.getCtpConfig(ctpProjectKey)
+  originalCtpConfig = ctpConfig
+  config.getCtpConfig = function getCtpConfig() {
+    return {
+      clientId: ctpConfig.clientId,
+      clientSecret: ctpConfig.clientSecret,
+      projectKey: ctpProjectKey,
+      apiUrl:
+        ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
+      authUrl:
+        ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
+      authentication: {
+        scheme: authentication.authScheme,
+        username: authentication.username,
+        password: authentication.password,
+      },
+    }
+  }
+  module.exports = config
+}
+
+function overrideBasicAuthFlag(isEnable) {
+  const moduleConfig = config.getModuleConfig()
+  moduleConfig.basicAuth = isEnable
+  config.getModuleConfig = function getModuleConfig() {
+    return moduleConfig
+  }
+  module.exports = config
+}
 
 function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   const moduleConfig = config.getModuleConfig()
@@ -31,9 +62,13 @@ function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   module.exports = config
 }
 
-async function initServerAndExtension({ ctpClient, ctpProjectKey }) {
+async function initServerAndExtension({
+  ctpClient,
+  ctpProjectKey,
+  authHeaderValue,
+}) {
   await initServer()
-  await initExtension(ctpClient, ctpProjectKey)
+  await initExtension(ctpClient, ctpProjectKey, authHeaderValue)
 }
 
 async function initServer() {
@@ -44,6 +79,7 @@ async function initServer() {
   // which is 40 connections at the same time as we're using Free program (https://ngrok.com/pricing).
   const apiExtensionBaseUrl = await ngrok.connect(port)
   _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
+
   return new Promise((resolve) => {
     server.listen(port, async () => {
       logger.debug(
@@ -54,12 +90,17 @@ async function initServer() {
   })
 }
 
-async function initExtension(ctpClient, ctpProjectKey) {
+async function initExtension(ctpClient, ctpProjectKey, authHeaderValue) {
   await testUtils.deleteAllResources(ctpClient, 'payments')
   await testUtils.deleteAllResources(ctpClient, 'types')
   await testUtils.deleteAllResources(ctpClient, 'extensions')
   const { apiExtensionBaseUrl } = config.getModuleConfig()
-  await ensureResources(ctpClient, ctpProjectKey, apiExtensionBaseUrl)
+  await ensureResources(
+    ctpClient,
+    ctpProjectKey,
+    apiExtensionBaseUrl,
+    authHeaderValue
+  )
 }
 
 async function cleanupCtpResources(ctpClient) {
@@ -334,6 +375,11 @@ async function stopRunningServers() {
   await ngrok.kill()
 }
 
+async function restoreCtpConfig() {
+  config.getCtpConfig = () => originalCtpConfig
+  module.exports = config
+}
+
 module.exports = {
   initServerAndExtension,
   stopRunningServers,
@@ -341,4 +387,7 @@ module.exports = {
   cleanupCtpResources,
   initServer,
   initExtension,
+  addAuthConfig,
+  restoreCtpConfig,
+  overrideBasicAuthFlag,
 }

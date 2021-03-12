@@ -1,5 +1,6 @@
 const { serializeError } = require('serialize-error')
 const httpUtils = require('../../utils')
+const auth = require('../../validator/authentication')
 const paymentHandler = require('../../paymentHandler/payment-handler')
 
 async function processRequest(request, response) {
@@ -8,8 +9,12 @@ async function processRequest(request, response) {
     // https://docs.commercetools.com/http-api-projects-api-extensions#input
     return httpUtils.sendResponse({ response })
 
+  const authToken = auth.getAuthorizationRequestHeader(request)
   const paymentObject = await _getPaymentObject(request)
-  const paymentResult = await paymentHandler.handlePayment(paymentObject)
+  const paymentResult = await paymentHandler.handlePayment(
+    paymentObject,
+    authToken
+  )
 
   return httpUtils.sendResponse({
     response,
