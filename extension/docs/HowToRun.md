@@ -109,13 +109,20 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 }
 ```
 
-| Name           | Content                                                      | Required | Default value                                     |
-| -------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------- |
-| `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.     | YES      |                                                   |
-| `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token. | YES      |                                                   |
-| `host`         | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
-| `authUrl`      | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
-| `authentication` | This setting only takes effect when `basicAuth` ( a child attribute in `ADYEN_INTEGRATION_CONFIG` ) is set to `true`. It enables authentication mechanism to prevent unauthorized access to the extension module. When it is provided as a JSON object, it must contain 3 separate attributes. They are `scheme` attribute which supports `basic` type, `username` attribute and `password` attribute defined by user. | NO       |                                                   |
+| Name             | Content                                                      | Required | Default value                                     |
+| ---------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------- |
+| `clientId`       | OAuth 2.0 `client_id` and can be used to obtain a token.     | YES      |                                                   |
+| `clientSecret`   | OAuth 2.0 `client_secret` and can be used to obtain a token. | YES      |                                                   |
+| `host`           | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `authUrl`        | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
+| `authentication` | This setting only takes effect when `basicAuth` ( a child    | NO       |                                                   |
+|                  | attribute in `ADYEN_INTEGRATION_CONFIG` ) is set to `true`.  | NO       |                                                   |
+|                  | It enables authentication mechanism to prevent unauthorized  |          |                                                   |
+|                  | access to the extension module. When it is provided as a     |          |                                                   |
+|                  | JSON object, it must contain 3 separate attributes. They     |          |                                                   |
+|                  | are `scheme` attribute which supports `basic` type,          |          |                                                   |
+|                  | `username` attribute and `password` attribute defined by     |          |                                                   |
+|                  | user.                                                        |          |                                                   |
 
 ### Other Configurations
 
