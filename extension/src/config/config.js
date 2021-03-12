@@ -14,10 +14,7 @@ function getModuleConfig() {
 
 function _validateAuthenticationConfig(ctpConfig) {
   if (getModuleConfig().basicAuth === true && !ctpConfig.authentication) {
-    return {
-      errorMessage:
-        'Basic authentication is enabled but authentication setting is missing.',
-    }
+    return 'Basic authentication is enabled but authentication setting is missing.'
   }
 
   if (ctpConfig.authentication) {
@@ -27,10 +24,8 @@ function _validateAuthenticationConfig(ctpConfig) {
       !ctpConfig.authentication.password
     ) {
       // scheme must be basic type, and username and password must be all provided if authentication object exists
-      return {
-        errorMessage:
-          'Attributes (scheme, username or password) is missing in authentication setting.',
-      }
+      return 'Attributes (scheme, username or password) is missing in authentication setting.'
+
     }
     return null
   }
@@ -116,10 +111,10 @@ function loadAndValidateConfig() {
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
           'Please verify that all projects have projectKey, clientId and clientSecret'
       )
-    const error = _validateAuthenticationConfig(ctpConfig)
-    if (error) {
+    const errorMessage = _validateAuthenticationConfig(ctpConfig)
+    if (errorMessage) {
       throw new Error(
-        `Authentication is not properly configured. Please update the configuration. error : [${error?.errorMessage}] 
+        `Authentication is not properly configured. Please update the configuration. error : [${errorMessage}] 
         ctpProjectKey: [${ctpProjectKey}]`
       )
     }
