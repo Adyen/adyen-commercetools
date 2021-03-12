@@ -23,48 +23,6 @@ const PAYMENT_METHOD_TYPE_KLARNA_METHODS = [
   'klarna_account',
 ]
 
-function _validatePaymentRequest(paymentObject, authToken) {
-  const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
-  if (!auth.isBasicAuthEnabled()) {
-    paymentValidator
-      .validateMetadataFields()
-      .validateRequestFields()
-      .validateReference()
-      .validateAmountPlanned()
-    if (paymentValidator.hasErrors())
-      return {
-        success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
-      }
-  } else {
-    paymentValidator.validateMetadataFields()
-    if (paymentValidator.hasErrors())
-      return {
-        success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
-      }
-
-    paymentValidator.validateAuthorizationHeader(authToken)
-    if (paymentValidator.hasErrors())
-      return {
-        success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
-      }
-
-    paymentValidator
-      .validateRequestFields()
-      .validateReference()
-      .validateAmountPlanned()
-
-    if (paymentValidator.hasErrors())
-      return {
-        success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
-      }
-  }
-  return null
-}
-
 async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
     // if it's not adyen payment, ignore the payment
@@ -151,6 +109,48 @@ function _isAdyenPayment(paymentObject) {
   return (
     paymentObject.paymentMethodInfo.paymentInterface === CTP_ADYEN_INTEGRATION
   )
+}
+
+function _validatePaymentRequest(paymentObject, authToken) {
+  const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
+  if (!auth.isBasicAuthEnabled()) {
+    paymentValidator
+      .validateMetadataFields()
+      .validateRequestFields()
+      .validateReference()
+      .validateAmountPlanned()
+    if (paymentValidator.hasErrors())
+      return {
+        success: false,
+        data: paymentValidator.buildCtpErrorResponse(),
+      }
+  } else {
+    paymentValidator.validateMetadataFields()
+    if (paymentValidator.hasErrors())
+      return {
+        success: false,
+        data: paymentValidator.buildCtpErrorResponse(),
+      }
+
+    paymentValidator.validateAuthorizationHeader(authToken)
+    if (paymentValidator.hasErrors())
+      return {
+        success: false,
+        data: paymentValidator.buildCtpErrorResponse(),
+      }
+
+    paymentValidator
+      .validateRequestFields()
+      .validateReference()
+      .validateAmountPlanned()
+
+    if (paymentValidator.hasErrors())
+      return {
+        success: false,
+        data: paymentValidator.buildCtpErrorResponse(),
+      }
+  }
+  return null
 }
 
 function _isKlarna(makePaymentRequestObj) {
