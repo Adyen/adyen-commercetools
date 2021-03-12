@@ -121,8 +121,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 |                  | access to the extension module. When it is provided as a     |          |                                                   |
 |                  | JSON object, it must contain 3 separate attributes. They     |          |                                                   |
 |                  | are `scheme` attribute which supports `basic` type,          |          |                                                   |
-|                  | `username` attribute and `password` attribute defined by     |          |                                                   |
-|                  | user.                                                        |          |                                                   |
+|                  | `username` and `password` attribute defined by user.         |          |                                                   |
 
 ### Other Configurations
 
