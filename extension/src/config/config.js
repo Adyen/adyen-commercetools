@@ -12,9 +12,13 @@ function getModuleConfig() {
   }
 }
 
-function _isValidAuthenticationConfig(ctpConfig) {
-  if (getModuleConfig().basicAuth === true && !ctpConfig.authentication)
-    return false
+function _validateAuthenticationConfig(ctpConfig) {
+  if (getModuleConfig().basicAuth === true && !ctpConfig.authentication) {
+    return {
+      errorMessage:
+        'Basic authentication is enabled but authentication setting is missing.',
+    }
+  }
 
   if (ctpConfig.authentication) {
     if (
@@ -23,20 +27,21 @@ function _isValidAuthenticationConfig(ctpConfig) {
       !ctpConfig.authentication.password
     ) {
       // scheme must be basic type, and username and password must be all provided if authentication object exists
-      return false
+      return {
+        errorMessage:
+          'Attributes (scheme, username or password) is missing in authentication setting.',
+      }
     }
-    return true
+    return null
   }
-  return true
+  return null
 }
 
 function getCtpConfig(ctpProjectKey) {
   const ctpConfig = config.commercetools[ctpProjectKey]
   if (!ctpConfig)
     throw new Error(
-      `Configuration is not provided. Please update the configuration. ctpProjectKey: [${JSON.stringify(
-        ctpProjectKey
-      )}]`
+      `Configuration is not provided. Please update the configuration. ctpProjectKey: [${ctpProjectKey}]`
     )
   const result = {
     clientId: ctpConfig.clientId,
@@ -111,11 +116,11 @@ function loadAndValidateConfig() {
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
           'Please verify that all projects have projectKey, clientId and clientSecret'
       )
-    if (!_isValidAuthenticationConfig(ctpConfig)) {
+    const error = _validateAuthenticationConfig(ctpConfig)
+    if (error) {
       throw new Error(
-        `Authentication is not properly configured. Please update the configuration. ctpProjectKey: [${JSON.stringify(
-          ctpProjectKey
-        )}]`
+        `Authentication is not properly configured. Please update the configuration. error : [${error?.errorMessage}] 
+        ctpProjectKey: [${ctpProjectKey}]`
       )
     }
   }
