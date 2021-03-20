@@ -93,8 +93,7 @@ function _getPaymentHandlers(paymentObject) {
   }
   if (
     paymentObject.custom.fields.makePaymentResponse &&
-    paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest &&
-    !paymentObject.custom.fields.submitAdditionalPaymentDetailsResponse
+    paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
   )
     handlers.push(submitPaymentDetailsHandler)
   if (
