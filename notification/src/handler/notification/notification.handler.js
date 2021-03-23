@@ -214,9 +214,7 @@ function compareTransactionStates(currentState, newState) {
     !transactionStateFlow.hasOwnProperty(newState)
   )
     throw new CommercetoolsError({
-      message:
-        'Wrong transaction state passed. ' +
-        `currentState: ${currentState}, newState: ${newState}`,
+      message: `Wrong transaction state passed. CurrentState: ${currentState}, newState: ${newState}`,
     })
 
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
