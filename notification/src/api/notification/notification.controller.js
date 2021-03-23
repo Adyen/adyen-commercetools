@@ -30,7 +30,7 @@ async function handleNotification(request, response) {
       { notification: httpUtils.getNotificationForTracking(notification), err },
       'Unexpected exception occurred.'
     )
-    if (err.isRecoverable) {
+    if (!err.isRecoverable) {
       return httpUtils.sendResponse(response, 500)
     }
     return sendAcceptedResponse(response)

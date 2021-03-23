@@ -6,6 +6,17 @@ const { getNotificationForTracking } = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
 const mainLogger = require('../../utils/logger').getLogger()
 
+class CommercetoolsError extends Error {
+  constructor({ stack, message, statusCode }) {
+    super()
+    this.stack = stack
+    this.message = message
+    // statusCode === 0 is NetworkError, default is recoverable.
+    this.isRecoverable = statusCode !== undefined
+      ? (statusCode !== 0 && statusCode < 500) : true
+  }
+}
+
 async function processNotification(
   notification,
   enableHmacSignature,
@@ -83,11 +94,13 @@ async function updatePaymentWithRepeater(
       )
       break
     } catch (err) {
-      if (err.body.statusCode !== 409)
-        throw new Error(
-          `Unexpected error during updating a payment with ID: ${currentPayment.id}. Exiting. ` +
-            `Error: ${JSON.stringify(serializeError(err))}`
-        )
+      if (err.statusCode !== 409)
+        throw new CommercetoolsError({
+          stack: err.stack,
+          message: `Unexpected error during updating a payment with ID: ${currentPayment.id}. Exiting. ` +
+            `Actions: ${JSON.stringify(_obfuscateNotificationInfoFromActionFields(updateActions))}`,
+          statusCode: err.statusCode
+        })
       retryCount += 1
       if (retryCount > maxRetry) {
         retryMessage =
@@ -95,11 +108,12 @@ async function updatePaymentWithRepeater(
           ` when updating payment with id "${currentPayment.id}".` +
           ` Version tried "${currentVersion}",` +
           ` currentVersion: "${err.body.errors[0].currentVersion}".`
-        throw new Error(
-          `${retryMessage} Won't retry again` +
+        throw new CommercetoolsError({
+          stack: err.stack,
+          message: `${retryMessage} Won't retry again` +
             ` because of a reached limit ${maxRetry}` +
-            ` max retries. Error: ${JSON.stringify(serializeError(err))}`
-        )
+            ` max retries. Actions: ${JSON.stringify(_obfuscateNotificationInfoFromActionFields(updateActions))}`
+        })
       }
       /* eslint-disable-next-line no-await-in-loop */
       const response = await ctpClient.fetchById(
@@ -110,6 +124,18 @@ async function updatePaymentWithRepeater(
       currentVersion = currentPayment.version
     }
   }
+}
+
+function _obfuscateNotificationInfoFromActionFields (updateActions) {
+  if (!updateActions) return updateActions
+
+  const copyOfUpdateActions =  _.cloneDeep(updateActions)
+  copyOfUpdateActions.filter(value => value.action === 'addInterfaceInteraction')
+    .filter(value => value?.fields?.notification)
+    .forEach(value => {
+      value.fields.notification =  getNotificationForTracking(JSON.parse(value.fields.notification))
+    })
+  return copyOfUpdateActions
 }
 
 function calculateUpdateActionsForPayment(payment, notification) {
@@ -178,9 +204,10 @@ function compareTransactionStates(currentState, newState) {
     !transactionStateFlow.hasOwnProperty(currentState) ||
     !transactionStateFlow.hasOwnProperty(newState)
   )
-    throw Error(
-      'Wrong transaction state passed. ' +
-        `currentState: ${currentState}, newState: ${newState}`
+    throw new CommercetoolsError({
+      message: 'Wrong transaction state passed. ' +
+          `currentState: ${currentState}, newState: ${newState}`
+      }
     )
 
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
@@ -286,10 +313,13 @@ async function getPaymentByMerchantReference(merchantReference, ctpClient) {
     return result.body
   } catch (err) {
     if (err.statusCode === 404) return null
-    throw Error(
-      `Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
-        `Error: ${JSON.stringify(serializeError(err))}`
-    )
+
+    throw new CommercetoolsError({
+      stack: err.stack,
+      message: `Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
+        `Error: ${JSON.stringify(serializeError(err))}`,
+      statusCode: err.statusCode
+    })
   }
 }
 

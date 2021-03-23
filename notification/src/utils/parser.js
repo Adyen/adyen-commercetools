@@ -1,29 +1,23 @@
 const config = require('../config/config')
 
 class ValidationError extends Error {
-  constructor({ stack, message, notification, isRecoverable }) {
+  constructor({ stack, message }) {
     super()
     this.stack = stack
     this.message = message
-    this.notification = JSON.stringify(notification)
-    this.isRecoverable = isRecoverable
+    this.isRecoverable = true
   }
 }
 
 function getCtpProjectConfig(notification) {
-  let commercetoolsProjectKey
-  try {
-    commercetoolsProjectKey =
-      notification.NotificationRequestItem.additionalData[
-        'metadata.commercetoolsProjectKey'
-      ]
-  } catch (e) {
+  const commercetoolsProjectKey =
+    notification?.NotificationRequestItem?.additionalData?.[
+      `metadata.commercetoolsProjectKey`
+    ]
+  if (!commercetoolsProjectKey) {
     throw new ValidationError({
-      stack: e.stack,
-      notification,
       message:
-        'Notification does not contain the field `metadata.commercetoolsProjectKey`.',
-      isRecoverable: false,
+        'Notification can not be processed as "commercetoolsProjectKey"  was not found on the notification.',
     })
   }
 
@@ -33,9 +27,7 @@ function getCtpProjectConfig(notification) {
   } catch (e) {
     throw new ValidationError({
       stack: e.stack,
-      message: e.message,
-      notification,
-      isRecoverable: true,
+      message: e.message
     })
   }
   return ctpProjectConfig
@@ -50,9 +42,7 @@ function getAdyenConfig(notification) {
   } catch (e) {
     throw new ValidationError({
       stack: e.stack,
-      message: e.message,
-      notification,
-      isRecoverable: true,
+      message: e.message
     })
   }
   return adyenConfig

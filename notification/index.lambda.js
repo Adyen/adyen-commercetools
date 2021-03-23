@@ -4,6 +4,7 @@ const { getNotificationForTracking } = require('./src/utils/commons')
 const { getCtpProjectConfig, getAdyenConfig } = require('./src/utils/parser')
 
 exports.handler = async (event) => {
+  // Reason for this check: event.body is a string of payload when AWS API Gateway is used.
   const body = event.body ? JSON.parse(event.body) : event
   const { notificationItems } = body
   if (!notificationItems) {
@@ -33,7 +34,7 @@ exports.handler = async (event) => {
       { notification: getNotificationForTracking(notificationItems), err },
       'Unexpected exception occurred.'
     )
-    if (err.isRecoverable) {
+    if (!err.isRecoverable) {
       throw err
     }
   }
