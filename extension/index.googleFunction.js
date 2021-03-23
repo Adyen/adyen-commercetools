@@ -8,7 +8,7 @@ exports.extensionTrigger = async (request, response) => {
   try {
     const obj = request?.body?.resource?.obj
     if (!obj) {
-      response.status(400).send({
+      return response.status(400).send({
         errors: [
           {
             code: 'BadRequest',
@@ -20,19 +20,18 @@ exports.extensionTrigger = async (request, response) => {
     const authToken = auth.getAuthorizationRequestHeader(request)
     const paymentResult = await paymentHandler.handlePayment(obj, authToken)
     if (paymentResult.success) {
-      response.status(200).send({
+      return response.status(200).send({
         actions: paymentResult.data ? paymentResult.data.actions : [],
       })
-    } else {
-      response.status(400).send({
-        errors: paymentResult.data ? paymentResult.data.errors : undefined,
-      })
     }
+    return response.status(400).send({
+      errors: paymentResult.data ? paymentResult.data.errors : undefined,
+    })
   } catch (err) {
     const errorMessage = `Unexpected error: ${err.message}`
     logger.error(errorMessage)
 
-    response.status(400).send({
+    return response.status(400).send({
       errors: [
         {
           code: 'InvalidOperation',
