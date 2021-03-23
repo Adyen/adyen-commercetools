@@ -6,8 +6,8 @@ const logger = utils.getLogger()
 
 exports.extensionTrigger = async (request, response) => {
   try {
-    const authToken = auth.getAuthorizationRequestHeader(request)
-    if (!request?.body?.resource) {
+    const obj = request?.body?.resource?.obj
+    if (!obj) {
       response.status(400).send({
         errors: [
           {
@@ -17,8 +17,7 @@ exports.extensionTrigger = async (request, response) => {
         ],
       })
     }
-
-    const { obj } = request.body.resource
+    const authToken = auth.getAuthorizationRequestHeader(request)
     const paymentResult = await paymentHandler.handlePayment(obj, authToken)
     if (paymentResult.success) {
       response.status(200).send({
