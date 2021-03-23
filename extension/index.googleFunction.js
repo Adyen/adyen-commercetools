@@ -1,4 +1,3 @@
-const { serializeError } = require('serialize-error')
 const paymentHandler = require('./src/paymentHandler/payment-handler')
 const utils = require('./src/utils')
 const auth = require('./src/validator/authentication')
@@ -30,8 +29,8 @@ exports.extensionTrigger = async (request, response) => {
     })
   } catch (err) {
     const errorMessage = `Unexpected error: ${err.message}`
-    const errorStackTrace = `Unexpected error: ${JSON.stringify(serializeError(err))}`
-    logger.error(errorStackTrace)
+    logger.error(errorMessage)
+
     return response.status(400).send({
       errors: [
         {
