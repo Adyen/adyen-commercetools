@@ -273,6 +273,15 @@ To make payment via our integration, you need to set the `makePaymentRequest` cu
 - `makePaymentRequest` must contain a unique payment `reference` value. The reference value cannot be duplicated in any commercetools payment and it's a required field by Adyen. The extension module uses the `reference` value to set the payment key, later it acts as a unique link between commercetools payment and Adyen payment(`merchantReference`). `Reference` may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
 - `payment.amountPlanned` can not be changed if there is a `makePayment` interface interaction present in the commercetools payment object. The `amount` value in `makePaymentRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
 
+**Important**
+
+In this integration document our Adyen payment request examples are trimmed to minimum, for instance, a `makePaymentRequest` for 3D Secure 2 payment type, should have `additionalData.allow3DS2` set to `true`. So in your integration, you might need to include additional parameters in your payment request to:
+
+- Integrate some payment methods. For more information, refer to Adyen [payment method integration guides](https://docs.adyen.com/payment-methods).
+- Make use of risk management features. For more information, see [required risk fields](https://docs.adyen.com/risk-management/configure-standard-risk-rules/required-risk-field-reference).
+- Use [native 3D Secure 2 authentication](https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-component#make-a-payment).
+- [Tokenize your shopper's payment details](https://docs.adyen.com/payment-methods/cards/web-component#create-a-token) or [make recurring payments](https://docs.adyen.com/payment-methods/cards/web-component#make-a-payment-with-a-token).
+
 Here's an example of the value of the `makePaymentRequest` custom field, with generated component data from Adyen Web Components for a credit card payment:
 
 ```json
