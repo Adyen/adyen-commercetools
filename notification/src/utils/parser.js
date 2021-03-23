@@ -27,7 +27,7 @@ function getCtpProjectConfig(notification) {
   } catch (e) {
     throw new ValidationError({
       stack: e.stack,
-      message: e.message
+      message: e.message,
     })
   }
   return ctpProjectConfig
@@ -42,7 +42,7 @@ function getAdyenConfig(notification) {
   } catch (e) {
     throw new ValidationError({
       stack: e.stack,
-      message: e.message
+      message: e.message,
     })
   }
   return adyenConfig

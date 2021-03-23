@@ -12,8 +12,8 @@ class CommercetoolsError extends Error {
     this.stack = stack
     this.message = message
     // statusCode === 0 is NetworkError, default is recoverable.
-    this.isRecoverable = statusCode !== undefined
-      ? (statusCode !== 0 && statusCode < 500) : true
+    this.isRecoverable =
+      statusCode !== undefined ? statusCode !== 0 && statusCode < 500 : true
   }
 }
 
@@ -97,9 +97,12 @@ async function updatePaymentWithRepeater(
       if (err.statusCode !== 409)
         throw new CommercetoolsError({
           stack: err.stack,
-          message: `Unexpected error during updating a payment with ID: ${currentPayment.id}. Exiting. ` +
-            `Actions: ${JSON.stringify(_obfuscateNotificationInfoFromActionFields(updateActions))}`,
-          statusCode: err.statusCode
+          message:
+            `Unexpected error during updating a payment with ID: ${currentPayment.id}. Exiting. ` +
+            `Actions: ${JSON.stringify(
+              _obfuscateNotificationInfoFromActionFields(updateActions)
+            )}`,
+          statusCode: err.statusCode,
         })
       retryCount += 1
       if (retryCount > maxRetry) {
@@ -110,9 +113,12 @@ async function updatePaymentWithRepeater(
           ` currentVersion: "${err.body.errors[0].currentVersion}".`
         throw new CommercetoolsError({
           stack: err.stack,
-          message: `${retryMessage} Won't retry again` +
+          message:
+            `${retryMessage} Won't retry again` +
             ` because of a reached limit ${maxRetry}` +
-            ` max retries. Actions: ${JSON.stringify(_obfuscateNotificationInfoFromActionFields(updateActions))}`
+            ` max retries. Actions: ${JSON.stringify(
+              _obfuscateNotificationInfoFromActionFields(updateActions)
+            )}`,
         })
       }
       /* eslint-disable-next-line no-await-in-loop */
@@ -126,14 +132,17 @@ async function updatePaymentWithRepeater(
   }
 }
 
-function _obfuscateNotificationInfoFromActionFields (updateActions) {
+function _obfuscateNotificationInfoFromActionFields(updateActions) {
   if (!updateActions) return updateActions
 
-  const copyOfUpdateActions =  _.cloneDeep(updateActions)
-  copyOfUpdateActions.filter(value => value.action === 'addInterfaceInteraction')
-    .filter(value => value?.fields?.notification)
-    .forEach(value => {
-      value.fields.notification =  getNotificationForTracking(JSON.parse(value.fields.notification))
+  const copyOfUpdateActions = _.cloneDeep(updateActions)
+  copyOfUpdateActions
+    .filter((value) => value.action === 'addInterfaceInteraction')
+    .filter((value) => value?.fields?.notification)
+    .forEach((value) => {
+      value.fields.notification = getNotificationForTracking(
+        JSON.parse(value.fields.notification)
+      )
     })
   return copyOfUpdateActions
 }
@@ -205,10 +214,10 @@ function compareTransactionStates(currentState, newState) {
     !transactionStateFlow.hasOwnProperty(newState)
   )
     throw new CommercetoolsError({
-      message: 'Wrong transaction state passed. ' +
-          `currentState: ${currentState}, newState: ${newState}`
-      }
-    )
+      message:
+        'Wrong transaction state passed. ' +
+        `currentState: ${currentState}, newState: ${newState}`,
+    })
 
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
 }
@@ -316,9 +325,10 @@ async function getPaymentByMerchantReference(merchantReference, ctpClient) {
 
     throw new CommercetoolsError({
       stack: err.stack,
-      message: `Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
+      message:
+        `Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
         `Error: ${JSON.stringify(serializeError(err))}`,
-      statusCode: err.statusCode
+      statusCode: err.statusCode,
     })
   }
 }
