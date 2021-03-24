@@ -21,7 +21,10 @@ class CommercetoolsError extends Error {
       So when isRecoverable assigned to true the notification will not respond with accepted but with 500 status code.
     */
     this.isRecoverable =
-      statusCode !== undefined ? statusCode === 0 && statusCode >= 500 : false
+      !(statusCode !== undefined &&
+        statusCode > 399 &&
+        statusCode !== 409 &&
+        statusCode < 500)
   }
 }
 
