@@ -106,7 +106,7 @@ async function updatePaymentWithRepeater(
         throw new CommercetoolsError({
           stack: err.stack,
           message:
-            `Unexpected error on payment update with ID: ${currentPayment.id}. Exiting. ` +
+            `Unexpected error on payment update with ID: ${currentPayment.id}.` +
             `Failed actions: ${JSON.stringify(
               _obfuscateNotificationInfoFromActionFields(updateActions)
             )}`,
