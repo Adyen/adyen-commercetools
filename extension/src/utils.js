@@ -33,13 +33,8 @@ function getLogger() {
   return logger
 }
 
-function sendGoogleFunctionResponse({ response, statusCode = 200, body }) {
-  response.status(statusCode).send(body)
-}
-
 module.exports = {
   collectRequestData,
   sendResponse,
   getLogger,
-  sendGoogleFunctionResponse,
 }
