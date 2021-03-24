@@ -44,7 +44,8 @@ describe('Lambda handler', () => {
         error: logSpy,
       })
 
-      const error = new Error('some error')
+      const error = new Error('some recoverable error')
+      error.isRecoverable = true
       sinon.stub(notificationHandler, 'processNotification').throws(error)
 
       const call = async () => handler(event)
