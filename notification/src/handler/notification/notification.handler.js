@@ -106,8 +106,8 @@ async function updatePaymentWithRepeater(
         throw new CommercetoolsError({
           stack: err.stack,
           message:
-            `Unexpected error during updating a payment with ID: ${currentPayment.id}. Exiting. ` +
-            `Actions: ${JSON.stringify(
+            `Unexpected error on payment update with ID: ${currentPayment.id}. Exiting. ` +
+            `Failed actions: ${JSON.stringify(
               _obfuscateNotificationInfoFromActionFields(updateActions)
             )}`,
           statusCode: err.statusCode,
@@ -124,7 +124,7 @@ async function updatePaymentWithRepeater(
           message:
             `${retryMessage} Won't retry again` +
             ` because of a reached limit ${maxRetry}` +
-            ` max retries. Actions: ${JSON.stringify(
+            ` max retries. Failed actions: ${JSON.stringify(
               _obfuscateNotificationInfoFromActionFields(updateActions)
             )}`,
         })
