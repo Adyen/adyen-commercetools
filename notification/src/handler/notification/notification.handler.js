@@ -141,8 +141,6 @@ async function updatePaymentWithRepeater(
 }
 
 function _obfuscateNotificationInfoFromActionFields(updateActions) {
-  if (!updateActions) return updateActions
-
   const copyOfUpdateActions = _.cloneDeep(updateActions)
   copyOfUpdateActions
     .filter((value) => value.action === 'addInterfaceInteraction')
