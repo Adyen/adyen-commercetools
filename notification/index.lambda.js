@@ -4,7 +4,7 @@ const { getNotificationForTracking } = require('./src/utils/commons')
 const { getCtpProjectConfig, getAdyenConfig } = require('./src/utils/parser')
 
 exports.handler = async (event) => {
-  // Reason for this check: event.body is a string of payload when AWS API Gateway is used.
+  // Reason for this check: if AWS API Gateway is used then event.body is provided as a string payload.
   const body = event.body ? JSON.parse(event.body) : event
   const { notificationItems } = body
   if (!notificationItems) {
