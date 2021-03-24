@@ -11,9 +11,17 @@ class CommercetoolsError extends Error {
     super()
     this.stack = stack
     this.message = message
-    // statusCode === 0 is NetworkError, default is recoverable.
+
+    /*
+      We do not want to block notifications coming by Adyen.
+      So with this error it will be accepted by notification module by default.
+
+      Only we do not accept for statusCode === 0 (NetworkError) or 5xx errors like 500.
+      Note that, our client configured to do retries for statusCode=503 cases.
+      So when isRecoverable assigned to true the notification will not respond with accepted but with 500 status code.
+    */
     this.isRecoverable =
-      statusCode !== undefined ? statusCode !== 0 && statusCode < 500 : true
+      statusCode !== undefined ? statusCode === 0 && statusCode >= 500 : false
   }
 }
 

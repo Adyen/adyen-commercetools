@@ -5,7 +5,12 @@ class ValidationError extends Error {
     super()
     this.stack = stack
     this.message = message
-    this.isRecoverable = true
+
+    /*
+      We do not want to block notifications coming by Adyen.
+      So with this error it will be accepted by notification module by default.
+    */
+    this.isRecoverable = false
   }
 }
 
