@@ -29,7 +29,7 @@ exports.extensionTrigger = async (request, response) => {
         response,
         statusCode: 200,
         body: {
-          actions: paymentResult.data ? paymentResult.data.actions : [],
+          actions: paymentResult?.actions,
         },
       })
     }
@@ -37,7 +37,7 @@ exports.extensionTrigger = async (request, response) => {
       response,
       statusCode: 400,
       body: {
-        errors: paymentResult.data ? paymentResult.data.errors : undefined,
+        errors: paymentResult?.errors,
       },
     })
   } catch (err) {

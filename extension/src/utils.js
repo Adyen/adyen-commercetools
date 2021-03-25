@@ -18,9 +18,9 @@ function collectRequestData(request) {
   })
 }
 
-function sendResponse({ response, statusCode = 200, headers, data }) {
+function sendResponse({ response, statusCode = 200, headers, body }) {
   response.writeHead(statusCode, headers)
-  response.end(JSON.stringify(data))
+  response.end(JSON.stringify(body))
 }
 
 function sendGoogleFunctionResponse({ response, statusCode = 200, body }) {

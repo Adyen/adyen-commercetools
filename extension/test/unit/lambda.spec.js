@@ -18,40 +18,37 @@ describe('Lambda handler', () => {
   }
 
   it('returns correct success response', async () => {
-    const actions = [{ some: 'action' }]
     sinon
       .stub(paymentHandler, 'handlePayment')
-      .returns({ success: true, data: { actions } })
+      .returns({ success: true, actions: [{ some: 'action' }] })
 
     const result = await handler(event)
-
     expect(result.responseType).equals('UpdateRequest')
-    expect(result.actions).equals(actions)
+    expect(result.actions).to.deep.equal([{ some: 'action' }])
     expect(result.errors).to.equal(undefined)
   })
 
   it('returns correct failed response', async () => {
-    const errors = [{ some: 'error' }]
     sinon
       .stub(paymentHandler, 'handlePayment')
-      .returns({ success: false, data: { errors } })
+      .returns({ success: false, errors: [{ some: 'error' }] })
 
     const result = await handler(event)
 
     expect(result.responseType).equals('FailedValidation')
-    expect(result.errors).equals(errors)
+    expect(result.errors).to.deep.equal([{ some: 'error' }])
     expect(result.actions).to.equal(undefined)
   })
 
-  it('does not throw unhandled exception when handlePayment data is null', async () => {
+  it('does not throw unhandled exception when handlePayment actions is empty', async () => {
     sinon
       .stub(paymentHandler, 'handlePayment')
-      .returns({ success: true, data: null })
+      .returns({ success: true, actions: [] })
 
     const result = await handler(event)
 
     expect(result.responseType).equals('UpdateRequest')
-    expect(result.errors).equals(undefined)
+    expect(result.errors).to.equal(undefined)
     expect(result.actions).to.be.empty
   })
 
