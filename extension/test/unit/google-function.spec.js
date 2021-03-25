@@ -76,4 +76,23 @@ describe('Google cloud function', () => {
 
     await googleFunction.extensionTrigger(mockRequest)
   })
+
+  it('if result is fail after payment handling, it should return 400 http status', async () => {
+    const mockRequest = {
+      body: {
+        resource: { obj: {} },
+      },
+    }
+
+    sandbox
+      .stub(paymentHandler, 'handlePayment')
+      .returns({ success: false, errors: [] })
+
+    utilsStub.sendGoogleFunctionResponse = ({ statusCode, body }) => {
+      expect(statusCode).to.equal(400)
+      expect(body.errors[0].code).to.equal('BadRequest')
+    }
+
+    await googleFunction.extensionTrigger(mockRequest)
+  })
 })
