@@ -6,8 +6,8 @@ const auth = require('./src/validator/authentication')
 const logger = utils.getLogger()
 
 exports.extensionTrigger = async (request, response) => {
+  const obj = request?.body?.resource?.obj
   try {
-    const obj = request?.body?.resource?.obj
     if (!obj) {
       return utils.sendGoogleFunctionResponse({
         response,
@@ -41,10 +41,10 @@ exports.extensionTrigger = async (request, response) => {
       },
     })
   } catch (err) {
-    const errorMessage = `Unexpected error: ${err.message}`
-    const errorStackTrace = `Unexpected error: ${JSON.stringify(
-      serializeError(err)
-    )}`
+    const errorMessage = `Unexpected error (Payment ID: ${obj?.id}): ${err.message}. `
+    const errorStackTrace = `Unexpected error (Payment ID: ${
+      obj?.id
+    }): ${JSON.stringify(serializeError(err))}`
     logger.error(errorStackTrace)
 
     return utils.sendGoogleFunctionResponse({
