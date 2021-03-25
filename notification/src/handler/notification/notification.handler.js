@@ -23,12 +23,7 @@ class CommercetoolsError extends Error {
    * If commercetools status code is not OK but also not 5xx or 409 then return `accepted` -> non recoverable
    */
   _shouldRetry(statusCode) {
-    return !(
-      statusCode !== undefined &&
-      statusCode > 399 &&
-      statusCode !== 409 &&
-      statusCode < 500
-    )
+    return statusCode < 200 || statusCode === 409 || statusCode >= 500
   }
 }
 
