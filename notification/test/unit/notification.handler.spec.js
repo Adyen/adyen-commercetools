@@ -266,7 +266,7 @@ describe('notification module', () => {
       config
     )
     // assert
-    expect(ctpClientUpdateSpy.args[0][3]).to.have.lengthOf(0)
+    expect(ctpClientUpdateSpy.callCount).to.equal(0)
   })
 
   it(`given that ADYEN sends a "CANCELLATION is successful" notification
