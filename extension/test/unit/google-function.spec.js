@@ -20,7 +20,6 @@ describe('Google cloud function', () => {
   })
 
   it('if accessing cloud function with correct payment, it should return 200 http status', async () => {
-    const actions = [{ some: 'action' }]
     const mockRequest = {
       body: {
         resource: { obj: {} },
@@ -29,7 +28,7 @@ describe('Google cloud function', () => {
 
     sandbox
       .stub(paymentHandler, 'handlePayment')
-      .returns({ success: true, data: { actions } })
+      .returns({ success: true, actions: [{ some: 'action' }] })
 
     utilsStub.sendGoogleFunctionResponse = ({ statusCode, body }) => {
       expect(statusCode).to.equal(200)

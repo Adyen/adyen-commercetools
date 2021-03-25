@@ -26,19 +26,17 @@ const PAYMENT_METHOD_TYPE_KLARNA_METHODS = [
 async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
     // if it's not adyen payment, ignore the payment
-    return { success: true, data: null }
+    return { success: true, actions: [] }
 
   if (auth.isBasicAuthEnabled() && !authToken) {
     return {
       success: false,
-      data: {
-        errors: [
-          {
-            code: 'Unauthorized',
-            message: errorMessages.UNAUTHORIZED_REQUEST,
-          },
-        ],
-      },
+      errors: [
+        {
+          code: 'Unauthorized',
+          message: errorMessages.UNAUTHORIZED_REQUEST,
+        },
+      ],
     }
   }
 
@@ -52,10 +50,10 @@ async function handlePayment(paymentObject, authToken) {
   const handlerResponses = await Promise.all(
     handlers.map((handler) => handler.execute(paymentObject))
   )
-  const handlerResponse = {
+  return {
+    success: true,
     actions: handlerResponses.flatMap((result) => result.actions),
   }
-  return { success: true, data: handlerResponse }
 }
 
 function _isRefund(paymentObject) {
@@ -122,21 +120,21 @@ function _validatePaymentRequest(paymentObject, authToken) {
     if (paymentValidator.hasErrors())
       return {
         success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
+        errors: paymentValidator.buildCtpErrorResponse(),
       }
   } else {
     paymentValidator.validateMetadataFields()
     if (paymentValidator.hasErrors())
       return {
         success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
+        errors: paymentValidator.buildCtpErrorResponse(),
       }
 
     paymentValidator.validateAuthorizationHeader(authToken)
     if (paymentValidator.hasErrors())
       return {
         success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
+        errors: paymentValidator.buildCtpErrorResponse(),
       }
 
     paymentValidator
@@ -147,7 +145,7 @@ function _validatePaymentRequest(paymentObject, authToken) {
     if (paymentValidator.hasErrors())
       return {
         success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
+        errors: paymentValidator.buildCtpErrorResponse(),
       }
   }
   return null

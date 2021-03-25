@@ -21,10 +21,12 @@ describe('Payment controller', () => {
 
       utilsStub.collectRequestData = () =>
         JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, headers, data }) => {
+      utilsStub.sendResponse = ({ statusCode, headers, body }) => {
         expect(statusCode).to.equal(200)
         expect(headers).to.not.exist
-        expect(data).to.not.exist
+        expect(body).to.deep.equal({
+          actions: [],
+        })
       }
 
       await paymentController.processRequest(mockRequest)
@@ -38,9 +40,9 @@ describe('Payment controller', () => {
 
       utilsStub.collectRequestData = () =>
         JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
+      utilsStub.sendResponse = ({ statusCode, body }) => {
         expect(statusCode).to.equal(400)
-        expect(data).to.deep.equal({
+        expect(body).to.deep.equal({
           errors: [
             {
               code: 'InvalidField',
@@ -58,9 +60,9 @@ describe('Payment controller', () => {
 
       utilsStub.collectRequestData = () =>
         JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
+      utilsStub.sendResponse = ({ statusCode, body }) => {
         expect(statusCode).to.equal(400)
-        expect(data).to.deep.equal({
+        expect(body).to.deep.equal({
           errors: [
             {
               code: 'InvalidField',
