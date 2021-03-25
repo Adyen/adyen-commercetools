@@ -61,7 +61,11 @@ describe('Google cloud function', () => {
   })
 
   it('if unexpected error is thrown from payment handling, it should return 400 http status', async () => {
-    const mockRequest = {}
+    const mockRequest = {
+      body: {
+        resource: { obj: {} },
+      },
+    }
 
     sandbox.stub(paymentHandler, 'handlePayment').throws()
 
