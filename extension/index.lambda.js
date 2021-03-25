@@ -17,8 +17,8 @@ exports.handler = async (event) => {
         ? 'UpdateRequest'
         : 'FailedValidation',
       // paymentResult.data can be null when paymentHandler short-circuits on non-Adyen payment
-      errors: paymentResult?.errors,
-      actions: paymentResult?.actions,
+      errors: paymentResult.data ? paymentResult.data.errors : undefined,
+      actions: paymentResult.data ? paymentResult.data.actions : [],
     }
   } catch (e) {
     logger.error(e, `Unexpected error when processing event`)
