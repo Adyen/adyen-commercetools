@@ -16,11 +16,15 @@ async function processRequest(request, response) {
     authToken
   )
 
-  return httpUtils.sendResponse({
+  const httpResponse = {
     response,
     statusCode: paymentResult.success ? 200 : 400,
-    data: paymentResult.data,
-  })
+    body: paymentResult.success
+      ? { actions: paymentResult.actions }
+      : { errors: paymentResult.errors },
+  }
+
+  return httpUtils.sendResponse(httpResponse)
 }
 
 async function _getPaymentObject(request) {
