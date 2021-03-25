@@ -7,8 +7,10 @@ class ValidationError extends Error {
     this.message = message
 
     /*
-      We do not want to block notifications coming by Adyen.
-      So with this error it will be accepted by notification module by default.
+      recoverable: notification delivery can be retried by Adyen
+      non recoverable: notification delivery can not be retried by Adyen as it most probably would fail again
+
+      In this case, it's non recoverable, then return `accepted`.
     */
     this.isRecoverable = false
   }
