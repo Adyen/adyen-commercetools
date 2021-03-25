@@ -45,7 +45,7 @@ describe('Lambda handler', () => {
       })
 
       const error = new Error('some recoverable error')
-      error.isRecoverable = true
+      error.retry = true
       sinon.stub(notificationHandler, 'processNotification').throws(error)
 
       const call = async () => handler(event)
@@ -64,7 +64,7 @@ describe('Lambda handler', () => {
     }
   })
 
-  it('logs for isRecoverable=false exceptions and returns "accepted"', async () => {
+  it('logs for retry=false exceptions and returns "accepted"', async () => {
     const originalChildFn = logger.getLogger().child
     try {
       const logSpy = sinon.spy()
@@ -74,7 +74,7 @@ describe('Lambda handler', () => {
       })
 
       const error = new Error('some error')
-      error.isRecoverable = false
+      error.retry = false
       sinon.stub(notificationHandler, 'processNotification').throws(error)
 
       const result = await handler(event)

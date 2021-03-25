@@ -581,7 +581,7 @@ describe('notification module', () => {
       // of retries. So the error is expected
       err = e
     }
-    expect(err.isRecoverable).to.equal(true)
+    expect(err.retry).to.equal(true)
     expect(ctpClientUpdateSpy.callCount).to.equal(21)
   })
 

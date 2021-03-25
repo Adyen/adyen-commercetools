@@ -12,7 +12,7 @@ class ValidationError extends Error {
 
       In this case, it's non recoverable, then return `accepted`.
     */
-    this.isRecoverable = false
+    this.retry = false
   }
 }
 

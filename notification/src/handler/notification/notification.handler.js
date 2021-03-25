@@ -11,7 +11,7 @@ class CommercetoolsError extends Error {
     super()
     this.stack = stack
     this.message = message
-    this.isRecoverable = this._isRecoverable(statusCode)
+    this.retry = this._shouldRetry(statusCode)
   }
 
   /**
@@ -21,7 +21,7 @@ class CommercetoolsError extends Error {
    * If during communication with commercetools we got a `NetworkError` then return `500` -> recoverable
    * If commercetools status code is not OK but also not 5xx or 409 then return `accepted` -> non recoverable
    */
-  _isRecoverable(statusCode) {
+  _shouldRetry(statusCode) {
     return !(
       statusCode !== undefined &&
       statusCode > 399 &&

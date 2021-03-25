@@ -34,7 +34,7 @@ exports.handler = async (event) => {
       { notification: getNotificationForTracking(notificationItems), err },
       'Unexpected exception occurred.'
     )
-    if (err.isRecoverable) {
+    if (err.retry) {
       throw err
     }
   }

@@ -24,7 +24,7 @@ exports.notificationTrigger = async (request, response) => {
       { notification: getNotificationForTracking(notificationItems), err },
       'Unexpected exception occurred.'
     )
-    if (err.isRecoverable) {
+    if (err.retry) {
       return response.status(500).send(err.message)
     }
   }
