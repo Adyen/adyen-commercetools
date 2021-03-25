@@ -11,17 +11,18 @@ class CommercetoolsError extends Error {
     super()
     this.stack = stack
     this.message = message
+    this.isRecoverable = this._isRecoverable(statusCode);
+  }
 
-    /*
-      We do not want to block notifications coming by Adyen.
-      So with this error it will be accepted by notification module by default.
-
-      Only we do not accept for statusCode === 0 (NetworkError) or 5xx errors like 500.
-      Note that, our client configured to do retries for statusCode=503 cases.
-      So when isRecoverable assigned to true the notification will not respond with accepted but with 500 status code.
-    */
-    this.isRecoverable =
-      !(statusCode !== undefined &&
+  /**
+   * recoverable: notification delivery can be retried by Adyen
+   * non recoverable: notification delivery can not be retried by Adyen as it most probably would fail again
+   * If commercetools status code is defined and is 5xx then return `500` to Adyen -> recoverable
+   * If during communication with commercetools we got a `NetworkError` then return `500` -> recoverable
+   * If commercetools status code is not OK but also not 5xx or 409 then return `accepted` -> non recoverable
+   */
+  _isRecoverable(statusCode) {
+      return !(statusCode !== undefined &&
         statusCode > 399 &&
         statusCode !== 409 &&
         statusCode < 500)
@@ -130,6 +131,7 @@ async function updatePaymentWithRepeater(
             ` max retries. Failed actions: ${JSON.stringify(
               _obfuscateNotificationInfoFromActionFields(updateActions)
             )}`,
+          statusCode: err.statusCode
         })
       }
       /* eslint-disable-next-line no-await-in-loop */

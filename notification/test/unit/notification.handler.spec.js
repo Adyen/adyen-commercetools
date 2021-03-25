@@ -541,16 +541,17 @@ describe('notification module', () => {
 
   it('should repeat on concurrent modification errors ', async () => {
     const modifiedPaymentMock = cloneDeep(paymentMock)
-    modifiedPaymentMock.interfaceInteractions.push({
-      type: {
-        typeId: 'type',
-        id: '3fd15a04-b460-4a88-a911-0472c4c080b3',
+    modifiedPaymentMock.transactions.push({
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Authorization',
+      amount: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 495,
+        fractionDigits: 2,
       },
-      fields: {
-        createdAt: '2019-02-05T12:29:36.028Z',
-        notification: JSON.stringify(notificationsMock[0]),
-        status: 'SUCCESS',
-      },
+      interactionId: 'test_AUTHORISATION_1',
+      state: 'Initial',
     })
     const ctpClient = ctpClientMock.get(ctpConfig)
     sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
@@ -567,6 +568,7 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
     module.exports = ctp
 
+    let err
     // process
     try {
       await notificationHandler.processNotification(
@@ -577,7 +579,9 @@ describe('notification module', () => {
     } catch (e) {
       // we check retry logic here and it should throw after certain amount
       // of retries. So the error is expected
+      err = e
     }
+    expect(err.isRecoverable).to.equal(true)
     expect(ctpClientUpdateSpy.callCount).to.equal(21)
   })
 
