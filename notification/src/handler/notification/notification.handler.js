@@ -15,8 +15,8 @@ class CommercetoolsError extends Error {
   }
 
   /**
-   * recoverable: notification delivery can be retried by Adyen
-   * non recoverable: notification delivery can not be retried by Adyen as it most probably would fail again
+   * recoverable: notification delivery can be retried by Adyen (return 500)
+   * non recoverable: notification delivery can not be retried by Adyen as it most probably would fail again (return "accepted")
    * If commercetools status code is defined and is 5xx then return `500` to Adyen -> recoverable
    * If during communication with commercetools we got a `NetworkError` then return `500` -> recoverable
    * If commercetools status code is not OK but also not 5xx or 409 then return `accepted` -> non recoverable
