@@ -103,7 +103,7 @@ function withPayment(paymentObject) {
         code: _getErrorResponseCode(value),
         message: value,
       }))
-      return errorArray
+      return { errors: errorArray }
     },
   }
 }
