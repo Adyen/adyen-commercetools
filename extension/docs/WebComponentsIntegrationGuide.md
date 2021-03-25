@@ -278,7 +278,7 @@ To make payment via our integration, you need to set the `makePaymentRequest` cu
 In this integration document our Adyen payment request examples are trimmed to minimum. Depending on your requirements you might want to include other Adyen parameters such as [add risk management fields](https://docs.adyen.com/risk-management/configure-standard-risk-rules/required-risk-field-reference), [activate 3D Secure 2](https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-component#make-a-payment) or [allow recurring payments](https://docs.adyen.com/payment-methods/cards/web-component#create-a-token).
 Please find all the possible parameters in the `Web Components` section of the desired payment method listed in the navigation [here](https://docs.adyen.com/payment-methods).
 
-Here's an example of the value of the `makePaymentRequest` custom field for 3D Secure 2 credit cart payment, with generated component data from Adyen Web Components for a credit card payment:
+Here's an example of the `makePaymentRequest` custom field value for 3D Secure 2 credit card payment along with the generated Adyen Web Components data:
 
 ```json
 {
