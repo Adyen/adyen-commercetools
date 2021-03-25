@@ -67,7 +67,7 @@ describe('Google cloud function', () => {
 
     utilsStub.sendGoogleFunctionResponse = ({ statusCode, body }) => {
       expect(statusCode).to.equal(400)
-      expect(body.errors[0].code).to.equal('InvalidOperation')
+      expect(body.errors[0].code).to.equal('BadRequest')
     }
 
     await googleFunction.extensionTrigger(mockRequest)
