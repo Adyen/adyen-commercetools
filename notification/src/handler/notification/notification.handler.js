@@ -92,6 +92,9 @@ async function updatePaymentWithRepeater(
       currentPayment,
       notification
     )
+    if (updateActions.length === 0) {
+      break
+    }
     try {
       /* eslint-disable-next-line no-await-in-loop */
       await ctpClient.update(
