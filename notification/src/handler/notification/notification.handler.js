@@ -11,7 +11,7 @@ class CommercetoolsError extends Error {
     super()
     this.stack = stack
     this.message = message
-    this.isRecoverable = this._isRecoverable(statusCode);
+    this.isRecoverable = this._isRecoverable(statusCode)
   }
 
   /**
@@ -22,10 +22,12 @@ class CommercetoolsError extends Error {
    * If commercetools status code is not OK but also not 5xx or 409 then return `accepted` -> non recoverable
    */
   _isRecoverable(statusCode) {
-      return !(statusCode !== undefined &&
-        statusCode > 399 &&
-        statusCode !== 409 &&
-        statusCode < 500)
+    return !(
+      statusCode !== undefined &&
+      statusCode > 399 &&
+      statusCode !== 409 &&
+      statusCode < 500
+    )
   }
 }
 
@@ -131,7 +133,7 @@ async function updatePaymentWithRepeater(
             ` max retries. Failed actions: ${JSON.stringify(
               _obfuscateNotificationInfoFromActionFields(updateActions)
             )}`,
-          statusCode: err.statusCode
+          statusCode: err.statusCode,
         })
       }
       /* eslint-disable-next-line no-await-in-loop */
