@@ -74,8 +74,39 @@ describe('Payment controller', () => {
           ],
         })
       }
-
       await paymentController.processRequest(mockRequest)
     })
+
+    it('on request with incorrect http method should return 400 status response', async () => {
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+
+      utilsStub.collectRequestData = () =>
+          JSON.stringify({ resource: { obj: ctpPaymentClone } })
+      utilsStub.sendResponse = ({ statusCode, data }) => {
+        expect(statusCode).to.equal(400)
+        expect(data).to.deep.equal({
+          errors: [
+            {
+              code: 'InvalidInput',
+              message: 'Invalid HTTP method.',
+            },
+          ],
+        })
+      }
+      const mockGetRequest = { method: 'GET' }
+      await paymentController.processRequest(mockGetRequest)
+    })
+  })
+
+  it('on request with missing body in http request should return 400 status response', async () => {
+    utilsStub.sendResponse = ({ statusCode, data }) => {
+      expect(statusCode).to.equal(400)
+      expect(data.errors).to.not.empty
+      expect(data.errors).to.have.lengthOf(1)
+      expect(data.errors[0].code).to.equal('InvalidOperation')
+
+    }
+    const mockPostRequest = { method: 'POST' }
+    await paymentController.processRequest(mockPostRequest)
   })
 })

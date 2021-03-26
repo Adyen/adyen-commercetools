@@ -3,36 +3,73 @@ const httpUtils = require('../../utils')
 const auth = require('../../validator/authentication')
 const paymentHandler = require('../../paymentHandler/payment-handler')
 
+const logger = httpUtils.getLogger()
+
 async function processRequest(request, response) {
   if (request.method !== 'POST')
     // API extensions always calls this endpoint with POST, so if we got GET, we don't process further
     // https://docs.commercetools.com/http-api-projects-api-extensions#input
-    return httpUtils.sendResponse({ response })
+    return httpUtils.sendResponse({
+      response,
+      statusCode: 400,
+      data: {
+        errors: [
+          {
+            code: 'InvalidInput',
+            message: 'Invalid HTTP method.',
+          },
+        ],
+      },
+    })
 
-  const authToken = auth.getAuthorizationRequestHeader(request)
-  const paymentObject = await _getPaymentObject(request)
-  const paymentResult = await paymentHandler.handlePayment(
-    paymentObject,
-    authToken
-  )
+  let paymentObject = {}
+  try {
+    const authToken = auth.getAuthorizationRequestHeader(request)
+    paymentObject = await _getPaymentObject(request)
+    const paymentResult = await paymentHandler.handlePayment(
+      paymentObject,
+      authToken
+    )
 
-  return httpUtils.sendResponse({
-    response,
-    statusCode: paymentResult.success ? 200 : 400,
-    data: paymentResult.data,
-  })
+    return httpUtils.sendResponse({
+      response,
+      statusCode: paymentResult.success ? 200 : 400,
+      data: paymentResult.data,
+    })
+  } catch (err) {
+    const errorMessage = `Unexpected error (Payment ID: ${paymentObject?.id}): ${err.message}. `
+    const errorStackTrace = `Unexpected error (Payment ID: ${
+      paymentObject?.id
+    }): ${JSON.stringify(serializeError(err))}`
+    logger.error(errorStackTrace)
+
+    return httpUtils.sendResponse({
+      response,
+      statusCode: 400,
+      data: {
+        errors: [
+          {
+            code: 'InvalidOperation',
+            message: errorMessage,
+          },
+        ],
+      },
+    })
+  }
 }
 
 async function _getPaymentObject(request) {
-  const body = await httpUtils.collectRequestData(request)
+  let body = {}
   try {
+    body = await httpUtils.collectRequestData(request)
     const requestBody = JSON.parse(body)
     return requestBody.resource.obj
   } catch (err) {
-    throw new Error(
+    const errorStackTrace =
       `Error during parsing CTP request: '${body}'. Ending the process. ` +
-        `Error: ${JSON.stringify(serializeError(err))}`
-    )
+      `Error: ${JSON.stringify(serializeError(err))}`
+    logger.error(errorStackTrace)
+    throw err
   }
 }
 
