@@ -50,7 +50,7 @@ describe('Google cloud function', () => {
       expect(body).to.deep.equal({
         errors: [
           {
-            code: 'BadRequest',
+            code: 'InvalidInput',
             message: 'Invalid body payload.',
           },
         ],
@@ -71,7 +71,9 @@ describe('Google cloud function', () => {
 
     utilsStub.sendGoogleFunctionResponse = ({ statusCode, body }) => {
       expect(statusCode).to.equal(400)
-      expect(body.errors[0].code).to.equal('BadRequest')
+      expect(body.errors).to.not.empty
+      expect(body.errors).to.have.lengthOf(1)
+      expect(body.errors[0].code).to.equal('InvalidOperation')
     }
 
     await googleFunction.extensionTrigger(mockRequest)
@@ -90,7 +92,9 @@ describe('Google cloud function', () => {
 
     utilsStub.sendGoogleFunctionResponse = ({ statusCode, body }) => {
       expect(statusCode).to.equal(400)
-      expect(body.errors[0].code).to.equal('BadRequest')
+      expect(body.errors).to.not.empty
+      expect(body.errors).to.have.lengthOf(1)
+      expect(body.errors[0].code).to.equal('InvalidOperation')
     }
 
     await googleFunction.extensionTrigger(mockRequest)

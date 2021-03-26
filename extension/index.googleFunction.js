@@ -15,7 +15,7 @@ exports.extensionTrigger = async (request, response) => {
         body: {
           errors: [
             {
-              code: 'BadRequest',
+              code: 'InvalidInput',
               message: 'Invalid body payload.',
             },
           ],
@@ -53,7 +53,7 @@ exports.extensionTrigger = async (request, response) => {
       body: {
         errors: [
           {
-            code: 'BadRequest',
+            code: 'InvalidOperation',
             message: errorMessage,
           },
         ],
