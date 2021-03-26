@@ -2,7 +2,6 @@ const sinon = require('sinon')
 const chai = require('chai')
 const { handler } = require('../../index.lambda')
 const paymentHandler = require('../../src/paymentHandler/payment-handler')
-const utils = require('../../src/utils')
 
 const { expect } = chai
 
