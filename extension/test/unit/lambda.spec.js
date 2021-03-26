@@ -56,18 +56,26 @@ describe('Lambda handler', () => {
   })
 
   it('logs and throws unhandled exceptions', async () => {
-    const logSpy = sinon.spy()
-    utils.getLogger().error = logSpy
+    sinon.stub(paymentHandler, 'handlePayment').throws(new Error('some error'))
 
-    const error = new Error('some error')
-    sinon.stub(paymentHandler, 'handlePayment').throws(error)
+    // const call = async () => handler(event)
+    const result = await handler(event)
+    expect(result.responseType).equals('FailedValidation')
+    expect(result.errors).to.not.empty
+    expect(result.errors).to.have.lengthOf(1)
+    expect(result.errors[0].code).to.equal('InvalidOperation')
+  })
 
-    const call = async () => handler(event)
+  it('empty body in event should return errors', async () => {
+    const actions = [{ some: 'action' }]
+    sinon
+      .stub(paymentHandler, 'handlePayment')
+      .returns({ success: true, data: { actions } })
 
-    await expect(call()).to.be.rejectedWith(error)
-    logSpy.calledWith(
-      error,
-      `Unexpected error when processing event ${JSON.stringify(error)}`
-    )
+    const result = await handler({})
+    expect(result.responseType).equals('FailedValidation')
+    expect(result.errors).to.not.empty
+    expect(result.errors).to.have.lengthOf(1)
+    expect(result.errors[0].code).to.equal('InvalidInput')
   })
 })
