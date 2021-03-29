@@ -23,10 +23,6 @@ function sendResponse({ response, statusCode = 200, headers, data }) {
   response.end(JSON.stringify(data))
 }
 
-function sendGoogleFunctionResponse({ response, statusCode = 200, body }) {
-  response.status(statusCode).send(body)
-}
-
 function getLogger() {
   if (!logger)
     logger = bunyan.createLogger({
@@ -41,5 +37,4 @@ module.exports = {
   collectRequestData,
   sendResponse,
   getLogger,
-  sendGoogleFunctionResponse,
 }

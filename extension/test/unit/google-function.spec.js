@@ -1,11 +1,6 @@
 const sinon = require('sinon')
-const proxyquire = require('proxyquire')
 const { expect } = require('chai')
-
-const utilsStub = {}
-const googleFunction = proxyquire('../../index.googleFunction', {
-  './src/utils': utilsStub,
-})
+const googleFunction = require('../../index.googleFunction')
 const paymentHandler = require('../../src/paymentHandler/payment-handler')
 
 let sandbox = null
@@ -19,84 +14,89 @@ describe('Google cloud function', () => {
     sandbox.restore()
   })
 
+  const mockRequest = {
+    body: {
+      resource: { obj: {} },
+    },
+  }
+
+  const mockResponse = {
+    responseStatus: 200,
+    responseBody: {},
+    status(value) {
+      this.responseStatus = value
+      return this
+    },
+    send(value) {
+      this.responseBody = value
+      return this
+    },
+  }
+
   it('if accessing cloud function with correct payment, it should return 200 http status', async () => {
     const actions = [{ some: 'action' }]
-    const mockRequest = {
-      body: {
-        resource: { obj: {} },
-      },
-    }
-
     sandbox
       .stub(paymentHandler, 'handlePayment')
       .returns({ success: true, data: { actions } })
 
-    utilsStub.sendGoogleFunctionResponse = ({ statusCode, body }) => {
-      expect(statusCode).to.equal(200)
-      expect(body).to.deep.equal({
-        actions: [{ some: 'action' }],
-      })
-    }
-
-    await googleFunction.extensionTrigger(mockRequest)
-    paymentHandler.handlePayment.restore()
+    const result = await googleFunction.extensionTrigger(
+      mockRequest,
+      mockResponse
+    )
+    expect(result.responseStatus).to.be.equal(200)
+    expect(result.responseBody).to.deep.equal({
+      actions: [{ some: 'action' }],
+    })
   })
 
   it('if accessing cloud function without payload, it should return 400 http status', async () => {
-    const mockRequest = {}
+    const result = await googleFunction.extensionTrigger({}, mockResponse)
 
-    utilsStub.sendGoogleFunctionResponse = ({ statusCode, body }) => {
-      expect(statusCode).to.equal(400)
-      expect(body).to.deep.equal({
-        errors: [
-          {
-            code: 'InvalidInput',
-            message: 'Invalid body payload.',
-          },
-        ],
-      })
-    }
-
-    await googleFunction.extensionTrigger(mockRequest)
+    expect(result.responseStatus).to.be.equal(400)
+    expect(result.responseBody).to.deep.equal({
+      errors: [
+        {
+          code: 'InvalidInput',
+          message: 'Invalid body payload.',
+        },
+      ],
+    })
   })
 
   it('if unexpected error is thrown from payment handling, it should return 400 http status', async () => {
-    const mockRequest = {
-      body: {
-        resource: { obj: {} },
-      },
-    }
-
     sandbox.stub(paymentHandler, 'handlePayment').throws()
 
-    utilsStub.sendGoogleFunctionResponse = ({ statusCode, body }) => {
-      expect(statusCode).to.equal(400)
-      expect(body.errors).to.not.empty
-      expect(body.errors).to.have.lengthOf(1)
-      expect(body.errors[0].code).to.equal('InvalidOperation')
-    }
-
-    await googleFunction.extensionTrigger(mockRequest)
+    const result = await googleFunction.extensionTrigger(
+      mockRequest,
+      mockResponse
+    )
+    expect(result.responseStatus).to.equal(400)
+    expect(result.responseBody.errors).to.not.empty
+    expect(result.responseBody.errors).to.have.lengthOf(1)
+    expect(result.responseBody.errors[0].code).to.equal('InvalidOperation')
   })
 
   it('if result is fail after payment handling, it should return 400 http status', async () => {
-    const mockRequest = {
-      body: {
-        resource: { obj: {} },
+    const errors = [
+      {
+        code: 'InvalidField',
+        message:
+          'Required field "commercetoolsProjectKey" is missing or empty.',
       },
-    }
+    ]
 
     sandbox
       .stub(paymentHandler, 'handlePayment')
-      .returns({ success: false, errors: [] })
+      .returns({ success: false, data: { errors } })
 
-    utilsStub.sendGoogleFunctionResponse = ({ statusCode, body }) => {
-      expect(statusCode).to.equal(400)
-      expect(body.errors).to.not.empty
-      expect(body.errors).to.have.lengthOf(1)
-      expect(body.errors[0].code).to.equal('InvalidOperation')
-    }
+    const result = await googleFunction.extensionTrigger(
+      mockRequest,
+      mockResponse
+    )
 
-    await googleFunction.extensionTrigger(mockRequest)
+    expect(result.responseStatus).to.equal(400)
+    expect(result.responseBody.errors).to.not.empty
+    expect(result.responseBody.errors).to.have.lengthOf(1)
+    expect(result.responseBody.errors).to.deep.equal(errors)
   })
 })
