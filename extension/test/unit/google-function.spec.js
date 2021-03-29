@@ -73,7 +73,7 @@ describe('Google cloud function', () => {
     expect(result.responseStatus).to.equal(400)
     expect(result.responseBody.errors).to.not.empty
     expect(result.responseBody.errors).to.have.lengthOf(1)
-    expect(result.responseBody.errors[0].code).to.equal('InvalidOperation')
+    expect(result.responseBody.errors[0].code).to.equal('General')
   })
 
   it('if result is fail after payment handling, it should return 400 http status', async () => {

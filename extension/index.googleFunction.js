@@ -38,7 +38,7 @@ exports.extensionTrigger = async (request, response) => {
     return response.status(400).send({
       errors: [
         {
-          code: 'InvalidOperation',
+          code: 'General',
           message: errorMessage,
         },
       ],

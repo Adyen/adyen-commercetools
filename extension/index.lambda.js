@@ -39,7 +39,7 @@ exports.handler = async (event) => {
       responseType: 'FailedValidation',
       errors: [
         {
-          code: 'InvalidOperation',
+          code: 'General',
           message: `Unexpected error when processing event (Payment ID : ${paymentObj?.id}. Error : ${e.message}`,
         },
       ],

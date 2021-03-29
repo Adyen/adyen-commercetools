@@ -103,7 +103,7 @@ describe('Payment controller', () => {
       expect(statusCode).to.equal(400)
       expect(data.errors).to.not.empty
       expect(data.errors).to.have.lengthOf(1)
-      expect(data.errors[0].code).to.equal('InvalidOperation')
+      expect(data.errors[0].code).to.equal('General')
     }
     const mockPostRequest = { method: 'POST' }
     await paymentController.processRequest(mockPostRequest)

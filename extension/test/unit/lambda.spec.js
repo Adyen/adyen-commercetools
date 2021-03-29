@@ -62,7 +62,7 @@ describe('Lambda handler', () => {
     expect(result.responseType).equals('FailedValidation')
     expect(result.errors).to.not.empty
     expect(result.errors).to.have.lengthOf(1)
-    expect(result.errors[0].code).to.equal('InvalidOperation')
+    expect(result.errors[0].code).to.equal('General')
   })
 
   it('empty body in event should return errors', async () => {

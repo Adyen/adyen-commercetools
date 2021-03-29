@@ -49,7 +49,7 @@ async function processRequest(request, response) {
       data: {
         errors: [
           {
-            code: 'InvalidOperation',
+            code: 'General',
             message: errorMessage,
           },
         ],
