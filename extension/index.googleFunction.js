@@ -6,9 +6,9 @@ const auth = require('./src/validator/authentication')
 const logger = utils.getLogger()
 
 exports.extensionTrigger = async (request, response) => {
-  const obj = request?.body?.resource?.obj
+  const paymentObj = request?.body?.resource?.obj
   try {
-    if (!obj) {
+    if (!paymentObj) {
       return response.status(400).send({
         errors: [
           {
@@ -19,7 +19,10 @@ exports.extensionTrigger = async (request, response) => {
       })
     }
     const authToken = auth.getAuthorizationRequestHeader(request)
-    const paymentResult = await paymentHandler.handlePayment(obj, authToken)
+    const paymentResult = await paymentHandler.handlePayment(
+      paymentObj,
+      authToken
+    )
     if (paymentResult.success) {
       return response.status(200).send({
         actions: paymentResult.data ? paymentResult.data.actions : [],
@@ -29,9 +32,9 @@ exports.extensionTrigger = async (request, response) => {
       errors: paymentResult.data ? paymentResult.data.errors : undefined,
     })
   } catch (err) {
-    const errorMessage = `Unexpected error (Payment ID: ${obj?.id}): ${err.message}.`
+    const errorMessage = `Unexpected error (Payment ID: ${paymentObj?.id}): ${err.message}.`
     const errorStackTrace = `Unexpected error (Payment ID: ${
-      obj?.id
+      paymentObj?.id
     }): ${JSON.stringify(serializeError(err))}`
     logger.error(errorStackTrace)
 
