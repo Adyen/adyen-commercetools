@@ -37,23 +37,10 @@ async function processRequest(request, response) {
       data: paymentResult.data,
     })
   } catch (err) {
-    const errorMessage = `Unexpected error (Payment ID: ${paymentObject?.id}): ${err.message}. `
-    const errorStackTrace = `Unexpected error (Payment ID: ${
-      paymentObject?.id
-    }): ${JSON.stringify(serializeError(err))}`
-    logger.error(errorStackTrace)
-
     return httpUtils.sendResponse({
       response,
       statusCode: 400,
-      data: {
-        errors: [
-          {
-            code: 'General',
-            message: errorMessage,
-          },
-        ],
-      },
+      data: httpUtils.handleUnexpectedPaymentError(paymentObject, err),
     })
   }
 }

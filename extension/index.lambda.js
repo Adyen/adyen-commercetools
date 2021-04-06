@@ -34,16 +34,10 @@ exports.handler = async (event) => {
       actions: paymentResult.data ? paymentResult.data.actions : [],
     }
   } catch (e) {
-    logger.error(e, `Unexpected error when processing event`)
-    const errorObj = {
-      responseType: 'FailedValidation',
-      errors: [
-        {
-          code: 'General',
-          message: `Unexpected error when processing event (Payment ID : ${paymentObj?.id}. Error : ${e.message}`,
-        },
-      ],
-    }
+    const errorObj = utils.handleUnexpectedPaymentError(paymentObj, e)
+    errorObj.responseType = 'FailedValidation'
+    console.log('******')
+    console.log(errorObj)
     return errorObj
   }
 }

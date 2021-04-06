@@ -1,9 +1,6 @@
-const { serializeError } = require('serialize-error')
 const paymentHandler = require('./src/paymentHandler/payment-handler')
 const utils = require('./src/utils')
 const auth = require('./src/validator/authentication')
-
-const logger = utils.getLogger()
 
 exports.extensionTrigger = async (request, response) => {
   const paymentObj = request?.body?.resource?.obj
@@ -32,19 +29,8 @@ exports.extensionTrigger = async (request, response) => {
       errors: paymentResult.data ? paymentResult.data.errors : undefined,
     })
   } catch (err) {
-    const errorMessage = `Unexpected error (Payment ID: ${paymentObj?.id}): ${err.message}.`
-    const errorStackTrace = `Unexpected error (Payment ID: ${
-      paymentObj?.id
-    }): ${JSON.stringify(serializeError(err))}`
-    logger.error(errorStackTrace)
-
-    return response.status(400).send({
-      errors: [
-        {
-          code: 'General',
-          message: errorMessage,
-        },
-      ],
-    })
+    return response
+      .status(400)
+      .send(utils.handleUnexpectedPaymentError(paymentObj, err))
   }
 }
