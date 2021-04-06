@@ -29,7 +29,7 @@ exports.extensionTrigger = async (request, response) => {
       errors: paymentResult.data ? paymentResult.data.errors : undefined,
     })
   } catch (err) {
-    const errorMessage = `Unexpected error (Payment ID: ${obj?.id}): ${err.message}. `
+    const errorMessage = `Unexpected error (Payment ID: ${obj?.id}): ${err.message}.`
     const errorStackTrace = `Unexpected error (Payment ID: ${
       obj?.id
     }): ${JSON.stringify(serializeError(err))}`
