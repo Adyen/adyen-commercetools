@@ -728,7 +728,7 @@ Some interactions may result in a transaction. If so, the interactionId in the p
 
 ### Adyen payment refusals
 
-If you receive an `HTTP 200 response` with an `Error` or `Refused` resultCode from Adyen, a transaction will be added to the commercetools payment object as the refusal result of the payment request.
+If you receive an `HTTP 200 response` with an `Error` or `Refused` resultCode from Adyen, a transaction with a `Failure` state will be added to the commercetools payment object. Payment objects with failed transactions can not be reused for further retries. In order to retry the payment process, a new commercetools payment resource needs to be created and payment steps like `makePaymentRequest` etc. re-applied.
 Use the commercetools payment [interfaceInteractions](https://docs.commercetools.com/api/projects/payments#payment) field to troubleshoot the response.
 
 Check the following table to see the mapping of Adyen [result codes](https://docs.adyen.com/development-resources/response-handling#error-codes-types) to commercetools [transaction state](https://docs.commercetools.com/http-api-projects-payments#transactionstate)
