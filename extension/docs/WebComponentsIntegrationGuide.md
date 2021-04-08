@@ -738,8 +738,6 @@ Check the following table to see the mapping of Adyen [result codes](https://doc
 | Refused| Authorization (Failure)|
 | Error| Authorization (Failure)|
 
-After resolving the issue on the refused payment request, to be able to retry the request existing payment should not be reused, instead a new commercetools payment resource needs to be created and added to the appropriate cart, please refer [creating a commercetools payment](#step-2-creating-a-commercetools-payment) section for more details.
-
 ### Shopper successfully paid but `redirectUrl` was not reached
 
 In some payment redirect cases, there might be a valid payment but no order as the shopper did not reach the shop's `redirectUrl`.
