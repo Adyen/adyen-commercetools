@@ -729,7 +729,7 @@ Some interactions may result in a transaction. If so, the interactionId in the p
 ### Adyen payment refusals
 
 If you receive an `HTTP 200 response` with an `Error` or `Refused` resultCode from Adyen, a transaction will be added to the commercetools payment object as the refusal result of the payment request.
-Use the commercetools payment `interface interactions` to [troubleshoot](#extension-module-errors) the response.
+Use the commercetools payment [interfaceInteractions](https://docs.commercetools.com/api/projects/payments#payment) field to troubleshoot the response.
 
 Check the following table to see the mapping of Adyen [result codes](https://docs.adyen.com/development-resources/response-handling#error-codes-types) to commercetools [transaction state](https://docs.commercetools.com/http-api-projects-payments#transactionstate)
 |Adyen result code| The commercetools transaction (transaction state)
