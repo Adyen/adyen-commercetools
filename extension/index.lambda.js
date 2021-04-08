@@ -36,8 +36,6 @@ exports.handler = async (event) => {
   } catch (e) {
     const errorObj = utils.handleUnexpectedPaymentError(paymentObj, e)
     errorObj.responseType = 'FailedValidation'
-    console.log('******')
-    console.log(errorObj)
     return errorObj
   }
 }
