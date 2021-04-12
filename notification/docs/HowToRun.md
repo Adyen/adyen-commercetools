@@ -122,11 +122,11 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 }
 ```
 
-| Name               | Content                                                                                                                                                             | Required | Default value               |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------- |
-| `port`             | Th port number on which the application will run.                                                                                                                   | NO       | 443                         |
-| `logLevel`         | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                 | NO       | `info`                      |
-| `keepAliveTimeout` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest-v14.x/docs/api/http.html#http_server_keepalivetimeout)). | NO       | Node.js default (5 seconds) |
+| Name               | Content                                                                                                                                                       | Required | Default value               |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------- |
+| `port`             | Th port number on which the application will run.                                                                                                             | NO       | 443                         |
+| `logLevel`         | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                           | NO       | `info`                      |
+| `keepAliveTimeout` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)). | NO       | Node.js default (5 seconds) |
 
 ## Commercetools project requirements
 
