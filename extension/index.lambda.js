@@ -5,11 +5,24 @@ const auth = require('./src/validator/authentication')
 const logger = utils.getLogger()
 
 exports.handler = async (event) => {
+  let paymentObj = {}
   try {
     const body = event.body ? JSON.parse(event.body) : event
+    paymentObj = body?.resource?.obj
+    if (!paymentObj)
+      return {
+        responseType: 'FailedValidation',
+        errors: [
+          {
+            code: 'InvalidInput',
+            message: `Invalid event body`,
+          },
+        ],
+      }
+
     const authToken = auth.getAuthorizationRequestHeader(event)
     const paymentResult = await paymentHandler.handlePayment(
-      body.resource.obj,
+      paymentObj,
       authToken
     )
     return {
@@ -21,7 +34,8 @@ exports.handler = async (event) => {
       actions: paymentResult.data ? paymentResult.data.actions : [],
     }
   } catch (e) {
-    logger.error(e, `Unexpected error when processing event`)
-    throw e
+    const errorObj = utils.handleUnexpectedPaymentError(paymentObj, e)
+    errorObj.responseType = 'FailedValidation'
+    return errorObj
   }
 }

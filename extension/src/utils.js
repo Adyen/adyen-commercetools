@@ -1,4 +1,5 @@
 const bunyan = require('bunyan')
+const { serializeError } = require('serialize-error')
 const config = require('./config/config')
 
 let logger
@@ -33,8 +34,25 @@ function getLogger() {
   return logger
 }
 
+function handleUnexpectedPaymentError(paymentObj, err) {
+  const errorMessage = `Unexpected error (Payment ID: ${paymentObj?.id}): ${err.message}.`
+  const errorStackTrace = `Unexpected error (Payment ID: ${
+    paymentObj?.id
+  }): ${JSON.stringify(serializeError(err))}`
+  logger.error(errorStackTrace)
+  return {
+    errors: [
+      {
+        code: 'General',
+        message: errorMessage,
+      },
+    ],
+  }
+}
+
 module.exports = {
   collectRequestData,
   sendResponse,
   getLogger,
+  handleUnexpectedPaymentError,
 }
