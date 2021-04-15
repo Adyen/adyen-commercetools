@@ -20,7 +20,7 @@ describe('Lambda handler', () => {
     const actions = [{ some: 'action' }]
     sinon
       .stub(paymentHandler, 'handlePayment')
-      .returns({ success: true, data: { actions } })
+      .returns({ success: true, actions })
 
     const result = await handler(event)
 
@@ -33,19 +33,19 @@ describe('Lambda handler', () => {
     const errors = [{ some: 'error' }]
     sinon
       .stub(paymentHandler, 'handlePayment')
-      .returns({ success: false, data: { errors } })
+      .returns({ success: false, errors })
 
     const result = await handler(event)
 
     expect(result.responseType).equals('FailedValidation')
     expect(result.errors).equals(errors)
-    expect(result.actions).to.equal(undefined)
+    expect(result.actions).to.have.lengthOf(0)
   })
 
-  it('does not throw unhandled exception when handlePayment data is null', async () => {
+  it('does not throw unhandled exception when handlePayment actions are empty', async () => {
     sinon
       .stub(paymentHandler, 'handlePayment')
-      .returns({ success: true, data: null })
+      .returns({ success: true, actions: [] })
 
     const result = await handler(event)
 
@@ -69,7 +69,7 @@ describe('Lambda handler', () => {
     const actions = [{ some: 'action' }]
     sinon
       .stub(paymentHandler, 'handlePayment')
-      .returns({ success: true, data: { actions } })
+      .returns({ success: true, actions })
 
     const result = await handler({})
     expect(result.responseType).equals('FailedValidation')

@@ -37,7 +37,7 @@ describe('Google cloud function', () => {
     const actions = [{ some: 'action' }]
     sandbox
       .stub(paymentHandler, 'handlePayment')
-      .returns({ success: true, data: { actions } })
+      .returns({ success: true, actions })
 
     const result = await googleFunction.extensionTrigger(
       mockRequest,
@@ -87,7 +87,7 @@ describe('Google cloud function', () => {
 
     sandbox
       .stub(paymentHandler, 'handlePayment')
-      .returns({ success: false, data: { errors } })
+      .returns({ success: false, errors })
 
     const result = await googleFunction.extensionTrigger(
       mockRequest,
