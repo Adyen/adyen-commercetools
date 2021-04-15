@@ -26,19 +26,16 @@ const PAYMENT_METHOD_TYPE_KLARNA_METHODS = [
 async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
     // if it's not adyen payment, ignore the payment
-    return { success: true, data: null }
-
+    return { success: true, actions: [] }
   if (auth.isBasicAuthEnabled() && !authToken) {
     return {
       success: false,
-      data: {
-        errors: [
-          {
-            code: 'Unauthorized',
-            message: errorMessages.UNAUTHORIZED_REQUEST,
-          },
-        ],
-      },
+      errors: [
+        {
+          code: 'Unauthorized',
+          message: errorMessages.UNAUTHORIZED_REQUEST,
+        },
+      ],
     }
   }
 
@@ -55,7 +52,7 @@ async function handlePayment(paymentObject, authToken) {
   const handlerResponse = {
     actions: handlerResponses.flatMap((result) => result.actions),
   }
-  return { success: true, data: handlerResponse }
+  return { success: true, actions: handlerResponse.actions }
 }
 
 function _isRefund(paymentObject) {
@@ -122,21 +119,21 @@ function _validatePaymentRequest(paymentObject, authToken) {
     if (paymentValidator.hasErrors())
       return {
         success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
+        errors: paymentValidator.buildCtpErrorResponse()?.errors,
       }
   } else {
     paymentValidator.validateMetadataFields()
     if (paymentValidator.hasErrors())
       return {
         success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
+        errors: paymentValidator.buildCtpErrorResponse()?.errors,
       }
 
     paymentValidator.validateAuthorizationHeader(authToken)
     if (paymentValidator.hasErrors())
       return {
         success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
+        errors: paymentValidator.buildCtpErrorResponse()?.errors,
       }
 
     paymentValidator
@@ -147,7 +144,7 @@ function _validatePaymentRequest(paymentObject, authToken) {
     if (paymentValidator.hasErrors())
       return {
         success: false,
-        data: paymentValidator.buildCtpErrorResponse(),
+        errors: paymentValidator.buildCtpErrorResponse()?.errors,
       }
   }
   return null
