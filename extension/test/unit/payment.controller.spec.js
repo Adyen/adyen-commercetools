@@ -27,7 +27,6 @@ describe('Payment controller', () => {
         expect(data).to.deep.equal({
           actions: [],
         })
-
       }
 
       await paymentController.processRequest(mockRequest)

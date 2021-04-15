@@ -33,14 +33,14 @@ async function processRequest(request, response) {
     const result = {
       response,
       statusCode: paymentResult.success ? 200 : 400,
-      data: null
+      data: null,
     }
 
     if (paymentResult.success && paymentResult.actions) {
       result.data = { actions: paymentResult.actions }
     }
     if (!paymentResult.success && paymentResult.errors) {
-      result.data = { errors : paymentResult.errors }
+      result.data = { errors: paymentResult.errors }
     }
     return httpUtils.sendResponse(result)
   } catch (err) {
