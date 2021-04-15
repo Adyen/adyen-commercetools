@@ -35,7 +35,7 @@ async function processRequest(request, response) {
       statusCode: paymentResult.success ? 200 : 400,
       data: paymentResult.success
         ? { actions: paymentResult?.actions }
-        : { errors: paymentResult.errors },
+        : { errors: paymentResult?.errors },
     }
 
     return httpUtils.sendResponse(result)
