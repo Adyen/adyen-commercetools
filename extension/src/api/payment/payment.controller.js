@@ -44,7 +44,6 @@ async function processRequest(request, response) {
     }
     return httpUtils.sendResponse(result)
   } catch (err) {
-    console.log(err)
     return httpUtils.sendResponse({
       response,
       statusCode: 400,
