@@ -22,7 +22,7 @@ exports.extensionTrigger = async (request, response) => {
     )
     if (paymentResult.success) {
       return response.status(200).send({
-        actions: paymentResult.actions ? paymentResult.actions : [],
+        actions: paymentResult.actions || [],
       })
     }
     return response.status(400).send({
