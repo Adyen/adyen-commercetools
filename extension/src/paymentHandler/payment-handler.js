@@ -125,11 +125,11 @@ function _validatePaymentRequest(paymentObject, authToken) {
   } else {
     paymentValidator.validateMetadataFields()
     if (paymentValidator.hasErrors())
-      return paymentValidator.buildCtpErrorResponse()?.errors
+      return paymentValidator.buildCtpErrorResponse().errors
 
     paymentValidator.validateAuthorizationHeader(authToken)
     if (paymentValidator.hasErrors())
-      return paymentValidator.buildCtpErrorResponse()?.errors
+      return paymentValidator.buildCtpErrorResponse().errors
 
     paymentValidator
       .validateRequestFields()
@@ -137,7 +137,7 @@ function _validatePaymentRequest(paymentObject, authToken) {
       .validateAmountPlanned()
 
     if (paymentValidator.hasErrors())
-      return paymentValidator.buildCtpErrorResponse()?.errors
+      return paymentValidator.buildCtpErrorResponse().errors
   }
   return null
 }
