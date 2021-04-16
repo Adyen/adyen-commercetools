@@ -28,7 +28,7 @@ exports.handler = async (event) => {
         ? 'UpdateRequest'
         : 'FailedValidation',
       errors: paymentResult?.errors,
-      actions: paymentResult.actions ? paymentResult.actions : [],
+      actions: paymentResult.actions || [],
     }
   } catch (e) {
     const errorObj = utils.handleUnexpectedPaymentError(paymentObj, e)
