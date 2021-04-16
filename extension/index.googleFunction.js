@@ -26,7 +26,7 @@ exports.extensionTrigger = async (request, response) => {
       })
     }
     return response.status(400).send({
-      errors: paymentResult?.errors,
+      errors: paymentResult.errors,
     })
   } catch (err) {
     return response

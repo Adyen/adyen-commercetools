@@ -27,7 +27,7 @@ exports.handler = async (event) => {
       responseType: paymentResult.success
         ? 'UpdateRequest'
         : 'FailedValidation',
-      errors: paymentResult?.errors,
+      errors: paymentResult.errors,
       actions: paymentResult.actions || [],
     }
   } catch (e) {
