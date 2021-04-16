@@ -43,7 +43,11 @@ async function handlePayment(paymentObject, authToken) {
     paymentObject,
     authToken
   )
-  if (validatePaymentErrors) return validatePaymentErrors
+  if (validatePaymentErrors)
+    return {
+      success: false,
+      errors: validatePaymentErrors,
+    }
 
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(
@@ -117,24 +121,15 @@ function _validatePaymentRequest(paymentObject, authToken) {
       .validateReference()
       .validateAmountPlanned()
     if (paymentValidator.hasErrors())
-      return {
-        success: false,
-        errors: paymentValidator.buildCtpErrorResponse().errors,
-      }
+      return paymentValidator.buildCtpErrorResponse().errors
   } else {
     paymentValidator.validateMetadataFields()
     if (paymentValidator.hasErrors())
-      return {
-        success: false,
-        errors: paymentValidator.buildCtpErrorResponse()?.errors,
-      }
+      return paymentValidator.buildCtpErrorResponse()?.errors
 
     paymentValidator.validateAuthorizationHeader(authToken)
     if (paymentValidator.hasErrors())
-      return {
-        success: false,
-        errors: paymentValidator.buildCtpErrorResponse()?.errors,
-      }
+      return paymentValidator.buildCtpErrorResponse()?.errors
 
     paymentValidator
       .validateRequestFields()
@@ -142,10 +137,7 @@ function _validatePaymentRequest(paymentObject, authToken) {
       .validateAmountPlanned()
 
     if (paymentValidator.hasErrors())
-      return {
-        success: false,
-        errors: paymentValidator.buildCtpErrorResponse()?.errors,
-      }
+      return paymentValidator.buildCtpErrorResponse()?.errors
   }
   return null
 }
