@@ -119,7 +119,7 @@ function _validatePaymentRequest(paymentObject, authToken) {
     if (paymentValidator.hasErrors())
       return {
         success: false,
-        errors: paymentValidator.buildCtpErrorResponse()?.errors,
+        errors: paymentValidator.buildCtpErrorResponse().errors,
       }
   } else {
     paymentValidator.validateMetadataFields()
