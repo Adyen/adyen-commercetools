@@ -20,7 +20,7 @@ exports.extensionTrigger = async (request, response) => {
       paymentObj,
       authToken
     )
-    if (paymentResult.success) {
+    if (paymentResult.actions) {
       return response.status(200).send({
         actions: paymentResult.actions || [],
       })

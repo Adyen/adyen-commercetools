@@ -35,9 +35,7 @@ describe('Google cloud function', () => {
 
   it('if accessing cloud function with correct payment, it should return 200 http status', async () => {
     const actions = [{ some: 'action' }]
-    sandbox
-      .stub(paymentHandler, 'handlePayment')
-      .returns({ success: true, actions })
+    sandbox.stub(paymentHandler, 'handlePayment').returns({ actions })
 
     const result = await googleFunction.extensionTrigger(
       mockRequest,
@@ -85,9 +83,7 @@ describe('Google cloud function', () => {
       },
     ]
 
-    sandbox
-      .stub(paymentHandler, 'handlePayment')
-      .returns({ success: false, errors })
+    sandbox.stub(paymentHandler, 'handlePayment').returns({ errors })
 
     const result = await googleFunction.extensionTrigger(
       mockRequest,

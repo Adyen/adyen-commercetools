@@ -24,7 +24,7 @@ exports.handler = async (event) => {
       authToken
     )
     return {
-      responseType: paymentResult.success
+      responseType: paymentResult.actions
         ? 'UpdateRequest'
         : 'FailedValidation',
       errors: paymentResult.errors,
