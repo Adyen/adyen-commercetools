@@ -18,7 +18,9 @@ describe('Lambda handler', () => {
 
   it('returns correct success response', async () => {
     const actions = [{ some: 'action' }]
-    sinon.stub(paymentHandler, 'handlePayment').returns({ actions })
+    sinon
+      .stub(paymentHandler, 'handlePayment')
+      .returns({ success: true, actions })
 
     const result = await handler(event)
 
@@ -29,7 +31,9 @@ describe('Lambda handler', () => {
 
   it('returns correct failed response', async () => {
     const errors = [{ some: 'error' }]
-    sinon.stub(paymentHandler, 'handlePayment').returns({ errors })
+    sinon
+      .stub(paymentHandler, 'handlePayment')
+      .returns({ success: false, errors })
 
     const result = await handler(event)
 
