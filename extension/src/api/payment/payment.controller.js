@@ -32,8 +32,8 @@ async function processRequest(request, response) {
     )
     const result = {
       response,
-      statusCode: paymentResult.success ? 200 : 400,
-      data: paymentResult.success
+      statusCode: paymentResult.actions ? 200 : 400,
+      data: paymentResult.actions
         ? { actions: paymentResult.actions }
         : { errors: paymentResult.errors },
     }

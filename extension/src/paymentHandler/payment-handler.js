@@ -26,10 +26,9 @@ const PAYMENT_METHOD_TYPE_KLARNA_METHODS = [
 async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
     // if it's not adyen payment, ignore the payment
-    return { success: true, actions: [] }
+    return { actions: [] }
   if (auth.isBasicAuthEnabled() && !authToken) {
     return {
-      success: false,
       errors: [
         {
           code: 'Unauthorized',
@@ -45,7 +44,6 @@ async function handlePayment(paymentObject, authToken) {
   )
   if (validatePaymentErrors)
     return {
-      success: false,
       errors: validatePaymentErrors,
     }
 
@@ -56,7 +54,7 @@ async function handlePayment(paymentObject, authToken) {
   const handlerResponse = {
     actions: handlerResponses.flatMap((result) => result.actions),
   }
-  return { success: true, actions: handlerResponse.actions }
+  return { actions: handlerResponse.actions }
 }
 
 function _isRefund(paymentObject) {

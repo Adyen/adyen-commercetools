@@ -193,7 +193,6 @@ describe('payment-handler::execute', () => {
 
       const response = await handlePayment(ctpPaymentClone)
 
-      expect(response.success).to.equal(false)
       expect(response.errors).to.have.lengthOf(2)
       expect(response.errors[0].message).to.equal(
         errorMessage.MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
@@ -224,7 +223,6 @@ describe('payment-handler::execute', () => {
 
         const response = await handlePayment(ctpPaymentClone)
 
-        expect(response.success).to.equal(false)
         expect(response.errors).to.have.lengthOf.above(0)
         expect(response.errors[0].message).to.equal(
           errorMessage.AMOUNT_PLANNED_NOT_SAME
@@ -245,7 +243,6 @@ describe('payment-handler::execute', () => {
 
         const response = await handlePayment(ctpPaymentClone)
 
-        expect(response.success).to.equal(true)
         expect(response.actions).to.deep.equal([])
       }
     )
@@ -281,7 +278,6 @@ describe('payment-handler::execute', () => {
 
       const response = await handlePayment(ctpPaymentClone)
 
-      expect(response.success).to.equal(false)
       expect(response.errors[0].message).to.equal(
         errorMessage.AMOUNT_PLANNED_NOT_SAME
       )

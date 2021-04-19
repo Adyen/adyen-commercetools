@@ -99,7 +99,6 @@ describe('payment-handler-authorization::execute', () => {
       sandbox.stub(config, 'getCtpConfig').returns(dummyCtpConfig)
       const response = await handlePayment(ctpPaymentClone)
 
-      expect(response.success).to.equal(false)
       expect(response.errors).to.have.lengthOf(1)
       expect(response.errors[0].message).to.equal(
         errorMessage.UNAUTHORIZED_REQUEST
@@ -130,7 +129,6 @@ describe('payment-handler-authorization::execute', () => {
       sandbox.stub(config, 'getCtpConfig').returns(dummyCtpConfig)
       const response = await handlePayment(ctpPaymentClone, 'Basic xxxyyyzzz')
 
-      expect(response.success).to.equal(false)
       expect(response.errors).to.have.lengthOf(1)
       expect(response.errors[0].message).to.equal(
         errorMessage.UNAUTHORIZED_REQUEST
@@ -184,7 +182,6 @@ describe('payment-handler-authorization::execute', () => {
       const response = await handlePayment(ctpPaymentClone, 'Basic xxxyyyzzz')
 
       expect(response.actions).to.have.lengthOf.above(0)
-      expect(response.success).to.equal(true)
     }
   )
 })
