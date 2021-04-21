@@ -39,7 +39,6 @@ function submitAdditionalPaymentDetails(
     submitAdditionalPaymentDetailsRequestObj,
     commercetoolsProjectKey
   )
-  extendRequestObjWithApplicationInfo(submitAdditionalPaymentDetailsRequestObj)
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/payments/details`,
     merchantAccount,
