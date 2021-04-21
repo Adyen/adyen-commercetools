@@ -6,6 +6,28 @@ const { getNotificationForTracking } = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
 const mainLogger = require('../../utils/logger').getLogger()
 
+class CommercetoolsError extends Error {
+  constructor({ stack, message, statusCode }) {
+    super()
+    this.stack = stack
+    this.message = message
+    this.retry = this._shouldRetry(statusCode)
+  }
+
+  /**
+   * recoverable: notification delivery can be retried by Adyen (return 500)
+   * non recoverable: notification delivery can not be retried by Adyen
+   * as it most probably would fail again (return "accepted")
+   *
+   * If commercetools status code is defined and is 5xx then return `500` to Adyen -> recoverable
+   * If during communication with commercetools we got a `NetworkError` then return `500` -> recoverable
+   * If commercetools status code is not OK but also not 5xx or 409 then return `accepted` -> non recoverable
+   */
+  _shouldRetry(statusCode) {
+    return statusCode < 200 || statusCode === 409 || statusCode >= 500
+  }
+}
+
 async function processNotification(
   notification,
   enableHmacSignature,
@@ -70,6 +92,9 @@ async function updatePaymentWithRepeater(
       currentPayment,
       notification
     )
+    if (updateActions.length === 0) {
+      break
+    }
     try {
       /* eslint-disable-next-line no-await-in-loop */
       await ctpClient.update(
@@ -83,11 +108,16 @@ async function updatePaymentWithRepeater(
       )
       break
     } catch (err) {
-      if (err.body.statusCode !== 409)
-        throw new Error(
-          `Unexpected error during updating a payment with ID: ${currentPayment.id}. Exiting. ` +
-            `Error: ${JSON.stringify(serializeError(err))}`
-        )
+      if (err.statusCode !== 409)
+        throw new CommercetoolsError({
+          stack: err.stack,
+          message:
+            `Unexpected error on payment update with ID: ${currentPayment.id}.` +
+            `Failed actions: ${JSON.stringify(
+              _obfuscateNotificationInfoFromActionFields(updateActions)
+            )}`,
+          statusCode: err.statusCode,
+        })
       retryCount += 1
       if (retryCount > maxRetry) {
         retryMessage =
@@ -95,11 +125,16 @@ async function updatePaymentWithRepeater(
           ` when updating payment with id "${currentPayment.id}".` +
           ` Version tried "${currentVersion}",` +
           ` currentVersion: "${err.body.errors[0].currentVersion}".`
-        throw new Error(
-          `${retryMessage} Won't retry again` +
+        throw new CommercetoolsError({
+          stack: err.stack,
+          message:
+            `${retryMessage} Won't retry again` +
             ` because of a reached limit ${maxRetry}` +
-            ` max retries. Error: ${JSON.stringify(serializeError(err))}`
-        )
+            ` max retries. Failed actions: ${JSON.stringify(
+              _obfuscateNotificationInfoFromActionFields(updateActions)
+            )}`,
+          statusCode: err.statusCode,
+        })
       }
       /* eslint-disable-next-line no-await-in-loop */
       const response = await ctpClient.fetchById(
@@ -110,6 +145,19 @@ async function updatePaymentWithRepeater(
       currentVersion = currentPayment.version
     }
   }
+}
+
+function _obfuscateNotificationInfoFromActionFields(updateActions) {
+  const copyOfUpdateActions = _.cloneDeep(updateActions)
+  copyOfUpdateActions
+    .filter((value) => value.action === 'addInterfaceInteraction')
+    .filter((value) => value?.fields?.notification)
+    .forEach((value) => {
+      value.fields.notification = getNotificationForTracking(
+        JSON.parse(value.fields.notification)
+      )
+    })
+  return copyOfUpdateActions
 }
 
 function calculateUpdateActionsForPayment(payment, notification) {
@@ -178,10 +226,9 @@ function compareTransactionStates(currentState, newState) {
     !transactionStateFlow.hasOwnProperty(currentState) ||
     !transactionStateFlow.hasOwnProperty(newState)
   )
-    throw Error(
-      'Wrong transaction state passed. ' +
-        `currentState: ${currentState}, newState: ${newState}`
-    )
+    throw new CommercetoolsError({
+      message: `Wrong transaction state passed. CurrentState: ${currentState}, newState: ${newState}`,
+    })
 
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
 }
@@ -286,10 +333,14 @@ async function getPaymentByMerchantReference(merchantReference, ctpClient) {
     return result.body
   } catch (err) {
     if (err.statusCode === 404) return null
-    throw Error(
-      `Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
-        `Error: ${JSON.stringify(serializeError(err))}`
-    )
+
+    throw new CommercetoolsError({
+      stack: err.stack,
+      message:
+        `Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
+        `Error: ${JSON.stringify(serializeError(err))}`,
+      statusCode: err.statusCode,
+    })
   }
 }
 

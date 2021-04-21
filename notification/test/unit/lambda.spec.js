@@ -35,7 +35,36 @@ describe('Lambda handler', () => {
     expect(result).to.eql({ notificationResponse: '[accepted]' })
   })
 
-  it('logs unhandled exceptions', async () => {
+  it('throws and logs for unexpected exceptions', async () => {
+    const originalChildFn = logger.getLogger().child
+    try {
+      const logSpy = sinon.spy()
+      logger.getLogger().error = logSpy
+      logger.getLogger().child = () => ({
+        error: logSpy,
+      })
+
+      const error = new Error('some recoverable error')
+      error.retry = true
+      sinon.stub(notificationHandler, 'processNotification').throws(error)
+
+      const call = async () => handler(event)
+      await expect(call()).to.be.rejectedWith(error.message)
+
+      const notificationItem = event.notificationItems.pop()
+      logSpy.calledWith(
+        {
+          notification: getNotificationForTracking(notificationItem),
+          err: error,
+        },
+        'Unexpected error when processing event'
+      )
+    } finally {
+      logger.getLogger().child = originalChildFn
+    }
+  })
+
+  it('logs for retry=false exceptions and returns "accepted"', async () => {
     const originalChildFn = logger.getLogger().child
     try {
       const logSpy = sinon.spy()
@@ -45,10 +74,10 @@ describe('Lambda handler', () => {
       })
 
       const error = new Error('some error')
+      error.retry = false
       sinon.stub(notificationHandler, 'processNotification').throws(error)
 
       const result = await handler(event)
-
       expect(result).to.eql({ notificationResponse: '[accepted]' })
 
       const notificationItem = event.notificationItems.pop()

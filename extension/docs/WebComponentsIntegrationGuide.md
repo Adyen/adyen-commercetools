@@ -273,7 +273,12 @@ To make payment via our integration, you need to set the `makePaymentRequest` cu
 - `makePaymentRequest` must contain a unique payment `reference` value. The reference value cannot be duplicated in any commercetools payment and it's a required field by Adyen. The extension module uses the `reference` value to set the payment key, later it acts as a unique link between commercetools payment and Adyen payment(`merchantReference`). `Reference` may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
 - `payment.amountPlanned` can not be changed if there is a `makePayment` interface interaction present in the commercetools payment object. The `amount` value in `makePaymentRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment.
 
-Here's an example of the value of the `makePaymentRequest` custom field, with generated component data from Adyen Web Components for a credit card payment:
+**Important**
+
+In this integration document our Adyen payment request examples are trimmed to minimum. Depending on your requirements you might want to include other Adyen parameters such as [add risk management fields](https://docs.adyen.com/risk-management/configure-standard-risk-rules/required-risk-field-reference), [activate 3D Secure 2](https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-component#make-a-payment) or [allow recurring payments](https://docs.adyen.com/payment-methods/cards/web-component#create-a-token).
+Please find all the possible parameters in the `Web Components` section of the desired payment method listed in the navigation [here](https://docs.adyen.com/payment-methods).
+
+Here's an example of the `makePaymentRequest` custom field value for 3D Secure 2 credit card payment along with the generated Adyen Web Components data:
 
 ```json
 {
@@ -289,6 +294,11 @@ Here's an example of the value of the `makePaymentRequest` custom field, with ge
     "encryptedExpiryYear": "test_2030",
     "encryptedSecurityCode": "test_737"
   },
+  "additionalData": {
+    "allow3DS2": true
+  },
+  "channel": "Web",
+  "origin": "https://your-company.com",
   "returnUrl": "https://your-company.com/...",
   "merchantAccount": "YOUR_MERCHANT_ACCOUNT"
 }
@@ -303,7 +313,7 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
     {
       "action": "setCustomField",
       "name": "makePaymentRequest",
-      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
+      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"}, \"additionalData\":{\"allow3DS2\":true}, \"channel\":\"Web\", \"origin\":\"https://your-company.com\", \"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
     }
   ]
 }
@@ -329,7 +339,7 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
     "fields": {
       "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
       "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"}, \"additionalData\":{\"allow3DS2\":true}, \"channel\":\"Web\", \"origin\":\"https://your-company.com\", \"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
     }
   }
 }
@@ -381,7 +391,7 @@ For some payment methods (e.g. Visa, Mastercard, and SEPA Direct Debits) you'll 
     "fields": {
       "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
       "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
+      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"}, \"additionalData\":{\"allow3DS2\":true}, \"channel\":\"Web\", \"origin\":\"https://your-company.com\", \"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
       "makePaymentResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_REFERENCE\"}"
     }
   },
@@ -718,7 +728,8 @@ Some interactions may result in a transaction. If so, the interactionId in the p
 
 ### Adyen payment refusals
 
-If you receive an HTTP 200 response with an Error or Refused resultCode, check the refusal reason and, if possible, modify your request.
+If you receive an `HTTP 200 response` with an `Error` or `Refused` resultCode from Adyen, a transaction with a `Failure` state will be added to the commercetools payment object. Payment objects with failed transactions can not be reused for further retries. In order to retry the payment process, a new commercetools payment resource needs to be created and payment steps like `makePaymentRequest` etc. re-applied.
+Use the commercetools payment [interfaceInteractions](https://docs.commercetools.com/api/projects/payments#payment) field to troubleshoot the response.
 
 Check the following table to see the mapping of Adyen [result codes](https://docs.adyen.com/development-resources/response-handling#error-codes-types) to commercetools [transaction state](https://docs.commercetools.com/http-api-projects-payments#transactionstate)
 |Adyen result code| The commercetools transaction (transaction state)

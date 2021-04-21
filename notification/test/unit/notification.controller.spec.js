@@ -18,6 +18,10 @@ describe('notification controller', () => {
             currency: 'EUR',
             value: 10100,
           },
+          additionalData: {
+            key: 'value',
+            key2: 'value2',
+          },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
           merchantAccountCode: 'CommercetoolsGmbHDE775',
@@ -49,7 +53,7 @@ describe('notification controller', () => {
 
   it(
     'when request does not contain commercetoolsProjectKey, ' +
-      'it should skip processing and return accepted',
+      'it should log error and return "accepted" status',
     async () => {
       // prepare:
       const requestMock = {
@@ -65,23 +69,25 @@ describe('notification controller', () => {
       httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
       module.exports = httpUtils
 
-      const configGetCtpConfigSpy = sandbox.spy(config, 'getCtpConfig')
-      config.getCtpConfig = configGetCtpConfigSpy
-      module.exports = config
+      logSpy = sinon.spy()
+      logger.getLogger().error = logSpy
 
       // test:
       await notificationController.handleNotification(requestMock, responseMock)
 
       // expect:
       expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
+      expect(logSpy.calledOnce).to.be.true
       expect(responseEndSpy.firstCall.firstArg).to.equal(
         JSON.stringify({ notificationResponse: '[accepted]' })
       )
-      expect(configGetCtpConfigSpy.called).to.be.false
+      expect(logSpy.firstCall.args[0].err.message).to.equal(
+        'Notification can not be processed as "commercetoolsProjectKey"  was not found on the notification.'
+      )
     }
   )
 
-  it('when adyenMerchantAccount is not configured, it should log error and return 500 status', async () => {
+  it('when adyenMerchantAccount is not configured, it should log error and return "accepted" status', async () => {
     // prepare:
     const requestMock = {
       method: 'POST',
@@ -91,6 +97,7 @@ describe('notification controller', () => {
       end: () => {},
     }
     const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+    const responseEndSpy = sandbox.spy(responseMock, 'end')
 
     const notificationJson = _.cloneDeep(mockNotificationJson)
     notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
@@ -114,15 +121,18 @@ describe('notification controller', () => {
     await notificationController.handleNotification(requestMock, responseMock)
 
     // expect:
-    expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(500)
+    expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
     expect(logSpy.calledOnce).to.be.true
+    expect(responseEndSpy.firstCall.firstArg).to.equal(
+      JSON.stringify({ notificationResponse: '[accepted]' })
+    )
     expect(logSpy.firstCall.args[0].err.message).to.equal(
       // eslint-disable-next-line max-len
       'Configuration for adyenMerchantAccount is not provided. Please update the configuration: "nonExistingMerchantAccount"'
     )
   })
 
-  it('when commercetools project is not configured, it should log error and return 500 status', async () => {
+  it('when commercetools project is not configured, it should log error and return "accepted" status', async () => {
     // prepare:
     const requestMock = {
       method: 'POST',
@@ -132,6 +142,7 @@ describe('notification controller', () => {
       end: () => {},
     }
     const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+    const responseEndSpy = sandbox.spy(responseMock, 'end')
     const notificationJson = _.cloneDeep(mockNotificationJson)
     notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
       'metadata.commercetoolsProjectKey': 'nonExistingCtpProjectKey',
@@ -146,8 +157,11 @@ describe('notification controller', () => {
     await notificationController.handleNotification(requestMock, responseMock)
 
     // expect:
-    expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(500)
+    expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
     expect(logSpy.calledOnce).to.be.true
+    expect(responseEndSpy.firstCall.firstArg).to.equal(
+      JSON.stringify({ notificationResponse: '[accepted]' })
+    )
     expect(logSpy.firstCall.args[0].err.message).to.equal(
       'Configuration is not provided. Please update the configuration. ctpProjectKey: ["nonExistingCtpProjectKey"]'
     )
