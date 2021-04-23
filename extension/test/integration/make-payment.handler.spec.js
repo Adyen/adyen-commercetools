@@ -101,7 +101,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     )
     const makePaymentRequest = JSON.parse(interfaceInteraction.fields.request)
     expect(makePaymentRequest.metadata).to.deep.equal({
-      commercetoolsProjectKey,
+      ctProjectKey: commercetoolsProjectKey,
     })
     expect(makePaymentRequest.merchantAccount).to.be.equal(adyenMerchantAccount)
 
