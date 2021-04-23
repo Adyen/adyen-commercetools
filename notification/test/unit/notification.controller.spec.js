@@ -52,7 +52,7 @@ describe('notification controller', () => {
   })
 
   it(
-    'when request does not contain commercetoolsProjectKey, ' +
+    'when request does not contain ctProjectKey, ' +
       'it should log error and return "accepted" status',
     async () => {
       // prepare:

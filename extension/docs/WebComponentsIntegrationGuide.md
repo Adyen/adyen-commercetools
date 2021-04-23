@@ -783,6 +783,8 @@ In order for `commercetools-adyen-integration` to know which project and merchan
 
 > `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.ctProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in every notification from Adyen to help with matching the correct commercetools project.
 
+**IMPORTANT: `commercetoolsProjectKey` must not have more than 80 characters. This is due to length restrictions from the Adyen API.** 
+
 # Bad Practices
 
 - **Never delete or un-assign** created payment objects during checkout from the cart. If required — clean up unused/obsolete payment objects by another asynchronous process instead.
