@@ -19,7 +19,7 @@ describe('Lambda handler', () => {
       {
         NotificationRequestItem: {
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           merchantAccountCode: 'CommercetoolsGmbHDE775',
         },

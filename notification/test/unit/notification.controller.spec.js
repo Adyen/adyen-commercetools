@@ -82,7 +82,7 @@ describe('notification controller', () => {
         JSON.stringify({ notificationResponse: '[accepted]' })
       )
       expect(logSpy.firstCall.args[0].err.message).to.equal(
-        'Notification can not be processed as "commercetoolsProjectKey"  was not found on the notification.'
+        'Notification can not be processed as "metadata.ctProjectKey"  was not found on the notification.'
       )
     }
   )
@@ -145,7 +145,7 @@ describe('notification controller', () => {
     const responseEndSpy = sandbox.spy(responseMock, 'end')
     const notificationJson = _.cloneDeep(mockNotificationJson)
     notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
-      'metadata.commercetoolsProjectKey': 'nonExistingCtpProjectKey',
+      'metadata.ctProjectKey': 'nonExistingCtpProjectKey',
     }
     httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
     module.exports = httpUtils
