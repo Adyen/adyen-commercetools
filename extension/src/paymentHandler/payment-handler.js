@@ -118,24 +118,20 @@ function _validatePaymentRequest(paymentObject, authToken) {
       .validateRequestFields()
       .validateReference()
       .validateAmountPlanned()
-    if (paymentValidator.hasErrors())
-      return paymentValidator.buildCtpErrorResponse().errors
+    if (paymentValidator.hasErrors()) return paymentValidator.getErrors()
   } else {
     paymentValidator.validateMetadataFields()
-    if (paymentValidator.hasErrors())
-      return paymentValidator.buildCtpErrorResponse().errors
+    if (paymentValidator.hasErrors()) return paymentValidator.getErrors()
 
     paymentValidator.validateAuthorizationHeader(authToken)
-    if (paymentValidator.hasErrors())
-      return paymentValidator.buildCtpErrorResponse().errors
+    if (paymentValidator.hasErrors()) return paymentValidator.getErrors()
 
     paymentValidator
       .validateRequestFields()
       .validateReference()
       .validateAmountPlanned()
 
-    if (paymentValidator.hasErrors())
-      return paymentValidator.buildCtpErrorResponse().errors
+    if (paymentValidator.hasErrors()) return paymentValidator.getErrors()
   }
   return null
 }

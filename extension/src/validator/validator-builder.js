@@ -96,14 +96,10 @@ function withPayment(paymentObject) {
       return Object.keys(errors).length > 0
     },
     getErrors() {
-      return errors
-    },
-    buildCtpErrorResponse() {
-      const errorArray = Object.entries(errors).map(([, value]) => ({
+      return Object.entries(errors).map(([, value]) => ({
         code: _getErrorResponseCode(value),
         message: value,
       }))
-      return { errors: errorArray }
     },
   }
 }
