@@ -19,7 +19,7 @@ class ValidationError extends Error {
 function getCtpProjectConfig(notification) {
   const commercetoolsProjectKey =
     notification?.NotificationRequestItem?.additionalData?.[
-      `metadata.commercetoolsProjectKey`
+      `metadata.ctProjectKey`
     ]
   if (!commercetoolsProjectKey) {
     throw new ValidationError({

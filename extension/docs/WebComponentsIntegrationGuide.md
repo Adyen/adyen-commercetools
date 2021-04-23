@@ -779,9 +779,9 @@ This will either:
 `commercetools-adyen-integration` supports multi-tenancy to serve multiple Adyen merchant accounts/commercetools projects
 with one application instance. This architectural style leverages sharing and scalability to provide cost-efficient hosting.
 
-In order for `commercetools-adyen-integration` to know which project and merchant account it should communicate with, so `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields must be provided on payment creation.
+In order for `commercetools-adyen-integration` to know which project and merchant account it should communicate with, `adyenMerchantAccount` and `commercetoolsProjectKey` custom fields must be provided on payment creation.
 
-> `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.commercetoolsProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in every notification from Adyen to help with matching the correct commercetools project.
+> `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.ctProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in every notification from Adyen to help with matching the correct commercetools project.
 
 # Bad Practices
 

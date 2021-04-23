@@ -21,10 +21,10 @@ describe('notification module', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
   notifications.notificationItems[0].NotificationRequestItem.additionalData[
-    'metadata.commercetoolsProjectKey'
+    'metadata.ctProjectKey'
   ] = commercetoolsProjectKey
   notificationRefundFail.notificationItems[0].NotificationRequestItem.additionalData[
-    'metadata.commercetoolsProjectKey'
+    'metadata.ctProjectKey'
   ] = commercetoolsProjectKey
 
   before(async () => {
@@ -287,7 +287,7 @@ describe('notification module', () => {
         'REFUND'
       modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
         'modification.action': 'refund',
-        'metadata.commercetoolsProjectKey': commercetoolsProjectKey,
+        'metadata.ctProjectKey': commercetoolsProjectKey,
       }
       modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId
 
@@ -384,7 +384,7 @@ describe('notification module', () => {
         'REFUND'
       successNotification1.notificationItems[0].NotificationRequestItem.additionalData = {
         'modification.action': 'refund',
-        'metadata.commercetoolsProjectKey': commercetoolsProjectKey,
+        'metadata.ctProjectKey': commercetoolsProjectKey,
       }
       successNotification1.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId1
 
@@ -487,7 +487,7 @@ describe('notification module', () => {
         'CANCEL_OR_REFUND'
       modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
         'modification.action': 'cancel',
-        'metadata.commercetoolsProjectKey': commercetoolsProjectKey,
+        'metadata.ctProjectKey': commercetoolsProjectKey,
       }
       modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = cancellationInteractionId
 

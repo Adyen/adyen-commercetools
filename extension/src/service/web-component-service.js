@@ -104,7 +104,7 @@ function extendRequestObjWithApplicationInfo(requestObj) {
 
 function extendRequestObjWithMetadata(requestObj, commercetoolsProjectKey) {
   requestObj.metadata = {
-    commercetoolsProjectKey,
+    ctProjectKey: commercetoolsProjectKey,
   }
 }
 
