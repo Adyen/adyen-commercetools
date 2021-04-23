@@ -24,7 +24,7 @@ function getCtpProjectConfig(notification) {
   if (!commercetoolsProjectKey) {
     throw new ValidationError({
       message:
-        'Notification can not be processed as "commercetoolsProjectKey"  was not found on the notification.',
+        'Notification can not be processed as "metadata.ctProjectKey"  was not found on the notification.',
     })
   }
 

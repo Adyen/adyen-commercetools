@@ -101,7 +101,7 @@ describe('notification controller', () => {
 
     const notificationJson = _.cloneDeep(mockNotificationJson)
     notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
-      'metadata.commercetoolsProjectKey': 'testKey',
+      'metadata.ctProjectKey': 'testKey',
     }
     notificationJson.notificationItems[0].NotificationRequestItem.merchantAccountCode =
       'nonExistingMerchantAccount'
