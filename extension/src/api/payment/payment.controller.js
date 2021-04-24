@@ -30,12 +30,15 @@ async function processRequest(request, response) {
       paymentObject,
       authToken
     )
-
-    return httpUtils.sendResponse({
+    const result = {
       response,
-      statusCode: paymentResult.success ? 200 : 400,
-      data: paymentResult.data,
-    })
+      statusCode: paymentResult.actions ? 200 : 400,
+      data: paymentResult.actions
+        ? { actions: paymentResult.actions }
+        : { errors: paymentResult.errors },
+    }
+
+    return httpUtils.sendResponse(result)
   } catch (err) {
     return httpUtils.sendResponse({
       response,

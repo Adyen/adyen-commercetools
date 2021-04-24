@@ -2,8 +2,6 @@ const utils = require('./src/utils')
 const paymentHandler = require('./src/paymentHandler/payment-handler')
 const auth = require('./src/validator/authentication')
 
-const logger = utils.getLogger()
-
 exports.handler = async (event) => {
   let paymentObj = {}
   try {
@@ -26,12 +24,11 @@ exports.handler = async (event) => {
       authToken
     )
     return {
-      responseType: paymentResult.success
+      responseType: paymentResult.actions
         ? 'UpdateRequest'
         : 'FailedValidation',
-      // paymentResult.data can be null when paymentHandler short-circuits on non-Adyen payment
-      errors: paymentResult.data ? paymentResult.data.errors : undefined,
-      actions: paymentResult.data ? paymentResult.data.actions : [],
+      errors: paymentResult.errors,
+      actions: paymentResult.actions || [],
     }
   } catch (e) {
     const errorObj = utils.handleUnexpectedPaymentError(paymentObj, e)

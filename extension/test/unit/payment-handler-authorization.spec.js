@@ -72,7 +72,7 @@ describe('payment-handler-authorization::execute', () => {
         ctpPaymentClone,
         'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
       )
-      expect(response.data.actions).to.have.lengthOf.above(0)
+      expect(response.actions).to.have.lengthOf.above(0)
       sandbox.restore()
     }
   )
@@ -99,9 +99,8 @@ describe('payment-handler-authorization::execute', () => {
       sandbox.stub(config, 'getCtpConfig').returns(dummyCtpConfig)
       const response = await handlePayment(ctpPaymentClone)
 
-      expect(response.success).to.equal(false)
-      expect(response.data.errors).to.have.lengthOf(1)
-      expect(response.data.errors[0].message).to.equal(
+      expect(response.errors).to.have.lengthOf(1)
+      expect(response.errors[0].message).to.equal(
         errorMessage.UNAUTHORIZED_REQUEST
       )
       sandbox.restore()
@@ -130,9 +129,8 @@ describe('payment-handler-authorization::execute', () => {
       sandbox.stub(config, 'getCtpConfig').returns(dummyCtpConfig)
       const response = await handlePayment(ctpPaymentClone, 'Basic xxxyyyzzz')
 
-      expect(response.success).to.equal(false)
-      expect(response.data.errors).to.have.lengthOf(1)
-      expect(response.data.errors[0].message).to.equal(
+      expect(response.errors).to.have.lengthOf(1)
+      expect(response.errors[0].message).to.equal(
         errorMessage.UNAUTHORIZED_REQUEST
       )
       sandbox.restore()
@@ -183,8 +181,7 @@ describe('payment-handler-authorization::execute', () => {
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
       const response = await handlePayment(ctpPaymentClone, 'Basic xxxyyyzzz')
 
-      expect(response.data.actions).to.have.lengthOf.above(0)
-      expect(response.success).to.equal(true)
+      expect(response.actions).to.have.lengthOf.above(0)
     }
   )
 })

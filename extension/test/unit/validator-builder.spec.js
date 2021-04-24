@@ -25,13 +25,11 @@ describe('Validator builder', () => {
     const errorObject = ValidatorBuilder.withPayment(invalidPayment)
       .validateRequestFields()
       .getErrors()
-    expect(errorObject.getPaymentMethodsRequest).to.equal(
+    expect(errorObject[0].message).to.equal(
       GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
     )
-    expect(errorObject.makePaymentRequest).to.equal(
-      MAKE_PAYMENT_REQUEST_INVALID_JSON
-    )
-    expect(errorObject.submitAdditionalPaymentDetailsRequest).to.equal(
+    expect(errorObject[1].message).to.equal(MAKE_PAYMENT_REQUEST_INVALID_JSON)
+    expect(errorObject[2].message).to.equal(
       SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
     )
   })
@@ -63,7 +61,7 @@ describe('Validator builder', () => {
       const errorObject = ValidatorBuilder.withPayment(payment)
         .validateAmountPlanned()
         .getErrors()
-      expect(errorObject.amountPlanned).to.equal(AMOUNT_PLANNED_NOT_SAME)
+      expect(errorObject[0].message).to.equal(AMOUNT_PLANNED_NOT_SAME)
     }
   )
 
@@ -131,7 +129,7 @@ describe('Validator builder', () => {
       const errorObject = ValidatorBuilder.withPayment(payment)
         .validateAmountPlanned()
         .getErrors()
-      expect(errorObject.amountPlanned).to.equal(AMOUNT_PLANNED_NOT_SAME)
+      expect(errorObject[0].message).to.equal(AMOUNT_PLANNED_NOT_SAME)
     }
   )
 
@@ -161,7 +159,7 @@ describe('Validator builder', () => {
       .validateReference()
       .getErrors()
 
-    expect(errorObject.missingReference).to.equal(
+    expect(errorObject[0].message).to.equal(
       MAKE_PAYMENT_REQUEST_MISSING_REFERENCE
     )
   })
@@ -178,7 +176,7 @@ describe('Validator builder', () => {
       .validateMetadataFields()
       .getErrors()
 
-    expect(errorObject.missingRequiredCtpProjectKey).to.equal(
+    expect(errorObject[0].message).to.equal(
       MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
     )
   })
@@ -195,7 +193,7 @@ describe('Validator builder', () => {
       .validateMetadataFields()
       .getErrors()
 
-    expect(errorObject.missingRequiredAdyenMerchantAcc).to.equal(
+    expect(errorObject[0].message).to.equal(
       MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
     )
   })
@@ -213,11 +211,11 @@ describe('Validator builder', () => {
       .validateMetadataFields()
       .getErrors()
 
-    expect(errorObject.missingRequiredAdyenMerchantAcc).to.equal(
-      MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
-    )
-    expect(errorObject.missingRequiredCtpProjectKey).to.equal(
+    expect(errorObject[0].message).to.equal(
       MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
+    )
+    expect(errorObject[1].message).to.equal(
+      MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
     )
   })
 })
