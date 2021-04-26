@@ -113,7 +113,7 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
     const makePaymentResponse = JSON.parse(makePaymentInteraction.response)
 
     expect(makePaymentRequest.metadata).to.deep.equal({
-      commercetoolsProjectKey,
+      ctProjectKey: commercetoolsProjectKey,
     })
     expect(makePaymentRequest.merchantAccount).to.be.equal(adyenMerchantAccount)
 

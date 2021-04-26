@@ -51,7 +51,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -135,7 +135,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -214,7 +214,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -282,7 +282,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'CANCELLATION',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -372,7 +372,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'CAPTURE',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -462,7 +462,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'CAPTURE_FAILED',
           eventDate: '2019-01-30T18:16:22+01:00',

@@ -48,12 +48,12 @@ describe('::multitenancy::', () => {
     const modifiedNotification2 = cloneDeep(notifications)
 
     modifiedNotification1.notificationItems[0].NotificationRequestItem.additionalData = {
-      'metadata.commercetoolsProjectKey': commercetoolsProjectKey1,
+      'metadata.ctProjectKey': commercetoolsProjectKey1,
     }
     modifiedNotification1.notificationItems[0].NotificationRequestItem.merchantAccountCode = adyenMerchantAccount1
 
     modifiedNotification2.notificationItems[0].NotificationRequestItem.additionalData = {
-      'metadata.commercetoolsProjectKey': commercetoolsProjectKey2,
+      'metadata.ctProjectKey': commercetoolsProjectKey2,
     }
     modifiedNotification2.notificationItems[0].NotificationRequestItem.merchantAccountCode = adyenMerchantAccount2
 

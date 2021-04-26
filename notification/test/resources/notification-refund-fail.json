@@ -17,7 +17,7 @@
         "reason": "Insufficient balance on payment",
         "success": "false",
         "additionalData": {
-          "metadata.commercetoolsProjectKey": "adyen-integration-test"
+          "metadata.ctProjectKey": "adyen-integration-test"
         }
       }
     }
