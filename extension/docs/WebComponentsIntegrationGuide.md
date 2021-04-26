@@ -3,7 +3,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Web Components integration guide](#web-components-integration-guide)
   - [How it works](#how-it-works)
   - [Before you begin](#before-you-begin)
