@@ -1,6 +1,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Manual Capture](#manual-capture)
   - [Make an API call to capture a payment:](#make-an-api-call-to-capture-a-payment)
     - [More info](#more-info)

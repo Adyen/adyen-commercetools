@@ -8,7 +8,6 @@
   - [commercetools](#commercetools)
   - [Other Configurations](#other-configurations)
 - [Commercetools project requirements](#commercetools-project-requirements)
-  - [Creating required resources manually](#creating-required-resources-manually)
 - [Running](#running)
   - [Docker](#docker)
     - [Running the Docker image](#running-the-docker-image)
