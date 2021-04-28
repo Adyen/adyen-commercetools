@@ -47,11 +47,11 @@ describe('get-payment-methods::execute::', () => {
     const adyenGetPaymentResponse = {
       paymentMethods: [
         {
-          "configuration": {
-            "intent": "capture"
+          configuration: {
+            intent: 'capture',
           },
-          "name": "PayPal",
-          "type": "paypal"
+          name: 'PayPal',
+          type: 'paypal',
         },
       ],
     }
