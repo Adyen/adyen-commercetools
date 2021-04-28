@@ -3,7 +3,7 @@
 
 `commercetools-adyen-integration` provides an [Adyen Web Components](https://docs.adyen.com/checkout/components-web) based integration between the commercetools and Adyen PSP. Integration supports all the payment methods available as an [Adyen Web Component](https://docs.adyen.com/checkout/components-web). For a full list of all supported web component based payment methods please refer to [supported payment methods](https://docs.adyen.com/checkout/supported-payment-methods).
 
-> Note: since `commercetools-adyen-integration` relies on the usage of Adyen's web components it does not need to process sensitive credit card data and thus is fully PCI DSS **compliant**.
+> Note: since the integration relies on the usage of Adyen's web components it does not need to process sensitive credit card data and thus is fully PCI DSS **compliant**.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -19,15 +19,14 @@
 This repository contains two standalone modules that interact with commercetools and Adyen.
 Complete integration requires running both of the modules.
 
-![Overview diagram](https://user-images.githubusercontent.com/3469524/86220256-9f8ab900-bb83-11ea-963a-243e9992283f.jpg)
-1. The shopper does a checkout and starts the payment process.
-2. Shop communicates only with the commercetools to process payment.
-3. The commercetools platform communicates with the extension module.
-4. The extension module communicates with the Adyen payment provider.
-5. Adyen returns a payment result to the extension module.
-6. The extension module updates the commercetools payment.
-7. The shop verifies the updated payment.
-8. The shop presents the results to the shopper.
+![Payment flow](./docs/images/payment-flow.svg)
+1. Front end uses [Adyen Web Coponents](https://docs.adyen.com/checkout/supported-payment-methods) to present required payment methods. The list of available payment methods can be also obtained through the integration with the help of [get available payment methods request](./extension/docs/WebComponentsIntegrationGuide.md#step-3-get-available-payment-methods-optional). On user interaction, frontend web-component generates JSON payloads like [make payment](https://docs.adyen.com/payment-methods/cards/web-component#make-a-payment) or submit additional payment data which has to be provided to commercetools payment as described [here](./extension/docs/WebComponentsIntegrationGuide.md#web-components-integration-guide).  
+2. With help of the API-Extension commercetools sends provided data to the Extension Module.
+3. The Extension Module processes provided data by the front end, exchanges it with Adyen and provides synchronous response back to the front end / commercetools caller. Based on the result the front end either creates an order or continues with further payment steps as described [here](./extension/docs/WebComponentsIntegrationGuide.md#web-components-integration-guide).
+
+In addition with help of Adyen notifications any payment status changes are asynchronously exchanged between Adyen and commercetools.
+
+Please follow the detailed guides below in order to ingerate your front end with the Extension and Notification modules.
 
 ## Extension module 
 
