@@ -83,10 +83,10 @@ describe('::config::', () => {
       projectKey: 'ctpProjectKey1',
     })
     expect(config.getAdyenConfig('adyenMerchantAccount1')).to.eql({
-      apiBaseUrl: 'https://checkout-test.adyen.com/v52',
+      apiBaseUrl: 'https://checkout-test.adyen.com/v67',
       apiKey: 'apiKey',
       clientKey: 'clientKey',
-      legacyApiBaseUrl: 'https://pal-test.adyen.com/pal/servlet/Payment/v52',
+      legacyApiBaseUrl: 'https://pal-test.adyen.com/pal/servlet/Payment/v64',
     })
   })
 
