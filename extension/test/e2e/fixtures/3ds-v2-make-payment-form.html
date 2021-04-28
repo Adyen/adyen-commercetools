@@ -47,160 +47,160 @@ Make payment request will come here</textarea
         environment: 'test', // When you're ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
         clientKey: '', // Your client key. To find out how to generate one, see https://docs.adyen.com/development-resources/client-side-authentication.
         paymentMethodsResponse: {
-          "paymentMethods": [
+          paymentMethods: [
             {
-              "configuration": {
-                "intent": "capture"
+              configuration: {
+                intent: 'capture',
               },
-              "name": "PayPal",
-              "type": "paypal"
+              name: 'PayPal',
+              type: 'paypal',
             },
             {
-              "brands": [
-                "visa",
-                "mc",
-                "amex",
-                "maestro",
-                "uatp",
-                "cup",
-                "diners",
-                "discover",
-                "hipercard",
-                "jcb"
+              brands: [
+                'visa',
+                'mc',
+                'amex',
+                'maestro',
+                'uatp',
+                'cup',
+                'diners',
+                'discover',
+                'hipercard',
+                'jcb',
               ],
-              "details": [
+              details: [
                 {
-                  "key": "encryptedCardNumber",
-                  "type": "cardToken"
+                  key: 'encryptedCardNumber',
+                  type: 'cardToken',
                 },
                 {
-                  "key": "encryptedSecurityCode",
-                  "type": "cardToken"
+                  key: 'encryptedSecurityCode',
+                  type: 'cardToken',
                 },
                 {
-                  "key": "encryptedExpiryMonth",
-                  "type": "cardToken"
+                  key: 'encryptedExpiryMonth',
+                  type: 'cardToken',
                 },
                 {
-                  "key": "encryptedExpiryYear",
-                  "type": "cardToken"
+                  key: 'encryptedExpiryYear',
+                  type: 'cardToken',
                 },
                 {
-                  "key": "holderName",
-                  "optional": true,
-                  "type": "text"
-                }
+                  key: 'holderName',
+                  optional: true,
+                  type: 'text',
+                },
               ],
-              "name": "Kreditkarte",
-              "type": "scheme"
+              name: 'Kreditkarte',
+              type: 'scheme',
             },
             {
-              "name": "Sofort.",
-              "type": "directEbanking"
+              name: 'Sofort.',
+              type: 'directEbanking',
             },
             {
-              "details": [
+              details: [
                 {
-                  "key": "sepa.ownerName",
-                  "type": "text"
+                  key: 'sepa.ownerName',
+                  type: 'text',
                 },
                 {
-                  "key": "sepa.ibanNumber",
-                  "type": "text"
-                }
+                  key: 'sepa.ibanNumber',
+                  type: 'text',
+                },
               ],
-              "name": "SEPA Lastschrift",
-              "type": "sepadirectdebit"
+              name: 'SEPA Lastschrift',
+              type: 'sepadirectdebit',
             },
             {
-              "name": "Rechnung mit Klarna.",
-              "type": "klarna"
+              name: 'Rechnung mit Klarna.',
+              type: 'klarna',
             },
             {
-              "name": "GiroPay",
-              "type": "giropay"
+              name: 'GiroPay',
+              type: 'giropay',
             },
             {
-              "name": "Ratenkauf mit Klarna.",
-              "type": "klarna_account"
+              name: 'Ratenkauf mit Klarna.',
+              type: 'klarna_account',
             },
             {
-              "brand": "givex",
-              "details": [
+              brand: 'givex',
+              details: [
                 {
-                  "key": "encryptedCardNumber",
-                  "type": "cardToken"
+                  key: 'encryptedCardNumber',
+                  type: 'cardToken',
                 },
                 {
-                  "key": "encryptedSecurityCode",
-                  "optional": true,
-                  "type": "cardToken"
+                  key: 'encryptedSecurityCode',
+                  optional: true,
+                  type: 'cardToken',
                 },
                 {
-                  "key": "encryptedExpiryMonth",
-                  "optional": true,
-                  "type": "cardToken"
+                  key: 'encryptedExpiryMonth',
+                  optional: true,
+                  type: 'cardToken',
                 },
                 {
-                  "key": "encryptedExpiryYear",
-                  "optional": true,
-                  "type": "cardToken"
+                  key: 'encryptedExpiryYear',
+                  optional: true,
+                  type: 'cardToken',
                 },
                 {
-                  "key": "encryptedPassword",
-                  "optional": true,
-                  "type": "cardToken"
+                  key: 'encryptedPassword',
+                  optional: true,
+                  type: 'cardToken',
                 },
                 {
-                  "key": "holderName",
-                  "optional": true,
-                  "type": "text"
-                }
+                  key: 'holderName',
+                  optional: true,
+                  type: 'text',
+                },
               ],
-              "name": "Givex",
-              "type": "giftcard"
+              name: 'Givex',
+              type: 'giftcard',
             },
             {
-              "name": "Sofort bezahlen mit Klarna.",
-              "type": "klarna_paynow"
+              name: 'Sofort bezahlen mit Klarna.',
+              type: 'klarna_paynow',
             },
             {
-              "brand": "svs",
-              "details": [
+              brand: 'svs',
+              details: [
                 {
-                  "key": "encryptedCardNumber",
-                  "type": "cardToken"
+                  key: 'encryptedCardNumber',
+                  type: 'cardToken',
                 },
                 {
-                  "key": "encryptedSecurityCode",
-                  "optional": true,
-                  "type": "cardToken"
+                  key: 'encryptedSecurityCode',
+                  optional: true,
+                  type: 'cardToken',
                 },
                 {
-                  "key": "encryptedExpiryMonth",
-                  "optional": true,
-                  "type": "cardToken"
+                  key: 'encryptedExpiryMonth',
+                  optional: true,
+                  type: 'cardToken',
                 },
                 {
-                  "key": "encryptedExpiryYear",
-                  "optional": true,
-                  "type": "cardToken"
+                  key: 'encryptedExpiryYear',
+                  optional: true,
+                  type: 'cardToken',
                 },
                 {
-                  "key": "encryptedPassword",
-                  "optional": true,
-                  "type": "cardToken"
+                  key: 'encryptedPassword',
+                  optional: true,
+                  type: 'cardToken',
                 },
                 {
-                  "key": "holderName",
-                  "optional": true,
-                  "type": "text"
-                }
+                  key: 'holderName',
+                  optional: true,
+                  type: 'text',
+                },
               ],
-              "name": "SVS",
-              "type": "giftcard"
-            }
-          ]
+              name: 'SVS',
+              type: 'giftcard',
+            },
+          ],
         }, // The payment methods response returned in step 1.
         onChange: handleOnChange, // Your function for handling onChange event
         onAdditionalDetails: handleOnAdditionalDetails, // Your function for handling onAdditionalDetails event
