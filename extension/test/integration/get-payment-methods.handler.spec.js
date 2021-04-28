@@ -111,7 +111,6 @@ describe('::getPaymentMethods::', () => {
       const interfaceInteractionResponse = JSON.parse(
         interfaceInteraction.fields.response
       )
-      expect(interfaceInteractionResponse.groups).to.be.an.instanceof(Array)
       expect(interfaceInteractionResponse.paymentMethods).to.be.an.instanceof(
         Array
       )
@@ -202,9 +201,6 @@ describe('::getPaymentMethods::', () => {
 
       const paymentMethodsInteractionResponse = JSON.parse(
         paymentMethodsInteraction.fields.response
-      )
-      expect(paymentMethodsInteractionResponse.groups).to.be.an.instanceof(
-        Array
       )
       expect(
         paymentMethodsInteractionResponse.paymentMethods
