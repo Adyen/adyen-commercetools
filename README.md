@@ -3,7 +3,7 @@
 
 `commercetools-adyen-integration` provides an [Adyen Web Components](https://docs.adyen.com/checkout/components-web) based integration between the commercetools and Adyen PSP. Integration supports all the payment methods available as an [Adyen Web Component](https://docs.adyen.com/checkout/components-web). For a full list of all supported web component based payment methods please refer to [supported payment methods](https://docs.adyen.com/checkout/supported-payment-methods).
 
-> Note: as `commercetools-adyen-integration` relies on the usage of Adyen's web components it does not need to process sensitive credit card data and thus is fully PCI DSS **compliant**.
+> Note: since `commercetools-adyen-integration` relies on the usage of Adyen's web components it does not need to process sensitive credit card data and thus is fully PCI DSS **compliant**.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
