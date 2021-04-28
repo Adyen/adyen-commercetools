@@ -1,4 +1,3 @@
-const querystring = require('querystring')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
