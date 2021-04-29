@@ -421,7 +421,7 @@ Notice that on an `Authorised` (successful) result, the integration will automat
 #### Action Response
 
 Some payment methods require additional action from the shopper such as: to scan a QR code, to authenticate a payment with 3D Secure, or to log in to their bank's website to complete the payment.
-In this case you'll receive an `action` object (e.g. redirect, threeDS2Fingerprint, qrCode etc).
+In this case you'll receive an `action` object (e.g. redirect, threeDS2, qrCode etc).
 
 Here an example response from Adyen where the user has to be redirected to a payment provider page:
 
@@ -580,7 +580,7 @@ By default, the extension module will populate `lineItems` for you but in case y
 
 ## Step 6: Submit additional payment details
 
-If the shopper performed an additional action (e.g. redirect, threeDS2Fingerprint) in the [Step-5](#step-5-make-a-payment), you need to make `submitAdditionalPaymentDetailsRequest` in order to complete the payment.
+If the shopper performed an additional action (e.g. redirect, threeDS2) in the [Step-5](#step-5-make-a-payment), you need to make `submitAdditionalPaymentDetailsRequest` in order to complete the payment.
 
 Pass the generated component data to your merchant server, the data is available either in `state.data` from the `onAdditionalDetails` event or, for redirects, the parameters you received when the shopper redirected back to your website.
 
