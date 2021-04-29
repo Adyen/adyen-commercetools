@@ -107,14 +107,8 @@ describe('::creditCardPayment3dsNative::', () => {
             clientKey,
           })
 
-          const paymentAfterIdentifyShopper = await identifyShopper({
-            payment: paymentAfterMakePayment,
-            browserTab,
-            baseUrl,
-          })
-
           const paymentAfterAuthentication = await performChallengeFlow({
-            payment: paymentAfterIdentifyShopper,
+            payment: paymentAfterMakePayment,
             browserTab,
             baseUrl,
           })
@@ -159,11 +153,14 @@ describe('::creditCardPayment3dsNative::', () => {
     return updatedPayment
   }
 
-  async function identifyShopper({ payment, browserTab, baseUrl }) {
+  async function performChallengeFlow({ payment, browserTab, baseUrl }) {
+    // Submit additional details 1
     const {
       makePaymentResponse: makePaymentResponseString,
     } = payment.custom.fields
-    const makePaymentResponse = await JSON.parse(makePaymentResponseString)
+    const makePaymentResponse = await JSON.parse(
+      makePaymentResponseString
+    )
     const redirectPaymentFormPage = new RedirectPaymentFormPage(
       browserTab,
       baseUrl
@@ -175,51 +172,9 @@ describe('::creditCardPayment3dsNative::', () => {
 
     await browserTab.waitForTimeout(2000)
 
-    const additionalPaymentDetailsInput = await browserTab.$(
-      '#adyen-additional-payment-details'
-    )
-    const additionalPaymentDetailsString = await browserTab.evaluate(
-      (el) => el.value,
-      additionalPaymentDetailsInput
-    )
-    const { body: updatedPayment2 } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'submitAdditionalPaymentDetailsRequest',
-          value: additionalPaymentDetailsString,
-        },
-      ]
-    )
-
-    return updatedPayment2
-  }
-
-  async function performChallengeFlow({ payment, browserTab, baseUrl }) {
-    // Submit additional details 1
-    const {
-      submitAdditionalPaymentDetailsResponse: submitAdditionalPaymentDetailsResponseString,
-    } = payment.custom.fields
-    const submitAdditionalPaymentDetailsResponse1 = await JSON.parse(
-      submitAdditionalPaymentDetailsResponseString
-    )
-    const redirectPaymentFormPage = new RedirectPaymentFormPage(
-      browserTab,
-      baseUrl
-    )
-    await redirectPaymentFormPage.goToThisPage()
-    await redirectPaymentFormPage.redirectToAdyenPaymentPage(
-      submitAdditionalPaymentDetailsResponse1
-    )
-
-    await browserTab.waitForTimeout(2000)
-
-    // Submit additional details 2
+    // Submit additional details
     const creditCardNativePage = new CreditCardNativePage(browserTab, baseUrl)
-    const additionalPaymentDetailsString2 = await creditCardNativePage.finish3dsNativePayment()
+    const additionalPaymentDetailsString = await creditCardNativePage.finish3dsNativePayment()
     const { body: finalPayment } = await ctpClient.update(
       ctpClient.builder.payments,
       payment.id,
@@ -228,12 +183,8 @@ describe('::creditCardPayment3dsNative::', () => {
         {
           action: 'setCustomField',
           name: 'submitAdditionalPaymentDetailsRequest',
-          value: additionalPaymentDetailsString2,
-        },
-        {
-          action: 'setCustomField',
-          name: 'submitAdditionalPaymentDetailsResponse',
-        },
+          value: additionalPaymentDetailsString,
+        }
       ]
     )
 
