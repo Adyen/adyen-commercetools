@@ -26,7 +26,7 @@ Complete integration requires running both of the modules.
 
 In addition with help of Adyen notifications any payment status changes are asynchronously exchanged between Adyen and commercetools.
 
-Please follow the detailed guides below in order to ingerate your front end with the Extension and Notification modules.
+Please follow the detailed guides below in order to integrate your front end with the Extension and Notification modules.
 
 ## Extension module 
 
