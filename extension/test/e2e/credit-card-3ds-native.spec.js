@@ -158,9 +158,7 @@ describe('::creditCardPayment3dsNative::', () => {
     const {
       makePaymentResponse: makePaymentResponseString,
     } = payment.custom.fields
-    const makePaymentResponse = await JSON.parse(
-      makePaymentResponseString
-    )
+    const makePaymentResponse = await JSON.parse(makePaymentResponseString)
     const redirectPaymentFormPage = new RedirectPaymentFormPage(
       browserTab,
       baseUrl
@@ -184,7 +182,7 @@ describe('::creditCardPayment3dsNative::', () => {
           action: 'setCustomField',
           name: 'submitAdditionalPaymentDetailsRequest',
           value: additionalPaymentDetailsString,
-        }
+        },
       ]
     )
 
