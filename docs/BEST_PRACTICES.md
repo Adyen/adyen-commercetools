@@ -17,12 +17,15 @@
 ## Order creation best practices
 #### AFTER a successful payment
 ##### Limitations & Solutions
+
+###### Shop was not reachable due to network issues
 - It is possible that shop was not reachable due to network issues. In that case there will be a successful payment but no order.
 
   ###### Possible solution:
   Create an order based on the payment transaction changes, which delivery is guaranteed due to the asynchronous notifications from Adyen. Depending on your preference you might either query for the latest messages of type [PaymentTransactionAdded](https://docs.commercetools.com/api/message-types#paymenttransactionadded-message), [PaymentTransactionStateChanged](https://docs.commercetools.com/api/message-types#paymenttransactionstatechanged-message) or [subscribe](https://docs.commercetools.com/api/projects/subscriptions#create-a-subscription) to the mentioned message types. Every [message](https://docs.commercetools.com/api/message-types#message) will link its payment through the `resource` field and since every payment is attached to a cart one has all the informations at hand to decide if the cart has to be converted to order or not. Since the job or worker processing the message is not a usual place where the order is created it might be reasonable to pass the cart ID to another service or web shop URL which will verify the cart and create an order out of it.
 
 ------  
+###### More than 1 valid payments on the cart/order
 - It is possible to have more than 1 valid payments on the cart/order. During checkout in two tabs, two redirect payments
 (like credit card and paypal) can be created for the same cart. These two payments can be completed independently in both tabs.
  Since every payment should be always attached to the cart this would make a cart to link two successful payments.
@@ -30,6 +33,7 @@
   [Refund](https://github.com/commercetools/commercetools-adyen-integration/blob/master/extension/docs/Refund.md) one of the successful payments. Similar as in case of `Create an order based on transaction state changes` above one could process the same message types in order to figure out if the cart has to many successful payments and create a refund. 
 
 ------  
+###### The amount of the successful payment is lower than the cart amount
 - It is possible to have the payment amount is lower than cart amount. During the checkout the shopper opens two tabs, one tab is for cart and
 the other tab is for payment provider. Shopper can add more items to the cart so that the cart value is not equal to the 
 amount that will be paid in the payment provider tab.
