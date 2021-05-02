@@ -25,7 +25,7 @@
 ------  
 - It is possible to have more than 1 valid payments on the cart/order. During checkout in two tabs, two redirect payments
 (like credit card and paypal) can be created for the same cart. These two payments can be completed independently in both tabs.
- This will lead the cart that links to two successful payments.
+ Since every payment should be always attached to the cart this would make a cart to link two successful payments.
   ###### Possible solution:
   Refund the payment. (It can be based on commercetools messages or subscriptions)
 
