@@ -27,7 +27,7 @@
 (like credit card and paypal) can be created for the same cart. These two payments can be completed independently in both tabs.
  Since every payment should be always attached to the cart this would make a cart to link two successful payments.
   ###### Possible solution:
-  Refund the payment. (It can be based on commercetools messages or subscriptions)
+  [Refund](https://github.com/commercetools/commercetools-adyen-integration/blob/master/extension/docs/Refund.md) one of the successful payments. Similar as in case of `Create an order based on transaction state changes` above one could process the same message types in order to figure out if the cart has to many successful payments and create a refund. 
 
 ------  
 - It is possible to have the payment amount is lower than cart amount. During the checkout the shopper opens two tabs, one tab is for cart and
