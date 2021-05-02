@@ -17,7 +17,7 @@
 ## Order creation best practices
 #### AFTER a successful payment
 ##### Limitations & Solutions
-- It is possible that shop was not reachable for network issues. In that case there will be a successful payment but no order.
+- It is possible that shop was not reachable due to network issues. In that case there will be a successful payment but no order.
 
   ###### Possible solution:
   Create an order based on transaction state changes (commercetools messages or subscriptions)
