@@ -20,7 +20,7 @@
 - It is possible that shop was not reachable due to network issues. In that case there will be a successful payment but no order.
 
   ###### Possible solution:
-  Create an order based on transaction state changes (commercetools messages or subscriptions)
+  Create an order based on the payment transaction changes, which delivery is guaranteed due to the asynchronous notifications from Adyen. Depending on your preference you might either query for the latest messages of type [PaymentTransactionAdded](https://docs.commercetools.com/api/message-types#paymenttransactionadded-message), [PaymentTransactionStateChanged](https://docs.commercetools.com/api/message-types#paymenttransactionstatechanged-message) or [subscribe](https://docs.commercetools.com/api/projects/subscriptions#create-a-subscription) to the mentioned message types. Every [message](https://docs.commercetools.com/api/message-types#message) will link its payment through the `resource` field and since every payment is attached to a cart one has all the informations at hand to decide if the cart has to be converted to order or not. Since the job or worker processing the message is not a usual place where the order is created it might be reasonable to pass the cart ID to another service or web shop URL which will verify the cart and create an order out of it.
 
 ------  
 - It is possible to have more than 1 valid payments on cart/order. During checkout in two tabs, two redirect payments
