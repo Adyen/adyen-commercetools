@@ -40,7 +40,7 @@ amount that will be paid in the payment provider tab.
 
   ###### Possible solution:
   After a successful payment, validate the cart to check if the cart amount matches payment amount. 
-  If not, refund the payment and let shopper to pay again.
+  If not, refund/cancel the payment and ask the shopper to pay again.
 
 #### BEFORE a successful payment
 ##### Limitations
