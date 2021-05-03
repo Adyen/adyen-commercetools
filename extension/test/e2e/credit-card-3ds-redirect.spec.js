@@ -1,4 +1,3 @@
-const querystring = require('querystring')
 const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
@@ -45,7 +44,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
       )
     }
     routes['/return-url'] = async (request, response) => {
-      const body = await httpUtils.collectRequestData(request)
+      const params = getRequestParams(request)
       return httpUtils.sendResponse({
         response,
         headers: {
@@ -53,7 +52,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
         },
         data:
           '<!DOCTYPE html><html><head></head>' +
-          `<body><div id=redirect-response>${body}</div></body></html>`,
+          `<body><div id=redirect-response>${params.redirectResult}</div></body></html>`,
       })
     }
 
@@ -171,7 +170,6 @@ describe('::creditCardPayment3dsRedirect::', () => {
     const value = await creditCardRedirectPage.finish3dsRedirectPayment()
 
     // Submit payment details
-    const parsedQuery = querystring.parse(value)
     const { body: finalPayment } = await ctpClient.update(
       ctpClient.builder.payments,
       payment.id,
@@ -181,12 +179,29 @@ describe('::creditCardPayment3dsRedirect::', () => {
           action: 'setCustomField',
           name: 'submitAdditionalPaymentDetailsRequest',
           value: JSON.stringify({
-            details: parsedQuery,
+            details: {
+              redirectResult: decodeURIComponent(value),
+            },
           }),
         },
       ]
     )
 
     return finalPayment
+  }
+
+  function getRequestParams(req) {
+    const queries = req.url.split('?')
+    const result = {}
+    if (queries.length >= 2) {
+      queries[1].split('&').forEach((item) => {
+        try {
+          result[item.split('=')[0]] = item.split('=')[1]
+        } catch (e) {
+          result[item.split('=')[0]] = ''
+        }
+      })
+    }
+    return result
   }
 })

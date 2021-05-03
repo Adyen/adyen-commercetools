@@ -45,16 +45,12 @@ describe('get-payment-methods::execute::', () => {
 
   it('handlePayment should return the right actions', async () => {
     const adyenGetPaymentResponse = {
-      groups: [
-        {
-          name: 'Credit Card',
-          types: ['visa', 'mc'],
-        },
-      ],
       paymentMethods: [
         {
+          configuration: {
+            intent: 'capture',
+          },
           name: 'PayPal',
-          supportsRecurring: true,
           type: 'paypal',
         },
       ],
