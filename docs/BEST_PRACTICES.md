@@ -34,8 +34,8 @@
 
 ------  
 ###### The amount of the successful payment is lower than the cart amount
-- It is possible to have the payment amount is lower than cart amount. During the checkout the shopper opens two tabs, one tab is for cart and
-the other tab is for payment provider. Shopper can add more items to the cart so that the cart value is not equal to the 
+- The amount of the successful payment is lower than the cart amount. During the checkout the shopper might navigate with two tabs, one with the cart and
+the other tab might be already a redirected payment with fixed amount like PayPal. Shopper can add more items to the cart so that the cart value is not equal to the 
 amount that will be paid in the payment provider tab.
 
   ###### Possible solution:
