@@ -59,8 +59,7 @@ Both approaches have their good and bad sides, but we found out that creating an
 
 ## Payment related best practices
 
-- Payment status changes will not be managed by the Adyen Integration library. Adyen Integration is base upon the 
-transactions and custom fields in Commercetools platform.
+- Currently [payment status](https://docs.commercetools.com/api/projects/payments#paymentstatus) is not maintained by the integration as status of the payment can be derived from the state of the payment transaction(s).
 - **Never delete or un-assign** created payment objects during the checkout from the cart. 
 If required — clean up unused/obsolete payment objects by another asynchronous process instead.
 
