@@ -65,7 +65,7 @@ If required — clean up unused/obsolete payment objects by another asynchronous
 
 ## Order/Cart related best practices
 
-- Order/Cart modifications have to be part of the shop. It is not the responsibility of the Adyen Integration modules.
+- Order/cart modifications should be part of the front end business logic. Adyen integration will neither change the cart nor the order.
 
 ## Deployment best practices
 
