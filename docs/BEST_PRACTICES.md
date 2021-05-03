@@ -55,7 +55,7 @@ amount that will be paid in the payment provider tab.
 - How to handle vouchers that can be applied only once but the shopper decided not to finish the payment and change the cart instead? It might require a new cart based on the old cart. The creation of a new cart with the same item might be an issue if an item had only stock = 1 and it has been used in not paid order already.
 
 ##### Conclusion
-Both approaches have their good and bad sides, but it is recommended creating order AFTER a successful payment is less harmful.
+Both approaches have their good and bad sides, but we found out that creating an order AFTER a successful payment is less harmful.
 
 ## Payment related best practices
 
