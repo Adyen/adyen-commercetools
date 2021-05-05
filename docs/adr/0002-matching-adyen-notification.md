@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [2. Matching Adyen Notification with commercetools payment.](#2-matching-adyen-notification-with-commercetools-payment)
+  - [Status](#status)
+  - [Context](#context)
+  - [Decision](#decision)
+  - [Consequences](#consequences)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # 2. Matching Adyen Notification with commercetools payment.
 
 Date: 2020-12-18

@@ -33,7 +33,7 @@
 - [Manual Capture](#manual-capture)
 - [Cancel or refund](#cancel-or-refund)
 - [Multi-tenancy](#multi-tenancy)
-- [Bad Practices](#bad-practices)
+- [Best Practices](#best-practices)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -785,6 +785,6 @@ In order for `commercetools-adyen-integration` to know which project and merchan
 
 **IMPORTANT: `commercetoolsProjectKey` must not have more than 80 characters. This is due to length restrictions of the Adyen API.**
 
-# Bad Practices
+# Best Practices
 
-- **Never delete or un-assign** created payment objects during checkout from the cart. If required — clean up unused/obsolete payment objects by another asynchronous process instead.
+- [Please refer to our best practices guide.](../../docs/BEST_PRACTICES.md)
