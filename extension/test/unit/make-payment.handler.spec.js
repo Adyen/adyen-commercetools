@@ -1,8 +1,8 @@
 const nock = require('nock')
-const { expect } = require('chai')
+const {expect} = require('chai')
 const _ = require('lodash')
 const config = require('../../src/config/config')
-const { execute } = require('../../src/paymentHandler/make-payment.handler')
+const {execute} = require('../../src/paymentHandler/make-payment.handler')
 const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
 const paymentErrorResponse = require('./fixtures/adyen-make-payment-error-response')
 const paymentRefusedResponse = require('./fixtures/adyen-make-payment-refused-response')
@@ -68,7 +68,12 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(5)
+
+      const setMethodInfoMethod = response.actions.find(
+        (a) => a.action === 'setMethodInfoMethod'
+      )
+      expect(setMethodInfoMethod.method).to.equal('Credit Card')
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -114,7 +119,7 @@ describe('make-payment::execute', () => {
 
   it(
     'when resultCode from Adyen is "RedirectShopper", ' +
-      'then it should return actions "addInterfaceInteraction", "setCustomField" and "setKey"',
+    'then it should return actions "addInterfaceInteraction", "setCustomField" and "setKey"',
     async () => {
       scope.post('/payments').reply(200, paymentRedirectResponse)
 
@@ -126,7 +131,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(4)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -162,7 +167,7 @@ describe('make-payment::execute', () => {
 
   it(
     'when adyen validation failed, ' +
-      'then it should return actions "addInterfaceInteraction", "setCustomField" and "setKey"',
+    'then it should return actions "addInterfaceInteraction", "setCustomField" and "setKey"',
     async () => {
       scope.post('/payments').reply(422, paymentValidationFailedResponse)
 
@@ -174,7 +179,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(4)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -210,8 +215,8 @@ describe('make-payment::execute', () => {
 
   it(
     'when resultCode from Adyen is "Refused"' +
-      'then it should return actions "addInterfaceInteraction", "setCustomField", ' +
-      '"setKey" and "addTransaction"',
+    'then it should return actions "addInterfaceInteraction", "setCustomField", ' +
+    '"setKey" and "addTransaction"',
     async () => {
       scope.post('/payments').reply(422, paymentRefusedResponse)
 
@@ -223,7 +228,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(5)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -269,8 +274,8 @@ describe('make-payment::execute', () => {
 
   it(
     'when resultCode from Adyen is "Error", ' +
-      'then it should return actions "addInterfaceInteraction", "setCustomField", ' +
-      '"setKey" and "addTransaction"',
+    'then it should return actions "addInterfaceInteraction", "setCustomField", ' +
+    '"setKey" and "addTransaction"',
     async () => {
       scope.post('/payments').reply(422, paymentErrorResponse)
 
@@ -282,7 +287,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(5)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -325,4 +330,24 @@ describe('make-payment::execute', () => {
       )
     }
   )
+
+  it('when payment method is not known, ' +
+    'then it should return setMethodInfoMethodAction with payment method name', async () => {
+    scope.post('/payments').reply(200, paymentSuccessResponse)
+
+    const ctpPaymentClone = _.cloneDeep(ctpPayment)
+    const makePaymentRequestClone = _.cloneDeep(makePaymentRequest)
+    makePaymentRequestClone.paymentMethod.type = 'new payment method'
+    ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
+      makePaymentRequestClone
+    )
+    ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
+    const response = await execute(ctpPaymentClone)
+
+    const setMethodInfoMethod = response.actions.find(
+      (a) => a.action === 'setMethodInfoMethod'
+    )
+    expect(setMethodInfoMethod.method).to.equal('new payment method')
+  })
 })

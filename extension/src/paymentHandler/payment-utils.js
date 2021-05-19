@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const c = require('../config/constants')
+const { getPaymentMethodsToNamesConfig } = require('../config/config')
 
 function getAuthorizationTransactionSuccess(paymentObject) {
   return getTransactionWithTypesAndStates(
@@ -63,6 +64,15 @@ function createSetCustomFieldAction(name, response) {
     action: 'setCustomField',
     name,
     value: JSON.stringify(response),
+  }
+}
+
+function createSetMethodInfoMethodAction(paymentMethod) {
+  const paymentMethodsToNames = getPaymentMethodsToNamesConfig()
+  const paymentMethodName = paymentMethodsToNames[paymentMethod] || paymentMethod
+  return {
+    action: 'setMethodInfoMethod',
+    method: paymentMethodName
   }
 }
 
@@ -179,6 +189,7 @@ module.exports = {
   createChangeTransactionInteractionId,
   createAddTransactionAction,
   createAddTransactionActionByResponse,
+  createSetMethodInfoMethodAction,
   getLatestInterfaceInteraction,
   isValidJSON,
   isValidMetadata,
