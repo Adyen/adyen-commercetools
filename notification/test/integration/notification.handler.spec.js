@@ -76,6 +76,7 @@ describe('notification module', () => {
         },
       } = await ctpClient.fetch(ctpClient.builder.payments)
       expect(paymentAfter.transactions).to.have.lengthOf(1)
+      expect(paymentAfter.paymentMethodInfo.method).to.equal('visa')
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
       expect(paymentAfter.transactions[0].state).to.equal('Success')
       expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)

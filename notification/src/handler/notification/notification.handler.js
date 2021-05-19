@@ -203,6 +203,10 @@ function calculateUpdateActionsForPayment(payment, notification) {
         )
       )
   }
+  const paymentMethodFromPayment = payment.paymentMethodInfo.method
+  const paymentMethodFromNotification = notificationRequestItem.paymentMethod;
+  if (paymentMethodFromNotification && paymentMethodFromPayment !== paymentMethodFromNotification)
+    updateActions.push(getSetMethodInfoMethodAction(paymentMethodFromNotification))
   return updateActions
 }
 
@@ -321,6 +325,13 @@ function getAddTransactionUpdateAction({
       state,
       interactionId,
     },
+  }
+}
+
+function getSetMethodInfoMethodAction(paymentMethod) {
+  return {
+    action: 'setMethodInfoMethod',
+    method: paymentMethod,
   }
 }
 
