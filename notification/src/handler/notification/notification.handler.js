@@ -204,9 +204,14 @@ function calculateUpdateActionsForPayment(payment, notification) {
       )
   }
   const paymentMethodFromPayment = payment.paymentMethodInfo.method
-  const paymentMethodFromNotification = notificationRequestItem.paymentMethod;
-  if (paymentMethodFromNotification && paymentMethodFromPayment !== paymentMethodFromNotification)
-    updateActions.push(getSetMethodInfoMethodAction(paymentMethodFromNotification))
+  const paymentMethodFromNotification = notificationRequestItem.paymentMethod
+  if (
+    paymentMethodFromNotification &&
+    paymentMethodFromPayment !== paymentMethodFromNotification
+  )
+    updateActions.push(
+      getSetMethodInfoMethodAction(paymentMethodFromNotification)
+    )
   return updateActions
 }
 
