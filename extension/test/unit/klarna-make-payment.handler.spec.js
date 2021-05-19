@@ -49,7 +49,7 @@ describe('klarna-make-payment::execute', () => {
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
 
       const response = await execute(ctpPaymentClone)
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(5)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
@@ -64,6 +64,11 @@ describe('klarna-make-payment::execute', () => {
       expect(ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT).to.equal(
         adyenLineItem.taxPercentage
       )
+
+      const setMethodInfoMethod = response.actions.find(
+        (a) => a.action === 'setMethodInfoMethod'
+      )
+      expect(setMethodInfoMethod.method).to.equal('Klarna')
 
       const ctpShippingInfo = ctpCart.shippingInfo
       const adyenShippingInfo = makePaymentRequestInteraction.lineItems.find(
@@ -101,7 +106,7 @@ describe('klarna-make-payment::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(5)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
