@@ -111,9 +111,9 @@ describe('notification module', () => {
         transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
       },
       {
-        action: "setMethodInfoMethod",
-        "method": "visa"
-      }
+        action: 'setMethodInfoMethod',
+        method: 'visa',
+      },
     ]
 
     // assert update actions
