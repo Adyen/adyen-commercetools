@@ -6,8 +6,7 @@ async function execute(paymentObject) {
   const makePaymentRequestObj = JSON.parse(
     paymentObject.custom.fields.makePaymentRequest
   )
-  const adyenMerchantAccount = paymentObject.
-    custom.fields.adyenMerchantAccount
+  const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
   const { request, response } = await makePayment(
@@ -15,7 +14,7 @@ async function execute(paymentObject) {
     commercetoolsProjectKey,
     makePaymentRequestObj
   )
-  const paymentMethod = request.paymentMethod.type
+  const paymentMethod = request.paymentMethod?.type
   const actions = [
     pU.createAddInterfaceInteractionAction({
       request,
@@ -26,8 +25,10 @@ async function execute(paymentObject) {
       c.CTP_CUSTOM_FIELD_MAKE_PAYMENT_RESPONSE,
       response
     ),
-    pU.createSetMethodInfoMethodAction(paymentMethod)
   ]
+
+  if (paymentMethod)
+    actions.push(pU.createSetMethodInfoMethodAction(paymentMethod))
 
   const paymentKey = paymentObject.key
   // ensure the key is a string, otherwise the error with "code": "InvalidJsonInput" will return by commercetools API.

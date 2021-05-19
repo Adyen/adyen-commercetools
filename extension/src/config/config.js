@@ -83,11 +83,14 @@ function getAllAdyenMerchantAccounts() {
 }
 
 function getPaymentMethodsToNamesConfig() {
-  return Object.assign({
-    scheme: 'Credit Card',
-    pp: 'PayPal',
-    klarna: 'Klarna'
-  }, config.paymentMethodsToNames || {})
+  return Object.assign(
+    {
+      scheme: 'Credit Card',
+      pp: 'PayPal',
+      klarna: 'Klarna',
+    },
+    config.paymentMethodsToNames || {}
+  )
 }
 
 function loadAndValidateConfig() {
@@ -136,5 +139,5 @@ module.exports = {
   getAdyenConfig,
   getAllCtpProjectKeys,
   getAllAdyenMerchantAccounts,
-  getPaymentMethodsToNamesConfig
+  getPaymentMethodsToNamesConfig,
 }

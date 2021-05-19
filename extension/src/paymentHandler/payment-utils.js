@@ -69,10 +69,11 @@ function createSetCustomFieldAction(name, response) {
 
 function createSetMethodInfoMethodAction(paymentMethod) {
   const paymentMethodsToNames = getPaymentMethodsToNamesConfig()
-  const paymentMethodName = paymentMethodsToNames[paymentMethod] || paymentMethod
+  const paymentMethodName =
+    paymentMethodsToNames[paymentMethod] || paymentMethod
   return {
     action: 'setMethodInfoMethod',
-    method: paymentMethodName
+    method: paymentMethodName,
   }
 }
 
