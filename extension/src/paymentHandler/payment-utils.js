@@ -73,7 +73,7 @@ function createSetMethodInfoMethodAction(paymentMethod) {
     paymentMethodsToNames[paymentMethod] || paymentMethod
   return {
     action: 'setMethodInfoMethod',
-    method: paymentMethodName,
+    method: encodeURI(paymentMethodName),
   }
 }
 

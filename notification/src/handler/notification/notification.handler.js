@@ -348,7 +348,7 @@ function getAddTransactionUpdateAction({
 function getSetMethodInfoMethodAction(paymentMethod) {
   return {
     action: 'setMethodInfoMethod',
-    method: paymentMethod,
+    method: encodeURI(paymentMethod),
   }
 }
 
