@@ -38,6 +38,10 @@ Extension module requires 1 environment variable to start. This environment vari
     "adyenMerchantAccount2": {
       "apiKey": "xxx"
     }
+  },
+  "paymentMethodsToNamesConfig": {
+    "visa": "Credit card visa",
+    "gpay": "Google Pay"
   }
 }
 ```
@@ -125,6 +129,10 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 {
   "commercetools": {...},
   "adyen": {...},
+  "paymentMethodsToNamesConfig": {
+    "klarna": "Klarna payment",
+    "gpay": "Google Pay"
+  },
   "logLevel": "DEBUG",
   "port": 8080,
   "keepAliveTimeout": 10000,
@@ -132,12 +140,13 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 }
 ```
 
-| Name               | Content                                                                                                                                                       | Required | Default value               |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------- |
-| `port`             | The port number on which the application will run.                                                                                                            | NO       | 8080                        |
-| `logLevel`         | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                           | NO       | `info`                      |
-| `keepAliveTimeout` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)). | NO       | Node.js default (5 seconds) |
-| `basicAuth`        | Boolean attribute to enable/disable basic authentication to prevent unauthorized 3rd-party from accessing extension endpoint                                  | NO       | false                       |
+| Name                          | Content                                                                                                                                                                        | Required | Default value                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ----------------------------------------------------------- |
+| `paymentMethodsToNamesConfig` | Key-value object where key is `paymentMethod.type` in makePayment Adyen request and value is the customized name that will be saved in CTP `payment.paymentMethodInfo.method`. | NO       | `{ scheme: 'Credit Card', pp: 'PayPal', klarna: 'Klarna' }` |
+| `port`                        | The port number on which the application will run.                                                                                                                             | NO       | 8080                                                        |
+| `logLevel`                    | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                            | NO       | `info`                                                      |
+| `keepAliveTimeout`            | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                  | NO       | Node.js default (5 seconds)                                 |
+| `basicAuth`                   | Boolean attribute to enable/disable basic authentication to prevent unauthorized 3rd-party from accessing extension endpoint                                                   | NO       | false                                                       |
 
 ## Commercetools project requirements
 

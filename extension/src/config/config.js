@@ -83,14 +83,12 @@ function getAllAdyenMerchantAccounts() {
 }
 
 function getPaymentMethodsToNamesConfig() {
-  return Object.assign(
-    {
-      scheme: 'Credit Card',
-      pp: 'PayPal',
-      klarna: 'Klarna',
-    },
-    config.paymentMethodsToNames || {}
-  )
+  return {
+    scheme: 'Credit Card',
+    pp: 'PayPal',
+    klarna: 'Klarna',
+    ...(config.paymentMethodsToNames || {}),
+  }
 }
 
 function loadAndValidateConfig() {

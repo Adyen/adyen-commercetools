@@ -4,6 +4,7 @@ const { validateHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
 const { getNotificationForTracking } = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
+const { getPaymentMethodsToNamesConfig } = require('../../config/config')
 const mainLogger = require('../../utils/logger').getLogger()
 
 class CommercetoolsError extends Error {
@@ -160,6 +161,15 @@ function _obfuscateNotificationInfoFromActionFields(updateActions) {
   return copyOfUpdateActions
 }
 
+function getPaymentMethodName(notificationRequestItem) {
+  const paymentMethodFromNotification = notificationRequestItem.paymentMethod
+  const paymentMethodsToNames = getPaymentMethodsToNamesConfig()
+  return (
+    paymentMethodsToNames[paymentMethodFromNotification] ||
+    paymentMethodFromNotification
+  )
+}
+
 function calculateUpdateActionsForPayment(payment, notification) {
   const updateActions = []
   const notificationRequestItem = notification.NotificationRequestItem
@@ -204,7 +214,9 @@ function calculateUpdateActionsForPayment(payment, notification) {
       )
   }
   const paymentMethodFromPayment = payment.paymentMethodInfo.method
-  const paymentMethodFromNotification = notificationRequestItem.paymentMethod
+  const paymentMethodFromNotification = getPaymentMethodName(
+    notificationRequestItem
+  )
   if (
     paymentMethodFromNotification &&
     paymentMethodFromPayment !== paymentMethodFromNotification
