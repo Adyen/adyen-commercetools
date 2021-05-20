@@ -125,7 +125,7 @@ function _createShippingInfoAdyenLineItem(shippingInfo) {
 }
 
 function _getShippingMethodDescription(shippingInfo) {
-  const shippingMethod = shippingInfo.shippingMethod.obj
+  const shippingMethod = shippingInfo.shippingMethod?.obj
   if (shippingMethod) return shippingMethod.description
   return shippingInfo.shippingMethodName
 }
