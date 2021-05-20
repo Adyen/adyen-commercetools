@@ -58,6 +58,7 @@ function getPaymentMethodsToNamesConfig() {
     scheme: 'Credit Card',
     pp: 'PayPal',
     klarna: 'Klarna',
+    gpay: 'Google Pay',
     ...(config.paymentMethodsToNames || {}),
   }
 }
