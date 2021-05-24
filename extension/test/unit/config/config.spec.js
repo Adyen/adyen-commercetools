@@ -252,8 +252,8 @@ describe('::config::', () => {
   })
 
   it(
-    'when extra paymentMethodsToNames config is not provided, ' +
-      'it should return default paymentMethodsToNames config',
+    'when extra adyenPaymentMethodsToNames config is not provided, ' +
+      'it should return default adyenPaymentMethodsToNames config',
     () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
         commercetools: {
@@ -282,8 +282,8 @@ describe('::config::', () => {
   )
 
   it(
-    'when extra paymentMethodsToNames config is provided, ' +
-      'it should return merged paymentMethodsToNames config',
+    'when extra adyenPaymentMethodsToNames config is provided, ' +
+      'it should return merged adyenPaymentMethodsToNames config',
     () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
         commercetools: {
@@ -298,7 +298,7 @@ describe('::config::', () => {
             clientKey: 'clientKey',
           },
         },
-        paymentMethodsToNames: {
+        adyenPaymentMethodsToNames: {
           pp: { en: 'Paypal standard' },
           gpay: { en: 'Google pay' },
         },

@@ -337,7 +337,7 @@ describe('make-payment::execute', () => {
   )
 
   it(
-    'when payment method is not in the paymentMethodsToNames map, ' +
+    'when payment method is not in the adyenPaymentMethodsToNames map, ' +
       'then it should return setMethodInfoMethodAction with payment method name',
     async () => {
       scope.post('/payments').reply(200, paymentSuccessResponse)
@@ -356,6 +356,11 @@ describe('make-payment::execute', () => {
         (a) => a.action === 'setMethodInfoMethod'
       )
       expect(setMethodInfoMethod.method).to.equal('new payment method')
+
+      const setMethodInfoName = response.actions.find(
+        (a) => a.action === 'setMethodInfoName'
+      )
+      expect(setMethodInfoName).to.be.undefined
     }
   )
 

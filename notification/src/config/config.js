@@ -59,7 +59,7 @@ function getAdyenPaymentMethodsToNames() {
     pp: 'PayPal',
     klarna: 'Klarna',
     gpay: 'Google Pay',
-    ...(config.paymentMethodsToNames || {}),
+    ...(config.adyenPaymentMethodsToNames || {}),
   }
 }
 
