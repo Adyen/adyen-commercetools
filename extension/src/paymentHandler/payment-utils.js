@@ -68,13 +68,22 @@ function createSetCustomFieldAction(name, response) {
 }
 
 function createSetMethodInfoMethodAction(paymentMethod) {
-  const paymentMethodsToNames = getPaymentMethodsToNamesConfig()
-  const paymentMethodName =
-    paymentMethodsToNames[paymentMethod] || paymentMethod
   return {
     action: 'setMethodInfoMethod',
-    method: encodeURI(paymentMethodName),
+    method: paymentMethod,
   }
+}
+
+function createSetMethodInfoNameAction(paymentMethod) {
+  const paymentMethodsToLocalizedNames = getPaymentMethodsToNamesConfig()
+  const paymentMethodLocalizedNames =
+    paymentMethodsToLocalizedNames[paymentMethod]
+  if (paymentMethodLocalizedNames)
+    return {
+      action: 'setMethodInfoName',
+      name: paymentMethodLocalizedNames,
+    }
+  return null
 }
 
 function createChangeTransactionInteractionId(transactionId, interactionId) {
@@ -191,6 +200,7 @@ module.exports = {
   createAddTransactionAction,
   createAddTransactionActionByResponse,
   createSetMethodInfoMethodAction,
+  createSetMethodInfoNameAction,
   getLatestInterfaceInteraction,
   isValidJSON,
   isValidMetadata,

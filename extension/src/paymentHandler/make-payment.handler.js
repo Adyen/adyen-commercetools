@@ -14,7 +14,6 @@ async function execute(paymentObject) {
     commercetoolsProjectKey,
     makePaymentRequestObj
   )
-  const paymentMethod = request.paymentMethod?.type
   const actions = [
     pU.createAddInterfaceInteractionAction({
       request,
@@ -27,8 +26,12 @@ async function execute(paymentObject) {
     ),
   ]
 
-  if (paymentMethod)
+  const paymentMethod = request.paymentMethod?.type
+  if (paymentMethod) {
     actions.push(pU.createSetMethodInfoMethodAction(paymentMethod))
+    const action = pU.createSetMethodInfoNameAction(paymentMethod)
+    if (action) actions.push(action)
+  }
 
   const paymentKey = paymentObject.key
   // ensure the key is a string, otherwise the error with "code": "InvalidJsonInput" will return by commercetools API.

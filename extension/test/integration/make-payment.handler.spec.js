@@ -94,7 +94,8 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     expect(statusCode).to.equal(201)
 
     expect(payment.key).to.equal(reference)
-    expect(payment.paymentMethodInfo.method).to.equal('Credit Card')
+    expect(payment.paymentMethodInfo.method).to.equal('scheme')
+    expect(payment.paymentMethodInfo.name).to.eql({en:'Credit Card'})
 
     const interfaceInteraction = payment.interfaceInteractions.find(
       (interaction) =>

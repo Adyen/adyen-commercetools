@@ -1,14 +1,14 @@
 const _ = require('lodash')
-const { serializeError } = require('serialize-error')
-const { validateHmacSignature } = require('../../utils/hmacValidator')
+const {serializeError} = require('serialize-error')
+const {validateHmacSignature} = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
-const { getNotificationForTracking } = require('../../utils/commons')
+const {getNotificationForTracking} = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
-const { getPaymentMethodsToNamesConfig } = require('../../config/config')
+const {getPaymentMethodsToNamesConfig} = require('../../config/config')
 const mainLogger = require('../../utils/logger').getLogger()
 
 class CommercetoolsError extends Error {
-  constructor({ stack, message, statusCode }) {
+  constructor({stack, message, statusCode}) {
     super()
     this.stack = stack
     this.message = message
@@ -42,7 +42,7 @@ async function processNotification(
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
       logger.error(
-        { notification: getNotificationForTracking(notification) },
+        {notification: getNotificationForTracking(notification)},
         `HMAC validation failed. Reason: "${errorMessage}"`
       )
       return
@@ -56,7 +56,7 @@ async function processNotification(
   )
   if (merchantReference === null) {
     logger.error(
-      { notification: getNotificationForTracking(notification) },
+      {notification: getNotificationForTracking(notification)},
       "Can't extract merchantReference from the notification"
     )
     return
@@ -161,15 +161,6 @@ function _obfuscateNotificationInfoFromActionFields(updateActions) {
   return copyOfUpdateActions
 }
 
-function getPaymentMethodName(notificationRequestItem) {
-  const paymentMethodFromNotification = notificationRequestItem.paymentMethod
-  const paymentMethodsToNames = getPaymentMethodsToNamesConfig()
-  return (
-    paymentMethodsToNames[paymentMethodFromNotification] ||
-    paymentMethodFromNotification
-  )
-}
-
 function calculateUpdateActionsForPayment(payment, notification) {
   const updateActions = []
   const notificationRequestItem = notification.NotificationRequestItem
@@ -188,7 +179,7 @@ function calculateUpdateActionsForPayment(payment, notification) {
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
-    const { pspReference } = notificationRequestItem
+    const {pspReference} = notificationRequestItem
     const oldTransaction = _.find(
       payment.transactions,
       (transaction) => transaction.interactionId === pspReference
@@ -214,16 +205,19 @@ function calculateUpdateActionsForPayment(payment, notification) {
       )
   }
   const paymentMethodFromPayment = payment.paymentMethodInfo.method
-  const paymentMethodFromNotification = getPaymentMethodName(
-    notificationRequestItem
-  )
+  const paymentMethodFromNotification = notificationRequestItem.paymentMethod
   if (
     paymentMethodFromNotification &&
     paymentMethodFromPayment !== paymentMethodFromNotification
-  )
+  ) {
     updateActions.push(
       getSetMethodInfoMethodAction(paymentMethodFromNotification)
     )
+    const action = getSetMethodInfoNameAction(paymentMethodFromNotification)
+    if (action)
+      updateActions.push(action)
+  }
+
   return updateActions
 }
 
@@ -325,12 +319,12 @@ function getTransactionTypeAndStateOrNull(notificationRequestItem) {
 }
 
 function getAddTransactionUpdateAction({
-  type,
-  state,
-  amount,
-  currency,
-  interactionId,
-}) {
+                                         type,
+                                         state,
+                                         amount,
+                                         currency,
+                                         interactionId,
+                                       }) {
   return {
     action: 'addTransaction',
     transaction: {
@@ -348,8 +342,19 @@ function getAddTransactionUpdateAction({
 function getSetMethodInfoMethodAction(paymentMethod) {
   return {
     action: 'setMethodInfoMethod',
-    method: encodeURI(paymentMethod),
+    method: paymentMethod,
   }
+}
+
+function getSetMethodInfoNameAction(paymentMethod) {
+  const paymentMethodsToLocalizedNames = getPaymentMethodsToNamesConfig()
+  const paymentMethodLocalizedNames = paymentMethodsToLocalizedNames[paymentMethod]
+  if (paymentMethodLocalizedNames)
+    return {
+      action: 'setMethodInfoName',
+      name: paymentMethodLocalizedNames,
+    }
+  return null
 }
 
 async function getPaymentByMerchantReference(merchantReference, ctpClient) {
@@ -372,4 +377,4 @@ async function getPaymentByMerchantReference(merchantReference, ctpClient) {
   }
 }
 
-module.exports = { processNotification }
+module.exports = {processNotification}

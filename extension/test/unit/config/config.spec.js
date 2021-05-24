@@ -273,9 +273,10 @@ describe('::config::', () => {
       const config = requireUncached('../../../src/config/config')
 
       expect(config.getPaymentMethodsToNamesConfig()).to.eql({
-        scheme: 'Credit Card',
-        pp: 'PayPal',
-        klarna: 'Klarna',
+        scheme: { en: 'Credit Card' },
+        pp: { en: 'PayPal' },
+        klarna: { en: 'Klarna' },
+        gpay: { en: 'Google Pay' },
       })
     }
   )
@@ -298,18 +299,18 @@ describe('::config::', () => {
           },
         },
         paymentMethodsToNames: {
-          pp: 'Paypal standard',
-          gpay: 'Google pay',
+          pp: { en: 'Paypal standard' },
+          gpay: { en: 'Google pay' },
         },
         logLevel: 'DEBUG',
       })
       const config = requireUncached('../../../src/config/config')
 
       expect(config.getPaymentMethodsToNamesConfig()).to.eql({
-        scheme: 'Credit Card',
-        pp: 'Paypal standard',
-        klarna: 'Klarna',
-        gpay: 'Google pay',
+        scheme: { en: 'Credit Card' },
+        pp: { en: 'Paypal standard' },
+        klarna: { en: 'Klarna' },
+        gpay: { en: 'Google pay' },
       })
     }
   )

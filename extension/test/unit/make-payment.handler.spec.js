@@ -68,12 +68,17 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(5)
+      expect(response.actions).to.have.lengthOf(6)
 
       const setMethodInfoMethod = response.actions.find(
         (a) => a.action === 'setMethodInfoMethod'
       )
-      expect(setMethodInfoMethod.method).to.equal('Credit Card')
+      expect(setMethodInfoMethod.method).to.equal('scheme')
+
+      const setMethodInfoName = response.actions.find(
+        (a) => a.action === 'setMethodInfoName'
+      )
+      expect(setMethodInfoName.name).to.eql({ en: 'Credit Card' })
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -131,7 +136,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(5)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -179,7 +184,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(5)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -228,7 +233,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(5)
+      expect(response.actions).to.have.lengthOf(6)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -287,7 +292,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(5)
+      expect(response.actions).to.have.lengthOf(6)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'

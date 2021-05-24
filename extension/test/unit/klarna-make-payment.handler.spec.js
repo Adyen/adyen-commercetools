@@ -49,7 +49,7 @@ describe('klarna-make-payment::execute', () => {
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
 
       const response = await execute(ctpPaymentClone)
-      expect(response.actions).to.have.lengthOf(5)
+      expect(response.actions).to.have.lengthOf(6)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
@@ -68,7 +68,12 @@ describe('klarna-make-payment::execute', () => {
       const setMethodInfoMethod = response.actions.find(
         (a) => a.action === 'setMethodInfoMethod'
       )
-      expect(setMethodInfoMethod.method).to.equal('Klarna')
+      expect(setMethodInfoMethod.method).to.equal('klarna')
+
+      const setMethodInfoName = response.actions.find(
+        (a) => a.action === 'setMethodInfoName'
+      )
+      expect(setMethodInfoName.name).to.eql({ en: 'Klarna' })
 
       const ctpShippingInfo = ctpCart.shippingInfo
       const adyenShippingInfo = makePaymentRequestInteraction.lineItems.find(
@@ -106,7 +111,7 @@ describe('klarna-make-payment::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
-      expect(response.actions).to.have.lengthOf(5)
+      expect(response.actions).to.have.lengthOf(6)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
