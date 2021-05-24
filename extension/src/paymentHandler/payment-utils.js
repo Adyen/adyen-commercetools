@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const c = require('../config/constants')
-const { getPaymentMethodsToNamesConfig } = require('../config/config')
+const { getAdyenPaymentMethodsToNames } = require('../config/config')
 
 function getAuthorizationTransactionSuccess(paymentObject) {
   return getTransactionWithTypesAndStates(
@@ -75,7 +75,7 @@ function createSetMethodInfoMethodAction(paymentMethod) {
 }
 
 function createSetMethodInfoNameAction(paymentMethod) {
-  const paymentMethodsToLocalizedNames = getPaymentMethodsToNamesConfig()
+  const paymentMethodsToLocalizedNames = getAdyenPaymentMethodsToNames()
   const paymentMethodLocalizedNames =
     paymentMethodsToLocalizedNames[paymentMethod]
   if (paymentMethodLocalizedNames)

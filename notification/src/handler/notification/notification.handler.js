@@ -4,7 +4,7 @@ const {validateHmacSignature} = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
 const {getNotificationForTracking} = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
-const {getPaymentMethodsToNamesConfig} = require('../../config/config')
+const {getAdyenPaymentMethodsToNames} = require('../../config/config')
 const mainLogger = require('../../utils/logger').getLogger()
 
 class CommercetoolsError extends Error {
@@ -347,7 +347,7 @@ function getSetMethodInfoMethodAction(paymentMethod) {
 }
 
 function getSetMethodInfoNameAction(paymentMethod) {
-  const paymentMethodsToLocalizedNames = getPaymentMethodsToNamesConfig()
+  const paymentMethodsToLocalizedNames = getAdyenPaymentMethodsToNames()
   const paymentMethodLocalizedNames = paymentMethodsToLocalizedNames[paymentMethod]
   if (paymentMethodLocalizedNames)
     return {

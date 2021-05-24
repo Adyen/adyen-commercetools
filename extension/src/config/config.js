@@ -82,7 +82,7 @@ function getAllAdyenMerchantAccounts() {
   return Object.keys(config.adyen)
 }
 
-function getPaymentMethodsToNamesConfig() {
+function getAdyenPaymentMethodsToNames() {
   return {
     scheme: { en: 'Credit Card' },
     pp: { en: 'PayPal' },
@@ -138,5 +138,5 @@ module.exports = {
   getAdyenConfig,
   getAllCtpProjectKeys,
   getAllAdyenMerchantAccounts,
-  getPaymentMethodsToNamesConfig,
+  getAdyenPaymentMethodsToNames,
 }

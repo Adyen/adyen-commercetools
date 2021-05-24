@@ -272,7 +272,7 @@ describe('::config::', () => {
       })
       const config = requireUncached('../../../src/config/config')
 
-      expect(config.getPaymentMethodsToNamesConfig()).to.eql({
+      expect(config.getAdyenPaymentMethodsToNames()).to.eql({
         scheme: { en: 'Credit Card' },
         pp: { en: 'PayPal' },
         klarna: { en: 'Klarna' },
@@ -306,7 +306,7 @@ describe('::config::', () => {
       })
       const config = requireUncached('../../../src/config/config')
 
-      expect(config.getPaymentMethodsToNamesConfig()).to.eql({
+      expect(config.getAdyenPaymentMethodsToNames()).to.eql({
         scheme: { en: 'Credit Card' },
         pp: { en: 'Paypal standard' },
         klarna: { en: 'Klarna' },
