@@ -57,9 +57,6 @@ describe('::creditCardPayment::', () => {
           )
 
           const browserTab = await browser.newPage()
-          await browserTab.setExtraHTTPHeaders({
-            'Bypass-Tunnel-Reminder': 'true',
-          })
 
           const paymentAfterMakePayment = await makePayment({
             browserTab,
