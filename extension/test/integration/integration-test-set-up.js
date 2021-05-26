@@ -23,20 +23,6 @@ const logger = require('../../src/utils').getLogger()
 
 let tunnel
 let server
-let originalGetCtpConfigFn
-function addAuthConfig(authentication) {
-  originalGetCtpConfigFn = config.getCtpConfig
-  config.getCtpConfig = function getCtpConfig(ctpProjectKeyParam) {
-    const ctpConfig = originalGetCtpConfigFn(ctpProjectKeyParam)
-    ctpConfig.authentication = {
-      scheme: authentication.scheme,
-      username: authentication.username,
-      password: authentication.password,
-    }
-    return ctpConfig
-  }
-  module.exports = config
-}
 
 function overrideBasicAuthFlag(isEnable) {
   const moduleConfig = config.getModuleConfig()
@@ -385,11 +371,6 @@ async function stopRunningServers() {
   await tunnel.close()
 }
 
-async function restoreCtpConfig() {
-  config.getCtpConfig = originalGetCtpConfigFn
-  module.exports = config
-}
-
 module.exports = {
   initServerAndExtension,
   stopRunningServers,
@@ -397,7 +378,5 @@ module.exports = {
   cleanupCtpResources,
   initServer,
   initExtension,
-  addAuthConfig,
-  restoreCtpConfig,
   overrideBasicAuthFlag,
 }
