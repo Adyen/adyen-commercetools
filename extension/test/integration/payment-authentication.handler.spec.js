@@ -6,7 +6,11 @@ const constants = require('../../src/config/constants')
 const iTSetUp = require('./integration-test-set-up')
 const auth = require('../../src/validator/authentication')
 
-describe(':: Test case for make-payment request with authentication process enabled ::', () => {
+/**
+ * This test is not possible to run as we need to update API extensions in this test
+ * and extension update is now eventually consistent
+ */
+xdescribe(':: Test case for make-payment request with authentication process enabled ::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
   const [
     adyenMerchantAccount1,
