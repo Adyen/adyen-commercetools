@@ -42,15 +42,6 @@ function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   module.exports = config
 }
 
-async function initServerAndExtension({
-  ctpClient,
-  ctpProjectKey,
-  authHeaderValue,
-}) {
-  await initServer()
-  await initExtension(ctpClient, ctpProjectKey, authHeaderValue)
-}
-
 async function initTunnel(port) {
   let repeaterCounter = 0
   // eslint-disable-next-line no-shadow
@@ -71,7 +62,7 @@ async function initTunnel(port) {
   return tunnel
 }
 
-async function initServer() {
+async function initServerAndTunnel() {
   const port = config.getModuleConfig().port || 8000
   server = serverBuilder.setupServer(routes)
   tunnel = await initTunnel(port)
@@ -372,11 +363,10 @@ async function stopRunningServers() {
 }
 
 module.exports = {
-  initServerAndExtension,
   stopRunningServers,
   initPaymentWithCart,
   cleanupCtpResources,
-  initServer,
+  initServerAndTunnel,
   initExtension,
   overrideBasicAuthFlag,
 }

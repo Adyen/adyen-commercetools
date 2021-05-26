@@ -4,7 +4,7 @@ const config = require('../src/config/config')
 const { deleteAllResources } = require('./test-utils')
 
 before(async () => {
-  await iTSetUp.initServer()
+  await iTSetUp.initServerAndTunnel()
   const ctpProjectKeys = config.getAllCtpProjectKeys()
   await Promise.all(
     ctpProjectKeys.map(async (ctpProjectKey) => {
