@@ -68,7 +68,17 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(6)
+
+      const setMethodInfoMethod = response.actions.find(
+        (a) => a.action === 'setMethodInfoMethod'
+      )
+      expect(setMethodInfoMethod.method).to.equal('scheme')
+
+      const setMethodInfoName = response.actions.find(
+        (a) => a.action === 'setMethodInfoName'
+      )
+      expect(setMethodInfoName.name).to.eql({ en: 'Credit Card' })
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -126,7 +136,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(5)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -174,7 +184,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(5)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -223,7 +233,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(6)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -282,7 +292,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(6)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -323,6 +333,57 @@ describe('make-payment::execute', () => {
       expect(addTransaction.transaction.interactionId).to.equal(
         JSON.parse(paymentErrorResponse).pspReference
       )
+    }
+  )
+
+  it(
+    'when payment method is not in the adyenPaymentMethodsToNames map, ' +
+      'then it should return setMethodInfoMethodAction with payment method name',
+    async () => {
+      scope.post('/payments').reply(200, paymentSuccessResponse)
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      const makePaymentRequestClone = _.cloneDeep(makePaymentRequest)
+      makePaymentRequestClone.paymentMethod.type = 'new payment method'
+      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
+        makePaymentRequestClone
+      )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
+      const response = await execute(ctpPaymentClone)
+
+      const setMethodInfoMethod = response.actions.find(
+        (a) => a.action === 'setMethodInfoMethod'
+      )
+      expect(setMethodInfoMethod.method).to.equal('new payment method')
+
+      const setMethodInfoName = response.actions.find(
+        (a) => a.action === 'setMethodInfoName'
+      )
+      expect(setMethodInfoName).to.be.undefined
+    }
+  )
+
+  it(
+    'when payment method is null, ' +
+      'then it should not return setMethodInfoMethodAction action',
+    async () => {
+      scope.post('/payments').reply(200, paymentSuccessResponse)
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      const makePaymentRequestClone = _.cloneDeep(makePaymentRequest)
+      delete makePaymentRequestClone.paymentMethod.type
+      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
+        makePaymentRequestClone
+      )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
+      const response = await execute(ctpPaymentClone)
+
+      const setMethodInfoMethod = response.actions.find(
+        (a) => a.action === 'setMethodInfoMethod'
+      )
+      expect(setMethodInfoMethod).to.be.undefined
     }
   )
 })

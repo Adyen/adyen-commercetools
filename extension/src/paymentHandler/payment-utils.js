@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const c = require('../config/constants')
+const { getAdyenPaymentMethodsToNames } = require('../config/config')
 
 function getAuthorizationTransactionSuccess(paymentObject) {
   return getTransactionWithTypesAndStates(
@@ -64,6 +65,25 @@ function createSetCustomFieldAction(name, response) {
     name,
     value: JSON.stringify(response),
   }
+}
+
+function createSetMethodInfoMethodAction(paymentMethod) {
+  return {
+    action: 'setMethodInfoMethod',
+    method: paymentMethod,
+  }
+}
+
+function createSetMethodInfoNameAction(paymentMethod) {
+  const paymentMethodsToLocalizedNames = getAdyenPaymentMethodsToNames()
+  const paymentMethodLocalizedNames =
+    paymentMethodsToLocalizedNames[paymentMethod]
+  if (paymentMethodLocalizedNames)
+    return {
+      action: 'setMethodInfoName',
+      name: paymentMethodLocalizedNames,
+    }
+  return null
 }
 
 function createChangeTransactionInteractionId(transactionId, interactionId) {
@@ -179,6 +199,8 @@ module.exports = {
   createChangeTransactionInteractionId,
   createAddTransactionAction,
   createAddTransactionActionByResponse,
+  createSetMethodInfoMethodAction,
+  createSetMethodInfoNameAction,
   getLatestInterfaceInteraction,
   isValidJSON,
   isValidMetadata,

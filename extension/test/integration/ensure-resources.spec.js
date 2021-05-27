@@ -24,23 +24,24 @@ describe('::ensure-resources::', () => {
     await iTSetUp.cleanupCtpResources(ctpClient)
   })
 
-  it('should ensure resources', async () => {
-    // create resources
-    await ensureResources(
-      ctpClient,
-      commercetoolsProjectKey,
-      'http://example.com'
+  it('should ensure types', async () => {
+    const {
+      body: {
+        destination: { url },
+      },
+    } = await ctpClient.fetchByKey(
+      ctpClient.builder.extensions,
+      apiExtensionTemplate.key
     )
+
+    // create resources
+    await ensureResources(ctpClient, commercetoolsProjectKey, url)
 
     // update some fields to ensure sync is working as expected
     await updateTypes()
 
     // sync
-    await ensureResources(
-      ctpClient,
-      commercetoolsProjectKey,
-      'http://example.net'
-    )
+    await ensureResources(ctpClient, commercetoolsProjectKey, url)
 
     // ensure sync is working as expected
     await ensureSynced()
@@ -144,16 +145,5 @@ describe('::ensure-resources::', () => {
     expect(
       existingInterfaceType.fieldDefinitions.map((def) => def.name)
     ).to.not.have.members(['customFieldOfUser'])
-
-    const {
-      body: {
-        destination: { url },
-      },
-    } = await ctpClient.fetchByKey(
-      ctpClient.builder.extensions,
-      apiExtensionTemplate.key
-    )
-
-    expect(url).to.be.equal('http://example.net')
   }
 })
