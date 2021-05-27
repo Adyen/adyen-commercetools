@@ -38,6 +38,10 @@ Extension module requires 1 environment variable to start. This environment vari
     "adyenMerchantAccount2": {
       "apiKey": "xxx"
     }
+  },
+  "adyenPaymentMethodsToNames": {
+    "visa": { "en": "Credit card visa" },
+    "gpay": { "en": "Google Pay" }
   }
 }
 ```
@@ -125,6 +129,10 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 {
   "commercetools": {...},
   "adyen": {...},
+  "adyenPaymentMethodsToNames": {
+    "klarna": {"en": "Klarna payment"},
+    "gpay": {"en": "Google Pay"}
+  },
   "logLevel": "DEBUG",
   "port": 8080,
   "keepAliveTimeout": 10000,
@@ -132,12 +140,13 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 }
 ```
 
-| Name               | Content                                                                                                                                                       | Required | Default value               |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------- |
-| `port`             | The port number on which the application will run.                                                                                                            | NO       | 8080                        |
-| `logLevel`         | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                           | NO       | `info`                      |
-| `keepAliveTimeout` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)). | NO       | Node.js default (5 seconds) |
-| `basicAuth`        | Boolean attribute to enable/disable basic authentication to prevent unauthorized 3rd-party from accessing extension endpoint                                  | NO       | false                       |
+| Name                         | Content                                                                                                                                                                            | Required | Default value                                                                                         |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
+| `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod.type` in makePayment Adyen request and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.name`. | NO       | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}}` |
+| `port`                       | The port number on which the application will run.                                                                                                                                 | NO       | 8080                                                                                                  |
+| `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                | NO       | `info`                                                                                                |
+| `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                      | NO       | Node.js default (5 seconds)                                                                           |
+| `basicAuth`                  | Boolean attribute to enable/disable basic authentication to prevent unauthorized 3rd-party from accessing extension endpoint                                                       | NO       | false                                                                                                 |
 
 ## Commercetools project requirements
 
