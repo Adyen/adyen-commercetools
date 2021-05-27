@@ -166,16 +166,16 @@ function calculateUpdateActionsForPayment(payment, notification) {
   const notificationRequestItem = notification.NotificationRequestItem
   const stringifiedNotification = JSON.stringify(notification)
   // check if the interfaceInteraction is already on payment or not
-  const isNotificationInInterfaceInteraction = payment.interfaceInteractions.some(
-    (interaction) => interaction.fields.notification === stringifiedNotification
-  )
+  const isNotificationInInterfaceInteraction =
+    payment.interfaceInteractions.some(
+      (interaction) =>
+        interaction.fields.notification === stringifiedNotification
+    )
   if (isNotificationInInterfaceInteraction === false)
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
 
-  const {
-    transactionType,
-    transactionState,
-  } = getTransactionTypeAndStateOrNull(notificationRequestItem)
+  const { transactionType, transactionState } =
+    getTransactionTypeAndStateOrNull(notificationRequestItem)
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`

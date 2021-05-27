@@ -30,13 +30,12 @@ async function execute(paymentObject) {
         commercetoolsProjectKey,
         refundRequestObjects
       )
-      const addInterfaceInteractionAction = pU.createAddInterfaceInteractionAction(
-        {
+      const addInterfaceInteractionAction =
+        pU.createAddInterfaceInteractionAction({
           request,
           response,
           type: CTP_INTERACTION_TYPE_REFUND,
-        }
-      )
+        })
       actions.push(addInterfaceInteractionAction)
       if (!response.errorCode && response.pspReference) {
         actions.push(
