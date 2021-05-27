@@ -16,12 +16,10 @@ const ctpDiscountCodeMultiBuy = require('./fixtures/ctp-discount-code-multi-buy'
 const ctpDiscountCodeShipping = require('./fixtures/ctp-discount-code-shipping')
 const serverBuilder = require('../../src/server')
 const { routes } = require('../../src/routes')
+const { ensureResources } = require('../../src/config/init/ensure-resources')
 const config = require('../../src/config/config')
 const testUtils = require('../test-utils')
 const logger = require('../../src/utils').getLogger()
-const {
-  ensureApiExtensions,
-} = require('../../src/config/init/ensure-api-extensions')
 
 let tunnel
 let server
@@ -81,10 +79,12 @@ async function initServerAndTunnel() {
   })
 }
 
-async function initExtension(ctpClient, ctpProjectKey, authHeaderValue) {
+async function initResources(ctpClient, ctpProjectKey, authHeaderValue) {
+  await testUtils.deleteAllResources(ctpClient, 'payments')
+  await testUtils.deleteAllResources(ctpClient, 'types')
   await testUtils.deleteAllResources(ctpClient, 'extensions')
   const { apiExtensionBaseUrl } = config.getModuleConfig()
-  await ensureApiExtensions(
+  await ensureResources(
     ctpClient,
     ctpProjectKey,
     apiExtensionBaseUrl,
@@ -367,6 +367,6 @@ module.exports = {
   initPaymentWithCart,
   cleanupCtpResources,
   initServerAndTunnel,
-  initExtension,
+  initResources,
   overrideBasicAuthFlag,
 }

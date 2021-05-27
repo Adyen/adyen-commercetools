@@ -10,7 +10,7 @@ before(async () => {
       const ctpConfig = config.getCtpConfig(ctpProjectKey)
       const ctpClient = ctpClientBuilder.get(ctpConfig)
       await iTSetUp.cleanupCtpResources(ctpClient)
-      await iTSetUp.initExtension(ctpClient, ctpProjectKey)
+      await iTSetUp.initResources(ctpClient, ctpProjectKey)
     })
   )
 })
