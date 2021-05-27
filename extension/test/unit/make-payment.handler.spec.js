@@ -61,9 +61,8 @@ describe('make-payment::execute', () => {
       scope.post('/payments').reply(200, paymentSuccessResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        makePaymentRequest
-      )
+      ctpPaymentClone.custom.fields.makePaymentRequest =
+        JSON.stringify(makePaymentRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
@@ -129,9 +128,8 @@ describe('make-payment::execute', () => {
       scope.post('/payments').reply(200, paymentRedirectResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        makePaymentRequest
-      )
+      ctpPaymentClone.custom.fields.makePaymentRequest =
+        JSON.stringify(makePaymentRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
@@ -177,9 +175,8 @@ describe('make-payment::execute', () => {
       scope.post('/payments').reply(422, paymentValidationFailedResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        makePaymentRequest
-      )
+      ctpPaymentClone.custom.fields.makePaymentRequest =
+        JSON.stringify(makePaymentRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
@@ -226,9 +223,8 @@ describe('make-payment::execute', () => {
       scope.post('/payments').reply(422, paymentRefusedResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        makePaymentRequest
-      )
+      ctpPaymentClone.custom.fields.makePaymentRequest =
+        JSON.stringify(makePaymentRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
@@ -285,9 +281,8 @@ describe('make-payment::execute', () => {
       scope.post('/payments').reply(422, paymentErrorResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        makePaymentRequest
-      )
+      ctpPaymentClone.custom.fields.makePaymentRequest =
+        JSON.stringify(makePaymentRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)

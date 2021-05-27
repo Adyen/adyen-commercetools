@@ -77,10 +77,8 @@ describe('::getPaymentMethods::', () => {
       }
       expect(statusCode).to.equal(201)
 
-      const {
-        getPaymentMethodsRequest,
-        getPaymentMethodsResponse,
-      } = payment.custom.fields
+      const { getPaymentMethodsRequest, getPaymentMethodsResponse } =
+        payment.custom.fields
       expect(getPaymentMethodsRequest).to.be.deep.equal(
         JSON.stringify(getPaymentMethodsRequestDraft)
       )
@@ -166,10 +164,8 @@ describe('::getPaymentMethods::', () => {
       }
       expect(statusCode).to.equal(201)
 
-      const {
-        getPaymentMethodsRequest,
-        getPaymentMethodsResponse,
-      } = payment.custom.fields
+      const { getPaymentMethodsRequest, getPaymentMethodsResponse } =
+        payment.custom.fields
       expect(getPaymentMethodsRequest).to.be.deep.equal(
         JSON.stringify(getPaymentMethodsRequestDraft)
       )

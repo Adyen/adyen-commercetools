@@ -46,7 +46,8 @@ describe('klarna-make-payment::execute', () => {
         klarnaMakePaymentRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-      ctpPaymentClone.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey =
+        commercetoolsProjectKey
 
       const response = await execute(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf(6)

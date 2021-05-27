@@ -7,10 +7,8 @@ const iTSetUp = require('./integration-test-set-up')
 
 describe('::make-payment with multiple adyen accounts use case::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
-  const [
-    adyenMerchantAccount1,
-    adyenMerchantAccount2,
-  ] = config.getAllAdyenMerchantAccounts()
+  const [adyenMerchantAccount1, adyenMerchantAccount2] =
+    config.getAllAdyenMerchantAccounts()
 
   let ctpClient
 
