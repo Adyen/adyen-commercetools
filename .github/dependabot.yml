@@ -1,0 +1,19 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/extension"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: nock
+    versions:
+    - 13.0.10
+    - 13.0.9
+- package-ecosystem: npm
+  directory: "/notification"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
