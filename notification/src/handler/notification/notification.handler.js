@@ -4,6 +4,7 @@ const { validateHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
 const { getNotificationForTracking } = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
+const { getAdyenPaymentMethodsToNames } = require('../../config/config')
 const mainLogger = require('../../utils/logger').getLogger()
 
 class CommercetoolsError extends Error {
@@ -203,6 +204,19 @@ function calculateUpdateActionsForPayment(payment, notification) {
         )
       )
   }
+  const paymentMethodFromPayment = payment.paymentMethodInfo.method
+  const paymentMethodFromNotification = notificationRequestItem.paymentMethod
+  if (
+    paymentMethodFromNotification &&
+    paymentMethodFromPayment !== paymentMethodFromNotification
+  ) {
+    updateActions.push(
+      getSetMethodInfoMethodAction(paymentMethodFromNotification)
+    )
+    const action = getSetMethodInfoNameAction(paymentMethodFromNotification)
+    if (action) updateActions.push(action)
+  }
+
   return updateActions
 }
 
@@ -322,6 +336,25 @@ function getAddTransactionUpdateAction({
       interactionId,
     },
   }
+}
+
+function getSetMethodInfoMethodAction(paymentMethod) {
+  return {
+    action: 'setMethodInfoMethod',
+    method: paymentMethod,
+  }
+}
+
+function getSetMethodInfoNameAction(paymentMethod) {
+  const paymentMethodsToLocalizedNames = getAdyenPaymentMethodsToNames()
+  const paymentMethodLocalizedNames =
+    paymentMethodsToLocalizedNames[paymentMethod]
+  if (paymentMethodLocalizedNames)
+    return {
+      action: 'setMethodInfoName',
+      name: paymentMethodLocalizedNames,
+    }
+  return null
 }
 
 async function getPaymentByMerchantReference(merchantReference, ctpClient) {

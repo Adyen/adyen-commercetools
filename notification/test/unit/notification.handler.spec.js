@@ -65,6 +65,7 @@ describe('notification module', () => {
       },
     ]
     const payment = cloneDeep(paymentMock)
+    payment.paymentMethodInfo.method = 'scheme'
     payment.transactions.push({
       id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
       type: 'Authorization',
@@ -108,6 +109,10 @@ describe('notification module', () => {
         action: 'changeTransactionState',
         state: 'Success',
         transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      },
+      {
+        action: 'setMethodInfoMethod',
+        method: 'visa',
       },
     ]
 
