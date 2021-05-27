@@ -250,4 +250,68 @@ describe('::config::', () => {
       )
     }
   })
+
+  it(
+    'when extra adyenPaymentMethodsToNames config is not provided, ' +
+      'it should return default adyenPaymentMethodsToNames config',
+    () => {
+      process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+        commercetools: {
+          ctpProjectKey1: {
+            clientId: 'clientId',
+            clientSecret: 'clientSecret',
+          },
+        },
+        adyen: {
+          adyenMerchantAccount1: {
+            apiKey: 'apiKey',
+            clientKey: 'clientKey',
+          },
+        },
+        logLevel: 'DEBUG',
+      })
+      const config = requireUncached('../../../src/config/config')
+
+      expect(config.getAdyenPaymentMethodsToNames()).to.eql({
+        scheme: { en: 'Credit Card' },
+        pp: { en: 'PayPal' },
+        klarna: { en: 'Klarna' },
+        gpay: { en: 'Google Pay' },
+      })
+    }
+  )
+
+  it(
+    'when extra adyenPaymentMethodsToNames config is provided, ' +
+      'it should return merged adyenPaymentMethodsToNames config',
+    () => {
+      process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+        commercetools: {
+          ctpProjectKey1: {
+            clientId: 'clientId',
+            clientSecret: 'clientSecret',
+          },
+        },
+        adyen: {
+          adyenMerchantAccount1: {
+            apiKey: 'apiKey',
+            clientKey: 'clientKey',
+          },
+        },
+        adyenPaymentMethodsToNames: {
+          pp: { en: 'Paypal standard' },
+          gpay: { en: 'Google pay' },
+        },
+        logLevel: 'DEBUG',
+      })
+      const config = requireUncached('../../../src/config/config')
+
+      expect(config.getAdyenPaymentMethodsToNames()).to.eql({
+        scheme: { en: 'Credit Card' },
+        pp: { en: 'Paypal standard' },
+        klarna: { en: 'Klarna' },
+        gpay: { en: 'Google pay' },
+      })
+    }
+  )
 })

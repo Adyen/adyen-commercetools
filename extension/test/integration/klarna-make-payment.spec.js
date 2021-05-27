@@ -18,23 +18,18 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
   let ctpClientProject2
 
   beforeEach(async () => {
-    await iTSetUp.initServer()
     const ctpConfig1 = config.getCtpConfig(commercetoolsProjectKey1)
     ctpClientProject1 = ctpClientBuilder.get(ctpConfig1)
 
     await iTSetUp.cleanupCtpResources(ctpClientProject1)
-    await iTSetUp.initExtension(ctpClientProject1, ctpConfig1.projectKey)
 
     const ctpConfig2 = config.getCtpConfig(commercetoolsProjectKey2)
     ctpClientProject2 = ctpClientBuilder.get(ctpConfig2)
 
     await iTSetUp.cleanupCtpResources(ctpClientProject2)
-    await iTSetUp.initExtension(ctpClientProject2, ctpConfig2.projectKey)
   })
 
   afterEach(async () => {
-    await iTSetUp.stopRunningServers()
-
     await iTSetUp.cleanupCtpResources(ctpClientProject1)
     await iTSetUp.cleanupCtpResources(ctpClientProject2)
   })

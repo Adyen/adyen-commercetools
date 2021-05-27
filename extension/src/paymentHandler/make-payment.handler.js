@@ -26,6 +26,13 @@ async function execute(paymentObject) {
     ),
   ]
 
+  const paymentMethod = request.paymentMethod?.type
+  if (paymentMethod) {
+    actions.push(pU.createSetMethodInfoMethodAction(paymentMethod))
+    const action = pU.createSetMethodInfoNameAction(paymentMethod)
+    if (action) actions.push(action)
+  }
+
   const paymentKey = paymentObject.key
   // ensure the key is a string, otherwise the error with "code": "InvalidJsonInput" will return by commercetools API.
   const reference = request.reference.toString()

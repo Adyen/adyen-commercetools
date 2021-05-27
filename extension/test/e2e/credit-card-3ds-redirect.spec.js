@@ -1,4 +1,3 @@
-const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const { routes } = require('../../src/routes')
@@ -58,15 +57,10 @@ describe('::creditCardPayment3dsRedirect::', () => {
 
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
-    await iTSetUp.initServerAndExtension({
-      ctpClient,
-      ctpProjectKey: ctpConfig.projectKey,
-    })
     browser = await initPuppeteerBrowser()
   })
 
   afterEach(async () => {
-    await iTSetUp.stopRunningServers()
     await browser.close()
   })
 

@@ -21,14 +21,9 @@ describe('::refund::', () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.cleanupCtpResources(ctpClient)
-    await iTSetUp.initServerAndExtension({
-      ctpClient,
-      ctpProjectKey: ctpConfig.projectKey,
-    })
   })
 
   afterEach(async () => {
-    await iTSetUp.stopRunningServers()
     await iTSetUp.cleanupCtpResources(ctpClient)
   })
 

@@ -53,6 +53,16 @@ function getAllAdyenMerchantAccounts() {
   return Object.keys(config.adyen)
 }
 
+function getAdyenPaymentMethodsToNames() {
+  return {
+    scheme: 'Credit Card',
+    pp: 'PayPal',
+    klarna: 'Klarna',
+    gpay: 'Google Pay',
+    ...(config.adyenPaymentMethodsToNames || {}),
+  }
+}
+
 function loadAndValidateConfig() {
   try {
     config = JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
@@ -105,4 +115,5 @@ module.exports = {
   getAdyenConfig,
   getAllCtpProjectKeys,
   getAllAdyenMerchantAccounts,
+  getAdyenPaymentMethodsToNames,
 }
