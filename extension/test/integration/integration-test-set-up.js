@@ -82,7 +82,6 @@ async function initServerAndTunnel() {
 async function initResources(ctpClient, ctpProjectKey, authHeaderValue) {
   await testUtils.deleteAllResources(ctpClient, 'payments')
   await testUtils.deleteAllResources(ctpClient, 'types')
-  await testUtils.deleteAllResources(ctpClient, 'extensions')
   const { apiExtensionBaseUrl } = config.getModuleConfig()
   await ensureResources(
     ctpClient,
