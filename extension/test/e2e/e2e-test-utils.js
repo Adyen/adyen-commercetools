@@ -47,7 +47,8 @@ function assertPayment(
   finalAdyenPaymentInteractionName = 'submitAdditionalPaymentDetails'
 ) {
   const {
-    [`${finalAdyenPaymentInteractionName}Response`]: finalAdyenPaymentResponseString,
+    [`${finalAdyenPaymentInteractionName}Response`]:
+      finalAdyenPaymentResponseString,
   } = payment.custom.fields
   const finalAdyenPaymentResponse = JSON.parse(finalAdyenPaymentResponseString)
   expect(finalAdyenPaymentResponse.resultCode).to.equal(

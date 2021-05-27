@@ -128,9 +128,8 @@ describe('::klarnaPayment::', () => {
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {
-    const {
-      makePaymentResponse: makePaymentResponseString,
-    } = payment.custom.fields
+    const { makePaymentResponse: makePaymentResponseString } =
+      payment.custom.fields
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
 
     // Redirect to Klarna page
@@ -209,9 +208,8 @@ describe('::klarnaPayment::', () => {
       `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`
     )
 
-    const chargePendingTransaction = pU.getChargeTransactionPending(
-      paymentAfterCapture
-    )
+    const chargePendingTransaction =
+      pU.getChargeTransactionPending(paymentAfterCapture)
     expect(chargePendingTransaction.interactionId).to.equal(
       manualCaptureResponse.pspReference
     )

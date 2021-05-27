@@ -5,14 +5,10 @@ const config = require('../../src/config/config')
 const iTSetUp = require('./integration-test-set-up')
 
 describe('::klarnaMakePayment with multiple projects use case::', () => {
-  const [
-    commercetoolsProjectKey1,
-    commercetoolsProjectKey2,
-  ] = config.getAllCtpProjectKeys()
-  const [
-    adyenMerchantAccount1,
-    adyenMerchantAccount2,
-  ] = config.getAllAdyenMerchantAccounts()
+  const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
+    config.getAllCtpProjectKeys()
+  const [adyenMerchantAccount1, adyenMerchantAccount2] =
+    config.getAllAdyenMerchantAccounts()
 
   let ctpClientProject1
   let ctpClientProject2

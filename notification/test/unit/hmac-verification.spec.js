@@ -67,7 +67,8 @@ describe('verify hmac signatures', () => {
       'then verification should pass',
     () => {
       const modifiedNotification = cloneDeep(notification)
-      modifiedNotification.NotificationRequestItem.additionalData.hmacSignature = null
+      modifiedNotification.NotificationRequestItem.additionalData.hmacSignature =
+        null
 
       const errorMessage = validateHmacSignature(modifiedNotification)
       expect(errorMessage).to.equal(
