@@ -63,10 +63,11 @@ function withPayment(paymentObject) {
     },
     validateAmountPlanned() {
       let amount
-      const makePaymentRequestInterfaceInteraction = pU.getLatestInterfaceInteraction(
-        paymentObject.interfaceInteractions,
-        c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
-      )
+      const makePaymentRequestInterfaceInteraction =
+        pU.getLatestInterfaceInteraction(
+          paymentObject.interfaceInteractions,
+          c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+        )
       if (makePaymentRequestInterfaceInteraction)
         amount = JSON.parse(
           makePaymentRequestInterfaceInteraction.fields.request

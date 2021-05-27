@@ -4,9 +4,8 @@ const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = require('../config/constants')
 
 async function execute(paymentObject) {
   const chargeInitialTransaction = pU.getChargeTransactionInitial(paymentObject)
-  const authorizationSuccessTransaction = pU.getAuthorizationTransactionSuccess(
-    paymentObject
-  )
+  const authorizationSuccessTransaction =
+    pU.getAuthorizationTransactionSuccess(paymentObject)
   const manualCaptureRequestObj = {
     modificationAmount: {
       value: chargeInitialTransaction.amount.centAmount,

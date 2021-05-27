@@ -81,8 +81,8 @@ describe('::creditCardPayment3dsNative::', () => {
           'then it should successfully finish the payment with 3DS native authentication flow',
         async () => {
           const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-          const clientKey = config.getAdyenConfig(adyenMerchantAccount)
-            .clientKey
+          const clientKey =
+            config.getAdyenConfig(adyenMerchantAccount).clientKey
           const payment = await createPayment(
             ctpClient,
             adyenMerchantAccount,
@@ -149,9 +149,8 @@ describe('::creditCardPayment3dsNative::', () => {
 
   async function performChallengeFlow({ payment, browserTab, baseUrl }) {
     // Submit additional details 1
-    const {
-      makePaymentResponse: makePaymentResponseString,
-    } = payment.custom.fields
+    const { makePaymentResponse: makePaymentResponseString } =
+      payment.custom.fields
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
     const redirectPaymentFormPage = new RedirectPaymentFormPage(
       browserTab,
@@ -166,7 +165,8 @@ describe('::creditCardPayment3dsNative::', () => {
 
     // Submit additional details
     const creditCardNativePage = new CreditCardNativePage(browserTab, baseUrl)
-    const additionalPaymentDetailsString = await creditCardNativePage.finish3dsNativePayment()
+    const additionalPaymentDetailsString =
+      await creditCardNativePage.finish3dsNativePayment()
     const { body: finalPayment } = await ctpClient.update(
       ctpClient.builder.payments,
       payment.id,

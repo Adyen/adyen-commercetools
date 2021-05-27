@@ -238,9 +238,8 @@ Make payment request will come here</textarea
           allow3DS2: true,
         }
 
-        document.getElementById(
-          'adyen-make-payment-request'
-        ).innerHTML = JSON.stringify(makePaymentRequest)
+        document.getElementById('adyen-make-payment-request').innerHTML =
+          JSON.stringify(makePaymentRequest)
       }
 
       const clientKeyElement = document.getElementById('adyen-client-key')

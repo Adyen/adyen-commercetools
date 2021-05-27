@@ -77,8 +77,8 @@ describe('::creditCardPayment3dsRedirect::', () => {
           'then it should successfully finish the payment with 3DS redirect flow',
         async () => {
           const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-          const clientKey = config.getAdyenConfig(adyenMerchantAccount)
-            .clientKey
+          const clientKey =
+            config.getAdyenConfig(adyenMerchantAccount).clientKey
           const payment = await createPayment(
             ctpClient,
             adyenMerchantAccount,
@@ -144,9 +144,8 @@ describe('::creditCardPayment3dsRedirect::', () => {
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {
-    const {
-      makePaymentResponse: makePaymentResponseString,
-    } = payment.custom.fields
+    const { makePaymentResponse: makePaymentResponseString } =
+      payment.custom.fields
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
 
     const redirectPaymentFormPage = new RedirectPaymentFormPage(

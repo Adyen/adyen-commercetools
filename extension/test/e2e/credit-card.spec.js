@@ -48,8 +48,8 @@ describe('::creditCardPayment::', () => {
           'then it should successfully finish the payment',
         async () => {
           const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-          const clientKey = config.getAdyenConfig(adyenMerchantAccount)
-            .clientKey
+          const clientKey =
+            config.getAdyenConfig(adyenMerchantAccount).clientKey
           const payment = await createPayment(
             ctpClient,
             adyenMerchantAccount,
