@@ -1,4 +1,5 @@
-const ngrok = require('ngrok') // eslint-disable-line
+// eslint-disable-next-line import/no-extraneous-dependencies
+const localtunnel = require('localtunnel')
 const _ = require('lodash')
 const ctpZone = require('./fixtures/ctp-zone')
 const ctpTaxCategory = require('./fixtures/ctp-tax-category')
@@ -20,29 +21,8 @@ const config = require('../../src/config/config')
 const testUtils = require('../test-utils')
 const logger = require('../../src/utils').getLogger()
 
+let tunnel
 let server
-let originalCtpConfig
-function addAuthConfig(ctpProjectKey, authentication) {
-  const ctpConfig = config.getCtpConfig(ctpProjectKey)
-  originalCtpConfig = ctpConfig
-  config.getCtpConfig = function getCtpConfig() {
-    return {
-      clientId: ctpConfig.clientId,
-      clientSecret: ctpConfig.clientSecret,
-      projectKey: ctpProjectKey,
-      apiUrl:
-        ctpConfig.apiUrl || 'https://api.europe-west1.gcp.commercetools.com',
-      authUrl:
-        ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
-      authentication: {
-        scheme: authentication.authScheme,
-        username: authentication.username,
-        password: authentication.password,
-      },
-    }
-  }
-  module.exports = config
-}
 
 function overrideBasicAuthFlag(isEnable) {
   const moduleConfig = config.getModuleConfig()
@@ -62,22 +42,31 @@ function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   module.exports = config
 }
 
-async function initServerAndExtension({
-  ctpClient,
-  ctpProjectKey,
-  authHeaderValue,
-}) {
-  await initServer()
-  await initExtension(ctpClient, ctpProjectKey, authHeaderValue)
+async function initTunnel(port) {
+  let repeaterCounter = 0
+  // eslint-disable-next-line no-shadow
+  let tunnel
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    try {
+      tunnel = await localtunnel({
+        port,
+        subdomain: 'ctp-adyen-integration-tests',
+      })
+      break
+    } catch (e) {
+      if (repeaterCounter === 10) throw e
+      repeaterCounter++
+    }
+  }
+  return tunnel
 }
 
-async function initServer() {
+async function initServerAndTunnel() {
   const port = config.getModuleConfig().port || 8000
   server = serverBuilder.setupServer(routes)
-  // note: ngrok should be restarted for every test case, otherwise there will be
-  // 429 Too Many Requests error. This is due to the limit of maximum opened HTTP connections,
-  // which is 40 connections at the same time as we're using Free program (https://ngrok.com/pricing).
-  const apiExtensionBaseUrl = await ngrok.connect(port)
+  tunnel = await initTunnel(port)
+  const apiExtensionBaseUrl = tunnel.url
   _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
 
   return new Promise((resolve) => {
@@ -90,7 +79,7 @@ async function initServer() {
   })
 }
 
-async function initExtension(ctpClient, ctpProjectKey, authHeaderValue) {
+async function initResources(ctpClient, ctpProjectKey, authHeaderValue) {
   await testUtils.deleteAllResources(ctpClient, 'payments')
   await testUtils.deleteAllResources(ctpClient, 'types')
   await testUtils.deleteAllResources(ctpClient, 'extensions')
@@ -104,6 +93,7 @@ async function initExtension(ctpClient, ctpProjectKey, authHeaderValue) {
 }
 
 async function cleanupCtpResources(ctpClient) {
+  await testUtils.deleteAllResources(ctpClient, 'discountCodes')
   await testUtils.deleteAllResources(ctpClient, 'carts')
   await testUtils.deleteAllResources(ctpClient, 'payments')
   await testUtils.deleteAllResources(ctpClient, 'products')
@@ -112,9 +102,6 @@ async function cleanupCtpResources(ctpClient) {
   await testUtils.deleteAllResources(ctpClient, 'shippingMethods')
   await testUtils.deleteAllResources(ctpClient, 'zones')
   await testUtils.deleteAllResources(ctpClient, 'taxCategories')
-  await testUtils.deleteAllResources(ctpClient, 'types')
-  await testUtils.deleteAllResources(ctpClient, 'extensions')
-  await testUtils.deleteAllResources(ctpClient, 'discountCodes')
   await testUtils.deleteAllResources(ctpClient, 'cartDiscounts')
 }
 
@@ -372,22 +359,14 @@ async function initPaymentWithCart({
 
 async function stopRunningServers() {
   server.close()
-  await ngrok.kill()
-}
-
-async function restoreCtpConfig() {
-  config.getCtpConfig = () => originalCtpConfig
-  module.exports = config
+  await tunnel.close()
 }
 
 module.exports = {
-  initServerAndExtension,
   stopRunningServers,
   initPaymentWithCart,
   cleanupCtpResources,
-  initServer,
-  initExtension,
-  addAuthConfig,
-  restoreCtpConfig,
+  initServerAndTunnel,
+  initResources,
   overrideBasicAuthFlag,
 }
