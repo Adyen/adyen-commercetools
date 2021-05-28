@@ -4,10 +4,11 @@ const { cloneDeep } = require('lodash')
 const config = require('../../src/config/config')
 
 const notificationHandler = require('../../src/handler/notification/notification.handler')
-const notificationsMock = require('../resources/notification').notificationItems
-const concurrentModificationError = require('../resources/concurrent-modification-exception')
+const notificationsMock =
+  require('../resources/notification.json').notificationItems
+const concurrentModificationError = require('../resources/concurrent-modification-exception.json')
 const ctpClientMock = require('./ctp-client-mock')
-const paymentMock = require('../resources/payment-credit-card')
+const paymentMock = require('../resources/payment-credit-card.json')
 const ctp = require('../../src/utils/ctp')
 const { overrideAdyenConfig, restoreAdyenConfig } = require('../test-utils')
 

@@ -3,7 +3,7 @@ const sinon = require('sinon')
 const { expect } = require('chai')
 
 const config = require('../../src/config/config')
-const notificationController = require('../../src/api/notification/notification.controller.js')
+const notificationController = require('../../src/api/notification/notification.controller')
 const httpUtils = require('../../src/utils/commons')
 const logger = require('../../src/utils/logger')
 
