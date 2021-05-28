@@ -7,7 +7,7 @@ const {
 } = require('../../src/paymentHandler/klarna-make-payment.handler')
 const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
 const ctpPayment = require('./fixtures/ctp-payment.json')
-const ctpCart = require('./fixtures/ctp-cart')
+const ctpCart = require('./fixtures/ctp-cart.json')
 
 describe('klarna-make-payment::execute', () => {
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
