@@ -5,7 +5,7 @@ const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const iTSetUp = require('./integration-test-set-up')
 const config = require('../../src/config/config')
-const notifications = require('../resources/notification')
+const notifications = require('../resources/notification.json')
 
 const localhostIp = address()
 

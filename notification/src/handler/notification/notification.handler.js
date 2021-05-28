@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { serializeError } = require('serialize-error')
 const { validateHmacSignature } = require('../../utils/hmacValidator')
-const adyenEvents = require('../../../resources/adyen-events')
+const adyenEvents = require('../../../resources/adyen-events.json')
 const { getNotificationForTracking } = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
 const { getAdyenPaymentMethodsToNames } = require('../../config/config')
