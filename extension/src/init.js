@@ -1,4 +1,4 @@
-const server = require('./server.js').setupServer()
+const server = require('./server').setupServer()
 const logger = require('./utils').getLogger()
 const config = require('./config/config')
 
