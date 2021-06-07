@@ -1,0 +1,64 @@
+{
+    "key": "ctp-adyen-integration-external-gateway-payment-type",
+    "name": {
+      "en": "commercetools Adyen integration payment custom type based on external gateway"
+    },
+    "resourceTypeIds": ["payment"],
+    "fieldDefinitions": [
+      {
+        "name": "commercetoolsProjectKey",
+        "label": {
+          "en": "commercetoolsProjectKey"
+        },
+        "type": {
+          "name": "String"
+        },
+        "inputHint": "SingleLine",
+        "required": false
+      },
+      {
+        "name": "adyenMerchantAccount",
+        "label": {
+          "en": "adyenMerchantAccount"
+        },
+        "type": {
+          "name": "String"
+        },
+        "inputHint": "SingleLine",
+        "required": false
+      },
+      {
+        "name": "makePaymentLinkRequest",
+        "label": {
+          "en": "makePaymentLinkRequest"
+        },
+        "type": {
+          "name": "String"
+        },
+        "inputHint": "MultiLine",
+        "required": false
+      },
+      {
+        "name": "makePaymentLinkResponse",
+        "label": {
+          "en": "makePaymentLinkResponse"
+        },
+        "type": {
+          "name": "String"
+        },
+        "inputHint": "MultiLine",
+        "required": false
+      },
+      {
+        "name": "languageCode",
+        "label": {
+          "en": "Language code is used to determine the default locale for line item names in the matching cart."
+        },
+        "type": {
+          "name": "String"
+        },
+        "inputHint": "SingleLine",
+        "required": false
+      }
+    ]
+  }
