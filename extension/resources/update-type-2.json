@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "actions": [
+    {
+      "action": "addFieldDefinition",
+      "fieldDefinition": {
+        "name": "patchPaymentLinkRequest",
+        "label": {
+          "en": "patchPaymentLinkRequest"
+        },
+        "type": {
+          "name": "String"
+        },
+        "inputHint": "MultiLine",
+        "required": false
+      }
+    },
+    {
+      "action": "addFieldDefinition",
+      "fieldDefinition": {
+        "name": "patchPaymentLinkResponse",
+        "label": {
+          "en": "patchPaymentLinkResponse"
+        },
+        "type": {
+          "name": "String"
+        },
+        "inputHint": "MultiLine",
+        "required": false
+      }
+    }
+  ]
+}
+
++ resource ID : id

@@ -2,6 +2,7 @@ const ValidatorBuilder = require('../validator/validator-builder')
 const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const makePaymentHandler = require('./make-payment.handler')
 const makePaymentLinkHandler = require('./make-payment-link.handler')
+const patchPaymentLinkHandler = require('./patch-payment-link.handler')
 const klarnaMakePaymentHandler = require('./klarna-make-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const manualCaptureHandler = require('./manual-capture.handler')
@@ -82,6 +83,14 @@ function _getPaymentHandlers(paymentObject) {
     !paymentObject.custom.fields.makePaymentLinkResponse
   ) {
     handlers.push(makePaymentLinkHandler);
+  }
+
+  // PAYMENT LINK PATCH
+  if (
+    paymentObject.custom.fields.patchPaymentLinkRequest &&
+    !paymentObject.custom.fields.patchPaymentLinkResponse
+  ) {
+    handlers.push(patchPaymentLinkHandler);
   }
 
   if (
