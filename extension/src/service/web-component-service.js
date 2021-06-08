@@ -29,6 +29,22 @@ function makePayment(
   )
 }
 
+function getPaymentLink(
+  merchantAccount,
+  commercetoolsProjectKey,
+  makePaymentLinkRequestObj
+) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+  extendRequestObjWithMetadata(makePaymentLinkRequestObj, commercetoolsProjectKey)
+  extendRequestObjWithApplicationInfo(makePaymentLinkRequestObj)
+  return callAdyen(
+    `${adyenCredentials.apiBaseUrl}/paymentLinks`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    makePaymentLinkRequestObj
+  )
+}
+
 function submitAdditionalPaymentDetails(
   merchantAccount,
   commercetoolsProjectKey,
@@ -152,4 +168,5 @@ module.exports = {
   manualCapture,
   refund,
   cancelPayment,
+  getPaymentLink
 }

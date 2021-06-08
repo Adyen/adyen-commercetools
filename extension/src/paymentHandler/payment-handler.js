@@ -1,6 +1,7 @@
 const ValidatorBuilder = require('../validator/validator-builder')
 const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const makePaymentHandler = require('./make-payment.handler')
+const makePaymentLinkHandler = require('./make-payment-link.handler')
 const klarnaMakePaymentHandler = require('./klarna-make-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const manualCaptureHandler = require('./manual-capture.handler')
@@ -74,6 +75,15 @@ function _getPaymentHandlers(paymentObject) {
   if (!paymentObject.custom) return []
 
   const handlers = []
+
+  // PAYMENT LINK
+  if (
+    paymentObject.custom.fields.makePaymentLinkRequest &&
+    !paymentObject.custom.fields.makePaymentLinkResponse
+  ) {
+    handlers.push(makePaymentLinkHandler);
+  }
+
   if (
     paymentObject.custom.fields.getPaymentMethodsRequest &&
     !paymentObject.custom.fields.getPaymentMethodsResponse

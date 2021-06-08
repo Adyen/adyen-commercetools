@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "actions": [
+    {
+      "action": "addFieldDefinition",
+      "fieldDefinition": {
+        "name": "makePaymentLinkRequest",
+        "label": {
+          "en": "makePaymentLinkRequest"
+        },
+        "type": {
+          "name": "String"
+        },
+        "inputHint": "MultiLine",
+        "required": false
+      }
+    },
+    {
+      "action": "addFieldDefinition",
+      "fieldDefinition": {
+        "name": "makePaymentLinkResponse",
+        "label": {
+          "en": "makePaymentLinkResponse"
+        },
+        "type": {
+          "name": "String"
+        },
+        "inputHint": "MultiLine",
+        "required": false
+      }
+    }
+  ]
+}
+
++ resource ID : id
