@@ -1,6 +1,8 @@
 const { getPaymentLink } = require('../service/web-component-service')
 const pU = require('./payment-utils')
 const c = require('../config/constants')
+const config = require('../config/config')
+const ctpClientBuilder = require('../ctp')
 
 async function execute(paymentObject) {
   const makePaymentLinkRequestObj = JSON.parse(
