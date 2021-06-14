@@ -5,7 +5,7 @@ const config = require('../config/config')
 const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
 const DEFAULT_PAYMENT_LANGUAGE = 'en'
 const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
-CONST KLARNA_DEFAULT_SHIPPING_METHOD_DESCRIPTION = 'shipping'
+const KLARNA_DEFAULT_SHIPPING_METHOD_DESCRIPTION = 'shipping'
 
 async function execute(paymentObject) {
   const makePaymentRequestObj = JSON.parse(
