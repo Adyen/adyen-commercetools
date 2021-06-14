@@ -5,6 +5,7 @@ const config = require('../config/config')
 const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
 const DEFAULT_PAYMENT_LANGUAGE = 'en'
 const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
+CONST KLARNA_DEFAULT_SHIPPING_METHOD_DESCRIPTION = 'shipping'
 
 async function execute(paymentObject) {
   const makePaymentRequestObj = JSON.parse(
@@ -55,7 +56,7 @@ function createLineItems(payment, cart) {
 
   const { shippingInfo } = cart
   if (shippingInfo && shippingInfo.taxRate)
-    lineItems.push(_createShippingInfoAdyenLineItem(shippingInfo))
+    lineItems.push(_createShippingInfoAdyenLineItem(shippingInfo, locales))
 
   return lineItems
 }
@@ -114,19 +115,25 @@ function _createAdyenLineItemFromCustomLineItem(ctpLineItem, locales) {
   }
 }
 
-function _createShippingInfoAdyenLineItem(shippingInfo) {
+function _createShippingInfoAdyenLineItem(shippingInfo, locales) {
   return {
     id: `${shippingInfo.shippingMethodName}`,
     quantity: 1, // always one shipment item so far
-    description: _getShippingMethodDescription(shippingInfo),
+    description: _getShippingMethodDescription(shippingInfo, locales) || KLARNA_DEFAULT_SHIPPING_METHOD_DESCRIPTION,
     amountIncludingTax: shippingInfo.price.centAmount,
     taxPercentage: shippingInfo.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT,
   }
 }
 
-function _getShippingMethodDescription(shippingInfo) {
-  const shippingMethod = shippingInfo.shippingMethod.obj
-  if (shippingMethod) return shippingMethod.description
+function _getShippingMethodDescription(shippingInfo, locales) {
+  const shippingMethod = shippingInfo.shippingMethod?.obj
+  if (shippingMethod) {
+    return _localizeOrFallback(
+      shippingMethod.localizedDescription,
+      locales,
+      shippingMethod.description
+    )
+  }
   return shippingInfo.shippingMethodName
 }
 
