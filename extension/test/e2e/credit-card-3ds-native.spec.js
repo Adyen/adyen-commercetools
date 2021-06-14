@@ -161,7 +161,7 @@ describe('::creditCardPayment3dsNative::', () => {
       makePaymentResponse
     )
 
-    await browserTab.waitForTimeout(3000)
+    await browserTab.waitForTimeout(10_000)
 
     // Submit additional details
     const creditCardNativePage = new CreditCardNativePage(browserTab, baseUrl)
