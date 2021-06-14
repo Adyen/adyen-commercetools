@@ -96,6 +96,11 @@ async function updatePaymentWithRepeater(
     if (updateActions.length === 0) {
       break
     }
+    logger.debug(
+      `Update payment with key ${
+        currentPayment.key
+      } with update actions [${JSON.stringify(updateActions)}]`
+    )
     try {
       /* eslint-disable-next-line no-await-in-loop */
       await ctpClient.update(
