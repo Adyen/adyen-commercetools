@@ -1,9 +1,9 @@
+const _ = require('lodash')
 const ctpClientBuilder = require('../ctp')
 const makePaymentHandler = require('./make-payment.handler')
 const config = require('../config/config')
 
 const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
-const DEFAULT_PAYMENT_LANGUAGE = 'en'
 const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
 const KLARNA_DEFAULT_SHIPPING_METHOD_DESCRIPTION = 'shipping'
 
@@ -71,9 +71,6 @@ function _getLocales(cart, payment) {
   let paymentLanguage = payment.custom && payment.custom.fields['languageCode']
   if (!paymentLanguage) paymentLanguage = cart.locale
   if (paymentLanguage) locales.push(paymentLanguage)
-  if (!paymentLanguage || paymentLanguage !== DEFAULT_PAYMENT_LANGUAGE)
-    locales.push(DEFAULT_PAYMENT_LANGUAGE)
-
   return locales
 }
 
@@ -119,7 +116,9 @@ function _createShippingInfoAdyenLineItem(shippingInfo, locales) {
   return {
     id: `${shippingInfo.shippingMethodName}`,
     quantity: 1, // always one shipment item so far
-    description: _getShippingMethodDescription(shippingInfo, locales) || KLARNA_DEFAULT_SHIPPING_METHOD_DESCRIPTION,
+    description:
+      _getShippingMethodDescription(shippingInfo, locales) ||
+      KLARNA_DEFAULT_SHIPPING_METHOD_DESCRIPTION,
     amountIncludingTax: shippingInfo.price.centAmount,
     taxPercentage: shippingInfo.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT,
   }
@@ -138,8 +137,12 @@ function _getShippingMethodDescription(shippingInfo, locales) {
 }
 
 function _localizeOrFallback(localizedString, locales, fallback) {
-  const locale = locales.find((l) => localizedString[l])
-  return locale ? localizedString[locale] : fallback
+  let result
+  if (_.size(localizedString) > 0) {
+    const locale = locales?.find((l) => localizedString[l])
+    result = localizedString[locale] || Object.values(localizedString)[0]
+  } else result = fallback
+  return result
 }
 
 module.exports = { execute }
