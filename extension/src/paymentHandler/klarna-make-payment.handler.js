@@ -61,11 +61,6 @@ function createLineItems(payment, cart) {
   return lineItems
 }
 
-/**
- * There will always be a locale `DEFAULT_PAYMENT_LANGUAGE` as a default fallback.
- * Additionally, another locale from payment custom field `languageCode` OR from cart locale
- * is added if it's different from the `DEFAULT_PAYMENT_LANGUAGE` locale.
- */
 function _getLocales(cart, payment) {
   const locales = []
   let paymentLanguage = payment.custom && payment.custom.fields['languageCode']
@@ -78,11 +73,6 @@ function _createAdyenLineItemFromLineItem(ctpLineItem, locales) {
   return {
     id: ctpLineItem.variant.sku,
     quantity: ctpLineItem.quantity,
-    /**
-     * The shop can set the language on the payment or on the cart.
-     * If it's not set, it will pick `DEFAULT_PAYMENT_LANGUAGE`.
-     * If `DEFAULT_PAYMENT_LANGUAGE` is not there, it will just show `KLARNA_DEFAULT_LINE_ITEM_NAME`.
-     */
     description: _localizeOrFallback(
       ctpLineItem.name,
       locales,
@@ -97,11 +87,6 @@ function _createAdyenLineItemFromCustomLineItem(ctpLineItem, locales) {
   return {
     id: ctpLineItem.id,
     quantity: ctpLineItem.quantity,
-    /**
-     * The shop can set the language on the payment or on the cart.
-     * If it's not set, it will pick `DEFAULT_PAYMENT_LANGUAGE`.
-     * If `DEFAULT_PAYMENT_LANGUAGE` is not there, it will just show `KLARNA_DEFAULT_LINE_ITEM_NAME`.
-     */
     description: _localizeOrFallback(
       ctpLineItem.name,
       locales,
