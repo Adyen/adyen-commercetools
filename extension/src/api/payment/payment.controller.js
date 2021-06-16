@@ -43,7 +43,7 @@ async function processRequest(request, response) {
         : { errors: paymentResult.errors },
     }
 
-    logger.debug('Returned data', JSON.stringify(result.data))
+    logger.debug('Data to be returned', JSON.stringify(result.data))
 
     return httpUtils.sendResponse(result)
   } catch (err) {
