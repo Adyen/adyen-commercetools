@@ -2,8 +2,6 @@ const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
-const logger = httpUtils.getLogger()
-
 const {
   assertPayment,
   createPayment,
@@ -86,7 +84,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
             adyenMerchantAccount,
             ctpProjectKey
           )
-          logger.debug('[credit-card-3ds-redirect]payment', payment)
+
           const browserTab = await browser.newPage()
 
           const paymentAfterMakePayment = await makePayment({
@@ -98,19 +96,13 @@ describe('::creditCardPayment3dsRedirect::', () => {
             payment,
             clientKey,
           })
-          logger.debug(
-            '[credit-card-3ds-redirect]paymentAfterMakePayment',
-            paymentAfterMakePayment
-          )
+
           const paymentAfterRedirect = await handleRedirect({
             browserTab,
             baseUrl,
             payment: paymentAfterMakePayment,
           })
-          logger.debug(
-            '[credit-card-3ds-redirect]paymentAfterRedirect',
-            paymentAfterRedirect
-          )
+
           assertPayment(paymentAfterRedirect)
         }
       )

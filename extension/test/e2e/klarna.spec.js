@@ -78,30 +78,27 @@ describe('::klarnaPayment::', () => {
       )
 
       const browserTab = await browser.newPage()
-      logger.debug('[klarna]payment', payment)
+      logger.info('payment : ', payment)
       const paymentAfterMakePayment = await makePayment({
         browserTab,
         baseUrl,
         payment,
         clientKey,
       })
-      logger.debug('[klarna]paymentAfterMakePayment', paymentAfterMakePayment)
+      logger.info('paymentAfterMakePayment : ', paymentAfterMakePayment)
       const paymentAfterHandleRedirect = await handleRedirect({
         browserTab,
         baseUrl,
         payment: paymentAfterMakePayment,
       })
-      logger.debug(
-        '[klarna]paymentAfterHandleRedirect',
-        paymentAfterHandleRedirect
-      )
+      logger.info('paymentAfterHandleRedirect : ', paymentAfterHandleRedirect)
       assertPayment(paymentAfterHandleRedirect)
 
       // Capture the payment
       const paymentAfterCapture = await capturePayment({
         payment: paymentAfterHandleRedirect,
       })
-      logger.debug('[klarna]paymentAfterCapture', paymentAfterCapture)
+      logger.info('paymentAfterCapture : ', paymentAfterCapture)
       assertManualCaptureResponse(paymentAfterCapture)
     }
   )
