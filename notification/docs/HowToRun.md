@@ -97,7 +97,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
     "commercetoolsProjectKey2": {
       "clientId": "xxx",
       "clientSecret": "xxx"
-      "host": "https://api.us-east-2.aws.commercetools.com/"
+      "apiUrl": "https://api.us-east-2.aws.commercetools.com/"
       "authUrl": "https://auth.us-east-2.aws.commercetools.com/"
     }
   }
@@ -108,7 +108,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 | -------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------- |
 | `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.     | YES      |                                                   |
 | `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token. | YES      |                                                   |
-| `host`         | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `apiUrl`         | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
 | `authUrl`      | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
 
 ### Other Configurations
