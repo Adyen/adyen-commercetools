@@ -108,7 +108,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 | -------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------- |
 | `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.     | YES      |                                                   |
 | `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token. | YES      |                                                   |
-| `apiUrl`         | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `apiUrl`       | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
 | `authUrl`      | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
 
 ### Other Configurations
