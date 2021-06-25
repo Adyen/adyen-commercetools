@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { serializeError } = require('serialize-error')
+const VError = require('verror')
 const { validateHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events')
 const { getNotificationForTracking } = require('../../utils/commons')
@@ -7,11 +8,9 @@ const ctp = require('../../utils/ctp')
 const mainLogger = require('../../utils/logger').getLogger()
 
 class CommercetoolsError extends Error {
-  constructor({ stack, message, statusCode }) {
+  constructor({ err }) {
     super()
-    this.stack = stack
-    this.message = message
-    this.retry = this._shouldRetry(statusCode)
+    this.errObject = err
   }
 
   /**
@@ -108,16 +107,15 @@ async function updatePaymentWithRepeater(
       )
       break
     } catch (err) {
-      if (err.statusCode !== 409)
-        throw new CommercetoolsError({
-          stack: err.stack,
-          message:
-            `Unexpected error on payment update with ID: ${currentPayment.id}.` +
-            `Failed actions: ${JSON.stringify(
-              _obfuscateNotificationInfoFromActionFields(updateActions)
-            )}`,
-          statusCode: err.statusCode,
-        })
+      const errMsg =
+        `Unexpected error on payment update with ID: ${currentPayment.id}.` +
+        `Failed actions: ${JSON.stringify(
+          _obfuscateNotificationInfoFromActionFields(updateActions)
+        )}`
+
+      if (err.statusCode !== 409) {
+        throw new VError(err, errMsg)
+      }
       retryCount += 1
       if (retryCount > maxRetry) {
         retryMessage =
@@ -125,16 +123,14 @@ async function updatePaymentWithRepeater(
           ` when updating payment with id "${currentPayment.id}".` +
           ` Version tried "${currentVersion}",` +
           ` currentVersion: "${err.body.errors[0].currentVersion}".`
-        throw new CommercetoolsError({
-          stack: err.stack,
-          message:
-            `${retryMessage} Won't retry again` +
+        throw new VError(
+          err,
+          `${retryMessage} Won't retry again` +
             ` because of a reached limit ${maxRetry}` +
             ` max retries. Failed actions: ${JSON.stringify(
               _obfuscateNotificationInfoFromActionFields(updateActions)
-            )}`,
-          statusCode: err.statusCode,
-        })
+            )}`
+        )
       }
       /* eslint-disable-next-line no-await-in-loop */
       const response = await ctpClient.fetchById(
@@ -333,14 +329,10 @@ async function getPaymentByMerchantReference(merchantReference, ctpClient) {
     return result.body
   } catch (err) {
     if (err.statusCode === 404) return null
-
-    throw new CommercetoolsError({
-      stack: err.stack,
-      message:
-        `Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
-        `Error: ${JSON.stringify(serializeError(err))}`,
-      statusCode: err.statusCode,
-    })
+    const errMsg =
+      `Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
+      `Error: ${JSON.stringify(serializeError(err))}`
+    throw new VError(err, errMsg)
   }
 }
 
