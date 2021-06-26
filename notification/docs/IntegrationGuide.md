@@ -3,12 +3,11 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-**Table of Contents**
-
 - [Step 1: Set up notification webhook and generate HMAC signature](#step-1-set-up-notification-webhook-and-generate-hmac-signature)
 - [Step 2: Deploy the notification module](#step-2-deploy-the-notification-module)
 - [Step 3: Processing notifications](#step-3-processing-notifications)
 - [Test and go live](#test-and-go-live)
+- [Best practices](#best-practices)
 - [FAQ](#faq)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -46,7 +45,7 @@ Adyen sends notifications which look like this:
       "NotificationRequestItem": {
         "additionalData": {
           "hmacSignature": "cjiTz03EI0jkkysGDdPJQdLbecRVVU/5jm12/DTFEHo=",
-          "metadata.commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY" // should match a project key in ADYEN_INTEGRATION_CONFIG
+          "metadata.ctProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY" // should match a project key in ADYEN_INTEGRATION_CONFIG
         },
         "amount": {
           "currency": "EUR",
@@ -90,6 +89,10 @@ If payment is not found then the notification will be skipped from processing.
 ## Test and go live
 
 Before you go live please follow the official Adyen [go-live checklist](https://docs.adyen.com/development-resources/webhooks#test-and-go-live).
+
+## Best practices
+
+- [Please refer to our best practices guide.](../../docs/BEST_PRACTICES.md)
 
 ## FAQ
 

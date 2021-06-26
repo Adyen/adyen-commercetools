@@ -4,10 +4,11 @@ const { cloneDeep } = require('lodash')
 const config = require('../../src/config/config')
 
 const notificationHandler = require('../../src/handler/notification/notification.handler')
-const notificationsMock = require('../resources/notification').notificationItems
-const concurrentModificationError = require('../resources/concurrent-modification-exception')
+const notificationsMock =
+  require('../resources/notification.json').notificationItems
+const concurrentModificationError = require('../resources/concurrent-modification-exception.json')
 const ctpClientMock = require('./ctp-client-mock')
-const paymentMock = require('../resources/payment-credit-card')
+const paymentMock = require('../resources/payment-credit-card.json')
 const ctp = require('../../src/utils/ctp')
 const { overrideAdyenConfig, restoreAdyenConfig } = require('../test-utils')
 
@@ -51,7 +52,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -65,6 +66,7 @@ describe('notification module', () => {
       },
     ]
     const payment = cloneDeep(paymentMock)
+    payment.paymentMethodInfo.method = 'scheme'
     payment.transactions.push({
       id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
       type: 'Authorization',
@@ -109,6 +111,10 @@ describe('notification module', () => {
         state: 'Success',
         transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
       },
+      {
+        action: 'setMethodInfoMethod',
+        method: 'visa',
+      },
     ]
 
     // assert update actions
@@ -135,7 +141,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -214,7 +220,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -282,7 +288,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'CANCELLATION',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -372,7 +378,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'CAPTURE',
           eventDate: '2019-01-30T18:16:22+01:00',
@@ -462,7 +468,7 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.commercetoolsProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': 'adyen-integration-test',
           },
           eventCode: 'CAPTURE_FAILED',
           eventDate: '2019-01-30T18:16:22+01:00',

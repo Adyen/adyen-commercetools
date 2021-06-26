@@ -1,6 +1,6 @@
 {
   "name": "commercetools-adyen-integration-extension",
-  "version": "7.1.2",
+  "version": "8.1.2",
   "description": "Integration between commercetools and Adyen payment service provider",
   "license": "MIT",
   "scripts": {
@@ -10,8 +10,8 @@
     "cover:integration": "nyc --silent --no-clean npm run integration",
     "cover:e2e": "nyc --silent --no-clean npm run e2e",
     "unit": "nyc mocha --file ./test/unit/mock-default-confg.js \"test/unit/**/*.spec.js\"",
-    "integration": "nyc mocha --file ./test/cleanup-ctp-project.js \"test/integration/**/*.spec.js\"",
-    "e2e": "nyc mocha --file ./test/cleanup-ctp-project.js \"test/e2e/**/*.spec.js\"",
+    "integration": "nyc mocha --file ./test/initial-integration-test-set-up.js \"test/integration/**/*.spec.js\"",
+    "e2e": "nyc mocha --file ./test/initial-integration-test-set-up.js \"test/e2e/**/*.spec.js\"",
     "start": "node ./src/init.js",
     "lint": "eslint ./src ./test",
     "check": "npm run lint && prettier --check .",
@@ -53,20 +53,20 @@
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-commercetools": "^6.0.0",
-    "eslint-config-prettier": "^8.2.0",
-    "eslint-plugin-import": "^2.22.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.3",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.23.2",
     "husky": "^6.0.0",
-    "lint-staged": "^10.5.4",
-    "mocha": "^8.3.2",
-    "ngrok": "^4.0.1",
+    "lint-staged": "^11.0.0",
+    "localtunnel": "^2.0.1",
+    "mocha": "^8.4.0",
     "nock": "^13.0.11",
     "nyc": "^15.1.0",
-    "prettier": "2.2.1",
+    "prettier": "2.3.0",
     "proxyquire": "^2.1.3",
-    "puppeteer": "^8.0.0",
-    "sinon": "^10.0.1"
+    "puppeteer": "^9.1.1",
+    "sinon": "^11.1.1"
   },
   "dependencies": {
     "@commercetools/api-request-builder": "^5.6.3",
@@ -75,12 +75,12 @@
     "@commercetools/sdk-middleware-http": "^6.0.11",
     "@commercetools/sdk-middleware-queue": "^2.1.4",
     "@commercetools/sdk-middleware-user-agent": "^2.1.5",
-    "@commercetools/sync-actions": "^4.9.2",
+    "@commercetools/sync-actions": "^4.9.5",
     "bunyan": "^1.8.15",
     "lockfile-lint": "^4.6.2",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
-    "serialize-error": "^8.0.1"
+    "serialize-error": "^8.1.0"
   },
   "mocha": {
     "timeout": 40000,

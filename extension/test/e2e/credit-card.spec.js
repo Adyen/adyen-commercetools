@@ -1,4 +1,3 @@
-const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
 const config = require('../../src/config/config')
@@ -29,15 +28,10 @@ describe('::creditCardPayment::', () => {
     }
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
-    await iTSetUp.initServerAndExtension({
-      ctpClient,
-      ctpProjectKey: ctpConfig.projectKey,
-    })
     browser = await initPuppeteerBrowser()
   })
 
   afterEach(async () => {
-    await iTSetUp.stopRunningServers()
     await browser.close()
   })
 
@@ -54,8 +48,8 @@ describe('::creditCardPayment::', () => {
           'then it should successfully finish the payment',
         async () => {
           const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-          const clientKey = config.getAdyenConfig(adyenMerchantAccount)
-            .clientKey
+          const clientKey =
+            config.getAdyenConfig(adyenMerchantAccount).clientKey
           const payment = await createPayment(
             ctpClient,
             adyenMerchantAccount,

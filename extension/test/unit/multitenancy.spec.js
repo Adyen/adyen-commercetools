@@ -2,7 +2,7 @@ const { expect } = require('chai')
 const _ = require('lodash')
 const nock = require('nock')
 const ctpPayment = require('./fixtures/ctp-payment.json')
-const ctpCart = require('./fixtures/ctp-cart')
+const ctpCart = require('./fixtures/ctp-cart.json')
 const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
 const {
   execute,

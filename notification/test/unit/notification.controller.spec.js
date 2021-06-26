@@ -3,7 +3,7 @@ const sinon = require('sinon')
 const { expect } = require('chai')
 
 const config = require('../../src/config/config')
-const notificationController = require('../../src/api/notification/notification.controller.js')
+const notificationController = require('../../src/api/notification/notification.controller')
 const httpUtils = require('../../src/utils/commons')
 const logger = require('../../src/utils/logger')
 
@@ -52,7 +52,7 @@ describe('notification controller', () => {
   })
 
   it(
-    'when request does not contain commercetoolsProjectKey, ' +
+    'when request does not contain ctProjectKey, ' +
       'it should log error and return "accepted" status',
     async () => {
       // prepare:
@@ -82,7 +82,7 @@ describe('notification controller', () => {
         JSON.stringify({ notificationResponse: '[accepted]' })
       )
       expect(logSpy.firstCall.args[0].err.message).to.equal(
-        'Notification can not be processed as "commercetoolsProjectKey"  was not found on the notification.'
+        'Notification can not be processed as "metadata.ctProjectKey"  was not found on the notification.'
       )
     }
   )
@@ -100,9 +100,10 @@ describe('notification controller', () => {
     const responseEndSpy = sandbox.spy(responseMock, 'end')
 
     const notificationJson = _.cloneDeep(mockNotificationJson)
-    notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
-      'metadata.commercetoolsProjectKey': 'testKey',
-    }
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
+      {
+        'metadata.ctProjectKey': 'testKey',
+      }
     notificationJson.notificationItems[0].NotificationRequestItem.merchantAccountCode =
       'nonExistingMerchantAccount'
     httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
@@ -144,9 +145,10 @@ describe('notification controller', () => {
     const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
     const responseEndSpy = sandbox.spy(responseMock, 'end')
     const notificationJson = _.cloneDeep(mockNotificationJson)
-    notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
-      'metadata.commercetoolsProjectKey': 'nonExistingCtpProjectKey',
-    }
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
+      {
+        'metadata.ctProjectKey': 'nonExistingCtpProjectKey',
+      }
     httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
     module.exports = httpUtils
 

@@ -8,7 +8,6 @@
   - [commercetools](#commercetools)
   - [Other Configurations](#other-configurations)
 - [Commercetools project requirements](#commercetools-project-requirements)
-  - [Creating required resources manually](#creating-required-resources-manually)
 - [Running](#running)
   - [Docker](#docker)
     - [Running the Docker image](#running-the-docker-image)
@@ -41,6 +40,10 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
       "enableHmacSignature": "true",
       "secretHmacKey": "secretKey"
     }
+  },
+  "getAdyenPaymentMethodsToNames": {
+    "visa": {"en": "Credit card visa"},
+    "gpay": {"en": "Google Pay"}
   },
   "logLevel": "DEBUG",
   "port": "8081",
@@ -94,7 +97,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
     "commercetoolsProjectKey2": {
       "clientId": "xxx",
       "clientSecret": "xxx"
-      "host": "https://api.us-east-2.aws.commercetools.com/"
+      "apiUrl": "https://api.us-east-2.aws.commercetools.com/"
       "authUrl": "https://auth.us-east-2.aws.commercetools.com/"
     }
   }
@@ -105,7 +108,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 | -------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------- |
 | `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.     | YES      |                                                   |
 | `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token. | YES      |                                                   |
-| `host`         | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `apiUrl`       | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
 | `authUrl`      | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
 
 ### Other Configurations
@@ -116,17 +119,22 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 {
   "commercetools": {...},
   "adyen": {...},
+  "getAdyenPaymentMethodsToNames": {
+    "visa": {"en": "Credit card visa"},
+    "gpay": {"en": "Google Pay"}
+  },
   "logLevel": "DEBUG",
   "port": 8080,
   "keepAliveTimeout": 10000
 }
 ```
 
-| Name               | Content                                                                                                                                                       | Required | Default value               |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------- |
-| `port`             | Th port number on which the application will run.                                                                                                             | NO       | 443                         |
-| `logLevel`         | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                           | NO       | `info`                      |
-| `keepAliveTimeout` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)). | NO       | Node.js default (5 seconds) |
+| Name                         | Content                                                                                                                                                                         | Required | Default value                                                                                         |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
+| `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod` returned in the notification and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.method`. | NO       | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}}` |
+| `port`                       | The port number on which the application will run.                                                                                                                              | NO       | 443                                                                                                   |
+| `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                             | NO       | `info`                                                                                                |
+| `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                   | NO       | Node.js default (5 seconds)                                                                           |
 
 ## Commercetools project requirements
 

@@ -36,6 +36,8 @@ async function initPuppeteerBrowser() {
     args: [
       '--disable-web-security',
       '--disable-features=IsolateOrigins,site-per-process',
+      // user-agent is overriden to bypass the "reminder" page of localtunnel module
+      '--user-agent=curl/7.64.1',
     ],
   })
 }
@@ -45,7 +47,8 @@ function assertPayment(
   finalAdyenPaymentInteractionName = 'submitAdditionalPaymentDetails'
 ) {
   const {
-    [`${finalAdyenPaymentInteractionName}Response`]: finalAdyenPaymentResponseString,
+    [`${finalAdyenPaymentInteractionName}Response`]:
+      finalAdyenPaymentResponseString,
   } = payment.custom.fields
   const finalAdyenPaymentResponse = JSON.parse(finalAdyenPaymentResponseString)
   expect(finalAdyenPaymentResponse.resultCode).to.equal(

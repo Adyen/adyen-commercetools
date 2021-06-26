@@ -24,7 +24,9 @@ describe('Payment controller', () => {
       utilsStub.sendResponse = ({ statusCode, headers, data }) => {
         expect(statusCode).to.equal(200)
         expect(headers).to.not.exist
-        expect(data).to.not.exist
+        expect(data).to.deep.equal({
+          actions: [],
+        })
       }
 
       await paymentController.processRequest(mockRequest)

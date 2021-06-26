@@ -63,10 +63,11 @@ function withPayment(paymentObject) {
     },
     validateAmountPlanned() {
       let amount
-      const makePaymentRequestInterfaceInteraction = pU.getLatestInterfaceInteraction(
-        paymentObject.interfaceInteractions,
-        c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
-      )
+      const makePaymentRequestInterfaceInteraction =
+        pU.getLatestInterfaceInteraction(
+          paymentObject.interfaceInteractions,
+          c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+        )
       if (makePaymentRequestInterfaceInteraction)
         amount = JSON.parse(
           makePaymentRequestInterfaceInteraction.fields.request
@@ -96,14 +97,10 @@ function withPayment(paymentObject) {
       return Object.keys(errors).length > 0
     },
     getErrors() {
-      return errors
-    },
-    buildCtpErrorResponse() {
-      const errorArray = Object.entries(errors).map(([, value]) => ({
+      return Object.entries(errors).map(([, value]) => ({
         code: _getErrorResponseCode(value),
         message: value,
       }))
-      return { errors: errorArray }
     },
   }
 }

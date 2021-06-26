@@ -2,9 +2,10 @@ const _ = require('lodash')
 const { serializeError } = require('serialize-error')
 const VError = require('verror')
 const { validateHmacSignature } = require('../../utils/hmacValidator')
-const adyenEvents = require('../../../resources/adyen-events')
+const adyenEvents = require('../../../resources/adyen-events.json')
 const { getNotificationForTracking } = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
+const { getAdyenPaymentMethodsToNames } = require('../../config/config')
 const mainLogger = require('../../utils/logger').getLogger()
 
 class CommercetoolsError extends Error {
@@ -94,6 +95,11 @@ async function updatePaymentWithRepeater(
     if (updateActions.length === 0) {
       break
     }
+    logger.debug(
+      `Update payment with key ${
+        currentPayment.key
+      } with update actions [${JSON.stringify(updateActions)}]`
+    )
     try {
       /* eslint-disable-next-line no-await-in-loop */
       await ctpClient.update(
@@ -161,16 +167,16 @@ function calculateUpdateActionsForPayment(payment, notification) {
   const notificationRequestItem = notification.NotificationRequestItem
   const stringifiedNotification = JSON.stringify(notification)
   // check if the interfaceInteraction is already on payment or not
-  const isNotificationInInterfaceInteraction = payment.interfaceInteractions.some(
-    (interaction) => interaction.fields.notification === stringifiedNotification
-  )
+  const isNotificationInInterfaceInteraction =
+    payment.interfaceInteractions.some(
+      (interaction) =>
+        interaction.fields.notification === stringifiedNotification
+    )
   if (isNotificationInInterfaceInteraction === false)
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
 
-  const {
-    transactionType,
-    transactionState,
-  } = getTransactionTypeAndStateOrNull(notificationRequestItem)
+  const { transactionType, transactionState } =
+    getTransactionTypeAndStateOrNull(notificationRequestItem)
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
@@ -199,6 +205,19 @@ function calculateUpdateActionsForPayment(payment, notification) {
         )
       )
   }
+  const paymentMethodFromPayment = payment.paymentMethodInfo.method
+  const paymentMethodFromNotification = notificationRequestItem.paymentMethod
+  if (
+    paymentMethodFromNotification &&
+    paymentMethodFromPayment !== paymentMethodFromNotification
+  ) {
+    updateActions.push(
+      getSetMethodInfoMethodAction(paymentMethodFromNotification)
+    )
+    const action = getSetMethodInfoNameAction(paymentMethodFromNotification)
+    if (action) updateActions.push(action)
+  }
+
   return updateActions
 }
 
@@ -318,6 +337,25 @@ function getAddTransactionUpdateAction({
       interactionId,
     },
   }
+}
+
+function getSetMethodInfoMethodAction(paymentMethod) {
+  return {
+    action: 'setMethodInfoMethod',
+    method: paymentMethod,
+  }
+}
+
+function getSetMethodInfoNameAction(paymentMethod) {
+  const paymentMethodsToLocalizedNames = getAdyenPaymentMethodsToNames()
+  const paymentMethodLocalizedNames =
+    paymentMethodsToLocalizedNames[paymentMethod]
+  if (paymentMethodLocalizedNames)
+    return {
+      action: 'setMethodInfoName',
+      name: paymentMethodLocalizedNames,
+    }
+  return null
 }
 
 async function getPaymentByMerchantReference(merchantReference, ctpClient) {

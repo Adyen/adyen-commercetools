@@ -39,7 +39,7 @@ function handleUnexpectedPaymentError(paymentObj, err) {
   const errorStackTrace = `Unexpected error (Payment ID: ${
     paymentObj?.id
   }): ${JSON.stringify(serializeError(err))}`
-  logger.error(errorStackTrace)
+  getLogger().error(errorStackTrace)
   return {
     errors: [
       {

@@ -39,7 +39,6 @@ function submitAdditionalPaymentDetails(
     submitAdditionalPaymentDetailsRequestObj,
     commercetoolsProjectKey
   )
-  extendRequestObjWithApplicationInfo(submitAdditionalPaymentDetailsRequestObj)
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/payments/details`,
     merchantAccount,
@@ -105,7 +104,9 @@ function extendRequestObjWithApplicationInfo(requestObj) {
 
 function extendRequestObjWithMetadata(requestObj, commercetoolsProjectKey) {
   requestObj.metadata = {
-    commercetoolsProjectKey,
+    // metadata key must have length of max. 20 chars
+    // metadata value must have length of max. 80 chars
+    ctProjectKey: commercetoolsProjectKey,
   }
 }
 

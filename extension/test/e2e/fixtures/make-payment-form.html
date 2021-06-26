@@ -5,8 +5,8 @@
     <title>Make Payment</title>
     <link
       rel="stylesheet"
-      href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.17.0/adyen.css"
-      integrity="sha384-gbQyzqV1xX+snFEMrubEm0IpmYSufBjUnHzTaJZ+dcWCyxl0j94IZhnfC2gbxgeu"
+      href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/4.3.0/adyen.css"
+      integrity="sha384-5CDvDZiVPuf+3ZID0lh0aaUHAeky3/ACF1YAKzPbn3GEmzWgO53gP6stiYHWIdpB"
       crossorigin="anonymous"
     />
   </head>
@@ -37,8 +37,8 @@ Make payment request will come here</textarea
     <div id="component-container"></div>
 
     <script
-      src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.17.0/adyen.js"
-      integrity="sha384-G9jkTAyCOIVdksXbtrNgdur2DyRi85ujYLXbqe5AvvH23rN21d7xiU7cRIqvsEaH"
+      src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/4.3.0/adyen.js"
+      integrity="sha384-cNkiBPQRGouJfbstYuSccx2XkGe3RB28iYrjge6rLIDtex7fk5+3/E9f4EZ34fxE"
       crossorigin="anonymous"
     ></script>
     <script type="application/javascript">
@@ -47,84 +47,27 @@ Make payment request will come here</textarea
         environment: 'test', // When you're ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
         clientKey: 'test_WT5XD2TUYFH2TBJDE5UKLYDHF4U4W7XP', // Your client key. To find out how to generate one, see https://docs.adyen.com/development-resources/client-side-authentication.
         paymentMethodsResponse: {
-          groups: [
-            {
-              name: 'Gift Card',
-              types: ['givex', 'svs'],
-            },
-            {
-              name: 'Credit Card',
-              types: ['mc', 'visa', 'amex', 'maestro', 'diners', 'discover'],
-            },
-          ],
           paymentMethods: [
             {
-              details: [
-                {
-                  items: [
-                    {
-                      id: '1121',
-                      name: 'Test Issuer',
-                    },
-                    {
-                      id: '1154',
-                      name: 'Test Issuer 5',
-                    },
-                    {
-                      id: '1153',
-                      name: 'Test Issuer 4',
-                    },
-                    {
-                      id: '1152',
-                      name: 'Test Issuer 3',
-                    },
-                    {
-                      id: '1151',
-                      name: 'Test Issuer 2',
-                    },
-                    {
-                      id: '1162',
-                      name: 'Test Issuer Cancelled',
-                    },
-                    {
-                      id: '1161',
-                      name: 'Test Issuer Pending',
-                    },
-                    {
-                      id: '1160',
-                      name: 'Test Issuer Refused',
-                    },
-                    {
-                      id: '1159',
-                      name: 'Test Issuer 10',
-                    },
-                    {
-                      id: '1158',
-                      name: 'Test Issuer 9',
-                    },
-                    {
-                      id: '1157',
-                      name: 'Test Issuer 8',
-                    },
-                    {
-                      id: '1156',
-                      name: 'Test Issuer 7',
-                    },
-                    {
-                      id: '1155',
-                      name: 'Test Issuer 6',
-                    },
-                  ],
-                  key: 'issuer',
-                  type: 'select',
-                },
-              ],
-              name: 'iDEAL',
-              supportsRecurring: true,
-              type: 'ideal',
+              configuration: {
+                intent: 'capture',
+              },
+              name: 'PayPal',
+              type: 'paypal',
             },
             {
-              brands: ['mc', 'visa', 'amex', 'maestro', 'diners', 'discover'],
+              brands: [
+                'visa',
+                'mc',
+                'amex',
+                'maestro',
+                'uatp',
+                'cup',
+                'diners',
+                'discover',
+                'hipercard',
+                'jcb',
+              ],
               details: [
                 {
                   key: 'encryptedCardNumber',
@@ -148,13 +91,12 @@ Make payment request will come here</textarea
                   type: 'text',
                 },
               ],
-              name: 'Credit Card',
+              name: 'Kreditkarte',
               type: 'scheme',
             },
             {
-              name: 'PayPal',
-              supportsRecurring: true,
-              type: 'paypal',
+              name: 'Sofort.',
+              type: 'directEbanking',
             },
             {
               details: [
@@ -167,11 +109,23 @@ Make payment request will come here</textarea
                   type: 'text',
                 },
               ],
-              name: 'SEPA Direct Debit',
-              supportsRecurring: true,
+              name: 'SEPA Lastschrift',
               type: 'sepadirectdebit',
             },
             {
+              name: 'Rechnung mit Klarna.',
+              type: 'klarna',
+            },
+            {
+              name: 'GiroPay',
+              type: 'giropay',
+            },
+            {
+              name: 'Ratenkauf mit Klarna.',
+              type: 'klarna_account',
+            },
+            {
+              brand: 'givex',
               details: [
                 {
                   key: 'encryptedCardNumber',
@@ -204,10 +158,14 @@ Make payment request will come here</textarea
                 },
               ],
               name: 'Givex',
-              supportsRecurring: true,
-              type: 'givex',
+              type: 'giftcard',
             },
             {
+              name: 'Sofort bezahlen mit Klarna.',
+              type: 'klarna_paynow',
+            },
+            {
+              brand: 'svs',
               details: [
                 {
                   key: 'encryptedCardNumber',
@@ -240,8 +198,7 @@ Make payment request will come here</textarea
                 },
               ],
               name: 'SVS',
-              supportsRecurring: true,
-              type: 'svs',
+              type: 'giftcard',
             },
           ],
         }, // The payment methods response returned in step 1.
@@ -264,9 +221,8 @@ Make payment request will come here</textarea
         makePaymentRequest.origin = window.location.origin
         makePaymentRequest.returnUrl = window.location.origin + '/return-url'
 
-        document.getElementById(
-          'adyen-make-payment-request'
-        ).innerHTML = JSON.stringify(makePaymentRequest)
+        document.getElementById('adyen-make-payment-request').innerHTML =
+          JSON.stringify(makePaymentRequest)
       }
 
       const clientKeyElement = document.getElementById('adyen-client-key')

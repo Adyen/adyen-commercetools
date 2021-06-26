@@ -66,10 +66,10 @@ function getAdyenConfig(adyenMerchantAccount) {
     )
   return {
     apiKey: adyenConfig.apiKey,
-    apiBaseUrl: adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v52',
+    apiBaseUrl: adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v67',
     legacyApiBaseUrl:
       adyenConfig.legacyApiBaseUrl ||
-      'https://pal-test.adyen.com/pal/servlet/Payment/v52',
+      'https://pal-test.adyen.com/pal/servlet/Payment/v64',
     clientKey: adyenConfig.clientKey || '', // used only for development purpose
   }
 }
@@ -80,6 +80,16 @@ function getAllCtpProjectKeys() {
 
 function getAllAdyenMerchantAccounts() {
   return Object.keys(config.adyen)
+}
+
+function getAdyenPaymentMethodsToNames() {
+  return {
+    scheme: { en: 'Credit Card' },
+    pp: { en: 'PayPal' },
+    klarna: { en: 'Klarna' },
+    gpay: { en: 'Google Pay' },
+    ...(config.adyenPaymentMethodsToNames || {}),
+  }
 }
 
 function loadAndValidateConfig() {
@@ -128,4 +138,5 @@ module.exports = {
   getAdyenConfig,
   getAllCtpProjectKeys,
   getAllAdyenMerchantAccounts,
+  getAdyenPaymentMethodsToNames,
 }

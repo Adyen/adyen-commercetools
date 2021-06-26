@@ -38,6 +38,10 @@ Extension module requires 1 environment variable to start. This environment vari
     "adyenMerchantAccount2": {
       "apiKey": "xxx"
     }
+  },
+  "adyenPaymentMethodsToNames": {
+    "visa": { "en": "Credit card visa" },
+    "gpay": { "en": "Google Pay" }
   }
 }
 ```
@@ -88,7 +92,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
     "commercetoolsProjectKey1": { // commercetools project key of the first project
       "clientId": "xxx",
       "clientSecret": "xxx",
-      "host": "https://api.us-east-2.aws.commercetools.com/",
+      "apiUrl": "https://api.us-east-2.aws.commercetools.com/",
       "authUrl": "https://auth.us-east-2.aws.commercetools.com/",
       "authentication" : {
         "scheme": "basic",
@@ -113,7 +117,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ------------------------------------------------- |
 | `clientId`       | OAuth 2.0 `client_id` and can be used to obtain a token.                                                                                                                                                                                                                                                                                                                                                     | YES      |                                                   |
 | `clientSecret`   | OAuth 2.0 `client_secret` and can be used to obtain a token.                                                                                                                                                                                                                                                                                                                                                 | YES      |                                                   |
-| `host`           | The commercetools HTTP API is hosted at that URL.                                                                                                                                                                                                                                                                                                                                                            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `apiUrl`         | The commercetools HTTP API is hosted at that URL.                                                                                                                                                                                                                                                                                                                                                            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
 | `authUrl`        | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                                                                                                                                                                                                                                                                                                                  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
 | `authentication` | This setting only takes effect when `basicAuth` ( a child attribute in `ADYEN_INTEGRATION_CONFIG` ) is set to `true`. It enables authentication mechanism to prevent unauthorized access to the extension module. When it is provided as a JSON object, it must contain 3 separate attributes. They are `scheme` attribute which supports `basic` type, `username` and `password` attribute defined by user. | NO       |                                                   |
 
@@ -125,6 +129,10 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 {
   "commercetools": {...},
   "adyen": {...},
+  "adyenPaymentMethodsToNames": {
+    "klarna": {"en": "Klarna payment"},
+    "gpay": {"en": "Google Pay"}
+  },
   "logLevel": "DEBUG",
   "port": 8080,
   "keepAliveTimeout": 10000,
@@ -132,12 +140,13 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 }
 ```
 
-| Name               | Content                                                                                                                                                       | Required | Default value               |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------- |
-| `port`             | The port number on which the application will run.                                                                                                            | NO       | 8080                        |
-| `logLevel`         | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                           | NO       | `info`                      |
-| `keepAliveTimeout` | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)). | NO       | Node.js default (5 seconds) |
-| `basicAuth`        | Boolean attribute to enable/disable basic authentication to prevent unauthorized 3rd-party from accessing extension endpoint                                  | NO       | false                       |
+| Name                         | Content                                                                                                                                                                            | Required | Default value                                                                                         |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
+| `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod.type` in makePayment Adyen request and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.name`. | NO       | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}}` |
+| `port`                       | The port number on which the application will run.                                                                                                                                 | NO       | 8080                                                                                                  |
+| `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                | NO       | `info`                                                                                                |
+| `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                      | NO       | Node.js default (5 seconds)                                                                           |
+| `basicAuth`                  | Boolean attribute to enable/disable basic authentication to prevent unauthorized 3rd-party from accessing extension endpoint                                                       | NO       | false                                                                                                 |
 
 ## Commercetools project requirements
 

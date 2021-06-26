@@ -2,7 +2,6 @@ const { expect } = require('chai')
 const _ = require('lodash')
 
 const ctpClientBuilder = require('../../src/ctp')
-const iTSetUp = require('./integration-test-set-up')
 const c = require('../../src/config/constants')
 const config = require('../../src/config/config')
 const packageJson = require('../../package.json')
@@ -19,14 +18,6 @@ describe('::getPaymentMethods::', () => {
   before(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
-    await iTSetUp.initServerAndExtension({
-      ctpClient,
-      ctpProjectKey: ctpConfig.projectKey,
-    })
-  })
-
-  after(async () => {
-    await iTSetUp.stopRunningServers()
   })
 
   it(
@@ -86,10 +77,8 @@ describe('::getPaymentMethods::', () => {
       }
       expect(statusCode).to.equal(201)
 
-      const {
-        getPaymentMethodsRequest,
-        getPaymentMethodsResponse,
-      } = payment.custom.fields
+      const { getPaymentMethodsRequest, getPaymentMethodsResponse } =
+        payment.custom.fields
       expect(getPaymentMethodsRequest).to.be.deep.equal(
         JSON.stringify(getPaymentMethodsRequestDraft)
       )
@@ -111,7 +100,6 @@ describe('::getPaymentMethods::', () => {
       const interfaceInteractionResponse = JSON.parse(
         interfaceInteraction.fields.response
       )
-      expect(interfaceInteractionResponse.groups).to.be.an.instanceof(Array)
       expect(interfaceInteractionResponse.paymentMethods).to.be.an.instanceof(
         Array
       )
@@ -176,10 +164,8 @@ describe('::getPaymentMethods::', () => {
       }
       expect(statusCode).to.equal(201)
 
-      const {
-        getPaymentMethodsRequest,
-        getPaymentMethodsResponse,
-      } = payment.custom.fields
+      const { getPaymentMethodsRequest, getPaymentMethodsResponse } =
+        payment.custom.fields
       expect(getPaymentMethodsRequest).to.be.deep.equal(
         JSON.stringify(getPaymentMethodsRequestDraft)
       )
@@ -202,9 +188,6 @@ describe('::getPaymentMethods::', () => {
 
       const paymentMethodsInteractionResponse = JSON.parse(
         paymentMethodsInteraction.fields.response
-      )
-      expect(paymentMethodsInteractionResponse.groups).to.be.an.instanceof(
-        Array
       )
       expect(
         paymentMethodsInteractionResponse.paymentMethods

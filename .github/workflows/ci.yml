@@ -9,12 +9,13 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  notification_build:
-    name: Notification Module
+  extension_build:
+    name: Extension Module
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: notification
+        working-directory: extension
+
     steps:
       - uses: actions/checkout@v2
       - name: serializing workflow runs
@@ -33,14 +34,13 @@ jobs:
         env:
           ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
 
-  extension_build:
-    name: Extension Module
-    needs: notification_build
+  notification_build:
+    name: Notification Module
+    needs: extension_build
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: extension
-
+        working-directory: notification
     steps:
       - uses: actions/checkout@v2
       - name: serializing workflow runs

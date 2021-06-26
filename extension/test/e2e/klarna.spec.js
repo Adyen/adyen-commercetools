@@ -1,5 +1,4 @@
 const { expect } = require('chai')
-const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const { routes } = require('../../src/routes')
@@ -55,15 +54,10 @@ describe('::klarnaPayment::', () => {
 
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
-    await iTSetUp.initServerAndExtension({
-      ctpClient,
-      ctpProjectKey: ctpConfig.projectKey,
-    })
     browser = await initPuppeteerBrowser()
   })
 
   afterEach(async () => {
-    await iTSetUp.stopRunningServers()
     await browser.close()
   })
 
@@ -134,9 +128,8 @@ describe('::klarnaPayment::', () => {
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {
-    const {
-      makePaymentResponse: makePaymentResponseString,
-    } = payment.custom.fields
+    const { makePaymentResponse: makePaymentResponseString } =
+      payment.custom.fields
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
 
     // Redirect to Klarna page
@@ -215,9 +208,8 @@ describe('::klarnaPayment::', () => {
       `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`
     )
 
-    const chargePendingTransaction = pU.getChargeTransactionPending(
-      paymentAfterCapture
-    )
+    const chargePendingTransaction =
+      pU.getChargeTransactionPending(paymentAfterCapture)
     expect(chargePendingTransaction.interactionId).to.equal(
       manualCaptureResponse.pspReference
     )

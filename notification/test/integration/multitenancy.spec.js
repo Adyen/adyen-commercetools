@@ -5,7 +5,7 @@ const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const iTSetUp = require('./integration-test-set-up')
 const config = require('../../src/config/config')
-const notifications = require('../resources/notification')
+const notifications = require('../resources/notification.json')
 
 const localhostIp = address()
 
@@ -18,14 +18,10 @@ describe('::multitenancy::', () => {
   let ctpClient2
 
   beforeEach(async () => {
-    ;[
-      commercetoolsProjectKey1,
-      commercetoolsProjectKey2,
-    ] = config.getAllCtpProjectKeys()
-    ;[
-      adyenMerchantAccount1,
-      adyenMerchantAccount2,
-    ] = config.getAllAdyenMerchantAccounts()
+    ;[commercetoolsProjectKey1, commercetoolsProjectKey2] =
+      config.getAllCtpProjectKeys()
+    ;[adyenMerchantAccount1, adyenMerchantAccount2] =
+      config.getAllAdyenMerchantAccounts()
     ctpClient1 = ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey1)
     )
@@ -47,15 +43,19 @@ describe('::multitenancy::', () => {
     const modifiedNotification1 = cloneDeep(notifications)
     const modifiedNotification2 = cloneDeep(notifications)
 
-    modifiedNotification1.notificationItems[0].NotificationRequestItem.additionalData = {
-      'metadata.commercetoolsProjectKey': commercetoolsProjectKey1,
-    }
-    modifiedNotification1.notificationItems[0].NotificationRequestItem.merchantAccountCode = adyenMerchantAccount1
+    modifiedNotification1.notificationItems[0].NotificationRequestItem.additionalData =
+      {
+        'metadata.ctProjectKey': commercetoolsProjectKey1,
+      }
+    modifiedNotification1.notificationItems[0].NotificationRequestItem.merchantAccountCode =
+      adyenMerchantAccount1
 
-    modifiedNotification2.notificationItems[0].NotificationRequestItem.additionalData = {
-      'metadata.commercetoolsProjectKey': commercetoolsProjectKey2,
-    }
-    modifiedNotification2.notificationItems[0].NotificationRequestItem.merchantAccountCode = adyenMerchantAccount2
+    modifiedNotification2.notificationItems[0].NotificationRequestItem.additionalData =
+      {
+        'metadata.ctProjectKey': commercetoolsProjectKey2,
+      }
+    modifiedNotification2.notificationItems[0].NotificationRequestItem.merchantAccountCode =
+      adyenMerchantAccount2
 
     const [response1, response2] = await Promise.all([
       fetch(`http://${localhostIp}:8000`, {

@@ -5,36 +5,27 @@ const config = require('../../src/config/config')
 const iTSetUp = require('./integration-test-set-up')
 
 describe('::klarnaMakePayment with multiple projects use case::', () => {
-  const [
-    commercetoolsProjectKey1,
-    commercetoolsProjectKey2,
-  ] = config.getAllCtpProjectKeys()
-  const [
-    adyenMerchantAccount1,
-    adyenMerchantAccount2,
-  ] = config.getAllAdyenMerchantAccounts()
+  const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
+    config.getAllCtpProjectKeys()
+  const [adyenMerchantAccount1, adyenMerchantAccount2] =
+    config.getAllAdyenMerchantAccounts()
 
   let ctpClientProject1
   let ctpClientProject2
 
   beforeEach(async () => {
-    await iTSetUp.initServer()
     const ctpConfig1 = config.getCtpConfig(commercetoolsProjectKey1)
     ctpClientProject1 = ctpClientBuilder.get(ctpConfig1)
 
     await iTSetUp.cleanupCtpResources(ctpClientProject1)
-    await iTSetUp.initExtension(ctpClientProject1, ctpConfig1.projectKey)
 
     const ctpConfig2 = config.getCtpConfig(commercetoolsProjectKey2)
     ctpClientProject2 = ctpClientBuilder.get(ctpConfig2)
 
     await iTSetUp.cleanupCtpResources(ctpClientProject2)
-    await iTSetUp.initExtension(ctpClientProject2, ctpConfig2.projectKey)
   })
 
   afterEach(async () => {
-    await iTSetUp.stopRunningServers()
-
     await iTSetUp.cleanupCtpResources(ctpClientProject1)
     await iTSetUp.cleanupCtpResources(ctpClientProject2)
   })
@@ -113,7 +104,7 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
     const makePaymentResponse = JSON.parse(makePaymentInteraction.response)
 
     expect(makePaymentRequest.metadata).to.deep.equal({
-      commercetoolsProjectKey,
+      ctProjectKey: commercetoolsProjectKey,
     })
     expect(makePaymentRequest.merchantAccount).to.be.equal(adyenMerchantAccount)
 

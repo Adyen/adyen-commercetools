@@ -7,10 +7,8 @@ const iTSetUp = require('./integration-test-set-up')
 
 describe('::make-payment with multiple adyen accounts use case::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
-  const [
-    adyenMerchantAccount1,
-    adyenMerchantAccount2,
-  ] = config.getAllAdyenMerchantAccounts()
+  const [adyenMerchantAccount1, adyenMerchantAccount2] =
+    config.getAllAdyenMerchantAccounts()
 
   let ctpClient
 
@@ -18,14 +16,9 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
     await iTSetUp.cleanupCtpResources(ctpClient)
-    await iTSetUp.initServerAndExtension({
-      ctpClient,
-      ctpProjectKey: ctpConfig.projectKey,
-    })
   })
 
   afterEach(async () => {
-    await iTSetUp.stopRunningServers()
     await iTSetUp.cleanupCtpResources(ctpClient)
   })
 
@@ -94,6 +87,8 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     expect(statusCode).to.equal(201)
 
     expect(payment.key).to.equal(reference)
+    expect(payment.paymentMethodInfo.method).to.equal('scheme')
+    expect(payment.paymentMethodInfo.name).to.eql({ en: 'Credit Card' })
 
     const interfaceInteraction = payment.interfaceInteractions.find(
       (interaction) =>
@@ -101,7 +96,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     )
     const makePaymentRequest = JSON.parse(interfaceInteraction.fields.request)
     expect(makePaymentRequest.metadata).to.deep.equal({
-      commercetoolsProjectKey,
+      ctProjectKey: commercetoolsProjectKey,
     })
     expect(makePaymentRequest.merchantAccount).to.be.equal(adyenMerchantAccount)
 

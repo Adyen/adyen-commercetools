@@ -1,5 +1,3 @@
-const querystring = require('querystring')
-const iTSetUp = require('../integration/integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const { routes } = require('../../src/routes')
@@ -45,7 +43,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
       )
     }
     routes['/return-url'] = async (request, response) => {
-      const body = await httpUtils.collectRequestData(request)
+      const params = getRequestParams(request)
       return httpUtils.sendResponse({
         response,
         headers: {
@@ -53,21 +51,16 @@ describe('::creditCardPayment3dsRedirect::', () => {
         },
         data:
           '<!DOCTYPE html><html><head></head>' +
-          `<body><div id=redirect-response>${body}</div></body></html>`,
+          `<body><div id=redirect-response>${params.redirectResult}</div></body></html>`,
       })
     }
 
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
-    await iTSetUp.initServerAndExtension({
-      ctpClient,
-      ctpProjectKey: ctpConfig.projectKey,
-    })
     browser = await initPuppeteerBrowser()
   })
 
   afterEach(async () => {
-    await iTSetUp.stopRunningServers()
     await browser.close()
   })
 
@@ -84,8 +77,8 @@ describe('::creditCardPayment3dsRedirect::', () => {
           'then it should successfully finish the payment with 3DS redirect flow',
         async () => {
           const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-          const clientKey = config.getAdyenConfig(adyenMerchantAccount)
-            .clientKey
+          const clientKey =
+            config.getAdyenConfig(adyenMerchantAccount).clientKey
           const payment = await createPayment(
             ctpClient,
             adyenMerchantAccount,
@@ -151,9 +144,8 @@ describe('::creditCardPayment3dsRedirect::', () => {
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {
-    const {
-      makePaymentResponse: makePaymentResponseString,
-    } = payment.custom.fields
+    const { makePaymentResponse: makePaymentResponseString } =
+      payment.custom.fields
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
 
     const redirectPaymentFormPage = new RedirectPaymentFormPage(
@@ -171,7 +163,6 @@ describe('::creditCardPayment3dsRedirect::', () => {
     const value = await creditCardRedirectPage.finish3dsRedirectPayment()
 
     // Submit payment details
-    const parsedQuery = querystring.parse(value)
     const { body: finalPayment } = await ctpClient.update(
       ctpClient.builder.payments,
       payment.id,
@@ -181,12 +172,29 @@ describe('::creditCardPayment3dsRedirect::', () => {
           action: 'setCustomField',
           name: 'submitAdditionalPaymentDetailsRequest',
           value: JSON.stringify({
-            details: parsedQuery,
+            details: {
+              redirectResult: decodeURIComponent(value),
+            },
           }),
         },
       ]
     )
 
     return finalPayment
+  }
+
+  function getRequestParams(req) {
+    const queries = req.url.split('?')
+    const result = {}
+    if (queries.length >= 2) {
+      queries[1].split('&').forEach((item) => {
+        try {
+          result[item.split('=')[0]] = item.split('=')[1]
+        } catch (e) {
+          result[item.split('=')[0]] = ''
+        }
+      })
+    }
+    return result
   }
 })

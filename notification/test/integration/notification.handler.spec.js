@@ -5,8 +5,8 @@ const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const iTSetUp = require('./integration-test-set-up')
 const config = require('../../src/config/config')
-const notifications = require('../resources/notification')
-const notificationRefundFail = require('../resources/notification-refund-fail')
+const notifications = require('../resources/notification.json')
+const notificationRefundFail = require('../resources/notification-refund-fail.json')
 const { overrideAdyenConfig } = require('../test-utils')
 
 // node-fetch package doesn't support requests to localhost, therefore
@@ -21,10 +21,10 @@ describe('notification module', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
   notifications.notificationItems[0].NotificationRequestItem.additionalData[
-    'metadata.commercetoolsProjectKey'
+    'metadata.ctProjectKey'
   ] = commercetoolsProjectKey
   notificationRefundFail.notificationItems[0].NotificationRequestItem.additionalData[
-    'metadata.commercetoolsProjectKey'
+    'metadata.ctProjectKey'
   ] = commercetoolsProjectKey
 
   before(async () => {
@@ -76,6 +76,7 @@ describe('notification module', () => {
         },
       } = await ctpClient.fetch(ctpClient.builder.payments)
       expect(paymentAfter.transactions).to.have.lengthOf(1)
+      expect(paymentAfter.paymentMethodInfo.method).to.equal('visa')
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
       expect(paymentAfter.transactions[0].state).to.equal('Success')
       expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
@@ -120,7 +121,8 @@ describe('notification module', () => {
     const modifiedNotification = cloneDeep(notifications)
     modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode =
       'CAPTURE'
-    modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = _generateRandomNumber()
+    modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference =
+      _generateRandomNumber()
 
     // Simulating a notification from Adyen
     const response = await fetch(`http://${localhostIp}:8000`, {
@@ -285,11 +287,13 @@ describe('notification module', () => {
       const modifiedNotification = cloneDeep(notifications)
       modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode =
         'REFUND'
-      modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
-        'modification.action': 'refund',
-        'metadata.commercetoolsProjectKey': commercetoolsProjectKey,
-      }
-      modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId
+      modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData =
+        {
+          'modification.action': 'refund',
+          'metadata.ctProjectKey': commercetoolsProjectKey,
+        }
+      modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference =
+        refundInteractionId
 
       // Simulating a notification from Adyen
       const response = await fetch(`http://${localhostIp}:8000`, {
@@ -382,17 +386,21 @@ describe('notification module', () => {
       const successNotification1 = cloneDeep(notifications)
       successNotification1.notificationItems[0].NotificationRequestItem.eventCode =
         'REFUND'
-      successNotification1.notificationItems[0].NotificationRequestItem.additionalData = {
-        'modification.action': 'refund',
-        'metadata.commercetoolsProjectKey': commercetoolsProjectKey,
-      }
-      successNotification1.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId1
+      successNotification1.notificationItems[0].NotificationRequestItem.additionalData =
+        {
+          'modification.action': 'refund',
+          'metadata.ctProjectKey': commercetoolsProjectKey,
+        }
+      successNotification1.notificationItems[0].NotificationRequestItem.pspReference =
+        refundInteractionId1
 
       const successNotification2 = cloneDeep(successNotification1)
-      successNotification2.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId2
+      successNotification2.notificationItems[0].NotificationRequestItem.pspReference =
+        refundInteractionId2
 
       const failedNotification = cloneDeep(notificationRefundFail)
-      failedNotification.notificationItems[0].NotificationRequestItem.pspReference = refundInteractionId3
+      failedNotification.notificationItems[0].NotificationRequestItem.pspReference =
+        refundInteractionId3
 
       // Simulating notifications from Adyen
       const responses = await Promise.all([
@@ -485,11 +493,13 @@ describe('notification module', () => {
       const modifiedNotification = cloneDeep(notifications)
       modifiedNotification.notificationItems[0].NotificationRequestItem.eventCode =
         'CANCEL_OR_REFUND'
-      modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData = {
-        'modification.action': 'cancel',
-        'metadata.commercetoolsProjectKey': commercetoolsProjectKey,
-      }
-      modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference = cancellationInteractionId
+      modifiedNotification.notificationItems[0].NotificationRequestItem.additionalData =
+        {
+          'modification.action': 'cancel',
+          'metadata.ctProjectKey': commercetoolsProjectKey,
+        }
+      modifiedNotification.notificationItems[0].NotificationRequestItem.pspReference =
+        cancellationInteractionId
 
       // Simulating a notification from Adyen
       const response = await fetch(`http://${localhostIp}:8000`, {
