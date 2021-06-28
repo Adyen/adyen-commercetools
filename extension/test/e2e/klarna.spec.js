@@ -118,8 +118,7 @@ describe('::klarnaPayment::', () => {
     const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest(
       clientKey
     )
-
-    const { body: updatedPayment } = await ctpClient.update(
+    const result = await ctpClient.update(
       ctpClient.builder.payments,
       payment.id,
       payment.version,
@@ -131,6 +130,8 @@ describe('::klarnaPayment::', () => {
         },
       ]
     )
+    console.log(result)
+    const { body: updatedPayment } = result
 
     return updatedPayment
   }
@@ -162,7 +163,7 @@ describe('::klarnaPayment::', () => {
     const returnPageUrl = new URL(browserTab.url())
     const searchParamsJson = Object.fromEntries(returnPageUrl.searchParams)
 
-    const { body: updatedPayment } = await ctpClient.update(
+    const result = await ctpClient.update(
       ctpClient.builder.payments,
       payment.id,
       payment.version,
@@ -176,13 +177,14 @@ describe('::klarnaPayment::', () => {
         },
       ]
     )
-
+    console.log(result)
+    const { body: updatedPayment } = result
     return updatedPayment
   }
 
   async function capturePayment({ payment }) {
     const transaction = payment.transactions[0]
-    const { body: updatedPayment } = await ctpClient.update(
+    const result = await ctpClient.update(
       ctpClient.builder.payments,
       payment.id,
       payment.version,
@@ -195,7 +197,8 @@ describe('::klarnaPayment::', () => {
         }),
       ]
     )
-
+    console.log(result)
+    const { body: updatedPayment } = result
     return updatedPayment
   }
 
