@@ -76,7 +76,6 @@ function _getPaymentHandlers(paymentObject) {
 
   const handlers = []
 
-  // PAYMENT LINK
   if (
     paymentObject.custom.fields.makePaymentLinkRequest &&
     !paymentObject.custom.fields.makePaymentLinkResponse
