@@ -12,19 +12,6 @@ async function execute(paymentObject) {
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey;
 
-  if (!makePaymentLinkRequestObj.lineItems) {
-    const ctpCart = await _fetchMatchingCart(
-      paymentObject,
-      commercetoolsProjectKey
-    );
-    if (ctpCart) {
-      makePaymentLinkRequestObj.lineItems = createLineItems(paymentObject, ctpCart)
-      paymentObject.custom.fields.makePaymentRequest = JSON.stringify(
-        makePaymentLinkRequestObj
-      );
-    }
-  }
-
   const { request, response } = await getPaymentLink(
     adyenMerchantAccount,
     commercetoolsProjectKey,
