@@ -2,6 +2,8 @@ const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
 const config = require('../../src/config/config')
 const httpUtils = require('../../src/utils')
+
+const logger = httpUtils.getLogger()
 const {
   assertPayment,
   createPayment,
@@ -88,7 +90,7 @@ describe('::creditCardPayment3dsNative::', () => {
             adyenMerchantAccount,
             ctpProjectKey
           )
-
+          logger.debug('credit-card-3ds-native::payment:', payment)
           const browserTab = await browser.newPage()
 
           const paymentAfterMakePayment = await makePayment({
@@ -100,13 +102,19 @@ describe('::creditCardPayment3dsNative::', () => {
             payment,
             clientKey,
           })
-
+          logger.debug(
+            'credit-card-3ds-native::paymentAfterMakePayment:',
+            paymentAfterMakePayment
+          )
           const paymentAfterAuthentication = await performChallengeFlow({
             payment: paymentAfterMakePayment,
             browserTab,
             baseUrl,
           })
-
+          logger.debug(
+            'credit-card-3ds-native::paymentAfterAuthentication:',
+            paymentAfterAuthentication
+          )
           assertPayment(paymentAfterAuthentication)
         }
       )
@@ -130,21 +138,27 @@ describe('::creditCardPayment3dsNative::', () => {
       creditCardCvc,
       clientKey,
     })
-
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'makePaymentRequest',
-          value: makePaymentRequest,
-        },
-      ]
-    )
-
-    return updatedPayment
+    let result = null
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'makePaymentRequest',
+            value: makePaymentRequest,
+          },
+        ]
+      )
+    } catch (err) {
+      logger.error(
+        'credit-card-3ds-native::makePayment::errors:',
+        err.body.errors
+      )
+    }
+    return result.body
   }
 
   async function performChallengeFlow({ payment, browserTab, baseUrl }) {
@@ -167,19 +181,26 @@ describe('::creditCardPayment3dsNative::', () => {
     const creditCardNativePage = new CreditCardNativePage(browserTab, baseUrl)
     const additionalPaymentDetailsString =
       await creditCardNativePage.finish3dsNativePayment()
-    const { body: finalPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'submitAdditionalPaymentDetailsRequest',
-          value: additionalPaymentDetailsString,
-        },
-      ]
-    )
-
-    return finalPayment
+    let result = null
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'submitAdditionalPaymentDetailsRequest',
+            value: additionalPaymentDetailsString,
+          },
+        ]
+      )
+    } catch (err) {
+      logger.error(
+        'credit-card-3ds-native::performChallengeFlow::errors:',
+        err.body.errors
+      )
+    }
+    return result.body
   }
 })

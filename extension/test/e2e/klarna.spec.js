@@ -78,24 +78,21 @@ describe('::klarnaPayment::', () => {
       )
 
       const browserTab = await browser.newPage()
-      logger.debug('[klarna] payment : ', payment)
+      logger.debug('klarna::payment:', payment)
       const paymentAfterMakePayment = await makePayment({
         browserTab,
         baseUrl,
         payment,
         clientKey,
       })
-      logger.debug(
-        '[klarna] paymentAfterMakePayment : ',
-        paymentAfterMakePayment
-      )
+      logger.debug('klarna::paymentAfterMakePayment:', paymentAfterMakePayment)
       const paymentAfterHandleRedirect = await handleRedirect({
         browserTab,
         baseUrl,
         payment: paymentAfterMakePayment,
       })
       logger.debug(
-        '[klarna] paymentAfterHandleRedirect : ',
+        'klarna::paymentAfterHandleRedirect:',
         paymentAfterHandleRedirect
       )
       assertPayment(paymentAfterHandleRedirect)
@@ -104,7 +101,7 @@ describe('::klarnaPayment::', () => {
       const paymentAfterCapture = await capturePayment({
         payment: paymentAfterHandleRedirect,
       })
-      logger.debug('[klarna] paymentAfterCapture : ', paymentAfterCapture)
+      logger.debug('klarna::paymentAfterCapture:', paymentAfterCapture)
       assertManualCaptureResponse(paymentAfterCapture)
     }
   )
@@ -118,22 +115,27 @@ describe('::klarnaPayment::', () => {
     const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest(
       clientKey
     )
-    const result = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'makePaymentRequest',
-          value: makePaymentRequest,
-        },
-      ]
-    )
-    console.log(result)
-    const { body: updatedPayment } = result
-
-    return updatedPayment
+    let result = null
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'makePaymentRequest',
+            value: makePaymentRequest,
+          },
+        ]
+      )
+    } catch (err) {
+      logger.error(
+        'klarna::makePayment::errors:',
+        JSON.stringify(err.body.errors)
+      )
+    }
+    return result.body
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {
@@ -162,44 +164,52 @@ describe('::klarnaPayment::', () => {
     // Submit payment details
     const returnPageUrl = new URL(browserTab.url())
     const searchParamsJson = Object.fromEntries(returnPageUrl.searchParams)
-
-    const result = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'submitAdditionalPaymentDetailsRequest',
-          value: JSON.stringify({
-            details: searchParamsJson,
-          }),
-        },
-      ]
-    )
-    console.log(result)
-    const { body: updatedPayment } = result
-    return updatedPayment
+    let result = null
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'submitAdditionalPaymentDetailsRequest',
+            value: JSON.stringify({
+              details: searchParamsJson,
+            }),
+          },
+        ]
+      )
+    } catch (err) {
+      logger.error('klarna::handleRedirect::errors:', err.body.errors)
+    }
+    return result.body
   }
 
   async function capturePayment({ payment }) {
     const transaction = payment.transactions[0]
-    const result = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        pU.createAddTransactionAction({
-          type: 'Charge',
-          state: 'Initial',
-          currency: transaction.amount.currencyCode,
-          amount: transaction.amount.centAmount,
-        }),
-      ]
-    )
-    console.log(result)
-    const { body: updatedPayment } = result
-    return updatedPayment
+    let result = null
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          pU.createAddTransactionAction({
+            type: 'Charge',
+            state: 'Initial',
+            currency: transaction.amount.currencyCode,
+            amount: transaction.amount.centAmount,
+          }),
+        ]
+      )
+    } catch (err) {
+      logger.error(
+        'klarna::capturePayment::errors:',
+        JSON.stringify(err.body.errors)
+      )
+    }
+    return result.body
   }
 
   function assertManualCaptureResponse(paymentAfterCapture) {

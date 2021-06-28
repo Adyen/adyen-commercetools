@@ -2,6 +2,9 @@ const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
 const config = require('../../src/config/config')
 const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
+const httpUtils = require('../../src/utils')
+
+const logger = httpUtils.getLogger()
 const {
   assertPayment,
   createPayment,
@@ -91,20 +94,24 @@ describe('::creditCardPayment::', () => {
       creditCardCvc,
       clientKey,
     })
+    let result = null
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'makePaymentRequest',
+            value: makePaymentRequest,
+          },
+        ]
+      )
+    } catch (err) {
+      logger.error('credit-card::makePayment::errors:', err.body.errors)
+    }
 
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'makePaymentRequest',
-          value: makePaymentRequest,
-        },
-      ]
-    )
-
-    return updatedPayment
+    return result.body
   }
 })
