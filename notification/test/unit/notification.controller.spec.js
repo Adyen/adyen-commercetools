@@ -6,6 +6,7 @@ const config = require('../../src/config/config')
 const notificationController = require('../../src/api/notification/notification.controller')
 const httpUtils = require('../../src/utils/commons')
 const logger = require('../../src/utils/logger')
+const notification = require('../resources/notification.json')
 
 const sandbox = sinon.createSandbox()
 describe('notification controller', () => {
@@ -100,10 +101,9 @@ describe('notification controller', () => {
     const responseEndSpy = sandbox.spy(responseMock, 'end')
 
     const notificationJson = _.cloneDeep(mockNotificationJson)
-    notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
-      {
-        'metadata.ctProjectKey': 'testKey',
-      }
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
+      'metadata.ctProjectKey': 'testKey',
+    }
     notificationJson.notificationItems[0].NotificationRequestItem.merchantAccountCode =
       'nonExistingMerchantAccount'
     httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
@@ -145,10 +145,9 @@ describe('notification controller', () => {
     const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
     const responseEndSpy = sandbox.spy(responseMock, 'end')
     const notificationJson = _.cloneDeep(mockNotificationJson)
-    notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
-      {
-        'metadata.ctProjectKey': 'nonExistingCtpProjectKey',
-      }
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
+      'metadata.ctProjectKey': 'nonExistingCtpProjectKey',
+    }
     httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
     module.exports = httpUtils
 
@@ -166,6 +165,35 @@ describe('notification controller', () => {
     )
     expect(logSpy.firstCall.args[0].err.message).to.equal(
       'Configuration is not provided. Please update the configuration. ctpProjectKey: ["nonExistingCtpProjectKey"]'
+    )
+  })
+
+  it(' test', async () => {
+    // prepare:
+    const requestMock = {
+      method: 'POST',
+    }
+    const responseMock = {
+      writeHead: () => {},
+      end: () => {},
+    }
+    const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+    const responseEndSpy = sandbox.spy(responseMock, 'end')
+    const notificationJson = notification
+    httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
+    module.exports = httpUtils
+
+    logSpy = sinon.spy()
+    logger.getLogger().error = logSpy
+
+    // test:
+    await notificationController.handleNotification(requestMock, responseMock)
+
+    // expect:
+    expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
+    console.log(logSpy.firstCall)
+    expect(responseEndSpy.firstCall.firstArg).to.equal(
+      JSON.stringify({ notificationResponse: '[accepted]' })
     )
   })
 })
