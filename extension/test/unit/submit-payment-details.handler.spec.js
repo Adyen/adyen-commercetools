@@ -234,7 +234,7 @@ describe('submit-additional-payment-details::execute', () => {
     'when "logSensitiveData" is true, ' +
       'then it should not remove sensitive data',
     async () => {
-      const ctpDummyConfig = {
+      const extensionDummyConfig = {
         logSensitiveData: true,
         port: 8080,
         logLevel: 'debug',
@@ -243,7 +243,7 @@ describe('submit-additional-payment-details::execute', () => {
         keepAliveTimeout: 10,
       }
       const sandbox = sinon.createSandbox()
-      sandbox.stub(config, 'getModuleConfig').returns(ctpDummyConfig)
+      sandbox.stub(config, 'getModuleConfig').returns(extensionDummyConfig)
 
       scope
         .post('/payments/details')
@@ -279,7 +279,7 @@ describe('submit-additional-payment-details::execute', () => {
     'when "logSensitiveData" is false, ' +
       'then it should remove sensitive data',
     async () => {
-      const ctpDummyConfig = {
+      const extensionDummyConfig = {
         logSensitiveData: false,
         port: 8080,
         logLevel: 'debug',
@@ -288,7 +288,7 @@ describe('submit-additional-payment-details::execute', () => {
         keepAliveTimeout: 10,
       }
       const sandbox = sinon.createSandbox()
-      sandbox.stub(config, 'getModuleConfig').returns(ctpDummyConfig)
+      sandbox.stub(config, 'getModuleConfig').returns(extensionDummyConfig)
 
       scope
         .post('/payments/details')

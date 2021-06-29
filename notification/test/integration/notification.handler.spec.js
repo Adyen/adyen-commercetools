@@ -81,6 +81,7 @@ describe('notification module', () => {
       expect(paymentAfter.transactions[0].state).to.equal('Success')
       expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
       const notification = notifications.notificationItems[0]
+      delete notification.NotificationRequestItem.additionalData
       expect(
         paymentAfter.interfaceInteractions[0].fields.notification
       ).to.equal(JSON.stringify(notification))
@@ -149,6 +150,7 @@ describe('notification module', () => {
 
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
     const notification = modifiedNotification.notificationItems[0]
+    delete notification.NotificationRequestItem.additionalData
     expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(
       JSON.stringify(notification)
     )
@@ -193,6 +195,7 @@ describe('notification module', () => {
       expect(paymentAfter.transactions[0].state).to.equal('Pending')
       expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
       const notification = modifiedNotification.notificationItems[0]
+      delete notification.NotificationRequestItem.additionalData
       expect(
         paymentAfter.interfaceInteractions[0].fields.notification
       ).to.equal(JSON.stringify(notification))
@@ -320,6 +323,7 @@ describe('notification module', () => {
 
       expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
       const notification = modifiedNotification.notificationItems[0]
+      delete notification.NotificationRequestItem.additionalData
       expect(
         paymentAfter.interfaceInteractions[0].fields.notification
       ).to.equal(JSON.stringify(notification))
@@ -526,6 +530,7 @@ describe('notification module', () => {
 
       expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
       const notification = modifiedNotification.notificationItems[0]
+      delete notification.NotificationRequestItem.additionalData
       expect(
         paymentAfter.interfaceInteractions[0].fields.notification
       ).to.equal(JSON.stringify(notification))

@@ -4,7 +4,7 @@ const { validateHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events.json')
 const { getNotificationForTracking } = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
-const { getAdyenPaymentMethodsToNames } = require('../../config/config')
+const config = require('../../config/config')
 const mainLogger = require('../../utils/logger').getLogger()
 
 class CommercetoolsError extends Error {
@@ -114,14 +114,17 @@ async function updatePaymentWithRepeater(
       )
       break
     } catch (err) {
+      const moduleConfig = config.getModuleConfig()
+      let updateActionsToLog = updateActions
+      if (!moduleConfig.logSensitiveData)
+        updateActionsToLog =
+          _obfuscateNotificationInfoFromActionFields(updateActions)
       if (err.statusCode !== 409)
         throw new CommercetoolsError({
           stack: err.stack,
           message:
             `Unexpected error on payment update with ID: ${currentPayment.id}.` +
-            `Failed actions: ${JSON.stringify(
-              _obfuscateNotificationInfoFromActionFields(updateActions)
-            )}`,
+            `Failed actions: ${JSON.stringify(updateActionsToLog)}`,
           statusCode: err.statusCode,
         })
       retryCount += 1
@@ -137,7 +140,7 @@ async function updatePaymentWithRepeater(
             `${retryMessage} Won't retry again` +
             ` because of a reached limit ${maxRetry}` +
             ` max retries. Failed actions: ${JSON.stringify(
-              _obfuscateNotificationInfoFromActionFields(updateActions)
+              updateActionsToLog
             )}`,
           statusCode: err.statusCode,
         })
@@ -253,9 +256,12 @@ function compareTransactionStates(currentState, newState) {
 }
 
 function getAddInterfaceInteractionUpdateAction(notification) {
-  // strip away sensitive data
-  delete notification.additionalData
-  delete notification.reason
+  const moduleConfig = config.getModuleConfig()
+  if (!moduleConfig.logSensitiveData) {
+    // strip away sensitive data
+    delete notification.NotificationRequestItem.additionalData
+    delete notification.NotificationRequestItem.reason
+  }
 
   const eventCode = _.isNil(notification.NotificationRequestItem.eventCode)
     ? ''
@@ -351,7 +357,7 @@ function getSetMethodInfoMethodAction(paymentMethod) {
 }
 
 function getSetMethodInfoNameAction(paymentMethod) {
-  const paymentMethodsToLocalizedNames = getAdyenPaymentMethodsToNames()
+  const paymentMethodsToLocalizedNames = config.getAdyenPaymentMethodsToNames()
   const paymentMethodLocalizedNames =
     paymentMethodsToLocalizedNames[paymentMethod]
   if (paymentMethodLocalizedNames)
