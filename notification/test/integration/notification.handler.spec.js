@@ -80,7 +80,7 @@ describe('notification module', () => {
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
       expect(paymentAfter.transactions[0].state).to.equal('Success')
       expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
-      const notification = notifications.notificationItems[0]
+      const notification = cloneDeep(notifications.notificationItems[0])
       delete notification.NotificationRequestItem.additionalData
       expect(
         paymentAfter.interfaceInteractions[0].fields.notification

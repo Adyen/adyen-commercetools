@@ -257,15 +257,16 @@ function compareTransactionStates(currentState, newState) {
 
 function getAddInterfaceInteractionUpdateAction(notification) {
   const moduleConfig = config.getModuleConfig()
+  const notificationToUse = _.cloneDeep(notification)
   if (!moduleConfig.logSensitiveData) {
     // strip away sensitive data
-    delete notification.NotificationRequestItem.additionalData
-    delete notification.NotificationRequestItem.reason
+    delete notificationToUse.NotificationRequestItem.additionalData
+    delete notificationToUse.NotificationRequestItem.reason
   }
 
-  const eventCode = _.isNil(notification.NotificationRequestItem.eventCode)
+  const eventCode = _.isNil(notificationToUse.NotificationRequestItem.eventCode)
     ? ''
-    : notification.NotificationRequestItem.eventCode.toLowerCase()
+    : notificationToUse.NotificationRequestItem.eventCode.toLowerCase()
 
   return {
     action: 'addInterfaceInteraction',
@@ -277,7 +278,7 @@ function getAddInterfaceInteractionUpdateAction(notification) {
       createdAt: new Date(),
       status: eventCode,
       type: 'notification',
-      notification: JSON.stringify(notification),
+      notification: JSON.stringify(notificationToUse),
     },
   }
 }

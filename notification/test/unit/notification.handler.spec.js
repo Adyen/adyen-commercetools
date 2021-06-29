@@ -93,6 +93,7 @@ describe('notification module', () => {
       false,
       config
     )
+    delete notifications[0].NotificationRequestItem.additionalData
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -181,6 +182,7 @@ describe('notification module', () => {
       false,
       config
     )
+    delete notifications[0].NotificationRequestItem.additionalData
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -327,6 +329,7 @@ describe('notification module', () => {
       false,
       config
     )
+    delete notifications[0].NotificationRequestItem.additionalData
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -417,6 +420,7 @@ describe('notification module', () => {
       false,
       config
     )
+    delete notifications[0].NotificationRequestItem.additionalData
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -507,6 +511,7 @@ describe('notification module', () => {
       false,
       config
     )
+    delete notifications[0].NotificationRequestItem.additionalData
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
