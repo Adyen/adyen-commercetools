@@ -13,7 +13,7 @@ const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const CreditCardNativePage = require('./pageObjects/CreditCard3dsNativePage')
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
-describe('::creditCardPayment3dsNative::', () => {
+describe.skip('::creditCardPayment3dsNative::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
