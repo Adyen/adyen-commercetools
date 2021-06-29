@@ -8,26 +8,6 @@ const ctp = require('../../utils/ctp')
 const { getAdyenPaymentMethodsToNames } = require('../../config/config')
 const mainLogger = require('../../utils/logger').getLogger()
 
-class CommercetoolsError extends Error {
-  constructor({ err }) {
-    super()
-    this.errObject = err
-  }
-
-  /**
-   * recoverable: notification delivery can be retried by Adyen (return 500)
-   * non recoverable: notification delivery can not be retried by Adyen
-   * as it most probably would fail again (return "accepted")
-   *
-   * If commercetools status code is defined and is 5xx then return `500` to Adyen -> recoverable
-   * If during communication with commercetools we got a `NetworkError` then return `500` -> recoverable
-   * If commercetools status code is not OK but also not 5xx or 409 then return `accepted` -> non recoverable
-   */
-  _shouldRetry(statusCode) {
-    return statusCode < 200 || statusCode === 409 || statusCode >= 500
-  }
-}
-
 async function processNotification(
   notification,
   enableHmacSignature,
@@ -240,11 +220,10 @@ function compareTransactionStates(currentState, newState) {
   if (
     !transactionStateFlow.hasOwnProperty(currentState) ||
     !transactionStateFlow.hasOwnProperty(newState)
-  )
-    throw new CommercetoolsError({
-      message: `Wrong transaction state passed. CurrentState: ${currentState}, newState: ${newState}`,
-    })
-
+  ) {
+    const errorMessage =  `Wrong transaction state passed. CurrentState: ${currentState}, newState: ${newState}`
+    throw new VError(errorMessage)
+  }
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
 }
 
