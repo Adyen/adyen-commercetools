@@ -108,9 +108,10 @@ describe('notification controller', () => {
     const responseEndSpy = sandbox.spy(responseMock, 'end')
 
     const notificationJson = _.cloneDeep(mockNotificationJson)
-    notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
-      'metadata.ctProjectKey': 'testKey',
-    }
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
+      {
+        'metadata.ctProjectKey': 'testKey',
+      }
     notificationJson.notificationItems[0].NotificationRequestItem.merchantAccountCode =
       'nonExistingMerchantAccount'
     httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
@@ -152,9 +153,10 @@ describe('notification controller', () => {
     const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
     const responseEndSpy = sandbox.spy(responseMock, 'end')
     const notificationJson = _.cloneDeep(mockNotificationJson)
-    notificationJson.notificationItems[0].NotificationRequestItem.additionalData = {
-      'metadata.ctProjectKey': 'nonExistingCtpProjectKey',
-    }
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
+      {
+        'metadata.ctProjectKey': 'nonExistingCtpProjectKey',
+      }
     httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
     module.exports = httpUtils
 
