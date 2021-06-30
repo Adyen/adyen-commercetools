@@ -48,7 +48,7 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
   "logLevel": "DEBUG",
   "port": "8081",
   "keepAliveTimeout": 10000,
-  "logSensitiveData": false
+  "removeSensitiveData": false
 }
 ```
 
@@ -127,7 +127,7 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
   "logLevel": "DEBUG",
   "port": 8080,
   "keepAliveTimeout": 10000,
-  "logSensitiveData": false
+  "removeSensitiveData": false
 }
 ```
 
@@ -137,7 +137,7 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 | `port`                       | The port number on which the application will run.                                                                                                                              | NO       | 443                                                                                                   |
 | `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                             | NO       | `info`                                                                                                |
 | `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                   | NO       | Node.js default (5 seconds)                                                                           |
-| `logSensitiveData`           | Boolean attribute. When `true`, all data from Adyen will be saved in the interface interaction and in the custom fields                                                         | NO       | false                                                                                                 |
+| `removeSensitiveData`           | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.                                                            | NO       | true                                                                                          |
 
 ## Commercetools project requirements
 

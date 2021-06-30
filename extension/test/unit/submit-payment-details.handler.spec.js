@@ -231,11 +231,11 @@ describe('submit-additional-payment-details::execute', () => {
   )
 
   it(
-    'when "logSensitiveData" is true, ' +
+    'when "removeSensitiveData" is false, ' +
       'then it should not remove sensitive data',
     async () => {
       const extensionDummyConfig = {
-        logSensitiveData: true,
+        removeSensitiveData: false,
         port: 8080,
         logLevel: 'debug',
         apiExtensionBaseUrl: 'testUrl',
@@ -276,11 +276,11 @@ describe('submit-additional-payment-details::execute', () => {
   )
 
   it(
-    'when "logSensitiveData" is false, ' +
+    'when "removeSensitiveData" is true, ' +
       'then it should remove sensitive data',
     async () => {
       const extensionDummyConfig = {
-        logSensitiveData: false,
+        removeSensitiveData: true,
         port: 8080,
         logLevel: 'debug',
         apiExtensionBaseUrl: 'testUrl',

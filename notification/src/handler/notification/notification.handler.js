@@ -116,7 +116,7 @@ async function updatePaymentWithRepeater(
     } catch (err) {
       const moduleConfig = config.getModuleConfig()
       let updateActionsToLog = updateActions
-      if (!moduleConfig.logSensitiveData)
+      if (moduleConfig.removeSensitiveData)
         updateActionsToLog =
           _obfuscateNotificationInfoFromActionFields(updateActions)
       if (err.statusCode !== 409)
@@ -258,7 +258,7 @@ function compareTransactionStates(currentState, newState) {
 function getAddInterfaceInteractionUpdateAction(notification) {
   const moduleConfig = config.getModuleConfig()
   const notificationToUse = _.cloneDeep(notification)
-  if (!moduleConfig.logSensitiveData) {
+  if (moduleConfig.removeSensitiveData) {
     // strip away sensitive data
     delete notificationToUse.NotificationRequestItem.additionalData
     delete notificationToUse.NotificationRequestItem.reason

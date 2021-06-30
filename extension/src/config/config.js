@@ -2,7 +2,7 @@ let config
 
 function getModuleConfig() {
   return {
-    logSensitiveData: config.logSensitiveData === 'true',
+    removeSensitiveData: config.removeSensitiveData !== 'false',
     port: config.port,
     logLevel: config.logLevel,
     apiExtensionBaseUrl: config.apiExtensionBaseUrl, // used only for development purpose

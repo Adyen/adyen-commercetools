@@ -617,12 +617,12 @@ describe('notification module', () => {
   })
 
   it(
-    'when "logSensitiveData" is true, ' +
+    'when "removeSensitiveData" is false, ' +
       'then it should not remove sensitive data',
     async () => {
       // prepare data
       const notificationDummyConfig = {
-        logSensitiveData: true,
+        removeSensitiveData: false,
         port: 8080,
         logLevel: 'info',
         keepAliveTimeout: 10,
@@ -686,12 +686,12 @@ describe('notification module', () => {
   )
 
   it(
-    'when "logSensitiveData" is false, ' +
-      'then it should not remove sensitive data',
+    'when "removeSensitiveData" is true, ' +
+      'then it should remove sensitive data',
     async () => {
       // prepare data
       const notificationDummyConfig = {
-        logSensitiveData: false,
+        removeSensitiveData: true,
         port: 8080,
         logLevel: 'info',
         keepAliveTimeout: 10,
