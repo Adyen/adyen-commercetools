@@ -679,6 +679,9 @@ describe('notification module', () => {
       expect(ctpClientUpdateSpy.args[0][3][0].fields.notification).to.include(
         'additionalData'
       )
+      expect(ctpClientUpdateSpy.args[0][3][0].fields.notification).to.include(
+        'reason'
+      )
     }
   )
 
@@ -745,6 +748,9 @@ describe('notification module', () => {
       expect(
         ctpClientUpdateSpy.args[0][3][0].fields.notification
       ).to.not.include('additionalData')
+      expect(
+        ctpClientUpdateSpy.args[0][3][0].fields.notification
+      ).to.not.include('reason')
     }
   )
 })
