@@ -46,11 +46,10 @@ async function handleNotification(request, response) {
 
 function _isRetryableError(err) {
   if (err instanceof VError) {
-    const {statusCode} = VError.cause(err)
+    const { statusCode } = VError.cause(err)
     return statusCode < 200 || statusCode === 409 || statusCode >= 500
   }
   return false
-
 }
 
 function sendAcceptedResponse(response) {
