@@ -1,58 +1,23 @@
 const config = require('../config/config')
 
-class ValidationError extends Error {
-  constructor({ stack, message }) {
-    super()
-    this.stack = stack
-    this.message = message
-
-    /*
-      recoverable: notification delivery can be retried by Adyen
-      non recoverable: notification delivery can not be retried by Adyen as it most probably would fail again
-
-      In this case, it's non recoverable, then return `accepted`.
-    */
-    this.retry = false
-  }
-}
-
 function getCtpProjectConfig(notification) {
   const commercetoolsProjectKey =
     notification?.NotificationRequestItem?.additionalData?.[
       `metadata.ctProjectKey`
     ]
   if (!commercetoolsProjectKey) {
-    throw new ValidationError({
-      message:
-        'Notification can not be processed as "metadata.ctProjectKey"  was not found on the notification.',
-    })
+    throw new Error(
+      'Notification can not be processed as "metadata.ctProjectKey"  was not found on the notification.'
+    )
   }
 
-  let ctpProjectConfig
-  try {
-    ctpProjectConfig = config.getCtpConfig(commercetoolsProjectKey)
-  } catch (e) {
-    throw new ValidationError({
-      stack: e.stack,
-      message: e.message,
-    })
-  }
-  return ctpProjectConfig
+  return config.getCtpConfig(commercetoolsProjectKey)
 }
 
 function getAdyenConfig(notification) {
   const adyenMerchantAccount =
     notification.NotificationRequestItem.merchantAccountCode
-  let adyenConfig
-  try {
-    adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-  } catch (e) {
-    throw new ValidationError({
-      stack: e.stack,
-      message: e.message,
-    })
-  }
-  return adyenConfig
+  return config.getAdyenConfig(adyenMerchantAccount)
 }
 
 module.exports = {
