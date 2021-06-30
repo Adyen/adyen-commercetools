@@ -132,7 +132,7 @@ describe('::klarnaPayment::', () => {
     } catch (err) {
       logger.error(
         'klarna::makePayment::errors:',
-        JSON.stringify(err)
+        JSON.stringify(err.body.errors)
       )
     }
     return result.body
@@ -181,7 +181,7 @@ describe('::klarnaPayment::', () => {
         ]
       )
     } catch (err) {
-      logger.error('klarna::handleRedirect::errors:', err)
+      logger.error('klarna::handleRedirect::errors:', err.body.errors)
     }
     return result.body
   }
@@ -206,7 +206,7 @@ describe('::klarnaPayment::', () => {
     } catch (err) {
       logger.error(
         'klarna::capturePayment::errors:',
-        JSON.stringify(err)
+        JSON.stringify(err.body.errors)
       )
     }
     return result.body

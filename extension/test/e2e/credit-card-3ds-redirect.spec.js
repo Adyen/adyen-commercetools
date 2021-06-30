@@ -152,7 +152,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
     } catch (err) {
       logger.error(
         'credit-card-3ds-redirect::makePayment::errors:',
-        err
+        err.body.errors
       )
     }
     return result.body
@@ -199,7 +199,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
     } catch (err) {
       logger.error(
         'credit-card-3ds-redirect::handleRedirect::errors:',
-        err
+        err.body.errors
       )
     }
     return result.body
