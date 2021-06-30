@@ -155,7 +155,7 @@ describe('::creditCardPayment3dsNative::', () => {
     } catch (err) {
       logger.error(
         'credit-card-3ds-native::makePayment::errors:',
-        err.body.errors
+        err
       )
     }
     return result.body
@@ -198,7 +198,7 @@ describe('::creditCardPayment3dsNative::', () => {
     } catch (err) {
       logger.error(
         'credit-card-3ds-native::performChallengeFlow::errors:',
-        err.body.errors
+        err
       )
     }
     return result.body

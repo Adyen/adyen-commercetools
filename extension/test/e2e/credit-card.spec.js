@@ -109,7 +109,7 @@ describe('::creditCardPayment::', () => {
         ]
       )
     } catch (err) {
-      logger.error('credit-card::makePayment::errors:', err.body.errors)
+      logger.error('credit-card::makePayment::errors:', err)
     }
 
     return result.body
