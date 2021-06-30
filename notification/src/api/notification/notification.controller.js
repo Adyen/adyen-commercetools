@@ -45,11 +45,12 @@ async function handleNotification(request, response) {
 }
 
 function _isRetryableError(err) {
-  const wrappedError = VError.cause(err)
-  if (!wrappedError) return false
+  if (err instanceof VError) {
+    const {statusCode} = VError.cause(err)
+    return statusCode < 200 || statusCode === 409 || statusCode >= 500
+  }
+  return false
 
-  const { statusCode } = wrappedError
-  return statusCode < 200 || statusCode === 409 || statusCode >= 500
 }
 
 function sendAcceptedResponse(response) {
