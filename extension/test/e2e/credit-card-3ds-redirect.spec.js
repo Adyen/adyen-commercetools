@@ -150,10 +150,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
         ]
       )
     } catch (err) {
-      logger.error(
-        'credit-card-3ds-redirect::makePayment::errors:',
-        err.body.errors
-      )
+      logger.error('credit-card-3ds-redirect::makePayment::errors:', err)
     }
     return result.body
   }
@@ -197,10 +194,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
         ]
       )
     } catch (err) {
-      logger.error(
-        'credit-card-3ds-redirect::handleRedirect::errors:',
-        err.body.errors
-      )
+      logger.error('credit-card-3ds-redirect::handleRedirect::errors:', err)
     }
     return result.body
   }
