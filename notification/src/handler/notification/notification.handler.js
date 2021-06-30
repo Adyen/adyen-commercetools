@@ -222,7 +222,7 @@ function compareTransactionStates(currentState, newState) {
     !transactionStateFlow.hasOwnProperty(newState)
   ) {
     const errorMessage = `Wrong transaction state passed. CurrentState: ${currentState}, newState: ${newState}`
-    throw new VError(errorMessage)
+    throw new Error(errorMessage)
   }
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
 }
