@@ -87,7 +87,10 @@ describe('::creditCardPayment3dsRedirect::', () => {
             adyenMerchantAccount,
             ctpProjectKey
           )
-          logger.debug('credit-card-3ds-redirect::payment:', payment)
+          logger.debug(
+            'credit-card-3ds-redirect::payment:',
+            JSON.stringify(payment)
+          )
           const browserTab = await browser.newPage()
 
           const paymentAfterMakePayment = await makePayment({
@@ -101,7 +104,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
           })
           logger.debug(
             'credit-card-3ds-redirect::paymentAfterMakePayment:',
-            paymentAfterMakePayment
+            JSON.stringify(paymentAfterMakePayment)
           )
           const paymentAfterRedirect = await handleRedirect({
             browserTab,
@@ -110,7 +113,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
           })
           logger.debug(
             'credit-card-3ds-redirect::paymentAfterRedirect:',
-            paymentAfterRedirect
+            JSON.stringify(paymentAfterRedirect)
           )
           assertPayment(paymentAfterRedirect)
         }
@@ -150,7 +153,10 @@ describe('::creditCardPayment3dsRedirect::', () => {
         ]
       )
     } catch (err) {
-      logger.error('credit-card-3ds-redirect::makePayment::errors:', err)
+      logger.error(
+        'credit-card-3ds-redirect::makePayment::errors:',
+        JSON.stringify(err)
+      )
     }
     return result.body
   }
@@ -194,7 +200,10 @@ describe('::creditCardPayment3dsRedirect::', () => {
         ]
       )
     } catch (err) {
-      logger.error('credit-card-3ds-redirect::handleRedirect::errors:', err)
+      logger.error(
+        'credit-card-3ds-redirect::handleRedirect::errors:',
+        JSON.stringify(err)
+      )
     }
     return result.body
   }

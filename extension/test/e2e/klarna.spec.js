@@ -78,14 +78,17 @@ describe('::klarnaPayment::', () => {
       )
 
       const browserTab = await browser.newPage()
-      logger.debug('klarna::payment:', payment)
+      logger.debug('klarna::payment:', JSON.stringify(payment))
       const paymentAfterMakePayment = await makePayment({
         browserTab,
         baseUrl,
         payment,
         clientKey,
       })
-      logger.debug('klarna::paymentAfterMakePayment:', paymentAfterMakePayment)
+      logger.debug(
+        'klarna::paymentAfterMakePayment:',
+        JSON.stringify(paymentAfterMakePayment)
+      )
       const paymentAfterHandleRedirect = await handleRedirect({
         browserTab,
         baseUrl,
@@ -93,7 +96,7 @@ describe('::klarnaPayment::', () => {
       })
       logger.debug(
         'klarna::paymentAfterHandleRedirect:',
-        paymentAfterHandleRedirect
+        JSON.stringify(paymentAfterHandleRedirect)
       )
       assertPayment(paymentAfterHandleRedirect)
 
@@ -101,7 +104,10 @@ describe('::klarnaPayment::', () => {
       const paymentAfterCapture = await capturePayment({
         payment: paymentAfterHandleRedirect,
       })
-      logger.debug('klarna::paymentAfterCapture:', paymentAfterCapture)
+      logger.debug(
+        'klarna::paymentAfterCapture:',
+        JSON.stringify(paymentAfterCapture)
+      )
       assertManualCaptureResponse(paymentAfterCapture)
     }
   )
@@ -178,7 +184,7 @@ describe('::klarnaPayment::', () => {
         ]
       )
     } catch (err) {
-      logger.error('klarna::handleRedirect::errors:', err)
+      logger.error('klarna::handleRedirect::errors:', JSON.stringify(err))
     }
     return result.body
   }
@@ -201,7 +207,7 @@ describe('::klarnaPayment::', () => {
         ]
       )
     } catch (err) {
-      logger.error('klarna::capturePayment::errors:', err)
+      logger.error('klarna::capturePayment::errors:', JSON.stringify(err))
     }
     return result.body
   }

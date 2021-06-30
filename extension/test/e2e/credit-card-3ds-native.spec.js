@@ -90,7 +90,10 @@ describe('::creditCardPayment3dsNative::', () => {
             adyenMerchantAccount,
             ctpProjectKey
           )
-          logger.debug('credit-card-3ds-native::payment:', payment)
+          logger.debug(
+            'credit-card-3ds-native::payment:',
+            JSON.stringify(payment)
+          )
           const browserTab = await browser.newPage()
 
           const paymentAfterMakePayment = await makePayment({
@@ -104,7 +107,7 @@ describe('::creditCardPayment3dsNative::', () => {
           })
           logger.debug(
             'credit-card-3ds-native::paymentAfterMakePayment:',
-            paymentAfterMakePayment
+            JSON.stringify(paymentAfterMakePayment)
           )
           const paymentAfterAuthentication = await performChallengeFlow({
             payment: paymentAfterMakePayment,
@@ -113,7 +116,7 @@ describe('::creditCardPayment3dsNative::', () => {
           })
           logger.debug(
             'credit-card-3ds-native::paymentAfterAuthentication:',
-            paymentAfterAuthentication
+            JSON.stringify(paymentAfterAuthentication)
           )
           assertPayment(paymentAfterAuthentication)
         }
@@ -153,7 +156,10 @@ describe('::creditCardPayment3dsNative::', () => {
         ]
       )
     } catch (err) {
-      logger.error('credit-card-3ds-native::makePayment::errors:', err)
+      logger.error(
+        'credit-card-3ds-native::makePayment::errors:',
+        JSON.stringify(err)
+      )
     }
     return result.body
   }
@@ -193,7 +199,10 @@ describe('::creditCardPayment3dsNative::', () => {
         ]
       )
     } catch (err) {
-      logger.error('credit-card-3ds-native::performChallengeFlow::errors:', err)
+      logger.error(
+        'credit-card-3ds-native::performChallengeFlow::errors:',
+        JSON.stringify(err)
+      )
     }
     return result.body
   }

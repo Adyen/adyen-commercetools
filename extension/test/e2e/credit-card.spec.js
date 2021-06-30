@@ -70,7 +70,10 @@ describe('::creditCardPayment::', () => {
             creditCardCvc,
             clientKey,
           })
-
+          logger.debug(
+            'credit-card::paymentAfterMakePayment:',
+            JSON.stringify(paymentAfterMakePayment)
+          )
           assertPayment(paymentAfterMakePayment, 'makePayment')
         }
       )
@@ -109,7 +112,7 @@ describe('::creditCardPayment::', () => {
         ]
       )
     } catch (err) {
-      logger.error('credit-card::makePayment::errors:', err)
+      logger.error('credit-card::makePayment::errors:', JSON.stringify(err))
     }
 
     return result.body
