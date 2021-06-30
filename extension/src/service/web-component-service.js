@@ -125,7 +125,10 @@ async function fetchAsync(url, adyenMerchantAccount, adyenApiKey, requestObj) {
   const response = await fetch(url, request)
   const responseBody = await response.json()
   // strip away sensitive data from the adyen response.
-  delete responseBody.additionalData
+  const moduleConfig = config.getModuleConfig()
+  if (moduleConfig.removeSensitiveData) {
+    delete responseBody.additionalData
+  }
   return responseBody
 }
 

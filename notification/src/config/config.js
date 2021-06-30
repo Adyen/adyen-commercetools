@@ -4,6 +4,7 @@ let config
 
 function getModuleConfig() {
   return {
+    removeSensitiveData: config.removeSensitiveData !== 'false',
     port: config.port,
     logLevel: config.logLevel,
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
