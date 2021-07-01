@@ -8,11 +8,11 @@ const {
 const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
 const ctpPayment = require('./fixtures/ctp-payment.json')
 const ctpCart = require('./fixtures/ctp-cart.json')
+const ctpCartWithCustomShippingMethod = require('./fixtures/ctp-cart-custom-shipping-method.json')
 
 describe('klarna-make-payment::execute', () => {
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
   const DEFAULT_PAYMENT_LANGUAGE = 'en'
-  const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
   let scope
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
@@ -125,7 +125,7 @@ describe('klarna-make-payment::execute', () => {
 
   it(
     'when locale is not existing, ' +
-      'it should fall back to default line item name',
+      'it should take the first locale in line item name',
     async () => {
       _mockCtpCartsEndpoint()
       scope.post('/payments').reply(200, paymentSuccessResponse)
@@ -147,7 +147,9 @@ describe('klarna-make-payment::execute', () => {
           .fields.request
       )
       expect(lineItems).to.have.lengthOf(3)
-      expect(lineItems[0].description).to.equal(KLARNA_DEFAULT_LINE_ITEM_NAME)
+      expect(lineItems[0].description).to.equal(
+        Object.values(ctpCart.lineItems[0].name)[0]
+      )
       expect(lineItems[1].description).to.equal(
         ctpCart.customLineItems[0].name[DEFAULT_PAYMENT_LANGUAGE]
       )
@@ -185,6 +187,48 @@ describe('klarna-make-payment::execute', () => {
       )
       expect(lineItems[2].description).to.equal(
         ctpCart.shippingInfo.shippingMethodName
+      )
+    }
+  )
+
+  it(
+    'when custom shipping info is used,' +
+      'it should return correct shipping name',
+    async () => {
+      const clonedCtpCart = _.cloneDeep(ctpCartWithCustomShippingMethod)
+      _mockCtpCartsEndpoint(clonedCtpCart)
+      scope.post('/payments').reply(200, paymentSuccessResponse)
+
+      const klarnaMakePaymentRequest = {
+        reference: 'YOUR_REFERENCE',
+        paymentMethod: {
+          type: 'klarna',
+        },
+      }
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
+        klarnaMakePaymentRequest
+      )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey =
+        commercetoolsProjectKey
+
+      const response = await execute(ctpPaymentClone)
+      expect(response.actions).to.have.lengthOf(6)
+      const { lineItems } = JSON.parse(
+        response.actions.find((a) => a.action === 'addInterfaceInteraction')
+          .fields.request
+      )
+      const shippingMethodItem = lineItems[lineItems.length - 1]
+      expect(shippingMethodItem.id).to.equal(
+        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
+      )
+      expect(shippingMethodItem.description).to.equal(
+        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
+      )
+      expect(shippingMethodItem.taxPercentage).to.equal(
+        ctpCartWithCustomShippingMethod.shippingInfo.taxRate.amount * 10000
       )
     }
   )
@@ -255,7 +299,7 @@ describe('klarna-make-payment::execute', () => {
 
   it(
     'when payment has NO languageCode and cart has NO locale, ' +
-      'it should fall back to default language',
+      'it should should take the first locale in line item name',
     async () => {
       const clonedCtpCart = _.cloneDeep(ctpCart)
       clonedCtpCart.lineItems[0].name = {
@@ -282,7 +326,7 @@ describe('klarna-make-payment::execute', () => {
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      expect(lineItems[0].description).to.equal('test-en')
+      expect(lineItems[0].description).to.equal('test-de')
     }
   )
 
