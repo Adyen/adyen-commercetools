@@ -93,6 +93,7 @@ describe('notification module', () => {
       false,
       config
     )
+    delete notifications[0].NotificationRequestItem.additionalData
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -181,6 +182,7 @@ describe('notification module', () => {
       false,
       config
     )
+    delete notifications[0].NotificationRequestItem.additionalData
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -327,6 +329,7 @@ describe('notification module', () => {
       false,
       config
     )
+    delete notifications[0].NotificationRequestItem.additionalData
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -417,6 +420,7 @@ describe('notification module', () => {
       false,
       config
     )
+    delete notifications[0].NotificationRequestItem.additionalData
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -507,6 +511,7 @@ describe('notification module', () => {
       false,
       config
     )
+    delete notifications[0].NotificationRequestItem.additionalData
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -610,4 +615,142 @@ describe('notification module', () => {
     expect(ctpClientFetchByIdSpy.callCount).to.equal(0)
     expect(ctpClientUpdateSpy.callCount).to.equal(0)
   })
+
+  it(
+    'when "removeSensitiveData" is false, ' +
+      'then it should not remove sensitive data',
+    async () => {
+      // prepare data
+      const notificationDummyConfig = {
+        removeSensitiveData: false,
+        port: 8080,
+        logLevel: 'info',
+        keepAliveTimeout: 10,
+      }
+      sandbox.stub(config, 'getModuleConfig').returns(notificationDummyConfig)
+
+      const notifications = [
+        {
+          NotificationRequestItem: {
+            additionalData: {
+              cvcResult: '1 Matches',
+              expiryDate: '03/2030',
+              authCode: '037397',
+              avsResult: '5 No AVS data provided',
+              cardHolderName: 'Checkout Shopper PlaceHolder',
+              cardSummary: '1111',
+              authorisationMid: '1000',
+              'metadata.commercetoolsProjectKey': 'adyen-qa',
+              hmacSignature: 'XYDnMApaCz1Mgq4oKhIg+Ew0tuZxibO2RuOxbz5asWM=',
+              acquirerAccountCode: 'TestPmmAcquirerAccount',
+            },
+            amount: {
+              currency: 'EUR',
+              value: 1000,
+            },
+            eventCode: 'AUTHORISATION',
+            eventDate: '2021-02-17T12:05:33+01:00',
+            merchantAccountCode: 'Adyen-ctp-qa-01',
+            merchantReference: 'test-9',
+            operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+            paymentMethod: 'visa',
+            pspReference: '862613559933189B',
+            reason: '037397:1111:03/2030',
+            success: 'true',
+          },
+        },
+      ]
+      const payment = cloneDeep(paymentMock)
+      const ctpClient = ctpClientMock.get(ctpConfig)
+      sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
+        body: payment,
+      }))
+      const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+      ctp.get = () => ctpClient
+      module.exports = ctp
+
+      // process
+      await notificationHandler.processNotification(
+        notifications[0],
+        false,
+        config
+      )
+
+      expect(ctpClientUpdateSpy.args[0][3][0].fields.notification).to.include(
+        'additionalData'
+      )
+      expect(ctpClientUpdateSpy.args[0][3][0].fields.notification).to.include(
+        'reason'
+      )
+    }
+  )
+
+  it(
+    'when "removeSensitiveData" is true, ' +
+      'then it should remove sensitive data',
+    async () => {
+      // prepare data
+      const notificationDummyConfig = {
+        removeSensitiveData: true,
+        port: 8080,
+        logLevel: 'info',
+        keepAliveTimeout: 10,
+      }
+      sandbox.stub(config, 'getModuleConfig').returns(notificationDummyConfig)
+
+      const notifications = [
+        {
+          NotificationRequestItem: {
+            additionalData: {
+              cvcResult: '1 Matches',
+              expiryDate: '03/2030',
+              authCode: '037397',
+              avsResult: '5 No AVS data provided',
+              cardHolderName: 'Checkout Shopper PlaceHolder',
+              cardSummary: '1111',
+              authorisationMid: '1000',
+              'metadata.commercetoolsProjectKey': 'adyen-qa',
+              hmacSignature: 'XYDnMApaCz1Mgq4oKhIg+Ew0tuZxibO2RuOxbz5asWM=',
+              acquirerAccountCode: 'TestPmmAcquirerAccount',
+            },
+            amount: {
+              currency: 'EUR',
+              value: 1000,
+            },
+            eventCode: 'AUTHORISATION',
+            eventDate: '2021-02-17T12:05:33+01:00',
+            merchantAccountCode: 'Adyen-ctp-qa-01',
+            merchantReference: 'test-9',
+            operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+            paymentMethod: 'visa',
+            pspReference: '862613559933189B',
+            reason: '037397:1111:03/2030',
+            success: 'true',
+          },
+        },
+      ]
+      const payment = cloneDeep(paymentMock)
+      const ctpClient = ctpClientMock.get(ctpConfig)
+      sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
+        body: payment,
+      }))
+      const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+      ctp.get = () => ctpClient
+      module.exports = ctp
+
+      // process
+      await notificationHandler.processNotification(
+        notifications[0],
+        false,
+        config
+      )
+
+      expect(
+        ctpClientUpdateSpy.args[0][3][0].fields.notification
+      ).to.not.include('additionalData')
+      expect(
+        ctpClientUpdateSpy.args[0][3][0].fields.notification
+      ).to.not.include('reason')
+    }
+  )
 })

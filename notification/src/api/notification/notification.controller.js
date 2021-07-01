@@ -9,11 +9,17 @@ const { getCtpProjectConfig, getAdyenConfig } = require('../../utils/parser')
 const logger = require('../../utils/logger').getLogger()
 
 async function handleNotification(request, response) {
-  if (request.method !== 'POST') return httpUtils.sendResponse(response)
+  if (request.method !== 'POST') {
+    logger.debug(
+      `Received non-POST request: ${request.method}. The request will not be processed...`
+    )
+    return httpUtils.sendResponse(response)
+  }
   const body = await httpUtils.collectRequestData(request)
   try {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
     for (const notification of notifications) {
+      logger.debug('Received notification', JSON.stringify(notification))
       const ctpProjectConfig = getCtpProjectConfig(notification)
       const adyenConfig = getAdyenConfig(notification)
 

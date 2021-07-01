@@ -339,6 +339,17 @@ async function _createCart(
     [
       { action: 'addPayment', payment: { type: 'payment', id: paymentId } },
       ...discountCodes.map((code) => ({ action: 'addDiscountCode', code })),
+      {
+        action: 'setCustomShippingMethod',
+        shippingMethodName: 'testCustomShippingMethod',
+        shippingRate: {
+          price: {
+            currencyCode: 'EUR',
+            centAmount: 4200,
+          },
+        },
+        taxCategory: { typeId: 'tax-category', key: 'standard' },
+      },
     ]
   )
 }

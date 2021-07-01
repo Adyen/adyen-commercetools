@@ -92,6 +92,7 @@ describe('::multitenancy::', () => {
     expect(paymentAfter1.transactions[0].state).to.equal('Success')
     expect(paymentAfter1.interfaceInteractions).to.have.lengthOf(1)
     const notificationItem1 = modifiedNotification1.notificationItems[0]
+    delete notificationItem1.NotificationRequestItem.additionalData
     expect(paymentAfter1.interfaceInteractions[0].fields.notification).to.equal(
       JSON.stringify(notificationItem1)
     )
@@ -101,6 +102,7 @@ describe('::multitenancy::', () => {
     expect(paymentAfter2.transactions[0].state).to.equal('Success')
     expect(paymentAfter2.interfaceInteractions).to.have.lengthOf(1)
     const notificationItem2 = modifiedNotification2.notificationItems[0]
+    delete notificationItem2.NotificationRequestItem.additionalData
     expect(paymentAfter2.interfaceInteractions[0].fields.notification).to.equal(
       JSON.stringify(notificationItem2)
     )

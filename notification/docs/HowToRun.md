@@ -47,7 +47,8 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
   },
   "logLevel": "DEBUG",
   "port": "8081",
-  "keepAliveTimeout": 10000
+  "keepAliveTimeout": 10000,
+  "removeSensitiveData": false
 }
 ```
 
@@ -97,7 +98,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
     "commercetoolsProjectKey2": {
       "clientId": "xxx",
       "clientSecret": "xxx"
-      "host": "https://api.us-east-2.aws.commercetools.com/"
+      "apiUrl": "https://api.us-east-2.aws.commercetools.com/"
       "authUrl": "https://auth.us-east-2.aws.commercetools.com/"
     }
   }
@@ -108,7 +109,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
 | -------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------- |
 | `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.     | YES      |                                                   |
 | `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token. | YES      |                                                   |
-| `host`         | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
+| `apiUrl`       | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
 | `authUrl`      | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
 
 ### Other Configurations
@@ -125,7 +126,8 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
   },
   "logLevel": "DEBUG",
   "port": 8080,
-  "keepAliveTimeout": 10000
+  "keepAliveTimeout": 10000,
+  "removeSensitiveData": false
 }
 ```
 
@@ -135,6 +137,7 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 | `port`                       | The port number on which the application will run.                                                                                                                              | NO       | 443                                                                                                   |
 | `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                             | NO       | `info`                                                                                                |
 | `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                   | NO       | Node.js default (5 seconds)                                                                           |
+| `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.         | NO       | true                                                                                                  |
 
 ## Commercetools project requirements
 
