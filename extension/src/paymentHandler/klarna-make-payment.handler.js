@@ -1,10 +1,11 @@
+const _ = require('lodash')
 const ctpClientBuilder = require('../ctp')
 const makePaymentHandler = require('./make-payment.handler')
 const config = require('../config/config')
 
 const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
-const DEFAULT_PAYMENT_LANGUAGE = 'en'
 const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
+const KLARNA_DEFAULT_SHIPPING_METHOD_DESCRIPTION = 'shipping'
 
 async function execute(paymentObject) {
   const makePaymentRequestObj = JSON.parse(
@@ -55,24 +56,16 @@ function createLineItems(payment, cart) {
 
   const { shippingInfo } = cart
   if (shippingInfo && shippingInfo.taxRate)
-    lineItems.push(_createShippingInfoAdyenLineItem(shippingInfo))
+    lineItems.push(_createShippingInfoAdyenLineItem(shippingInfo, locales))
 
   return lineItems
 }
 
-/**
- * There will always be a locale `DEFAULT_PAYMENT_LANGUAGE` as a default fallback.
- * Additionally, another locale from payment custom field `languageCode` OR from cart locale
- * is added if it's different from the `DEFAULT_PAYMENT_LANGUAGE` locale.
- */
 function _getLocales(cart, payment) {
   const locales = []
   let paymentLanguage = payment.custom && payment.custom.fields['languageCode']
   if (!paymentLanguage) paymentLanguage = cart.locale
   if (paymentLanguage) locales.push(paymentLanguage)
-  if (!paymentLanguage || paymentLanguage !== DEFAULT_PAYMENT_LANGUAGE)
-    locales.push(DEFAULT_PAYMENT_LANGUAGE)
-
   return locales
 }
 
@@ -80,11 +73,6 @@ function _createAdyenLineItemFromLineItem(ctpLineItem, locales) {
   return {
     id: ctpLineItem.variant.sku,
     quantity: ctpLineItem.quantity,
-    /**
-     * The shop can set the language on the payment or on the cart.
-     * If it's not set, it will pick `DEFAULT_PAYMENT_LANGUAGE`.
-     * If `DEFAULT_PAYMENT_LANGUAGE` is not there, it will just show `KLARNA_DEFAULT_LINE_ITEM_NAME`.
-     */
     description: _localizeOrFallback(
       ctpLineItem.name,
       locales,
@@ -99,11 +87,6 @@ function _createAdyenLineItemFromCustomLineItem(ctpLineItem, locales) {
   return {
     id: ctpLineItem.id,
     quantity: ctpLineItem.quantity,
-    /**
-     * The shop can set the language on the payment or on the cart.
-     * If it's not set, it will pick `DEFAULT_PAYMENT_LANGUAGE`.
-     * If `DEFAULT_PAYMENT_LANGUAGE` is not there, it will just show `KLARNA_DEFAULT_LINE_ITEM_NAME`.
-     */
     description: _localizeOrFallback(
       ctpLineItem.name,
       locales,
@@ -114,25 +97,37 @@ function _createAdyenLineItemFromCustomLineItem(ctpLineItem, locales) {
   }
 }
 
-function _createShippingInfoAdyenLineItem(shippingInfo) {
+function _createShippingInfoAdyenLineItem(shippingInfo, locales) {
   return {
     id: `${shippingInfo.shippingMethodName}`,
     quantity: 1, // always one shipment item so far
-    description: _getShippingMethodDescription(shippingInfo),
+    description:
+      _getShippingMethodDescription(shippingInfo, locales) ||
+      KLARNA_DEFAULT_SHIPPING_METHOD_DESCRIPTION,
     amountIncludingTax: shippingInfo.price.centAmount,
     taxPercentage: shippingInfo.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT,
   }
 }
 
-function _getShippingMethodDescription(shippingInfo) {
-  const shippingMethod = shippingInfo.shippingMethod.obj
-  if (shippingMethod) return shippingMethod.description
+function _getShippingMethodDescription(shippingInfo, locales) {
+  const shippingMethod = shippingInfo.shippingMethod?.obj
+  if (shippingMethod) {
+    return _localizeOrFallback(
+      shippingMethod.localizedDescription,
+      locales,
+      shippingMethod.description
+    )
+  }
   return shippingInfo.shippingMethodName
 }
 
 function _localizeOrFallback(localizedString, locales, fallback) {
-  const locale = locales.find((l) => localizedString[l])
-  return locale ? localizedString[locale] : fallback
+  let result
+  if (_.size(localizedString) > 0) {
+    const locale = locales?.find((l) => localizedString[l])
+    result = localizedString[locale] || Object.values(localizedString)[0]
+  } else result = fallback
+  return result
 }
 
 module.exports = { execute }

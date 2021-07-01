@@ -1,0 +1,439 @@
+{
+  "type": "Cart",
+  "id": "ca4482c1-39b0-4468-b190-b95f2d4c3e1c",
+  "version": 14,
+  "lastMessageSequenceNumber": 1,
+  "createdAt": "2021-06-14T20:14:03.261Z",
+  "lastModifiedAt": "2021-06-14T20:14:03.377Z",
+  "lastModifiedBy": {
+    "clientId": "GfjD1YgZgpe0K6wEdUEpwTmx",
+    "isPlatformClient": false
+  },
+  "createdBy": {
+    "clientId": "GfjD1YgZgpe0K6wEdUEpwTmx",
+    "isPlatformClient": false
+  },
+  "lineItems": [
+    {
+      "id": "fb73af87-28dc-42b1-bf56-5a8981fe0c61",
+      "productId": "862ff799-dad9-40ec-a9bc-38d70cdf0541",
+      "name": {
+        "de-DE": "Product with one variant and one price"
+      },
+      "productType": {
+        "typeId": "product-type",
+        "id": "21c9dd44-6012-485e-83c6-a82ef0e64b2e",
+        "version": 1
+      },
+      "productSlug": {
+        "de": "test-product-slug"
+      },
+      "variant": {
+        "id": 1,
+        "sku": "test-product-sku-1",
+        "prices": [
+          {
+            "value": {
+              "type": "centPrecision",
+              "currencyCode": "EUR",
+              "centAmount": 1000,
+              "fractionDigits": 2
+            },
+            "id": "029ab733-d70f-4969-9384-dcfb3dbe7626"
+          }
+        ],
+        "images": [],
+        "attributes": [
+          {
+            "name": "test",
+            "value": "12345"
+          }
+        ],
+        "assets": []
+      },
+      "price": {
+        "value": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 1000,
+          "fractionDigits": 2
+        },
+        "id": "029ab733-d70f-4969-9384-dcfb3dbe7626"
+      },
+      "quantity": 2,
+      "discountedPrice": {
+        "value": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 900,
+          "fractionDigits": 2
+        },
+        "includedDiscounts": [
+          {
+            "discount": {
+              "typeId": "cart-discount",
+              "id": "cf2be190-c683-4bc4-aa43-1730680fc4fb"
+            },
+            "discountedAmount": {
+              "type": "centPrecision",
+              "currencyCode": "EUR",
+              "centAmount": 0,
+              "fractionDigits": 2
+            }
+          },
+          {
+            "discount": {
+              "typeId": "cart-discount",
+              "id": "af3c262f-59ba-49a9-8df4-8d03d0b48c7b"
+            },
+            "discountedAmount": {
+              "type": "centPrecision",
+              "currencyCode": "EUR",
+              "centAmount": 100,
+              "fractionDigits": 2
+            }
+          }
+        ]
+      },
+      "discountedPricePerQuantity": [
+        {
+          "quantity": 1,
+          "discountedPrice": {
+            "value": {
+              "type": "centPrecision",
+              "currencyCode": "EUR",
+              "centAmount": 810,
+              "fractionDigits": 2
+            },
+            "includedDiscounts": [
+              {
+                "discount": {
+                  "typeId": "cart-discount",
+                  "id": "cf2be190-c683-4bc4-aa43-1730680fc4fb"
+                },
+                "discountedAmount": {
+                  "type": "centPrecision",
+                  "currencyCode": "EUR",
+                  "centAmount": 100,
+                  "fractionDigits": 2
+                }
+              },
+              {
+                "discount": {
+                  "typeId": "cart-discount",
+                  "id": "af3c262f-59ba-49a9-8df4-8d03d0b48c7b"
+                },
+                "discountedAmount": {
+                  "type": "centPrecision",
+                  "currencyCode": "EUR",
+                  "centAmount": 90,
+                  "fractionDigits": 2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "quantity": 1,
+          "discountedPrice": {
+            "value": {
+              "type": "centPrecision",
+              "currencyCode": "EUR",
+              "centAmount": 900,
+              "fractionDigits": 2
+            },
+            "includedDiscounts": [
+              {
+                "discount": {
+                  "typeId": "cart-discount",
+                  "id": "cf2be190-c683-4bc4-aa43-1730680fc4fb"
+                },
+                "discountedAmount": {
+                  "type": "centPrecision",
+                  "currencyCode": "EUR",
+                  "centAmount": 0,
+                  "fractionDigits": 2
+                }
+              },
+              {
+                "discount": {
+                  "typeId": "cart-discount",
+                  "id": "af3c262f-59ba-49a9-8df4-8d03d0b48c7b"
+                },
+                "discountedAmount": {
+                  "type": "centPrecision",
+                  "currencyCode": "EUR",
+                  "centAmount": 100,
+                  "fractionDigits": 2
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "taxRate": {
+        "name": "20% MwSt",
+        "amount": 0.19,
+        "includedInPrice": true,
+        "country": "DE",
+        "id": "zJBk48xn",
+        "subRates": []
+      },
+      "addedAt": "2021-06-14T20:14:03.257Z",
+      "lastModifiedAt": "2021-06-14T20:14:03.257Z",
+      "state": [
+        {
+          "quantity": 2,
+          "state": {
+            "typeId": "state",
+            "id": "47c923f8-f20d-411e-92d9-38a9d44a98c8"
+          }
+        }
+      ],
+      "priceMode": "Platform",
+      "totalPrice": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 1710,
+        "fractionDigits": 2
+      },
+      "taxedPrice": {
+        "totalNet": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 1437,
+          "fractionDigits": 2
+        },
+        "totalGross": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 1710,
+          "fractionDigits": 2
+        }
+      },
+      "lineItemMode": "Standard"
+    }
+  ],
+  "cartState": "Active",
+  "totalPrice": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 9690,
+    "fractionDigits": 2
+  },
+  "taxedPrice": {
+    "totalNet": {
+      "type": "centPrecision",
+      "currencyCode": "EUR",
+      "centAmount": 8142,
+      "fractionDigits": 2
+    },
+    "totalGross": {
+      "type": "centPrecision",
+      "currencyCode": "EUR",
+      "centAmount": 9690,
+      "fractionDigits": 2
+    },
+    "taxPortions": [
+      {
+        "rate": 0.19,
+        "amount": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 1548,
+          "fractionDigits": 2
+        },
+        "name": "20% MwSt"
+      }
+    ]
+  },
+  "shippingInfo": {
+    "shippingMethodName": "testCustomShippingMethod",
+    "price": {
+      "type": "centPrecision",
+      "currencyCode": "EUR",
+      "centAmount": 4200,
+      "fractionDigits": 2
+    },
+    "shippingRate": {
+      "price": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 4200,
+        "fractionDigits": 2
+      },
+      "tiers": []
+    },
+    "taxRate": {
+      "name": "20% MwSt",
+      "amount": 0.19,
+      "includedInPrice": true,
+      "country": "DE",
+      "id": "zJBk48xn",
+      "subRates": []
+    },
+    "taxCategory": {
+      "typeId": "tax-category",
+      "id": "5bd89256-aea3-4760-bc1b-2ef81000fb3c"
+    },
+    "deliveries": [],
+    "discountedPrice": {
+      "value": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 3780,
+        "fractionDigits": 2
+      },
+      "includedDiscounts": [
+        {
+          "discount": {
+            "typeId": "cart-discount",
+            "id": "6e6edcfc-1dcb-484f-a60d-d02730a6acaf"
+          },
+          "discountedAmount": {
+            "type": "centPrecision",
+            "currencyCode": "EUR",
+            "centAmount": 420,
+            "fractionDigits": 2
+          }
+        }
+      ]
+    },
+    "taxedPrice": {
+      "totalNet": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 3176,
+        "fractionDigits": 2
+      },
+      "totalGross": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 3780,
+        "fractionDigits": 2
+      }
+    },
+    "shippingMethodState": "MatchesCart"
+  },
+  "customLineItems": [
+    {
+      "totalPrice": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 4200,
+        "fractionDigits": 2
+      },
+      "id": "21a56210-35f5-463c-af47-4f17c1379e06",
+      "name": {
+        "de": "testCustomLineItem",
+        "en": "testCustomLineItem"
+      },
+      "money": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 4200,
+        "fractionDigits": 2
+      },
+      "slug": "/testCustomLineItem",
+      "quantity": 1,
+      "discountedPricePerQuantity": [],
+      "taxCategory": {
+        "typeId": "tax-category",
+        "id": "5bd89256-aea3-4760-bc1b-2ef81000fb3c"
+      },
+      "taxRate": {
+        "name": "20% MwSt",
+        "amount": 0.19,
+        "includedInPrice": true,
+        "country": "DE",
+        "id": "zJBk48xn",
+        "subRates": []
+      },
+      "state": [
+        {
+          "quantity": 1,
+          "state": {
+            "typeId": "state",
+            "id": "47c923f8-f20d-411e-92d9-38a9d44a98c8"
+          }
+        }
+      ],
+      "taxedPrice": {
+        "totalNet": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 3529,
+          "fractionDigits": 2
+        },
+        "totalGross": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 4200,
+          "fractionDigits": 2
+        }
+      }
+    }
+  ],
+  "discountCodes": [
+    {
+      "discountCode": {
+        "typeId": "discount-code",
+        "id": "699bf5eb-0ec8-4e08-a463-c313e6daceb8"
+      },
+      "state": "MatchesCart"
+    },
+    {
+      "discountCode": {
+        "typeId": "discount-code",
+        "id": "e74e88ec-af9c-4ec1-bffc-fbf371ef8139"
+      },
+      "state": "MatchesCart"
+    },
+    {
+      "discountCode": {
+        "typeId": "discount-code",
+        "id": "f2416c13-2dae-4096-9d43-0503dd293b50"
+      },
+      "state": "MatchesCart"
+    }
+  ],
+  "paymentInfo": {
+    "payments": [
+      {
+        "typeId": "payment",
+        "id": "71e17c2c-3312-45ca-9fec-43a4223f2f8d"
+      }
+    ]
+  },
+  "inventoryMode": "None",
+  "taxMode": "Platform",
+  "taxRoundingMode": "HalfEven",
+  "taxCalculationMode": "LineItemLevel",
+  "refusedGifts": [],
+  "origin": "Customer",
+  "shippingAddress": {
+    "salutation": "mr",
+    "firstName": "Shipping",
+    "lastName": "Address",
+    "streetName": "ShippingStreet",
+    "streetNumber": "1",
+    "postalCode": "54321",
+    "city": "Köln",
+    "country": "DE",
+    "additionalAddressInfo": ""
+  },
+  "billingAddress": {
+    "salutation": "mr",
+    "firstName": "Billing",
+    "lastName": "Address",
+    "streetName": "Vogelsanger Straße",
+    "streetNumber": "123",
+    "postalCode": "50827",
+    "city": "Köln",
+    "country": "DE",
+    "phone": "0123456789",
+    "email": "billing.address@test.com",
+    "additionalAddressInfo": "Vogelsanger Straße"
+  },
+  "itemShippingAddresses": []
+}
