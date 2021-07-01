@@ -1,6 +1,7 @@
 const nock = require('nock')
 const _ = require('lodash')
 const { expect } = require('chai')
+const sinon = require('sinon')
 const submitPaymentDetailsSuccessResponse = require('./fixtures/adyen-submit-payment-details-success-response')
 const submitPaymentDetailsChallengeRes = require('./fixtures/adyen-submit-payment-details-challenge-shopper-response')
 const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
@@ -85,8 +86,12 @@ describe('submit-additional-payment-details::execute', () => {
         c.CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE
       )
       expect(setCustomFieldAction.value).to.be.a('string')
+      const expectedCustomFieldValue = JSON.parse(
+        _.cloneDeep(submitPaymentDetailsSuccessResponse)
+      )
+      delete expectedCustomFieldValue.additionalData
       expect(setCustomFieldAction.value).to.equal(
-        submitPaymentDetailsSuccessResponse
+        JSON.stringify(expectedCustomFieldValue)
       )
       expect(setCustomFieldAction.value).to.equal(
         addInterfaceInteraction.fields.response
@@ -222,6 +227,96 @@ describe('submit-additional-payment-details::execute', () => {
       )
       const request = JSON.parse(addInterfaceInteraction.fields.request)
       expect(request.paymentData).to.equal(testPaymentData)
+    }
+  )
+
+  it(
+    'when "removeSensitiveData" is false, ' +
+      'then it should not remove sensitive data',
+    async () => {
+      const extensionDummyConfig = {
+        removeSensitiveData: false,
+        port: 8080,
+        logLevel: 'debug',
+        apiExtensionBaseUrl: 'testUrl',
+        basicAuth: false,
+        keepAliveTimeout: 10,
+      }
+      const sandbox = sinon.createSandbox()
+      sandbox.stub(config, 'getModuleConfig').returns(extensionDummyConfig)
+
+      scope
+        .post('/payments/details')
+        .reply(200, submitPaymentDetailsSuccessResponse)
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
+        JSON.stringify(submitPaymentDetailsRequest)
+      ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
+        makePaymentRedirectResponse
+      )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
+      const response = await execute(ctpPaymentClone)
+
+      expect(response.actions).to.have.lengthOf(3)
+      const addInterfaceInteractionAction = response.actions.find(
+        (a) => a.action === 'addInterfaceInteraction'
+      )
+      expect(addInterfaceInteractionAction.fields.response).to.include(
+        'additionalData'
+      )
+      const setCustomFieldAction = response.actions.find(
+        (a) => a.action === 'setCustomField'
+      )
+      expect(setCustomFieldAction.value).to.include('additionalData')
+
+      sandbox.restore()
+    }
+  )
+
+  it(
+    'when "removeSensitiveData" is true, ' +
+      'then it should remove sensitive data',
+    async () => {
+      const extensionDummyConfig = {
+        removeSensitiveData: true,
+        port: 8080,
+        logLevel: 'debug',
+        apiExtensionBaseUrl: 'testUrl',
+        basicAuth: false,
+        keepAliveTimeout: 10,
+      }
+      const sandbox = sinon.createSandbox()
+      sandbox.stub(config, 'getModuleConfig').returns(extensionDummyConfig)
+
+      scope
+        .post('/payments/details')
+        .reply(200, submitPaymentDetailsSuccessResponse)
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
+        JSON.stringify(submitPaymentDetailsRequest)
+      ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
+        makePaymentRedirectResponse
+      )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
+      const response = await execute(ctpPaymentClone)
+
+      expect(response.actions).to.have.lengthOf(3)
+      const addInterfaceInteractionAction = response.actions.find(
+        (a) => a.action === 'addInterfaceInteraction'
+      )
+      expect(addInterfaceInteractionAction.fields.response).to.not.include(
+        'additionalData'
+      )
+      const setCustomFieldAction = response.actions.find(
+        (a) => a.action === 'setCustomField'
+      )
+      expect(setCustomFieldAction.value).to.not.include('additionalData')
+
+      sandbox.restore()
     }
   )
 })
