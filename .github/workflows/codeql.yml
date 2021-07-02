@@ -9,8 +9,6 @@ on:
       - 'dependabot/**'
     types: [labeled]
   push:
-    branches-ignore:
-      - 'dependabot/**'
 
 jobs:
   codeql_build:
