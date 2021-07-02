@@ -26,6 +26,7 @@ jobs:
         uses: github/codeql-action/analyze@v1
   test_job:
     name: Test
+    if: github.event_name != 'push' || (github.event_name == 'push' && !contains(github.actor, 'dependabot'))
     runs-on: ubuntu-latest
     steps:
       - run: |
