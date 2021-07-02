@@ -5,12 +5,7 @@ name: CodeQL
 
 on:
   pull_request_target:
-    branches:
-      - 'dependabot/**'
-    types: [labeled]
   push:
-    branches-ignore:
-      - 'dependabot/**'
 
 jobs:
   codeql_build:
