@@ -6,10 +6,10 @@ name: CI
 on:
   pull_request_target:
     branches:
-      - 'dependabot/*'
+      - 'dependabot/**'
   push:
     branches-ignore:
-      - 'dependabot/*'
+      - 'dependabot/**'
   schedule:
     - cron: '0 0 * * *'
 
