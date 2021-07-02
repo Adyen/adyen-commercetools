@@ -24,3 +24,11 @@ jobs:
           languages: javascript
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
+  test_job:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Event name: #${{ github.event_name }}"
+          echo "Github actor: #${{ github.actor }}"
+
