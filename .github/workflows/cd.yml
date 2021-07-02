@@ -5,6 +5,7 @@ name: CD
 
 on:
   pull_request_target:
+  push:
     tags:
       - 'v*.*.*'
 

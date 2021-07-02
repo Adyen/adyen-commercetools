@@ -3,7 +3,7 @@
 
 name: CodeQL
 
-on: [pull_request_target]
+on: [pull_request_target, push]
 
 jobs:
   codeql_build:
