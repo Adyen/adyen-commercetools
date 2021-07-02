@@ -3,7 +3,13 @@
 
 name: CodeQL
 
-on: [pull_request_target, push]
+on:
+  pull_request_target:
+    branches:
+      - 'dependabot/*'
+  push:
+    branches-ignore:
+      - 'dependabot/*'
 
 jobs:
   codeql_build:
