@@ -9,11 +9,10 @@ on:
       - 'dependabot/**'
     types: [labeled]
   push:
-    branches-ignore:
-      - 'dependabot/**'
 
 jobs:
   codeql_build:
+    if: github.event_name != 'push' || (github.event_name == 'push' && !contains(github.actor, 'dependabot'))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
