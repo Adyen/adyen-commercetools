@@ -1,12 +1,13 @@
 const sinon = require('sinon')
 const chai = require('chai')
+const VError = require('verror')
 const { handler } = require('../../index.lambda')
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const logger = require('../../src/utils/logger')
 
-const { expect, assert } = chai
+const { expect } = chai
 const { getNotificationForTracking } = require('../../src/utils/commons')
-
+const { buildMockErrorFromConcurrentModificaitonException } = require('../test-utils')
 chai.use(require('chai-as-promised'))
 
 describe('Lambda handler', () => {
@@ -35,7 +36,7 @@ describe('Lambda handler', () => {
     expect(result).to.eql({ notificationResponse: '[accepted]' })
   })
 
-  it('throws and logs for unexpected exceptions', async () => {
+  it('throws and logs for concurrent modification exceptions', async () => {
     const originalChildFn = logger.getLogger().child
     try {
       const logSpy = sinon.spy()
@@ -44,18 +45,18 @@ describe('Lambda handler', () => {
         error: logSpy,
       })
 
-      const error = new Error('some recoverable error')
-      error.retry = true
-      sinon.stub(notificationHandler, 'processNotification').throws(error)
+      const error = buildMockErrorFromConcurrentModificaitonException()
+      const errorWrapper = new VError(error)
+      sinon.stub(notificationHandler, 'processNotification').throws(errorWrapper)
 
       const call = async () => handler(event)
-      await expect(call()).to.be.rejectedWith(error.message)
+      await expect(call()).to.be.rejectedWith(errorWrapper)
 
       const notificationItem = event.notificationItems.pop()
       logSpy.calledWith(
         {
           notification: getNotificationForTracking(notificationItem),
-          err: error,
+          err: errorWrapper,
         },
         'Unexpected error when processing event'
       )
@@ -64,7 +65,7 @@ describe('Lambda handler', () => {
     }
   })
 
-  it('logs for retry=false exceptions and returns "accepted"', async () => {
+  it('logs for unrecoverable and returns "accepted"', async () => {
     const originalChildFn = logger.getLogger().child
     try {
       const logSpy = sinon.spy()
@@ -74,7 +75,6 @@ describe('Lambda handler', () => {
       })
 
       const error = new Error('some error')
-      error.retry = false
       sinon.stub(notificationHandler, 'processNotification').throws(error)
 
       const result = await handler(event)
@@ -91,29 +91,5 @@ describe('Lambda handler', () => {
     } finally {
       logger.getLogger().child = originalChildFn
     }
-  })
-
-  it('throws error if no notificationItems were received and logs properly', async () => {
-    const logSpy = sinon.spy()
-    sinon.stub(notificationHandler, 'processNotification').returns(undefined)
-    logger.getLogger().error = logSpy
-
-    const error = new Error('No notification received.')
-
-    const emptyEvent = {}
-    const call = async () => handler(emptyEvent)
-
-    await expect(call()).to.be.rejectedWith(error.message)
-    assert(
-      logSpy.calledWith(
-        sinon.match({
-          notification: undefined,
-          err: sinon.match
-            .instanceOf(Error)
-            .and(sinon.match.has('message', error.message)),
-        }),
-        `Unexpected error when processing event`
-      )
-    )
   })
 })
