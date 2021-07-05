@@ -1,6 +1,6 @@
 const _ = require('lodash')
-const VError = require('verror')
 const httpUtils = require('../../utils/commons')
+const { isRecoverableError } = require('../../utils/commons')
 
 const {
   processNotification,
@@ -37,19 +37,11 @@ async function handleNotification(request, response) {
       { notification: httpUtils.getNotificationForTracking(notification), err },
       'Unexpected exception occurred.'
     )
-    if (_isRetryableError(err)) {
+    if (isRecoverableError(err)) {
       return httpUtils.sendResponse(response, 500)
     }
     return sendAcceptedResponse(response)
   }
-}
-
-function _isRetryableError(err) {
-  if (err instanceof VError) {
-    const { statusCode } = VError.cause(err)
-    return statusCode < 200 || statusCode === 409 || statusCode >= 500
-  }
-  return false
 }
 
 function sendAcceptedResponse(response) {

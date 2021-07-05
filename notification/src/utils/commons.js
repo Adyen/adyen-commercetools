@@ -1,3 +1,5 @@
+const VError = require('verror')
+
 function collectRequestData(request) {
   return new Promise((resolve) => {
     const data = []
@@ -44,8 +46,17 @@ function getNotificationForTracking(notification) {
   return convertNotificationForTracking(notification)
 }
 
+function isRecoverableError(err) {
+  if (err instanceof VError) {
+    const { statusCode } = VError.cause(err)
+    return statusCode < 200 || statusCode === 409 || statusCode >= 500
+  }
+  return false
+}
+
 module.exports = {
   collectRequestData,
   sendResponse,
   getNotificationForTracking,
+  isRecoverableError,
 }
