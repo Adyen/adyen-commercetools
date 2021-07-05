@@ -9,9 +9,11 @@ const httpUtils = require('../../src/utils/commons')
 const logger = require('../../src/utils/logger')
 const notification = require('../resources/notification.json')
 const ctpClientMock = require('./ctp-client-mock')
-const concurrentModificationError = require('../resources/concurrent-modification-exception.json')
 const ctp = require('../../src/utils/ctp')
 const paymentMock = require('../resources/payment-credit-card.json')
+const {
+  buildMockErrorFromConcurrentModificaitonException,
+} = require('../test-utils')
 
 const sandbox = sinon.createSandbox()
 describe('notification controller', () => {
@@ -198,7 +200,7 @@ describe('notification controller', () => {
         body: modifiedPaymentMock,
       }))
       sandbox.stub(ctpClient, 'update').callsFake(() => {
-        throw _buildMockErrorFromConcurrentModificaitonException()
+        throw buildMockErrorFromConcurrentModificaitonException()
       })
       ctp.get = () => ctpClient
       module.exports = ctp
@@ -225,16 +227,3 @@ describe('notification controller', () => {
     }
   )
 })
-
-function _buildMockErrorFromConcurrentModificaitonException() {
-  const error = new Error(concurrentModificationError.message)
-  error.body = concurrentModificationError.body
-  error.name = concurrentModificationError.name
-  error.code = concurrentModificationError.code
-  error.status = concurrentModificationError.status
-  error.statusCode = concurrentModificationError.statusCode
-  error.originalRequest = concurrentModificationError.originalRequest
-  error.retryCount = concurrentModificationError.retryCount
-  error.headers = concurrentModificationError.headers
-  return error
-}

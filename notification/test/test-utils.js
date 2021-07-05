@@ -1,4 +1,5 @@
 const config = require('../src/config/config')
+const concurrentModificationError = require('./resources/concurrent-modification-exception.json')
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -52,9 +53,23 @@ function restoreAdyenConfig() {
   module.exports = config
 }
 
+function buildMockErrorFromConcurrentModificaitonException() {
+  const error = new Error(concurrentModificationError.message)
+  error.body = concurrentModificationError.body
+  error.name = concurrentModificationError.name
+  error.code = concurrentModificationError.code
+  error.status = concurrentModificationError.status
+  error.statusCode = concurrentModificationError.statusCode
+  error.originalRequest = concurrentModificationError.originalRequest
+  error.retryCount = concurrentModificationError.retryCount
+  error.headers = concurrentModificationError.headers
+  return error
+}
+
 module.exports = {
   unpublish,
   deleteAllResources,
   overrideAdyenConfig,
   restoreAdyenConfig,
+  buildMockErrorFromConcurrentModificaitonException,
 }
