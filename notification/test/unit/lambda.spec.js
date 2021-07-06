@@ -7,7 +7,9 @@ const logger = require('../../src/utils/logger')
 
 const { expect } = chai
 const { getNotificationForTracking } = require('../../src/utils/commons')
-const { buildMockErrorFromConcurrentModificaitonException } = require('../test-utils')
+const {
+  buildMockErrorFromConcurrentModificaitonException,
+} = require('../test-utils')
 chai.use(require('chai-as-promised'))
 
 describe('Lambda handler', () => {
@@ -47,7 +49,9 @@ describe('Lambda handler', () => {
 
       const error = buildMockErrorFromConcurrentModificaitonException()
       const errorWrapper = new VError(error)
-      sinon.stub(notificationHandler, 'processNotification').throws(errorWrapper)
+      sinon
+        .stub(notificationHandler, 'processNotification')
+        .throws(errorWrapper)
 
       const call = async () => handler(event)
       await expect(call()).to.be.rejectedWith(errorWrapper)
