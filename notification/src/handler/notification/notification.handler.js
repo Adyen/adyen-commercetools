@@ -5,7 +5,7 @@ const { validateHmacSignature } = require('../../utils/hmacValidator')
 const adyenEvents = require('../../../resources/adyen-events.json')
 const { getNotificationForTracking } = require('../../utils/commons')
 const ctp = require('../../utils/ctp')
-const { getAdyenPaymentMethodsToNames } = require('../../config/config')
+const config = require('../../config/config')
 const mainLogger = require('../../utils/logger').getLogger()
 
 async function processNotification(
@@ -93,15 +93,18 @@ async function updatePaymentWithRepeater(
       )
       break
     } catch (err) {
+      const moduleConfig = config.getModuleConfig()
+      let updateActionsToLog = updateActions
+      if (moduleConfig.removeSensitiveData)
+        updateActionsToLog =
+          _obfuscateNotificationInfoFromActionFields(updateActions)
       const errMsg =
         `Unexpected error on payment update with ID: ${currentPayment.id}.` +
-        `Failed actions: ${JSON.stringify(
-          _obfuscateNotificationInfoFromActionFields(updateActions)
-        )}`
-
+        `Failed actions: ${JSON.stringify(updateActionsToLog)}`
       if (err.statusCode !== 409) {
         throw new VError(err, errMsg)
       }
+
       retryCount += 1
       if (retryCount > maxRetry) {
         retryMessage =
@@ -114,7 +117,7 @@ async function updatePaymentWithRepeater(
           `${retryMessage} Won't retry again` +
             ` because of a reached limit ${maxRetry}` +
             ` max retries. Failed actions: ${JSON.stringify(
-              _obfuscateNotificationInfoFromActionFields(updateActions)
+              updateActionsToLog
             )}`
         )
       }
@@ -228,13 +231,17 @@ function compareTransactionStates(currentState, newState) {
 }
 
 function getAddInterfaceInteractionUpdateAction(notification) {
-  // strip away sensitive data
-  delete notification.additionalData
-  delete notification.reason
+  const moduleConfig = config.getModuleConfig()
+  const notificationToUse = _.cloneDeep(notification)
+  if (moduleConfig.removeSensitiveData) {
+    // strip away sensitive data
+    delete notificationToUse.NotificationRequestItem.additionalData
+    delete notificationToUse.NotificationRequestItem.reason
+  }
 
-  const eventCode = _.isNil(notification.NotificationRequestItem.eventCode)
+  const eventCode = _.isNil(notificationToUse.NotificationRequestItem.eventCode)
     ? ''
-    : notification.NotificationRequestItem.eventCode.toLowerCase()
+    : notificationToUse.NotificationRequestItem.eventCode.toLowerCase()
 
   return {
     action: 'addInterfaceInteraction',
@@ -246,7 +253,7 @@ function getAddInterfaceInteractionUpdateAction(notification) {
       createdAt: new Date(),
       status: eventCode,
       type: 'notification',
-      notification: JSON.stringify(notification),
+      notification: JSON.stringify(notificationToUse),
     },
   }
 }
@@ -326,7 +333,7 @@ function getSetMethodInfoMethodAction(paymentMethod) {
 }
 
 function getSetMethodInfoNameAction(paymentMethod) {
-  const paymentMethodsToLocalizedNames = getAdyenPaymentMethodsToNames()
+  const paymentMethodsToLocalizedNames = config.getAdyenPaymentMethodsToNames()
   const paymentMethodLocalizedNames =
     paymentMethodsToLocalizedNames[paymentMethod]
   if (paymentMethodLocalizedNames)
