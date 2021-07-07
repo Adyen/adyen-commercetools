@@ -1,3 +1,4 @@
+const VError = require('verror')
 const handler = require('./src/handler/notification/notification.handler')
 const logger = require('./src/utils/logger').getLogger()
 const {
@@ -33,8 +34,10 @@ exports.handler = async (event) => {
       )
     }
   } catch (err) {
+    let cause = err
+    if (err instanceof VError) cause = err.cause()
     logger.error(
-      { notification: getNotificationForTracking(notificationItems), err },
+      { notification: getNotificationForTracking(notificationItems), cause },
       'Unexpected exception occurred.'
     )
     if (isRecoverableError(err)) {
