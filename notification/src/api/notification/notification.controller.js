@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const httpUtils = require('../../utils/commons')
 const { isRecoverableError } = require('../../utils/commons')
+const VError = require('verror')
 
 const {
   processNotification,
@@ -33,8 +34,13 @@ async function handleNotification(request, response) {
     return sendAcceptedResponse(response)
   } catch (err) {
     const notification = _.get(JSON.parse(body), 'notificationItems', [])
+    let cause = err
+    if (err instanceof VError) cause = err.cause()
     logger.error(
-      { notification: httpUtils.getNotificationForTracking(notification), err },
+      {
+        notification: httpUtils.getNotificationForTracking(notification),
+        cause,
+      },
       'Unexpected exception occurred.'
     )
     if (isRecoverableError(err)) {

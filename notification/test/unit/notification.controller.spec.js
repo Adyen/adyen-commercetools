@@ -84,14 +84,14 @@ describe('notification controller', () => {
 
       // test:
       await notificationController.handleNotification(requestMock, responseMock)
-
+      const { cause } = logSpy.firstCall.args[0]
       // expect:
       expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
       expect(logSpy.calledOnce).to.be.true
       expect(responseEndSpy.firstCall.firstArg).to.equal(
         JSON.stringify({ notificationResponse: '[accepted]' })
       )
-      expect(logSpy.firstCall.args[0].err.message).to.equal(
+      expect(cause.message).to.equal(
         'Notification can not be processed as "metadata.ctProjectKey"  was not found on the notification.'
       )
     }
@@ -130,14 +130,14 @@ describe('notification controller', () => {
 
     // test:
     await notificationController.handleNotification(requestMock, responseMock)
-
+    const { cause } = logSpy.firstCall.args[0]
     // expect:
     expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
     expect(logSpy.calledOnce).to.be.true
     expect(responseEndSpy.firstCall.firstArg).to.equal(
       JSON.stringify({ notificationResponse: '[accepted]' })
     )
-    expect(logSpy.firstCall.args[0].err.message).to.equal(
+    expect(cause.message).to.equal(
       // eslint-disable-next-line max-len
       'Configuration for adyenMerchantAccount is not provided. Please update the configuration: "nonExistingMerchantAccount"'
     )
@@ -168,13 +168,15 @@ describe('notification controller', () => {
     // test:
     await notificationController.handleNotification(requestMock, responseMock)
 
+    const { cause } = logSpy.firstCall.args[0]
     // expect:
     expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
     expect(logSpy.calledOnce).to.be.true
     expect(responseEndSpy.firstCall.firstArg).to.equal(
       JSON.stringify({ notificationResponse: '[accepted]' })
     )
-    expect(logSpy.firstCall.args[0].err.message).to.equal(
+
+    expect(cause.message).to.equal(
       'Configuration is not provided. Please update the configuration. ctpProjectKey: ["nonExistingCtpProjectKey"]'
     )
   })
@@ -216,10 +218,10 @@ describe('notification controller', () => {
 
       // test:
       await notificationController.handleNotification(requestMock, responseMock)
+      const { cause } = logSpy.firstCall.args[0]
 
-      // expect:
       expect(logSpy.calledOnce).to.be.true
-      expect(logSpy.firstCall.args[0].err.cause().message).to.equal(
+      expect(cause.body.message).to.equal(
         'Object 62f05181-4789-47ce-84f8-d27c895ee23c has a different version than expected. Expected: 1 - Actual: 2.'
       )
       expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(500)
