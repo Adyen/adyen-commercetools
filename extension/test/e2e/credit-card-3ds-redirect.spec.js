@@ -13,7 +13,7 @@ const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const CreditCardRedirectPage = require('./pageObjects/CreditCard3dsRedirectPage')
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/redirect-3ds2-3ds1/web-component
-describe.skip('::creditCardPayment3dsRedirect::', () => {
+describe('::creditCardPayment3dsRedirect::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

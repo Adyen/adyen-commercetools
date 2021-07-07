@@ -10,7 +10,7 @@ const {
 } = require('./e2e-test-utils')
 
 // Flow description: https://docs.adyen.com/checkout/components-web
-describe.skip('::creditCardPayment::', () => {
+describe('::creditCardPayment::', () => {
   let browser
   let ctpClient
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
