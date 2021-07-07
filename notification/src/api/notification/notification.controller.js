@@ -1,7 +1,7 @@
 const _ = require('lodash')
+const VError = require('verror')
 const httpUtils = require('../../utils/commons')
 const { isRecoverableError } = require('../../utils/commons')
-const VError = require('verror')
 
 const {
   processNotification,
