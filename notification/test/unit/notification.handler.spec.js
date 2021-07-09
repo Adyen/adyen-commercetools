@@ -597,8 +597,6 @@ describe('notification module', () => {
       // of retries. So the error is expected
       err = e
     }
-    // expect(err.retry).to.equal(true)
-
     expect(err instanceof VError).to.equal(true)
     expect(err.cause().name).to.equal('ConcurrentModification')
     expect(ctpClientUpdateSpy.callCount).to.equal(21)
