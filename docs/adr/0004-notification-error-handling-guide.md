@@ -1,4 +1,4 @@
-# Error Handling Guide
+# Notification Module Error Handling Guide
 
 There are two kinds of scenario in where exception can be thrown in notification module :
 

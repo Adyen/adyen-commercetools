@@ -48,7 +48,7 @@ The notification module will process the notification and update the matching co
 
 - Follow [Integration Guide](./notification/docs/IntegrationGuide.md) for information how to integrate with notification module.
 - Follow [How to run](notification/docs/HowToRun.md) the notification module.
-- Follow [Error Handling Guide](notification/docs/ErrorHandlingGuide.md) for information of the error handling approach.
+- Follow [Error Handling Guide](docs/adr/0004-notification-error-handling-guide.md) for information of the error handling approach.
 
 ## Contribution Guide
 
