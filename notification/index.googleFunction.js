@@ -1,10 +1,8 @@
-const VError = require('verror')
 const handler = require('./src/handler/notification/notification.handler')
 const logger = require('./src/utils/logger').getLogger()
-const {
-  getNotificationForTracking,
-  isRecoverableError,
-} = require('./src/utils/commons')
+const { getNotificationForTracking } = require('./src/utils/commons')
+const { getErrorCause, isRecoverableError } = require('./src/utils/error-utils')
+
 const { getCtpProjectConfig, getAdyenConfig } = require('./src/utils/parser')
 
 exports.notificationTrigger = async (request, response) => {
@@ -24,8 +22,7 @@ exports.notificationTrigger = async (request, response) => {
       )
     }
   } catch (err) {
-    let cause = err
-    if (err instanceof VError) cause = err.cause()
+    const cause = getErrorCause(err)
     logger.error(
       { notification: getNotificationForTracking(notificationItems), cause },
       'Unexpected exception occurred.'

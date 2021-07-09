@@ -1,5 +1,3 @@
-const VError = require('verror')
-
 function collectRequestData(request) {
   return new Promise((resolve) => {
     const data = []
@@ -46,28 +44,8 @@ function getNotificationForTracking(notification) {
   return convertNotificationForTracking(notification)
 }
 
-/*
- * recoverable: notification delivery can be retried by Adyen (return 500)
- * non recoverable: notification delivery can not be retried by Adyen
- * as it most probably would fail again (return "accepted")
- *
- * If commercetools status code is defined and is 5xx then return `500` to Adyen -> recoverable
- * If during communication with commercetools we got a `NetworkError` then return `500` -> recoverable
- * If commercetools status code is not OK but also not 5xx or 409 then return `accepted` -> non recoverable
- * @param err
- * @returns {boolean}
- */
-function isRecoverableError(err) {
-  if (err instanceof VError) {
-    const { statusCode } = VError.cause(err)
-    return statusCode < 200 || statusCode === 409 || statusCode >= 500
-  }
-  return false
-}
-
 module.exports = {
   collectRequestData,
   sendResponse,
   getNotificationForTracking,
-  isRecoverableError,
 }
