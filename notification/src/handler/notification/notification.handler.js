@@ -98,10 +98,11 @@ async function updatePaymentWithRepeater(
       if (moduleConfig.removeSensitiveData)
         updateActionsToLog =
           _obfuscateNotificationInfoFromActionFields(updateActions)
-      const errMsg =
-        `Unexpected error on payment update with ID: ${currentPayment.id}.` +
-        `Failed actions: ${JSON.stringify(updateActionsToLog)}`
+
       if (err.statusCode !== 409) {
+        const errMsg =
+          `Unexpected error on payment update with ID: ${currentPayment.id}.` +
+          `Failed actions: ${JSON.stringify(updateActionsToLog)}`
         throw new VError(err, errMsg)
       }
 
