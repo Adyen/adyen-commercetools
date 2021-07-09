@@ -4,6 +4,7 @@ const VError = require('verror')
 const { notificationTrigger } = require('../../index.googleFunction')
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const logger = require('../../src/utils/logger')
+const config = require('../../src/config/config')
 
 const { expect } = chai
 const { getNotificationForTracking } = require('../../src/utils/commons')
@@ -13,9 +14,7 @@ const {
 chai.use(require('chai-as-promised'))
 
 describe('Google Function handler', () => {
-  afterEach(() => {
-    notificationHandler.processNotification.restore()
-  })
+  const sandbox = sinon.createSandbox()
 
   const mockRequest = {
     body: {
@@ -23,9 +22,9 @@ describe('Google Function handler', () => {
         {
           NotificationRequestItem: {
             additionalData: {
-              'metadata.ctProjectKey': 'adyen-integration-test',
+              'metadata.ctProjectKey': 'dummyCtProjectKey',
             },
-            merchantAccountCode: 'CommercetoolsGmbHDE775',
+            merchantAccountCode: 'dummyAydenMerchantCode',
           },
         },
       ],
@@ -44,6 +43,24 @@ describe('Google Function handler', () => {
       return this
     },
   }
+  beforeEach(() => {
+    const configGetCtpConfigSpy = sandbox
+      .stub(config, 'getCtpConfig')
+      .callsFake(() => ({}))
+    config.getCtpConfig = configGetCtpConfigSpy
+    module.exports = config
+
+    const configGetAdyenConfigSpy = sandbox
+      .stub(config, 'getAdyenConfig')
+      .callsFake(() => ({}))
+    config.getAdyenConfig = configGetAdyenConfigSpy
+    module.exports = config
+  })
+  afterEach(() => {
+    notificationHandler.processNotification.restore()
+
+    sandbox.restore()
+  })
 
   it('returns correct success response', async () => {
     sinon.stub(notificationHandler, 'processNotification').returns(undefined)

@@ -4,6 +4,7 @@ const VError = require('verror')
 const { handler } = require('../../index.lambda')
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const logger = require('../../src/utils/logger')
+const config = require('../../src/config/config')
 
 const { expect, assert } = chai
 const { getNotificationForTracking } = require('../../src/utils/commons')
@@ -13,22 +14,50 @@ const {
 chai.use(require('chai-as-promised'))
 
 describe('Lambda handler', () => {
-  afterEach(() => {
-    notificationHandler.processNotification.restore()
-  })
-
+  const sandbox = sinon.createSandbox()
   const event = {
+    live: 'false',
     notificationItems: [
       {
         NotificationRequestItem: {
-          additionalData: {
-            'metadata.ctProjectKey': 'adyen-integration-test',
+          amount: {
+            currency: 'EUR',
+            value: 10100,
           },
+          additionalData: {
+            key: 'value',
+            key2: 'value2',
+            'metadata.ctProjectKey': 'testKey',
+          },
+          eventCode: 'AUTHORISATION',
+          eventDate: '2019-01-30T18:16:22+01:00',
           merchantAccountCode: 'CommercetoolsGmbHDE775',
+          merchantReference: '8313842560770001',
+          operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+          paymentMethod: 'visa',
+          pspReference: 'test_AUTHORISATION_1',
+          success: 'true',
         },
       },
     ],
   }
+  beforeEach(() => {
+    const configGetCtpConfigSpy = sandbox
+      .stub(config, 'getCtpConfig')
+      .callsFake(() => ({}))
+    config.getCtpConfig = configGetCtpConfigSpy
+    module.exports = config
+
+    const configGetAdyenConfigSpy = sandbox
+      .stub(config, 'getAdyenConfig')
+      .callsFake(() => ({}))
+    config.getAdyenConfig = configGetAdyenConfigSpy
+    module.exports = config
+  })
+  afterEach(() => {
+    notificationHandler.processNotification.restore()
+    sandbox.restore()
+  })
 
   it('returns correct success response', async () => {
     sinon.stub(notificationHandler, 'processNotification').returns(undefined)

@@ -7,7 +7,6 @@ const config = require('../../src/config/config')
 const notificationController = require('../../src/api/notification/notification.controller')
 const httpUtils = require('../../src/utils/commons')
 const logger = require('../../src/utils/logger')
-const notification = require('../resources/notification.json')
 const ctpClientMock = require('./ctp-client-mock')
 const ctp = require('../../src/utils/ctp')
 const paymentMock = require('../resources/payment-credit-card.json')
@@ -209,12 +208,29 @@ describe('notification controller', () => {
 
       const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
       const responseEndSpy = sandbox.spy(responseMock, 'end')
-      const notificationJson = notification
+      const notificationJson = mockNotificationJson
       httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
       module.exports = httpUtils
 
       logSpy = sinon.spy()
       logger.getLogger().error = logSpy
+
+      notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
+        {
+          'metadata.ctProjectKey': 'testKey',
+        }
+
+      const configGetCtpConfigSpy = sandbox
+        .stub(config, 'getCtpConfig')
+        .callsFake(() => ({}))
+      config.getCtpConfig = configGetCtpConfigSpy
+      module.exports = config
+
+      const configGetAdyenConfigSpy = sandbox
+        .stub(config, 'getAdyenConfig')
+        .callsFake(() => ({}))
+      config.getAdyenConfig = configGetAdyenConfigSpy
+      module.exports = config
 
       // test:
       await notificationController.handleNotification(requestMock, responseMock)
