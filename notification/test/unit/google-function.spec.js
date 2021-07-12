@@ -1,45 +1,47 @@
 const sinon = require('sinon')
 const chai = require('chai')
 const VError = require('verror')
-const { handler } = require('../../index.lambda')
+const { notificationTrigger } = require('../../index.googleFunction')
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const logger = require('../../src/utils/logger')
 const config = require('../../src/config/config')
 
-const { expect, assert } = chai
+const { expect } = chai
 const { getNotificationForTracking } = require('../../src/utils/commons')
 const {
   buildMockErrorFromConcurrentModificaitonException,
 } = require('../test-utils')
 chai.use(require('chai-as-promised'))
 
-describe('Lambda handler', () => {
+describe('Google Function handler', () => {
   const sandbox = sinon.createSandbox()
-  const event = {
-    live: 'false',
-    notificationItems: [
-      {
-        NotificationRequestItem: {
-          amount: {
-            currency: 'EUR',
-            value: 10100,
+
+  const mockRequest = {
+    body: {
+      notificationItems: [
+        {
+          NotificationRequestItem: {
+            additionalData: {
+              'metadata.ctProjectKey': 'dummyCtProjectKey',
+            },
+            merchantAccountCode: 'dummyAydenMerchantCode',
           },
-          additionalData: {
-            key: 'value',
-            key2: 'value2',
-            'metadata.ctProjectKey': 'testKey',
-          },
-          eventCode: 'AUTHORISATION',
-          eventDate: '2019-01-30T18:16:22+01:00',
-          merchantAccountCode: 'CommercetoolsGmbHDE775',
-          merchantReference: '8313842560770001',
-          operations: ['CANCEL', 'CAPTURE', 'REFUND'],
-          paymentMethod: 'visa',
-          pspReference: 'test_AUTHORISATION_1',
-          success: 'true',
         },
-      },
-    ],
+      ],
+    },
+  }
+
+  const mockResponse = {
+    responseStatus: 200,
+    responseBody: {},
+    status(value) {
+      this.responseStatus = value
+      return this
+    },
+    send(value) {
+      this.responseBody = value
+      return this
+    },
   }
   beforeEach(() => {
     const configGetCtpConfigSpy = sandbox
@@ -56,15 +58,16 @@ describe('Lambda handler', () => {
   })
   afterEach(() => {
     notificationHandler.processNotification.restore()
+
     sandbox.restore()
   })
 
   it('returns correct success response', async () => {
     sinon.stub(notificationHandler, 'processNotification').returns(undefined)
 
-    const result = await handler(event)
-
-    expect(result).to.eql({ notificationResponse: '[accepted]' })
+    const result = await notificationTrigger(mockRequest, mockResponse)
+    expect(result.responseStatus).to.eql(200)
+    expect(result.responseBody).to.eql({ notificationResponse: '[accepted]' })
   })
 
   it('throws and logs for concurrent modification exceptions', async () => {
@@ -82,16 +85,19 @@ describe('Lambda handler', () => {
         .stub(notificationHandler, 'processNotification')
         .throws(errorWrapper)
 
-      const call = async () => handler(event)
-      await expect(call()).to.be.rejectedWith(errorWrapper)
+      const result = await notificationTrigger(mockRequest, mockResponse)
+      expect(result.responseStatus).to.equal(500)
+      expect(result.responseBody).to.equal(
+        'Object 62f05181-4789-47ce-84f8-d27c895ee23c has a different version than expected. Expected: 1 - Actual: 2.'
+      )
 
-      const notificationItem = event.notificationItems.pop()
+      const notificationItem = mockRequest.body.notificationItems.pop()
       logSpy.calledWith(
         {
           notification: getNotificationForTracking(notificationItem),
           err: errorWrapper,
         },
-        'Unexpected error when processing event'
+        'Unexpected exception occurred.'
       )
     } finally {
       logger.getLogger().child = originalChildFn
@@ -110,43 +116,20 @@ describe('Lambda handler', () => {
       const error = new Error('some error')
       sinon.stub(notificationHandler, 'processNotification').throws(error)
 
-      const result = await handler(event)
-      expect(result).to.eql({ notificationResponse: '[accepted]' })
+      const result = await notificationTrigger(mockRequest, mockResponse)
+      expect(result.responseStatus).to.eql(200)
+      expect(result.responseBody).to.eql({ notificationResponse: '[accepted]' })
 
-      const notificationItem = event.notificationItems.pop()
+      const notificationItem = mockRequest.body.notificationItems.pop()
       logSpy.calledWith(
         {
           notification: getNotificationForTracking(notificationItem),
           err: error,
         },
-        'Unexpected error when processing event'
+        'Unexpected exception occurred.'
       )
     } finally {
       logger.getLogger().child = originalChildFn
     }
-  })
-
-  it('throws error if no notificationItems were received and logs properly', async () => {
-    const logSpy = sinon.spy()
-    sinon.stub(notificationHandler, 'processNotification').returns(undefined)
-    logger.getLogger().error = logSpy
-
-    const error = new Error('No notification received.')
-
-    const emptyEvent = {}
-    const call = async () => handler(emptyEvent)
-
-    await expect(call()).to.be.rejectedWith(error.message)
-    assert(
-      logSpy.calledWith(
-        sinon.match({
-          notification: undefined,
-          err: sinon.match
-            .instanceOf(Error)
-            .and(sinon.match.has('message', error.message)),
-        }),
-        `Unexpected error when processing event`
-      )
-    )
   })
 })

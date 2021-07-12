@@ -1,14 +1,23 @@
 const _ = require('lodash')
 const sinon = require('sinon')
+const { cloneDeep } = require('lodash')
 const { expect } = require('chai')
 
 const config = require('../../src/config/config')
 const notificationController = require('../../src/api/notification/notification.controller')
 const httpUtils = require('../../src/utils/commons')
 const logger = require('../../src/utils/logger')
+const ctpClientMock = require('./ctp-client-mock')
+const ctp = require('../../src/utils/ctp')
+const paymentMock = require('../resources/payment-credit-card.json')
+const {
+  buildMockErrorFromConcurrentModificaitonException,
+} = require('../test-utils')
 
 const sandbox = sinon.createSandbox()
 describe('notification controller', () => {
+  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
+  const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
   const mockNotificationJson = {
     live: 'false',
     notificationItems: [
@@ -74,14 +83,14 @@ describe('notification controller', () => {
 
       // test:
       await notificationController.handleNotification(requestMock, responseMock)
-
+      const { cause } = logSpy.firstCall.args[0]
       // expect:
       expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
       expect(logSpy.calledOnce).to.be.true
       expect(responseEndSpy.firstCall.firstArg).to.equal(
         JSON.stringify({ notificationResponse: '[accepted]' })
       )
-      expect(logSpy.firstCall.args[0].err.message).to.equal(
+      expect(cause.message).to.equal(
         'Notification can not be processed as "metadata.ctProjectKey"  was not found on the notification.'
       )
     }
@@ -120,14 +129,14 @@ describe('notification controller', () => {
 
     // test:
     await notificationController.handleNotification(requestMock, responseMock)
-
+    const { cause } = logSpy.firstCall.args[0]
     // expect:
     expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
     expect(logSpy.calledOnce).to.be.true
     expect(responseEndSpy.firstCall.firstArg).to.equal(
       JSON.stringify({ notificationResponse: '[accepted]' })
     )
-    expect(logSpy.firstCall.args[0].err.message).to.equal(
+    expect(cause.message).to.equal(
       // eslint-disable-next-line max-len
       'Configuration for adyenMerchantAccount is not provided. Please update the configuration: "nonExistingMerchantAccount"'
     )
@@ -158,14 +167,81 @@ describe('notification controller', () => {
     // test:
     await notificationController.handleNotification(requestMock, responseMock)
 
+    const { cause } = logSpy.firstCall.args[0]
     // expect:
     expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
     expect(logSpy.calledOnce).to.be.true
     expect(responseEndSpy.firstCall.firstArg).to.equal(
       JSON.stringify({ notificationResponse: '[accepted]' })
     )
-    expect(logSpy.firstCall.args[0].err.message).to.equal(
+
+    expect(cause.message).to.equal(
       'Configuration is not provided. Please update the configuration. ctpProjectKey: ["nonExistingCtpProjectKey"]'
     )
   })
+
+  it(
+    'when concurrent modification exception occur during fetching from CTP and retry fails, ' +
+      'it should return 500 HTTP response and log error',
+    async () => {
+      // prepare:
+      const requestMock = {
+        method: 'POST',
+      }
+      const responseMock = {
+        writeHead: () => {},
+        end: () => {},
+      }
+      const ctpClient = ctpClientMock.get(ctpConfig)
+      const modifiedPaymentMock = cloneDeep(paymentMock)
+      sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
+        body: modifiedPaymentMock,
+      }))
+      sandbox.stub(ctpClient, 'fetchById').callsFake(() => ({
+        body: modifiedPaymentMock,
+      }))
+      sandbox.stub(ctpClient, 'update').callsFake(() => {
+        throw buildMockErrorFromConcurrentModificaitonException()
+      })
+      ctp.get = () => ctpClient
+      module.exports = ctp
+
+      const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+      const responseEndSpy = sandbox.spy(responseMock, 'end')
+      const notificationJson = mockNotificationJson
+      httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
+      module.exports = httpUtils
+
+      logSpy = sinon.spy()
+      logger.getLogger().error = logSpy
+
+      notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
+        {
+          'metadata.ctProjectKey': 'testKey',
+        }
+
+      const configGetCtpConfigSpy = sandbox
+        .stub(config, 'getCtpConfig')
+        .callsFake(() => ({}))
+      config.getCtpConfig = configGetCtpConfigSpy
+      module.exports = config
+
+      const configGetAdyenConfigSpy = sandbox
+        .stub(config, 'getAdyenConfig')
+        .callsFake(() => ({}))
+      config.getAdyenConfig = configGetAdyenConfigSpy
+      module.exports = config
+
+      // test:
+      await notificationController.handleNotification(requestMock, responseMock)
+      const { cause } = logSpy.firstCall.args[0]
+
+      expect(logSpy.calledOnce).to.be.true
+      expect(cause.body.message).to.equal(
+        'Object 62f05181-4789-47ce-84f8-d27c895ee23c has a different version than expected. Expected: 1 - Actual: 2.'
+      )
+      expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(500)
+      expect(responseEndSpy.firstCall.firstArg).to.equal(undefined)
+    }
+  )
 })

@@ -1,6 +1,8 @@
 const handler = require('./src/handler/notification/notification.handler')
 const logger = require('./src/utils/logger').getLogger()
 const { getNotificationForTracking } = require('./src/utils/commons')
+const { getErrorCause, isRecoverableError } = require('./src/utils/error-utils')
+
 const { getCtpProjectConfig, getAdyenConfig } = require('./src/utils/parser')
 
 exports.notificationTrigger = async (request, response) => {
@@ -20,12 +22,13 @@ exports.notificationTrigger = async (request, response) => {
       )
     }
   } catch (err) {
+    const cause = getErrorCause(err)
     logger.error(
-      { notification: getNotificationForTracking(notificationItems), err },
+      { notification: getNotificationForTracking(notificationItems), cause },
       'Unexpected exception occurred.'
     )
-    if (err.retry) {
-      return response.status(500).send(err.message)
+    if (isRecoverableError(err)) {
+      return response.status(500).send(cause.message)
     }
   }
 

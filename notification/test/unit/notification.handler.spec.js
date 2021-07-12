@@ -1,4 +1,5 @@
 const sinon = require('sinon')
+const VError = require('verror')
 const { expect } = require('chai')
 const { cloneDeep } = require('lodash')
 const config = require('../../src/config/config')
@@ -6,11 +7,15 @@ const config = require('../../src/config/config')
 const notificationHandler = require('../../src/handler/notification/notification.handler')
 const notificationsMock =
   require('../resources/notification.json').notificationItems
-const concurrentModificationError = require('../resources/concurrent-modification-exception.json')
+
 const ctpClientMock = require('./ctp-client-mock')
 const paymentMock = require('../resources/payment-credit-card.json')
 const ctp = require('../../src/utils/ctp')
-const { overrideAdyenConfig, restoreAdyenConfig } = require('../test-utils')
+const {
+  overrideAdyenConfig,
+  restoreAdyenConfig,
+  buildMockErrorFromConcurrentModificaitonException,
+} = require('../test-utils')
 
 const sandbox = sinon.createSandbox()
 
@@ -574,7 +579,7 @@ describe('notification module', () => {
     const ctpClientUpdateSpy = sandbox
       .stub(ctpClient, 'update')
       .callsFake(() => {
-        throw concurrentModificationError
+        throw buildMockErrorFromConcurrentModificaitonException()
       })
     ctp.get = () => ctpClient
     module.exports = ctp
@@ -592,7 +597,8 @@ describe('notification module', () => {
       // of retries. So the error is expected
       err = e
     }
-    expect(err.retry).to.equal(true)
+    expect(err instanceof VError).to.equal(true)
+    expect(err.cause().name).to.equal('ConcurrentModification')
     expect(ctpClientUpdateSpy.callCount).to.equal(21)
   })
 
@@ -615,7 +621,6 @@ describe('notification module', () => {
     expect(ctpClientFetchByIdSpy.callCount).to.equal(0)
     expect(ctpClientUpdateSpy.callCount).to.equal(0)
   })
-
   it(
     'when "removeSensitiveData" is false, ' +
       'then it should not remove sensitive data',
@@ -753,4 +758,65 @@ describe('notification module', () => {
       ).to.not.include('reason')
     }
   )
+
+  it(`given that unexpected error occurs when get payment By merchant reference
+      then notification module should add notification to the interface interaction 
+      and should add a success Charge transaction`, async () => {
+    // prepare data
+    const notifications = [
+      {
+        NotificationRequestItem: {
+          amount: {
+            currency: 'EUR',
+            value: 10100,
+          },
+          additionalData: {
+            'metadata.ctProjectKey': 'adyen-integration-test',
+          },
+          eventCode: 'CAPTURE',
+          eventDate: '2019-01-30T18:16:22+01:00',
+          merchantAccountCode: 'CommercetoolsGmbHDE775',
+          merchantReference: '8313842560770001',
+          operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+          paymentMethod: 'visa',
+          pspReference: 'test_AUTHORISATION_1',
+          success: 'true',
+        },
+      },
+    ]
+    const payment = cloneDeep(paymentMock)
+    payment.transactions.push({
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Authorization',
+      amount: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 495,
+        fractionDigits: 2,
+      },
+      state: 'Success',
+    })
+    const ctpClient = ctpClientMock.get(ctpConfig)
+    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => {
+      throw new Error('error')
+    })
+
+    ctp.get = () => ctpClient
+    module.exports = ctp
+    let error
+    // process
+    try {
+      await notificationHandler.processNotification(
+        notifications[0],
+        false,
+        config
+      )
+    } catch (e) {
+      error = e
+    }
+    expect(error instanceof VError).to.equal(true)
+    expect(error.message).to.contains(
+      'Failed to fetch a payment with merchantReference'
+    )
+  })
 })

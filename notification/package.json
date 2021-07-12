@@ -57,7 +57,8 @@
     "lockfile-lint": "^4.6.2",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
-    "serialize-error": "^8.1.0"
+    "serialize-error": "^8.1.0",
+    "verror": "^1.10.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
