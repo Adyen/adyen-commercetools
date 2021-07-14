@@ -5,13 +5,12 @@ name: Depandabot CI
 
 on:
   pull_request_target:
-    branches:
-      - 'dependabot/**'
-    types: [ labeled ]
 
 jobs:
   codeql_build:
     runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    needs: extension_build
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
