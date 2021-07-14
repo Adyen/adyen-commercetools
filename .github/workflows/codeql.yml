@@ -3,16 +3,10 @@
 
 name: CodeQL
 
-on:
-  pull_request_target:
-    branches:
-      - 'dependabot/**'
-    types: [labeled]
-  push:
+on: [push]
 
 jobs:
   codeql_build:
-    if: github.event_name != 'push' || (github.event_name == 'push' && !contains(github.actor, 'dependabot'))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
