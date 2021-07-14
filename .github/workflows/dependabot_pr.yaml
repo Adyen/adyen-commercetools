@@ -3,7 +3,6 @@ name: Dependabot PR Check
 
 on:
   push:
-  pull_request:
 
 jobs:
   check_dependabot:
