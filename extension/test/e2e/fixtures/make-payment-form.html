@@ -206,10 +206,20 @@ Make payment request will come here</textarea
         onSubmit: handleOnSubmit,
       }
 
+      function generateHexString() {
+        const randomReferenceNumber = Math.floor(Math.random() * 65535)
+        return randomReferenceNumber.toString(16).padStart(4, '0')
+      }
+
       function generateReference() {
-        // Generate 3-digit reference number to make payment
-        const randomReferenceNumber = Math.floor(Math.random() * 999)
-        return String(randomReferenceNumber).padStart(3, '0')
+        // Generate 16-digit hex string with format xxxx-xxxx-xxxx-xxxx
+        let randomReferenceNumber = ''
+        for (let index = 1; index <= 4; index++) {
+          randomReferenceNumber = randomReferenceNumber
+            .concat(generateHexString())
+            .concat('-')
+        }
+        return randomReferenceNumber.substr(0, randomReferenceNumber.length - 1)
       }
 
       function handleOnSubmit(state, component) {
