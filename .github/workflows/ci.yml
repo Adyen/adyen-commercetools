@@ -4,19 +4,21 @@
 name: CI
 
 on:
-  pull_request_target:
-    branches:
-      - 'dependabot/**'
-    types: [labeled]
   push:
+    branches-ignore:
+      - 'dependabot/**'
   schedule:
     - cron: '0 0 * * *'
+  workflow_run:
+    workflows: [ "Dependabot PR Check" ]
+    types:
+      - completed
 
 jobs:
   extension_build:
-    if: github.event_name != 'push' || (github.event_name == 'push' && !contains(github.actor, 'dependabot'))
     name: Extension Module
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} || ${{ github.actor != 'dependabot[bot]' }}
     defaults:
       run:
         working-directory: extension
@@ -40,7 +42,6 @@ jobs:
           ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
 
   notification_build:
-    if: github.event_name != 'push' || (github.event_name == 'push' && !contains(github.actor, 'dependabot'))
     name: Notification Module
     needs: extension_build
     runs-on: ubuntu-latest
