@@ -1,5 +1,5 @@
 ### This workflow now has no secrets and a read-only token
-name: Dependabot PR
+name: Dependabot PR Check
 
 on:
   push:

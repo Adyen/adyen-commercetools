@@ -47,9 +47,9 @@
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "chai": "4.1.1",
+    "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
-    "doctoc": "^2.0.1",
+    "doctoc": "^1.4.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-commercetools": "^6.0.0",
