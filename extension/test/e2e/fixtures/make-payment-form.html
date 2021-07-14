@@ -206,19 +206,19 @@ Make payment request will come here</textarea
         onSubmit: handleOnSubmit,
       }
 
-      function generateHexString() {
-        // Generate 4-digit hex string
-        const randomReferenceNumber = Math.floor(Math.random() * 65535)
-        return randomReferenceNumber.toString(16).padStart(4, '0')
+      function generateNumericString() {
+        // Generate 4-digit numeric string
+        const randomReferenceNumber = Math.floor(Math.random() * 9999)
+        return randomReferenceNumber.toString().padStart(4, '0')
       }
 
       function generateReference() {
-        // Generate 16-digit hex string with format xxxx-xxxx-xxxx-xxxx
+        // Generate 16-digit numeric string with format xxxx-xxxx-xxxx-xxxx
         let randomReferenceNumber = ''
         for (let index = 1; index <= 4; index++) {
-          randomReferenceNumber = randomReferenceNumber
-            .concat(generateHexString())
-            .concat('-')
+          randomReferenceNumber = randomReferenceNumber.concat(
+            generateNumericString()
+          )
         }
         return randomReferenceNumber.substr(0, randomReferenceNumber.length - 1)
       }
