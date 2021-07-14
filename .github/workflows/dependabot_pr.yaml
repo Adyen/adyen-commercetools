@@ -1,0 +1,13 @@
+### This workflow now has no secrets and a read-only token
+name: Dependabot PR
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check_dependabot:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - run: echo "PR created by Dependabot"
