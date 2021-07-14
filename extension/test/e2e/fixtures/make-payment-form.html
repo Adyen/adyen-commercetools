@@ -208,7 +208,8 @@ Make payment request will come here</textarea
 
       function generateReference() {
         // Generate 2-digit or 3-digit reference number to make payment
-        return Math.floor(Math.random() * 989 + 10)
+        const randomReferenceNumber = Math.floor(Math.random() * 999)
+        return String(randomReferenceNumber).padStart(3, '0')
       }
 
       function handleOnSubmit(state, component) {
