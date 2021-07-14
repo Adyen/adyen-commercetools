@@ -1,17 +1,19 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests with node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: CI
+name: Depandabot CI
 
 on:
-  push:
-    branches-ignore:
-      - 'dependabot/**'
+  workflow_run:
+    workflows: [ "Dependabot PR Check" ]
+    types:
+      - completed
 
 jobs:
   extension_build:
     name: Extension Module
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     defaults:
       run:
         working-directory: extension
