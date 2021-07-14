@@ -216,9 +216,9 @@ Make payment request will come here</textarea
         // Generate 16-digit numeric string with format xxxx-xxxx-xxxx-xxxx
         let randomReferenceNumber = ''
         for (let index = 1; index <= 4; index++) {
-          randomReferenceNumber = randomReferenceNumber
-            .concat(generateNumericString())
-            .concat('-')
+          randomReferenceNumber = randomReferenceNumber.concat(
+            generateNumericString()
+          )
         }
         return randomReferenceNumber.substr(0, randomReferenceNumber.length - 1)
       }
