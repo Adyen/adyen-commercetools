@@ -8,6 +8,7 @@ on: [push]
 jobs:
   codeql_build:
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
