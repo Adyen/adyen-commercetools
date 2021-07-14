@@ -185,6 +185,10 @@ describe('::creditCardPayment3dsNative::', () => {
     const additionalPaymentDetailsString =
       await creditCardNativePage.finish3dsNativePayment()
     let result = null
+    logger.debug(
+      'additionalPaymentDetailsString',
+      additionalPaymentDetailsString
+    )
     try {
       result = await ctpClient.update(
         ctpClient.builder.payments,
