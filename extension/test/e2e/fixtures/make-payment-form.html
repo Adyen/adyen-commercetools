@@ -217,7 +217,7 @@ Make payment request will come here</textarea
         let randomReferenceNumber = ''
         for (let index = 1; index <= 4; index++) {
           randomReferenceNumber = randomReferenceNumber
-            .concat(generateHexString())
+            .concat(generateNumericString())
             .concat('-')
         }
         return randomReferenceNumber.substr(0, randomReferenceNumber.length - 1)
