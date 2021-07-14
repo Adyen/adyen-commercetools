@@ -5,6 +5,8 @@ name: CI
 
 on:
   push:
+    branches-ignore:
+      - 'dependabot/**'
   workflow_run:
     workflows: [ "Dependabot PR Check" ]
     types:
@@ -14,7 +16,7 @@ jobs:
   extension_build:
     name: Extension Module
     runs-on: ubuntu-latest
-    if: ${{  github.actor == 'dependabot[bot]' && github.event_name != 'push' }} || ${{ github.actor != 'dependabot[bot]' && github.event_name == 'push' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event_name != 'push' }} || ${{ github.actor != 'dependabot[bot]' && github.event_name == 'push' }}
     defaults:
       run:
         working-directory: extension
@@ -41,7 +43,7 @@ jobs:
     name: Notification Module
     needs: extension_build
     runs-on: ubuntu-latest
-    if: ${{  github.actor == 'dependabot[bot]' && github.event_name != 'push' }} || ${{ github.actor != 'dependabot[bot]' && github.event_name == 'push' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event_name != 'push' }} || ${{ github.actor != 'dependabot[bot]' && github.event_name == 'push' }}
     defaults:
       run:
         working-directory: notification
