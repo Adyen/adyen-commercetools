@@ -66,9 +66,7 @@ describe('::klarnaPayment::', () => {
   it(
     'when payment method is klarna and process is done correctly, ' +
       'then it should successfully finish the payment',
-    async function func() {
-      this.timeout(60000)
-
+    async () => {
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
       const payment = await createPayment(
