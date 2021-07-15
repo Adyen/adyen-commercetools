@@ -7,12 +7,19 @@ const c = require('../config/constants')
 const {
   CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
 } = require('../config/constants')
+const utils = require('../utils')
 
+const logger = utils.getLogger()
 async function execute(paymentObject) {
   const actions = []
   const submitAdditionalDetailsRequestObj = JSON.parse(
     paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
   )
+  logger.debug(
+    'submitAdditionalDetailsRequestObj === ',
+    submitAdditionalDetailsRequestObj
+  )
+
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
@@ -29,6 +36,7 @@ async function execute(paymentObject) {
       commercetoolsProjectKey,
       submitAdditionalDetailsRequestObj
     )
+    logger.debug('submitAdditionalDetailsResponse === ', response)
     actions.push(
       pU.createAddInterfaceInteractionAction({
         request,
