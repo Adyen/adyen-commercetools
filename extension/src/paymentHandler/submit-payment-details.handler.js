@@ -11,6 +11,7 @@ const utils = require('../utils')
 
 const logger = utils.getLogger()
 async function execute(paymentObject) {
+  logger.debug('submit-payment-details-handler.execute()')
   const actions = []
   const submitAdditionalDetailsRequestObj = JSON.parse(
     paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
