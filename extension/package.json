@@ -83,7 +83,7 @@
     "serialize-error": "^8.1.0"
   },
   "mocha": {
-    "timeout": 40000,
+    "timeout": 120000,
     "exit": true,
     "full-trace": true
   },
