@@ -13,7 +13,6 @@ async function execute(paymentObject) {
   const submitAdditionalDetailsRequestObj = JSON.parse(
     paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
   )
-
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
