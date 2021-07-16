@@ -9,9 +9,6 @@ const refundHandler = require('./refund-payment.handler')
 const pU = require('./payment-utils')
 const auth = require('../validator/authentication')
 const errorMessages = require('../validator/error-messages')
-const utils = require('../utils')
-
-const logger = utils.getLogger()
 
 const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
 const {
@@ -40,12 +37,10 @@ async function handlePayment(paymentObject, authToken) {
       ],
     }
   }
-  logger.debug('Before validatePaymentRequest')
   const validatePaymentErrors = _validatePaymentRequest(
     paymentObject,
     authToken
   )
-  logger.debug('After validatePaymentRequest', validatePaymentErrors)
   if (validatePaymentErrors)
     return {
       errors: validatePaymentErrors,
