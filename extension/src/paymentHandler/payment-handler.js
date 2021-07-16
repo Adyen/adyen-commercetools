@@ -37,6 +37,7 @@ async function handlePayment(paymentObject, authToken) {
       ],
     }
   }
+
   const validatePaymentErrors = _validatePaymentRequest(
     paymentObject,
     authToken
