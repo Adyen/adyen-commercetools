@@ -206,26 +206,9 @@ Make payment request will come here</textarea
         onSubmit: handleOnSubmit,
       }
 
-      function generateHexString() {
-        // Generate 4-digit hex string
-        const randomReferenceNumber = Math.floor(Math.random() * 9999)
-        return randomReferenceNumber.toString(16).padStart(4, '0')
-      }
-
-      function generateReference() {
-        // Generate 16-digit hex string with format xxxx-xxxx-xxxx-xxxx
-        let randomReferenceNumber = ''
-        for (let index = 1; index <= 4; index++) {
-          randomReferenceNumber = randomReferenceNumber
-            .concat(generateHexString())
-            .concat('-')
-        }
-        return randomReferenceNumber.substr(0, randomReferenceNumber.length - 1)
-      }
-
       function handleOnSubmit(state, component) {
         const makePaymentRequest = state.data
-        makePaymentRequest.reference = generateReference()
+        makePaymentRequest.reference = new Date().getTime()
         makePaymentRequest.amount = {
           currency: 'EUR',
           value: 1000,
