@@ -1,5 +1,7 @@
 const { executeInAdyenIframe } = require('../e2e-test-utils')
+const httpUtils = require('../../../src/utils')
 
+const logger = httpUtils.getLogger()
 module.exports = class CreditCard3dsNativePage {
   constructor(page, baseUrl) {
     this.page = page
@@ -14,10 +16,14 @@ module.exports = class CreditCard3dsNativePage {
       el.click()
     )
 
-    await this.page.waitForTimeout(10_000)
+    await this.page.waitForTimeout(15_000)
 
     const additionalPaymentDetailsInput2 = await this.page.$(
       '#adyen-additional-payment-details'
+    )
+    logger.debug('additionalPaymentDetailsInput2')
+    logger.debug(
+      this.page.evaluate((el) => el.value, additionalPaymentDetailsInput2)
     )
     return this.page.evaluate((el) => el.value, additionalPaymentDetailsInput2)
   }
