@@ -148,6 +148,7 @@ describe('::creditCardPayment3dsNative::', () => {
     })
     let result = null
     try {
+      console.time('credit-card-3ds-native::makePayment')
       result = await ctpClient.update(
         ctpClient.builder.payments,
         payment.id,
@@ -160,12 +161,8 @@ describe('::creditCardPayment3dsNative::', () => {
           },
         ]
       )
-    } catch (err) {
-      logger.error(
-        'credit-card-3ds-native::makePayment::errors:',
-        JSON.stringify(err)
-      )
-      throw err
+    } finally {
+      console.timeEnd('credit-card-3ds-native::makePayment')
     }
     return result.body
   }
@@ -191,11 +188,8 @@ describe('::creditCardPayment3dsNative::', () => {
     const additionalPaymentDetailsString =
       await creditCardNativePage.finish3dsNativePayment()
     let result = null
-    logger.debug(
-      'additionalPaymentDetailsString',
-      additionalPaymentDetailsString
-    )
     try {
+      console.time('credit-card-3ds-native::performChallengeFlow')
       result = await ctpClient.update(
         ctpClient.builder.payments,
         payment.id,
@@ -214,6 +208,8 @@ describe('::creditCardPayment3dsNative::', () => {
         JSON.stringify(err)
       )
       throw err
+    } finally {
+      console.timeEnd('credit-card-3ds-native::performChallengeFlow')
     }
     return result.body
   }

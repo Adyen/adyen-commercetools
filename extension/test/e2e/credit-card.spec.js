@@ -104,6 +104,7 @@ describe('::creditCardPayment::', () => {
     })
     let result = null
     try {
+      console.time('credit-card::makePayment')
       result = await ctpClient.update(
         ctpClient.builder.payments,
         payment.id,
@@ -116,9 +117,8 @@ describe('::creditCardPayment::', () => {
           },
         ]
       )
-    } catch (err) {
-      logger.error('credit-card::makePayment::errors:', JSON.stringify(err))
-      throw err
+    } finally {
+      console.timeEnd('credit-card::makePayment')
     }
 
     return result.body

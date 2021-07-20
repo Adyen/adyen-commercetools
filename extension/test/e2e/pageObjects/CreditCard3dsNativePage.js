@@ -21,10 +21,6 @@ module.exports = class CreditCard3dsNativePage {
     const additionalPaymentDetailsInput2 = await this.page.$(
       '#adyen-additional-payment-details'
     )
-    logger.debug('additionalPaymentDetailsInput2')
-    logger.debug(
-      this.page.evaluate((el) => el.value, additionalPaymentDetailsInput2)
-    )
     return this.page.evaluate((el) => el.value, additionalPaymentDetailsInput2)
   }
 }
