@@ -188,6 +188,10 @@ describe('::creditCardPayment3dsNative::', () => {
     const creditCardNativePage = new CreditCardNativePage(browserTab, baseUrl)
     const additionalPaymentDetailsString =
       await creditCardNativePage.finish3dsNativePayment()
+    logger.debug(
+      'additionalPaymentDetailsString',
+      additionalPaymentDetailsString
+    )
     let result = null
     const startTime = new Date().getTime()
     try {
