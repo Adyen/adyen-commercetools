@@ -14,7 +14,7 @@ module.exports = class CreditCard3dsNativePage {
       el.click()
     )
 
-    await this.page.waitForTimeout(15_000)
+    await this.page.waitForTimeout(20_000)
 
     const additionalPaymentDetailsInput2 = await this.page.$(
       '#adyen-additional-payment-details'
