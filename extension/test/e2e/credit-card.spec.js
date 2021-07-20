@@ -103,8 +103,8 @@ describe('::creditCardPayment::', () => {
       clientKey,
     })
     let result = null
+    const startTime = new Date().getTime()
     try {
-      console.time('credit-card::makePayment')
       result = await ctpClient.update(
         ctpClient.builder.payments,
         payment.id,
@@ -118,7 +118,8 @@ describe('::creditCardPayment::', () => {
         ]
       )
     } finally {
-      console.timeEnd('credit-card::makePayment')
+      const endTime = new Date().getTime()
+      logger.debug('credit-card::makePayment:', endTime - startTime)
     }
 
     return result.body

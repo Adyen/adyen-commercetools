@@ -147,8 +147,8 @@ describe('::creditCardPayment3dsRedirect::', () => {
       clientKey,
     })
     let result = null
+    const startTime = new Date().getTime()
     try {
-      console.time('credit-card-3ds-redirect::makePayment')
       result = await ctpClient.update(
         ctpClient.builder.payments,
         payment.id,
@@ -162,7 +162,11 @@ describe('::creditCardPayment3dsRedirect::', () => {
         ]
       )
     } finally {
-      console.timeEnd('credit-card-3ds-redirect::makePayment')
+      const endTime = new Date().getTime()
+      logger.debug(
+        'credit-card-3ds-redirect::makePayment:',
+        endTime - startTime
+      )
     }
     return result.body
   }
@@ -188,8 +192,8 @@ describe('::creditCardPayment3dsRedirect::', () => {
 
     // Submit payment details
     let result = null
+    const startTime = new Date().getTime()
     try {
-      console.time('credit-card-3ds-redirect::handleRedirect')
       result = await ctpClient.update(
         ctpClient.builder.payments,
         payment.id,
@@ -207,7 +211,11 @@ describe('::creditCardPayment3dsRedirect::', () => {
         ]
       )
     } finally {
-      console.timeEnd('credit-card-3ds-redirect::handleRedirect')
+      const endTime = new Date().getTime()
+      logger.debug(
+        'credit-card-3ds-redirect::handleRedirect:',
+        endTime - startTime
+      )
     }
     return result.body
   }

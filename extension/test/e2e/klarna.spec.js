@@ -125,8 +125,8 @@ describe('::klarnaPayment::', () => {
       clientKey
     )
     let result = null
+    const startTime = new Date().getTime()
     try {
-      console.time('klarna::makePayment')
       result = await ctpClient.update(
         ctpClient.builder.payments,
         payment.id,
@@ -140,7 +140,8 @@ describe('::klarnaPayment::', () => {
         ]
       )
     } finally {
-      console.timeEnd('klarna::makePayment')
+      const endTime = new Date().getTime()
+      logger.debug('klarna::makePayment:', endTime - startTime)
     }
     return result.body
   }
@@ -172,8 +173,8 @@ describe('::klarnaPayment::', () => {
     const returnPageUrl = new URL(browserTab.url())
     const searchParamsJson = Object.fromEntries(returnPageUrl.searchParams)
     let result = null
+    const startTime = new Date().getTime()
     try {
-      console.time('klarna::handleRedirect')
       result = await ctpClient.update(
         ctpClient.builder.payments,
         payment.id,
@@ -189,7 +190,8 @@ describe('::klarnaPayment::', () => {
         ]
       )
     } finally {
-      console.timeEnd('klarna::handleRedirect')
+      const endTime = new Date().getTime()
+      logger.debug('klarna::handleRedirect:', endTime - startTime)
     }
     return result.body
   }
@@ -197,8 +199,8 @@ describe('::klarnaPayment::', () => {
   async function capturePayment({ payment }) {
     const transaction = payment.transactions[0]
     let result = null
+    const startTime = new Date().getTime()
     try {
-      console.time('klarna::capturePayment')
       result = await ctpClient.update(
         ctpClient.builder.payments,
         payment.id,
@@ -213,7 +215,8 @@ describe('::klarnaPayment::', () => {
         ]
       )
     } finally {
-      console.timeEnd('klarna::capturePayment')
+      const endTime = new Date().getTime()
+      logger.debug('klarna::capturePayment:', endTime - startTime)
     }
     return result.body
   }
