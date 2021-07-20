@@ -79,42 +79,50 @@ describe('::creditCardPayment3dsRedirect::', () => {
         `when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
           'then it should successfully finish the payment with 3DS redirect flow',
         async () => {
-          const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-          const clientKey =
-            config.getAdyenConfig(adyenMerchantAccount).clientKey
-          const payment = await createPayment(
-            ctpClient,
-            adyenMerchantAccount,
-            ctpProjectKey
-          )
-          logger.debug(
-            'credit-card-3ds-redirect::payment:',
-            JSON.stringify(payment)
-          )
-          const browserTab = await browser.newPage()
+          let paymentAfterRedirect
+          try {
+            const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+            const clientKey =
+              config.getAdyenConfig(adyenMerchantAccount).clientKey
+            const payment = await createPayment(
+              ctpClient,
+              adyenMerchantAccount,
+              ctpProjectKey
+            )
+            logger.debug(
+              'credit-card-3ds-redirect::payment:',
+              JSON.stringify(payment)
+            )
+            const browserTab = await browser.newPage()
 
-          const paymentAfterMakePayment = await makePayment({
-            browserTab,
-            baseUrl,
-            creditCardNumber,
-            creditCardDate,
-            creditCardCvc,
-            payment,
-            clientKey,
-          })
-          logger.debug(
-            'credit-card-3ds-redirect::paymentAfterMakePayment:',
-            JSON.stringify(paymentAfterMakePayment)
-          )
-          const paymentAfterRedirect = await handleRedirect({
-            browserTab,
-            baseUrl,
-            payment: paymentAfterMakePayment,
-          })
-          logger.debug(
-            'credit-card-3ds-redirect::paymentAfterRedirect:',
-            JSON.stringify(paymentAfterRedirect)
-          )
+            const paymentAfterMakePayment = await makePayment({
+              browserTab,
+              baseUrl,
+              creditCardNumber,
+              creditCardDate,
+              creditCardCvc,
+              payment,
+              clientKey,
+            })
+            logger.debug(
+              'credit-card-3ds-redirect::paymentAfterMakePayment:',
+              JSON.stringify(paymentAfterMakePayment)
+            )
+            paymentAfterRedirect = await handleRedirect({
+              browserTab,
+              baseUrl,
+              payment: paymentAfterMakePayment,
+            })
+            logger.debug(
+              'credit-card-3ds-redirect::paymentAfterRedirect:',
+              JSON.stringify(paymentAfterRedirect)
+            )
+          } catch (err) {
+            logger.error(
+              'credit-card-3ds-redirect::errors',
+              JSON.stringify(err)
+            )
+          }
           assertPayment(paymentAfterRedirect)
         }
       )
@@ -157,6 +165,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
         'credit-card-3ds-redirect::makePayment::errors:',
         JSON.stringify(err)
       )
+      throw err
     }
     return result.body
   }
@@ -204,6 +213,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
         'credit-card-3ds-redirect::handleRedirect::errors:',
         JSON.stringify(err)
       )
+      throw err
     }
     return result.body
   }

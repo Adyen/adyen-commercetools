@@ -67,45 +67,50 @@ describe('::klarnaPayment::', () => {
     'when payment method is klarna and process is done correctly, ' +
       'then it should successfully finish the payment',
     async () => {
-      const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-      const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
-      const payment = await createPayment(
-        ctpClient,
-        adyenMerchantAccount,
-        ctpProjectKey
-      )
+      let paymentAfterCapture
+      try {
+        const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+        const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
+        const payment = await createPayment(
+          ctpClient,
+          adyenMerchantAccount,
+          ctpProjectKey
+        )
 
-      const browserTab = await browser.newPage()
-      logger.debug('klarna::payment:', JSON.stringify(payment))
-      const paymentAfterMakePayment = await makePayment({
-        browserTab,
-        baseUrl,
-        payment,
-        clientKey,
-      })
-      logger.debug(
-        'klarna::paymentAfterMakePayment:',
-        JSON.stringify(paymentAfterMakePayment)
-      )
-      const paymentAfterHandleRedirect = await handleRedirect({
-        browserTab,
-        baseUrl,
-        payment: paymentAfterMakePayment,
-      })
-      logger.debug(
-        'klarna::paymentAfterHandleRedirect:',
-        JSON.stringify(paymentAfterHandleRedirect)
-      )
-      assertPayment(paymentAfterHandleRedirect)
+        const browserTab = await browser.newPage()
+        logger.debug('klarna::payment:', JSON.stringify(payment))
+        const paymentAfterMakePayment = await makePayment({
+          browserTab,
+          baseUrl,
+          payment,
+          clientKey,
+        })
+        logger.debug(
+          'klarna::paymentAfterMakePayment:',
+          JSON.stringify(paymentAfterMakePayment)
+        )
+        const paymentAfterHandleRedirect = await handleRedirect({
+          browserTab,
+          baseUrl,
+          payment: paymentAfterMakePayment,
+        })
+        logger.debug(
+          'klarna::paymentAfterHandleRedirect:',
+          JSON.stringify(paymentAfterHandleRedirect)
+        )
+        assertPayment(paymentAfterHandleRedirect)
 
-      // Capture the payment
-      const paymentAfterCapture = await capturePayment({
-        payment: paymentAfterHandleRedirect,
-      })
-      logger.debug(
-        'klarna::paymentAfterCapture:',
-        JSON.stringify(paymentAfterCapture)
-      )
+        // Capture the payment
+        paymentAfterCapture = await capturePayment({
+          payment: paymentAfterHandleRedirect,
+        })
+        logger.debug(
+          'klarna::paymentAfterCapture:',
+          JSON.stringify(paymentAfterCapture)
+        )
+      } catch (err) {
+        logger.error('klarna::errors', JSON.stringify(err))
+      }
       assertManualCaptureResponse(paymentAfterCapture)
     }
   )
@@ -135,6 +140,7 @@ describe('::klarnaPayment::', () => {
       )
     } catch (err) {
       logger.error('klarna::makePayment::errors:', JSON.stringify(err))
+      throw err
     }
     return result.body
   }
@@ -183,6 +189,7 @@ describe('::klarnaPayment::', () => {
       )
     } catch (err) {
       logger.error('klarna::handleRedirect::errors:', JSON.stringify(err))
+      throw err
     }
     return result.body
   }
@@ -206,6 +213,7 @@ describe('::klarnaPayment::', () => {
       )
     } catch (err) {
       logger.error('klarna::capturePayment::errors:', JSON.stringify(err))
+      throw err
     }
     return result.body
   }

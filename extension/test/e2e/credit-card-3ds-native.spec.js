@@ -15,7 +15,7 @@ const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const CreditCardNativePage = require('./pageObjects/CreditCard3dsNativePage')
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
-describe.skip('::creditCardPayment3dsNative::', () => {
+describe('::creditCardPayment3dsNative::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
@@ -85,39 +85,44 @@ describe.skip('::creditCardPayment3dsNative::', () => {
           const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
           const clientKey =
             config.getAdyenConfig(adyenMerchantAccount).clientKey
-          const payment = await createPayment(
-            ctpClient,
-            adyenMerchantAccount,
-            ctpProjectKey
-          )
-          logger.debug(
-            'credit-card-3ds-native::payment:',
-            JSON.stringify(payment)
-          )
-          const browserTab = await browser.newPage()
+          let paymentAfterAuthentication
+          try {
+            const payment = await createPayment(
+              ctpClient,
+              adyenMerchantAccount,
+              ctpProjectKey
+            )
+            logger.debug(
+              'credit-card-3ds-native::payment:',
+              JSON.stringify(payment)
+            )
+            const browserTab = await browser.newPage()
 
-          const paymentAfterMakePayment = await makePayment({
-            browserTab,
-            baseUrl,
-            creditCardNumber,
-            creditCardDate,
-            creditCardCvc,
-            payment,
-            clientKey,
-          })
-          logger.debug(
-            'credit-card-3ds-native::paymentAfterMakePayment:',
-            JSON.stringify(paymentAfterMakePayment)
-          )
-          const paymentAfterAuthentication = await performChallengeFlow({
-            payment: paymentAfterMakePayment,
-            browserTab,
-            baseUrl,
-          })
-          logger.debug(
-            'credit-card-3ds-native::paymentAfterAuthentication:',
-            JSON.stringify(paymentAfterAuthentication)
-          )
+            const paymentAfterMakePayment = await makePayment({
+              browserTab,
+              baseUrl,
+              creditCardNumber,
+              creditCardDate,
+              creditCardCvc,
+              payment,
+              clientKey,
+            })
+            logger.debug(
+              'credit-card-3ds-native::paymentAfterMakePayment:',
+              JSON.stringify(paymentAfterMakePayment)
+            )
+            paymentAfterAuthentication = await performChallengeFlow({
+              payment: paymentAfterMakePayment,
+              browserTab,
+              baseUrl,
+            })
+            logger.debug(
+              'credit-card-3ds-native::paymentAfterAuthentication:',
+              JSON.stringify(paymentAfterAuthentication)
+            )
+          } catch (err) {
+            logger.error('credit-card-3ds-native::errors', JSON.stringify(err))
+          }
           assertPayment(paymentAfterAuthentication)
         }
       )
@@ -160,6 +165,7 @@ describe.skip('::creditCardPayment3dsNative::', () => {
         'credit-card-3ds-native::makePayment::errors:',
         JSON.stringify(err)
       )
+      throw err
     }
     return result.body
   }
@@ -207,6 +213,7 @@ describe.skip('::creditCardPayment3dsNative::', () => {
         'credit-card-3ds-native::performChallengeFlow::errors:',
         JSON.stringify(err)
       )
+      throw err
     }
     return result.body
   }

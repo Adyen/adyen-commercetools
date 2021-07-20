@@ -50,30 +50,35 @@ describe('::creditCardPayment::', () => {
         `when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
           'then it should successfully finish the payment',
         async () => {
-          const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-          const clientKey =
-            config.getAdyenConfig(adyenMerchantAccount).clientKey
-          const payment = await createPayment(
-            ctpClient,
-            adyenMerchantAccount,
-            ctpProjectKey
-          )
+          let paymentAfterMakePayment
+          try {
+            const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+            const clientKey =
+              config.getAdyenConfig(adyenMerchantAccount).clientKey
+            const payment = await createPayment(
+              ctpClient,
+              adyenMerchantAccount,
+              ctpProjectKey
+            )
 
-          const browserTab = await browser.newPage()
+            const browserTab = await browser.newPage()
 
-          const paymentAfterMakePayment = await makePayment({
-            browserTab,
-            payment,
-            baseUrl,
-            creditCardNumber,
-            creditCardDate,
-            creditCardCvc,
-            clientKey,
-          })
-          logger.debug(
-            'credit-card::paymentAfterMakePayment:',
-            JSON.stringify(paymentAfterMakePayment)
-          )
+            paymentAfterMakePayment = await makePayment({
+              browserTab,
+              payment,
+              baseUrl,
+              creditCardNumber,
+              creditCardDate,
+              creditCardCvc,
+              clientKey,
+            })
+            logger.debug(
+              'credit-card::paymentAfterMakePayment:',
+              JSON.stringify(paymentAfterMakePayment)
+            )
+          } catch (err) {
+            logger.error('credit-card::errors:', JSON.stringify(err))
+          }
           assertPayment(paymentAfterMakePayment, 'makePayment')
         }
       )
@@ -113,6 +118,7 @@ describe('::creditCardPayment::', () => {
       )
     } catch (err) {
       logger.error('credit-card::makePayment::errors:', JSON.stringify(err))
+      throw err
     }
 
     return result.body

@@ -6,6 +6,7 @@ const paymentHandler = require('../../paymentHandler/payment-handler')
 const logger = httpUtils.getLogger()
 
 async function processRequest(request, response) {
+  console.time('processRequest')
   if (request.method !== 'POST') {
     // API extensions always calls this endpoint with POST, so if we got GET, we don't process further
     // https://docs.commercetools.com/http-api-projects-api-extensions#input
@@ -44,7 +45,7 @@ async function processRequest(request, response) {
     }
 
     logger.debug('Data to be returned', JSON.stringify(result.data))
-
+    console.timeEnd('processRequest')
     return httpUtils.sendResponse(result)
   } catch (err) {
     return httpUtils.sendResponse({
