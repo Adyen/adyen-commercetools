@@ -1,5 +1,4 @@
 const { executeInAdyenIframe } = require('../e2e-test-utils')
-const httpUtils = require('../../../src/utils')
 
 module.exports = class CreditCard3dsNativePage {
   constructor(page, baseUrl) {
