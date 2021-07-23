@@ -10,18 +10,16 @@ const pU = require('./payment-utils')
 const auth = require('../validator/authentication')
 const errorMessages = require('../validator/error-messages')
 
-const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
+const {
+  CTP_ADYEN_INTEGRATION,
+  PAYMENT_METHOD_TYPE_KLARNA_METHODS,
+  PAYMENT_METHOD_TYPE_AFFIRM_METHODS,
+} = require('../config/constants')
 const {
   getChargeTransactionInitial,
   getAuthorizationTransactionSuccess,
   getCancelAuthorizationTransactionInit,
 } = require('./payment-utils')
-
-const PAYMENT_METHOD_TYPE_KLARNA_METHODS = [
-  'klarna',
-  'klarna_paynow',
-  'klarna_account',
-]
 
 async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
@@ -88,7 +86,9 @@ function _getPaymentHandlers(paymentObject) {
     )
     if (_isKlarna(makePaymentRequestObj))
       handlers.push(klarnaMakePaymentHandler)
-    else handlers.push(makePaymentHandler)
+    else if (_isAffirm(makePaymentRequestObj)) {
+      // TODO : push affirm payment handler
+    } else handlers.push(makePaymentHandler)
   }
   if (
     paymentObject.custom.fields.makePaymentResponse &&
@@ -140,6 +140,15 @@ function _isKlarna(makePaymentRequestObj) {
   return (
     makePaymentRequestObj.paymentMethod &&
     PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(
+      makePaymentRequestObj.paymentMethod.type
+    )
+  )
+}
+
+function _isAffirm(makePaymentRequestObj) {
+  return (
+    makePaymentRequestObj.paymentMethod &&
+    PAYMENT_METHOD_TYPE_AFFIRM_METHODS.includes(
       makePaymentRequestObj.paymentMethod.type
     )
   )

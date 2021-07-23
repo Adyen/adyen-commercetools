@@ -15,4 +15,12 @@ module.exports = {
     'submitAdditionalPaymentDetailsResponse',
   CTP_INTERACTION_TYPE_MANUAL_CAPTURE: 'manualCapture',
   CTP_INTERACTION_TYPE_REFUND: 'refund',
+
+  PAYMENT_METHOD_TYPE_KLARNA_METHODS: [
+    'klarna',
+    'klarna_paynow',
+    'klarna_account',
+  ],
+
+  PAYMENT_METHOD_TYPE_AFFIRM_METHODS: ['affirm'],
 }
