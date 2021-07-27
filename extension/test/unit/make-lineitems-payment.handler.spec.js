@@ -96,16 +96,16 @@ describe('make-lineitems-payment::execute', () => {
       _mockCtpCartsEndpoint()
       scope.post('/payments').reply(200, paymentSuccessResponse)
 
-      const klarnaMakePaymentRequest = {
+      const affirmMakePaymentRequest = {
         reference: 'YOUR_REFERENCE',
         paymentMethod: {
-          type: 'klarna',
+          type: 'affirm',
         },
       }
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        klarnaMakePaymentRequest
+          affirmMakePaymentRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
@@ -136,7 +136,7 @@ describe('make-lineitems-payment::execute', () => {
       const setMethodInfoName = response.actions.find(
         (a) => a.action === 'setMethodInfoName'
       )
-      expect(setMethodInfoName.name).to.eql({ en: 'affirm' })
+      expect(setMethodInfoName.name).to.eql({ en: 'Affirm' })
 
       const ctpShippingInfo = ctpCart.shippingInfo
       const adyenShippingInfo = makePaymentRequestInteraction.lineItems.find(
@@ -193,7 +193,7 @@ describe('make-lineitems-payment::execute', () => {
 
       scope.post('/payments').reply(200, paymentSuccessResponse)
 
-      const klarnaMakePaymentRequest = {
+      const affirmMakePaymentRequest = {
         reference: 'YOUR_REFERENCE',
         paymentMethod: {
           type: 'affirm',
@@ -203,7 +203,7 @@ describe('make-lineitems-payment::execute', () => {
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        klarnaMakePaymentRequest
+          affirmMakePaymentRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
@@ -214,7 +214,7 @@ describe('make-lineitems-payment::execute', () => {
           .fields.request
       )
       expect(makePaymentRequestInteraction.lineItems).to.deep.equal(
-        klarnaMakePaymentRequest.lineItems
+          affirmMakePaymentRequest.lineItems
       )
     }
   )
@@ -337,7 +337,7 @@ describe('make-lineitems-payment::execute', () => {
       _mockCtpCartsEndpoint(clonedCtpCart)
       scope.post('/payments').reply(200, paymentSuccessResponse)
 
-      const klarnaMakePaymentRequest = {
+      const affirmMakePaymentRequest = {
         reference: 'YOUR_REFERENCE',
         paymentMethod: {
           type: 'affirm',
@@ -346,7 +346,7 @@ describe('make-lineitems-payment::execute', () => {
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        klarnaMakePaymentRequest
+          affirmMakePaymentRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
