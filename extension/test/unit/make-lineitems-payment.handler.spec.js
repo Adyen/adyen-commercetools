@@ -105,7 +105,7 @@ describe('make-lineitems-payment::execute', () => {
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-          affirmMakePaymentRequest
+        affirmMakePaymentRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
@@ -203,7 +203,7 @@ describe('make-lineitems-payment::execute', () => {
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-          affirmMakePaymentRequest
+        affirmMakePaymentRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
@@ -214,7 +214,7 @@ describe('make-lineitems-payment::execute', () => {
           .fields.request
       )
       expect(makePaymentRequestInteraction.lineItems).to.deep.equal(
-          affirmMakePaymentRequest.lineItems
+        affirmMakePaymentRequest.lineItems
       )
     }
   )
@@ -346,7 +346,7 @@ describe('make-lineitems-payment::execute', () => {
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-          affirmMakePaymentRequest
+        affirmMakePaymentRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =

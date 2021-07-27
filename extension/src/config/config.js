@@ -88,6 +88,7 @@ function getAdyenPaymentMethodsToNames() {
     scheme: { en: 'Credit Card' },
     pp: { en: 'PayPal' },
     klarna: { en: 'Klarna' },
+    affirm: { en: 'Affirm' },
     gpay: { en: 'Google Pay' },
     ...(config.adyenPaymentMethodsToNames || {}),
   }
