@@ -8,25 +8,54 @@ module.exports = class AffirmMakePaymentFormPage extends MakePaymentFormPage {
   }
 
   async pasteValuesInAdyenMakePaymentForm() {
-    await this.page.type('.adyen-checkout__input--firstName', 'firstName')
-    await this.page.type('.adyen-checkout__input--lastName', 'lastName')
+    const makePaymentInputFormElement = await this.page.$(
+      '#adyen-payment-form-input'
+    )
+    const makePaymentInputForm = await (
+      await makePaymentInputFormElement.getProperty('innerHTML')
+    ).jsonValue()
+    const makePaymentInputFormJSON = JSON.parse(makePaymentInputForm.toString())
+
+    await this.page.type(
+      '.adyen-checkout__input--firstName',
+      makePaymentInputFormJSON?.shopperName?.firstName
+    )
+    await this.page.type(
+      '.adyen-checkout__input--lastName',
+      makePaymentInputFormJSON?.shopperName?.lastName
+    )
     await this.page.type(
       '.adyen-checkout__input--shopperEmail',
-      'test@test.com'
+      makePaymentInputFormJSON?.shopperEmail
     )
     await this.page.type(
       '.adyen-checkout__input--telephoneNumber',
-      '+491725554479'
+      makePaymentInputFormJSON?.telephoneNumber
     )
-    await this.page.type('.adyen-checkout__input--street', 'Apple Street')
-    await this.page.type('.adyen-checkout__input--houseNumberOrName', '9')
-    await this.page.type('.adyen-checkout__input--city', 'New York')
-    await this.page.type('.adyen-checkout__input--postalCode', '88888')
-    await this.fillDeliveryAddressStateDDL()
+
+    await this.page.type(
+      '.adyen-checkout__input--street',
+      makePaymentInputFormJSON?.billingAddress?.street
+    )
+    await this.page.type(
+      '.adyen-checkout__input--houseNumberOrName',
+      makePaymentInputFormJSON?.billingAddress?.houseNumberOrName
+    )
+    await this.page.type(
+      '.adyen-checkout__input--city',
+      makePaymentInputFormJSON?.billingAddress?.city
+    )
+    await this.page.type(
+      '.adyen-checkout__input--postalCode',
+      makePaymentInputFormJSON?.billingAddress?.postalCode
+    )
+    await this.fillDeliveryAddressStateDDL(
+      makePaymentInputFormJSON?.billingAddress?.stateCode
+    )
     await this.page.waitForTimeout(5_000)
   }
 
-  async fillDeliveryAddressStateDDL() {
+  async fillDeliveryAddressStateDDL(stateCodeInput) {
     const deliveryAddressStateElemList = await this.page.$$(
       '.adyen-checkout__dropdown__list'
     )
@@ -34,11 +63,12 @@ module.exports = class AffirmMakePaymentFormPage extends MakePaymentFormPage {
     const deliveryAddressStateOptions = await deliveryAddressStateElem.$$(
       '.adyen-checkout__dropdown__element'
     )
-    deliveryAddressStateOptions.map(async (e1) => {
-      await e1.evaluate((item) => {
+    deliveryAddressStateOptions.map(async (el) => {
+      // const elem = e1
+      await el.evaluate((item, selectedStateCode) => {
         const stateCode = item.getAttribute('data-value')
-        if (stateCode === 'NY') item.click()
-      })
+        if (stateCode === selectedStateCode) item.click()
+      }, stateCodeInput)
     })
   }
 

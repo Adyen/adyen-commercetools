@@ -20,9 +20,7 @@
       <textarea id="adyen-make-payment-request">
 Make payment request will come here</textarea
       >
-      <textarea id="adyen-make-payment-state">
-Make payment state will come here</textarea
-      >
+      <textarea id="adyen-payment-form-input"> </textarea>
       <br />
       <input type="button" id="gen-container-details" />
       <input type="text" class="firstname secondname" />
@@ -210,7 +208,29 @@ Make payment state will come here</textarea
         },
         onChange: handleOnChange,
       }
+      function createMakePaymentFormInput() {
+        const makePaymentFormInput = {}
 
+        makePaymentFormInput.channel = 'Web'
+        makePaymentFormInput.origin = window.location.origin
+        makePaymentFormInput.returnUrl = window.location.origin + '/return-url'
+        makePaymentFormInput.shopperEmail = 'test@test.com'
+        makePaymentFormInput.telephoneNumber = '+12122203809'
+        makePaymentFormInput.shopperName = {
+          firstName: 'firstName',
+          lastName: 'lastName',
+        }
+        makePaymentFormInput.billingAddress = {
+          city: 'Durham',
+          country: 'US',
+          houseNumberOrName: 'Suite 120',
+          postalCode: 'NC 27701',
+          street: 'Blackwell St.',
+          stateCode: 'NC',
+        }
+        document.getElementById('adyen-payment-form-input').innerText =
+          JSON.stringify(makePaymentFormInput)
+      }
       function handleOnChange(state) {
         const makePaymentRequest = state.data
         if (state.isValid) {
@@ -260,6 +280,7 @@ Make payment state will come here</textarea
         document.getElementById('adyen-make-payment-request').innerText =
           innerDoc
       })
+      createMakePaymentFormInput()
     </script>
   </body>
 </html>
