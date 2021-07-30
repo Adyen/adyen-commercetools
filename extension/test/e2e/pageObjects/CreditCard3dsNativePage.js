@@ -6,6 +6,12 @@ module.exports = class CreditCard3dsNativePage {
     this.baseUrl = baseUrl
   }
 
+  async getMakePaymentAction() {
+    const makePaymentAction = await this.page.$(
+      '#adyen-make-payment-response-action-field'
+    )
+    return makePaymentAction
+  }
   async finish3dsNativePayment() {
     await executeInAdyenIframe(this.page, '[name=answer]', (el) =>
       el.type('password')

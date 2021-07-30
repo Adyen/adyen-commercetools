@@ -189,6 +189,10 @@ describe('::creditCardPayment3dsNative::', () => {
     const additionalPaymentDetailsString =
       await creditCardNativePage.finish3dsNativePayment()
     logger.debug(
+      'getMakePaymentAction',
+      await creditCardNativePage.getMakePaymentAction()
+    )
+    logger.debug(
       'additionalPaymentDetailsString',
       additionalPaymentDetailsString
     )
