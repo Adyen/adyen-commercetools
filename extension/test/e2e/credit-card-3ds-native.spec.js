@@ -186,12 +186,13 @@ describe('::creditCardPayment3dsNative::', () => {
 
     // Submit additional details
     const creditCardNativePage = new CreditCardNativePage(browserTab, baseUrl)
-    const additionalPaymentDetailsString =
-      await creditCardNativePage.finish3dsNativePayment()
     logger.debug(
       'getMakePaymentAction',
       await creditCardNativePage.getMakePaymentAction()
     )
+    const additionalPaymentDetailsString =
+      await creditCardNativePage.finish3dsNativePayment()
+
     logger.debug(
       'additionalPaymentDetailsString',
       additionalPaymentDetailsString
