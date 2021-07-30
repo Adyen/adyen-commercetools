@@ -7,6 +7,7 @@ module.exports = class CreditCard3dsNativePage {
   }
 
   async getMakePaymentAction() {
+    await this.page.waitForTimeout(5_000)
     const makePaymentActionElem = await this.page.$(
       '#adyen-make-payment-response-action-field'
     )
