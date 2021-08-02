@@ -83,7 +83,6 @@ async function initResources(ctpClient, ctpProjectKey, authHeaderValue) {
   await testUtils.deleteAllResources(ctpClient, 'payments')
   await testUtils.deleteAllResources(ctpClient, 'types')
   const { apiExtensionBaseUrl } = config.getModuleConfig()
-  console.log('apiExtensionBaseUrl', apiExtensionBaseUrl)
   await ensureResources(
     ctpClient,
     ctpProjectKey,

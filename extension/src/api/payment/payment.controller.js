@@ -44,6 +44,7 @@ async function processRequest(request, response) {
     }
 
     logger.debug('Data to be returned', JSON.stringify(result.data))
+
     return httpUtils.sendResponse(result)
   } catch (err) {
     return httpUtils.sendResponse({
