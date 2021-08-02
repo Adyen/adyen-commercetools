@@ -1,5 +1,15 @@
 {
   "extends": [
     "config:base"
+  ],
+  "automerge": true,
+  "schedule": ["every weekend"],
+  "ignoreDeps": ["nock"],
+  "prConcurrentLimit": 10,
+  "packageRules": [
+    {
+      "matchDatasources": ["npm"],
+      "stabilityDays": 3
+    }
   ]
 }
