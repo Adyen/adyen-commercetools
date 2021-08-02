@@ -55,7 +55,7 @@
     "@commercetools/sync-actions": "^4.9.6",
     "bunyan": "^1.8.15",
     "lockfile-lint": "^4.6.2",
-    "lodash": "^4.17.21",
+    "lodash": "4.17.21",
     "node-fetch": "^2.6.1",
     "serialize-error": "^8.1.0",
     "verror": "^1.10.0"
