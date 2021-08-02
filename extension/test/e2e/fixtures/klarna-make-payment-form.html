@@ -194,10 +194,9 @@ Make payment request will come here</textarea
       }
 
       function handleOnSubmit(state) {
-        console.log(state)
         if (state.isValid) {
           const makePaymentRequest = state.data
-          makePaymentRequest.reference = new Date().getMilliseconds()
+          makePaymentRequest.reference = new Date().getTime()
           makePaymentRequest.amount = {
             currency: 'EUR',
             value: 1000,

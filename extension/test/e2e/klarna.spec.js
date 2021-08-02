@@ -3,6 +3,8 @@ const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
+
+const logger = httpUtils.getLogger()
 const pU = require('../../src/paymentHandler/payment-utils')
 const {
   assertPayment,
@@ -64,39 +66,51 @@ describe('::klarnaPayment::', () => {
   it(
     'when payment method is klarna and process is done correctly, ' +
       'then it should successfully finish the payment',
-    async function func() {
-      this.timeout(60000)
+    async () => {
+      let paymentAfterCapture
+      try {
+        const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+        const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
+        const payment = await createPayment(
+          ctpClient,
+          adyenMerchantAccount,
+          ctpProjectKey
+        )
 
-      const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-      const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
-      const payment = await createPayment(
-        ctpClient,
-        adyenMerchantAccount,
-        ctpProjectKey
-      )
+        const browserTab = await browser.newPage()
+        logger.debug('klarna::payment:', JSON.stringify(payment))
+        const paymentAfterMakePayment = await makePayment({
+          browserTab,
+          baseUrl,
+          payment,
+          clientKey,
+        })
+        logger.debug(
+          'klarna::paymentAfterMakePayment:',
+          JSON.stringify(paymentAfterMakePayment)
+        )
+        const paymentAfterHandleRedirect = await handleRedirect({
+          browserTab,
+          baseUrl,
+          payment: paymentAfterMakePayment,
+        })
+        logger.debug(
+          'klarna::paymentAfterHandleRedirect:',
+          JSON.stringify(paymentAfterHandleRedirect)
+        )
+        assertPayment(paymentAfterHandleRedirect)
 
-      const browserTab = await browser.newPage()
-
-      const paymentAfterMakePayment = await makePayment({
-        browserTab,
-        baseUrl,
-        payment,
-        clientKey,
-      })
-
-      const paymentAfterHandleRedirect = await handleRedirect({
-        browserTab,
-        baseUrl,
-        payment: paymentAfterMakePayment,
-      })
-
-      assertPayment(paymentAfterHandleRedirect)
-
-      // Capture the payment
-      const paymentAfterCapture = await capturePayment({
-        payment: paymentAfterHandleRedirect,
-      })
-
+        // Capture the payment
+        paymentAfterCapture = await capturePayment({
+          payment: paymentAfterHandleRedirect,
+        })
+        logger.debug(
+          'klarna::paymentAfterCapture:',
+          JSON.stringify(paymentAfterCapture)
+        )
+      } catch (err) {
+        logger.error('klarna::errors', JSON.stringify(err))
+      }
       assertManualCaptureResponse(paymentAfterCapture)
     }
   )
@@ -110,21 +124,26 @@ describe('::klarnaPayment::', () => {
     const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest(
       clientKey
     )
-
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'makePaymentRequest',
-          value: makePaymentRequest,
-        },
-      ]
-    )
-
-    return updatedPayment
+    let result = null
+    const startTime = new Date().getTime()
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'makePaymentRequest',
+            value: makePaymentRequest,
+          },
+        ]
+      )
+    } finally {
+      const endTime = new Date().getTime()
+      logger.debug('klarna::makePayment:', endTime - startTime)
+    }
+    return result.body
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {
@@ -153,42 +172,53 @@ describe('::klarnaPayment::', () => {
     // Submit payment details
     const returnPageUrl = new URL(browserTab.url())
     const searchParamsJson = Object.fromEntries(returnPageUrl.searchParams)
-
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'submitAdditionalPaymentDetailsRequest',
-          value: JSON.stringify({
-            details: searchParamsJson,
-          }),
-        },
-      ]
-    )
-
-    return updatedPayment
+    let result = null
+    const startTime = new Date().getTime()
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'submitAdditionalPaymentDetailsRequest',
+            value: JSON.stringify({
+              details: searchParamsJson,
+            }),
+          },
+        ]
+      )
+    } finally {
+      const endTime = new Date().getTime()
+      logger.debug('klarna::handleRedirect:', endTime - startTime)
+    }
+    return result.body
   }
 
   async function capturePayment({ payment }) {
     const transaction = payment.transactions[0]
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        pU.createAddTransactionAction({
-          type: 'Charge',
-          state: 'Initial',
-          currency: transaction.amount.currencyCode,
-          amount: transaction.amount.centAmount,
-        }),
-      ]
-    )
-
-    return updatedPayment
+    let result = null
+    const startTime = new Date().getTime()
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          pU.createAddTransactionAction({
+            type: 'Charge',
+            state: 'Initial',
+            currency: transaction.amount.currencyCode,
+            amount: transaction.amount.centAmount,
+          }),
+        ]
+      )
+    } finally {
+      const endTime = new Date().getTime()
+      logger.debug('klarna::capturePayment:', endTime - startTime)
+    }
+    return result.body
   }
 
   function assertManualCaptureResponse(paymentAfterCapture) {
