@@ -820,9 +820,12 @@ In order to do so remove the existing `submitAdditionalPaymentDetailsResponse` c
 }
 ```
 
-## Step 7: Capture payment (required for Klarna)
+## Step 7: Capture payment (required for Klarna and Affirm)
 
 All Klarna payments [have to be manually captured](https://docs.adyen.com/payment-methods/klarna/web-component#capture) within 28 days after authorization, even if you have enabled automatic capture on your Adyen merchant account.
+Refer to [Manual Capture](ManualCapture.md) guide to see how it can be done.
+
+All Affirm payments [have to be manually captured](https://docs.adyen.com/payment-methods/affirm/web-component#capture), even if you have enabled automatic capture on your Adyen merchant account.
 Refer to [Manual Capture](ManualCapture.md) guide to see how it can be done.
 
 ## Error handling
