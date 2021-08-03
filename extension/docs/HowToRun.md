@@ -131,7 +131,8 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
   "adyen": {...},
   "adyenPaymentMethodsToNames": {
     "klarna": {"en": "Klarna payment"},
-    "gpay": {"en": "Google Pay"}
+    "gpay": {"en": "Google Pay"},
+    "affirm": {"en": "Affirm"}
   },
   "logLevel": "DEBUG",
   "port": 8080,
