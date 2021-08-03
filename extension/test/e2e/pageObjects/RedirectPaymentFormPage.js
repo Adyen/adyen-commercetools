@@ -1,5 +1,9 @@
 const { pasteValue } = require('../e2e-test-utils')
 
+const httpUtils = require('../../../src/utils')
+
+const logger = httpUtils.getLogger()
+
 module.exports = class RedirectPaymentFormPage {
   constructor(page, baseUrl) {
     this.page = page
@@ -11,6 +15,10 @@ module.exports = class RedirectPaymentFormPage {
   }
 
   async redirectToAdyenPaymentPage(paymentDetailsResponse) {
+    logger.debug(
+      'redirectToAdyenPaymentPage::paymentDetailsResponse::',
+      paymentDetailsResponse
+    )
     await pasteValue(
       this.page,
       '#adyen-make-payment-response-action-field',

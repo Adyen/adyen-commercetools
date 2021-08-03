@@ -2,6 +2,8 @@ const ctpClientBuilder = require('../../src/ctp')
 const { routes } = require('../../src/routes')
 const config = require('../../src/config/config')
 const httpUtils = require('../../src/utils')
+
+const logger = httpUtils.getLogger()
 const {
   assertPayment,
   createPayment,
@@ -83,30 +85,44 @@ describe('::creditCardPayment3dsNative::', () => {
           const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
           const clientKey =
             config.getAdyenConfig(adyenMerchantAccount).clientKey
-          const payment = await createPayment(
-            ctpClient,
-            adyenMerchantAccount,
-            ctpProjectKey
-          )
+          let paymentAfterAuthentication
+          try {
+            const payment = await createPayment(
+              ctpClient,
+              adyenMerchantAccount,
+              ctpProjectKey
+            )
+            logger.debug(
+              'credit-card-3ds-native::payment:',
+              JSON.stringify(payment)
+            )
+            const browserTab = await browser.newPage()
 
-          const browserTab = await browser.newPage()
-
-          const paymentAfterMakePayment = await makePayment({
-            browserTab,
-            baseUrl,
-            creditCardNumber,
-            creditCardDate,
-            creditCardCvc,
-            payment,
-            clientKey,
-          })
-
-          const paymentAfterAuthentication = await performChallengeFlow({
-            payment: paymentAfterMakePayment,
-            browserTab,
-            baseUrl,
-          })
-
+            const paymentAfterMakePayment = await makePayment({
+              browserTab,
+              baseUrl,
+              creditCardNumber,
+              creditCardDate,
+              creditCardCvc,
+              payment,
+              clientKey,
+            })
+            logger.debug(
+              'credit-card-3ds-native::paymentAfterMakePayment:',
+              JSON.stringify(paymentAfterMakePayment)
+            )
+            paymentAfterAuthentication = await performChallengeFlow({
+              payment: paymentAfterMakePayment,
+              browserTab,
+              baseUrl,
+            })
+            logger.debug(
+              'credit-card-3ds-native::paymentAfterAuthentication:',
+              JSON.stringify(paymentAfterAuthentication)
+            )
+          } catch (err) {
+            logger.error('credit-card-3ds-native::errors', JSON.stringify(err))
+          }
           assertPayment(paymentAfterAuthentication)
         }
       )
@@ -130,21 +146,26 @@ describe('::creditCardPayment3dsNative::', () => {
       creditCardCvc,
       clientKey,
     })
-
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'makePaymentRequest',
-          value: makePaymentRequest,
-        },
-      ]
-    )
-
-    return updatedPayment
+    let result = null
+    const startTime = new Date().getTime()
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'makePaymentRequest',
+            value: makePaymentRequest,
+          },
+        ]
+      )
+    } finally {
+      const endTime = new Date().getTime()
+      logger.debug('credit-card-3ds-native::makePayment:', endTime - startTime)
+    }
+    return result.body
   }
 
   async function performChallengeFlow({ payment, browserTab, baseUrl }) {
@@ -161,25 +182,45 @@ describe('::creditCardPayment3dsNative::', () => {
       makePaymentResponse
     )
 
-    await browserTab.waitForTimeout(10_000)
+    await browserTab.waitForTimeout(15_000)
 
     // Submit additional details
     const creditCardNativePage = new CreditCardNativePage(browserTab, baseUrl)
     const additionalPaymentDetailsString =
       await creditCardNativePage.finish3dsNativePayment()
-    const { body: finalPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'submitAdditionalPaymentDetailsRequest',
-          value: additionalPaymentDetailsString,
-        },
-      ]
-    )
 
-    return finalPayment
+    logger.debug(
+      'additionalPaymentDetailsString',
+      additionalPaymentDetailsString
+    )
+    let result = null
+    const startTime = new Date().getTime()
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'submitAdditionalPaymentDetailsRequest',
+            value: additionalPaymentDetailsString,
+          },
+        ]
+      )
+    } catch (err) {
+      logger.error(
+        'credit-card-3ds-native::performChallengeFlow::errors:',
+        JSON.stringify(err)
+      )
+      throw err
+    } finally {
+      const endTime = new Date().getTime()
+      logger.debug(
+        'credit-card-3ds-native::performChallengeFlow:',
+        endTime - startTime
+      )
+    }
+    return result.body
   }
 })

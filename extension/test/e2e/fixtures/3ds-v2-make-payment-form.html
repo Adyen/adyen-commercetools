@@ -221,12 +221,8 @@ Make payment request will come here</textarea
       }
 
       function handleOnSubmit(state, component) {
-        console.log('handleOnSubmit')
-        console.log(state)
-        console.log(component)
         const makePaymentRequest = state.data
-        const orderReference = new Date().getMilliseconds()
-        makePaymentRequest.reference = orderReference
+        makePaymentRequest.reference = new Date().getTime()
         makePaymentRequest.amount = {
           currency: 'EUR',
           value: 1000,

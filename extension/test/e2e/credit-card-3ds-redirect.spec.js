@@ -2,6 +2,9 @@ const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
+
+const logger = httpUtils.getLogger()
+
 const {
   assertPayment,
   createPayment,
@@ -76,33 +79,50 @@ describe('::creditCardPayment3dsRedirect::', () => {
         `when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
           'then it should successfully finish the payment with 3DS redirect flow',
         async () => {
-          const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-          const clientKey =
-            config.getAdyenConfig(adyenMerchantAccount).clientKey
-          const payment = await createPayment(
-            ctpClient,
-            adyenMerchantAccount,
-            ctpProjectKey
-          )
+          let paymentAfterRedirect
+          try {
+            const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+            const clientKey =
+              config.getAdyenConfig(adyenMerchantAccount).clientKey
+            const payment = await createPayment(
+              ctpClient,
+              adyenMerchantAccount,
+              ctpProjectKey
+            )
+            logger.debug(
+              'credit-card-3ds-redirect::payment:',
+              JSON.stringify(payment)
+            )
+            const browserTab = await browser.newPage()
 
-          const browserTab = await browser.newPage()
-
-          const paymentAfterMakePayment = await makePayment({
-            browserTab,
-            baseUrl,
-            creditCardNumber,
-            creditCardDate,
-            creditCardCvc,
-            payment,
-            clientKey,
-          })
-
-          const paymentAfterRedirect = await handleRedirect({
-            browserTab,
-            baseUrl,
-            payment: paymentAfterMakePayment,
-          })
-
+            const paymentAfterMakePayment = await makePayment({
+              browserTab,
+              baseUrl,
+              creditCardNumber,
+              creditCardDate,
+              creditCardCvc,
+              payment,
+              clientKey,
+            })
+            logger.debug(
+              'credit-card-3ds-redirect::paymentAfterMakePayment:',
+              JSON.stringify(paymentAfterMakePayment)
+            )
+            paymentAfterRedirect = await handleRedirect({
+              browserTab,
+              baseUrl,
+              payment: paymentAfterMakePayment,
+            })
+            logger.debug(
+              'credit-card-3ds-redirect::paymentAfterRedirect:',
+              JSON.stringify(paymentAfterRedirect)
+            )
+          } catch (err) {
+            logger.error(
+              'credit-card-3ds-redirect::errors',
+              JSON.stringify(err)
+            )
+          }
           assertPayment(paymentAfterRedirect)
         }
       )
@@ -126,21 +146,29 @@ describe('::creditCardPayment3dsRedirect::', () => {
       creditCardCvc,
       clientKey,
     })
-
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'makePaymentRequest',
-          value: makePaymentRequest,
-        },
-      ]
-    )
-
-    return updatedPayment
+    let result = null
+    const startTime = new Date().getTime()
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'makePaymentRequest',
+            value: makePaymentRequest,
+          },
+        ]
+      )
+    } finally {
+      const endTime = new Date().getTime()
+      logger.debug(
+        'credit-card-3ds-redirect::makePayment:',
+        endTime - startTime
+      )
+    }
+    return result.body
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {
@@ -163,24 +191,33 @@ describe('::creditCardPayment3dsRedirect::', () => {
     const value = await creditCardRedirectPage.finish3dsRedirectPayment()
 
     // Submit payment details
-    const { body: finalPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'submitAdditionalPaymentDetailsRequest',
-          value: JSON.stringify({
-            details: {
-              redirectResult: decodeURIComponent(value),
-            },
-          }),
-        },
-      ]
-    )
-
-    return finalPayment
+    let result = null
+    const startTime = new Date().getTime()
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'submitAdditionalPaymentDetailsRequest',
+            value: JSON.stringify({
+              details: {
+                redirectResult: decodeURIComponent(value),
+              },
+            }),
+          },
+        ]
+      )
+    } finally {
+      const endTime = new Date().getTime()
+      logger.debug(
+        'credit-card-3ds-redirect::handleRedirect:',
+        endTime - startTime
+      )
+    }
+    return result.body
   }
 
   function getRequestParams(req) {
