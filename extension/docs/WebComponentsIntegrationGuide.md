@@ -19,6 +19,7 @@
       - [Authorised Response](#authorised-response)
       - [Action Response](#action-response)
     - [Klarna payment](#klarna-payment)
+    - [Affirm payment](#affirm-payment)
   - [Step 6: Submit additional payment details](#step-6-submit-additional-payment-details)
     - [Response](#response-1)
       - [Authorised Response](#authorised-response-1)
@@ -529,6 +530,115 @@ Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` 
   "reference": "YOUR_REFERENCE",
   "paymentMethod": {
     "type": "klarna"
+  },
+  "amount": {
+    "currency": "EUR",
+    "value": "1000"
+  },
+  "shopperLocale": "en_US",
+  "countryCode": "SE",
+  "shopperEmail": "youremail@email.com",
+  "shopperName": {
+    "firstName": "Testperson-se",
+    "gender": "UNKNOWN",
+    "lastName": "Approved"
+  },
+  "shopperReference": "YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j",
+  "billingAddress": {
+    "city": "Ankeborg",
+    "country": "SE",
+    "houseNumberOrName": "1",
+    "postalCode": "12345",
+    "street": "Stargatan"
+  },
+  "returnUrl": "https://www.your-company.com/...",
+  "lineItems": [
+    {
+      "quantity": "1",
+      "amountExcludingTax": "331",
+      "taxPercentage": "2100",
+      "description": "Shoes",
+      "id": "Item #1",
+      "taxAmount": "69",
+      "amountIncludingTax": "400"
+    },
+    {
+      "quantity": "2",
+      "amountExcludingTax": "248",
+      "taxPercentage": "2100",
+      "description": "Socks",
+      "id": "Item #2",
+      "taxAmount": "52",
+      "amountIncludingTax": "300"
+    }
+  ]
+}
+```
+
+</details>
+
+### Affirm payment
+
+Identical to Klarna payment, Affirm payment requires to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) in `makePaymentRequest`.
+The extension module can add the line item details for you if [the payment is added to a cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
+
+Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` attribute.
+
+```json
+{
+  "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
+  "reference": "YOUR_REFERENCE",
+  "paymentMethod": {
+    "type": "affirm"
+  },
+  "amount": {
+    "currency": "EUR",
+    "value": "1000"
+  },
+  "shopperLocale": "en_US",
+  "countryCode": "SE",
+  "shopperEmail": "youremail@email.com",
+  "shopperName": {
+    "firstName": "Testperson-se",
+    "gender": "UNKNOWN",
+    "lastName": "Approved"
+  },
+  "shopperReference": "YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j",
+  "billingAddress": {
+    "city": "Ankeborg",
+    "country": "SE",
+    "houseNumberOrName": "1",
+    "postalCode": "12345",
+    "street": "Stargatan"
+  },
+  "returnUrl": "https://www.your-company.com/..."
+}
+```
+
+[Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with the request above.
+
+```json
+{
+  "version": "PAYMENT_VERSION",
+  "actions": [
+    {
+      "action": "setCustomField",
+      "name": "makePaymentRequest",
+      "value": "{\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\",\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"affirm\"},\"amount\":{\"currency\":\"SEK\",\"value\":\"1000\"},\"shopperLocale\":\"en_US\",\"countryCode\":\"SE\",\"shopperEmail\":\"youremail@email.com\",\"shopperName\":{\"firstName\":\"Testperson-se\",\"gender\":\"UNKNOWN\",\"lastName\":\"Approved\"},\"shopperReference\":\"YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j\",\"billingAddress\":{\"city\":\"Ankeborg\",\"country\":\"SE\",\"houseNumberOrName\":\"1\",\"postalCode\":\"12345\",\"street\":\"Stargatan\"},\"returnUrl\":\"https://www.your-company.com/...\"}"
+    }
+  ]
+}
+```
+
+<details>
+<summary>Extension module will add line items to your makePaymentRequest. Click to expand.</summary>
+
+```json
+{
+  "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
+  "reference": "YOUR_REFERENCE",
+  "paymentMethod": {
+    "type": "affirm"
   },
   "amount": {
     "currency": "EUR",
