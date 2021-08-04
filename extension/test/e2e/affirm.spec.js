@@ -3,6 +3,8 @@ const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
+
+const logger = httpUtils.getLogger()
 const pU = require('../../src/paymentHandler/payment-utils')
 const {
   assertPayment,
@@ -65,8 +67,7 @@ describe('::affirmPayment::', () => {
     'when payment method is affirm and process is done correctly, ' +
       'then it should successfully finish the payment',
     async function func() {
-      this.timeout(360_000)
-
+      let paymentAfterCapture
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
       try {
@@ -75,7 +76,7 @@ describe('::affirmPayment::', () => {
           adyenMerchantAccount,
           ctpProjectKey
         )
-
+        logger.debug('affirm::payment:', JSON.stringify(payment))
         const browserTab = await browser.newPage()
 
         const paymentAfterMakePayment = await makePayment({
@@ -84,23 +85,33 @@ describe('::affirmPayment::', () => {
           payment,
           clientKey,
         })
-
+        logger.debug(
+          'affirm::paymentAfterMakePayment:',
+          JSON.stringify(paymentAfterMakePayment)
+        )
         const paymentAfterHandleRedirect = await handleRedirect({
           browserTab,
           baseUrl,
           payment: paymentAfterMakePayment,
         })
-
+        logger.debug(
+          'affirm::paymentAfterHandleRedirect:',
+          JSON.stringify(paymentAfterHandleRedirect)
+        )
         assertPayment(paymentAfterHandleRedirect)
 
         // Capture the payment
-        const paymentAfterCapture = await capturePayment({
+        paymentAfterCapture = await capturePayment({
           payment: paymentAfterHandleRedirect,
         })
-        assertManualCaptureResponse(paymentAfterCapture)
+        logger.debug(
+          'affirm::paymentAfterCapture:',
+          JSON.stringify(paymentAfterCapture)
+        )
       } catch (err) {
-        setTimeout(() => {}, 20_000)
+        logger.error('affirm::errors', JSON.stringify(err))
       }
+      assertManualCaptureResponse(paymentAfterCapture)
     }
   )
 

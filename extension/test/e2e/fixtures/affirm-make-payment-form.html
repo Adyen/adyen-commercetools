@@ -211,9 +211,6 @@ Make payment request will come here</textarea
       function createMakePaymentFormInput() {
         const makePaymentFormInput = {}
 
-        makePaymentFormInput.channel = 'Web'
-        makePaymentFormInput.origin = window.location.origin
-        makePaymentFormInput.returnUrl = window.location.origin + '/return-url'
         makePaymentFormInput.shopperEmail = 'test@test.com'
         makePaymentFormInput.telephoneNumber = '+12122203809'
         makePaymentFormInput.shopperName = {
@@ -234,6 +231,14 @@ Make payment request will come here</textarea
       function handleOnChange(state) {
         const makePaymentRequest = state.data
         if (state.isValid) {
+          makePaymentRequest.reference = new Date().getTime()
+          makePaymentRequest.amount = {
+            currency: 'EUR',
+            value: 1000,
+          }
+          makePaymentRequest.channel = 'Web'
+          makePaymentRequest.origin = window.location.origin
+          makePaymentRequest.returnUrl = window.location.origin + '/return-url'
           makePaymentRequest.billingAddress = {
             city: 'München',
             country: 'DE',
