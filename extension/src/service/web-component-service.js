@@ -68,7 +68,7 @@ function cancelPayment(
   cancelPaymentRequestObj
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
-  extendRequestObjWithMetadata(cancelPaymentRequestObj)
+  extendRequestObjWithMetadata(cancelPaymentRequestObj, commercetoolsProjectKey)
   return callAdyen(
     `${adyenCredentials.legacyApiBaseUrl}/cancel`,
     merchantAccount,
