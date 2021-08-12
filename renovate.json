@@ -4,7 +4,6 @@
   ],
   "automerge": true,
   "schedule": ["every weekend"],
-  "ignoreDeps": ["nock"],
   "groupName": "all",
   "docker": {
     "enabled":  false
