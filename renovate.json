@@ -5,8 +5,9 @@
   "automerge": true,
   "schedule": ["every weekend"],
   "ignoreDeps": ["nock"],
-  "prConcurrentLimit": 10,
+  "groupName": "all",
   "docker": {
     "enabled":  false
-  }
+  },
+  "prConcurrentLimit": 10
 }
