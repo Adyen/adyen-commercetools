@@ -18,8 +18,7 @@
     - [Response](#response)
       - [Authorised Response](#authorised-response)
       - [Action Response](#action-response)
-    - [Klarna payment](#klarna-payment)
-    - [Affirm payment](#affirm-payment)
+    - [Klarna payment and Affirm payment](#klarna-payment-and-affirm-payment)
   - [Step 6: Submit additional payment details](#step-6-submit-additional-payment-details)
     - [Response](#response-1)
       - [Authorised Response](#authorised-response-1)
@@ -468,7 +467,7 @@ Pass the action object to your front end. The Adyen web component uses this to h
 
 > See [Adyen documentation](https://docs.adyen.com/online-payments/components-web#step-4-additional-front-end) for more information how to perform additional front end actions.
 
-### Klarna payment & Affirm payment
+### Klarna payment and Affirm payment
 
 For Klarna payment and Affirm payment, it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) in `makePaymentRequest`.
 The extension module can add the line item details for you if [the payment is added to a cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
