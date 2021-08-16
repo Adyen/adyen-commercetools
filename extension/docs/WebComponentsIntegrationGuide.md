@@ -23,7 +23,7 @@
     - [Response](#response-1)
       - [Authorised Response](#authorised-response-1)
       - [Action Response](#action-response-1)
-  - [Step 7: Capture payment (required for Klarna)](#step-7-capture-payment-required-for-klarna)
+  - [Step 7: Capture payment (required for Klarna and Affirm)](#step-7-capture-payment-required-for-klarna-and-affirm)
   - [Error handling](#error-handling)
     - [Extension module errors](#extension-module-errors)
     - [Adyen payment refusals](#adyen-payment-refusals)
