@@ -18,12 +18,12 @@
     - [Response](#response)
       - [Authorised Response](#authorised-response)
       - [Action Response](#action-response)
-    - [Klarna payment](#klarna-payment)
+    - [Klarna payment and Affirm payment](#klarna-payment-and-affirm-payment)
   - [Step 6: Submit additional payment details](#step-6-submit-additional-payment-details)
     - [Response](#response-1)
       - [Authorised Response](#authorised-response-1)
       - [Action Response](#action-response-1)
-  - [Step 7: Capture payment (required for Klarna)](#step-7-capture-payment-required-for-klarna)
+  - [Step 7: Capture payment (required for Klarna and Affirm)](#step-7-capture-payment-required-for-klarna-and-affirm)
   - [Error handling](#error-handling)
     - [Extension module errors](#extension-module-errors)
     - [Adyen payment refusals](#adyen-payment-refusals)
@@ -467,9 +467,9 @@ Pass the action object to your front end. The Adyen web component uses this to h
 
 > See [Adyen documentation](https://docs.adyen.com/online-payments/components-web#step-4-additional-front-end) for more information how to perform additional front end actions.
 
-### Klarna payment
+### Klarna payment and Affirm payment
 
-For Klarna payment it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) in `makePaymentRequest`.
+For Klarna payment and Affirm payment, it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) in `makePaymentRequest`.
 The extension module can add the line item details for you if [the payment is added to a cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
 
 Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` attribute.
@@ -479,7 +479,7 @@ Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` 
   "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
   "reference": "YOUR_REFERENCE",
   "paymentMethod": {
-    "type": "klarna"
+    "type": "YOUR_PAYMENT_METHOD"
   },
   "amount": {
     "currency": "EUR",
@@ -528,7 +528,7 @@ Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` 
   "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
   "reference": "YOUR_REFERENCE",
   "paymentMethod": {
-    "type": "klarna"
+    "type": "YOUR_PAYMENT_METHOD"
   },
   "amount": {
     "currency": "EUR",
@@ -710,10 +710,10 @@ In order to do so remove the existing `submitAdditionalPaymentDetailsResponse` c
 }
 ```
 
-## Step 7: Capture payment (required for Klarna)
+## Step 7: Capture payment (required for Klarna and Affirm)
 
 All Klarna payments [have to be manually captured](https://docs.adyen.com/payment-methods/klarna/web-component#capture) within 28 days after authorization, even if you have enabled automatic capture on your Adyen merchant account.
-Refer to [Manual Capture](ManualCapture.md) guide to see how it can be done.
+All Affirm payments also require [mannually captured](https://docs.adyen.com/payment-methods/affirm/web-component#capture) as same as Klarna payments. Refer to [Manual Capture](ManualCapture.md) guide to see how it can be done.
 
 ## Error handling
 
