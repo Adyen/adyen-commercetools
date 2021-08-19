@@ -1,6 +1,6 @@
 {
   "name": "commercetools-adyen-integration-notification",
-  "version": "9.0.0",
+  "version": "9.0.2",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "scripts": {
     "check-coverage": "nyc check-coverage --statements 93",

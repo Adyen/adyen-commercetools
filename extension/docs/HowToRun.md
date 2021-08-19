@@ -82,7 +82,7 @@ Multiple child attributes can be provided in the `adyen` attribute. Each direct 
 
 If you don't have the commercetools OAuth credentials,[create a commercetools API Client](https://docs.commercetools.com/getting-started.html#create-an-api-client).
 
-> Extension module's recommended [scope](https://docs.commercetools.com/http-api-scopes#manage_projectprojectkey) is `manage_project`.
+> Note that, extension module requires `manage_payments, view_orders` [scopes](https://docs.commercetools.com/http-api-scopes) for the integration and `manage_types, manage_extensions` [scopes](https://docs.commercetools.com/http-api-scopes) are for setting up required resources.
 
 Multiple child attributes can be provided in the `commercetools` attribute. Each direct child attribute must represent 1 commercetools project like in the following example:
 
