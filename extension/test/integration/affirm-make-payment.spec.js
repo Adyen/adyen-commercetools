@@ -7,7 +7,8 @@ const iTSetUp = require('./integration-test-set-up')
 describe('::affirmMakePayment with multiple projects use case::', () => {
   const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
     config.getAllCtpProjectKeys()
-  const [adyenMerchantAccount1] = config.getAllAdyenMerchantAccounts()
+  const [adyenMerchantAccount1, adyenMerchantAccount2] =
+    config.getAllAdyenMerchantAccounts()
 
   let ctpClientProject1
   let ctpClientProject2
@@ -34,7 +35,8 @@ describe('::affirmMakePayment with multiple projects use case::', () => {
   it(
     'given 2 different commercetools projects and payments with single Adyen merchant account, ' +
       'when makePayment custom field is set with Affirm Adyen request without line items,' +
-      'then it should should calculate correct line items for Affirm Adyen',
+      'then it should connect the 2 different adyen mechant accounts ' +
+      'and should calculate correct line items for Affirm Adyen',
     async () => {
       await Promise.all([
         makePayment({
@@ -45,7 +47,7 @@ describe('::affirmMakePayment with multiple projects use case::', () => {
         }),
         makePayment({
           ctpClient: ctpClientProject2,
-          adyenMerchantAccount: adyenMerchantAccount1,
+          adyenMerchantAccount: adyenMerchantAccount2,
           commercetoolsProjectKey: commercetoolsProjectKey2,
           reference: 'paymentFromMerchant2_'.concat(Date.now().toString()),
         }),
