@@ -4,9 +4,13 @@ const _ = require('lodash')
 const ctpZone = require('./fixtures/ctp-zone.json')
 const ctpTaxCategory = require('./fixtures/ctp-tax-category.json')
 const ctpShippingMethod = require('./fixtures/ctp-shipping-method.json')
+const ctpShippingMethodUsd = require('./fixtures/usd/ctp-shipping-method.json')
 const ctpProductType = require('./fixtures/ctp-product-type.json')
 const ctpProduct = require('./fixtures/ctp-product.json')
 const ctpPayment = require('./fixtures/ctp-payment.json')
+const ctpProductUsd = require('./fixtures/usd/ctp-product.json')
+const ctpPaymentUsd = require('./fixtures/usd/ctp-payment.json')
+const ctpCartUsd = require('./fixtures/usd/ctp-cart.json')
 const ctpCart = require('./fixtures/ctp-cart.json')
 const ctpCartDiscount = require('./fixtures/ctp-cart-discount.json')
 const ctpCartDiscountMultiBuy = require('./fixtures/ctp-cart-discount-multi-buy.json')
@@ -23,6 +27,11 @@ const logger = require('../../src/utils').getLogger()
 
 let tunnel
 let server
+let currency = 'EUR'
+
+function initCurrency(value) {
+  currency = value
+}
 
 function overrideBasicAuthFlag(isEnable) {
   const moduleConfig = config.getModuleConfig()
@@ -179,7 +188,10 @@ async function _ensureShippingMethods(ctpClient, taxCategoryId, zoneId) {
     ctpClient.builder.shippingMethods.where(`key="${ctpShippingMethod.key}"`)
   )
   if (body.results.length === 0) {
-    const ctpShippingMethodClone = _.cloneDeep(ctpShippingMethod)
+    let ctpShippingMethodClone
+    if (currency === 'USD')
+      ctpShippingMethodClone = _.cloneDeep(ctpShippingMethodUsd)
+    else ctpShippingMethodClone = _.cloneDeep(ctpShippingMethod)
     ctpShippingMethodClone.taxCategory.id = taxCategoryId
     ctpShippingMethodClone.zoneRates[0].zone.id = zoneId
     return ctpClient.create(
@@ -290,7 +302,9 @@ async function _ensureProducts(ctpClient, productTypeId, taxCategoryId) {
     ctpClient.builder.products.where(`key="${ctpProduct.key}"`)
   )
   if (body.results.length === 0) {
-    const ctpProductClone = _.cloneDeep(ctpProduct)
+    let ctpProductClone
+    if (currency === 'USD') ctpProductClone = _.cloneDeep(ctpProductUsd)
+    else ctpProductClone = _.cloneDeep(ctpProduct)
     ctpProductClone.productType.id = productTypeId
     ctpProductClone.taxCategory.id = taxCategoryId
     const { body: product } = await ctpClient.create(
@@ -311,6 +325,12 @@ async function _ensurePayment({
     ctpClient.builder.payments.where(`key="${ctpPayment.key}"`)
   )
   if (body.results.length === 0) {
+    if (currency === 'USD') {
+      ctpPaymentUsd.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentUsd.custom.fields.commercetoolsProjectKey =
+        commercetoolsProjectKey
+      return ctpClient.create(ctpClient.builder.payments, ctpPaymentUsd)
+    }
     ctpPayment.custom.fields.adyenMerchantAccount = adyenMerchantAccount
     ctpPayment.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
     return ctpClient.create(ctpClient.builder.payments, ctpPayment)
@@ -325,7 +345,9 @@ async function _createCart(
   shippingMethodId,
   discountCodes
 ) {
-  const ctpCartClone = _.cloneDeep(ctpCart)
+  let ctpCartClone
+  if (currency === 'USD') ctpCartClone = _.cloneDeep(ctpCartUsd)
+  else ctpCartClone = _.cloneDeep(ctpCart)
   ctpCartClone.lineItems[0].productId = productId
   ctpCartClone.shippingMethod.id = shippingMethodId
   const { body: cartResponse } = await ctpClient.create(
@@ -344,7 +366,7 @@ async function _createCart(
         shippingMethodName: 'testCustomShippingMethod',
         shippingRate: {
           price: {
-            currencyCode: 'EUR',
+            currencyCode: currency,
             centAmount: 4200,
           },
         },
@@ -379,4 +401,5 @@ module.exports = {
   initServerAndTunnel,
   initResources,
   overrideBasicAuthFlag,
+  initCurrency,
 }
