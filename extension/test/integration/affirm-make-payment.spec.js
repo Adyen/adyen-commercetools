@@ -11,7 +11,6 @@ describe('::affirmMakePayment with multiple projects use case::', () => {
 
   let ctpClientProject1
   let ctpClientProject2
-  iTSetUp.initCurrency('USD')
 
   beforeEach(async () => {
     const ctpConfig1 = config.getCtpConfig(commercetoolsProjectKey1)
@@ -23,11 +22,13 @@ describe('::affirmMakePayment with multiple projects use case::', () => {
     ctpClientProject2 = ctpClientBuilder.get(ctpConfig2)
 
     await iTSetUp.cleanupCtpResources(ctpClientProject2)
+    iTSetUp.initCurrency('USD')
   })
 
   afterEach(async () => {
     await iTSetUp.cleanupCtpResources(ctpClientProject1)
     await iTSetUp.cleanupCtpResources(ctpClientProject2)
+    iTSetUp.initCurrency('EUR')
   })
 
   it(
