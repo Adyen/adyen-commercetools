@@ -73,8 +73,8 @@ Multiple child attributes can be provided in the `adyen` attribute. Each direct 
 | Name               | Content                                                                                                                                                  | Required | Default value (only for test environment)            |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------- |
 | `apiKey`           | You'll be making API requests that are authenticated with an [API key](https://docs.adyen.com/user-management/how-to-get-the-api-key#page-introduction). | YES      |                                                      |
-| `apiBaseUrl`       | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO       | `https://checkout-test.adyen.com/v52`                |
-| `legacyApiBaseUrl` | [Standart payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                           | NO       | `https://pal-test.adyen.com/pal/servlet/Payment/v52` |
+| `apiBaseUrl`       | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO       | `https://checkout-test.adyen.com/v52` (even though it is not required, you **need** to spcifiy a URL for live environment)             |
+| `legacyApiBaseUrl` | [Standart payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                           | NO       | `https://pal-test.adyen.com/pal/servlet/Payment/v52` (even though it is not required, you **need** to spcifiy a URL for live environment to use e.g. manualCapture, refund, cancel) |
 
 > Note: Sometimes it's necessary to regenerate the `apiKey`, when you get `403 Forbidden error` from Adyen.
 
