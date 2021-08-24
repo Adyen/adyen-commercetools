@@ -74,7 +74,8 @@ describe('::affirmPayment::', () => {
         const payment = await createPayment(
           ctpClient,
           adyenMerchantAccount,
-          ctpProjectKey
+          ctpProjectKey,
+          'USD'
         )
         logger.debug('affirm::payment:', JSON.stringify(payment))
         const browserTab = await browser.newPage()

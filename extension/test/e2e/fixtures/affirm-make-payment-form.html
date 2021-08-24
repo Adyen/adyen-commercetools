@@ -212,7 +212,7 @@ Make payment request will come here</textarea
         const makePaymentFormInput = {}
 
         makePaymentFormInput.shopperEmail = 'test@test.com'
-        makePaymentFormInput.telephoneNumber = '+12122203809'
+        makePaymentFormInput.telephoneNumber = '+31612345678'
         makePaymentFormInput.shopperName = {
           firstName: 'firstName',
           lastName: 'lastName',
@@ -233,18 +233,19 @@ Make payment request will come here</textarea
         if (state.isValid) {
           makePaymentRequest.reference = new Date().getTime()
           makePaymentRequest.amount = {
-            currency: 'EUR',
+            currency: 'USD',
             value: 1000,
           }
           makePaymentRequest.channel = 'Web'
           makePaymentRequest.origin = window.location.origin
           makePaymentRequest.returnUrl = window.location.origin + '/return-url'
-          makePaymentRequest.billingAddress = {
-            city: 'München',
-            country: 'DE',
-            houseNumberOrName: '44',
-            postalCode: '80797',
-            street: 'Adams-Lehmann-Straße',
+          makePaymentRequest.deliveryAddress = {
+            city: 'Durham',
+            country: 'US',
+            houseNumberOrName: 'Suite 120',
+            postalCode: 'NC 27701',
+            street: 'Blackwell St.',
+            stateOrProvince: 'NC',
           }
           makePaymentRequest.lineItems = [
             {

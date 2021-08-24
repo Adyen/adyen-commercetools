@@ -86,11 +86,12 @@ function assertPayment(
 async function createPayment(
   ctpClient,
   adyenMerchantAccount,
-  commercetoolsProjectKey
+  commercetoolsProjectKey,
+  currency
 ) {
   const paymentDraft = {
     amountPlanned: {
-      currencyCode: 'EUR',
+      currencyCode: currency === null ? 'EUR' : 'USD',
       centAmount: 1000,
     },
     paymentMethodInfo: {
