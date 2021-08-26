@@ -155,7 +155,7 @@ describe('::affirmPayment::', () => {
     await redirectPaymentFormPage.goToThisPage()
     await Promise.all([
       redirectPaymentFormPage.redirectToAdyenPaymentPage(makePaymentResponse),
-      browserTab.waitForSelector('#buy-button:not([disabled])'),
+      browserTab.waitForSelector('.propvHOJQwT:not([disabled])'),
     ])
 
     const affirmPage = new AffirmPage(browserTab)
