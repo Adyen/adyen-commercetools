@@ -213,17 +213,20 @@ Make payment request will come here</textarea
 
         makePaymentFormInput.shopperEmail = 'test@test.com'
         makePaymentFormInput.telephoneNumber = '+31612345678'
+        //   makePaymentFormInput.telephoneNumber = '+19195398363'
+
         makePaymentFormInput.shopperName = {
           firstName: 'firstName',
           lastName: 'lastName',
         }
+
         makePaymentFormInput.billingAddress = {
-          city: 'Durham',
+          city: 'San Francisco',
           country: 'US',
-          houseNumberOrName: 'Suite 120',
-          postalCode: 'NC 27701',
-          street: 'Blackwell St.',
-          stateCode: 'NC',
+          houseNumberOrName: '274',
+          postalCode: '94107',
+          street: 'Brannan St.',
+          stateCode: 'CA',
         }
         document.getElementById('adyen-payment-form-input').innerText =
           JSON.stringify(makePaymentFormInput)
@@ -240,33 +243,14 @@ Make payment request will come here</textarea
           makePaymentRequest.origin = window.location.origin
           makePaymentRequest.returnUrl = window.location.origin + '/return-url'
           makePaymentRequest.deliveryAddress = {
-            city: 'Durham',
+            city: 'San Francisco',
             country: 'US',
-            houseNumberOrName: 'Suite 120',
-            postalCode: 'NC 27701',
-            street: 'Blackwell St.',
-            stateOrProvince: 'NC',
+            houseNumberOrName: '274',
+            postalCode: '94107',
+            street: 'Brannan St.',
+            stateOrProvince: 'CA',
           }
-          makePaymentRequest.lineItems = [
-            {
-              quantity: '1',
-              amountExcludingTax: '331',
-              taxPercentage: '2100',
-              description: 'Shoes',
-              id: 'Item #1',
-              taxAmount: '69',
-              amountIncludingTax: '400',
-            },
-            {
-              quantity: '2',
-              amountExcludingTax: '248',
-              taxPercentage: '2100',
-              description: 'Socks',
-              id: 'Item #2',
-              taxAmount: '52',
-              amountIncludingTax: '300',
-            },
-          ]
+
           document.getElementById('adyen-make-payment-request').innerHTML =
             JSON.stringify(makePaymentRequest)
         }
