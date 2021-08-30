@@ -1,13 +1,13 @@
-// const { expect } = require('chai')
+const { expect } = require('chai')
 const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
 
 const logger = httpUtils.getLogger()
-// const pU = require('../../src/paymentHandler/payment-utils')
+const pU = require('../../src/paymentHandler/payment-utils')
 const {
-  // assertPayment,
+  assertPayment,
   createPayment,
   initPuppeteerBrowser,
   serveFile,
@@ -15,9 +15,9 @@ const {
 const AffirmMakePaymentFormPage = require('./pageObjects/AffirmMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const AffirmPage = require('./pageObjects/AffirmPage')
-// const {
-//   CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
-// } = require('../../src/config/constants')
+const {
+  CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
+} = require('../../src/config/constants')
 
 // Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction
 describe('::affirmPayment::', () => {
@@ -66,8 +66,8 @@ describe('::affirmPayment::', () => {
   it(
     'when payment method is affirm and process is done correctly, ' +
       'then it should successfully finish the payment',
-    async () => {
-      // let paymentAfterCapture
+    async function func() {
+      let paymentAfterCapture
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
       try {
@@ -99,20 +99,20 @@ describe('::affirmPayment::', () => {
           'affirm::paymentAfterHandleRedirect:',
           JSON.stringify(paymentAfterHandleRedirect)
         )
-        // assertPayment(paymentAfterHandleRedirect)
-        //
-        // // Capture the payment
-        // paymentAfterCapture = await capturePayment({
-        //   payment: paymentAfterHandleRedirect,
-        // })
-        // logger.debug(
-        //   'affirm::paymentAfterCapture:',
-        //   JSON.stringify(paymentAfterCapture)
-        // )
+        assertPayment(paymentAfterHandleRedirect)
+
+        // Capture the payment
+        paymentAfterCapture = await capturePayment({
+          payment: paymentAfterHandleRedirect,
+        })
+        logger.debug(
+          'affirm::paymentAfterCapture:',
+          JSON.stringify(paymentAfterCapture)
+        )
       } catch (err) {
         logger.error('affirm::errors', JSON.stringify(err))
       }
-      // assertManualCaptureResponse(paymentAfterCapture)
+      assertManualCaptureResponse(paymentAfterCapture)
     }
   )
 
@@ -187,46 +187,46 @@ describe('::affirmPayment::', () => {
     return updatedPayment
   }
 
-  // async function capturePayment({ payment }) {
-  //   const transaction = payment.transactions[0]
-  //   const { body: updatedPayment } = await ctpClient.update(
-  //     ctpClient.builder.payments,
-  //     payment.id,
-  //     payment.version,
-  //     [
-  //       pU.createAddTransactionAction({
-  //         type: 'Charge',
-  //         state: 'Initial',
-  //         currency: transaction.amount.currencyCode,
-  //         amount: transaction.amount.centAmount,
-  //       }),
-  //     ]
-  //   )
-  //
-  //   return updatedPayment
-  // }
-  //
-  // function assertManualCaptureResponse(paymentAfterCapture) {
-  //   const interfaceInteraction = pU.getLatestInterfaceInteraction(
-  //     paymentAfterCapture.interfaceInteractions,
-  //     CTP_INTERACTION_TYPE_MANUAL_CAPTURE
-  //   )
-  //   const manualCaptureResponse = JSON.parse(
-  //     interfaceInteraction.fields.response
-  //   )
-  //   expect(manualCaptureResponse.response).to.equal(
-  //     '[capture-received]',
-  //     `response is not [capture-received]: ${manualCaptureResponse}`
-  //   )
-  //   expect(manualCaptureResponse.pspReference).to.match(
-  //     /[A-Z0-9]+/,
-  //     `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`
-  //   )
-  //
-  //   const chargePendingTransaction =
-  //     pU.getChargeTransactionPending(paymentAfterCapture)
-  //   expect(chargePendingTransaction.interactionId).to.equal(
-  //     manualCaptureResponse.pspReference
-  //   )
-  // }
+  async function capturePayment({ payment }) {
+    const transaction = payment.transactions[0]
+    const { body: updatedPayment } = await ctpClient.update(
+      ctpClient.builder.payments,
+      payment.id,
+      payment.version,
+      [
+        pU.createAddTransactionAction({
+          type: 'Charge',
+          state: 'Initial',
+          currency: transaction.amount.currencyCode,
+          amount: transaction.amount.centAmount,
+        }),
+      ]
+    )
+
+    return updatedPayment
+  }
+
+  function assertManualCaptureResponse(paymentAfterCapture) {
+    const interfaceInteraction = pU.getLatestInterfaceInteraction(
+      paymentAfterCapture.interfaceInteractions,
+      CTP_INTERACTION_TYPE_MANUAL_CAPTURE
+    )
+    const manualCaptureResponse = JSON.parse(
+      interfaceInteraction.fields.response
+    )
+    expect(manualCaptureResponse.response).to.equal(
+      '[capture-received]',
+      `response is not [capture-received]: ${manualCaptureResponse}`
+    )
+    expect(manualCaptureResponse.pspReference).to.match(
+      /[A-Z0-9]+/,
+      `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`
+    )
+
+    const chargePendingTransaction =
+      pU.getChargeTransactionPending(paymentAfterCapture)
+    expect(chargePendingTransaction.interactionId).to.equal(
+      manualCaptureResponse.pspReference
+    )
+  }
 })
