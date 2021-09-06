@@ -22,7 +22,7 @@ function isRecoverableError(err) {
 
 function getErrorCause(err) {
   if (err instanceof VError) return err.cause()
-  return err
+  return new VError(err).cause()
 }
 
 module.exports = {
