@@ -1,5 +1,4 @@
 const VError = require('verror')
-const _ = require('lodash')
 
 /*
  * recoverable: notification delivery can be retried by Adyen (return 500)
