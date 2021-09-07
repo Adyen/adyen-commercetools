@@ -37,7 +37,7 @@ async function handleNotification(request, response) {
     logger.error(
       {
         notification: httpUtils.getNotificationForTracking(notification),
-        cause,
+        err: cause,
       },
       'Unexpected exception occurred.'
     )

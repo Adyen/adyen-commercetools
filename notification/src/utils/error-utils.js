@@ -21,16 +21,7 @@ function isRecoverableError(err) {
 }
 
 function getErrorCause(err) {
-  if (err instanceof VError) {
-    const cause = err.cause()
-    return {
-      name: cause.name,
-      message: cause.message,
-      stack: cause.stack,
-      body: cause.body,
-      statusCode: cause.statusCode,
-    }
-  }
+  if (err instanceof VError) return err.cause()
 
   return err
 }
