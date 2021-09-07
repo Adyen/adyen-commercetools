@@ -3,8 +3,10 @@ const { isEmpty } = require('lodash')
 let config
 
 function getModuleConfig() {
+  let removeSensitiveData = config.removeSensitiveData !== 'false'
+  if (config.removeSensitiveData === false) removeSensitiveData = false
   return {
-    removeSensitiveData: config.removeSensitiveData !== 'false',
+    removeSensitiveData,
     port: config.port,
     logLevel: config.logLevel,
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)

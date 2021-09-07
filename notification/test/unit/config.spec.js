@@ -28,6 +28,32 @@ describe('::config::', () => {
     }
   })
 
+  it(
+    'when removeSensitiveData is set as boolean false in config.js, ' +
+      'it should load as false value in module config',
+    () => {
+      process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+        logLevel: 'DEBUG',
+        removeSensitiveData: false,
+      })
+      const config = requireUncached('../../../src/config/config')
+      expect(config.getModuleConfig()?.removeSensitiveData).to.eql(false)
+    }
+  )
+
+  it(
+    'when removeSensitiveData is set as boolean true in config.js, ' +
+      'it should load as true value in module config',
+    () => {
+      process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+        logLevel: 'DEBUG',
+        removeSensitiveData: true,
+      })
+      const config = requireUncached('../../../src/config/config')
+      expect(config.getModuleConfig()?.removeSensitiveData).to.eql(true)
+    }
+  )
+
   function requireUncached(module) {
     delete require.cache[require.resolve(module)]
     // eslint-disable-next-line global-require,import/no-dynamic-require
