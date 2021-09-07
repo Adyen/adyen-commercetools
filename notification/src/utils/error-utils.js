@@ -1,4 +1,5 @@
 const VError = require('verror')
+const _ = require('lodash')
 
 /*
  * recoverable: notification delivery can be retried by Adyen (return 500)
@@ -21,8 +22,14 @@ function isRecoverableError(err) {
 }
 
 function getErrorCause(err) {
-  if (err instanceof VError) return err.cause()
-  return new VError(err).cause()
+
+  if (err instanceof VError) {
+    const cause = err.cause()
+    return {name: cause.name, message: cause.message, stack: cause.stack,
+      body: cause.body, statusCode: cause.statusCode}
+  }
+
+  return err
 }
 
 module.exports = {
