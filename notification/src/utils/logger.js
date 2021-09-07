@@ -10,7 +10,10 @@ function getLogger() {
       name: NOTIFICATION_MODULE_NAME,
       stream: process.stdout,
       level: logLevel || bunyan.INFO,
-      serializers: bunyan.stdSerializers,
+      serializers: {
+        err: bunyan.stdSerializers.err,
+        cause: bunyan.stdSerializers.err,
+      },
     })
   }
   return obj
