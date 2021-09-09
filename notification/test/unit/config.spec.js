@@ -56,7 +56,7 @@ describe('::config::', () => {
         removeSensitiveData: false,
       })
       const config = requireUncached('../../src/config/config')
-      expect(config.getModuleConfig()?.removeSensitiveData).to.eql(false)
+      expect(config.getModuleConfig().removeSensitiveData).to.eql(false)
     }
   )
 
@@ -82,7 +82,7 @@ describe('::config::', () => {
         removeSensitiveData: true,
       })
       const config = requireUncached('../../src/config/config')
-      expect(config.getModuleConfig()?.removeSensitiveData).to.eql(true)
+      expect(config.getModuleConfig().removeSensitiveData).to.eql(true)
     }
   )
 
@@ -108,7 +108,7 @@ describe('::config::', () => {
         removeSensitiveData: 'false',
       })
       const config = requireUncached('../../src/config/config')
-      expect(config.getModuleConfig()?.removeSensitiveData).to.eql(false)
+      expect(config.getModuleConfig().removeSensitiveData).to.eql(false)
     }
   )
 
@@ -134,7 +134,7 @@ describe('::config::', () => {
         removeSensitiveData: 'true',
       })
       const config = requireUncached('../../src/config/config')
-      expect(config.getModuleConfig()?.removeSensitiveData).to.eql(true)
+      expect(config.getModuleConfig().removeSensitiveData).to.eql(true)
     }
   )
 })
