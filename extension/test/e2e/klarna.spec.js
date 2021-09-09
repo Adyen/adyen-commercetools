@@ -162,6 +162,8 @@ describe('::klarnaPayment::', () => {
       browserTab.waitForSelector('#buy-button:not([disabled])'),
     ])
 
+    // Set 10 seconds to process Klarna Page
+    await browserTab.waitForTimeout(10_000)
     const klarnaPage = new KlarnaPage(browserTab)
 
     await Promise.all([
