@@ -1,8 +1,11 @@
 let config
 
 function getModuleConfig() {
-  return {
-    removeSensitiveData: config.removeSensitiveData !== 'false',
+  let removeSensitiveData = config.removeSensitiveData !== 'false'
+  if (config.removeSensitiveData === false) removeSensitiveData = false
+
+  const result = {
+    removeSensitiveData,
     port: config.port,
     logLevel: config.logLevel,
     apiExtensionBaseUrl: config.apiExtensionBaseUrl, // used only for development purpose
@@ -11,6 +14,7 @@ function getModuleConfig() {
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
   }
+  return result
 }
 
 function _validateAuthenticationConfig(ctpConfig) {
