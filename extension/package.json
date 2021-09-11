@@ -63,7 +63,7 @@
     "mocha": "9.1.1",
     "nock": "13.1.3",
     "nyc": "15.1.0",
-    "prettier": "2.3.2",
+    "prettier": "2.4.0",
     "proxyquire": "2.1.3",
     "puppeteer": "10.2.0",
     "sinon": "11.1.2"
@@ -79,7 +79,7 @@
     "bunyan": "1.8.15",
     "lockfile-lint": "4.6.2",
     "lodash": "4.17.21",
-    "node-fetch": "2.6.1",
+    "node-fetch": "2.6.2",
     "serialize-error": "8.1.0"
   },
   "mocha": {
