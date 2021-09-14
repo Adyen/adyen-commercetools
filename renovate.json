@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "config:base"
-  ],
+  "extends": ["config:base", ":disableDependencyDashboard"],
   "automerge": true,
   "schedule": ["every weekend"],
   "groupName": "all",
