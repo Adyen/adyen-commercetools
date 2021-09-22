@@ -59,6 +59,15 @@ function createChangeTransactionStateAction(transactionId, transactionState) {
   }
 }
 
+function createChangeTransactionTimestampAction(transactionId) {
+  const currentTimestamp = new Date()
+  return {
+    action: 'changeTransactionTimestamp',
+    transactionId,
+    changeTransactionTimestamp: currentTimestamp.toISOString(),
+  }
+}
+
 function createSetCustomFieldAction(name, response) {
   return {
     action: 'setCustomField',
@@ -197,6 +206,7 @@ module.exports = {
   listRefundTransactionsInit,
   createAddInterfaceInteractionAction,
   createChangeTransactionStateAction,
+  createChangeTransactionTimestampAction,
   createSetCustomFieldAction,
   createChangeTransactionInteractionId,
   createAddTransactionAction,
