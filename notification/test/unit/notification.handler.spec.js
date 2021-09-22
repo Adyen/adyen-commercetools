@@ -129,6 +129,10 @@ describe('notification module', () => {
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
     const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
     delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    const actualTransactionTimestamp =
+      actualUpdateActionsWithoutCreatedAt[1]?.transaction?.timestamp
+    expect(actualTransactionTimestamp).to.not.equal(undefined)
+    expectedUpdateActions[1].transaction.timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
       expectedUpdateActions
     )
@@ -209,6 +213,10 @@ describe('notification module', () => {
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
     const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
     delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    const actualTransactionTimestamp =
+      actualUpdateActionsWithoutCreatedAt[1]?.transaction?.timestamp
+    expect(actualTransactionTimestamp).to.not.equal(undefined)
+    expectedUpdateActions[1].transaction.timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
       expectedUpdateActions
     )
@@ -368,6 +376,10 @@ describe('notification module', () => {
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
     const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
     delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    const actualTransactionTimestamp =
+      actualUpdateActionsWithoutCreatedAt[1]?.transaction?.timestamp
+    expect(actualTransactionTimestamp).to.not.equal(undefined)
+    expectedUpdateActions[1].transaction.timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
       expectedUpdateActions
     )
@@ -459,6 +471,10 @@ describe('notification module', () => {
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
     const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
     delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    const actualTransactionTimestamp =
+      actualUpdateActionsWithoutCreatedAt[1]?.transaction?.timestamp
+    expect(actualTransactionTimestamp).to.not.equal(undefined)
+    expectedUpdateActions[1].transaction.timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
       expectedUpdateActions
     )
@@ -540,6 +556,7 @@ describe('notification module', () => {
           state: 'Failure',
           type: 'Charge',
           interactionId: 'test_AUTHORISATION_1',
+          timestamp: '',
         },
       },
     ]
@@ -550,6 +567,10 @@ describe('notification module', () => {
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
     const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
     delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    const actualTransactionTimestamp =
+      actualUpdateActionsWithoutCreatedAt[1]?.transaction?.timestamp
+    expect(actualTransactionTimestamp).to.not.equal(undefined)
+    expectedUpdateActions[1].transaction.timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
       expectedUpdateActions
     )
