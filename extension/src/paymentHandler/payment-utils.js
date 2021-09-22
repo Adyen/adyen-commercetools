@@ -64,7 +64,7 @@ function createChangeTransactionTimestampAction(transactionId) {
   return {
     action: 'changeTransactionTimestamp',
     transactionId,
-    changeTransactionTimestamp: currentTimestamp.toISOString(),
+    timestamp: currentTimestamp.toISOString(),
   }
 }
 

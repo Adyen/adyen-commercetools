@@ -44,6 +44,7 @@ function _createTransactionActions(paymentObject, pspReference) {
   return [
     pU.createChangeTransactionStateAction(transactionId, 'Pending'),
     pU.createChangeTransactionInteractionId(transactionId, pspReference),
+    pU.createChangeTransactionTimestampAction(transactionId),
   ]
 }
 

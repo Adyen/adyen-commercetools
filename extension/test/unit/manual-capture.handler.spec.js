@@ -42,6 +42,7 @@ describe('manual-capture.handler::execute::', () => {
 
   const chargeInitialTransaction = {
     id: 'chargeInitialTransactionId',
+    timestamp: '2021-09-21T10:00:00.000Z',
     type: 'Charge',
     amount: {
       currencyCode: 'EUR',
@@ -76,7 +77,7 @@ describe('manual-capture.handler::execute::', () => {
 
       const { actions } = await execute(paymentObject)
 
-      expect(actions).to.have.lengthOf(3)
+      expect(actions).to.have.lengthOf(4)
 
       const addInterfaceInteraction = actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -107,6 +108,17 @@ describe('manual-capture.handler::execute::', () => {
         action: 'changeTransactionInteractionId',
         interactionId: '8825408195409505',
       })
+
+      const changeTransactionTimestamp = actions.find(
+        (a) => a.action === 'changeTransactionTimestamp'
+      )
+      expect(changeTransactionTimestamp.transactionId).to.be.equal(
+        'chargeInitialTransactionId'
+      )
+      expect(changeTransactionTimestamp.action).to.be.equal(
+        'changeTransactionTimestamp'
+      )
+      expect(changeTransactionTimestamp.timestamp).to.not.equal(undefined)
     }
   )
 
