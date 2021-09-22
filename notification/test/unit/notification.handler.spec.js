@@ -118,6 +118,11 @@ describe('notification module', () => {
         transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
       },
       {
+        action: 'changeTransactionTimestamp',
+        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+        timestamp: '2021-01-01T10:00:00.000Z',
+      },
+      {
         action: 'setMethodInfoMethod',
         method: 'visa',
       },
@@ -130,9 +135,9 @@ describe('notification module', () => {
     const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
     delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
     const actualTransactionTimestamp =
-      actualUpdateActionsWithoutCreatedAt[1]?.transaction?.timestamp
+      actualUpdateActionsWithoutCreatedAt[2]?.transaction?.timestamp
     expect(actualTransactionTimestamp).to.not.equal(undefined)
-    expectedUpdateActions[1].transaction.timestamp = actualTransactionTimestamp
+    expectedUpdateActions[2].transaction.timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
       expectedUpdateActions
     )
@@ -213,10 +218,6 @@ describe('notification module', () => {
     expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
     const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
     delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
-    const actualTransactionTimestamp =
-      actualUpdateActionsWithoutCreatedAt[1]?.transaction?.timestamp
-    expect(actualTransactionTimestamp).to.not.equal(undefined)
-    expectedUpdateActions[1].transaction.timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
       expectedUpdateActions
     )

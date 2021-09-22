@@ -181,13 +181,17 @@ function calculateUpdateActionsForPayment(payment, notification) {
       )
     else if (
       compareTransactionStates(oldTransaction.state, transactionState) > 0
-    )
+    ) {
       updateActions.push(
         getChangeTransactionStateUpdateAction(
           oldTransaction.id,
           transactionState
         )
       )
+      updateActions.push(
+        getChangeTransactionTimestampUpdateAction(oldTransaction.id)
+      )
+    }
   }
   const paymentMethodFromPayment = payment.paymentMethodInfo.method
   const paymentMethodFromNotification = notificationRequestItem.paymentMethod
@@ -267,6 +271,15 @@ function getChangeTransactionStateUpdateAction(
     action: 'changeTransactionState',
     transactionId,
     state: newTransactionState,
+  }
+}
+
+function getChangeTransactionTimestampUpdateAction(transactionId) {
+  const currentTimestamp = new Date()
+  return {
+    action: 'changeTransactionTimestamp',
+    transactionId,
+    timestamp: currentTimestamp.toISOString(),
   }
 }
 
