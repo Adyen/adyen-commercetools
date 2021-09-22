@@ -312,11 +312,9 @@ function getAddTransactionUpdateAction({
   currency,
   interactionId,
 }) {
-  const currentTimestamp = new Date().toISOString()
   return {
     action: 'addTransaction',
     transaction: {
-      timestamp: currentTimestamp,
       type,
       amount: {
         currencyCode: currency,
