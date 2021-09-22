@@ -137,7 +137,7 @@ describe('notification module', () => {
     const actualTransactionTimestamp =
       actualUpdateActionsWithoutCreatedAt[2]?.timestamp
     expect(actualTransactionTimestamp).to.not.equal(undefined)
-    expectedUpdateActions[2].transaction.timestamp = actualTransactionTimestamp
+    expectedUpdateActions[2].timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
       expectedUpdateActions
     )
