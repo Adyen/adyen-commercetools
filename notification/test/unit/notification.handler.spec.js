@@ -135,7 +135,7 @@ describe('notification module', () => {
     const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
     delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
     const actualTransactionTimestamp =
-      actualUpdateActionsWithoutCreatedAt[2]?.transaction?.timestamp
+      actualUpdateActionsWithoutCreatedAt[2]?.timestamp
     expect(actualTransactionTimestamp).to.not.equal(undefined)
     expectedUpdateActions[2].transaction.timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
