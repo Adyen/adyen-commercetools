@@ -11,6 +11,7 @@ describe('manual-capture.handler::execute::', () => {
   /* eslint-disable*/
   const authorisedPayment = {
     id: 'paymentId',
+    createdAt: '2018-10-12T14:00:00.000Z',
     transactions: [
       {
         id: 'transaction1',
