@@ -189,7 +189,10 @@ function calculateUpdateActionsForPayment(payment, notification) {
         )
       )
       updateActions.push(
-        getChangeTransactionTimestampUpdateAction(oldTransaction.id)
+        getChangeTransactionTimestampUpdateAction(
+          oldTransaction.id,
+          notificationRequestItem.eventDate
+        )
       )
     }
   }
@@ -274,12 +277,26 @@ function getChangeTransactionStateUpdateAction(
   }
 }
 
-function getChangeTransactionTimestampUpdateAction(transactionId) {
-  const currentTimestamp = new Date()
+function getChangeTransactionTimestampUpdateAction(
+  transactionId,
+  transactionEventDate
+) {
+  let transactionTimestamp = ''
+  try {
+    // Assume transactionEventDate should be in correct format (e.g. '2019-01-30T18:16:22+01:00')
+    const eventDateMilliSecondsStr = Date.parse(transactionEventDate)
+    const transactionDate = new Date()
+    transactionDate.setTime(eventDateMilliSecondsStr)
+    transactionTimestamp = transactionDate.toISOString()
+  } catch (err) {
+    // if transactionEventDate is incorrect in format
+    transactionTimestamp = new Date().toISOString()
+  }
+
   return {
     action: 'changeTransactionTimestamp',
     transactionId,
-    timestamp: currentTimestamp.toISOString(),
+    timestamp: transactionTimestamp,
   }
 }
 
