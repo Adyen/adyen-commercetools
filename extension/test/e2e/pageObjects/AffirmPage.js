@@ -6,7 +6,7 @@ module.exports = class AffirmPage {
   async finishAffirmPayment() {
     // Input phone number and proceed
     await this.page.type('[data-testid="phone-number-field"]', '919-539-8363')
-    await this.page.click('button.propvHOJQwT')
+    await this.page.click('[data-testid="submit-button"]')
     await this.page.waitForSelector('[aria-label="PIN"]')
 
     // Input PIN code
@@ -14,13 +14,18 @@ module.exports = class AffirmPage {
 
     // Enter the 2nd page and press continue button
     await this.page.waitForSelector('#confirm-submit')
+    const autoPayToggle = await this.page.$('#autopay-toggle')
+    await this.page.evaluate((cb) => cb.click(), autoPayToggle)
+
+    // The confirm button refreshes after toggle the autopay
+    await this.page.waitForSelector('#confirm-submit')
+
     await this.page.click('#confirm-submit')
     await this.page.waitForSelector('#confirm-disclosure-checkbox')
 
     // Enter confirmation page and press confirm button
     const confirmCheckbox = await this.page.$('#confirm-disclosure-checkbox')
     await this.page.evaluate((cb) => cb.click(), confirmCheckbox)
-
     return this.page.click('[data-test="confirm-loan-submit"]')
   }
 }
