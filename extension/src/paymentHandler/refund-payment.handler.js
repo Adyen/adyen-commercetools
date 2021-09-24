@@ -48,7 +48,10 @@ async function execute(paymentObject) {
           )
         )
         actions.push(
-          pU.createChangeTransactionTimestampAction(refundTransaction.id, paymentObject.createdAt)
+          pU.createChangeTransactionTimestampAction(
+            refundTransaction.id,
+            paymentObject.createdAt
+          )
         )
       }
     })

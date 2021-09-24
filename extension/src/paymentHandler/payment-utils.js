@@ -59,10 +59,12 @@ function createChangeTransactionStateAction(transactionId, transactionState) {
   }
 }
 
-function createChangeTransactionTimestampAction(transactionId, paymentObjTimestamp) {
+function createChangeTransactionTimestampAction(
+  transactionId,
+  paymentObjTimestamp
+) {
   let currentTimestamp = new Date().toISOString()
-  if (paymentObjTimestamp!==undefined)
-    currentTimestamp = paymentObjTimestamp
+  if (paymentObjTimestamp !== undefined) currentTimestamp = paymentObjTimestamp
   return {
     action: 'changeTransactionTimestamp',
     transactionId,
