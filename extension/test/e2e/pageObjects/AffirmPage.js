@@ -5,7 +5,7 @@ module.exports = class AffirmPage {
 
   async finishAffirmPayment() {
     // Input phone number and proceed
-    await this.page.type('[data-testid="phone-number-field"]', '919-539-8363')
+    await this.page.type('[data-testid="phone-number-field"]', '212-220-3809')
     await this.page.click('[data-testid="submit-button"]')
     await this.page.waitForSelector('[aria-label="PIN"]')
 
