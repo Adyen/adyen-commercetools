@@ -66,7 +66,7 @@ describe('::affirmPayment::', () => {
   it(
     'when payment method is affirm and process is done correctly, ' +
       'then it should successfully finish the payment',
-    async function func() {
+    async () => {
       let paymentAfterCapture
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
