@@ -12,15 +12,15 @@ const {
   initPuppeteerBrowser,
   serveFile,
 } = require('./e2e-test-utils')
-const KlarnaMakePaymentFormPage = require('./pageObjects/KlarnaMakePaymentFormPage')
+const AffirmMakePaymentFormPage = require('./pageObjects/AffirmMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
-const KlarnaPage = require('./pageObjects/KlarnaPage')
+const AffirmPage = require('./pageObjects/AffirmPage')
 const {
   CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
 } = require('../../src/config/constants')
 
 // Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction
-describe.skip('::klarnaPayment::', () => {
+describe('::affirmPayment::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
@@ -29,7 +29,7 @@ describe.skip('::klarnaPayment::', () => {
   beforeEach(async () => {
     routes['/make-payment-form'] = async (request, response) => {
       serveFile(
-        './test/e2e/fixtures/klarna-make-payment-form.html',
+        './test/e2e/fixtures/affirm-make-payment-form.html',
         request,
         response
       )
@@ -64,21 +64,22 @@ describe.skip('::klarnaPayment::', () => {
   })
 
   it(
-    'when payment method is klarna and process is done correctly, ' +
+    'when payment method is affirm and process is done correctly, ' +
       'then it should successfully finish the payment',
     async () => {
       let paymentAfterCapture
+      const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+      const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
       try {
-        const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-        const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
         const payment = await createPayment(
           ctpClient,
           adyenMerchantAccount,
-          ctpProjectKey
+          ctpProjectKey,
+          'USD'
         )
-
+        logger.debug('affirm::payment:', JSON.stringify(payment))
         const browserTab = await browser.newPage()
-        logger.debug('klarna::payment:', JSON.stringify(payment))
+
         const paymentAfterMakePayment = await makePayment({
           browserTab,
           baseUrl,
@@ -86,7 +87,7 @@ describe.skip('::klarnaPayment::', () => {
           clientKey,
         })
         logger.debug(
-          'klarna::paymentAfterMakePayment:',
+          'affirm::paymentAfterMakePayment:',
           JSON.stringify(paymentAfterMakePayment)
         )
         const paymentAfterHandleRedirect = await handleRedirect({
@@ -95,7 +96,7 @@ describe.skip('::klarnaPayment::', () => {
           payment: paymentAfterMakePayment,
         })
         logger.debug(
-          'klarna::paymentAfterHandleRedirect:',
+          'affirm::paymentAfterHandleRedirect:',
           JSON.stringify(paymentAfterHandleRedirect)
         )
         assertPayment(paymentAfterHandleRedirect)
@@ -105,18 +106,18 @@ describe.skip('::klarnaPayment::', () => {
           payment: paymentAfterHandleRedirect,
         })
         logger.debug(
-          'klarna::paymentAfterCapture:',
+          'affirm::paymentAfterCapture:',
           JSON.stringify(paymentAfterCapture)
         )
       } catch (err) {
-        logger.error('klarna::errors', JSON.stringify(err))
+        logger.error('affirm::errors', JSON.stringify(err))
       }
       assertManualCaptureResponse(paymentAfterCapture)
     }
   )
 
   async function makePayment({ browserTab, baseUrl, payment, clientKey }) {
-    const makePaymentFormPage = new KlarnaMakePaymentFormPage(
+    const makePaymentFormPage = new AffirmMakePaymentFormPage(
       browserTab,
       baseUrl
     )
@@ -124,26 +125,21 @@ describe.skip('::klarnaPayment::', () => {
     const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest(
       clientKey
     )
-    let result = null
-    const startTime = new Date().getTime()
-    try {
-      result = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          {
-            action: 'setCustomField',
-            name: 'makePaymentRequest',
-            value: makePaymentRequest,
-          },
-        ]
-      )
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug('klarna::makePayment:', endTime - startTime)
-    }
-    return result.body
+
+    const { body: updatedPayment } = await ctpClient.update(
+      ctpClient.builder.payments,
+      payment.id,
+      payment.version,
+      [
+        {
+          action: 'setCustomField',
+          name: 'makePaymentRequest',
+          value: makePaymentRequest,
+        },
+      ]
+    )
+
+    return updatedPayment
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {
@@ -151,7 +147,7 @@ describe.skip('::klarnaPayment::', () => {
       payment.custom.fields
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
 
-    // Redirect to Klarna page
+    // Redirect to Affirm page
     const redirectPaymentFormPage = new RedirectPaymentFormPage(
       browserTab,
       baseUrl
@@ -159,66 +155,55 @@ describe.skip('::klarnaPayment::', () => {
     await redirectPaymentFormPage.goToThisPage()
     await Promise.all([
       redirectPaymentFormPage.redirectToAdyenPaymentPage(makePaymentResponse),
-      browserTab.waitForSelector('#buy-button:not([disabled])'),
+      browserTab.waitForSelector('.propvHOJQwT:not([disabled])'),
     ])
 
-    const klarnaPage = new KlarnaPage(browserTab)
+    const affirmPage = new AffirmPage(browserTab)
 
     await Promise.all([
-      klarnaPage.finishKlarnaPayment(),
+      affirmPage.finishAffirmPayment(),
       browserTab.waitForSelector('#redirect-response'),
     ])
 
     // Submit payment details
     const returnPageUrl = new URL(browserTab.url())
     const searchParamsJson = Object.fromEntries(returnPageUrl.searchParams)
-    let result = null
-    const startTime = new Date().getTime()
-    try {
-      result = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          {
-            action: 'setCustomField',
-            name: 'submitAdditionalPaymentDetailsRequest',
-            value: JSON.stringify({
-              details: searchParamsJson,
-            }),
-          },
-        ]
-      )
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug('klarna::handleRedirect:', endTime - startTime)
-    }
-    return result.body
+
+    const { body: updatedPayment } = await ctpClient.update(
+      ctpClient.builder.payments,
+      payment.id,
+      payment.version,
+      [
+        {
+          action: 'setCustomField',
+          name: 'submitAdditionalPaymentDetailsRequest',
+          value: JSON.stringify({
+            details: searchParamsJson,
+          }),
+        },
+      ]
+    )
+
+    return updatedPayment
   }
 
   async function capturePayment({ payment }) {
     const transaction = payment.transactions[0]
-    let result = null
-    const startTime = new Date().getTime()
-    try {
-      result = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          pU.createAddTransactionAction({
-            type: 'Charge',
-            state: 'Initial',
-            currency: transaction.amount.currencyCode,
-            amount: transaction.amount.centAmount,
-          }),
-        ]
-      )
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug('klarna::capturePayment:', endTime - startTime)
-    }
-    return result.body
+    const { body: updatedPayment } = await ctpClient.update(
+      ctpClient.builder.payments,
+      payment.id,
+      payment.version,
+      [
+        pU.createAddTransactionAction({
+          type: 'Charge',
+          state: 'Initial',
+          currency: transaction.amount.currencyCode,
+          amount: transaction.amount.centAmount,
+        }),
+      ]
+    )
+
+    return updatedPayment
   }
 
   function assertManualCaptureResponse(paymentAfterCapture) {
