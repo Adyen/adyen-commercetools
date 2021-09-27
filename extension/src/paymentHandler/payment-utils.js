@@ -18,11 +18,27 @@ function getCancelAuthorizationTransactionInit(paymentObject) {
   )
 }
 
+function getCancelAuthorizationTransactionPending(paymentObject) {
+  return getTransactionWithTypesAndStates(
+    paymentObject,
+    ['CancelAuthorization'],
+    ['Pending']
+  )
+}
+
 function listRefundTransactionsInit(paymentObject) {
   return listTransactionsWithTypesAndStates(
     paymentObject,
     ['Refund'],
     ['Initial']
+  )
+}
+
+function getRefundTransactionPending(paymentObject) {
+  return getTransactionWithTypesAndStates(
+    paymentObject,
+    ['Refund'],
+    ['Pending']
   )
 }
 
@@ -192,7 +208,9 @@ module.exports = {
   getAuthorizationTransactionSuccess,
   getChargeTransactionSuccess,
   getCancelAuthorizationTransactionInit,
+  getCancelAuthorizationTransactionPending,
   listRefundTransactionsInit,
+  getRefundTransactionPending,
   createAddInterfaceInteractionAction,
   createChangeTransactionStateAction,
   createSetCustomFieldAction,
