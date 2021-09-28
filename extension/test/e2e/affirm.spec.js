@@ -128,32 +128,6 @@ describe('::affirmPayment::', () => {
     }
   )
 
-  async function makePayment({ browserTab, baseUrl, payment, clientKey }) {
-    const makePaymentFormPage = new AffirmMakePaymentFormPage(
-      browserTab,
-      baseUrl
-    )
-    await makePaymentFormPage.goToThisPage()
-    const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest(
-      clientKey
-    )
-
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'makePaymentRequest',
-          value: makePaymentRequest,
-        },
-      ]
-    )
-
-    return updatedPayment
-  }
-
   it(
     'when payment method is affirm and process is done correctly and then cancel without manual capture, ' +
       'then it should successfully cancel the payment',
