@@ -9,8 +9,11 @@ module.exports = class KlarnaPage {
       .frames()
       .find((f) => f.name() === 'klarna-hpp-instance-fullscreen')
     await confirmationFrame.waitForSelector(
-      '#mandate-review__confirmation-button'
+      '#iban'
     )
-    return confirmationFrame.click('#mandate-review__confirmation-button')
+    await confirmationFrame.type('#iban','DE11520513735120710131') // Testing IBAN provided by Klarna
+    await confirmationFrame.click('#aligned-content__button__0')
+    await this.page.waitForTimeout(500)
+    return confirmationFrame.click('#aligned-content__button__0')
   }
 }
