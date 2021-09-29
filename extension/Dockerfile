@@ -1,4 +1,4 @@
-FROM node:14.15.5-alpine
+FROM node:14.17.4-alpine
 MAINTAINER Professional Services <ps-dev@commercetools.com>
 
 WORKDIR /app

@@ -81,7 +81,7 @@ function withPayment(paymentObject) {
           amount = JSON.parse(makePaymentRequestString).amount
       }
       if (amount) {
-        const amountInMakePaymentRequest = amount.value
+        const amountInMakePaymentRequest = Number(amount.value)
         const amountPlannedValue = paymentObject.amountPlanned.centAmount
         const currencyInMakePaymentRequest = amount.currency
         const currencyInAmountPlanned = paymentObject.amountPlanned.currencyCode

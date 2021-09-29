@@ -70,11 +70,11 @@ Multiple child attributes can be provided in the `adyen` attribute. Each direct 
 }
 ```
 
-| Name               | Content                                                                                                                                                  | Required | Default value (only for test environment)            |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------- |
-| `apiKey`           | You'll be making API requests that are authenticated with an [API key](https://docs.adyen.com/user-management/how-to-get-the-api-key#page-introduction). | YES      |                                                      |
-| `apiBaseUrl`       | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO       | `https://checkout-test.adyen.com/v52`                |
-| `legacyApiBaseUrl` | [Standart payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                           | NO       | `https://pal-test.adyen.com/pal/servlet/Payment/v52` |
+| Name               | Content                                                                                                                                                  | Required | Default value (only for test environment)                                                                                                                                           |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apiKey`           | You'll be making API requests that are authenticated with an [API key](https://docs.adyen.com/user-management/how-to-get-the-api-key#page-introduction). | YES      |                                                                                                                                                                                     |
+| `apiBaseUrl`       | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO       | `https://checkout-test.adyen.com/v52` (even though it is not required, you **need** to specify a URL for live environment)                                                          |
+| `legacyApiBaseUrl` | [Standart payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                           | NO       | `https://pal-test.adyen.com/pal/servlet/Payment/v52` (even though it is not required, you **need** to specify a URL for live environment to use e.g. manualCapture, refund, cancel) |
 
 > Note: Sometimes it's necessary to regenerate the `apiKey`, when you get `403 Forbidden error` from Adyen.
 
@@ -82,7 +82,7 @@ Multiple child attributes can be provided in the `adyen` attribute. Each direct 
 
 If you don't have the commercetools OAuth credentials,[create a commercetools API Client](https://docs.commercetools.com/getting-started.html#create-an-api-client).
 
-> Extension module's recommended [scope](https://docs.commercetools.com/http-api-scopes#manage_projectprojectkey) is `manage_project`.
+> Note that, extension module requires `manage_payments, view_orders` [scopes](https://docs.commercetools.com/http-api-scopes) for the integration and `manage_types, manage_extensions` [scopes](https://docs.commercetools.com/http-api-scopes) for setting up required resources.
 
 Multiple child attributes can be provided in the `commercetools` attribute. Each direct child attribute must represent 1 commercetools project like in the following example:
 
