@@ -71,10 +71,16 @@ describe('::klarnaPayment::', () => {
       try {
         const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
         const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
+        const startTime = new Date().getTime()
         const payment = await createPayment(
           ctpClient,
           adyenMerchantAccount,
           ctpProjectKey
+        )
+        const endTime = new Date().getTime()
+        logger.debug(
+          'klarna::createPayment::elapsedMilliseconds:',
+          endTime - startTime
         )
 
         const browserTab = await browser.newPage()
@@ -109,7 +115,7 @@ describe('::klarnaPayment::', () => {
           JSON.stringify(paymentAfterCapture)
         )
       } catch (err) {
-        logger.error('klarna::errors', JSON.stringify(err))
+        logger.error('klarna::errors', err)
       }
       assertManualCaptureResponse(paymentAfterCapture)
     }
@@ -139,9 +145,14 @@ describe('::klarnaPayment::', () => {
           },
         ]
       )
+    } catch (err) {
+      logger.error('klarna::makePaymentRequest::errors', JSON.stringify(err))
     } finally {
       const endTime = new Date().getTime()
-      logger.debug('klarna::makePayment:', endTime - startTime)
+      logger.debug(
+        'klarna::makePayment::elapsedMilliseconds:',
+        endTime - startTime
+      )
     }
     return result.body
   }
@@ -162,8 +173,6 @@ describe('::klarnaPayment::', () => {
       browserTab.waitForSelector('#buy-button:not([disabled])'),
     ])
 
-    // Set 10 seconds to process Klarna Page
-    await browserTab.waitForTimeout(10_000)
     const klarnaPage = new KlarnaPage(browserTab)
 
     await Promise.all([
@@ -191,9 +200,17 @@ describe('::klarnaPayment::', () => {
           },
         ]
       )
+    } catch (err) {
+      logger.error(
+        'klarna::submitAdditionalPaymentDetailsRequest::errors',
+        JSON.stringify(err)
+      )
     } finally {
       const endTime = new Date().getTime()
-      logger.debug('klarna::handleRedirect:', endTime - startTime)
+      logger.debug(
+        'klarna::handleRedirect::elapsedMilliseconds:',
+        endTime - startTime
+      )
     }
     return result.body
   }
@@ -216,9 +233,14 @@ describe('::klarnaPayment::', () => {
           }),
         ]
       )
+    } catch (err) {
+      logger.error('klarna::capturePaymentRequest::errors', JSON.stringify(err))
     } finally {
       const endTime = new Date().getTime()
-      logger.debug('klarna::capturePayment:', endTime - startTime)
+      logger.debug(
+        'klarna::capturePayment::elapsedMilliseconds:',
+        endTime - startTime
+      )
     }
     return result.body
   }
