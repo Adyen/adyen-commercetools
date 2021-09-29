@@ -144,7 +144,6 @@ describe('::klarnaPayment::', () => {
       )
     } catch (err) {
       logger.error('klarna::makePaymentRequest::errors', JSON.stringify(err))
-      throw err
     } finally {
       const endTime = new Date().getTime()
       logger.debug('klarna::makePayment:', endTime - startTime)
@@ -200,7 +199,6 @@ describe('::klarnaPayment::', () => {
         'klarna::submitAdditionalPaymentDetailsRequest::errors',
         JSON.stringify(err)
       )
-      throw err
     } finally {
       const endTime = new Date().getTime()
       logger.debug('klarna::handleRedirect:', endTime - startTime)
@@ -228,7 +226,6 @@ describe('::klarnaPayment::', () => {
       )
     } catch (err) {
       logger.error('klarna::capturePaymentRequest::errors', JSON.stringify(err))
-      throw err
     } finally {
       const endTime = new Date().getTime()
       logger.debug('klarna::capturePayment:', endTime - startTime)
