@@ -67,7 +67,6 @@ describe('::affirmPayment::', () => {
     'when payment method is affirm and process is done correctly, ' +
       'then it should successfully finish the payment',
     async () => {
-      let paymentAfterRefund
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
       try {
@@ -125,20 +124,31 @@ describe('::affirmPayment::', () => {
     const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest(
       clientKey
     )
-
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'makePaymentRequest',
-          value: makePaymentRequest,
-        },
-      ]
-    )
-    return updatedPayment
+    let result = null
+    const startTime = new Date().getTime()
+    try {
+      result = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'makePaymentRequest',
+            value: makePaymentRequest,
+          },
+        ]
+      )
+    } catch (err) {
+      logger.error('affirm::makePaymentRequest::errors', JSON.stringify(err))
+    } finally {
+      const endTime = new Date().getTime()
+      logger.debug(
+        'affirm::makePayment::elapsedMilliseconds:',
+        endTime - startTime
+      )
+    }
+    return result.body
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {
@@ -167,42 +177,68 @@ describe('::affirmPayment::', () => {
     // Submit payment details
     const returnPageUrl = new URL(browserTab.url())
     const searchParamsJson = Object.fromEntries(returnPageUrl.searchParams)
+    let updatedPayment = null
+    const startTime = new Date().getTime()
+    try {
+      updatedPayment = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'submitAdditionalPaymentDetailsRequest',
+            value: JSON.stringify({
+              details: searchParamsJson,
+            }),
+          },
+        ]
+      )
+    } catch (err) {
+      logger.error(
+        'affirm::submitAdditionalPaymentDetailsRequest::errors',
+        JSON.stringify(err)
+      )
+    } finally {
+      const endTime = new Date().getTime()
+      logger.debug(
+        'affirm::submitAdditionalPaymentDetailsRequest::elapsedMilliseconds:',
+        endTime - startTime
+      )
+    }
 
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'submitAdditionalPaymentDetailsRequest',
-          value: JSON.stringify({
-            details: searchParamsJson,
-          }),
-        },
-      ]
-    )
-
-    return updatedPayment
+    return updatedPayment.body
   }
 
   async function capturePayment({ payment }) {
     const transaction = payment.transactions[0]
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        pU.createAddTransactionAction({
-          type: 'Charge',
-          state: 'Initial',
-          currency: transaction.amount.currencyCode,
-          amount: transaction.amount.centAmount,
-        }),
-      ]
-    )
+    let updatedPayment = null
+    const startTime = new Date()
+    try {
+      updatedPayment = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          pU.createAddTransactionAction({
+            type: 'Charge',
+            state: 'Initial',
+            currency: transaction.amount.currencyCode,
+            amount: transaction.amount.centAmount,
+          }),
+        ]
+      )
+    } catch (err) {
+      logger.error('affirm::capturePaymentRequest::errors', JSON.stringify(err))
+    } finally {
+      const endTime = new Date().getTime()
+      logger.debug(
+        'affirm::capturePaymentRequest::elapsedMilliseconds:',
+        endTime - startTime
+      )
+    }
 
-    return updatedPayment
+    return updatedPayment.body
   }
 
   function assertManualCaptureResponse(paymentAfterCapture) {
