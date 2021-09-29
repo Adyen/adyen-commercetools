@@ -17,7 +17,7 @@ module.exports = class AffirmPage {
     const autoPayToggle = await this.page.$('#autopay-toggle')
     await this.page.evaluate((cb) => cb.click(), autoPayToggle)
 
-    // Wait for the confirm button refreshes after toggle the autopay
+    // Wait for the page refreshes after toggling the autopay
     await this.page.waitForTimeout(1_000)
 
     await this.page.click('#confirm-submit')
