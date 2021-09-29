@@ -52,7 +52,7 @@ module.exports = class AffirmMakePaymentFormPage extends MakePaymentFormPage {
     await this.fillDeliveryAddressStateDDL(
       makePaymentInputFormJSON?.billingAddress?.stateCode
     )
-    await this.page.waitForTimeout(5_000)
+    await this.page.waitForSelector('#adyen-make-payment-request')
   }
 
   async fillDeliveryAddressStateDDL(stateCodeInput) {
