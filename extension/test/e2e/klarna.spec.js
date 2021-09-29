@@ -78,7 +78,10 @@ describe('::klarnaPayment::', () => {
           ctpProjectKey
         )
         const endTime = new Date().getTime()
-        logger.debug('klarna::createPayment:', endTime - startTime)
+        logger.debug(
+          'klarna::createPayment::elapsedMilliseconds:',
+          endTime - startTime
+        )
 
         const browserTab = await browser.newPage()
         logger.debug('klarna::payment:', JSON.stringify(payment))
@@ -146,7 +149,10 @@ describe('::klarnaPayment::', () => {
       logger.error('klarna::makePaymentRequest::errors', JSON.stringify(err))
     } finally {
       const endTime = new Date().getTime()
-      logger.debug('klarna::makePayment:', endTime - startTime)
+      logger.debug(
+        'klarna::makePayment::elapsedMilliseconds:',
+        endTime - startTime
+      )
     }
     return result.body
   }
@@ -201,7 +207,10 @@ describe('::klarnaPayment::', () => {
       )
     } finally {
       const endTime = new Date().getTime()
-      logger.debug('klarna::handleRedirect:', endTime - startTime)
+      logger.debug(
+        'klarna::handleRedirect::elapsedMilliseconds:',
+        endTime - startTime
+      )
     }
     return result.body
   }
@@ -228,7 +237,10 @@ describe('::klarnaPayment::', () => {
       logger.error('klarna::capturePaymentRequest::errors', JSON.stringify(err))
     } finally {
       const endTime = new Date().getTime()
-      logger.debug('klarna::capturePayment:', endTime - startTime)
+      logger.debug(
+        'klarna::capturePayment::elapsedMilliseconds:',
+        endTime - startTime
+      )
     }
     return result.body
   }
