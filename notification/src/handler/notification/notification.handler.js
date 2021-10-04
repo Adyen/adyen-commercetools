@@ -165,6 +165,7 @@ function calculateUpdateActionsForPayment(payment, notification) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
     const { pspReference } = notificationRequestItem
+    const { eventDate } = notificationRequestItem
     const oldTransaction = _.find(
       payment.transactions,
       (transaction) => transaction.interactionId === pspReference
@@ -172,6 +173,7 @@ function calculateUpdateActionsForPayment(payment, notification) {
     if (_.isEmpty(oldTransaction))
       updateActions.push(
         getAddTransactionUpdateAction({
+          timestamp: convertDateToUTCFormat(eventDate),
           type: transactionType,
           state: transactionState,
           amount: notificationRequestItem.amount.value,
@@ -277,26 +279,27 @@ function getChangeTransactionStateUpdateAction(
   }
 }
 
-function getChangeTransactionTimestampUpdateAction(
-  transactionId,
-  transactionEventDate
-) {
-  let transactionTimestamp = ''
+function convertDateToUTCFormat(transactionEventDate) {
   try {
     // Assume transactionEventDate should be in correct format (e.g. '2019-01-30T18:16:22+01:00')
     const eventDateMilliSecondsStr = Date.parse(transactionEventDate)
     const transactionDate = new Date()
     transactionDate.setTime(eventDateMilliSecondsStr)
-    transactionTimestamp = transactionDate.toISOString()
+    return transactionDate.toISOString()
   } catch (err) {
     // if transactionEventDate is incorrect in format
-    transactionTimestamp = new Date().toISOString()
+    return new Date().toISOString()
   }
+}
 
+function getChangeTransactionTimestampUpdateAction(
+  transactionId,
+  transactionEventDate
+) {
   return {
     action: 'changeTransactionTimestamp',
     transactionId,
-    timestamp: transactionTimestamp,
+    timestamp: convertDateToUTCFormat(transactionEventDate),
   }
 }
 
@@ -336,17 +339,17 @@ function getTransactionTypeAndStateOrNull(notificationRequestItem) {
 }
 
 function getAddTransactionUpdateAction({
+  timestamp,
   type,
   state,
   amount,
   currency,
   interactionId,
 }) {
-  const currentTimestamp = new Date().toISOString()
   return {
     action: 'addTransaction',
     transaction: {
-      timestamp: currentTimestamp,
+      timestamp,
       type,
       amount: {
         currencyCode: currency,
