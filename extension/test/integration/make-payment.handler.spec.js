@@ -3,7 +3,6 @@ const { expect } = require('chai')
 const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const constants = require('../../src/config/constants')
-const iTSetUp = require('./integration-test-set-up')
 
 describe('::make-payment with multiple adyen accounts use case::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
@@ -12,14 +11,9 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
 
   let ctpClient
 
-  beforeEach(async () => {
+  before(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
-    await iTSetUp.cleanupCtpResources(ctpClient)
-  })
-
-  afterEach(async () => {
-    await iTSetUp.cleanupCtpResources(ctpClient)
   })
 
   it(
@@ -31,11 +25,11 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     async () => {
       await Promise.all([
         makePayment({
-          reference: 'paymentFromMerchant1',
+          reference: 'paymentFromMerchant-make-payment-1',
           adyenMerchantAccount: adyenMerchantAccount1,
         }),
         makePayment({
-          reference: 'paymentFromMerchant2',
+          reference: 'paymentFromMerchant-make-payment-2',
           adyenMerchantAccount: adyenMerchantAccount2,
         }),
       ])
@@ -78,12 +72,12 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
         },
       },
     }
-
+    console.log('before error')
     const { statusCode, body: payment } = await ctpClient.create(
       ctpClient.builder.payments,
       paymentDraft
     )
-
+    console.log('after error')
     expect(statusCode).to.equal(201)
 
     expect(payment.key).to.equal(reference)

@@ -17,14 +17,9 @@ describe('::refund::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   let ctpClient
 
-  beforeEach(async () => {
+  before(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
-    await iTSetUp.cleanupCtpResources(ctpClient)
-  })
-
-  afterEach(async () => {
-    await iTSetUp.cleanupCtpResources(ctpClient)
   })
 
   it(
