@@ -8,6 +8,7 @@ on: [push]
 jobs:
   extension_build:
     name: Extension Module
+    concurrency: extension_build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -15,12 +16,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: serializing workflow runs
-        uses: softprops/turnstyle@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          same-branch-only: false
       - name: Use Node.js 14.x
         uses: actions/setup-node@v2
         with:
@@ -33,6 +28,7 @@ jobs:
 
   notification_build:
     name: Notification Module
+    concurrency: notification_build
     needs: extension_build
     runs-on: ubuntu-latest
     defaults:
@@ -40,12 +36,6 @@ jobs:
         working-directory: notification
     steps:
       - uses: actions/checkout@v2
-      - name: serializing workflow runs
-        uses: softprops/turnstyle@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          same-branch-only: false
       - name: Use Node.js 14.x
         uses: actions/setup-node@v2
         with:
