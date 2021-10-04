@@ -59,19 +59,6 @@ function createChangeTransactionStateAction(transactionId, transactionState) {
   }
 }
 
-function createChangeTransactionTimestampAction(
-  transactionId,
-  paymentObjTimestamp
-) {
-  let currentTimestamp = new Date().toISOString()
-  if (paymentObjTimestamp !== undefined) currentTimestamp = paymentObjTimestamp
-  return {
-    action: 'changeTransactionTimestamp',
-    transactionId,
-    timestamp: currentTimestamp,
-  }
-}
-
 function createSetCustomFieldAction(name, response) {
   return {
     action: 'setCustomField',
@@ -114,11 +101,9 @@ function createAddTransactionAction({
   currency,
   interactionId,
 }) {
-  const currentTimestamp = new Date().toISOString()
   return {
     action: 'addTransaction',
     transaction: {
-      timestamp: currentTimestamp,
       type,
       amount: {
         currencyCode: currency,
@@ -210,7 +195,6 @@ module.exports = {
   listRefundTransactionsInit,
   createAddInterfaceInteractionAction,
   createChangeTransactionStateAction,
-  createChangeTransactionTimestampAction,
   createSetCustomFieldAction,
   createChangeTransactionInteractionId,
   createAddTransactionAction,

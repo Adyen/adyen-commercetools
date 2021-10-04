@@ -118,7 +118,6 @@ describe('make-payment::execute', () => {
       expect(addTransaction.transaction.interactionId).to.equal(
         JSON.parse(paymentSuccessResponse).pspReference
       )
-      expect(addTransaction.transaction.timestamp).to.not.equal(undefined)
     }
   )
 
@@ -271,7 +270,6 @@ describe('make-payment::execute', () => {
       expect(addTransaction.transaction.interactionId).to.equal(
         JSON.parse(paymentRefusedResponse).pspReference
       )
-      expect(addTransaction.transaction.timestamp).to.not.equal(undefined)
     }
   )
 
@@ -330,7 +328,6 @@ describe('make-payment::execute', () => {
       expect(addTransaction.transaction.interactionId).to.equal(
         JSON.parse(paymentErrorResponse).pspReference
       )
-      expect(addTransaction.transaction.timestamp).to.not.equal(undefined)
     }
   )
 

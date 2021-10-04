@@ -11,7 +11,6 @@ describe('manual-capture.handler::execute::', () => {
   /* eslint-disable*/
   const authorisedPayment = {
     id: 'paymentId',
-    createdAt: '2018-10-12T14:00:00.000Z',
     transactions: [
       {
         id: 'transaction1',
@@ -43,7 +42,6 @@ describe('manual-capture.handler::execute::', () => {
 
   const chargeInitialTransaction = {
     id: 'chargeInitialTransactionId',
-    timestamp: '2021-09-21T10:00:00.000Z',
     type: 'Charge',
     amount: {
       currencyCode: 'EUR',
@@ -78,7 +76,7 @@ describe('manual-capture.handler::execute::', () => {
 
       const { actions } = await execute(paymentObject)
 
-      expect(actions).to.have.lengthOf(4)
+      expect(actions).to.have.lengthOf(3)
 
       const addInterfaceInteraction = actions.find(
         (a) => a.action === 'addInterfaceInteraction'
@@ -109,17 +107,6 @@ describe('manual-capture.handler::execute::', () => {
         action: 'changeTransactionInteractionId',
         interactionId: '8825408195409505',
       })
-
-      const changeTransactionTimestamp = actions.find(
-        (a) => a.action === 'changeTransactionTimestamp'
-      )
-      expect(changeTransactionTimestamp.transactionId).to.be.equal(
-        'chargeInitialTransactionId'
-      )
-      expect(changeTransactionTimestamp.action).to.be.equal(
-        'changeTransactionTimestamp'
-      )
-      expect(changeTransactionTimestamp.timestamp).to.not.equal(undefined)
     }
   )
 

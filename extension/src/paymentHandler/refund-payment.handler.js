@@ -47,12 +47,6 @@ async function execute(paymentObject) {
             response.pspReference
           )
         )
-        actions.push(
-          pU.createChangeTransactionTimestampAction(
-            refundTransaction.id,
-            paymentObject.createdAt
-          )
-        )
       }
     })
   )

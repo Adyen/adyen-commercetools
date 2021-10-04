@@ -43,12 +43,6 @@ async function execute(paymentObject) {
         response.pspReference
       )
     )
-    actions.push(
-      pU.createChangeTransactionTimestampAction(
-        chargeInitialTransaction.id,
-        paymentObject.createdAt
-      )
-    )
   }
 
   return {
