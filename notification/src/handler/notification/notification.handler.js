@@ -70,7 +70,8 @@ async function updatePaymentWithRepeater(
   while (true) {
     updateActions = calculateUpdateActionsForPayment(
       currentPayment,
-      notification
+      notification,
+      logger
     )
     if (updateActions.length === 0) {
       break
@@ -146,7 +147,7 @@ function _obfuscateNotificationInfoFromActionFields(updateActions) {
   return copyOfUpdateActions
 }
 
-function calculateUpdateActionsForPayment(payment, notification) {
+function calculateUpdateActionsForPayment(payment, notification, logger) {
   const updateActions = []
   const notificationRequestItem = notification.NotificationRequestItem
   const stringifiedNotification = JSON.stringify(notification)
@@ -173,7 +174,7 @@ function calculateUpdateActionsForPayment(payment, notification) {
     if (_.isEmpty(oldTransaction))
       updateActions.push(
         getAddTransactionUpdateAction({
-          timestamp: convertDateToUTCFormat(eventDate),
+          timestamp: convertDateToUTCFormat(eventDate, logger),
           type: transactionType,
           state: transactionState,
           amount: notificationRequestItem.amount.value,
@@ -193,7 +194,8 @@ function calculateUpdateActionsForPayment(payment, notification) {
       updateActions.push(
         getChangeTransactionTimestampUpdateAction(
           oldTransaction.id,
-          notificationRequestItem.eventDate
+          notificationRequestItem.eventDate,
+          logger
         )
       )
     }
@@ -279,7 +281,7 @@ function getChangeTransactionStateUpdateAction(
   }
 }
 
-function convertDateToUTCFormat(transactionEventDate) {
+function convertDateToUTCFormat(transactionEventDate, logger) {
   try {
     // Assume transactionEventDate should be in correct format (e.g. '2019-01-30T18:16:22+01:00')
     const eventDateMilliSecondsStr = Date.parse(transactionEventDate)
@@ -288,18 +290,23 @@ function convertDateToUTCFormat(transactionEventDate) {
     return transactionDate.toISOString()
   } catch (err) {
     // if transactionEventDate is incorrect in format
+    logger.error(
+      err,
+      `Fail to convert notification event date "${transactionEventDate}" to UTC format`
+    )
     return new Date().toISOString()
   }
 }
 
 function getChangeTransactionTimestampUpdateAction(
   transactionId,
-  transactionEventDate
+  transactionEventDate,
+  logger
 ) {
   return {
     action: 'changeTransactionTimestamp',
     transactionId,
-    timestamp: convertDateToUTCFormat(transactionEventDate),
+    timestamp: convertDateToUTCFormat(transactionEventDate, logger),
   }
 }
 
