@@ -1,11 +1,10 @@
-const { expect } = require('chai')
 const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const { routes } = require('../../src/routes')
 const httpUtils = require('../../src/utils')
 
 const logger = httpUtils.getLogger()
-const pU = require('../../src/paymentHandler/payment-utils')
+
 const {
   assertPayment,
   createPayment,
@@ -15,9 +14,6 @@ const {
 const AffirmMakePaymentFormPage = require('./pageObjects/AffirmMakePaymentFormPage')
 const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const AffirmPage = require('./pageObjects/AffirmPage')
-const {
-  CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
-} = require('../../src/config/constants')
 
 // Flow description: https://docs.adyen.com/payment-methods/affirm/web-component#page-introduction
 describe('::affirmPayment::', () => {
@@ -69,6 +65,7 @@ describe('::affirmPayment::', () => {
     async () => {
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
+      let paymentAfterHandleRedirect
       try {
         const payment = await createPayment(
           ctpClient,
@@ -89,7 +86,7 @@ describe('::affirmPayment::', () => {
           'affirm::paymentAfterMakePayment:',
           JSON.stringify(paymentAfterMakePayment)
         )
-        const paymentAfterHandleRedirect = await handleRedirect({
+        paymentAfterHandleRedirect = await handleRedirect({
           browserTab,
           baseUrl,
           payment: paymentAfterMakePayment,
@@ -98,20 +95,10 @@ describe('::affirmPayment::', () => {
           'affirm::paymentAfterHandleRedirect:',
           JSON.stringify(paymentAfterHandleRedirect)
         )
-        assertPayment(paymentAfterHandleRedirect)
-
-        // Capture the payment
-        const paymentAfterCapture = await capturePayment({
-          payment: paymentAfterHandleRedirect,
-        })
-        logger.debug(
-          'affirm::paymentAfterCapture:',
-          JSON.stringify(paymentAfterCapture)
-        )
-        assertManualCaptureResponse(paymentAfterCapture)
       } catch (err) {
         logger.error('affirm::errors', err)
       }
+      assertPayment(paymentAfterHandleRedirect)
     }
   )
 
@@ -208,60 +195,5 @@ describe('::affirmPayment::', () => {
     }
 
     return updatedPayment.body
-  }
-
-  async function capturePayment({ payment }) {
-    const transaction = payment.transactions[0]
-    let updatedPayment = null
-    const startTime = new Date()
-    try {
-      updatedPayment = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          pU.createAddTransactionAction({
-            type: 'Charge',
-            state: 'Initial',
-            currency: transaction.amount.currencyCode,
-            amount: transaction.amount.centAmount,
-          }),
-        ]
-      )
-    } catch (err) {
-      logger.error('affirm::capturePaymentRequest::errors', JSON.stringify(err))
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug(
-        'affirm::capturePaymentRequest::elapsedMilliseconds:',
-        endTime - startTime
-      )
-    }
-
-    return updatedPayment.body
-  }
-
-  function assertManualCaptureResponse(paymentAfterCapture) {
-    const interfaceInteraction = pU.getLatestInterfaceInteraction(
-      paymentAfterCapture.interfaceInteractions,
-      CTP_INTERACTION_TYPE_MANUAL_CAPTURE
-    )
-    const manualCaptureResponse = JSON.parse(
-      interfaceInteraction.fields.response
-    )
-    expect(manualCaptureResponse.response).to.equal(
-      '[capture-received]',
-      `response is not [capture-received]: ${manualCaptureResponse}`
-    )
-    expect(manualCaptureResponse.pspReference).to.match(
-      /[A-Z0-9]+/,
-      `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`
-    )
-
-    const chargePendingTransaction =
-      pU.getChargeTransactionPending(paymentAfterCapture)
-    expect(chargePendingTransaction.interactionId).to.equal(
-      manualCaptureResponse.pspReference
-    )
   }
 })
