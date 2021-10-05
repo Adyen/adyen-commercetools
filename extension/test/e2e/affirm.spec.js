@@ -19,7 +19,7 @@ const {
   CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
 } = require('../../src/config/constants')
 
-// Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction
+// Flow description: https://docs.adyen.com/payment-methods/affirm/web-component#page-introduction
 describe('::affirmPayment::', () => {
   let browser
   let ctpClient
