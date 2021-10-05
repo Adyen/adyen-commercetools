@@ -1,6 +1,5 @@
 const { expect } = require('chai')
 
-const iTSetUp = require('./integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const {
   CTP_ADYEN_INTEGRATION,

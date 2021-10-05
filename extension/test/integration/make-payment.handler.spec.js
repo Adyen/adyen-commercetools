@@ -72,12 +72,10 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
         },
       },
     }
-    console.log('before error')
     const { statusCode, body: payment } = await ctpClient.create(
       ctpClient.builder.payments,
       paymentDraft
     )
-    console.log('after error')
     expect(statusCode).to.equal(201)
 
     expect(payment.key).to.equal(reference)
