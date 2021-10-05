@@ -2,7 +2,6 @@ const { expect } = require('chai')
 
 const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
-const iTSetUp = require('./integration-test-set-up')
 
 const { ensureResources } = require('../../src/config/init/ensure-resources')
 
