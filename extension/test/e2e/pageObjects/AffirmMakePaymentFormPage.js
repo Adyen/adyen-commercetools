@@ -73,7 +73,8 @@ module.exports = class AffirmMakePaymentFormPage extends MakePaymentFormPage {
   }
 
   async getMakePaymentRequestTextAreaValue() {
-    await this.page.waitForTimeout(1_000) // suspend 1 second to wait for readiness of makePaymentRequest value in textbox
+    // suspend 1 second to wait for readiness of makePaymentRequest value in textbox
+    await this.page.waitForTimeout(1_000)
     const makePaymentRequestTextArea = await this.page.$(
       '#adyen-make-payment-request'
     )
