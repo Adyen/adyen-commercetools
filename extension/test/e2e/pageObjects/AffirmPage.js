@@ -5,18 +5,18 @@ module.exports = class AffirmPage {
 
   async finishAffirmPayment() {
     await this.inputPhoneNumberAndSubmitButton()
-    await this.inputPIIN()
+    await this.inputPIN()
     await this.clickAutoPayToggleAndProceed()
     return this.enterConfirmationPageAndClickConfirmButton()
   }
 
-  async inputPhoneNumberAndSubmitButton() {
+  async inputPhoneNumberAndClickSubmitButton() {
     await this.page.type('[data-testid="phone-number-field"]', '212-220-3809')
     await this.page.click('[data-testid="submit-button"]')
     await this.page.waitForSelector('[aria-label="PIN"]')
   }
 
-  async inputPIIN() {
+  async inputPIN() {
     await this.page.type('[aria-label="PIN"]', '1234')
     await this.page.waitForSelector('#confirm-submit')
   }
