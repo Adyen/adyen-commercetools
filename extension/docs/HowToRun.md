@@ -195,6 +195,7 @@ curl https://checkout-test.adyen.com/v67/paymentMethods \
 ```
 
 If Affirm payment is not supported, please contact Adyen technical support and provide all following information :
+
 - Affirm payment account public API key
 - Affirm payment account ARI
 
