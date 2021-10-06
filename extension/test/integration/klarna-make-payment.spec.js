@@ -27,18 +27,20 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
       'then it should connect the 2 different adyen mechant accounts ' +
       'and should calculate correct line items for Klarna Adyen',
     async () => {
+      const reference1 = new Date().getTime()
+      const reference2 = new Date().getTime()
       await Promise.all([
         makePayment({
           ctpClient: ctpClientProject1,
           adyenMerchantAccount: adyenMerchantAccount1,
           commercetoolsProjectKey: commercetoolsProjectKey1,
-          reference: 'paymentFromMerchant1',
+          reference: `klarna-payment-1-${reference1}`,
         }),
         makePayment({
           ctpClient: ctpClientProject2,
           adyenMerchantAccount: adyenMerchantAccount2,
           commercetoolsProjectKey: commercetoolsProjectKey2,
-          reference: 'paymentFromMerchant2',
+          reference: `klarna-payment-2-${reference2}`,
         }),
       ])
     }
