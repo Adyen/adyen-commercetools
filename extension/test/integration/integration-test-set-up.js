@@ -80,8 +80,6 @@ async function initServerAndTunnel() {
 }
 
 async function initResources(ctpClient, ctpProjectKey, authHeaderValue) {
-  await testUtils.deleteAllResources(ctpClient, 'payments')
-  await testUtils.deleteAllResources(ctpClient, 'types')
   const { apiExtensionBaseUrl } = config.getModuleConfig()
   await ensureResources(
     ctpClient,
@@ -94,7 +92,6 @@ async function initResources(ctpClient, ctpProjectKey, authHeaderValue) {
 async function cleanupCtpResources(ctpClient) {
   await testUtils.deleteAllResources(ctpClient, 'discountCodes')
   await testUtils.deleteAllResources(ctpClient, 'carts')
-  await testUtils.deleteAllResources(ctpClient, 'payments')
   await testUtils.deleteAllResources(ctpClient, 'products')
   await testUtils.deleteAllResources(ctpClient, 'products')
   await testUtils.deleteAllResources(ctpClient, 'productTypes')

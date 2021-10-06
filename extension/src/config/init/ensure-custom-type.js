@@ -29,6 +29,16 @@ function createChildLogger(ctpProjectKey) {
   })
 }
 
+function excludeChangeFieldDefinitionOrderUpdateAction(updateActions) {
+  /*
+    FieldNames attribute in specified update action is always a list of object, which is not accepted by
+    Commercetools platform and leads to 400 HTTP error.
+  */
+  return updateActions.filter(
+    (actionItem) => actionItem.action !== 'changeFieldDefinitionOrder'
+  )
+}
+
 async function syncCustomType(ctpClient, logger, typeDraft) {
   try {
     const existingType = await fetchTypeByKey(ctpClient, typeDraft.key)
@@ -38,12 +48,14 @@ async function syncCustomType(ctpClient, logger, typeDraft) {
     } else {
       const syncTypes = createSyncTypes()
       const updateActions = syncTypes.buildActions(typeDraft, existingType)
-      if (updateActions.length > 0) {
+      const filteredUpdateActions =
+        excludeChangeFieldDefinitionOrderUpdateAction(updateActions)
+      if (filteredUpdateActions.length > 0) {
         await ctpClient.update(
           ctpClient.builder.types,
           existingType.id,
           existingType.version,
-          updateActions
+          filteredUpdateActions
         )
         logger.info(`Successfully updated the type (key=${typeDraft.key})`)
       }
