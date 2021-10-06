@@ -285,8 +285,7 @@ function convertDateToUTCFormat(transactionEventDate, logger) {
   try {
     // Assume transactionEventDate should be in correct format (e.g. '2019-01-30T18:16:22+01:00')
     const eventDateMilliSecondsStr = Date.parse(transactionEventDate)
-    const transactionDate = new Date()
-    transactionDate.setTime(eventDateMilliSecondsStr)
+    const transactionDate = new Date(eventDateMilliSecondsStr)
     return transactionDate.toISOString()
   } catch (err) {
     // if transactionEventDate is incorrect in format
