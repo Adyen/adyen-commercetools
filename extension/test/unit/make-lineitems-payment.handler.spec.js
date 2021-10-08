@@ -4,13 +4,13 @@ const _ = require('lodash')
 const config = require('../../src/config/config')
 const {
   execute,
-} = require('../../src/paymentHandler/klarna-make-payment.handler')
+} = require('../../src/paymentHandler/make-lineitems-payment.handler')
 const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
 const ctpPayment = require('./fixtures/ctp-payment.json')
 const ctpCart = require('./fixtures/ctp-cart.json')
 const ctpCartWithCustomShippingMethod = require('./fixtures/ctp-cart-custom-shipping-method.json')
 
-describe('klarna-make-payment::execute', () => {
+describe('make-lineitems-payment::execute', () => {
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
   const DEFAULT_PAYMENT_LANGUAGE = 'en'
   let scope
@@ -28,7 +28,7 @@ describe('klarna-make-payment::execute', () => {
   })
 
   it(
-    'when request does not contain lineItems, ' +
+    'when klarna request does not contain lineItems, ' +
       'then it should add lineItems correctly',
     async () => {
       _mockCtpCartsEndpoint()
@@ -90,7 +90,69 @@ describe('klarna-make-payment::execute', () => {
   )
 
   it(
-    'when request does contain lineItems, ' +
+    'when affirm request does not contain lineItems, ' +
+      'then it should add lineItems correctly',
+    async () => {
+      _mockCtpCartsEndpoint()
+      scope.post('/payments').reply(200, paymentSuccessResponse)
+
+      const affirmMakePaymentRequest = {
+        reference: 'YOUR_REFERENCE',
+        paymentMethod: {
+          type: 'affirm',
+        },
+      }
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
+        affirmMakePaymentRequest
+      )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey =
+        commercetoolsProjectKey
+
+      const response = await execute(ctpPaymentClone)
+      expect(response.actions).to.have.lengthOf(6)
+      const makePaymentRequestInteraction = JSON.parse(
+        response.actions.find((a) => a.action === 'addInterfaceInteraction')
+          .fields.request
+      )
+      const ctpLineItem = ctpCart.lineItems[0]
+      const adyenLineItem = makePaymentRequestInteraction.lineItems.find(
+        (item) => item.id === 'test-product-sku-1'
+      )
+      expect(ctpLineItem.price.value.centAmount).to.equal(
+        adyenLineItem.amountIncludingTax
+      )
+      expect(ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT).to.equal(
+        adyenLineItem.taxPercentage
+      )
+
+      const setMethodInfoMethod = response.actions.find(
+        (a) => a.action === 'setMethodInfoMethod'
+      )
+      expect(setMethodInfoMethod.method).to.equal('affirm')
+
+      const setMethodInfoName = response.actions.find(
+        (a) => a.action === 'setMethodInfoName'
+      )
+      expect(setMethodInfoName.name).to.eql({ en: 'Affirm' })
+
+      const ctpShippingInfo = ctpCart.shippingInfo
+      const adyenShippingInfo = makePaymentRequestInteraction.lineItems.find(
+        (item) => item.id === ctpShippingInfo.shippingMethodName
+      )
+      expect(ctpShippingInfo.price.centAmount).to.equal(
+        adyenShippingInfo.amountIncludingTax
+      )
+      expect(
+        ctpShippingInfo.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT
+      ).to.equal(adyenShippingInfo.taxPercentage)
+    }
+  )
+
+  it(
+    'when klarna request does contain lineItems, ' +
       'then it should not add lineItems',
     async () => {
       _mockCtpCartsEndpoint()
@@ -119,6 +181,40 @@ describe('klarna-make-payment::execute', () => {
       )
       expect(makePaymentRequestInteraction.lineItems).to.deep.equal(
         klarnaMakePaymentRequest.lineItems
+      )
+    }
+  )
+
+  it(
+    'when affirm request does contain lineItems, ' +
+      'then it should not add lineItems',
+    async () => {
+      _mockCtpCartsEndpoint()
+
+      scope.post('/payments').reply(200, paymentSuccessResponse)
+
+      const affirmMakePaymentRequest = {
+        reference: 'YOUR_REFERENCE',
+        paymentMethod: {
+          type: 'affirm',
+        },
+        lineItems: [],
+      }
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
+        affirmMakePaymentRequest
+      )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
+      const response = await execute(ctpPaymentClone)
+      expect(response.actions).to.have.lengthOf(6)
+      const makePaymentRequestInteraction = JSON.parse(
+        response.actions.find((a) => a.action === 'addInterfaceInteraction')
+          .fields.request
+      )
+      expect(makePaymentRequestInteraction.lineItems).to.deep.equal(
+        affirmMakePaymentRequest.lineItems
       )
     }
   )
@@ -192,7 +288,7 @@ describe('klarna-make-payment::execute', () => {
   )
 
   it(
-    'when custom shipping info is used,' +
+    'when custom shipping info is used in klarna payment,' +
       'it should return correct shipping name',
     async () => {
       const clonedCtpCart = _.cloneDeep(ctpCartWithCustomShippingMethod)
@@ -209,6 +305,48 @@ describe('klarna-make-payment::execute', () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
         klarnaMakePaymentRequest
+      )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey =
+        commercetoolsProjectKey
+
+      const response = await execute(ctpPaymentClone)
+      expect(response.actions).to.have.lengthOf(6)
+      const { lineItems } = JSON.parse(
+        response.actions.find((a) => a.action === 'addInterfaceInteraction')
+          .fields.request
+      )
+      const shippingMethodItem = lineItems[lineItems.length - 1]
+      expect(shippingMethodItem.id).to.equal(
+        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
+      )
+      expect(shippingMethodItem.description).to.equal(
+        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
+      )
+      expect(shippingMethodItem.taxPercentage).to.equal(
+        ctpCartWithCustomShippingMethod.shippingInfo.taxRate.amount * 10000
+      )
+    }
+  )
+
+  it(
+    'when custom shipping info is used in affirm payment,' +
+      'it should return correct shipping name',
+    async () => {
+      const clonedCtpCart = _.cloneDeep(ctpCartWithCustomShippingMethod)
+      _mockCtpCartsEndpoint(clonedCtpCart)
+      scope.post('/payments').reply(200, paymentSuccessResponse)
+
+      const affirmMakePaymentRequest = {
+        reference: 'YOUR_REFERENCE',
+        paymentMethod: {
+          type: 'affirm',
+        },
+      }
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
+        affirmMakePaymentRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =

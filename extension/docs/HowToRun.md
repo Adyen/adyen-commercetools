@@ -8,6 +8,8 @@
   - [commercetools](#commercetools)
   - [Other Configurations](#other-configurations)
 - [Commercetools project requirements](#commercetools-project-requirements)
+- [Other requirements](#other-requirements)
+  - [Affirm payment](#affirm-payment)
 - [Running](#running)
   - [Docker](#docker)
     - [Running the Docker image](#running-the-docker-image)
@@ -169,6 +171,38 @@ After you change the destination, you can set up required resources in your comm
 export ADYEN_INTEGRATION_CONFIG=xxxx
 npm run setup-resources
 ```
+
+## Other requirements
+
+### Affirm payment
+
+Please run following CURL command in order to list out all payment methods in US supported by your Adyen account.`
+Make sure Affirm payment is inside the response.
+
+```bash
+curl https://checkout-test.adyen.com/v67/paymentMethods \
+-H "x-API-key: YOUR_ADYEN_X-API-KEY" \
+-H "content-type: application/json" \
+-d '{
+  "merchantAccount": "YOUR_ADYEN_MERCHANT_ACCOUNT",
+  "countryCode": "US",
+  "amount": {
+    "currency": "USD",
+    "value": 1000
+  },
+  "channel": "Web",
+  "shopperLocale": "us-US"
+}'
+```
+
+If Affirm payment is not supported, please contact Adyen technical support and provide all following information :
+
+- Affirm payment account public API key
+- Affirm payment account ARI
+
+Adyen makes use of the provided credential to integrate your account to Affirm payment platform.
+
+For more details about Affirm credential, please visit the [Affirm doc](https://docs.affirm.com/affirm-developers/docs/api-keys) and contact Affirm support through it.
 
 ## Running
 

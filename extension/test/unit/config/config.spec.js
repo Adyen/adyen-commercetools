@@ -277,6 +277,7 @@ describe('::config::', () => {
         pp: { en: 'PayPal' },
         klarna: { en: 'Klarna' },
         gpay: { en: 'Google Pay' },
+        affirm: { en: 'Affirm' },
       })
     }
   )
@@ -310,6 +311,7 @@ describe('::config::', () => {
         scheme: { en: 'Credit Card' },
         pp: { en: 'Paypal standard' },
         klarna: { en: 'Klarna' },
+        affirm: { en: 'Affirm' },
         gpay: { en: 'Google pay' },
       })
     }
