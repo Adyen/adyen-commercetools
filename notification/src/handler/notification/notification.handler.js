@@ -70,7 +70,8 @@ async function updatePaymentWithRepeater(
   while (true) {
     updateActions = calculateUpdateActionsForPayment(
       currentPayment,
-      notification
+      notification,
+      logger
     )
     if (updateActions.length === 0) {
       break
@@ -146,7 +147,7 @@ function _obfuscateNotificationInfoFromActionFields(updateActions) {
   return copyOfUpdateActions
 }
 
-function calculateUpdateActionsForPayment(payment, notification) {
+function calculateUpdateActionsForPayment(payment, notification, logger) {
   const updateActions = []
   const notificationRequestItem = notification.NotificationRequestItem
   const stringifiedNotification = JSON.stringify(notification)
@@ -165,6 +166,7 @@ function calculateUpdateActionsForPayment(payment, notification) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
     const { pspReference } = notificationRequestItem
+    const { eventDate } = notificationRequestItem
     const oldTransaction = _.find(
       payment.transactions,
       (transaction) => transaction.interactionId === pspReference
@@ -172,6 +174,7 @@ function calculateUpdateActionsForPayment(payment, notification) {
     if (_.isEmpty(oldTransaction))
       updateActions.push(
         getAddTransactionUpdateAction({
+          timestamp: convertDateToUTCFormat(eventDate, logger),
           type: transactionType,
           state: transactionState,
           amount: notificationRequestItem.amount.value,
@@ -181,13 +184,21 @@ function calculateUpdateActionsForPayment(payment, notification) {
       )
     else if (
       compareTransactionStates(oldTransaction.state, transactionState) > 0
-    )
+    ) {
       updateActions.push(
         getChangeTransactionStateUpdateAction(
           oldTransaction.id,
           transactionState
         )
       )
+      updateActions.push(
+        getChangeTransactionTimestampUpdateAction(
+          oldTransaction.id,
+          notificationRequestItem.eventDate,
+          logger
+        )
+      )
+    }
   }
   const paymentMethodFromPayment = payment.paymentMethodInfo.method
   const paymentMethodFromNotification = notificationRequestItem.paymentMethod
@@ -270,6 +281,34 @@ function getChangeTransactionStateUpdateAction(
   }
 }
 
+function convertDateToUTCFormat(transactionEventDate, logger) {
+  try {
+    // Assume transactionEventDate should be in correct format (e.g. '2019-01-30T18:16:22+01:00')
+    const eventDateMilliSecondsStr = Date.parse(transactionEventDate)
+    const transactionDate = new Date(eventDateMilliSecondsStr)
+    return transactionDate.toISOString()
+  } catch (err) {
+    // if transactionEventDate is incorrect in format
+    logger.error(
+      err,
+      `Fail to convert notification event date "${transactionEventDate}" to UTC format`
+    )
+    return new Date().toISOString()
+  }
+}
+
+function getChangeTransactionTimestampUpdateAction(
+  transactionId,
+  transactionEventDate,
+  logger
+) {
+  return {
+    action: 'changeTransactionTimestamp',
+    transactionId,
+    timestamp: convertDateToUTCFormat(transactionEventDate, logger),
+  }
+}
+
 function getTransactionTypeAndStateOrNull(notificationRequestItem) {
   const adyenEventCode = notificationRequestItem.eventCode
   const adyenEventSuccess = notificationRequestItem.success
@@ -306,6 +345,7 @@ function getTransactionTypeAndStateOrNull(notificationRequestItem) {
 }
 
 function getAddTransactionUpdateAction({
+  timestamp,
   type,
   state,
   amount,
@@ -315,6 +355,7 @@ function getAddTransactionUpdateAction({
   return {
     action: 'addTransaction',
     transaction: {
+      timestamp,
       type,
       amount: {
         currencyCode: currency,
