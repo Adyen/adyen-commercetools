@@ -6,7 +6,7 @@ const ctpCart = require('./fixtures/ctp-cart.json')
 const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
 const {
   execute,
-} = require('../../src/paymentHandler/klarna-make-payment.handler')
+} = require('../../src/paymentHandler/make-lineitems-payment.handler')
 const config = require('../../src/config/config')
 
 describe('::Multitenancy::', () => {

@@ -49,24 +49,17 @@ Make payment request will come here</textarea
         paymentMethodsResponse: {
           paymentMethods: [
             {
-              configuration: {
-                intent: 'capture',
-              },
-              name: 'PayPal',
-              type: 'paypal',
-            },
-            {
               brands: [
                 'visa',
                 'mc',
                 'amex',
-                'maestro',
-                'uatp',
-                'cup',
-                'diners',
                 'discover',
+                'cup',
+                'maestro',
+                'diners',
                 'hipercard',
                 'jcb',
+                'uatp',
               ],
               details: [
                 {
@@ -91,38 +84,25 @@ Make payment request will come here</textarea
                   type: 'text',
                 },
               ],
-              name: 'Kreditkarte',
+              name: 'Credit Card',
               type: 'scheme',
             },
             {
-              name: 'Sofort.',
-              type: 'directEbanking',
+              configuration: {
+                intent: 'capture',
+              },
+              name: 'PayPal',
+              type: 'paypal',
             },
             {
               details: [
                 {
-                  key: 'sepa.ownerName',
-                  type: 'text',
-                },
-                {
-                  key: 'sepa.ibanNumber',
+                  key: 'affirm.checkoutId',
                   type: 'text',
                 },
               ],
-              name: 'SEPA Lastschrift',
-              type: 'sepadirectdebit',
-            },
-            {
-              name: 'Rechnung mit Klarna.',
-              type: 'klarna',
-            },
-            {
-              name: 'GiroPay',
-              type: 'giropay',
-            },
-            {
-              name: 'Ratenkauf mit Klarna.',
-              type: 'klarna_account',
+              name: 'Affirm',
+              type: 'affirm',
             },
             {
               brand: 'givex',
@@ -161,8 +141,12 @@ Make payment request will come here</textarea
               type: 'giftcard',
             },
             {
-              name: 'Sofort bezahlen mit Klarna.',
-              type: 'klarna_paynow',
+              name: 'Pay later with Klarna.',
+              type: 'klarna',
+            },
+            {
+              name: 'Pay over time with Klarna.',
+              type: 'klarna_account',
             },
             {
               brand: 'svs',
@@ -201,7 +185,7 @@ Make payment request will come here</textarea
               type: 'giftcard',
             },
           ],
-        }, // The payment methods response returned in step 1.
+        },
         showPayButton: true,
         onSubmit: handleOnSubmit,
       }

@@ -1,0 +1,37 @@
+{
+  "productType": {
+    "id": "86ee1e1d-3723-4cd9-85ca-596a44284e50",
+    "typeId": "product-type"
+  },
+  "name": {
+    "de-DE": "Product with one variant and one price"
+  },
+  "slug": {
+    "de": "test-product-slug"
+  },
+  "masterVariant": {
+    "id": "1",
+    "sku": "test-product-sku-1",
+    "attributes": [
+      {
+        "name": "test",
+        "value": "12345"
+      }
+    ],
+    "images": [],
+    "prices": [
+      {
+        "value": {
+          "currencyCode": "USD",
+          "centAmount": 1000
+        }
+      }
+    ]
+  },
+  "variants": [],
+  "categories": [],
+  "taxCategory": {
+    "id": "cfc2dbcb-3d3f-442f-8264-36f6da5729b6",
+    "typeId": "tax-category"
+  }
+}

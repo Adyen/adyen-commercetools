@@ -1,7 +1,7 @@
 const ValidatorBuilder = require('../validator/validator-builder')
 const getPaymentMethodsHandler = require('./get-payment-methods.handler')
 const makePaymentHandler = require('./make-payment.handler')
-const klarnaMakePaymentHandler = require('./klarna-make-payment.handler')
+const makeLineitemsPaymentHandler = require('./make-lineitems-payment.handler')
 const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const manualCaptureHandler = require('./manual-capture.handler')
 const cancelHandler = require('./cancel-payment.handler')
@@ -10,18 +10,16 @@ const pU = require('./payment-utils')
 const auth = require('../validator/authentication')
 const errorMessages = require('../validator/error-messages')
 
-const { CTP_ADYEN_INTEGRATION } = require('../config/constants')
+const {
+  CTP_ADYEN_INTEGRATION,
+  PAYMENT_METHOD_TYPE_KLARNA_METHODS,
+  PAYMENT_METHOD_TYPE_AFFIRM_METHODS,
+} = require('../config/constants')
 const {
   getChargeTransactionInitial,
   getAuthorizationTransactionSuccess,
   getCancelAuthorizationTransactionInit,
 } = require('./payment-utils')
-
-const PAYMENT_METHOD_TYPE_KLARNA_METHODS = [
-  'klarna',
-  'klarna_paynow',
-  'klarna_account',
-]
 
 async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
@@ -86,8 +84,8 @@ function _getPaymentHandlers(paymentObject) {
     const makePaymentRequestObj = JSON.parse(
       paymentObject.custom.fields.makePaymentRequest
     )
-    if (_isKlarna(makePaymentRequestObj))
-      handlers.push(klarnaMakePaymentHandler)
+    if (_isKlarna(makePaymentRequestObj) || _isAffirm(makePaymentRequestObj))
+      handlers.push(makeLineitemsPaymentHandler)
     else handlers.push(makePaymentHandler)
   }
   if (
@@ -140,6 +138,15 @@ function _isKlarna(makePaymentRequestObj) {
   return (
     makePaymentRequestObj.paymentMethod &&
     PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(
+      makePaymentRequestObj.paymentMethod.type
+    )
+  )
+}
+
+function _isAffirm(makePaymentRequestObj) {
+  return (
+    makePaymentRequestObj.paymentMethod &&
+    PAYMENT_METHOD_TYPE_AFFIRM_METHODS.includes(
       makePaymentRequestObj.paymentMethod.type
     )
   )
