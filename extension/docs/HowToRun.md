@@ -180,7 +180,7 @@ Please run following CURL command in order to list out all payment methods in US
 Make sure Affirm payment is inside the response.
 
 ```bash
-curl https://checkout-test.adyen.com/v67/paymentMethods \
+curl https://checkout-test.adyen.com/v68/paymentMethods \
 -H "x-API-key: YOUR_ADYEN_X-API-KEY" \
 -H "content-type: application/json" \
 -d '{
