@@ -742,7 +742,7 @@ Check the following table to see the mapping of Adyen [result codes](https://doc
 
 In some payment redirect cases, there might be a valid payment but no order as the shopper did not reach the shop's `redirectUrl`.
 For example, after successfully issued payment shopper loses internet connection or accidentally closes the tab.
-In this case [Notification module](../../notification) will receive asynchronously a notification from Adyen with payment confirmation which will result in a transaction creation or transaction state change.
+In this case the [Extension module](../) will still have synchronously handled the response from Adyen after payment creation which will result in a transaction creation or transaction state change. However, the Order will not have been created.
 An optional usage of scheduled [commercetools-payment-to-order-processor](https://github.com/commercetools/commercetools-payment-to-order-processor) job ensures that for every successful payment
 an order can still be asynchronously created.
 
