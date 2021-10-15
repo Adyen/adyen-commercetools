@@ -11,13 +11,13 @@ module.exports = class CreditCardMakePaymentFormPage extends (
     clientKey,
   }) {
     await this.generateAdyenMakePaymentForm(clientKey)
-    await executeInAdyenIframe(this.page, '#encryptedCardNumber', (el) =>
+    await executeInAdyenIframe(this.page, '[data-fieldtype="encryptedCardNumber"]', (el) =>
       el.type(creditCardNumber)
     )
-    await executeInAdyenIframe(this.page, '#encryptedExpiryDate', (el) =>
+    await executeInAdyenIframe(this.page, '[data-fieldtype="encryptedExpiryDate"]', (el) =>
       el.type(creditCardDate)
     )
-    await executeInAdyenIframe(this.page, '#encryptedSecurityCode', (el) =>
+    await executeInAdyenIframe(this.page, '[data-fieldtype="encryptedSecurityCode"]', (el) =>
       el.type(creditCardCvc)
     )
     return this.getMakePaymentRequestTextAreaValue()

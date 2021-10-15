@@ -3,12 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <title>Make Payment</title>
-    <link
-      rel="stylesheet"
-      href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/4.3.0/adyen.css"
-      integrity="sha384-5CDvDZiVPuf+3ZID0lh0aaUHAeky3/ACF1YAKzPbn3GEmzWgO53gP6stiYHWIdpB"
-      crossorigin="anonymous"
-    />
+      <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.0.0/adyen.css"
+            integrity="sha384-0IvbHDeulbhdg1tMDeFeGlmjiYoVT6YsbfAMKFU2lFd6YKUVk0Hgivcmva3j6mkK"
+            crossorigin="anonymous">
+
   </head>
   <body>
     <div>
@@ -24,11 +22,10 @@ Make payment request will come here</textarea
     <br />
     <div id="klarna_paynow-container"></div>
 
-    <script
-      src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/4.3.0/adyen.js"
-      integrity="sha384-cNkiBPQRGouJfbstYuSccx2XkGe3RB28iYrjge6rLIDtex7fk5+3/E9f4EZ34fxE"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.0.0/adyen.js"
+            integrity="sha384-kcKKvS6qZbXycrUw31OJ2/2Hz8A8FTsV9anjvpyQc/IWR1SmkFUw7w7F/t5S3qtA"
+            crossorigin="anonymous"></script>
+
     <script type="application/javascript">
       const configuration = {
         environment: 'test', // When you"re ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
@@ -250,9 +247,9 @@ Make payment request will come here</textarea
       }
 
       const clientKeyElement = document.getElementById('adyen-client-key')
-      clientKeyElement.addEventListener('blur', () => {
+      clientKeyElement.addEventListener('blur', async () => {
         configuration.clientKey = clientKeyElement.value
-        const checkout = new AdyenCheckout(configuration)
+        const checkout = await AdyenCheckout(configuration)
         checkout.create('klarna_paynow').mount('#klarna_paynow-container')
       })
     </script>

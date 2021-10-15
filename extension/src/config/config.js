@@ -71,7 +71,7 @@ function getAdyenConfig(adyenMerchantAccount) {
     )
   return {
     apiKey: adyenConfig.apiKey,
-    apiBaseUrl: adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v67',
+    apiBaseUrl: adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v68',
     legacyApiBaseUrl:
       adyenConfig.legacyApiBaseUrl ||
       'https://pal-test.adyen.com/pal/servlet/Payment/v64',
