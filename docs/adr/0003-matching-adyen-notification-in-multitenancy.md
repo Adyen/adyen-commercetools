@@ -36,5 +36,5 @@ The solution should be as less work as possible for the user of the integration.
 
 ## Consequences
 - `custom.fields.commercetoolsProjectKey` will be a required field for every payment. This will be validated in the extension module.
-- `custom.fields.commercetoolsProjectKey` will be sent as `metadata.commercetoolsProjectKey` to Adyen with every request from the extension module.
-- To select the right commercetools project in the notification module, the notification module will get the commercetools project key from the field `notificationItems.NotificationRequestItem.metadata.commercetoolsProjectKey.metadata.commercetoolsProjectKey` in the notification.
+- `custom.fields.commercetoolsProjectKey` will be sent as `metadata.ctProjectKey` to Adyen with every request from the extension module.
+- To select the right commercetools project in the notification module, the notification module will get the commercetools project key from the field `notificationItems.NotificationRequestItem.metadata.ctProjectKey` in the notification.
