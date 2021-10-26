@@ -62,8 +62,8 @@ Multiple child attributes can be provided in the `adyen` attribute. Each direct 
   "adyen": {
     "adyenMerchantAccount1": {  // The name of your first merchant account.
       "apiKey": "xxx"
-      "apiBaseUrl": "https://checkout-test.adyen.com/v50",
-      "legacyApiBaseUrl": "https://pal-test.adyen.com/pal/servlet/Payment/v50"
+      "apiBaseUrl": "https://checkout-test.adyen.com/v65",
+      "legacyApiBaseUrl": "https://pal-test.adyen.com/pal/servlet/Payment/v65"
     },
     "adyenMerchantAccount2": {  // The name of your second merchant account.
       "apiKey": "xxx"
@@ -75,8 +75,8 @@ Multiple child attributes can be provided in the `adyen` attribute. Each direct 
 | Name               | Content                                                                                                                                                  | Required | Default value (only for test environment)                                                                                                                                           |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `apiKey`           | You'll be making API requests that are authenticated with an [API key](https://docs.adyen.com/user-management/how-to-get-the-api-key#page-introduction). | YES      |                                                                                                                                                                                     |
-| `apiBaseUrl`       | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO       | `https://checkout-test.adyen.com/v52` (even though it is not required, you **need** to specify a URL for live environment)                                                          |
-| `legacyApiBaseUrl` | [Standart payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                           | NO       | `https://pal-test.adyen.com/pal/servlet/Payment/v52` (even though it is not required, you **need** to specify a URL for live environment to use e.g. manualCapture, refund, cancel) |
+| `apiBaseUrl`       | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO       | `https://checkout-test.adyen.com/v67` (even though it is not required, you **need** to specify a URL for live environment)                                                          |
+| `legacyApiBaseUrl` | [Standard payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                           | NO       | `https://pal-test.adyen.com/pal/servlet/Payment/v64` (even though it is not required, you **need** to specify a URL for live environment to use e.g. manualCapture, refund, cancel) |
 
 > Note: Sometimes it's necessary to regenerate the `apiKey`, when you get `403 Forbidden error` from Adyen.
 
@@ -104,12 +104,7 @@ Multiple child attributes can be provided in the `commercetools` attribute. Each
     },
     "commercetoolsProjectKey2": { // commercetools project key of the second project
       "clientId": "xxx",
-      "clientSecret": "xxx",
-      "authentication" : {
-        "scheme": "basic",
-        "username": "xxx",
-        "password": "xxx"
-      }
+      "clientSecret": "xxx"
     }
   }
 }
@@ -162,7 +157,7 @@ Resources below are required for the extension module to operate correctly.
 1. [Payment custom type](../resources/web-components-payment-type.json)
 1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
 
-First, you will need to configure [ExtensionDraft](../resources/api-extension.json) destination according to your deployment,
+First, you will need to configure [ExtensionDraft](../resources/api-extension.json) destination according to your deployment.
 A destination contains all info necessary for the commercetools platform to call the extension module. Please follow the [commercetools HTTP API Extension](https://docs.commercetools.com/api/projects/api-extensions#destination) documentation for details.
 
 After you change the destination, you can set up required resources in your commercetools projects by running the script `npm run setup-resources`, the script requires the `ADYEN_INTEGRATION_CONFIG` to be set as an environment variable.
