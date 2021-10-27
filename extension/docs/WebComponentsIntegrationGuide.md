@@ -47,7 +47,7 @@ Terms used in this guide:
 - **Extension module** - [extension module](https://github.com/commercetools/commercetools-adyen-integration#extension-module) configured as [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is handling checkout steps by intercepting payment modifications and communicating with Adyen API.
 - **Notification module** - [notification module](https://github.com/commercetools/commercetools-adyen-integration#notification-module) processes asynchronous notifications from Adyen and stores payment state changes in commercetools payment object.
 
-The following diagram shows checkout integration flow based on [Adyen Web Components](https://docs.adyen.com/online-payments/components-web).
+The following diagram shows checkout integration flow based on [Adyen Web Components](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0).
 
 ![Flow](https://user-images.githubusercontent.com/803826/98081637-c467a380-1e77-11eb-93ed-003f7e68b59a.png)
 
@@ -61,7 +61,7 @@ On this page we describe the checkout integration steps between the extension mo
 - [Step 4](#step-4-add-components-to-your-payments-form) : Add Adyen Web Component to your checkout payments form.
 - [Step 5](#step-5-make-a-payment) : Submit a payment request by setting `makePaymentRequest` payment custom field with the payment data returned by the Adyen web component.
 - [Step 6](#step-6-submit-additional-payment-details) : Set `submitAdditionalPaymentDetailsRequest ` custom field to commercetools payment to submit additional payment details.
-- [Step 7](#step-7-capture-payment-required-for-klarna) : Add an optional `Charge` transaction to commercetools payment in order to manually capture the payment.
+- [Step 7](#step-7-capture-payment-required-for-klarna-and-affirm) : Add an optional `Charge` transaction to commercetools payment in order to manually capture the payment.
 
 ## Before you begin
 
@@ -256,13 +256,13 @@ Pass the `getPaymentMethodsResponse` custom field value to your front end. You m
 
 Next, use the Adyen Web Components to render the payment method, and collect the required payment details from the shopper.
 
-If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Components integration guide](https://docs.adyen.com/online-payments/components-web#step-2-add-components).
+If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Components integration guide](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-2-add-components).
 
 ## Step 5: Make a payment
 
 When a shopper selects a payment method, enters payment details into the web component form, and then submits payment with a `Pay` button, the Adyen web component will trigger an `onSubmit` component event with a generated "make payment" JSON data that the merchant server needs to pass to the commercetools payment for further processing.
 
-> For details, consult the [Adyen documentation](https://docs.adyen.com/online-payments/components-web#step-3-make-a-payment)
+> For details, consult the [Adyen documentation](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-3-make-a-payment)
 
 To make payment via our integration, you need to set the `makePaymentRequest` custom field to existing commercetools payment with generated component data from the Adyen web component.
 
@@ -416,7 +416,7 @@ For some payment methods (e.g. Visa, Mastercard, and SEPA Direct Debits) you'll 
 
 Notice that on an `Authorised` (successful) result, the integration will automatically add a transaction to the commercetools payment. The transaction will be of type `Authorization`, its' `amount` will match the `amountPlanned` and `interactionId` will be matching the unique Adyen's `pspReference` from `makePaymentResponse`.
 
-> See [Adyen documentation](https://docs.adyen.com/online-payments/components-web#step-6-present-payment-result) for more information how to present the results.
+> See [Adyen documentation](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-6-present-payment-result) for more information how to present the results.
 
 #### Action Response
 
@@ -465,7 +465,7 @@ Here an example response from Adyen where the user has to be redirected to a pay
 
 Pass the action object to your front end. The Adyen web component uses this to handle the required action.
 
-> See [Adyen documentation](https://docs.adyen.com/online-payments/components-web#step-4-additional-front-end) for more information how to perform additional front end actions.
+> See [Adyen documentation](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-4-additional-front-end) for more information how to perform additional front end actions.
 
 ### Klarna payment and Affirm payment
 
@@ -615,7 +615,7 @@ Depending on the payment result, you receive a response containing:
 
 If the response does not contain an action object, you can present the payment result to your shopper.
 
-> See [Adyen documentation](https://docs.adyen.com/online-payments/components-web#step-6-present-payment-result) for more information how to present the results.
+> See [Adyen documentation](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-6-present-payment-result) for more information how to present the results.
 
 <details>
 <summary>A commercetools example payment with submitAdditionalPaymentDetailsResponse field. Click to expand.</summary>
@@ -713,7 +713,7 @@ In order to do so remove the existing `submitAdditionalPaymentDetailsResponse` c
 ## Step 7: Capture payment (required for Klarna and Affirm)
 
 All Klarna payments [have to be manually captured](https://docs.adyen.com/payment-methods/klarna/web-component#capture) within 28 days after authorization, even if you have enabled automatic capture on your Adyen merchant account.
-All Affirm payments also require [mannually captured](https://docs.adyen.com/payment-methods/affirm/web-component#capture) as same as Klarna payments. Refer to [Manual Capture](ManualCapture.md) guide to see how it can be done.
+All Affirm payments also require [manually captured](https://docs.adyen.com/payment-methods/affirm/web-component#capture) as same as Klarna payments. Refer to [Manual Capture](ManualCapture.md) guide to see how it can be done.
 
 ## Error handling
 
@@ -755,7 +755,7 @@ has to be shown and order creation must be declined. In such a case, it might be
 
 ## Test and go live
 
-Before you go live please follow [steps](https://docs.adyen.com/online-payments/components-web#testing-your-integration) described by Adyen.
+Before you go live please follow [steps](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#testing-your-integration) described by Adyen.
 
 Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist).
 
