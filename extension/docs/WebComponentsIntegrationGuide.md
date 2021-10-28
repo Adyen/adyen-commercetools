@@ -23,7 +23,6 @@
     - [Response](#response-1)
       - [Authorised Response](#authorised-response-1)
       - [Action Response](#action-response-1)
-  - [Step 7: Capture payment (required for Klarna and Affirm)](#step-7-capture-payment-required-for-klarna-and-affirm)
   - [Error handling](#error-handling)
     - [Extension module errors](#extension-module-errors)
     - [Adyen payment refusals](#adyen-payment-refusals)
@@ -61,7 +60,6 @@ On this page we describe the checkout integration steps between the extension mo
 - [Step 4](#step-4-add-components-to-your-payments-form) : Add Adyen Web Component to your checkout payments form.
 - [Step 5](#step-5-make-a-payment) : Submit a payment request by setting `makePaymentRequest` payment custom field with the payment data returned by the Adyen web component.
 - [Step 6](#step-6-submit-additional-payment-details) : Set `submitAdditionalPaymentDetailsRequest ` custom field to commercetools payment to submit additional payment details.
-- [Step 7](#step-7-capture-payment-required-for-klarna-and-affirm) : Add an optional `Charge` transaction to commercetools payment in order to manually capture the payment.
 
 ## Before you begin
 
@@ -710,11 +708,6 @@ In order to do so remove the existing `submitAdditionalPaymentDetailsResponse` c
 }
 ```
 
-## Step 7: Capture payment (required for Klarna and Affirm)
-
-All Klarna payments [have to be manually captured](https://docs.adyen.com/payment-methods/klarna/web-component#capture) within 28 days after authorization, even if you have enabled automatic capture on your Adyen merchant account.
-All Affirm payments also require [manually captured](https://docs.adyen.com/payment-methods/affirm/web-component#capture) as same as Klarna payments. Refer to [Manual Capture](ManualCapture.md) guide to see how it can be done.
-
 ## Error handling
 
 In case you encounter errors in your integration, refer to the following:
@@ -762,6 +755,11 @@ Additionally, follow the official Adyen [integration checklist](https://docs.ady
 # Manual Capture
 
 By default, payments are captured immediately (or with [delay](https://docs.adyen.com/online-payments/capture#capture-delay)) after authorisation. For payment methods that support separate authorization and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This also allows you to cancel the payment/authorization.
+
+For instance:
+
+- All Klarna payments [have to be manually captured](https://docs.adyen.com/payment-methods/klarna/web-component#capture) within 28 days after authorization, even if you have enabled automatic capture on your Adyen merchant account.
+- All Affirm payments also require [manually captured](https://docs.adyen.com/payment-methods/affirm/web-component#capture-the-payment) as same as Klarna payments.
 
 If you need to explicitly request a capture for each payment please follow our [manual capture documentation](./ManualCapture.md).
 
