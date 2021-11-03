@@ -75,7 +75,7 @@ Multiple child attributes can be provided in the `adyen` attribute. Each direct 
 | Name               | Content                                                                                                                                                  | Required | Default value (only for test environment)                                                                                                                                           |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `apiKey`           | You'll be making API requests that are authenticated with an [API key](https://docs.adyen.com/user-management/how-to-get-the-api-key#page-introduction). | YES      |                                                                                                                                                                                     |
-| `apiBaseUrl`       | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO       | `https://checkout-test.adyen.com/v67` (even though it is not required, you **need** to specify a URL for live environment)                                                          |
+| `apiBaseUrl`       | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO       | `https://checkout-test.adyen.com/v68` (even though it is not required, you **need** to specify a URL for live environment)                                                          |
 | `legacyApiBaseUrl` | [Standard payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                           | NO       | `https://pal-test.adyen.com/pal/servlet/Payment/v64` (even though it is not required, you **need** to specify a URL for live environment to use e.g. manualCapture, refund, cancel) |
 
 > Note: Sometimes it's necessary to regenerate the `apiKey`, when you get `403 Forbidden error` from Adyen.
@@ -175,7 +175,7 @@ Please run following CURL command in order to list out all payment methods in US
 Make sure Affirm payment is inside the response.
 
 ```bash
-curl https://checkout-test.adyen.com/v67/paymentMethods \
+curl https://checkout-test.adyen.com/v68/paymentMethods \
 -H "x-API-key: YOUR_ADYEN_X-API-KEY" \
 -H "content-type: application/json" \
 -d '{
