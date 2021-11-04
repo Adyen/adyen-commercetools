@@ -103,6 +103,28 @@
       },
       "inputHint": "SingleLine",
       "required": false
+    },
+    {
+      "name": "getCarbonOffsetCostsRequest",
+      "label": {
+        "en": "getCarbonOffsetCostsRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "getCarbonOffsetCostsResponse",
+      "label": {
+        "en": "getCarbonOffsetCostsResponse"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
     }
   ]
 }
