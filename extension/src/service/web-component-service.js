@@ -88,6 +88,16 @@ function refund(merchantAccount, commercetoolsProjectKey, refundRequestObj) {
   )
 }
 
+function getCarbonOffsetCosts(merchantAccount, getCarbonOffsetCostsRequestObj) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+  return callAdyen(
+    `${adyenCredentials.apiBaseUrl}/carbonOffsetCosts`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    extendRequestObjWithApplicationInfo(getCarbonOffsetCostsRequestObj)
+  )
+}
+
 function extendRequestObjWithApplicationInfo(requestObj) {
   requestObj.applicationInfo = {
     merchantApplication: {
@@ -155,4 +165,5 @@ module.exports = {
   manualCapture,
   refund,
   cancelPayment,
+  getCarbonOffsetCosts
 }
