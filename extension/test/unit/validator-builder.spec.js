@@ -9,16 +9,19 @@ const {
   MAKE_PAYMENT_REQUEST_MISSING_REFERENCE,
   MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT,
   MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY,
+  GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON
 } = require('../../src/validator/error-messages')
 
 describe('Validator builder', () => {
   it('on invalid JSON validateRequestFields() should return error object', () => {
+    const invalidJSONContent = '{"a"}'
     const invalidPayment = {
       custom: {
         fields: {
-          getPaymentMethodsRequest: '{"a"}',
-          makePaymentRequest: '{"a"}',
-          submitAdditionalPaymentDetailsRequest: '{"a"}',
+          getPaymentMethodsRequest: invalidJSONContent,
+          makePaymentRequest: invalidJSONContent,
+          submitAdditionalPaymentDetailsRequest: invalidJSONContent,
+          getCarbonOffsetCostsRequest: invalidJSONContent
         },
       },
     }
@@ -31,6 +34,9 @@ describe('Validator builder', () => {
     expect(errorObject[1].message).to.equal(MAKE_PAYMENT_REQUEST_INVALID_JSON)
     expect(errorObject[2].message).to.equal(
       SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
+    )
+    expect(errorObject[3].message).to.equal(
+      GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON
     )
   })
 

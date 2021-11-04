@@ -18,4 +18,6 @@ module.exports = {
   UNAUTHORIZED_REQUEST: 'The request is unauthorized.',
   MISSING_CREDENTIAL:
     'Credential is missing in required project configuration.',
+  GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON:
+    'getCarbonOffsetCostsRequest does not contain valid JSON.',
 }
