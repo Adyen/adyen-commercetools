@@ -165,5 +165,5 @@ module.exports = {
   manualCapture,
   refund,
   cancelPayment,
-  getCarbonOffsetCosts
+  getCarbonOffsetCosts,
 }

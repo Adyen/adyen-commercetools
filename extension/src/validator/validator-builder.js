@@ -44,7 +44,9 @@ function withPayment(paymentObject) {
       )
         errors.submitAdditionalPaymentDetailsRequest =
           errorMessages.SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
-      if (!pU.isValidJSON(paymentObject.custom.fields.getCarbonOffsetCostsRequest))
+      if (
+        !pU.isValidJSON(paymentObject.custom.fields.getCarbonOffsetCostsRequest)
+      )
         errors.getCarbonOffsetCostsRequest =
           errorMessages.GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON
       return this

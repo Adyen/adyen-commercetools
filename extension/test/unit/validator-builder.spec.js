@@ -9,7 +9,7 @@ const {
   MAKE_PAYMENT_REQUEST_MISSING_REFERENCE,
   MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT,
   MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY,
-  GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON
+  GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON,
 } = require('../../src/validator/error-messages')
 
 describe('Validator builder', () => {
@@ -21,7 +21,7 @@ describe('Validator builder', () => {
           getPaymentMethodsRequest: invalidJSONContent,
           makePaymentRequest: invalidJSONContent,
           submitAdditionalPaymentDetailsRequest: invalidJSONContent,
-          getCarbonOffsetCostsRequest: invalidJSONContent
+          getCarbonOffsetCostsRequest: invalidJSONContent,
         },
       },
     }

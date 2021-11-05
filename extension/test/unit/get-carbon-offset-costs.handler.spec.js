@@ -13,9 +13,9 @@ describe('get-carbon-offset-costs::execute::', () => {
     originCountry: 'BE',
     deliveryCountry: 'FR',
     packageWeight: {
-      value: 2.20,
-      unit: 'kg'
-    }
+      value: 2.2,
+      unit: 'kg',
+    },
   }
 
   const paymentObject = {
@@ -34,7 +34,9 @@ describe('get-carbon-offset-costs::execute::', () => {
       },
       fields: {
         commercetoolsProjectKey: 'commercetoolsProjectKey',
-        getCarbonOffsetCostsRequest: JSON.stringify(getCarbonOffsetCostsRequest),
+        getCarbonOffsetCostsRequest: JSON.stringify(
+          getCarbonOffsetCostsRequest
+        ),
         adyenMerchantAccount,
       },
     },
@@ -48,12 +50,12 @@ describe('get-carbon-offset-costs::execute::', () => {
     const getCarbonOffsetCostsResponse = {
       deliveryOffset: {
         currency: 'EUR',
-        value: 12
+        value: 12,
       },
       totalOffset: {
         currency: 'EUR',
-        value: 12
-      }
+        value: 12,
+      },
     }
 
     sinon
@@ -77,9 +79,7 @@ describe('get-carbon-offset-costs::execute::', () => {
     expect(result.actions[0].fields.type).to.equal(
       c.CTP_INTERACTION_TYPE_GET_CARBON_OFFSET_COSTS
     )
-    expect(result.actions[1].name).to.equal(
-      c.CTP_CARBON_OFFSET_COSTS_RESPONSE
-    )
+    expect(result.actions[1].name).to.equal(c.CTP_CARBON_OFFSET_COSTS_RESPONSE)
   })
 
   it(
