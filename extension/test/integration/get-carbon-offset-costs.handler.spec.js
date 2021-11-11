@@ -52,7 +52,7 @@ describe('get-carbon-offset-costs', () => {
           },
         },
         {
-          code: '1345345',
+          code: '10001335',
           weight: {
             value: 2,
             unit: 'kg',
