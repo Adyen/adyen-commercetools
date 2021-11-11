@@ -94,7 +94,7 @@ function getCarbonOffsetCosts(merchantAccount, getCarbonOffsetCostsRequestObj) {
     `${adyenCredentials.apiBaseUrl}/carbonOffsetCosts`,
     merchantAccount,
     adyenCredentials.apiKey,
-    extendRequestObjWithApplicationInfo(getCarbonOffsetCostsRequestObj)
+    getCarbonOffsetCostsRequestObj
   )
 }
 
