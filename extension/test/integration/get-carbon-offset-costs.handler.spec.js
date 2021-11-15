@@ -31,6 +31,7 @@ describe('get-carbon-offset-costs', () => {
       getCarbonOffsetCostsRequestDraft
     )
     expect(interfaceInteractionResponse.deliveryOffset).to.exist
+    expect(interfaceInteractionResponse.deliveryOffset.value).to.exist
     expect(interfaceInteractionResponse.totalOffset).to.exist
     expect(interfaceInteractionResponse.totalOffset.value).to.greaterThan(0)
   })
@@ -64,6 +65,7 @@ describe('get-carbon-offset-costs', () => {
       getCarbonOffsetCostsRequestDraft
     )
     expect(interfaceInteractionResponse.deliveryOffset).to.exist
+    expect(interfaceInteractionResponse.deliveryOffset.value).to.exist
     expect(interfaceInteractionResponse.totalOffset).to.exist
     expect(interfaceInteractionResponse.totalOffset.value).to.greaterThan(0)
     expect(interfaceInteractionResponse.productOffset).to.exist
