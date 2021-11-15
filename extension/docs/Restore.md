@@ -186,29 +186,19 @@ The response includes the delivery, product and total offset costs:
 
 ```json
 {
-  "originCountry": "DE",
-  "deliveryCountry": "FR",
-  "packageWeight": {
-    "value": 2.2,
-    "unit": "kg"
+  "deliveryOffset": {
+    "currency": "EUR",
+    "value": 1
   },
-  "merchantAccount": "CommercetoolsGmbHDE775",
-  "products": [
-    {
-      "code": "123",
-      "weight": {
-        "value": 0.2,
-        "unit": "kg"
-      }
-    },
-    {
-      "code": "10001335",
-      "weight": {
-        "value": 2,
-        "unit": "kg"
-      }
-    }
-  ]
+  "productOffset": {
+    "currency": "EUR",
+    "value": 138
+  },
+  "totalOffset": {
+    "currency": "EUR",
+    "value": 139
+  },
+  "unavailableProductCodes": ["123"]
 }
 ```
 
