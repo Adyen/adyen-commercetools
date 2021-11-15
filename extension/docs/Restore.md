@@ -5,19 +5,19 @@ For more details of the feature follow official Adyen [Restore](https://www.adye
 
 This document describes the integration steps of restore.
 
+> NOTE: Restore is part of checkout process so follow along with [Integration Guide](./WebComponentsIntegrationGuide.md).
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-**Table of Contents**
-
-- [Step 1: Requesting offset costs](#step-1-requesting-offset-costs)
+- [Requesting offset costs](#requesting-offset-costs)
   - [Delivery Offset](#delivery-offset)
   - [Lifecycle Offset](#lifecycle-offset)
-- [Step 2: Making a payment with offset costs (to be defined later.)](#step-2-making-a-payment-with-offset-costs-to-be-defined-later)
+- [Making a payment with offset costs](#making-a-payment-with-offset-costs)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Step 1: Requesting offset costs
+## Requesting offset costs
 
 To request offset costs via our integration, you need to set the `getCarbonOffsetCostsRequest` custom field to your existing commercetools payment or create a payment right away with the custom field set.
 
@@ -236,4 +236,37 @@ The response includes the delivery, product and total offset costs:
 
 </details>
 
-## Step 2: Making a payment with offset costs (to be defined later.)
+## Making a payment with offset costs
+
+To integrate offset costs as part of the payment, you'll need to send the [splits](https://docs.adyen.com/api-explorer/#/CheckoutService/latest/post/payments__reqParam_splits) array.
+
+For example, when a customer pays for goods on your platform for 10.00 EUR, the totalOffsetCost is calculated as 00.12 EUR, you can split the payment such that:
+
+- 00.12 EUR goes to charity for carbon offset with account BA0000X000000X0XXX0X00XXX.
+- 10.00 EUR goes to the seller's account as payment for the goods.
+
+Structure of the splits array:
+
+```json
+{
+  "splits": [
+    {
+      "amount": {
+        "value": 12
+      },
+      "type": "BalanceAccount",
+      "account": "BA0000X000000X0XXX0X00XXX",
+      "reference": "Restore"
+    },
+    {
+      "amount": {
+        "value": 1000
+      },
+      "type": "Default",
+      "reference": "Payment"
+    }
+  ]
+}
+```
+
+To make payment via our integration, you need to set the `makePaymentRequest` custom field to existing commercetools payment, those steps described already on web components integration guide on [Step 5: Make a payment](./WebComponentsIntegrationGuide.md/#step-5-make-a-payment). As stated in this part, the original payment request payload is genarated by Adyen web components, so to make a payment with offset costs included, the merchant server needs to update payload and change it to a split array with adding carbon offset fee as described above.
