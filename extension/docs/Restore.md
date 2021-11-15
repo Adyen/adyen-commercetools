@@ -10,12 +10,17 @@ This document describes the integration steps of restore.
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+- [Configuration](#configuration)
 - [Requesting offset costs](#requesting-offset-costs)
   - [Delivery Offset](#delivery-offset)
   - [Lifecycle Offset](#lifecycle-offset)
 - [Making a payment with offset costs](#making-a-payment-with-offset-costs)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## Configuration
+
+Restore feature requires additional configuration. Please [submit a support request](https://www.adyen.help/hc/en-us/requests/new) for the required setup.
 
 ## Requesting offset costs
 
