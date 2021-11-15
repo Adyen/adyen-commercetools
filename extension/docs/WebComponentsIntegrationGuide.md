@@ -769,10 +769,10 @@ This will either:
 - [**Cancel**](CancelPayment.md) - cancel the authorisation on an uncaptured payment(full payment).
 - [**Refund**](Refund.md) - (partially) refund a payment back to the shopper.
 
-# Restore:
+# Restore
 
 Restore gives your shoppers an opportunity to offset their carbon emissions from the delivery or lifecycle of their purchase at checkout.
-For the integration details please follow our [restore documentation](./Restore.md)
+For the integration details please follow our [restore documentation](./Restore.md).
 
 # Multi-tenancy
 

@@ -19,15 +19,15 @@ This document describes the integration steps of restore.
 
 ## Requesting offset costs
 
-To request offset costs via our integration, you need to set the `getCarbonOffsetCostsRequest` custom field to your existing commercetools payment or create a payment right away with the custom field set.
+To request offset costs via our integration, you need to set the `getCarbonOffsetCostsRequest` custom field to your existing commercetools payment or create a payment right away with the custom field set. We recommend to request offset costs before [Step 5: Make a payment](./WebComponentsIntegrationGuide.md/#step-5-make-a-payment).
 
 The `getCarbonOffsetCostsRequest` custom field has to include the following information:
 
 - Weight of the package
 - Delivery - country of origin
 - Delivery - country of destination
-- Product code (if lifecycle option)
-- Product weight (if lifecycle option)
+- Product code (only for requesting lifecycle offset)
+- Product weight (only for requesting lifecycle offset)
 
 ### Delivery Offset
 
