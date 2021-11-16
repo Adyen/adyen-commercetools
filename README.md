@@ -24,7 +24,7 @@
 - [Refunding](./extension/docs/Refund.md) a payment back to the shopper.
 - Authorisation [cancellation](./extension/docs/CancelPayment.md) on a payment that has not yet been captured.
 - [Manual capture](./extension/docs/ManualCapture.md) of a payment.
-- [Restore](./extension/docs/Restore.md) feature of Adyen, which gives your shoppers an opportunity to offset their carbon emissions from the delivery or lifecycle of their purchase at checkout. 
+- [Restore](./extension/docs/Restore.md), which gives your shoppers an opportunity to offset their carbon emissions from the delivery or lifecycle of their purchase at checkout. 
 
 ## Overview
 This repository contains two standalone modules that interact with commercetools and Adyen.
