@@ -31,6 +31,7 @@ describe('get-carbon-offset-costs', () => {
       getCarbonOffsetCostsRequestDraft
     )
     expect(interfaceInteractionResponse.deliveryOffset).to.exist
+    expect(interfaceInteractionResponse.deliveryOffset.value).to.exist
     expect(interfaceInteractionResponse.totalOffset).to.exist
     expect(interfaceInteractionResponse.totalOffset.value).to.greaterThan(0)
   })
@@ -52,7 +53,7 @@ describe('get-carbon-offset-costs', () => {
           },
         },
         {
-          code: '1345345',
+          code: '10001335',
           weight: {
             value: 2,
             unit: 'kg',
@@ -64,6 +65,7 @@ describe('get-carbon-offset-costs', () => {
       getCarbonOffsetCostsRequestDraft
     )
     expect(interfaceInteractionResponse.deliveryOffset).to.exist
+    expect(interfaceInteractionResponse.deliveryOffset.value).to.exist
     expect(interfaceInteractionResponse.totalOffset).to.exist
     expect(interfaceInteractionResponse.totalOffset.value).to.greaterThan(0)
     expect(interfaceInteractionResponse.productOffset).to.exist
