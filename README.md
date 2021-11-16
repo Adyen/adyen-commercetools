@@ -7,7 +7,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [Features](#features)
+- [Supported features](#supported-features)
 - [Overview](#overview)
 - [Extension module](#extension-module)
 - [Notification module](#notification-module)
@@ -15,16 +15,16 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Features
+## Supported features
 
-- Integration supports all the payment methods available as an [Adyen Web Component](https://docs.adyen.com/checkout/components-web). For a full list of all supported web component based payment methods please refer to [supported payment methods](https://docs.adyen.com/checkout/supported-payment-methods).
+- [Adyen Web Component](https://docs.adyen.com/checkout/components-web) based payment methods. For a full list of payment methods please refer to [supported payment methods](https://docs.adyen.com/checkout/supported-payment-methods).
   - Note: since the integration relies on the usage of Adyen's web components it does not need to process sensitive credit card data and thus is fully PCI DSS **compliant**.
-- Integration supports asynchronous notifications handling via [Notification module](#notification-module). 
-- Integration supports [multi-tenancy](./extension/docs/WebComponentsIntegrationGuide.md#multi-tenancy) to serve multiple Adyen merchant accounts/commercetools projects with one application instance.
-- Integration supports [refunding](./extension/docs/Refund.md) a payment back to the shopper.
-- Integration supports [cancelling](./extension/docs/CancelPayment.md) the authorisation on a payment that has not yet been captured.
-- Integration supports [manual capturing](./extension/docs/ManualCapture.md) of a payment.
-- Integration supports [restore](./extension/docs/Restore.md) feature of Adyen, which gives your shoppers an opportunity to offset their carbon emissions from the delivery or lifecycle of their purchase at checkout. 
+- Asynchronous notifications handling via [notification module](#notification-module).
+- [Multi-tenancy](./extension/docs/WebComponentsIntegrationGuide.md#multi-tenancy) to serve multiple Adyen merchant accounts/commercetools projects with one application instance.
+- [Refunding](./extension/docs/Refund.md) a payment back to the shopper.
+- [Cancelling](./extension/docs/CancelPayment.md) the authorisation on a payment that has not yet been captured.
+- [Manual capturing](./extension/docs/ManualCapture.md) of a payment.
+- [Restore](./extension/docs/Restore.md) feature of Adyen, which gives your shoppers an opportunity to offset their carbon emissions from the delivery or lifecycle of their purchase at checkout. 
 
 ## Overview
 This repository contains two standalone modules that interact with commercetools and Adyen.
