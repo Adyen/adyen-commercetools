@@ -1,6 +1,5 @@
+const nock = require('nock')
 const { expect } = require('chai')
-const sinon = require('sinon')
-const fetch = require('node-fetch')
 const c = require('../../src/config/constants')
 const {
   execute,
@@ -42,12 +41,14 @@ describe('get-carbon-offset-costs::execute::', () => {
     },
   }
 
-  afterEach(() => {
-    sinon.restore()
+  let scope
+  beforeEach(() => {
+    const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
+    scope = nock(`${adyenConfig.apiBaseUrl}`)
   })
 
   it('handlePayment should return the right actions', async () => {
-    const getCarbonOffsetCostsResponse = {
+    const getCarbonOffsetCostsResponse = JSON.stringify({
       deliveryOffset: {
         currency: 'EUR',
         value: 12,
@@ -56,11 +57,9 @@ describe('get-carbon-offset-costs::execute::', () => {
         currency: 'EUR',
         value: 12,
       },
-    }
+    })
 
-    sinon
-      .stub(fetch, 'Promise')
-      .resolves({ json: () => getCarbonOffsetCostsResponse })
+    scope.post('/carbonOffsetCosts').reply(200, getCarbonOffsetCostsResponse)
 
     const result = await execute(paymentObject)
 
@@ -71,7 +70,7 @@ describe('get-carbon-offset-costs::execute::', () => {
       getCarbonOffsetCostsRequest
     )
     expect(result.actions[0].fields.response).to.be.deep.equal(
-      JSON.stringify(getCarbonOffsetCostsResponse)
+      getCarbonOffsetCostsResponse
     )
     expect(result.actions[0].fields.response).to.be.deep.equal(
       result.actions[1].value
@@ -86,8 +85,15 @@ describe('get-carbon-offset-costs::execute::', () => {
     'when adyen request fails ' +
       'then handlePayment should return the right actions with failed responses',
     async () => {
-      const errorMsg = 'unexpected exception'
-      sinon.stub(fetch, 'Promise').rejects(errorMsg)
+      const getCarbonOffsetCostsFailedResponse = JSON.stringify({
+        status: 422,
+        errorCode: '14_0417',
+        message: 'The carbon credit project id is not configured.',
+        errorType: 'validation',
+      })
+      scope
+        .post('/carbonOffsetCosts')
+        .reply(422, getCarbonOffsetCostsFailedResponse)
 
       const result = await execute(paymentObject)
 
@@ -97,7 +103,9 @@ describe('get-carbon-offset-costs::execute::', () => {
       expect(JSON.parse(result.actions[0].fields.request)).to.be.deep.includes(
         getCarbonOffsetCostsRequest
       )
-      expect(result.actions[0].fields.response).to.be.includes(errorMsg)
+      expect(result.actions[0].fields.response).to.equal(
+        getCarbonOffsetCostsFailedResponse
+      )
       expect(result.actions[0].fields.type).to.equal(
         c.CTP_INTERACTION_TYPE_GET_CARBON_OFFSET_COSTS
       )
