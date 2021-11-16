@@ -51,7 +51,7 @@ Here's an example of the `getCarbonOffsetCostsRequest` to calculate delivery off
 ```
 
 <details>
-  <summary>The commercetools payment representation example with getCarbonOffsetCostsRequest. Click to expand.</summary>
+  <summary>The commercetools payment representation example with `getCarbonOffsetCostsRequest`. Click to expand.</summary>
 
 ```json
 {
@@ -94,7 +94,7 @@ The response includes the delivery and total offset costs:
 ```
 
 <details>
-  <summary>The commercetools payment representation example with getCarbonOffsetCostsResponse. Click to expand.</summary>
+  <summary>The commercetools payment representation example with `getCarbonOffsetCostsResponse`. Click to expand.</summary>
 
 ```json
 {
@@ -155,7 +155,7 @@ Here's an example of the `getCarbonOffsetCostsRequest` to calculate delivery and
 ```
 
 <details>
-  <summary>The commercetools payment representation example with getCarbonOffsetCostsRequest. Click to expand.</summary>
+  <summary>The commercetools payment representation example with `getCarbonOffsetCostsRequest`. Click to expand.</summary>
 
 ```json
 {
@@ -203,7 +203,7 @@ The response includes the delivery, product and total offset costs:
 ```
 
 <details>
-  <summary>The commercetools payment representation example with getCarbonOffsetCostsResponse. Click to expand.</summary>
+  <summary>The commercetools payment representation example with `getCarbonOffsetCostsResponse`. Click to expand.</summary>
 
 ```json
 {
@@ -235,12 +235,10 @@ The response includes the delivery, product and total offset costs:
 
 To integrate offset costs as part of the payment, you'll need to send the [splits](https://docs.adyen.com/api-explorer/#/CheckoutService/latest/post/payments__reqParam_splits) array.
 
-For example, when a customer pays for goods on your platform for 10.00 EUR, the totalOffsetCost is calculated as 00.12 EUR, you can split the payment such that:
+For example, if the cart's total amount is 10.00 EUR, and the calculated totalOffsetCost is 00.12 EUR, then both amounts have to be supplied as `splits` as shown below:
 
 - 00.12 EUR goes to charity for carbon offset with account BA0000X000000X0XXX0X00XXX.
 - 10.00 EUR goes to the seller's account as payment for the goods.
-
-Structure of the splits array:
 
 ```json
 {
@@ -264,4 +262,4 @@ Structure of the splits array:
 }
 ```
 
-To make payment via our integration, you need to set the `makePaymentRequest` custom field to existing commercetools payment, those steps described already on web components integration guide on [Step 5: Make a payment](./WebComponentsIntegrationGuide.md/#step-5-make-a-payment). As stated in this part, the original payment request payload is genarated by Adyen web components, so to make a payment with offset costs included, the merchant server needs to update payload and change it to a split array with adding carbon offset fee as described above.
+To make payment via our integration, you need to set the `makePaymentRequest` custom field to existing commercetools payment, those steps are described already on the web components integration guide on [Step 5: Make a payment](./WebComponentsIntegrationGuide.md/#step-5-make-a-payment). As stated there, the original payment request payload is genarated by Adyen web components, so to make a payment with offset costs included, the merchant server needs to extend the payload with the required amount splits.
