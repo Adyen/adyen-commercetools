@@ -22,7 +22,7 @@
 - Asynchronous notifications handling via [notification module](#notification-module).
 - [Multi-tenancy](./extension/docs/WebComponentsIntegrationGuide.md#multi-tenancy) to serve multiple Adyen merchant accounts/commercetools projects with one application instance.
 - [Refunding](./extension/docs/Refund.md) a payment back to the shopper.
-- [Cancelling](./extension/docs/CancelPayment.md) the authorisation on a payment that has not yet been captured.
+- Authorisation [cancellation](./extension/docs/CancelPayment.md) on a payment that has not yet been captured.
 - [Manual capturing](./extension/docs/ManualCapture.md) of a payment.
 - [Restore](./extension/docs/Restore.md) feature of Adyen, which gives your shoppers an opportunity to offset their carbon emissions from the delivery or lifecycle of their purchase at checkout. 
 
