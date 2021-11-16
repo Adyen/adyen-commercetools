@@ -23,4 +23,6 @@ module.exports = {
   ],
 
   PAYMENT_METHOD_TYPE_AFFIRM_METHODS: ['affirm'],
+  CTP_CARBON_OFFSET_COSTS_RESPONSE: 'getCarbonOffsetCostsResponse',
+  CTP_INTERACTION_TYPE_GET_CARBON_OFFSET_COSTS: 'getCarbonOffsetCosts',
 }

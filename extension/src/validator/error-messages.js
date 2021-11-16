@@ -3,7 +3,6 @@ module.exports = {
     'getPaymentMethodsRequest does not contain valid JSON.',
   MAKE_PAYMENT_REQUEST_INVALID_JSON:
     'makePaymentRequest does not contain valid JSON.',
-  // eslint-disable-next-line max-len
   SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON:
     'submitAdditionalPaymentDetailsRequest does not contain valid JSON.',
   AMOUNT_PLANNED_NOT_SAME:
@@ -18,4 +17,6 @@ module.exports = {
   UNAUTHORIZED_REQUEST: 'The request is unauthorized.',
   MISSING_CREDENTIAL:
     'Credential is missing in required project configuration.',
+  GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON:
+    'getCarbonOffsetCostsRequest does not contain valid JSON.',
 }
