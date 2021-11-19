@@ -31,6 +31,7 @@
   - [Test and go live](#test-and-go-live)
 - [Manual Capture](#manual-capture)
 - [Cancel or refund](#cancel-or-refund)
+- [Restore](#restore)
 - [Multi-tenancy](#multi-tenancy)
 - [Best Practices](#best-practices)
 
@@ -767,6 +768,11 @@ This will either:
 
 - [**Cancel**](CancelPayment.md) - cancel the authorisation on an uncaptured payment(full payment).
 - [**Refund**](Refund.md) - (partially) refund a payment back to the shopper.
+
+# Restore
+
+Restore gives your shoppers an opportunity to offset their carbon emissions from the delivery or lifecycle of their purchase at checkout.
+For the integration details please follow our [restore documentation](./Restore.md).
 
 # Multi-tenancy
 

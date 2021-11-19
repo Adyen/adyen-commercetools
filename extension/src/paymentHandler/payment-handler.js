@@ -6,6 +6,7 @@ const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
 const manualCaptureHandler = require('./manual-capture.handler')
 const cancelHandler = require('./cancel-payment.handler')
 const refundHandler = require('./refund-payment.handler')
+const getCarbonOffsetCostsHandler = require('./get-carbon-offset-costs.handler')
 const pU = require('./payment-utils')
 const auth = require('../validator/authentication')
 const errorMessages = require('../validator/error-messages')
@@ -77,6 +78,11 @@ function _getPaymentHandlers(paymentObject) {
     !paymentObject.custom.fields.getPaymentMethodsResponse
   )
     handlers.push(getPaymentMethodsHandler)
+  if (
+    paymentObject.custom.fields.getCarbonOffsetCostsRequest &&
+    !paymentObject.custom.fields.getCarbonOffsetCostsResponse
+  )
+    handlers.push(getCarbonOffsetCostsHandler)
   if (
     paymentObject.custom.fields.makePaymentRequest &&
     !paymentObject.custom.fields.makePaymentResponse
