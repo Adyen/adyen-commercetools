@@ -23,10 +23,10 @@ describe('::creditCardPayment3dsNative::', () => {
 
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
-    {
-      name: 'Mastercard',
-      creditCardNumber: '5454 5454 5454 5454',
-    },
+    // {
+    //   name: 'Mastercard',
+    //   creditCardNumber: '5454 5454 5454 5454',
+    // },
     {
       name: 'Visa',
       creditCardNumber: '4917 6100 0000 0000',
@@ -181,8 +181,6 @@ describe('::creditCardPayment3dsNative::', () => {
     await redirectPaymentFormPage.redirectToAdyenPaymentPage(
       makePaymentResponse
     )
-
-    await browserTab.waitForTimeout(15_000)
 
     // Submit additional details
     const creditCardNativePage = new CreditCardNativePage(browserTab, baseUrl)
