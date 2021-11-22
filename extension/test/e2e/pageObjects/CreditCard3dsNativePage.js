@@ -7,7 +7,6 @@ module.exports = class CreditCard3dsNativePage {
   }
 
   async finish3dsNativePayment() {
-    await this.page.waitForTimeout(5_000)
     await executeInAdyenIframe(this.page, '[name=answer]', (el) =>
       el.type('password')
     )
