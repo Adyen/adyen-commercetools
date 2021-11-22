@@ -1,3 +1,5 @@
+const { readFile } = require('fs/promises')
+
 let config
 
 function getModuleConfig() {
@@ -98,9 +100,20 @@ function getAdyenPaymentMethodsToNames() {
   }
 }
 
-function loadAndValidateConfig() {
+async function getConfigFileContent(path) {
+  return readFile(path, 'utf-8')
+}
+
+async function loadAndValidateConfig() {
   try {
-    config = JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
+    if (process.env.ADYEN_INTEGRATION_CONFIG !== undefined) {
+      config = JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
+    } else if (process.env.ADYEN_INTEGRATION_CONFIG_FILE !== undefined) {
+      const jsonContent = await getConfigFileContent(
+        process.env.ADYEN_INTEGRATION_CONFIG_FILE
+      )
+      config = JSON.parse(jsonContent)
+    }
   } catch (e) {
     throw new Error(
       'Adyen integration configuration is not provided in the JSON format'
@@ -136,7 +149,9 @@ function loadAndValidateConfig() {
   }
 }
 
-loadAndValidateConfig()
+;(async () => {
+  loadAndValidateConfig()
+})()
 
 module.exports = {
   getModuleConfig,

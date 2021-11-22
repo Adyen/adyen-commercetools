@@ -1,29 +1,50 @@
-const { isEmpty } = require('lodash')
+const { readFile } = require('fs/promises')
 
 let config
 
 function getModuleConfig() {
   let removeSensitiveData = config.removeSensitiveData !== 'false'
   if (config.removeSensitiveData === false) removeSensitiveData = false
-  return {
+
+  const result = {
     removeSensitiveData,
     port: config.port,
     logLevel: config.logLevel,
+    apiExtensionBaseUrl: config.apiExtensionBaseUrl, // used only for development purpose
+    basicAuth: config.basicAuth || false,
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
   }
+  return result
+}
+
+function _validateAuthenticationConfig(ctpConfig) {
+  if (getModuleConfig().basicAuth === true && !ctpConfig.authentication) {
+    return 'Basic authentication is enabled but authentication setting is missing.'
+  }
+
+  if (ctpConfig.authentication) {
+    if (
+      ctpConfig.authentication.scheme?.toLowerCase() !== 'basic' ||
+      !ctpConfig.authentication.username ||
+      !ctpConfig.authentication.password
+    ) {
+      // scheme must be basic type, and username and password must be all provided if authentication object exists
+      return 'Attributes (scheme, username or password) is missing in authentication setting.'
+    }
+    return null
+  }
+  return null
 }
 
 function getCtpConfig(ctpProjectKey) {
   const ctpConfig = config.commercetools[ctpProjectKey]
   if (!ctpConfig)
     throw new Error(
-      `Configuration is not provided. Please update the configuration. ctpProjectKey: [${JSON.stringify(
-        ctpProjectKey
-      )}]`
+      `Configuration is not provided. Please update the configuration. ctpProjectKey: [${ctpProjectKey}]`
     )
-  return {
+  const result = {
     clientId: ctpConfig.clientId,
     clientSecret: ctpConfig.clientSecret,
     projectKey: ctpProjectKey,
@@ -32,6 +53,14 @@ function getCtpConfig(ctpProjectKey) {
     authUrl:
       ctpConfig.authUrl || 'https://auth.europe-west1.gcp.commercetools.com',
   }
+  if (ctpConfig.authentication) {
+    result.authentication = {
+      scheme: ctpConfig.authentication.scheme,
+      username: ctpConfig.authentication.username,
+      password: ctpConfig.authentication.password,
+    }
+  }
+  return result
 }
 
 function getAdyenConfig(adyenMerchantAccount) {
@@ -43,8 +72,12 @@ function getAdyenConfig(adyenMerchantAccount) {
       )}`
     )
   return {
-    secretHmacKey: adyenConfig.secretHmacKey,
-    enableHmacSignature: adyenConfig.enableHmacSignature !== 'false',
+    apiKey: adyenConfig.apiKey,
+    apiBaseUrl: adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v68',
+    legacyApiBaseUrl:
+      adyenConfig.legacyApiBaseUrl ||
+      'https://pal-test.adyen.com/pal/servlet/Payment/v64',
+    clientKey: adyenConfig.clientKey || '', // used only for development purpose
   }
 }
 
@@ -58,22 +91,35 @@ function getAllAdyenMerchantAccounts() {
 
 function getAdyenPaymentMethodsToNames() {
   return {
-    scheme: 'Credit Card',
-    pp: 'PayPal',
-    klarna: 'Klarna',
-    gpay: 'Google Pay',
+    scheme: { en: 'Credit Card' },
+    pp: { en: 'PayPal' },
+    klarna: { en: 'Klarna' },
+    affirm: { en: 'Affirm' },
+    gpay: { en: 'Google Pay' },
     ...(config.adyenPaymentMethodsToNames || {}),
   }
 }
 
-function loadAndValidateConfig() {
+async function getConfigFileContent(path) {
+  return readFile(path, 'utf-8')
+}
+
+async function loadAndValidateConfig() {
   try {
-    config = JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
+    if (process.env.ADYEN_INTEGRATION_CONFIG !== undefined) {
+      config = JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
+    } else if (process.env.ADYEN_INTEGRATION_CONFIG_FILE !== undefined) {
+      const jsonContent = await getConfigFileContent(
+        process.env.ADYEN_INTEGRATION_CONFIG_FILE
+      )
+      config = JSON.parse(jsonContent)
+    }
   } catch (e) {
     throw new Error(
       'Adyen integration configuration is not provided in the JSON format'
     )
   }
+
   const numberOfCtpConfigs = Object.keys(config.commercetools).length
   const numberOfAdyenConfigs = Object.keys(config.adyen).length
   if (numberOfCtpConfigs === 0)
@@ -93,24 +139,19 @@ function loadAndValidateConfig() {
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
           'Please verify that all projects have projectKey, clientId and clientSecret'
       )
-  }
-
-  for (const [adyenMerchantAccount, adyenConfig] of Object.entries(
-    config.adyen
-  )) {
-    if (
-      adyenConfig.enableHmacSignature !== 'false' &&
-      isEmpty(adyenConfig.secretHmacKey)
-    )
+    const errorMessage = _validateAuthenticationConfig(ctpConfig)
+    if (errorMessage) {
       throw new Error(
-        `[${adyenMerchantAccount}]: The "secretHmacKey" config variable is missing to be able to verify ` +
-          `notifications, please generate a secret HMAC key in Adyen Customer Area ` +
-          `or set "enableHmacSignature=false" to disable the verification feature.`
+        `Authentication is not properly configured. Please update the configuration. error : [${errorMessage}] 
+        ctpProjectKey: [${ctpProjectKey}]`
       )
+    }
   }
 }
 
-loadAndValidateConfig()
+;(async () => {
+  loadAndValidateConfig()
+})()
 
 module.exports = {
   getModuleConfig,

@@ -15,8 +15,8 @@
     "check": "npm run lint && prettier --check .",
     "format": "prettier --write .",
     "rename-indexfile": "cp index.googleFunction.js index.js",
-    "zip-google-function": "cp index.googleFunction.js index.js && zip -r notification-module.zip src resources index.js package.json && rm index.js",
-    "zip-lambda-function": "cp index.lambda.js index.js && npm ci --production && zip -r notification-module.zip . && rm index.js",
+    "zip-google-function": "cp index.googleFunction.js index.js && cp ../config.json config.json && zip -r notification-module.zip src resources index.js package.json && rm index.js && rm config.json",
+    "zip-lambda-function": "cp index.lambda.js index.js && cp ../config.json config.json && npm ci --production && zip -r notification-module.zip . && rm index.js && rm config.json",
     "setup-resources": "node -e 'require(\"./src/setup.js\").setupNotificationResources()'"
   },
   "keywords": [

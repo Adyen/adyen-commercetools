@@ -19,7 +19,7 @@
 
 ## Environment variable
 
-Extension module requires 1 environment variable to start. This environment variable name is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JSON structure.
+Extension module requires 1 environment variable to start. This environment variable name is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JSON structure. If your configuration needs more positions than you can provide in the process environment (e.g. AWS Lambda's process env is limited to 4KB), you can push needed configuration in to the `config.json` from main directory and next add environment variable `ADYEN_INTEGRATION_CONFIG_FILE` with path to this file (in this case you don't need `ADYEN_INTEGRATION_CONFIG`). By default value for this environment should be set to `./config.json`, because this file will be copied in to the main `extension` directory during the `zip-...-function` script.
 
 ```json
 {
