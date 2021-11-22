@@ -68,8 +68,7 @@ describe('::creditCardPayment3dsNative::', () => {
       const creditCardCvc = '737'
 
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-      const clientKey =
-        config.getAdyenConfig(adyenMerchantAccount).clientKey
+      const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
       let paymentAfterAuthentication
       try {
         const payment = await createPayment(
