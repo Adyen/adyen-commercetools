@@ -21,7 +21,9 @@ function loadFromExternalFile() {
   see: https://github.com/dominictarr/rc#standards for file precedence.
    */
   const appName = 'extension'
+  /* eslint-disable global-require */
   const configFromExternalFile = require('rc')(appName)
+  /* eslint-enable global-require */
   const hasConfig = configFromExternalFile?.configs?.length > 0
   if (!hasConfig) {
     throw new Error('Adyen integration configuration is not provided.')
