@@ -443,7 +443,9 @@ describe('::config::', () => {
       requireUncached('../../../src/config/config')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
-      expect(e.message).to.contain('configuration is not provided in the JSON format')
+      expect(e.message).to.contain(
+        'configuration is not provided in the JSON format'
+      )
     }
   })
 })
