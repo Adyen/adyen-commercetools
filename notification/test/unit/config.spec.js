@@ -137,4 +137,14 @@ describe('::config::', () => {
       expect(config.getModuleConfig().removeSensitiveData).to.eql(true)
     }
   )
+
+  it('when ADYEN_INTEGRATION_CONFIG is not valid JSON, it should throw error', () => {
+    process.env.ADYEN_INTEGRATION_CONFIG = '{"a"}'
+    try {
+      requireUncached('../../src/config/config')
+      expect.fail('This test should throw an error, but it did not')
+    } catch (e) {
+      expect(e.message).to.contain('configuration is not provided in the JSON format')
+    }
+  })
 })
