@@ -453,7 +453,7 @@ describe('::config::', () => {
 
   it(
     'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
-    'then it should load configuration correctly',
+      'then it should load configuration correctly',
     () => {
       const filePath = `${homedir}/.extensionrc`
       try {
@@ -484,7 +484,27 @@ describe('::config::', () => {
         }
         fs.writeFileSync(filePath, JSON.stringify(config), 'utf-8')
 
-        requireUncached('../../../src/config/config')
+        const loadedConfig = requireUncached('../../../src/config/config')
+        expect(loadedConfig.getCtpConfig('ctpProjectKey1')).to.deep.equal({
+          clientId: 'clientId',
+          clientSecret: 'clientSecret',
+          apiUrl: 'host',
+          authUrl: 'authUrl',
+          projectKey: 'ctpProjectKey1',
+          authentication: {
+            scheme: 'basic',
+            username: 'username',
+            password: 'password',
+          },
+        })
+        expect(
+          loadedConfig.getAdyenConfig('adyenMerchantAccount1')
+        ).to.deep.equal({
+          apiBaseUrl: 'apiBaseUrl',
+          apiKey: 'apiKey',
+          clientKey: 'clientKey',
+          legacyApiBaseUrl: 'legacyApiBaseUrl',
+        })
       } finally {
         fs.unlinkSync(filePath)
       }
