@@ -142,7 +142,7 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 
 ### External file configuration
 
-In case you have a huge configuration that reaches above the environment limits (e.g the total size of all environment variables on AWS Lambda can't exceed 4 KB.), you could use the external file configuration, with that the notification module will look the `.notificationrc` file in the notification folder, the file should contain the same content as it's defined with environment variable.
+In case you have a huge configuration that reaches above the environment limits (e.g the total size of all environment variables on AWS Lambda can't exceed 4 KB.), you could use the external file configuration instead of setting `ADYEN_INTEGRATION_CONFIG` environment variable. The notification module will look for the `.notificationrc` file in the `notification` folder. The file should contain the same JSON content as it's defined with environment variable.
 
 ## Commercetools project requirements
 
