@@ -1,4 +1,6 @@
 const { expect } = require('chai')
+const fs = require('fs')
+const homedir = require('os').homedir()
 
 describe('::config::', () => {
   it('when hmac is enabled but no hmac key, it should throw an error', () => {
@@ -135,6 +137,64 @@ describe('::config::', () => {
       })
       const config = requireUncached('../../src/config/config')
       expect(config.getModuleConfig().removeSensitiveData).to.eql(true)
+    }
+  )
+
+  it('when ADYEN_INTEGRATION_CONFIG is not valid JSON, it should throw error', () => {
+    process.env.ADYEN_INTEGRATION_CONFIG = '{"a"}'
+    try {
+      requireUncached('../../src/config/config')
+      expect.fail('This test should throw an error, but it did not')
+    } catch (e) {
+      expect(e.message).to.contain(
+        'configuration is not provided in the JSON format'
+      )
+    }
+  })
+
+  it(
+    'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
+      'then it should load configuration correctly',
+    () => {
+      const filePath = `${homedir}/.notificationrc`
+      try {
+        delete process.env.ADYEN_INTEGRATION_CONFIG
+        const config = {
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              enableHmacSignature: 'false',
+            },
+          },
+          logLevel: 'DEBUG',
+          removeSensitiveData: true,
+        }
+        fs.writeFileSync(filePath, JSON.stringify(config), 'utf-8')
+
+        const loadedConfig = requireUncached('../../src/config/config')
+        expect(loadedConfig.getCtpConfig('ctpProjectKey1')).to.deep.equal({
+          clientId: 'clientId',
+          clientSecret: 'clientSecret',
+          apiUrl: 'host',
+          authUrl: 'authUrl',
+          projectKey: 'ctpProjectKey1',
+        })
+        expect(
+          loadedConfig.getAdyenConfig('adyenMerchantAccount1')
+        ).to.deep.equal({
+          enableHmacSignature: false,
+          secretHmacKey: undefined,
+        })
+      } finally {
+        fs.unlinkSync(filePath)
+      }
     }
   )
 })

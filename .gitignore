@@ -25,3 +25,5 @@ secrets.yaml
 .nyc_output/
 
 *.zip
+.extensionrc
+.notificationrc

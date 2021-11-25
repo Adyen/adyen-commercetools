@@ -7,6 +7,7 @@
   - [Adyen](#adyen)
   - [commercetools](#commercetools)
   - [Other Configurations](#other-configurations)
+  - [External file configuration](#external-file-configuration)
 - [Commercetools project requirements](#commercetools-project-requirements)
 - [Running](#running)
   - [Docker](#docker)
@@ -138,6 +139,10 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 | `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                             | NO       | `info`                                                                                                |
 | `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                   | NO       | Node.js default (5 seconds)                                                                           |
 | `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.         | NO       | true                                                                                                  |
+
+### External file configuration
+
+In case you have a huge configuration that reaches above the environment limits (e.g the total size of all environment variables on AWS Lambda can't exceed 4 KB.), you could use the external file configuration instead of setting `ADYEN_INTEGRATION_CONFIG` environment variable. The notification module will look for the `.notificationrc` file in the `notification` folder. The file should contain the same JSON content as it's defined with environment variable.
 
 ## Commercetools project requirements
 

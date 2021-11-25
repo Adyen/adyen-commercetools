@@ -1,4 +1,5 @@
 const { isEmpty } = require('lodash')
+const loadConfig = require('./config-loader')
 
 let config
 
@@ -67,13 +68,8 @@ function getAdyenPaymentMethodsToNames() {
 }
 
 function loadAndValidateConfig() {
-  try {
-    config = JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
-  } catch (e) {
-    throw new Error(
-      'Adyen integration configuration is not provided in the JSON format'
-    )
-  }
+  config = loadConfig()
+
   const numberOfCtpConfigs = Object.keys(config.commercetools).length
   const numberOfAdyenConfigs = Object.keys(config.adyen).length
   if (numberOfCtpConfigs === 0)
