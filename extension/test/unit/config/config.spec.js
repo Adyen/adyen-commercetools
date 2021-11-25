@@ -1,4 +1,6 @@
 const { expect } = require('chai')
+const fs = require('fs')
+const homedir = require('os').homedir()
 
 describe('::config::', () => {
   it('when config is provided, it should load correctly', () => {
@@ -448,4 +450,44 @@ describe('::config::', () => {
       )
     }
   })
+
+  it(
+    'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
+    'then it should load configuration correctly',
+    () => {
+      const filePath = `${homedir}/.extensionrc`
+      try {
+        delete process.env.ADYEN_INTEGRATION_CONFIG
+        const config = {
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+              authentication: {
+                scheme: 'basic',
+                username: 'username',
+                password: 'password',
+              },
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              apiBaseUrl: 'apiBaseUrl',
+              apiKey: 'apiKey',
+              clientKey: 'clientKey',
+              legacyApiBaseUrl: 'legacyApiBaseUrl',
+            },
+          },
+          logLevel: 'DEBUG',
+        }
+        fs.writeFileSync(filePath, JSON.stringify(config), 'utf-8')
+
+        requireUncached('../../../src/config/config')
+      } finally {
+        fs.unlinkSync(filePath)
+      }
+    }
+  )
 })
