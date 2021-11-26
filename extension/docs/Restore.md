@@ -25,6 +25,7 @@ Restore feature requires additional configuration. Please [submit a support requ
 In your request please specify which offset type you are choosing and which climate action project you would like to support. The following are available:
 
 1. Offset type:
+
    - the delivery of purchases or
    - the entire lifecycle of purchases
 
