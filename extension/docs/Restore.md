@@ -22,6 +22,16 @@ This document describes the integration steps of restore.
 
 Restore feature requires additional configuration. Please [submit a support request](https://www.adyen.help/hc/en-us/requests/new) for the required setup.
 
+In your request please specify which offset type you are choosing and which climate action project you would like to support. The following are available:
+
+1. Offset type:
+   - the delivery of purchases or
+   - the entire lifecycle of purchases
+
+2. Climate action project:
+   - forestry projects or
+   - renewable energy projects
+
 ## Requesting offset costs
 
 To request offset costs via our integration, you need to set the `getCarbonOffsetCostsRequest` custom field to your existing commercetools payment or create a payment right away with the custom field set. We recommend to request offset costs before [Step 5: Make a payment](./WebComponentsIntegrationGuide.md/#step-5-make-a-payment).
