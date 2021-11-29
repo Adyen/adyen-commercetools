@@ -10,7 +10,7 @@ module.exports = class CreditCard3dsNativePage {
     await executeInAdyenIframe(this.page, '[name=answer]', (el) =>
       el.type('password')
     )
-    await executeInAdyenIframe(this.page, '.button--primary', (el) =>
+    await executeInAdyenIframe(this.page, 'button[type=submit]', (el) =>
       el.click()
     )
 
