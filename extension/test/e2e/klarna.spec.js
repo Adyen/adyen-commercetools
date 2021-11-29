@@ -168,17 +168,14 @@ describe('::klarnaPayment::', () => {
       baseUrl
     )
     await redirectPaymentFormPage.goToThisPage()
-    await Promise.all([
-      redirectPaymentFormPage.redirectToAdyenPaymentPage(makePaymentResponse),
-      browserTab.waitForSelector('#buy-button:not([disabled])'),
-    ])
+    await redirectPaymentFormPage.redirectToAdyenPaymentPage(
+      makePaymentResponse
+    )
+    await browserTab.waitForSelector('#buy-button:not([disabled])')
 
     const klarnaPage = new KlarnaPage(browserTab)
-
-    await Promise.all([
-      klarnaPage.finishKlarnaPayment(),
-      browserTab.waitForSelector('#redirect-response'),
-    ])
+    await klarnaPage.finishKlarnaPayment()
+    await browserTab.waitForSelector('#redirect-response')
 
     // Submit payment details
     const returnPageUrl = new URL(browserTab.url())

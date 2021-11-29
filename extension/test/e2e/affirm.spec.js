@@ -149,17 +149,15 @@ describe('::affirmPayment::', () => {
       baseUrl
     )
     await redirectPaymentFormPage.goToThisPage()
-    await Promise.all([
-      redirectPaymentFormPage.redirectToAdyenPaymentPage(makePaymentResponse),
-      browserTab.waitForSelector('.propvHOJQwT:not([disabled])'),
-    ])
+    await redirectPaymentFormPage.redirectToAdyenPaymentPage(
+      makePaymentResponse
+    )
+    await browserTab.waitForSelector('.propvHOJQwT:not([disabled])')
 
     const affirmPage = new AffirmPage(browserTab)
 
-    await Promise.all([
-      affirmPage.finishAffirmPayment(),
-      browserTab.waitForSelector('#redirect-response'),
-    ])
+    await affirmPage.finishAffirmPayment()
+    await browserTab.waitForSelector('#redirect-response')
 
     // Submit payment details
     const returnPageUrl = new URL(browserTab.url())
