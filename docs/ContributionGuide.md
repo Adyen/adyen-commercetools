@@ -51,3 +51,4 @@ Following additional environment variables must be provided in order to run the 
 ##### Debugging
 
 E2E tests using [puppeteer](https://github.com/puppeteer/puppeteer) library for testing payment sandbox UI's on the Chrome browser. Refer to puppeteer [debugging tips](https://github.com/puppeteer/puppeteer#debugging-tips) documentation such as turning off headless mode and using nodejs debugger, which might be useful to develop new UI integration or troubleshooting UI flow.
+Addition to the tips provided by puppeteer, if you're using IntelliJ Idea, you could also debug using the build-in Mocha test runner since the tests using Mocha.
