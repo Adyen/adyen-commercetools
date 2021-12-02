@@ -1,8 +1,12 @@
 {
-  "extends": ["commercetools", "prettier"],
+  "extends": ["airbnb-base", "prettier"],
+  "parserOptions": {
+    "ecmaVersion": 2021
+  },
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "mocha": true
   },
   "rules": {
     "nonblock-statement-body-position": "off",
@@ -23,6 +27,9 @@
     "indent": "off",
     "operator-linebreak": "off",
     "no-await-in-loop": "off",
-    "prefer-destructuring": "off"
+    "prefer-destructuring": "off",
+    "no-use-before-define": [ 2, "nofunc" ],
+    "no-underscore-dangle": "off",
+    "dot-notation": "off"
   }
 }
