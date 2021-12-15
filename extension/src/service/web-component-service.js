@@ -113,10 +113,17 @@ function extendRequestObjWithApplicationInfo(requestObj) {
 }
 
 function extendRequestObjWithMetadata(requestObj, commercetoolsProjectKey) {
-  requestObj.metadata = {
-    // metadata key must have length of max. 20 chars
-    // metadata value must have length of max. 80 chars
-    ctProjectKey: commercetoolsProjectKey,
+  if (requestObj.metadata) {
+    requestObj.metadata = {
+      ...requestObj.metadata,
+      ctProjectKey: commercetoolsProjectKey
+    }
+  } else {
+    requestObj.metadata = {
+      // metadata key must have length of max. 20 chars
+      // metadata value must have length of max. 80 chars
+      ctProjectKey: commercetoolsProjectKey,
+    }
   }
 }
 
