@@ -35,8 +35,8 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
           adyenMerchantAccount: adyenMerchantAccount1,
           metadata: {
             orderNumber: `externalOrderSystem-12345`,
-            receiptNumber: `externalOrderSystem-receipt123`
-          }
+            receiptNumber: `externalOrderSystem-receipt123`,
+          },
         }),
         makePayment({
           reference: 'paymentFromMerchant2',

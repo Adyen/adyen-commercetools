@@ -116,7 +116,7 @@ function extendRequestObjWithMetadata(requestObj, commercetoolsProjectKey) {
   if (requestObj.metadata) {
     requestObj.metadata = {
       ...requestObj.metadata,
-      ctProjectKey: commercetoolsProjectKey
+      ctProjectKey: commercetoolsProjectKey,
     }
   } else {
     requestObj.metadata = {
