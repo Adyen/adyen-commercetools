@@ -21,7 +21,6 @@ jobs:
           echo $ADYEN_INTEGRATION_CONFIG >> sources/.extensionrc
           cp index.googleFunction.js index.js
           cp -R {index.js,.extensionrc,src,resources,package.json} sources
-        shell: bash
         env:
           ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
       - id: auth
