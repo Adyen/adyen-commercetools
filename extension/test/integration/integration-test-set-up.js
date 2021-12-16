@@ -408,7 +408,7 @@ async function stopLocal() {
 // this part used only on github actions (CI)
 async function startCI() {
   await setupLocalServer()
-  overrideApiExtensionBaseUrlConfig('http://localhost')
+  overrideApiExtensionBaseUrlConfig(`http://localhost:${port}`)
   await setupExtensionResources(process.env.CI_EXTENSION_BASE_URL)
 }
 
