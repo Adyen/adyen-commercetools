@@ -20,7 +20,7 @@ jobs:
       - id: setup-ci-server
         uses: google-github-actions/deploy-cloud-functions@v0
         with:
-          name: test-ga
+          name: test-ga-2
           region: europe-west3
           runtime: nodejs14
           entry_point: extensionTrigger
