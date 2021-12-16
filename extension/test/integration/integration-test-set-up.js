@@ -4,7 +4,6 @@ const _ = require('lodash')
 const ctpZone = require('./fixtures/ctp-zone.json')
 const ctpTaxCategory = require('./fixtures/ctp-tax-category.json')
 const ctpShippingMethod = require('./fixtures/ctp-shipping-method.json')
-const ctpShippingMethodUsd = require('./fixtures/usd/ctp-shipping-method.json')
 const ctpProductType = require('./fixtures/ctp-product-type.json')
 const ctpProduct = require('./fixtures/ctp-product.json')
 const ctpPayment = require('./fixtures/ctp-payment.json')
@@ -188,10 +187,7 @@ async function _ensureShippingMethods(ctpClient, taxCategoryId, zoneId) {
     ctpClient.builder.shippingMethods.where(`key="${ctpShippingMethod.key}"`)
   )
   if (body.results.length === 0) {
-    let ctpShippingMethodClone
-    if (currency === 'USD')
-      ctpShippingMethodClone = _.cloneDeep(ctpShippingMethodUsd)
-    else ctpShippingMethodClone = _.cloneDeep(ctpShippingMethod)
+    const ctpShippingMethodClone = _.cloneDeep(ctpShippingMethod)
     ctpShippingMethodClone.taxCategory.id = taxCategoryId
     ctpShippingMethodClone.zoneRates[0].zone.id = zoneId
     return ctpClient.create(
@@ -298,8 +294,10 @@ async function _ensureDiscountCodeShipping(ctpClient, cartDiscountId) {
 }
 
 async function _ensureProducts(ctpClient, productTypeId, taxCategoryId) {
+  const productKey = currency === 'USD' ? ctpProductUsd.key : ctpProduct.key
+
   const { body } = await ctpClient.fetch(
-    ctpClient.builder.products.where(`key="${ctpProduct.key}"`)
+    ctpClient.builder.products.where(`key="${productKey}"`)
   )
   if (body.results.length === 0) {
     let ctpProductClone
@@ -381,12 +379,15 @@ async function initPaymentWithCart({
   adyenMerchantAccount,
   commercetoolsProjectKey,
 }) {
-  const payment = await _ensureCtpResources({
-    ctpClient,
-    adyenMerchantAccount,
-    commercetoolsProjectKey,
-  })
-  return payment
+  try {
+    return await _ensureCtpResources({
+      ctpClient,
+      adyenMerchantAccount,
+      commercetoolsProjectKey,
+    })
+  } catch (e) {
+    throw e
+  }
 }
 
 async function stopRunningServers() {

@@ -17,18 +17,13 @@ describe('::affirmMakePayment with multiple projects use case::', () => {
     const ctpConfig1 = config.getCtpConfig(commercetoolsProjectKey1)
     ctpClientProject1 = ctpClientBuilder.get(ctpConfig1)
 
-    await iTSetUp.cleanupCtpResources(ctpClientProject1)
-
     const ctpConfig2 = config.getCtpConfig(commercetoolsProjectKey2)
     ctpClientProject2 = ctpClientBuilder.get(ctpConfig2)
 
-    await iTSetUp.cleanupCtpResources(ctpClientProject2)
     iTSetUp.initCurrency('USD')
   })
 
   afterEach(async () => {
-    await iTSetUp.cleanupCtpResources(ctpClientProject1)
-    await iTSetUp.cleanupCtpResources(ctpClientProject2)
     iTSetUp.initCurrency('EUR')
   })
 
@@ -43,13 +38,13 @@ describe('::affirmMakePayment with multiple projects use case::', () => {
           ctpClient: ctpClientProject1,
           adyenMerchantAccount: adyenMerchantAccount1,
           commercetoolsProjectKey: commercetoolsProjectKey1,
-          reference: 'paymentFromMerchant1_'.concat(Date.now().toString()),
+          reference: `affirmMakePayment1-${new Date().getTime()}`,
         }),
         makePayment({
           ctpClient: ctpClientProject2,
           adyenMerchantAccount: adyenMerchantAccount2,
           commercetoolsProjectKey: commercetoolsProjectKey2,
-          reference: 'paymentFromMerchant2_'.concat(Date.now().toString()),
+          reference: `affirmMakePayment2-${new Date().getTime()}`,
         }),
       ])
     }

@@ -20,11 +20,6 @@ describe('::refund::', () => {
   beforeEach(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
-    await iTSetUp.cleanupCtpResources(ctpClient)
-  })
-
-  afterEach(async () => {
-    await iTSetUp.cleanupCtpResources(ctpClient)
   })
 
   it(
