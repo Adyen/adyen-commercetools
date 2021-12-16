@@ -27,3 +27,4 @@ secrets.yaml
 *.zip
 .extensionrc
 .notificationrc
+/sources/

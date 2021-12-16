@@ -15,7 +15,7 @@ jobs:
         working-directory: extension
     steps:
       - uses: actions/checkout@v2
-      - run: cp index.googleFunction.js index.js
+      - run: mkdir -p sources && cp index.googleFunction.js index.js && cp -R {index.js,src,resources,package.json} sources
       - id: auth
         uses: google-github-actions/auth@v0
         with:
@@ -25,7 +25,7 @@ jobs:
       - name: Use gcloud CLI
         run: gcloud info
       - name: gcloud
-        run: gcloud functions deploy test-ga-3 --region europe-west3 --entry-point extensionTrigger --runtime nodejs14 --trigger-http --allow-unauthenticated
+        run: gcloud functions deploy test-ga-3 --region europe-west3 --source sources --entry-point extensionTrigger --runtime nodejs14 --trigger-http --allow-unauthenticated
 
 #      - name: Use Node.js 14.x
 #        uses: actions/setup-node@v2
