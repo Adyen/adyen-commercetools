@@ -17,10 +17,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: prepare sources
         run: |
-          mkdir -p sources
-          echo $ADYEN_INTEGRATION_CONFIG >> sources/.extensionrc
-          cp index.googleFunction.js index.js
+          echo $ADYEN_INTEGRATION_CONFIG >> .extensionrc
+          mkdir -p sources && cp index.googleFunction.js index.js
           cp -R {index.js,.extensionrc,src,resources,package.json} sources
+          rm .extensionrc
+        shell: bash
         env:
           ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
       - id: auth
