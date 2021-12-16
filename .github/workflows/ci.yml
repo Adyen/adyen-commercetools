@@ -13,10 +13,17 @@ jobs:
     defaults:
       run:
         working-directory: extension
-
     steps:
       - uses: actions/checkout@v2
       - run: cp index.googleFunction.js index.js
+      - id: auth
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.3.0
+      - name: Use gcloud CLI
+        run: gcloud info
       - id: setup-ci-server
         uses: google-github-actions/deploy-cloud-functions@v0
         with:
