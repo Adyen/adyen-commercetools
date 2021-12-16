@@ -15,7 +15,14 @@ jobs:
         working-directory: extension
     steps:
       - uses: actions/checkout@v2
-      - run: mkdir -p sources && cp index.googleFunction.js index.js && cp -R {index.js,src,resources,package.json} sources
+      - name: prepare sources
+        run: |
+          echo $ADYEN_INTEGRATION_CONFIG >> .extensionrc
+          mkdir -p sources && cp index.googleFunction.js index.js
+          cp -R {index.js,.extensionrc,src,resources,package.json} sources
+        shell: bash
+        env:
+          ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
       - id: auth
         uses: google-github-actions/auth@v0
         with:
@@ -30,12 +37,7 @@ jobs:
             --entry-point extensionTrigger \
             --runtime nodejs14 \
             --trigger-http \
-            --allow-unauthenticated \
-            --set-env-vars ADYEN_INTEGRATION_CONFIG=$ADYEN_INTEGRATION_CONFIG
-        env:
-          ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
-
-
+            --allow-unauthenticated
 #      - name: Use Node.js 14.x
 #        uses: actions/setup-node@v2
 #        with:
