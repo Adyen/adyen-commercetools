@@ -16,15 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: mkdir -p sources && cp index.googleFunction.js index.js && cp -R {index.js,src,resources,package.json} sources
-      - id: auth
+      - id: gcloud auth
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-      - name: Set up Cloud SDK
+      - name: gcloud sdk
         uses: google-github-actions/setup-gcloud@v0.3.0
-      - name: Use gcloud CLI
-        run: gcloud info
-      - name: gcloud
+      - name: run gloud functions deploy
         run: |
           gcloud functions deploy test-ga-3 \
             --region europe-west3 \
@@ -32,7 +30,7 @@ jobs:
             --entry-point extensionTrigger \
             --runtime nodejs14 \
             --trigger-http \
-          - -allow-unauthenticated
+            --allow-unauthenticated
 
 #      - name: Use Node.js 14.x
 #        uses: actions/setup-node@v2
