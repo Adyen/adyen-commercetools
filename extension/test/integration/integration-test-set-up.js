@@ -88,8 +88,6 @@ async function initServerAndTunnel() {
 }
 
 async function initResources(ctpClient, ctpProjectKey, authHeaderValue) {
-  await testUtils.deleteAllResources(ctpClient, 'payments')
-  await testUtils.deleteAllResources(ctpClient, 'types')
   const { apiExtensionBaseUrl } = config.getModuleConfig()
   await ensureResources(
     ctpClient,
@@ -379,15 +377,11 @@ async function initPaymentWithCart({
   adyenMerchantAccount,
   commercetoolsProjectKey,
 }) {
-  try {
-    return await _ensureCtpResources({
-      ctpClient,
-      adyenMerchantAccount,
-      commercetoolsProjectKey,
-    })
-  } catch (e) {
-    throw e
-  }
+  return _ensureCtpResources({
+    ctpClient,
+    adyenMerchantAccount,
+    commercetoolsProjectKey,
+  })
 }
 
 async function stopRunningServers() {
