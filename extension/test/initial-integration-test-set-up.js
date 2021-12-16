@@ -13,7 +13,7 @@ before(async () => {
 })
 
 after(async () => {
-  if (process.env.CI) {
+  if (!process.env.CI) {
     // this part used only for debugging purposes (localhost)
     await iTSetUp.stopRunningServers()
   }
