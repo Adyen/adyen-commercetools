@@ -24,27 +24,19 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0.3.0
       - name: Use gcloud CLI
         run: gcloud info
-      - id: setup-ci-server
-        uses: google-github-actions/deploy-cloud-functions@v0
-        with:
-          name: test-ga-2
-          region: europe-west3
-          runtime: nodejs14
-          entry_point: extensionTrigger
-          env_vars: ADYEN_INTEGRATION_CONFIG={{ secrets.ADYEN_INTEGRATION_CONFIG }}
-          credentials: ${{ secrets.GCP_CREDENTIALS }}
-      - id: test
-        run: curl "${{ steps.deploy.outputs.url }}"
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14.x'
-      - run: npm ci
-      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
-      - run: npm run test
-        env:
-          ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
-          CI_EXTENSION_BASE_URL: ${{ secrets.CI_EXTENSION_BASE_URL }}
+      - name: gcloud
+        run: gcloud functions deploy test-ga-3 --region europe-west3 --entry-point extensionTrigger --runtime nodejs14 --trigger-http --allow-unauthenticated
+
+#      - name: Use Node.js 14.x
+#        uses: actions/setup-node@v2
+#        with:
+#          node-version: '14.x'
+#      - run: npm ci
+#      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+#      - run: npm run test
+#        env:
+#          ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
+#          CI_EXTENSION_BASE_URL: ${{ secrets.CI_EXTENSION_BASE_URL }}
 
   notification_build:
     name: Notification Module
