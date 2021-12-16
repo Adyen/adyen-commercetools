@@ -25,7 +25,14 @@ jobs:
       - name: Use gcloud CLI
         run: gcloud info
       - name: gcloud
-        run: gcloud functions deploy test-ga-3 --region europe-west3 --source sources --entry-point extensionTrigger --runtime nodejs14 --trigger-http --allow-unauthenticated
+        run: |
+          gcloud functions deploy test-ga-3 \
+            --region europe-west3 \
+            --source sources \
+            --entry-point extensionTrigger \
+            --runtime nodejs14 \
+            --trigger-http \
+          - -allow-unauthenticated
 
 #      - name: Use Node.js 14.x
 #        uses: actions/setup-node@v2
