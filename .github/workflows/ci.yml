@@ -16,13 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: mkdir -p sources && cp index.googleFunction.js index.js && cp -R {index.js,src,resources,package.json} sources
-      - id: gcloud auth
+      - id: auth
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: gcloud sdk
         uses: google-github-actions/setup-gcloud@v0.3.0
-      - name: run gloud functions deploy
+      - name: gcloud functions deploy
         run: |
           gcloud functions deploy test-ga-3 \
             --region europe-west3 \
