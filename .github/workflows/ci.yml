@@ -30,7 +30,11 @@ jobs:
             --entry-point extensionTrigger \
             --runtime nodejs14 \
             --trigger-http \
-            --allow-unauthenticated
+            --allow-unauthenticated \
+            --set-env-vars ADYEN_INTEGRATION_CONFIG=$ADYEN_INTEGRATION_CONFIG
+        env:
+          ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
+
 
 #      - name: Use Node.js 14.x
 #        uses: actions/setup-node@v2
