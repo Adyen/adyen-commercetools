@@ -19,6 +19,7 @@
     "format": "prettier --write .",
     "zip-google-function": "cp index.googleFunction.js index.js && zip -r extension-module.zip src resources index.js package.json && rm index.js",
     "zip-lambda-function": "cp index.lambda.js index.js && npm ci --production && zip -r extension-module.zip . && rm index.js",
+    "zip-azure-function": "cp index.azureFunction.js.js index.js && npm ci --production && zip -r extension-module.zip . && rm index.js",
     "setup-resources": "node -e 'require(\"./src/setup.js\").setupExtensionResources()'"
   },
   "keywords": [
