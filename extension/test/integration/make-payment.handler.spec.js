@@ -103,7 +103,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     if (metadata) {
       expect(makePaymentRequest.metadata).to.deep.equal({
         ctProjectKey: commercetoolsProjectKey,
-        ...metadata
+        ...metadata,
       })
     } else {
       expect(makePaymentRequest.metadata).to.deep.equal({
