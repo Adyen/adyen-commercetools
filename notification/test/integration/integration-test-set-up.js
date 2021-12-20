@@ -4,7 +4,6 @@ const { ensureResources } = require('./init/init-resources')
 const testUtils = require('../test-utils')
 
 async function prepareProject(ctpClient) {
-  await cleanupProject(ctpClient)
   await ensureResources(ctpClient)
 }
 

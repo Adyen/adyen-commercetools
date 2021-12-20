@@ -5,23 +5,21 @@ const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const iTSetUp = require('./integration-test-set-up')
 const config = require('../../src/config/config')
-const notifications = require('../resources/notification.json')
+const { ensurePayment } = require('./init/ensure-payment')
+const createNotificationPayload = require('./init/create-notification-payload')
 
 const localhostIp = address()
 
 describe('::multitenancy::', () => {
-  let commercetoolsProjectKey1
-  let commercetoolsProjectKey2
-  let adyenMerchantAccount1
-  let adyenMerchantAccount2
+  const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
+    config.getAllCtpProjectKeys()
+  const [adyenMerchantAccount1, adyenMerchantAccount2] =
+    config.getAllAdyenMerchantAccounts()
+
   let ctpClient1
   let ctpClient2
 
   beforeEach(async () => {
-    ;[commercetoolsProjectKey1, commercetoolsProjectKey2] =
-      config.getAllCtpProjectKeys()
-    ;[adyenMerchantAccount1, adyenMerchantAccount2] =
-      config.getAllAdyenMerchantAccounts()
     ctpClient1 = ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey1)
     )
@@ -35,37 +33,47 @@ describe('::multitenancy::', () => {
 
   afterEach(async () => {
     iTSetUp.stopServer()
-    await iTSetUp.cleanupProject(ctpClient1)
-    await iTSetUp.cleanupProject(ctpClient2)
   })
 
   it('should process payment correctly when notifications are from different projects', async () => {
-    const modifiedNotification1 = cloneDeep(notifications)
-    const modifiedNotification2 = cloneDeep(notifications)
+    const payment1Key = `notificationPayment1-${new Date().getTime()}`
+    const payment2Key = `notificationPayment2-${new Date().getTime()}`
+    await Promise.all([
+      ensurePayment(
+        ctpClient1,
+        payment1Key,
+        commercetoolsProjectKey1,
+        adyenMerchantAccount1
+      ),
+      ensurePayment(
+        ctpClient2,
+        payment2Key,
+        commercetoolsProjectKey2,
+        adyenMerchantAccount2
+      ),
+    ])
 
-    modifiedNotification1.notificationItems[0].NotificationRequestItem.additionalData =
-      {
-        'metadata.ctProjectKey': commercetoolsProjectKey1,
-      }
-    modifiedNotification1.notificationItems[0].NotificationRequestItem.merchantAccountCode =
-      adyenMerchantAccount1
+    const notificationPayload1 = createNotificationPayload(
+      commercetoolsProjectKey1,
+      adyenMerchantAccount1,
+      payment1Key
+    )
 
-    modifiedNotification2.notificationItems[0].NotificationRequestItem.additionalData =
-      {
-        'metadata.ctProjectKey': commercetoolsProjectKey2,
-      }
-    modifiedNotification2.notificationItems[0].NotificationRequestItem.merchantAccountCode =
-      adyenMerchantAccount2
+    const notificationPayload2 = createNotificationPayload(
+      commercetoolsProjectKey2,
+      adyenMerchantAccount2,
+      payment2Key
+    )
 
     const [response1, response2] = await Promise.all([
       fetch(`http://${localhostIp}:8000`, {
         method: 'post',
-        body: JSON.stringify(modifiedNotification1),
+        body: JSON.stringify(notificationPayload1),
         headers: { 'Content-Type': 'application/json' },
       }),
       fetch(`http://${localhostIp}:8000`, {
         method: 'post',
-        body: JSON.stringify(modifiedNotification2),
+        body: JSON.stringify(notificationPayload2),
         headers: { 'Content-Type': 'application/json' },
       }),
     ])
@@ -75,24 +83,25 @@ describe('::multitenancy::', () => {
     const response2Json = await response2.json()
     expect(response2Json).to.deep.equal({ notificationResponse: '[accepted]' })
 
-    const {
-      body: {
-        results: [paymentAfter1],
-      },
-    } = await ctpClient1.fetch(ctpClient1.builder.payments)
+    const { body: paymentAfter1 } = await ctpClient1.fetchByKey(
+      ctpClient1.builder.payments,
+      payment1Key
+    )
 
-    const {
-      body: {
-        results: [paymentAfter2],
-      },
-    } = await ctpClient2.fetch(ctpClient2.builder.payments)
+    const { body: paymentAfter2 } = await ctpClient2.fetchByKey(
+      ctpClient2.builder.payments,
+      payment2Key
+    )
 
     expect(paymentAfter1.transactions).to.have.lengthOf(1)
     expect(paymentAfter1.transactions[0].type).to.equal('Authorization')
     expect(paymentAfter1.transactions[0].state).to.equal('Success')
     expect(paymentAfter1.interfaceInteractions).to.have.lengthOf(1)
-    const notificationItem1 = modifiedNotification1.notificationItems[0]
+    const notificationItem1 = cloneDeep(
+      notificationPayload1.notificationItems[0]
+    )
     delete notificationItem1.NotificationRequestItem.additionalData
+
     expect(paymentAfter1.interfaceInteractions[0].fields.notification).to.equal(
       JSON.stringify(notificationItem1)
     )
@@ -101,8 +110,11 @@ describe('::multitenancy::', () => {
     expect(paymentAfter2.transactions[0].type).to.equal('Authorization')
     expect(paymentAfter2.transactions[0].state).to.equal('Success')
     expect(paymentAfter2.interfaceInteractions).to.have.lengthOf(1)
-    const notificationItem2 = modifiedNotification2.notificationItems[0]
+    const notificationItem2 = cloneDeep(
+      notificationPayload2.notificationItems[0]
+    )
     delete notificationItem2.NotificationRequestItem.additionalData
+
     expect(paymentAfter2.interfaceInteractions[0].fields.notification).to.equal(
       JSON.stringify(notificationItem2)
     )
