@@ -100,9 +100,17 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
         interaction.fields.type === constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
     )
     const makePaymentRequest = JSON.parse(interfaceInteraction.fields.request)
-    expect(makePaymentRequest.metadata).to.deep.include({
-      ctProjectKey: commercetoolsProjectKey,
-    })
+    if (metadata) {
+      expect(makePaymentRequest.metadata).to.deep.equal({
+        ctProjectKey: commercetoolsProjectKey,
+        ...metadata
+      })
+    } else {
+      expect(makePaymentRequest.metadata).to.deep.equal({
+        ctProjectKey: commercetoolsProjectKey,
+      })
+    }
+
     expect(makePaymentRequest.merchantAccount).to.be.equal(adyenMerchantAccount)
 
     const { makePaymentResponse } = payment.custom.fields
