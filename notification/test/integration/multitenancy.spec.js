@@ -1,14 +1,14 @@
 const { expect } = require('chai')
-const { address } = require('ip')
 const { cloneDeep } = require('lodash')
 const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
-const iTSetUp = require('./integration-test-set-up')
 const config = require('../../src/config/config')
-const { ensurePayment } = require('./init/ensure-payment')
-const createNotificationPayload = require('./init/create-notification-payload')
-
-const localhostIp = address()
+const {
+  startIT,
+  stopIT,
+  ensurePayment,
+  createNotificationPayload,
+} = require('../test-utils')
 
 describe('::multitenancy::', () => {
   const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
@@ -18,21 +18,20 @@ describe('::multitenancy::', () => {
 
   let ctpClient1
   let ctpClient2
+  let notificationURL
 
-  beforeEach(async () => {
+  before(async () => {
     ctpClient1 = ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey1)
     )
     ctpClient2 = ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey2)
     )
-    await iTSetUp.prepareProject(ctpClient1)
-    await iTSetUp.prepareProject(ctpClient2)
-    await iTSetUp.startServer()
+    notificationURL = await startIT()
   })
 
-  afterEach(async () => {
-    iTSetUp.stopServer()
+  after(() => {
+    stopIT()
   })
 
   it('should process payment correctly when notifications are from different projects', async () => {
@@ -66,12 +65,12 @@ describe('::multitenancy::', () => {
     )
 
     const [response1, response2] = await Promise.all([
-      fetch(`http://${localhostIp}:8000`, {
+      fetch(notificationURL, {
         method: 'post',
         body: JSON.stringify(notificationPayload1),
         headers: { 'Content-Type': 'application/json' },
       }),
-      fetch(`http://${localhostIp}:8000`, {
+      fetch(notificationURL, {
         method: 'post',
         body: JSON.stringify(notificationPayload2),
         headers: { 'Content-Type': 'application/json' },

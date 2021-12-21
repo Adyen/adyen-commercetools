@@ -1,32 +1,31 @@
 const { expect } = require('chai')
 const { cloneDeep } = require('lodash')
-const { address } = require('ip')
 const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
-const iTSetUp = require('./integration-test-set-up')
 const config = require('../../src/config/config')
-const { overrideAdyenConfig } = require('../test-utils')
-const { ensurePayment } = require('./init/ensure-payment')
-const createNotificationPayload = require('./init/create-notification-payload')
-
-// node-fetch package doesn't support requests to localhost, therefore
-// we need to provide the IP behind localhost
-const localhostIp = address()
+const {
+  startIT,
+  stopIT,
+  overrideAdyenConfig,
+  ensurePayment,
+  createNotificationPayload,
+} = require('../test-utils')
 
 describe('notification module', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
-  const ctpClient = ctpClientBuilder.get(
-    config.getCtpConfig(commercetoolsProjectKey)
-  )
   const [adyenMerchantAccount] = config.getAllAdyenMerchantAccounts()
 
+  let notificationURL
+  let ctpClient
   before(async () => {
-    await iTSetUp.prepareProject(ctpClient)
-    await iTSetUp.startServer()
+    ctpClient = ctpClientBuilder.get(
+      config.getCtpConfig(commercetoolsProjectKey)
+    )
+    notificationURL = await startIT()
   })
 
   after(() => {
-    iTSetUp.stopServer()
+    stopIT()
   })
 
   it(
@@ -52,7 +51,7 @@ describe('notification module', () => {
       )
 
       // Simulating a notification from Adyen
-      const response = await fetch(`http://${localhostIp}:8000`, {
+      const response = await fetch(notificationURL, {
         method: 'post',
         body: JSON.stringify(notificationPayload),
         headers: { 'Content-Type': 'application/json' },
@@ -122,7 +121,7 @@ describe('notification module', () => {
     )
 
     // Simulating a notification from Adyen
-    const response = await fetch(`http://${localhostIp}:8000`, {
+    const response = await fetch(notificationURL, {
       method: 'post',
       body: JSON.stringify(notificationPayload),
       headers: { 'Content-Type': 'application/json' },
@@ -175,7 +174,7 @@ describe('notification module', () => {
       )
 
       // Simulating a notification from Adyen
-      const response = await fetch(`http://${localhostIp}:8000`, {
+      const response = await fetch(notificationURL, {
         method: 'post',
         body: JSON.stringify(notificationPayload),
         headers: { 'Content-Type': 'application/json' },
@@ -223,7 +222,7 @@ describe('notification module', () => {
     )
 
     // Simulating a notification from Adyen
-    const response = await fetch(`http://${localhostIp}:8000`, {
+    const response = await fetch(notificationURL, {
       method: 'post',
       body: JSON.stringify(notificationPayload),
       headers: { 'Content-Type': 'application/json' },
@@ -303,7 +302,7 @@ describe('notification module', () => {
       )
 
       // Simulating a notification from Adyen
-      const response = await fetch(`http://${localhostIp}:8000`, {
+      const response = await fetch(notificationURL, {
         method: 'post',
         body: JSON.stringify(notificationPayload),
         headers: { 'Content-Type': 'application/json' },
@@ -419,17 +418,17 @@ describe('notification module', () => {
 
       // Simulating notifications from Adyen
       const responses = await Promise.all([
-        fetch(`http://${localhostIp}:8000`, {
+        fetch(notificationURL, {
           method: 'post',
           body: JSON.stringify(notificationPayload1),
           headers: { 'Content-Type': 'application/json' },
         }),
-        fetch(`http://${localhostIp}:8000`, {
+        fetch(notificationURL, {
           method: 'post',
           body: JSON.stringify(notificationPayload2),
           headers: { 'Content-Type': 'application/json' },
         }),
-        fetch(`http://${localhostIp}:8000`, {
+        fetch(notificationURL, {
           method: 'post',
           body: JSON.stringify(notificationPayload3),
           headers: { 'Content-Type': 'application/json' },
@@ -516,7 +515,7 @@ describe('notification module', () => {
       )
 
       // Simulating a notification from Adyen
-      const response = await fetch(`http://${localhostIp}:8000`, {
+      const response = await fetch(notificationURL, {
         method: 'post',
         body: JSON.stringify(notificationPayload),
         headers: { 'Content-Type': 'application/json' },
@@ -576,7 +575,7 @@ describe('notification module', () => {
     notificationPayload.notificationItems[0].NotificationRequestItem.amount.value = 0
 
     // Simulating a notification from Adyen
-    const response = await fetch(`http://${localhostIp}:8000`, {
+    const response = await fetch(notificationURL, {
       method: 'post',
       body: JSON.stringify(notificationPayload),
       headers: { 'Content-Type': 'application/json' },
