@@ -15,7 +15,14 @@ jobs:
         working-directory: extension
     steps:
       - uses: actions/checkout@v2
-      - name: prepare sources
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+      - run: npm ci
+      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - run: npm run check
+      - name: prepare extensions folder
         run: |
           echo $ADYEN_INTEGRATION_CONFIG >> .extensionrc
           mkdir -p sources && cp index.googleFunction.js index.js
@@ -24,7 +31,7 @@ jobs:
         shell: bash
         env:
           ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
-      - id: auth
+      - name: gcloud auth
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
@@ -39,13 +46,7 @@ jobs:
             --runtime nodejs14 \
             --trigger-http \
             --allow-unauthenticated
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14.x'
-      - run: npm ci
-      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
-      - run: npm run test
+      - run: npm run ci:test
         env:
           ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
           CI_EXTENSION_BASE_URL: ${{ secrets.CI_EXTENSION_BASE_URL }}
