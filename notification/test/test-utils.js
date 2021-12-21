@@ -48,9 +48,8 @@ async function startIT() {
   if (!process.env.CI) {
     await setupLocalServer(8000)
     return `http://${localhostIp}:8000`
-  } else {
-    return process.env.CI_NOTIFICATION_URL
   }
+  return process.env.CI_NOTIFICATION_URL
 }
 
 let server
@@ -67,6 +66,7 @@ function stopIT() {
   server.close()
 }
 
+/* eslint-disable new-cap */
 const validator = new hmacValidator()
 
 function createNotificationPayload(
