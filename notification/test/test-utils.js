@@ -47,6 +47,11 @@ async function startIT() {
   await setupNotificationResources()
   if (!process.env.CI) {
     await setupLocalServer(8000)
+  }
+}
+
+function getNotificationURL() {
+  if (!process.env.CI) {
     return `http://${localhostIp}:8000`
   }
   return process.env.CI_NOTIFICATION_URL
@@ -141,6 +146,7 @@ module.exports = {
   restoreAdyenConfig,
   buildMockErrorFromConcurrentModificaitonException,
   startIT,
+  getNotificationURL,
   stopIT,
   createNotificationPayload,
   ensurePayment,

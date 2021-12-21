@@ -4,8 +4,7 @@ const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const config = require('../../src/config/config')
 const {
-  startIT,
-  stopIT,
+  getNotificationURL,
   ensurePayment,
   createNotificationPayload,
 } = require('../test-utils')
@@ -20,18 +19,14 @@ describe('::multitenancy::', () => {
   let ctpClient2
   let notificationURL
 
-  before(async () => {
+  before(() => {
     ctpClient1 = ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey1)
     )
     ctpClient2 = ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey2)
     )
-    notificationURL = await startIT()
-  })
-
-  after(() => {
-    stopIT()
+    notificationURL = getNotificationURL()
   })
 
   it('should process payment correctly when notifications are from different projects', async () => {

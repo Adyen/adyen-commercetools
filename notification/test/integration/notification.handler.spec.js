@@ -4,8 +4,7 @@ const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const config = require('../../src/config/config')
 const {
-  startIT,
-  stopIT,
+  getNotificationURL,
   overrideAdyenConfig,
   ensurePayment,
   createNotificationPayload,
@@ -17,15 +16,11 @@ describe('notification module', () => {
 
   let notificationURL
   let ctpClient
-  before(async () => {
+  before(() => {
     ctpClient = ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey)
     )
-    notificationURL = await startIT()
-  })
-
-  after(() => {
-    stopIT()
+    notificationURL = getNotificationURL()
   })
 
   it(
