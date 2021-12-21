@@ -6,7 +6,6 @@
   "scripts": {
     "check-coverage": "nyc check-coverage --statements 97",
     "test": "npm run check && npm run cover:unit && npm run cover:integration && npm run cover:e2e && npm run check-coverage",
-    "ci:test": "npm run cover:unit && npm run cover:integration && npm run cover:e2e && npm run check-coverage",
     "cover:unit": "nyc --silent npm run unit",
     "cover:integration": "nyc --silent --no-clean npm run integration",
     "cover:e2e": "nyc --silent --no-clean npm run e2e",
