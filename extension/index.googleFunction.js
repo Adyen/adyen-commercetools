@@ -4,6 +4,7 @@ const auth = require('./src/validator/authentication')
 
 exports.extensionTrigger = async (request, response) => {
   const paymentObj = request?.body?.resource?.obj
+  console.log('test-1')
   try {
     if (!paymentObj) {
       return response.status(400).send({
