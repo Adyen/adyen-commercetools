@@ -4,7 +4,7 @@
   "description": "Integration between commercetools and Adyen payment service provider",
   "license": "MIT",
   "scripts": {
-    "check-coverage": "nyc check-coverage --statements 84",
+    "check-coverage": "nyc check-coverage --lines 84",
     "test": "npm run check && npm run cover:unit && npm run cover:integration && npm run cover:e2e && npm run check-coverage",
     "cover:unit": "nyc --silent npm run unit",
     "cover:integration": "nyc --silent --no-clean npm run integration",
