@@ -68,7 +68,9 @@ async function setupLocalServer(testServerPort = 8000) {
 }
 
 function stopIT() {
-  server.close()
+  if (!process.env.CI) {
+    server.close()
+  }
 }
 
 /* eslint-disable new-cap */
