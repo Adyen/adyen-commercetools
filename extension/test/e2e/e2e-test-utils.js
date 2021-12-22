@@ -87,6 +87,7 @@ async function createPayment(
   ctpClient,
   adyenMerchantAccount,
   commercetoolsProjectKey,
+  makePaymentRequest,
   currency = 'EUR'
 ) {
   const paymentDraft = {
@@ -105,6 +106,7 @@ async function createPayment(
       fields: {
         adyenMerchantAccount,
         commercetoolsProjectKey,
+        makePaymentRequest,
       },
     },
   }
