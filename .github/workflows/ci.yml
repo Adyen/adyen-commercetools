@@ -50,7 +50,7 @@ jobs:
             --allow-unauthenticated
       - run: npm run cover:integration
       - run: npm run cover:e2e
-#      - run: npm run check-coverage
+      - run: npm run check-coverage
 
   notification_build:
     name: Notification Module
