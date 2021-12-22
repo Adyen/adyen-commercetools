@@ -1,5 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-const localtunnel = require('localtunnel')
 const _ = require('lodash')
 const ctpZone = require('./fixtures/ctp-zone.json')
 const ctpTaxCategory = require('./fixtures/ctp-tax-category.json')
@@ -17,52 +15,11 @@ const ctpCartDiscountShipping = require('./fixtures/ctp-cart-discount-shipping.j
 const ctpDiscountCode = require('./fixtures/ctp-discount-code.json')
 const ctpDiscountCodeMultiBuy = require('./fixtures/ctp-discount-code-multi-buy.json')
 const ctpDiscountCodeShipping = require('./fixtures/ctp-discount-code-shipping.json')
-const serverBuilder = require('../../src/server')
-const { routes } = require('../../src/routes')
-const { ensureResources } = require('../../src/config/init/ensure-resources')
-const config = require('../../src/config/config')
-const testUtils = require('../test-utils')
-const ctpClientBuilder = require('../../src/ctp')
-const { setupExtensionResources } = require('../../src/setup')
 
-let tunnel
-let server
 let currency = 'EUR'
 
 function initCurrency(value) {
   currency = value
-}
-
-function overrideBasicAuthFlag(isEnable) {
-  const moduleConfig = config.getModuleConfig()
-  moduleConfig.basicAuth = isEnable
-  config.getModuleConfig = function getModuleConfig() {
-    return moduleConfig
-  }
-  module.exports = config
-}
-
-async function initResources(ctpClient, ctpProjectKey, authHeaderValue) {
-  const { apiExtensionBaseUrl } = config.getModuleConfig()
-  await ensureResources(
-    ctpClient,
-    ctpProjectKey,
-    apiExtensionBaseUrl,
-    authHeaderValue
-  )
-}
-
-async function cleanupCtpResources(ctpClient) {
-  await testUtils.deleteAllResources(ctpClient, 'discountCodes')
-  await testUtils.deleteAllResources(ctpClient, 'carts')
-  await testUtils.deleteAllResources(ctpClient, 'payments')
-  await testUtils.deleteAllResources(ctpClient, 'products')
-  await testUtils.deleteAllResources(ctpClient, 'products')
-  await testUtils.deleteAllResources(ctpClient, 'productTypes')
-  await testUtils.deleteAllResources(ctpClient, 'shippingMethods')
-  await testUtils.deleteAllResources(ctpClient, 'zones')
-  await testUtils.deleteAllResources(ctpClient, 'taxCategories')
-  await testUtils.deleteAllResources(ctpClient, 'cartDiscounts')
 }
 
 async function _ensureCtpResources({
@@ -262,9 +219,19 @@ async function _ensureProducts(ctpClient, productTypeId, taxCategoryId) {
       ctpClient.builder.products,
       ctpProductClone
     )
-    return testUtils.publish(ctpClient, product)
+    return _publish(ctpClient, product)
   }
   return { body: body.results[0] }
+}
+
+async function _publish(ctpClient, product) {
+  const uri = ctpClient.builder.products
+  const actions = [
+    {
+      action: 'publish',
+    },
+  ]
+  return ctpClient.update(uri, product.id, product.version, actions)
 }
 
 async function _ensurePayment({
@@ -339,91 +306,7 @@ async function initPaymentWithCart({
   })
 }
 
-const port = 3000
-const tunnelDomain = 'ctp-adyen-integration-tests'
-// this part used only for debugging purposes (localhost)
-async function startLocal() {
-  await setupLocalServer()
-  await setupLocalTunnel()
-
-  const ctpProjectKeys = config.getAllCtpProjectKeys()
-  await Promise.all(
-    ctpProjectKeys.map(async (ctpProjectKey) => {
-      const ctpConfig = config.getCtpConfig(ctpProjectKey)
-      const ctpClient = ctpClientBuilder.get(ctpConfig)
-      await initResources(ctpClient, ctpProjectKey)
-    })
-  )
-}
-
-function setupLocalServer() {
-  server = serverBuilder.setupServer(routes)
-  return new Promise((resolve) => {
-    server.listen(port, async () => {
-      resolve()
-    })
-  })
-}
-
-async function setupLocalTunnel() {
-  tunnel = await initTunnel(port)
-  const apiExtensionBaseUrl = tunnel.url
-  overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
-}
-
-async function initTunnel() {
-  let repeaterCounter = 0
-  // eslint-disable-next-line no-shadow
-  let tunnel
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    try {
-      tunnel = await localtunnel({
-        port,
-        subdomain: tunnelDomain,
-      })
-      break
-    } catch (e) {
-      if (repeaterCounter === 10) throw e
-      repeaterCounter++
-    }
-  }
-  return tunnel
-}
-
-function overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
-  const moduleConfig = config.getModuleConfig()
-  moduleConfig.apiExtensionBaseUrl = apiExtensionBaseUrl
-  config.getModuleConfig = function getModuleConfig() {
-    return moduleConfig
-  }
-  module.exports = config
-}
-
-async function stopLocal() {
-  server.close()
-  await tunnel.close()
-}
-
-// this part used only on github actions (CI)
-async function startCI() {
-  await setupLocalServer()
-  overrideApiExtensionBaseUrlConfig(`http://localhost:${port}`)
-  await setupExtensionResources(process.env.CI_EXTENSION_BASE_URL)
-}
-
-function stopCI() {
-  server.close()
-}
-
 module.exports = {
   initPaymentWithCart,
-  cleanupCtpResources,
-  initResources,
-  overrideBasicAuthFlag,
   initCurrency,
-  startCI,
-  stopCI,
-  startLocal,
-  stopLocal,
 }
