@@ -239,21 +239,15 @@ async function _ensurePayment({
   adyenMerchantAccount,
   commercetoolsProjectKey,
 }) {
-  const { body } = await ctpClient.fetch(
-    ctpClient.builder.payments.where(`key="${ctpPayment.key}"`)
-  )
-  if (body.results.length === 0) {
-    if (currency === 'USD') {
-      ctpPaymentUsd.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-      ctpPaymentUsd.custom.fields.commercetoolsProjectKey =
-        commercetoolsProjectKey
-      return ctpClient.create(ctpClient.builder.payments, ctpPaymentUsd)
-    }
-    ctpPayment.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-    ctpPayment.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
-    return ctpClient.create(ctpClient.builder.payments, ctpPayment)
+  if (currency === 'USD') {
+    ctpPaymentUsd.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+    ctpPaymentUsd.custom.fields.commercetoolsProjectKey =
+      commercetoolsProjectKey
+    return ctpClient.create(ctpClient.builder.payments, ctpPaymentUsd)
   }
-  return { body: body.results[0] }
+  ctpPayment.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+  ctpPayment.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
+  return ctpClient.create(ctpClient.builder.payments, ctpPayment)
 }
 
 async function _createCart(

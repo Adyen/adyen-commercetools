@@ -31,7 +31,7 @@ describe('Lambda handler', () => {
           },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
-          merchantAccountCode: 'CommercetoolsGmbHDE775',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
           merchantReference: '8313842560770001',
           operations: ['CANCEL', 'CAPTURE', 'REFUND'],
           paymentMethod: 'visa',
