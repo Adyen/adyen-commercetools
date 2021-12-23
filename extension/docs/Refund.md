@@ -112,7 +112,7 @@ The commercetools payment representation after a successful refund:
       "fields": {
         "createdAt": "2020-11-19T16:17:14.247Z",
         "response": "{\"pspReference\":\"853605802634337B\",\"response\":\"[refund-received]\"}",
-        "request": "{\"modificationAmount\":{\"value\":500,\"currency\":\"EUR\"},\"originalReference\":\"883605782632488F\",\"merchantAccount\":\"CommercetoolsGmbHDE775\"}",
+        "request": "{\"modificationAmount\":{\"value\":500,\"currency\":\"EUR\"},\"originalReference\":\"883605782632488F\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
         "type": "refund"
       }
     }

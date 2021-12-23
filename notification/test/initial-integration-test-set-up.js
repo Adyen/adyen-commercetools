@@ -4,6 +4,6 @@ before(async () => {
   await startIT()
 })
 
-after(() => {
-  stopIT()
+after(async () => {
+  await stopIT()
 })

@@ -1,5 +1,4 @@
 const { expect } = require('chai')
-const { cloneDeep } = require('lodash')
 const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const config = require('../../src/config/config')
@@ -91,26 +90,24 @@ describe('::multitenancy::', () => {
     expect(paymentAfter1.transactions[0].type).to.equal('Authorization')
     expect(paymentAfter1.transactions[0].state).to.equal('Success')
     expect(paymentAfter1.interfaceInteractions).to.have.lengthOf(1)
-    const notificationItem1 = cloneDeep(
-      notificationPayload1.notificationItems[0]
-    )
-    delete notificationItem1.NotificationRequestItem.additionalData
-
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notificationPayload1.notificationItems[0].NotificationRequestItem
+        .additionalData
+    }
     expect(paymentAfter1.interfaceInteractions[0].fields.notification).to.equal(
-      JSON.stringify(notificationItem1)
+      JSON.stringify(notificationPayload1.notificationItems[0])
     )
 
     expect(paymentAfter2.transactions).to.have.lengthOf(1)
     expect(paymentAfter2.transactions[0].type).to.equal('Authorization')
     expect(paymentAfter2.transactions[0].state).to.equal('Success')
     expect(paymentAfter2.interfaceInteractions).to.have.lengthOf(1)
-    const notificationItem2 = cloneDeep(
-      notificationPayload2.notificationItems[0]
-    )
-    delete notificationItem2.NotificationRequestItem.additionalData
-
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notificationPayload2.notificationItems[0].NotificationRequestItem
+        .additionalData
+    }
     expect(paymentAfter2.interfaceInteractions[0].fields.notification).to.equal(
-      JSON.stringify(notificationItem2)
+      JSON.stringify(notificationPayload2.notificationItems[0])
     )
   })
 })

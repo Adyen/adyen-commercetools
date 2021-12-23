@@ -1,23 +1,9 @@
-const {
-  startLocal,
-  stopLocal,
-  startCI,
-  stopCI,
-} = require('./integration/integration-test-set-up')
+const { startIT, stopIT } = require('./test-utils')
 
 before(async () => {
-  if (process.env.CI) {
-    // Github actions sets CI env variable to true.
-    await startCI()
-  } else {
-    await startLocal()
-  }
+  await startIT()
 })
 
 after(async () => {
-  if (process.env.CI) {
-    await stopCI()
-  } else {
-    await stopLocal()
-  }
+  await stopIT()
 })

@@ -3,17 +3,18 @@
   "version": "9.4.0",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "scripts": {
-    "check-coverage": "nyc check-coverage --lines 84",
+    "check-coverage": "nyc check-coverage --lines 83",
     "test": "npm run check && npm run cover:unit && npm run cover:integration && npm run check-coverage",
     "cover:unit": "nyc --silent npm run unit",
     "cover:integration": "nyc --silent --no-clean npm run integration",
-    "unit": "nyc mocha \"test/unit/**/*.spec.js\"",
-    "integration": "nyc mocha --file ./test/initial-integration-test-set-up.js \"test/integration/**/*.spec.js\"",
+    "unit": "nyc mocha --check-leaks --no-clean --timeout 30000 --full-trace --recursive \"./test/unit/**/*.spec.js\"",
+    "integration": "nyc mocha --file ./test/initial-integration-test-set-up.js --check-leaks --no-clean --timeout 30000 --full-trace --recursive \"./test/integration/**/*.spec.js\"",
     "start": "node ./src/init.js",
     "coverage": "nyc report",
     "lint": "eslint ./src ./test",
     "check": "npm run lint && prettier --check .",
     "format": "prettier --write .",
+    "rename-indexfile": "cp index.googleFunction.js index.js",
     "zip-google-function": "cp index.googleFunction.js index.js && zip -r notification-module.zip src resources .notificationrc index.js package.json && rm index.js",
     "zip-lambda-function": "cp index.lambda.js index.js && npm ci --production && zip -r notification-module.zip . && rm index.js",
     "setup-resources": "node -e 'require(\"./src/setup.js\").setupNotificationResources()'"
@@ -74,12 +75,8 @@
     "nyc": "15.1.0",
     "p-map": "5.3.0",
     "prettier": "2.5.1",
-    "sinon": "12.0.1"
-  },
-  "mocha": {
-    "timeout": 120000,
-    "exit": true,
-    "full-trace": true
+    "sinon": "12.0.1",
+    "localtunnel": "2.0.2"
   },
   "husky": {
     "hooks": {

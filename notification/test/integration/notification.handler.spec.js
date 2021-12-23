@@ -1,5 +1,4 @@
 const { expect } = require('chai')
-const { cloneDeep } = require('lodash')
 const fetch = require('node-fetch')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const config = require('../../src/config/config')
@@ -66,11 +65,13 @@ describe('notification module', () => {
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
       expect(paymentAfter.transactions[0].state).to.equal('Success')
       expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
-      const notification = cloneDeep(notificationPayload.notificationItems[0])
-      delete notification.NotificationRequestItem.additionalData
+      if (config.getModuleConfig().removeSensitiveData) {
+        delete notificationPayload.notificationItems[0].NotificationRequestItem
+          .additionalData
+      }
       expect(
         paymentAfter.interfaceInteractions[0].fields.notification
-      ).to.equal(JSON.stringify(notification))
+      ).to.equal(JSON.stringify(notificationPayload.notificationItems[0]))
     }
   )
 
@@ -138,10 +139,12 @@ describe('notification module', () => {
     expect(paymentAfter.transactions[1].state).to.equal('Success')
 
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
-    const notification = cloneDeep(notificationPayload.notificationItems[0])
-    delete notification.NotificationRequestItem.additionalData
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notificationPayload.notificationItems[0].NotificationRequestItem
+        .additionalData
+    }
     expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(
-      JSON.stringify(notification)
+      JSON.stringify(notificationPayload.notificationItems[0])
     )
   })
 
@@ -188,11 +191,13 @@ describe('notification module', () => {
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
       expect(paymentAfter.transactions[0].state).to.equal('Pending')
       expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
-      const notification = cloneDeep(notificationPayload.notificationItems[0])
-      delete notification.NotificationRequestItem.additionalData
+      if (config.getModuleConfig().removeSensitiveData) {
+        delete notificationPayload.notificationItems[0].NotificationRequestItem
+          .additionalData
+      }
       expect(
         paymentAfter.interfaceInteractions[0].fields.notification
-      ).to.equal(JSON.stringify(notification))
+      ).to.equal(JSON.stringify(notificationPayload.notificationItems[0]))
     }
   )
 
@@ -319,11 +324,13 @@ describe('notification module', () => {
       expect(paymentAfter.transactions[1].state).to.equal('Success')
 
       expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
-      const notification = cloneDeep(notificationPayload.notificationItems[0])
-      delete notification.NotificationRequestItem.additionalData
+      if (config.getModuleConfig().removeSensitiveData) {
+        delete notificationPayload.notificationItems[0].NotificationRequestItem
+          .additionalData
+      }
       expect(
         paymentAfter.interfaceInteractions[0].fields.notification
-      ).to.equal(JSON.stringify(notification))
+      ).to.equal(JSON.stringify(notificationPayload.notificationItems[0]))
     }
   )
 
@@ -532,11 +539,13 @@ describe('notification module', () => {
       expect(paymentAfter.transactions[1].state).to.equal('Success')
 
       expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
-      const notification = cloneDeep(notificationPayload.notificationItems[0])
-      delete notification.NotificationRequestItem.additionalData
+      if (config.getModuleConfig().removeSensitiveData) {
+        delete notificationPayload.notificationItems[0].NotificationRequestItem
+          .additionalData
+      }
       expect(
         paymentAfter.interfaceInteractions[0].fields.notification
-      ).to.equal(JSON.stringify(notification))
+      ).to.equal(JSON.stringify(notificationPayload.notificationItems[0]))
     }
   )
 

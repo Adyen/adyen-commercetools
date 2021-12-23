@@ -6,6 +6,10 @@ const concurrentModificationError = require('./resources/concurrent-modification
 const serverBuilder = require('../src/server')
 const { setupNotificationResources } = require('../src/setup')
 const payment = require('./resources/payment-draft.json')
+const {
+  startFakeExtension,
+  stopFakeExtension,
+} = require('./fake-extension-service')
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -47,6 +51,7 @@ async function startIT() {
   await setupNotificationResources()
   if (!process.env.CI) {
     await setupLocalServer(8000)
+    await startFakeExtension()
   }
 }
 
@@ -67,9 +72,10 @@ async function setupLocalServer(testServerPort = 8000) {
   })
 }
 
-function stopIT() {
+async function stopIT() {
   if (!process.env.CI) {
     server.close()
+    await stopFakeExtension()
   }
 }
 

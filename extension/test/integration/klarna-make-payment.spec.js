@@ -4,7 +4,7 @@ const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const iTSetUp = require('./integration-test-set-up')
 
-describe.skip('::klarnaMakePayment with multiple projects use case::', () => {
+describe('::klarnaMakePayment with multiple projects use case::', () => {
   const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
     config.getAllCtpProjectKeys()
   const [adyenMerchantAccount1, adyenMerchantAccount2] =
