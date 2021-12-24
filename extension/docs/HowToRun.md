@@ -158,7 +158,7 @@ In case you have a huge configuration that reaches above the environment limits 
 Resources below are required for the extension module to operate correctly.
 
 1. [The commercetools HTTP API Extension pointing to Adyen extension module](../resources/api-extension.json)
-   > It's required that the HTTP API Extension timeout limit is increased to 10000 milliseconds (default is 2000). Please contact Support via the commercetools [support portal](https://support.commercetools.com/) and provide the region, project key, and use case to increase the timeout to 10000 ms. Additionally, after the limit increased, timeout might be updated over API with [setTimeoutInMs](https://docs.commercetools.com/http-api-projects-api-extensions#set-timeoutinms) action.
+   > It's required that the HTTP API Extension timeout limit is increased to 10000 milliseconds (default is 2000). The timeout might be updated over the API with [setTimeoutInMs](https://docs.commercetools.com/http-api-projects-api-extensions#set-timeoutinms) action.
 1. [Payment custom type](../resources/web-components-payment-type.json)
 1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
 
