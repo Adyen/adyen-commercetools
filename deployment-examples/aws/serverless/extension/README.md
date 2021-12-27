@@ -1,7 +1,7 @@
 ## Deploy as AWS Lambda
 
 1. In order to setup the extension module config, follow our [how to run guide](../../../../extension/docs/HowToRun.md).
-2. Extension module requires `ADYEN_INTEGRATION_CONFIG` as `environment variable`.
+2. Extension module requires `ADYEN_INTEGRATION_CONFIG` as `environment variable` `.extensionrc` file to configure with [external file configuration](../../../../extension/docs/HowToRun.md#external-file-configuration).
 3. Deployments work by uploading an archive containing your function's source code and their dependencies. 
 You could use a deployment package to deploy your function code to Lambda.
 To bundle the extension module, navigate into `extension` folder and run `npm run zip-lambda-function`. 
