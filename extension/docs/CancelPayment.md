@@ -111,7 +111,7 @@ The commercetools payment representation after a successful refund:
       "fields": {
         "createdAt": "2020-11-19T16:17:14.247Z",
         "response": "{\"pspReference\":\"853605802634337B\",\"response\":\"[cancel-received]\"}",
-        "request": "{\"originalReference\":\"883605782632488F\",\"merchantAccount\":\"CommercetoolsGmbHDE775\"}",
+        "request": "{\"originalReference\":\"883605782632488F\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
         "type": "cancelPayment"
       }
     }
