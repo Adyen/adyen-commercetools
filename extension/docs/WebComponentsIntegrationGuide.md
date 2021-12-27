@@ -33,7 +33,6 @@
 - [Cancel or refund](#cancel-or-refund)
 - [Restore](#restore)
 - [Multi-tenancy](#multi-tenancy)
-- [Best Practices](#best-practices)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -751,6 +750,9 @@ has to be shown and order creation must be declined. In such a case, it might be
 
 Before you go live please follow [steps](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#testing-your-integration) described by Adyen.
 
+- [Please check FAQ guide](../../docs/FAQ.md).
+- [Please refer to our best practices guide](../../docs/BEST_PRACTICES.md).
+
 Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist).
 
 # Manual Capture
@@ -784,7 +786,3 @@ In order for `commercetools-adyen-integration` to know which project and merchan
 > `commercetoolsProjectKey` is passed to Adyen using the field [`metadata.ctProjectKey`](https://docs.adyen.com/api-explorer/#/CheckoutService/v66/post/payments__reqParam_metadata). This field is also present in every notification from Adyen to help with matching the correct commercetools project.
 
 **IMPORTANT: `commercetoolsProjectKey` must not have more than 80 characters. This is due to length restrictions of the Adyen API.**
-
-# Best Practices
-
-- [Please refer to our best practices guide.](../../docs/BEST_PRACTICES.md)
