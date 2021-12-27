@@ -1,3 +1,9 @@
+const localtunnel = require('localtunnel')
+const serverBuilder = require('../src/server')
+const { routes } = require('../src/routes')
+const { setupExtensionResources } = require('../src/setup')
+const config = require('../src/config/config')
+
 global.window = {}
 global.navigator = {}
 
@@ -7,51 +13,77 @@ process.on('unhandledRejection', (reason) => {
   process.exit(1)
 })
 
-function deleteResource(ctpClient, endpoint, item) {
-  const uri = ctpClient.builder[endpoint]
-  return ctpClient.delete(uri, item.id, item.version)
+const port = 3000
+const tunnelDomain = 'ctp-adyen-integration-tests'
+let tunnel
+let server
+
+async function startIT() {
+  await setupLocalServer()
+  if (process.env.CI) {
+    // this part used only on github actions (CI)
+    await setupExtensionResources(process.env.CI_EXTENSION_BASE_URL)
+    // e2e requires this for static forms
+    overrideApiExtensionBaseUrlConfig(`http://localhost:${port}`)
+  } else {
+    await setupLocalTunnel()
+    await setupExtensionResources()
+  }
 }
 
-async function unpublish(ctpClient, product) {
-  const uri = ctpClient.builder.products
-  const actions = [
-    {
-      action: 'unpublish',
-    },
-  ]
-  return ctpClient.update(uri, product.id, product.version, actions)
+async function stopIT() {
+  server.close()
+  if (!process.env.CI) {
+    // this part is not used on github actions (CI)
+    await tunnel.close()
+  }
 }
 
-async function publish(ctpClient, product) {
-  const uri = ctpClient.builder.products
-  const actions = [
-    {
-      action: 'publish',
-    },
-  ]
-  return ctpClient.update(uri, product.id, product.version, actions)
+function setupLocalServer() {
+  server = serverBuilder.setupServer(routes)
+  return new Promise((resolve) => {
+    server.listen(port, async () => {
+      resolve()
+    })
+  })
 }
 
-function deleteAllResources(ctpClient, endpoint, condition) {
-  let requestBuilder = ctpClient.builder[endpoint]
+function overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
+  const moduleConfig = config.getModuleConfig()
+  moduleConfig.apiExtensionBaseUrl = apiExtensionBaseUrl
+  config.getModuleConfig = function getModuleConfig() {
+    return moduleConfig
+  }
+  module.exports = config
+}
 
-  if (condition) requestBuilder = requestBuilder.where(condition)
+async function setupLocalTunnel() {
+  tunnel = await initTunnel(port)
+  const apiExtensionBaseUrl = tunnel.url
+  overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
+}
 
-  return ctpClient.fetchBatches(requestBuilder, (items) =>
-    Promise.all(
-      items.map(async (item) => {
-        if (endpoint === 'products' && item.masterData.published) {
-          const { body } = await unpublish(ctpClient, item)
-          item = body
-        }
-
-        await deleteResource(ctpClient, endpoint, item)
+async function initTunnel() {
+  let repeaterCounter = 0
+  // eslint-disable-next-line no-shadow
+  let tunnel
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    try {
+      tunnel = await localtunnel({
+        port,
+        subdomain: tunnelDomain,
       })
-    )
-  )
+      break
+    } catch (e) {
+      if (repeaterCounter === 10) throw e
+      repeaterCounter++
+    }
+  }
+  return tunnel
 }
 
 module.exports = {
-  publish,
-  deleteAllResources,
+  startIT,
+  stopIT,
 }
