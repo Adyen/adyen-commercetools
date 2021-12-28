@@ -9,7 +9,7 @@
         },
         "eventCode": "REFUND",
         "eventDate": "2020-11-24T14:35:33+01:00",
-        "merchantAccountCode": "CommercetoolsGmbHDE775",
+        "merchantAccountCode": "YOUR_MERCHANT_ACCOUNT",
         "merchantReference": "8313842560770001",
         "originalReference": "883605782632488F",
         "paymentMethod": "visa",
@@ -17,7 +17,7 @@
         "reason": "Insufficient balance on payment",
         "success": "false",
         "additionalData": {
-          "metadata.ctProjectKey": "adyen-integration-test"
+          "metadata.ctProjectKey": "YOUR_PROJECT_KEY"
         }
       }
     }

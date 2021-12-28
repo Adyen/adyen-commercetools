@@ -84,15 +84,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
             const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
             const clientKey =
               config.getAdyenConfig(adyenMerchantAccount).clientKey
-            const payment = await createPayment(
-              ctpClient,
-              adyenMerchantAccount,
-              ctpProjectKey
-            )
-            logger.debug(
-              'credit-card-3ds-redirect::payment:',
-              JSON.stringify(payment)
-            )
+
             const browserTab = await browser.newPage()
 
             const paymentAfterMakePayment = await makePayment({
@@ -101,7 +93,6 @@ describe('::creditCardPayment3dsRedirect::', () => {
               creditCardNumber,
               creditCardDate,
               creditCardCvc,
-              payment,
               clientKey,
             })
             logger.debug(
@@ -135,7 +126,6 @@ describe('::creditCardPayment3dsRedirect::', () => {
     creditCardNumber,
     creditCardDate,
     creditCardCvc,
-    payment,
     clientKey,
   }) {
     const makePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
@@ -146,20 +136,14 @@ describe('::creditCardPayment3dsRedirect::', () => {
       creditCardCvc,
       clientKey,
     })
-    let result = null
+    let payment = null
     const startTime = new Date().getTime()
     try {
-      result = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          {
-            action: 'setCustomField',
-            name: 'makePaymentRequest',
-            value: makePaymentRequest,
-          },
-        ]
+      payment = await createPayment(
+        ctpClient,
+        adyenMerchantAccount,
+        ctpProjectKey,
+        makePaymentRequest
       )
     } finally {
       const endTime = new Date().getTime()
@@ -168,7 +152,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
         endTime - startTime
       )
     }
-    return result.body
+    return payment
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {

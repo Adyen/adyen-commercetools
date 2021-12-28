@@ -1,7 +1,6 @@
 {
-  "name": "ABHOLUNG",
-  "key": "abholung",
-  "description": "Abholung beim Fachhändler (kostenlos)",
+  "name": "default",
+  "key": "default",
   "taxCategory": {
     "typeId": "tax-category",
     "id": ""
@@ -16,6 +15,12 @@
         {
           "price": {
             "currencyCode": "EUR",
+            "centAmount": 3000
+          }
+        },
+        {
+          "price": {
+            "currencyCode": "USD",
             "centAmount": 3000
           }
         }

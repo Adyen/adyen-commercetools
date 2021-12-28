@@ -4,7 +4,7 @@ const logger = require('./utils').getLogger()
 const { ensureResources } = require('./config/init/ensure-resources')
 const auth = require('./validator/authentication')
 
-async function setupExtensionResources() {
+async function setupExtensionResources(apiExtensionBaseUrl) {
   const moduleConfig = config.getModuleConfig()
   const ctpProjectKeys = config.getAllCtpProjectKeys()
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
@@ -16,7 +16,7 @@ async function setupExtensionResources() {
       await ensureResources(
         ctpClient,
         ctpConfig.projectKey,
-        moduleConfig.apiExtensionBaseUrl,
+        apiExtensionBaseUrl || moduleConfig.apiExtensionBaseUrl,
         auth.generateBasicAuthorizationHeaderValue(ctpConfig.projectKey)
       )
     })

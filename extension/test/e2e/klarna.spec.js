@@ -71,24 +71,11 @@ describe('::klarnaPayment::', () => {
       try {
         const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
         const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
-        const startTime = new Date().getTime()
-        const payment = await createPayment(
-          ctpClient,
-          adyenMerchantAccount,
-          ctpProjectKey
-        )
-        const endTime = new Date().getTime()
-        logger.debug(
-          'klarna::createPayment::elapsedMilliseconds:',
-          endTime - startTime
-        )
 
         const browserTab = await browser.newPage()
-        logger.debug('klarna::payment:', JSON.stringify(payment))
         const paymentAfterMakePayment = await makePayment({
           browserTab,
           baseUrl,
-          payment,
           clientKey,
         })
         logger.debug(
@@ -121,7 +108,7 @@ describe('::klarnaPayment::', () => {
     }
   )
 
-  async function makePayment({ browserTab, baseUrl, payment, clientKey }) {
+  async function makePayment({ browserTab, baseUrl, clientKey }) {
     const makePaymentFormPage = new KlarnaMakePaymentFormPage(
       browserTab,
       baseUrl
@@ -130,20 +117,14 @@ describe('::klarnaPayment::', () => {
     const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest(
       clientKey
     )
-    let result = null
+    let payment = null
     const startTime = new Date().getTime()
     try {
-      result = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          {
-            action: 'setCustomField',
-            name: 'makePaymentRequest',
-            value: makePaymentRequest,
-          },
-        ]
+      payment = await createPayment(
+        ctpClient,
+        adyenMerchantAccount,
+        ctpProjectKey,
+        makePaymentRequest
       )
     } catch (err) {
       logger.error('klarna::makePaymentRequest::errors', JSON.stringify(err))
@@ -154,7 +135,7 @@ describe('::klarnaPayment::', () => {
         endTime - startTime
       )
     }
-    return result.body
+    return payment
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {

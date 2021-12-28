@@ -67,19 +67,10 @@ describe.skip('::affirmPayment::', () => {
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
       let paymentAfterHandleRedirect
       try {
-        const payment = await createPayment(
-          ctpClient,
-          adyenMerchantAccount,
-          ctpProjectKey,
-          'USD'
-        )
-        logger.debug('affirm::payment:', JSON.stringify(payment))
         const browserTab = await browser.newPage()
-
         const paymentAfterMakePayment = await makePayment({
           browserTab,
           baseUrl,
-          payment,
           clientKey,
         })
         logger.debug(
@@ -102,7 +93,7 @@ describe.skip('::affirmPayment::', () => {
     }
   )
 
-  async function makePayment({ browserTab, baseUrl, payment, clientKey }) {
+  async function makePayment({ browserTab, baseUrl, clientKey }) {
     const makePaymentFormPage = new AffirmMakePaymentFormPage(
       browserTab,
       baseUrl
@@ -111,20 +102,15 @@ describe.skip('::affirmPayment::', () => {
     const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest(
       clientKey
     )
-    let result = null
+    let payment = null
     const startTime = new Date().getTime()
     try {
-      result = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          {
-            action: 'setCustomField',
-            name: 'makePaymentRequest',
-            value: makePaymentRequest,
-          },
-        ]
+      payment = await createPayment(
+        ctpClient,
+        adyenMerchantAccount,
+        ctpProjectKey,
+        makePaymentRequest,
+        'USD'
       )
     } catch (err) {
       logger.error('affirm::makePaymentRequest::errors', JSON.stringify(err))
@@ -135,7 +121,7 @@ describe.skip('::affirmPayment::', () => {
         endTime - startTime
       )
     }
-    return result.body
+    return payment
   }
 
   async function handleRedirect({ browserTab, baseUrl, payment }) {

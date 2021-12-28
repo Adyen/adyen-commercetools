@@ -1,6 +1,5 @@
 const { expect } = require('chai')
 
-const iTSetUp = require('./integration-test-set-up')
 const ctpClientBuilder = require('../../src/ctp')
 const {
   CTP_ADYEN_INTEGRATION,
@@ -21,7 +20,6 @@ describe('::manualCapture::', () => {
   beforeEach(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
-    await iTSetUp.cleanupCtpResources(ctpClient)
     const paymentDraft = {
       amountPlanned: {
         currencyCode: 'EUR',
@@ -58,10 +56,6 @@ describe('::manualCapture::', () => {
       paymentDraft
     )
     payment = result.body
-  })
-
-  afterEach(async () => {
-    await iTSetUp.cleanupCtpResources(ctpClient)
   })
 
   it(

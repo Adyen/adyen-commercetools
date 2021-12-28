@@ -2,7 +2,6 @@ const { expect } = require('chai')
 
 const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
-const iTSetUp = require('./integration-test-set-up')
 
 const { ensureResources } = require('../../src/config/init/ensure-resources')
 
@@ -17,11 +16,6 @@ describe('::ensure-resources::', () => {
   beforeEach(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = ctpClientBuilder.get(ctpConfig)
-    await iTSetUp.cleanupCtpResources(ctpClient)
-  })
-
-  afterEach(async () => {
-    await iTSetUp.cleanupCtpResources(ctpClient)
   })
 
   it('should ensure types', async () => {

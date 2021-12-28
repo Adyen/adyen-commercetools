@@ -1,9 +1,12 @@
 {
-  "name": "Europa",
-  "key": "europa",
+  "name": "default",
+  "key": "default",
   "locations": [
     {
       "country": "DE"
+    },
+    {
+      "country": "US"
     }
   ]
 }

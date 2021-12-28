@@ -55,17 +55,10 @@ describe('::creditCardPayment::', () => {
             const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
             const clientKey =
               config.getAdyenConfig(adyenMerchantAccount).clientKey
-            const payment = await createPayment(
-              ctpClient,
-              adyenMerchantAccount,
-              ctpProjectKey
-            )
-
             const browserTab = await browser.newPage()
 
             paymentAfterMakePayment = await makePayment({
               browserTab,
-              payment,
               baseUrl,
               creditCardNumber,
               creditCardDate,
@@ -87,7 +80,6 @@ describe('::creditCardPayment::', () => {
 
   async function makePayment({
     browserTab,
-    payment,
     baseUrl,
     creditCardNumber,
     creditCardDate,
@@ -102,26 +94,20 @@ describe('::creditCardPayment::', () => {
       creditCardCvc,
       clientKey,
     })
-    let result = null
+    let payment = null
     const startTime = new Date().getTime()
     try {
-      result = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          {
-            action: 'setCustomField',
-            name: 'makePaymentRequest',
-            value: makePaymentRequest,
-          },
-        ]
+      payment = await createPayment(
+        ctpClient,
+        adyenMerchantAccount,
+        ctpProjectKey,
+        makePaymentRequest
       )
     } finally {
       const endTime = new Date().getTime()
       logger.debug('credit-card::makePayment:', endTime - startTime)
     }
 
-    return result.body
+    return payment
   }
 })
