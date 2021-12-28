@@ -37,7 +37,9 @@ async function syncCustomType(ctpClient, logger, typeDraft) {
       logger.info(`Successfully created the type (key=${typeDraft.key})`)
     } else {
       const syncTypes = createSyncTypes()
-      const updateActions = syncTypes.buildActions(typeDraft, existingType)
+      const updateActions = syncTypes
+        .buildActions(typeDraft, existingType)
+        .filter((i) => i.action !== 'changeFieldDefinitionOrder')
       if (updateActions.length > 0) {
         await ctpClient.update(
           ctpClient.builder.types,

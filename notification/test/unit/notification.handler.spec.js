@@ -57,11 +57,11 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.ctProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': commercetoolsProjectKey,
           },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
-          merchantAccountCode: 'CommercetoolsGmbHDE775',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
           merchantReference: '8313842560770001',
           operations: ['CANCEL', 'CAPTURE', 'REFUND'],
           paymentMethod: 'visa',
@@ -98,7 +98,9 @@ describe('notification module', () => {
       false,
       config
     )
-    delete notifications[0].NotificationRequestItem.additionalData
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notifications[0].NotificationRequestItem.additionalData
+    }
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -156,11 +158,11 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.ctProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': commercetoolsProjectKey,
           },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
-          merchantAccountCode: 'CommercetoolsGmbHDE775',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
           merchantReference: '8313842560770001',
           operations: ['CANCEL', 'CAPTURE', 'REFUND'],
           paymentMethod: 'visa',
@@ -196,7 +198,9 @@ describe('notification module', () => {
       false,
       config
     )
-    delete notifications[0].NotificationRequestItem.additionalData
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notifications[0].NotificationRequestItem.additionalData
+    }
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -236,11 +240,11 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.ctProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': commercetoolsProjectKey,
           },
           eventCode: 'AUTHORISATION',
           eventDate: '2019-01-30T18:16:22+01:00',
-          merchantAccountCode: 'CommercetoolsGmbHDE775',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
           merchantReference: '8313842560770001',
           operations: ['CANCEL', 'CAPTURE', 'REFUND'],
           paymentMethod: 'visa',
@@ -304,11 +308,11 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.ctProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': commercetoolsProjectKey,
           },
           eventCode: 'CANCELLATION',
           eventDate: '2019-01-30T18:16:22+01:00',
-          merchantAccountCode: 'CommercetoolsGmbHDE775',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
           merchantReference: '8313842560770001',
           operations: ['CANCEL', 'CAPTURE', 'REFUND'],
           paymentMethod: 'visa',
@@ -343,7 +347,9 @@ describe('notification module', () => {
       false,
       config
     )
-    delete notifications[0].NotificationRequestItem.additionalData
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notifications[0].NotificationRequestItem.additionalData
+    }
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -399,11 +405,11 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.ctProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': commercetoolsProjectKey,
           },
           eventCode: 'CAPTURE',
           eventDate: '2019-01-30T18:16:22+01:00',
-          merchantAccountCode: 'CommercetoolsGmbHDE775',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
           merchantReference: '8313842560770001',
           operations: ['CANCEL', 'CAPTURE', 'REFUND'],
           paymentMethod: 'visa',
@@ -438,7 +444,9 @@ describe('notification module', () => {
       false,
       config
     )
-    delete notifications[0].NotificationRequestItem.additionalData
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notifications[0].NotificationRequestItem.additionalData
+    }
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -494,11 +502,11 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.ctProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': commercetoolsProjectKey,
           },
           eventCode: 'CAPTURE_FAILED',
           eventDate: '2019-01-30T18:16:22+01:00',
-          merchantAccountCode: 'CommercetoolsGmbHDE775',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
           merchantReference: '8313842560770001',
           operations: ['CANCEL', 'CAPTURE', 'REFUND'],
           paymentMethod: 'visa',
@@ -533,7 +541,9 @@ describe('notification module', () => {
       false,
       config
     )
-    delete notifications[0].NotificationRequestItem.additionalData
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notifications[0].NotificationRequestItem.additionalData
+    }
     const expectedUpdateActions = [
       {
         action: 'addInterfaceInteraction',
@@ -793,11 +803,11 @@ describe('notification module', () => {
             value: 10100,
           },
           additionalData: {
-            'metadata.ctProjectKey': 'adyen-integration-test',
+            'metadata.ctProjectKey': commercetoolsProjectKey,
           },
           eventCode: 'CAPTURE',
           eventDate: '2019-01-30T18:16:22+01:00',
-          merchantAccountCode: 'CommercetoolsGmbHDE775',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
           merchantReference: '8313842560770001',
           operations: ['CANCEL', 'CAPTURE', 'REFUND'],
           paymentMethod: 'visa',

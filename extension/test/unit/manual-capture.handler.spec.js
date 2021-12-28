@@ -27,7 +27,7 @@ describe('manual-capture.handler::execute::', () => {
         fields: {
           type: 'makePayment',
           request:
-            '{"amount":{"currency":"EUR","value":500},"reference":"YOUR_UNIQUE_REFERENCE","paymentMethod":{"type":"scheme","encryptedCardNumber":"test_4111111111111111","encryptedExpiryMonth":"test_03","encryptedExpiryYear":"test_2030","encryptedSecurityCode":"test_737"},"returnUrl":"https://your-company.com/","merchantAccount":"CommercetoolsGmbHDE775"}',
+            '{"amount":{"currency":"EUR","value":500},"reference":"YOUR_UNIQUE_REFERENCE","paymentMethod":{"type":"scheme","encryptedCardNumber":"test_4111111111111111","encryptedExpiryMonth":"test_03","encryptedExpiryYear":"test_2030","encryptedSecurityCode":"test_737"},"returnUrl":"https://your-company.com/","merchantAccount":"YOUR_MERCHANT_ACCOUNT"}',
           response:
             '{"pspReference":"8313547924770610","resultCode":"Authorised","amount":{"currency":"EUR","value":500},"merchantReference":"YOUR_UNIQUE_REFERENCE"}',
           createdAt: '2020-06-10T12:37:00.010Z',

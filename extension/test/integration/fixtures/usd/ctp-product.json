@@ -1,4 +1,5 @@
 {
+  "key": "test-product-usd",
   "productType": {
     "id": "86ee1e1d-3723-4cd9-85ca-596a44284e50",
     "typeId": "product-type"
@@ -7,11 +8,11 @@
     "de-DE": "Product with one variant and one price"
   },
   "slug": {
-    "de": "test-product-slug"
+    "de": "test-product-usd-slug"
   },
   "masterVariant": {
     "id": "1",
-    "sku": "test-product-sku-1",
+    "sku": "test-product-usd-sku-1",
     "attributes": [
       {
         "name": "test",

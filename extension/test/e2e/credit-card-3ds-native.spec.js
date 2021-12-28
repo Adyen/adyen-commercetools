@@ -71,24 +71,13 @@ describe.skip('::creditCardPayment3dsNative::', () => {
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
       let paymentAfterAuthentication
       try {
-        const payment = await createPayment(
-          ctpClient,
-          adyenMerchantAccount,
-          ctpProjectKey
-        )
-        logger.debug(
-          'credit-card-3ds-native::payment:',
-          JSON.stringify(payment)
-        )
         const browserTab = await browser.newPage()
-
         const paymentAfterMakePayment = await makePayment({
           browserTab,
           baseUrl,
           creditCardNumber,
           creditCardDate,
           creditCardCvc,
-          payment,
           clientKey,
         })
         logger.debug(
@@ -117,7 +106,6 @@ describe.skip('::creditCardPayment3dsNative::', () => {
     creditCardNumber,
     creditCardDate,
     creditCardCvc,
-    payment,
     clientKey,
   }) {
     const makePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
@@ -128,26 +116,20 @@ describe.skip('::creditCardPayment3dsNative::', () => {
       creditCardCvc,
       clientKey,
     })
-    let result = null
+    let payment = null
     const startTime = new Date().getTime()
     try {
-      result = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          {
-            action: 'setCustomField',
-            name: 'makePaymentRequest',
-            value: makePaymentRequest,
-          },
-        ]
+      payment = await createPayment(
+        ctpClient,
+        adyenMerchantAccount,
+        ctpProjectKey,
+        makePaymentRequest
       )
     } finally {
       const endTime = new Date().getTime()
       logger.debug('credit-card-3ds-native::makePayment:', endTime - startTime)
     }
-    return result.body
+    return payment
   }
 
   async function performChallengeFlow({ payment, browserTab, baseUrl }) {

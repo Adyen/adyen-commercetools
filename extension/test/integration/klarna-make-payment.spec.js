@@ -4,7 +4,7 @@ const ctpClientBuilder = require('../../src/ctp')
 const config = require('../../src/config/config')
 const iTSetUp = require('./integration-test-set-up')
 
-describe.skip('::klarnaMakePayment with multiple projects use case::', () => {
+describe('::klarnaMakePayment with multiple projects use case::', () => {
   const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
     config.getAllCtpProjectKeys()
   const [adyenMerchantAccount1, adyenMerchantAccount2] =
@@ -17,17 +17,8 @@ describe.skip('::klarnaMakePayment with multiple projects use case::', () => {
     const ctpConfig1 = config.getCtpConfig(commercetoolsProjectKey1)
     ctpClientProject1 = ctpClientBuilder.get(ctpConfig1)
 
-    await iTSetUp.cleanupCtpResources(ctpClientProject1)
-
     const ctpConfig2 = config.getCtpConfig(commercetoolsProjectKey2)
     ctpClientProject2 = ctpClientBuilder.get(ctpConfig2)
-
-    await iTSetUp.cleanupCtpResources(ctpClientProject2)
-  })
-
-  afterEach(async () => {
-    await iTSetUp.cleanupCtpResources(ctpClientProject1)
-    await iTSetUp.cleanupCtpResources(ctpClientProject2)
   })
 
   it(
@@ -41,13 +32,13 @@ describe.skip('::klarnaMakePayment with multiple projects use case::', () => {
           ctpClient: ctpClientProject1,
           adyenMerchantAccount: adyenMerchantAccount1,
           commercetoolsProjectKey: commercetoolsProjectKey1,
-          reference: 'paymentFromMerchant1',
+          reference: `klarnaMakePayment1-${new Date().getTime()}`,
         }),
         makePayment({
           ctpClient: ctpClientProject2,
           adyenMerchantAccount: adyenMerchantAccount2,
           commercetoolsProjectKey: commercetoolsProjectKey2,
-          reference: 'paymentFromMerchant2',
+          reference: `klarnaMakePayment2-${new Date().getTime()}`,
         }),
       ])
     }

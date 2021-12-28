@@ -8,12 +8,8 @@ const packageJson = require('../../package.json')
 
 describe('::getPaymentMethods::', () => {
   let ctpClient
-  const adyenMerchantAccount = Object.keys(
-    JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG).adyen
-  )[0]
-  const commercetoolsProjectKey = Object.keys(
-    JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG).commercetools
-  )[0]
+  const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
+  const [adyenMerchantAccount] = config.getAllAdyenMerchantAccounts()
 
   before(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)

@@ -1,10 +1,7 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-const localtunnel = require('localtunnel')
 const _ = require('lodash')
 const ctpZone = require('./fixtures/ctp-zone.json')
 const ctpTaxCategory = require('./fixtures/ctp-tax-category.json')
 const ctpShippingMethod = require('./fixtures/ctp-shipping-method.json')
-const ctpShippingMethodUsd = require('./fixtures/usd/ctp-shipping-method.json')
 const ctpProductType = require('./fixtures/ctp-product-type.json')
 const ctpProduct = require('./fixtures/ctp-product.json')
 const ctpPayment = require('./fixtures/ctp-payment.json')
@@ -18,99 +15,11 @@ const ctpCartDiscountShipping = require('./fixtures/ctp-cart-discount-shipping.j
 const ctpDiscountCode = require('./fixtures/ctp-discount-code.json')
 const ctpDiscountCodeMultiBuy = require('./fixtures/ctp-discount-code-multi-buy.json')
 const ctpDiscountCodeShipping = require('./fixtures/ctp-discount-code-shipping.json')
-const serverBuilder = require('../../src/server')
-const { routes } = require('../../src/routes')
-const { ensureResources } = require('../../src/config/init/ensure-resources')
-const config = require('../../src/config/config')
-const testUtils = require('../test-utils')
-const logger = require('../../src/utils').getLogger()
 
-let tunnel
-let server
 let currency = 'EUR'
 
 function initCurrency(value) {
   currency = value
-}
-
-function overrideBasicAuthFlag(isEnable) {
-  const moduleConfig = config.getModuleConfig()
-  moduleConfig.basicAuth = isEnable
-  config.getModuleConfig = function getModuleConfig() {
-    return moduleConfig
-  }
-  module.exports = config
-}
-
-function _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
-  const moduleConfig = config.getModuleConfig()
-  moduleConfig.apiExtensionBaseUrl = apiExtensionBaseUrl
-  config.getModuleConfig = function getModuleConfig() {
-    return moduleConfig
-  }
-  module.exports = config
-}
-
-async function initTunnel(port) {
-  let repeaterCounter = 0
-  // eslint-disable-next-line no-shadow
-  let tunnel
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    try {
-      tunnel = await localtunnel({
-        port,
-        subdomain: 'ctp-adyen-integration-tests',
-      })
-      break
-    } catch (e) {
-      if (repeaterCounter === 10) throw e
-      repeaterCounter++
-    }
-  }
-  return tunnel
-}
-
-async function initServerAndTunnel() {
-  const port = config.getModuleConfig().port || 8000
-  server = serverBuilder.setupServer(routes)
-  tunnel = await initTunnel(port)
-  const apiExtensionBaseUrl = tunnel.url
-  _overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
-
-  return new Promise((resolve) => {
-    server.listen(port, async () => {
-      logger.debug(
-        `Extension server is running at ${apiExtensionBaseUrl}:${port}/`
-      )
-      resolve()
-    })
-  })
-}
-
-async function initResources(ctpClient, ctpProjectKey, authHeaderValue) {
-  await testUtils.deleteAllResources(ctpClient, 'payments')
-  await testUtils.deleteAllResources(ctpClient, 'types')
-  const { apiExtensionBaseUrl } = config.getModuleConfig()
-  await ensureResources(
-    ctpClient,
-    ctpProjectKey,
-    apiExtensionBaseUrl,
-    authHeaderValue
-  )
-}
-
-async function cleanupCtpResources(ctpClient) {
-  await testUtils.deleteAllResources(ctpClient, 'discountCodes')
-  await testUtils.deleteAllResources(ctpClient, 'carts')
-  await testUtils.deleteAllResources(ctpClient, 'payments')
-  await testUtils.deleteAllResources(ctpClient, 'products')
-  await testUtils.deleteAllResources(ctpClient, 'products')
-  await testUtils.deleteAllResources(ctpClient, 'productTypes')
-  await testUtils.deleteAllResources(ctpClient, 'shippingMethods')
-  await testUtils.deleteAllResources(ctpClient, 'zones')
-  await testUtils.deleteAllResources(ctpClient, 'taxCategories')
-  await testUtils.deleteAllResources(ctpClient, 'cartDiscounts')
 }
 
 async function _ensureCtpResources({
@@ -188,10 +97,7 @@ async function _ensureShippingMethods(ctpClient, taxCategoryId, zoneId) {
     ctpClient.builder.shippingMethods.where(`key="${ctpShippingMethod.key}"`)
   )
   if (body.results.length === 0) {
-    let ctpShippingMethodClone
-    if (currency === 'USD')
-      ctpShippingMethodClone = _.cloneDeep(ctpShippingMethodUsd)
-    else ctpShippingMethodClone = _.cloneDeep(ctpShippingMethod)
+    const ctpShippingMethodClone = _.cloneDeep(ctpShippingMethod)
     ctpShippingMethodClone.taxCategory.id = taxCategoryId
     ctpShippingMethodClone.zoneRates[0].zone.id = zoneId
     return ctpClient.create(
@@ -298,8 +204,10 @@ async function _ensureDiscountCodeShipping(ctpClient, cartDiscountId) {
 }
 
 async function _ensureProducts(ctpClient, productTypeId, taxCategoryId) {
+  const productKey = currency === 'USD' ? ctpProductUsd.key : ctpProduct.key
+
   const { body } = await ctpClient.fetch(
-    ctpClient.builder.products.where(`key="${ctpProduct.key}"`)
+    ctpClient.builder.products.where(`key="${productKey}"`)
   )
   if (body.results.length === 0) {
     let ctpProductClone
@@ -311,9 +219,19 @@ async function _ensureProducts(ctpClient, productTypeId, taxCategoryId) {
       ctpClient.builder.products,
       ctpProductClone
     )
-    return testUtils.publish(ctpClient, product)
+    return _publish(ctpClient, product)
   }
   return { body: body.results[0] }
+}
+
+async function _publish(ctpClient, product) {
+  const uri = ctpClient.builder.products
+  const actions = [
+    {
+      action: 'publish',
+    },
+  ]
+  return ctpClient.update(uri, product.id, product.version, actions)
 }
 
 async function _ensurePayment({
@@ -321,21 +239,15 @@ async function _ensurePayment({
   adyenMerchantAccount,
   commercetoolsProjectKey,
 }) {
-  const { body } = await ctpClient.fetch(
-    ctpClient.builder.payments.where(`key="${ctpPayment.key}"`)
-  )
-  if (body.results.length === 0) {
-    if (currency === 'USD') {
-      ctpPaymentUsd.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-      ctpPaymentUsd.custom.fields.commercetoolsProjectKey =
-        commercetoolsProjectKey
-      return ctpClient.create(ctpClient.builder.payments, ctpPaymentUsd)
-    }
-    ctpPayment.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-    ctpPayment.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
-    return ctpClient.create(ctpClient.builder.payments, ctpPayment)
+  if (currency === 'USD') {
+    ctpPaymentUsd.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+    ctpPaymentUsd.custom.fields.commercetoolsProjectKey =
+      commercetoolsProjectKey
+    return ctpClient.create(ctpClient.builder.payments, ctpPaymentUsd)
   }
-  return { body: body.results[0] }
+  ctpPayment.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+  ctpPayment.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
+  return ctpClient.create(ctpClient.builder.payments, ctpPayment)
 }
 
 async function _createCart(
@@ -381,25 +293,14 @@ async function initPaymentWithCart({
   adyenMerchantAccount,
   commercetoolsProjectKey,
 }) {
-  const payment = await _ensureCtpResources({
+  return _ensureCtpResources({
     ctpClient,
     adyenMerchantAccount,
     commercetoolsProjectKey,
   })
-  return payment
-}
-
-async function stopRunningServers() {
-  server.close()
-  await tunnel.close()
 }
 
 module.exports = {
-  stopRunningServers,
   initPaymentWithCart,
-  cleanupCtpResources,
-  initServerAndTunnel,
-  initResources,
-  overrideBasicAuthFlag,
   initCurrency,
 }

@@ -1,10 +1,10 @@
-const { cloneDeep } = require('lodash')
 const { expect } = require('chai')
 const { validateHmacSignature } = require('../../src/utils/hmacValidator')
-const notificationRequest = require('../resources/notification.json')
-const { overrideAdyenConfig, restoreAdyenConfig } = require('../test-utils')
-
-const notification = notificationRequest.notificationItems[0]
+const {
+  overrideAdyenConfig,
+  restoreAdyenConfig,
+  createNotificationPayload,
+} = require('../test-utils')
 
 describe('verify hmac signatures', () => {
   before(() => {
@@ -24,7 +24,14 @@ describe('verify hmac signatures', () => {
       'when matches with the stored HMAC key ' +
       'then verification should pass',
     () => {
-      const errorMessage = validateHmacSignature(notification)
+      const notification = createNotificationPayload(
+        'YOUR_PROJECT_KEY',
+        'YOUR_ADYEN_ACCOUNT',
+        `payment_${new Date().getTime()}`
+      )
+      const errorMessage = validateHmacSignature(
+        notification.notificationItems[0]
+      )
       expect(errorMessage).to.equal(null)
     }
   )
@@ -34,7 +41,11 @@ describe('verify hmac signatures', () => {
       'when notification is modified on the way' +
       'then verification should NOT pass',
     () => {
-      const modifiedNotification = cloneDeep(notification)
+      const modifiedNotification = createNotificationPayload(
+        'YOUR_PROJECT_KEY',
+        'YOUR_ADYEN_ACCOUNT',
+        `payment_${new Date().getTime()}`
+      ).notificationItems[0]
       modifiedNotification.NotificationRequestItem.amount.value = 0
 
       const errorMessage = validateHmacSignature(modifiedNotification)
@@ -50,7 +61,11 @@ describe('verify hmac signatures', () => {
       'when notification does not have additionalData field' +
       'then verification should pass',
     () => {
-      const modifiedNotification = cloneDeep(notification)
+      const modifiedNotification = createNotificationPayload(
+        'YOUR_PROJECT_KEY',
+        'YOUR_ADYEN_ACCOUNT',
+        `payment_${new Date().getTime()}`
+      ).notificationItems[0]
       modifiedNotification.NotificationRequestItem.additionalData = null
 
       const errorMessage = validateHmacSignature(modifiedNotification)
@@ -66,7 +81,11 @@ describe('verify hmac signatures', () => {
       'when notification does not have hmacSignature field' +
       'then verification should pass',
     () => {
-      const modifiedNotification = cloneDeep(notification)
+      const modifiedNotification = createNotificationPayload(
+        'YOUR_PROJECT_KEY',
+        'YOUR_ADYEN_ACCOUNT',
+        `payment_${new Date().getTime()}`
+      ).notificationItems[0]
       modifiedNotification.NotificationRequestItem.additionalData.hmacSignature =
         null
 
