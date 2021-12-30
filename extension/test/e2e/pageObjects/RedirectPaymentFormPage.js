@@ -25,9 +25,7 @@ module.exports = class RedirectPaymentFormPage {
       JSON.stringify(paymentDetailsResponse.action)
     )
 
-    await pasteValue(
-      this.page, '#adyen-client-key', clientKey
-    )
+    await pasteValue(this.page, '#adyen-client-key', clientKey)
     return this.page.click('#redirect-payment-button')
   }
 }

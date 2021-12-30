@@ -88,7 +88,7 @@ describe('::creditCardPayment3dsNative::', () => {
           payment: paymentAfterMakePayment,
           browserTab,
           baseUrl,
-          clientKey
+          clientKey,
         })
         logger.debug(
           'credit-card-3ds-native::paymentAfterAuthentication:',
@@ -133,7 +133,12 @@ describe('::creditCardPayment3dsNative::', () => {
     return payment
   }
 
-  async function performChallengeFlow({ payment, browserTab, baseUrl, clientKey }) {
+  async function performChallengeFlow({
+    payment,
+    browserTab,
+    baseUrl,
+    clientKey,
+  }) {
     // Submit additional details 1
     const { makePaymentResponse: makePaymentResponseString } =
       payment.custom.fields
@@ -144,7 +149,8 @@ describe('::creditCardPayment3dsNative::', () => {
     )
     await redirectPaymentFormPage.goToThisPage()
     await redirectPaymentFormPage.redirectToAdyenPaymentPage(
-      makePaymentResponse, clientKey
+      makePaymentResponse,
+      clientKey
     )
 
     await browserTab.waitForTimeout(5_000)
