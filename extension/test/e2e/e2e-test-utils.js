@@ -23,7 +23,7 @@ async function executeInAdyenIframe(page, selector, executeFn) {
   for (const frame of page.mainFrame().childFrames()) {
     const elementHandle = await frame.$(selector)
     if (elementHandle) {
-      await executeFn(elementHandle)
+      await executeFn(elementHandle, frame)
       break
     }
   }

@@ -15,7 +15,7 @@ const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
 const CreditCardNativePage = require('./pageObjects/CreditCard3dsNativePage')
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
-describe.skip('::creditCardPayment3dsNative::', () => {
+describe('::creditCardPayment3dsNative::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
@@ -88,6 +88,7 @@ describe.skip('::creditCardPayment3dsNative::', () => {
           payment: paymentAfterMakePayment,
           browserTab,
           baseUrl,
+          clientKey
         })
         logger.debug(
           'credit-card-3ds-native::paymentAfterAuthentication:',
@@ -132,7 +133,7 @@ describe.skip('::creditCardPayment3dsNative::', () => {
     return payment
   }
 
-  async function performChallengeFlow({ payment, browserTab, baseUrl }) {
+  async function performChallengeFlow({ payment, browserTab, baseUrl, clientKey }) {
     // Submit additional details 1
     const { makePaymentResponse: makePaymentResponseString } =
       payment.custom.fields
@@ -143,7 +144,7 @@ describe.skip('::creditCardPayment3dsNative::', () => {
     )
     await redirectPaymentFormPage.goToThisPage()
     await redirectPaymentFormPage.redirectToAdyenPaymentPage(
-      makePaymentResponse
+      makePaymentResponse, clientKey
     )
 
     await browserTab.waitForTimeout(5_000)
