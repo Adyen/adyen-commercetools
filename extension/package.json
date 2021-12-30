@@ -1,6 +1,6 @@
 {
   "name": "commercetools-adyen-integration-extension",
-  "version": "9.4.0",
+  "version": "9.5.0",
   "description": "Integration between commercetools and Adyen payment service provider",
   "license": "MIT",
   "scripts": {
@@ -37,8 +37,7 @@
     "email": "ps-dev@commercetools.com"
   },
   "engines": {
-    "node": ">=14",
-    "npm": ">=6"
+    "node": ">=16"
   },
   "contributors": [],
   "bugs": {
