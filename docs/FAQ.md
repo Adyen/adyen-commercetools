@@ -24,3 +24,16 @@ Integration supports automatically adding lineItems from commercetools cart for 
 ### Why we need to pass submit payment details twice for some payment methods?
 
 For some payment methods you need to submitAdditionalPaymentDetails twice based on the returned action from Adyen (such as 3DS v2 with IdentifyShopper and ChallengeShopper), please follow instructions in [here](../extension/docs/WebComponentsIntegrationGuide.md#action-response-1) for more details.
+
+### Can I remove a subscription I created?
+
+If you accidentally created a subscription you can edit it and uncheck the **Active** checkbox so Adyen doesn't send notifications. Then you can contact the Adyen support and ask them to remove the subscription
+
+### How does the notification module find a matching payment?
+
+It first find the payment by `key` where `key=${merchantReference}` and then it finds in this payment the corresponding transaction by `interactionId` where `interactionId=${pspReference}`.
+
+### Will we lose a notification if it was not processed for some reason?
+
+Adyen will queue notifications when the notification service was not reachable or it didn't return a success message and will try to send it later.
+

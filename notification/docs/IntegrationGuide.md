@@ -7,8 +7,6 @@
 - [Step 2: Deploy the notification module](#step-2-deploy-the-notification-module)
 - [Step 3: Processing notifications](#step-3-processing-notifications)
 - [Test and go live](#test-and-go-live)
-- [Best practices](#best-practices)
-- [FAQ](#faq)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -90,22 +88,5 @@ If payment is not found then the notification will be skipped from processing.
 
 Before you go live please follow the official Adyen [go-live checklist](https://docs.adyen.com/development-resources/webhooks#test-and-go-live).
 
-## Best practices
-
-- [Please refer to our best practices guide.](../../docs/BEST_PRACTICES.md)
-
-## FAQ
-
-Can I remove a subscription I created?
-
-- If you accidentally created a subscription you can edit it and uncheck the **Active** checkbox so Adyen doesn't
-  send notifications. Then you can contact the Adyen support and ask them to remove the subscription
-
-How does the notification module find a matching payment?
-
-- It first find the payment by `key` where `key=${merchantReference}` and then it finds in this payment the corresponding transaction
-  by `interactionId` where `interactionId=${pspReference}`.
-
-Will we lose a notification if it was not processed for some reason?
-
-- Adyen will queue notifications when the notification service was not reachable or it didn't return a success message and will try to send it later.
+- [Please check FAQ guide](../../docs/FAQ.md).
+- [Please refer to our best practices guide](../../docs/BEST_PRACTICES.md).
