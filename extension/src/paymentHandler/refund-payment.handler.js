@@ -4,9 +4,7 @@ const { CTP_INTERACTION_TYPE_REFUND } = require('../config/constants')
 
 async function execute(paymentObject) {
   const refundInitTransactions = pU.listRefundTransactionsInit(paymentObject)
-  let transaction = pU.getChargeTransactionSuccess(paymentObject)
-  if (!transaction)
-    transaction = pU.getAuthorizationTransactionSuccess(paymentObject)
+  const transaction = pU.getAuthorizationTransactionSuccess(paymentObject)
   const interactionId = transaction.interactionId
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
