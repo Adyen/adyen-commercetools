@@ -20,7 +20,7 @@ If you want to return the funds to your shopper, for example if they returned an
 
 #### Prerequisites
 
-It is required that the payment has one `Authorized` transaction with state `Success`.
+It is required that the payment has a transaction of type `Authorization` and state `Success`.
 From `Authorized` transaction, the `interactionId` field is being used as `originalReference` for the Adyen refund request.
 
 #### Steps
