@@ -61,7 +61,7 @@ Extension module will update the commercetools transaction with `Pending` transa
 ```
 
 Request/response between Adyen and extension module are stored in `interfaceInteraction` field of the payment with type `cancelPayment`.
-The commercetools payment representation after a successful refund:
+The commercetools payment representation after a successful `CancelAuthorization` request:
 
 ```json
 {

@@ -20,9 +20,8 @@ If you want to return the funds to your shopper, for example if they returned an
 
 #### Prerequisites
 
-It is required that the payment has one `Charge` transaction with state `Success`.
-If `Charge` transaction with state `Success` is NOT present, then it is required that the payment has one `Authorized` transaction with state `Success`.
-From either `Charge` or `Authorized` transaction, the `interactionId` field is being used as `originalReference` for the Adyen refund request.
+It is required that the payment has a transaction of type `Authorization` and state `Success`.
+From `Authorized` transaction, the `interactionId` field is being used as `originalReference` for the Adyen refund request.
 
 #### Steps
 
@@ -80,7 +79,7 @@ The commercetools payment representation after a successful refund:
   "transactions": [
     {
       "id": "98d62c56-9a72-4b96-8cb7-f9fe68181085",
-      "type": "Charge",
+      "type": "Authorization",
       "amount": {
         "type": "centPrecision",
         "currencyCode": "EUR",
@@ -127,9 +126,6 @@ The commercetools payment representation after a successful refund:
 1. Adyen processes the refunds asynchronously. Therefore the response from Adyen for extension module will always be `refund-received`.
    However, the final response comes later for the notification module and it can also contain failure.
 1. [Unreferenced refund](https://docs.adyen.com/checkout/refund#unreferenced-refund) is not supported.
-1. After the payment is authorized, it could take some time until the payment is captured. In Adyen, the payment has state `SentForSettle`.
-   During this time, there is no `Charge` transaction with state `Success`. However, it is still possible to do (partial) refunds.
-   Therefore `Authorized` transactions are also taken into consideration when getting the `interactionId` field (see [Prerequisites](#Prerequisites))
 
 ### Further resources
 
