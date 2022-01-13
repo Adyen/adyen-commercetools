@@ -2,8 +2,6 @@
 
 ### Can we use Adyen web components >= v5.0.0 with this integration ?
 
-Yes, you could use the web components > v5.0.0. It's always better to keep your web component front end dependencies up to date with following latest Adyen releases.
-
 In v5.0.0 (released in October 2021) Adyen introduced a simplified way of integrating Web Components, using a single API endpoint. The `/sessions` release is only an orchestration layer on top of existing functionalities.
 This means that the complete checkout experience is still available and existing merchants will not have to change anything to their existing workflow. In fact, the 3 step `/paymentMethods`, `/payments`, `/payments/details` is still the way to go for more complex user flows.
 Adyen will be revisiting this topic in Q2 2022 and we will keep you updated on the potential upgrade regarding with `/session` endpoint usage with this integration.
