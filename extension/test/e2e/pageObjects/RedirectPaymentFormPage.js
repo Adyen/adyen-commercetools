@@ -14,7 +14,7 @@ module.exports = class RedirectPaymentFormPage {
     await this.page.goto(`${this.baseUrl}/redirect-payment-form`)
   }
 
-  async redirectToAdyenPaymentPage(paymentDetailsResponse) {
+  async redirectToAdyenPaymentPage(paymentDetailsResponse, clientKey) {
     logger.debug(
       'redirectToAdyenPaymentPage::paymentDetailsResponse::',
       paymentDetailsResponse
@@ -24,6 +24,8 @@ module.exports = class RedirectPaymentFormPage {
       '#adyen-make-payment-response-action-field',
       JSON.stringify(paymentDetailsResponse.action)
     )
+
+    await pasteValue(this.page, '#adyen-client-key', clientKey)
     return this.page.click('#redirect-payment-button')
   }
 }

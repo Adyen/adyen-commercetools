@@ -10,11 +10,13 @@ module.exports = class CreditCard3dsNativePage {
     await executeInAdyenIframe(this.page, '[name=answer]', (el) =>
       el.type('password')
     )
-    await executeInAdyenIframe(this.page, 'button[type=submit]', (el) =>
-      el.click()
+    await executeInAdyenIframe(this.page, 'button[type=submit]', (el, frame) =>
+      frame.$eval('#buttonSubmit', async (button) => {
+        await button.click()
+      })
     )
 
-    await this.page.waitForTimeout(15_000)
+    await this.page.waitForTimeout(1_000)
 
     const additionalPaymentDetailsInput2 = await this.page.$(
       '#adyen-additional-payment-details'
