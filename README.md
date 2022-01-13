@@ -9,9 +9,9 @@
 
 - [Supported features](#supported-features)
 - [Overview](#overview)
-- [Extension module](#extension-module)
-- [Notification module](#notification-module)
-- [Contribution Guide](#contribution-guide)
+  - [Extension module](#extension-module)
+  - [Notification module](#notification-module)
+- [Other guides](#other-guides)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -33,13 +33,12 @@ Complete integration requires running both of the modules.
 ![Payment flow](./docs/images/payment-flow.svg)
 1. Front end uses [Adyen Web Components](https://docs.adyen.com/checkout/supported-payment-methods) to present required payment methods. The list of available payment methods can be also obtained through the integration with the help of [get available payment methods request](./extension/docs/WebComponentsIntegrationGuide.md#step-3-get-available-payment-methods-optional). On user interaction, frontend web-component generates JSON payloads like [make payment](https://docs.adyen.com/online-payments/components-web#step-3-make-a-payment) or [submit additional payment data](https://docs.adyen.com/online-payments/components-web#step-5-additional-payment-details) which has to be provided to commercetools payment as described [here](./extension/docs/WebComponentsIntegrationGuide.md#web-components-integration-guide).  
 2. With help of the [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) provided data is sent to the Extension Module.
-3. The Extension Module processes provided web component payload passed by the front end, exchanges it with Adyen API, and provides synchronous response back to the front end / commercetools caller. Based on result, the front end either creates an order or continues with further payment steps as described in the [integration guide](./extension/docs/WebComponentsIntegrationGuide.md#web-components-integration-guide).
+3. The Extension Module processes provided web component payload passed by the front end, exchanges it with Adyen API, and provides **synchronous** response back to the front end / commercetools caller. Based on result, the front end either creates an order or continues with further payment steps as described in the [integration guide](./extension/docs/WebComponentsIntegrationGuide.md#web-components-integration-guide). Note that order/cart creations/modifications should be part of the front end business logic. `commercetools-adyen-integration` will neither change the cart nor the order.
 
-In addition with help of Adyen notifications any payment status changes are asynchronously exchanged between Adyen and commercetools.
-
+In addition with help of Adyen notifications any payment status changes are **asynchronously** exchanged between Adyen and commercetools.
 Please follow the detailed guides below in order to integrate your front end with the Extension and Notification modules.
 
-## Extension module 
+### Extension module 
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension)
 
@@ -49,17 +48,19 @@ Once [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api
 - Follow [Integration Guide](./extension/docs/WebComponentsIntegrationGuide.md) for information how to integrate your shop with this module.
 - Follow [How to run](extension/docs/HowToRun.md) the extension module.
 
-## Notification module 
+### Notification module 
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-notification)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-notification)
 
-Notification module is a publicly exposed service which receives asynchronous notifications sent by Adyen, 
+Notification module is a publicly exposed service which receives asynchronous notifications sent by Adyen.
 Through notifications, Adyen provides asynchronously payment status changes like authorization, charge, or refund of the payment.
-The notification module will process the notification and update the matching commercetools payment accordingly.
+The notification module will process the notification sent by Adyen and matches the commercetools payment for this notification, and modifies commercetools payment accordingly.
 
 - Follow [Integration Guide](./notification/docs/IntegrationGuide.md) for information how to integrate with notification module.
 - Follow [How to run](notification/docs/HowToRun.md) the notification module.
 
-## Contribution Guide
-
+## Other guides
+ 
+- Follow the [FAQ](docs/FAQ.md) for the answers to frequently asked questions.
+- Follow the [Best Practices](docs/BEST_PRACTICES.md) for best practices such as order creation, deployment etc. 
 - Follow the [Contribution Guide](docs/ContributionGuide.md) if you would like to run modules locally.
