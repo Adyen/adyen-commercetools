@@ -74,7 +74,7 @@
     "bunyan": "1.8.15",
     "lockfile-lint": "4.6.2",
     "lodash": "4.17.21",
-    "node-fetch": "2.6.7",
+    "node-fetch": "3.1.1",
     "rc": "1.2.8",
     "serialize-error": "8.1.0"
   },
