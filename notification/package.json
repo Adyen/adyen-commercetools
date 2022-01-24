@@ -5,6 +5,7 @@
   "scripts": {
     "check-coverage": "nyc check-coverage --lines 83",
     "test": "npm run check && npm run cover:unit && npm run cover:integration && npm run check-coverage",
+    "stryker": "npm run unit",
     "cover:unit": "nyc --silent npm run unit",
     "cover:integration": "nyc --silent --no-clean npm run integration",
     "unit": "nyc mocha --check-leaks --no-clean --timeout 30000 --full-trace --recursive \"./test/unit/**/*.spec.js\"",
@@ -54,6 +55,7 @@
     "@commercetools/sdk-middleware-user-agent": "2.1.5",
     "@commercetools/sync-actions": "4.9.6",
     "bunyan": "1.8.15",
+    "env-cmd": "^10.1.0",
     "lockfile-lint": "4.6.2",
     "lodash": "4.17.21",
     "node-fetch": "2.6.7",
@@ -62,6 +64,7 @@
     "verror": "1.10.1"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "^5.6.0",
     "chai": "4.3.4",
     "chai-as-promised": "7.1.1",
     "eslint": "8.7.0",
