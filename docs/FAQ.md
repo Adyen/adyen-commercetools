@@ -15,10 +15,6 @@ If you encounter any problems during your integration, feel free to create a git
 
 Yes, you could include additional fields to payment such as [add risk management fields](https://docs.adyen.com/risk-management/configure-standard-risk-rules/required-risk-field-reference), [activate 3D Secure 2](https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-component#make-a-payment) or [allow recurring payments](https://docs.adyen.com/payment-methods/cards/web-component#create-a-token) based on the payment method that you use, for more details please check the note in [important section](../extension/docs/WebComponentsIntegrationGuide.md#step-5-make-a-payment) on our integration docs.
 
-### Can I pass lineItems to makePayment requests ?
-
-Integration supports automatically adding lineItems from commercetools cart for klarna and affirm payments if the payment is referenced in the cart, beside that lineItems and other required data can be provided by the users of the integration within the makePaymentRequest as answered in the above question. If lineItems field is provided, integration will skip adding lineItems and leave the provided lineItems.
-
 ### Why we need to pass submit payment details twice for some payment methods?
 
 For some payment methods you need to submitAdditionalPaymentDetails twice based on the returned action from Adyen (such as 3DS v2 with IdentifyShopper and ChallengeShopper), please follow instructions in [here](../extension/docs/WebComponentsIntegrationGuide.md#action-response-1) for more details.
