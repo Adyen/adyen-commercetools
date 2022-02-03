@@ -9,17 +9,17 @@ Date: 2022-02-01
 ## Context
 
 - Many payment methods requires information about the price and product information by specifying `lineItems` in `makePaymentRequest`.
-- Integration supports automatically **adding lineItems** from commercetools cart for [klarna and affirm payments](https://github.com/commercetools/commercetools-adyen-integration/blob/v9.6.0/extension/docs/WebComponentsIntegrationGuide.md#klarna-payment-and-affirm-payment).
-- There are many payment methods which require line items **beside** the klarna and affirm payment.
-- Since we add out of the box for Affirm and Klarna only the users need to write additional logic to include those items for other payment methods which poses an inconvenience. For instance check the request here on issue [#728](https://github.com/commercetools/commercetools-adyen-integration/issues/728).
+- Integration can **add lineItems** from commercetools cart for [klarna and affirm payments](https://github.com/commercetools/commercetools-adyen-integration/blob/v9.6.0/extension/docs/WebComponentsIntegrationGuide.md#klarna-payment-and-affirm-payment).
+- There are many payment methods which require line items **besides** the klarna and affirm payment.
+- Integration adds lineItems for Affirm and Klarna only. Users need to write additional logic to include those lineItems for other payment methods which poses an inconvenience. For instance check the request here on issue [#728](https://github.com/commercetools/commercetools-adyen-integration/issues/728).
 
 ## Decision
 
 - If lineItems field is provided with `makePaymentRequest`, extension will skip adding lineItems and leave the provided lineItems.
-- An application configuration flag `addCommercetoolsLineItems: true/false` for extension, which will default to false and if set to true would add lineItems to all payment methods.
-- If user includes in the makePaymentRequest,  "addCommercetoolsLineItems": true then integration would generate line items, no matter if it's set to false on application config.
-- For backwards compatibility, still add line items for both Affirm and Klarna. No matter if "addCommercetoolsLineItems" is set to true or false.
-- Extension does not include lineItems for payment methods where those infos are not beneficial and thus we save an API call i.e: fetch the cart.
+- An application configuration flag `addCommercetoolsLineItems: true/false` for extension, which will default to **false**. If set to **true**, it would add lineItems to all payment methods.
+- If user sets  `"addCommercetoolsLineItems": true` in the `makePaymentRequest`, then integration would generate line items, regardless of the setting in the application config.
+- For backwards compatibility, the integration still adds line items for both Affirm and Klarna. No matter if `addCommercetoolsLineItems` is set to true or false.
+- Extension will not add lineItems for payment methods where lineItems are not beneficial and thus we save an API call to fetch the cart.
 
 Payment method types that requires [lineItems](https://docs.adyen.com/api-explorer/#/CheckoutService/latest/payments__reqParam_lineItems): 
 `afterpay`, `afterpaytouch`, `klarna`, `ratepay`, `facilypay`, `clearpay`, `grabpay`, `paybright`, `pix`, `zip`.
