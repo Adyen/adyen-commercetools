@@ -23,6 +23,16 @@ module.exports = {
   ],
 
   PAYMENT_METHOD_TYPE_AFFIRM_METHODS: ['affirm'],
+  PAYMENT_METHODS_REQUIRES_LINE_ITEMS: [
+    'afterpay',
+    'ratepay',
+    'facilypay',
+    'clearpay',
+    'grabpay',
+    'paybright',
+    'pix',
+    'zip',
+  ],
   CTP_CARBON_OFFSET_COSTS_RESPONSE: 'getCarbonOffsetCostsResponse',
   CTP_INTERACTION_TYPE_GET_CARBON_OFFSET_COSTS: 'getCarbonOffsetCosts',
 }

@@ -10,11 +10,13 @@ const getCarbonOffsetCostsHandler = require('./get-carbon-offset-costs.handler')
 const pU = require('./payment-utils')
 const auth = require('../validator/authentication')
 const errorMessages = require('../validator/error-messages')
+const config = require('../config/config')
 
 const {
   CTP_ADYEN_INTEGRATION,
   PAYMENT_METHOD_TYPE_KLARNA_METHODS,
   PAYMENT_METHOD_TYPE_AFFIRM_METHODS,
+  PAYMENT_METHODS_REQUIRES_LINE_ITEMS,
 } = require('../config/constants')
 const {
   getChargeTransactionInitial,
@@ -89,7 +91,7 @@ function _getPaymentHandlers(paymentObject) {
     const makePaymentRequestObj = JSON.parse(
       paymentObject.custom.fields.makePaymentRequest
     )
-    if (_isKlarna(makePaymentRequestObj) || _isAffirm(makePaymentRequestObj))
+    if (_isOpenInvoiceMethodType(makePaymentRequestObj))
       handlers.push(makeLineitemsPaymentHandler)
     else handlers.push(makePaymentHandler)
   }
@@ -139,6 +141,39 @@ function _validatePaymentRequest(paymentObject, authToken) {
   return null
 }
 
+function _isOpenInvoiceMethodType(makePaymentRequestObj) {
+  const addCommercetoolsLineItemsFlag = _getAddCommercetoolsLineItemsFlag(
+    makePaymentRequestObj
+  )
+  if (addCommercetoolsLineItemsFlag !== undefined) {
+    return addCommercetoolsLineItemsFlag
+  }
+
+  if (_isKlarna(makePaymentRequestObj) || _isAffirm(makePaymentRequestObj))
+    return true
+
+  const addCommercetoolsLineItemsAppConfigFlag =
+    config.getModuleConfig().addCommercetoolsLineItems
+  if (addCommercetoolsLineItemsAppConfigFlag === true)
+    return _isPaymentMethodRequiresLineItems(makePaymentRequestObj)
+
+  return false
+}
+
+function _getAddCommercetoolsLineItemsFlag(makePaymentRequestObj) {
+  let addCommercetoolsLineItems
+  if ('addCommercetoolsLineItems' in makePaymentRequestObj) {
+    if (
+      makePaymentRequestObj.addCommercetoolsLineItems === true ||
+      makePaymentRequestObj.addCommercetoolsLineItems === false
+    ) {
+      addCommercetoolsLineItems =
+        makePaymentRequestObj.addCommercetoolsLineItems
+    }
+  }
+  return addCommercetoolsLineItems
+}
+
 function _isKlarna(makePaymentRequestObj) {
   return (
     makePaymentRequestObj.paymentMethod &&
@@ -155,6 +190,18 @@ function _isAffirm(makePaymentRequestObj) {
       makePaymentRequestObj.paymentMethod.type
     )
   )
+}
+
+function _isPaymentMethodRequiresLineItems(makePaymentRequestObj) {
+  if (makePaymentRequestObj.paymentMethod) {
+    const paymentMethodType = makePaymentRequestObj.paymentMethod.type
+    for (const type of PAYMENT_METHODS_REQUIRES_LINE_ITEMS) {
+      if (paymentMethodType.startsWith(type)) {
+        return true
+      }
+    }
+  }
+  return false
 }
 
 function _isCancelPayment(paymentObject) {

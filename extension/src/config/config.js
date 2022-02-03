@@ -6,6 +6,10 @@ function getModuleConfig() {
   let removeSensitiveData = config.removeSensitiveData !== 'false'
   if (config.removeSensitiveData === false) removeSensitiveData = false
 
+  let addCommercetoolsLineItems = config.addCommercetoolsLineItems !== 'false'
+  if (config.addCommercetoolsLineItems === false)
+    addCommercetoolsLineItems = false
+
   return {
     removeSensitiveData,
     port: config.port,
@@ -15,6 +19,7 @@ function getModuleConfig() {
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
+    addCommercetoolsLineItems,
   }
 }
 
