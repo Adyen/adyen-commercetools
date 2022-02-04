@@ -477,7 +477,7 @@ The extension module can add the line item details for you, but you need to do f
   1. `addCommercetoolsLineItems` flag set `true` on your extension [config](./HowToRun.md#other-configurations). If set to **true**, it would add lineItems to payment methods that requires lineItems.
   1. `addCommercetoolsLineItems` field added to `makePaymentRequest`.
 
-Here's an example of the `makePaymentRequest` custom field set **WITHOUT** `lineItems` attribute.
+Here's an example of the `makePaymentRequest` custom field set **WITHOUT** `lineItems` attribute and `addCommercetoolsLineItems` is set to true.
 
 ```json
 {
@@ -506,7 +506,8 @@ Here's an example of the `makePaymentRequest` custom field set **WITHOUT** `line
     "postalCode": "12345",
     "street": "Stargatan"
   },
-  "returnUrl": "https://www.your-company.com/..."
+  "returnUrl": "https://www.your-company.com/...",
+  "addCommercetoolsLineItems": true
 }
 ```
 
