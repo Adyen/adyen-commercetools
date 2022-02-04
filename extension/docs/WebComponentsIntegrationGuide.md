@@ -469,7 +469,7 @@ Pass the action object to your front end. The Adyen web component uses this to h
 
 For some payment methods (such as Klarna & Affirm), it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) in `makePaymentRequest`.
 
-The extension module can add the line item details for you, but you might need to do following steps:
+The extension module can add the line item details for you, but you need to do following steps:
 
 - The commercetools payment [referenced in the commercetools cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
 - To use commercetools lineItems, do not include `lineItems` field in the `makePaymentRequest`, otherwise the extension module will use provided lineItems already passed by `makePaymentRequest`.
