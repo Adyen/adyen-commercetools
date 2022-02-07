@@ -3,15 +3,8 @@ const loadConfig = require('./config-loader')
 let config
 
 function getModuleConfig() {
-  let removeSensitiveData = config.removeSensitiveData !== 'false'
-  if (config.removeSensitiveData === false) removeSensitiveData = false
-
-  let addCommercetoolsLineItems = config.addCommercetoolsLineItems !== 'false'
-  if (config.addCommercetoolsLineItems === false)
-    addCommercetoolsLineItems = false
-
   return {
-    removeSensitiveData,
+    removeSensitiveData: _getValueOfBooleanFlag(config.removeSensitiveData, true),
     port: config.port,
     logLevel: config.logLevel,
     apiExtensionBaseUrl: config.apiExtensionBaseUrl, // used only for development purpose
@@ -19,8 +12,22 @@ function getModuleConfig() {
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
-    addCommercetoolsLineItems,
+    addCommercetoolsLineItems: _getValueOfBooleanFlag(config.addCommercetoolsLineItems, true),
   }
+}
+
+function _getValueOfBooleanFlag(value, defaultValue) {
+  if (value === undefined) {
+    return defaultValue
+  }
+
+  if (value === true || value === 'true') {
+    return true
+  } else if (value === false || value === 'false') {
+    return false
+  }
+
+  return defaultValue
 }
 
 function _validateAuthenticationConfig(ctpConfig) {
