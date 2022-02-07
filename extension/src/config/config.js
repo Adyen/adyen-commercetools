@@ -29,7 +29,9 @@ function _getValueOfBooleanFlag(value, defaultValue) {
 
   if (value === true || value === 'true') {
     return true
-  } else if (value === false || value === 'false') {
+  }
+
+  if (value === false || value === 'false') {
     return false
   }
 
