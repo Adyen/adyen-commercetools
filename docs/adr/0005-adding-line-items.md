@@ -22,7 +22,7 @@ Date: 2022-02-01
 - Extension will not add lineItems for payment methods where lineItems are not beneficial and thus we save an API call to fetch the cart.
 
 Payment method types that requires [lineItems](https://docs.adyen.com/api-explorer/#/CheckoutService/latest/payments__reqParam_lineItems): 
-`afterpay`, `afterpaytouch`, `klarna`, `ratepay`, `facilypay`, `clearpay`, `grabpay`, `paybright`, `pix`, `zip`.
+`klarna`, `affirm`, `afterpay`, `afterpaytouch`, `klarna`, `ratepay`, `facilypay`, `clearpay`, `grabpay`, `paybright`, `pix`, `zip`.
 
 ## Consequences
 

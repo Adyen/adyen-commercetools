@@ -24,6 +24,8 @@ module.exports = {
 
   PAYMENT_METHOD_TYPE_AFFIRM_METHODS: ['affirm'],
   PAYMENT_METHODS_WITH_REQUIRED_LINE_ITEMS: [
+    'klarna',
+    'affirm',
     'afterpay',
     'ratepay',
     'facilypay',
