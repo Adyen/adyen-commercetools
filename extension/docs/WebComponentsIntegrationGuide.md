@@ -465,7 +465,7 @@ Pass the action object to your front end. The Adyen web component uses this to h
 
 > See [Adyen documentation](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-4-additional-front-end) for more information how to perform additional front end actions.
 
-### Adding invoice lines (lineItems) to request
+### Adding cart and product informations (lineItems) to the request
 
 For some payment methods (such as Klarna & Affirm), it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) within the `makePaymentRequest`.
 
