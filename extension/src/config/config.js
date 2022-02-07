@@ -4,7 +4,10 @@ let config
 
 function getModuleConfig() {
   return {
-    removeSensitiveData: _getValueOfBooleanFlag(config.removeSensitiveData, true),
+    removeSensitiveData: _getValueOfBooleanFlag(
+      config.removeSensitiveData,
+      true
+    ),
     port: config.port,
     logLevel: config.logLevel,
     apiExtensionBaseUrl: config.apiExtensionBaseUrl, // used only for development purpose
@@ -12,7 +15,10 @@ function getModuleConfig() {
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
-    addCommercetoolsLineItems: _getValueOfBooleanFlag(config.addCommercetoolsLineItems, true),
+    addCommercetoolsLineItems: _getValueOfBooleanFlag(
+      config.addCommercetoolsLineItems,
+      true
+    ),
   }
 }
 
