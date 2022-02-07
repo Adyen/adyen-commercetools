@@ -3,6 +3,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Web Components integration guide](#web-components-integration-guide)
   - [How it works](#how-it-works)
   - [Before you begin](#before-you-begin)
@@ -18,7 +19,7 @@
     - [Response](#response)
       - [Authorised Response](#authorised-response)
       - [Action Response](#action-response)
-    - [Adding invoice lines (lineItems) to request](#adding-invoice-lines-lineitems-to-request)
+    - [Adding cart and product informations (lineItems) to the request](#adding-cart-and-product-informations-lineitems-to-the-request)
   - [Step 6: Submit additional payment details](#step-6-submit-additional-payment-details)
     - [Response](#response-1)
       - [Authorised Response](#authorised-response-1)
