@@ -3,7 +3,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Web Components integration guide](#web-components-integration-guide)
   - [How it works](#how-it-works)
   - [Before you begin](#before-you-begin)
@@ -471,10 +470,11 @@ Pass the action object to your front end. The Adyen web component uses this to h
 For some payment methods, it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) within the `makePaymentRequest`.
 
 Extension module can generate the line item automatically, but you need to do following steps:
+
 - The commercetools payment [referenced in the commercetools cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
-- Either `addCommercetoolsLineItems` property set to`true` within the `makePaymentRequest` or `addCommercetoolsLineItems` flag set to `true` within your extension [configuration](./HowToRun.md#other-configurations). 
+- Either `addCommercetoolsLineItems` property set to`true` within the `makePaymentRequest` or `addCommercetoolsLineItems` flag set to `true` within your extension [configuration](./HowToRun.md#other-configurations).
   > In case you would like to override the generation of the lineItems please provide within the `makePaymentRequest` own `lineItems` data.
-  
+
 Here's an example of the `makePaymentRequest` **WITHOUT** `lineItems` and `addCommercetoolsLineItems` property set to true.
 
 ```json
