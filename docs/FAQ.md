@@ -20,7 +20,7 @@ Find information on most frequently asked questions during integrating on **comm
 - [What are the best practices in regards to commercetools payment object lifecycle?](#what-are-the-best-practices-in-regards-to-commercetools-payment-object-lifecycle)
 - [Why payment status is not set?](#why-payment-status-is-not-set)
 - [What do I do in case of errors?](#what-do-i-do-in-case-of-errors)
-- [When we should create commercetools order ?](#when-we-should-create-commercetools-order-)
+- [When I should create commercetools order ?](#when-i-should-create-commercetools-order-)
   - [What to consider when creating an order _AFTER_ a successful commercetools payment ?](#what-to-consider-when-creating-an-order-_after_-a-successful-commercetools-payment-)
   - [What to consider when creating an order _BEFORE_ a successful commercetools payment ?](#what-to-consider-when-creating-an-order-_before_-a-successful-commercetools-payment-)
 
@@ -85,13 +85,14 @@ Order/cart modifications should be part of the front end/merchant server busines
 - **Never delete or un-assign from cart** the payment objects created during the checkout. Clean-up (if required) can be done asynchronously i.e.: after order creation.
 
 ### Why payment status is not set?
+
 Currently [payment status](https://docs.commercetools.com/api/projects/payments#paymentstatus) is not maintained by the integration as status of the payment can be derived from the state of the payment transaction(s).
 
 ### What do I do in case of errors?
 
 In case you encounter errors during the integration please refer to the [error-handling section](../extension/docs/WebComponentsIntegrationGuide.md#error-handling)
 
-### When we should create commercetools order ?
+### When I should create commercetools order ?
 
 There are 2 approaches for creating commercetools order. You can create an order either before or after a successful payment.
 Both approaches have their good and bad sides, but we found out that creating an order AFTER a successful payment is less harmful. Please read the details below for both approaches and decide based on your checkout scenarios.
