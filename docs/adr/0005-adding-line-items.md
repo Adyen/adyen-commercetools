@@ -16,7 +16,7 @@ Date: 2022-02-01
 ## Decision
 
 - If lineItems field is defined within the `makePaymentRequest`, extension will skip lineItems generation and leave the provided lineItems.
-- An application configuration flag `addCommercetoolsLineItems: true/false` for extension, which will default to **false**. If set to **true**, it would add lineItems to payment methods that requires lineItems.
+-  If extension application configuration flag named `addCommercetoolsLineItems` is set to `true` then the integration will add lineItems to all payment methods which require lineItems.
 - If user sets `"addCommercetoolsLineItems": true` in the `makePaymentRequest`, then the integration will generate lineItems, regardless of the setting in the application config.
     - For backwards compatibility, the integration still adds line items for both Affirm and Klarna - no matter how `addCommercetoolsLineItems` configurations are set.
 - Extension will not add lineItems for payment methods where lineItems are not beneficial and thus we save an API call to fetch the cart.
