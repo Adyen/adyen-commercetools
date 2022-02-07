@@ -16,7 +16,7 @@ const {
   CTP_ADYEN_INTEGRATION,
   PAYMENT_METHOD_TYPE_KLARNA_METHODS,
   PAYMENT_METHOD_TYPE_AFFIRM_METHODS,
-  PAYMENT_METHODS_REQUIRES_LINE_ITEMS,
+  PAYMENT_METHODS_WITH_REQUIRED_LINE_ITEMS,
 } = require('../config/constants')
 const {
   getChargeTransactionInitial,
@@ -195,7 +195,7 @@ function _isAffirm(makePaymentRequestObj) {
 function _isPaymentMethodRequiresLineItems(makePaymentRequestObj) {
   if (makePaymentRequestObj.paymentMethod) {
     const paymentMethodType = makePaymentRequestObj.paymentMethod.type
-    for (const type of PAYMENT_METHODS_REQUIRES_LINE_ITEMS) {
+    for (const type of PAYMENT_METHODS_WITH_REQUIRED_LINE_ITEMS) {
       if (paymentMethodType.startsWith(type)) {
         return true
       }

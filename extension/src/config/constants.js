@@ -23,7 +23,7 @@ module.exports = {
   ],
 
   PAYMENT_METHOD_TYPE_AFFIRM_METHODS: ['affirm'],
-  PAYMENT_METHODS_REQUIRES_LINE_ITEMS: [
+  PAYMENT_METHODS_WITH_REQUIRED_LINE_ITEMS: [
     'afterpay',
     'ratepay',
     'facilypay',
