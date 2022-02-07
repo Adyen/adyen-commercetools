@@ -468,7 +468,7 @@ Pass the action object to your front end. The Adyen web component uses this to h
 
 ### Adding cart and product informations (lineItems) to the request
 
-For some payment methods (such as Klarna & Affirm), it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) within the `makePaymentRequest`.
+For some payment methods, it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) within the `makePaymentRequest`.
 
 Extension module can generate line item details automatically if either `addCommercetoolsLineItems` property is set to`true` within the `makePaymentRequest` or `addCommercetoolsLineItems` flag is set to `true` within your extension [configuration](./HowToRun.md#other-configurations). In case you would like to override the generation of the lineItems please provide within the `makePaymentRequest` own `lineItems` data.
 
