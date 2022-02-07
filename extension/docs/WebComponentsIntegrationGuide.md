@@ -467,9 +467,9 @@ Pass the action object to your front end. The Adyen web component uses this to h
 
 ### Adding invoice lines (lineItems) to request
 
-For some payment methods (such as Klarna & Affirm), it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) in `makePaymentRequest`.
+For some payment methods (such as Klarna & Affirm), it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) within the `makePaymentRequest`.
 
-The extension module can add the line item details for you, but you need to do following steps:
+Extension module can generate line item details automatically if either `addCommercetoolsLineItems` property is set to`true` within the `makePaymentRequest` or `addCommercetoolsLineItems` flag is set to `true` within your extension [configuration](./HowToRun.md#other-configurations). In case you would like to override the generation of the lineItems please provide within the `makePaymentRequest` own `lineItems` data.
 
 - The commercetools payment [referenced in the commercetools cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
 - To use commercetools lineItems, do not include `lineItems` field in the `makePaymentRequest`, otherwise the extension module will use provided lineItems already passed by `makePaymentRequest`.
@@ -477,7 +477,7 @@ The extension module can add the line item details for you, but you need to do f
   1. `addCommercetoolsLineItems` flag set `true` on your extension [config](./HowToRun.md#other-configurations). If set to **true**, it would add lineItems to payment methods that requires lineItems.
   1. `addCommercetoolsLineItems` field added to `makePaymentRequest`.
 
-Here's an example of the `makePaymentRequest` custom field set **WITHOUT** `lineItems` attribute and `addCommercetoolsLineItems` is set to true.
+Here's an example of the `makePaymentRequest` **WITHOUT** `lineItems` and `addCommercetoolsLineItems` property set to true.
 
 ```json
 {
