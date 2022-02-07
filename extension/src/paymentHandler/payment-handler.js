@@ -91,7 +91,7 @@ function _getPaymentHandlers(paymentObject) {
     const makePaymentRequestObj = JSON.parse(
       paymentObject.custom.fields.makePaymentRequest
     )
-    if (_isOpenInvoiceMethodType(makePaymentRequestObj))
+    if (_requiresLineItems(makePaymentRequestObj))
       handlers.push(makeLineitemsPaymentHandler)
     else handlers.push(makePaymentHandler)
   }
@@ -141,7 +141,7 @@ function _validatePaymentRequest(paymentObject, authToken) {
   return null
 }
 
-function _isOpenInvoiceMethodType(makePaymentRequestObj) {
+function _requiresLineItems(makePaymentRequestObj) {
   const addCommercetoolsLineItemsFlag = _getAddCommercetoolsLineItemsFlag(
     makePaymentRequestObj
   )
