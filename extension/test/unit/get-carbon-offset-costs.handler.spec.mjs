@@ -1,10 +1,8 @@
-const nock = require('nock')
-const { expect } = require('chai')
-const c = require('../../src/config/constants')
-const {
-  execute,
-} = require('../../src/paymentHandler/get-carbon-offset-costs.handler')
-const config = require('../../src/config/config')
+import nock from 'nock'
+import { expect } from 'chai'
+import c from '../../src/config/constants.mjs'
+import execute from '../../src/paymentHandler/get-carbon-offset-costs.handler.mjs'
+import config from '../../src/config/config.mjs'
 
 describe('get-carbon-offset-costs::execute::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

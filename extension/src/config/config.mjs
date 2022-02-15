@@ -1,4 +1,4 @@
-const loadConfig = require('./config-loader')
+import loadConfig from './config-loader.js'
 
 let config
 
@@ -133,7 +133,7 @@ function loadAndValidateConfig() {
 
 loadAndValidateConfig()
 
-module.exports = {
+export default {
   getModuleConfig,
   getCtpConfig,
   getAdyenConfig,

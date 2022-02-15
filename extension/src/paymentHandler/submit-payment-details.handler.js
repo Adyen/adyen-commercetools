@@ -1,12 +1,10 @@
-const _ = require('lodash')
-const {
-  submitAdditionalPaymentDetails,
-} = require('../service/web-component-service')
-const pU = require('./payment-utils')
-const c = require('../config/constants')
-const {
-  CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
-} = require('../config/constants')
+import _ from 'lodash'
+import componentService from '../service/web-component-service'
+import pU from './payment-utils'
+import c from '../config/constants'
+
+const { submitAdditionalPaymentDetails } = componentService
+const { CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = c
 
 async function execute(paymentObject) {
   const actions = []
@@ -81,4 +79,4 @@ function _isNewRequest(
   return false
 }
 
-module.exports = { execute }
+export default execute

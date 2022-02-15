@@ -1,6 +1,8 @@
-const pU = require('./payment-utils')
-const c = require('../config/constants')
-const { getPaymentMethods } = require('../service/web-component-service')
+import pU from './payment-utils'
+import c from '../config/constants.mjs'
+import componentService from '../service/web-component-service'
+
+const { getPaymentMethods } = componentService
 
 async function execute(paymentObject) {
   const getPaymentMethodsRequestObj = JSON.parse(
@@ -26,4 +28,4 @@ async function execute(paymentObject) {
   }
 }
 
-module.exports = { execute }
+export default execute

@@ -1,4 +1,4 @@
-module.exports = class AffirmPage {
+export default class AffirmPage {
   constructor(page) {
     this.page = page
   }

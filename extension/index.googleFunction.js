@@ -1,8 +1,8 @@
-const paymentHandler = require('./src/paymentHandler/payment-handler')
-const utils = require('./src/utils')
-const auth = require('./src/validator/authentication')
+import paymentHandler from './src/paymentHandler/payment-handler'
+import utils from './src/utils.mjs'
+import auth from './src/validator/authentication'
 
-exports.extensionTrigger = async (request, response) => {
+export let extensionTrigger = async (request, response) => {
   const paymentObj = request?.body?.resource?.obj
   try {
     if (!paymentObj) {

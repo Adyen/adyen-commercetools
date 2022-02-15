@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 
 const sinon = require('sinon')
-const config = require('../../src/config/config')
+const config = require('../../src/config/config.mjs')
 const auth = require('../../src/validator/authentication')
 
 describe('Authentication unit test', () => {

@@ -1,6 +1,6 @@
-const { createSyncTypes } = require('@commercetools/sync-actions')
-const { serializeError } = require('serialize-error')
-const utils = require('../../utils')
+import { createSyncTypes } from '@commercetools/sync-actions'
+import { serializeError } from 'serialize-error'
+import utils from '../../utils'
 
 const mainLogger = utils.getLogger()
 
@@ -68,7 +68,7 @@ async function fetchTypeByKey(ctpClient, key) {
   }
 }
 
-module.exports = {
+export default {
   ensurePaymentCustomType,
   ensureInterfaceInteractionCustomType,
 }

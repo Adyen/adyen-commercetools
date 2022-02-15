@@ -1,18 +1,15 @@
-const ctpClientBuilder = require('../../src/ctp')
-const { routes } = require('../../src/routes')
-const config = require('../../src/config/config')
-const httpUtils = require('../../src/utils')
+import ctpClientBuilder from '../../src/ctp'
+import routes from '../../src/routes'
+import config from '../../src/config/config'
+import httpUtils from '../../src/utils'
+import testUtils from './e2e-test-utils'
+import MakePaymentFormPage from './pageObjects/CreditCardMakePaymentFormPage'
+import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage'
+import CreditCardNativePage from './pageObjects/CreditCard3dsNativePage'
 
 const logger = httpUtils.getLogger()
-const {
-  assertPayment,
-  createPayment,
-  initPuppeteerBrowser,
-  serveFile,
-} = require('./e2e-test-utils')
-const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
-const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
-const CreditCardNativePage = require('./pageObjects/CreditCard3dsNativePage')
+const { assertPayment, createPayment, initPuppeteerBrowser, serveFile } =
+  testUtils
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
 describe('::creditCardPayment3dsNative::', () => {

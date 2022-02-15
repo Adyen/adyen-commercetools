@@ -1,6 +1,8 @@
-const { executeInAdyenIframe } = require('../e2e-test-utils')
+import testUtils from '../e2e-test-utils'
 
-module.exports = class CreditCard3dsNativePage {
+const { executeInAdyenIframe } = testUtils
+
+export default class CreditCard3dsNativePage {
   constructor(page, baseUrl) {
     this.page = page
     this.baseUrl = baseUrl

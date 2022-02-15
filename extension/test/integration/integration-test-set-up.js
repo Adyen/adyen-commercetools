@@ -1,20 +1,20 @@
-const _ = require('lodash')
-const ctpZone = require('./fixtures/ctp-zone.json')
-const ctpTaxCategory = require('./fixtures/ctp-tax-category.json')
-const ctpShippingMethod = require('./fixtures/ctp-shipping-method.json')
-const ctpProductType = require('./fixtures/ctp-product-type.json')
-const ctpProduct = require('./fixtures/ctp-product.json')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const ctpProductUsd = require('./fixtures/usd/ctp-product.json')
-const ctpPaymentUsd = require('./fixtures/usd/ctp-payment.json')
-const ctpCartUsd = require('./fixtures/usd/ctp-cart.json')
-const ctpCart = require('./fixtures/ctp-cart.json')
-const ctpCartDiscount = require('./fixtures/ctp-cart-discount.json')
-const ctpCartDiscountMultiBuy = require('./fixtures/ctp-cart-discount-multi-buy.json')
-const ctpCartDiscountShipping = require('./fixtures/ctp-cart-discount-shipping.json')
-const ctpDiscountCode = require('./fixtures/ctp-discount-code.json')
-const ctpDiscountCodeMultiBuy = require('./fixtures/ctp-discount-code-multi-buy.json')
-const ctpDiscountCodeShipping = require('./fixtures/ctp-discount-code-shipping.json')
+import _ from 'lodash'
+import ctpZone from './fixtures/ctp-zone.json'
+import ctpTaxCategory from './fixtures/ctp-tax-category.json'
+import ctpShippingMethod from './fixtures/ctp-shipping-method.json'
+import ctpProductType from './fixtures/ctp-product-type.json'
+import ctpProduct from './fixtures/ctp-product.json'
+import ctpPayment from './fixtures/ctp-payment.json'
+import ctpProductUsd from './fixtures/usd/ctp-product.json'
+import ctpPaymentUsd from './fixtures/usd/ctp-payment.json'
+import ctpCartUsd from './fixtures/usd/ctp-cart.json'
+import ctpCart from './fixtures/ctp-cart.json'
+import ctpCartDiscount from './fixtures/ctp-cart-discount.json'
+import ctpCartDiscountMultiBuy from './fixtures/ctp-cart-discount-multi-buy.json'
+import ctpCartDiscountShipping from './fixtures/ctp-cart-discount-shipping.json'
+import ctpDiscountCode from './fixtures/ctp-discount-code.json'
+import ctpDiscountCodeMultiBuy from './fixtures/ctp-discount-code-multi-buy.json'
+import ctpDiscountCodeShipping from './fixtures/ctp-discount-code-shipping.json'
 
 let currency = 'EUR'
 
@@ -300,7 +300,7 @@ async function initPaymentWithCart({
   })
 }
 
-module.exports = {
+export default {
   initPaymentWithCart,
   initCurrency,
 }

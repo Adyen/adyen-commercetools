@@ -1,7 +1,7 @@
-const httpUtils = require('../../utils')
+import httpUtils from '../../utils.mjs'
 
 function processRequest(request, response) {
   httpUtils.sendResponse({ response, statusCode: 200 })
 }
 
-module.exports = { processRequest }
+export default { processRequest }

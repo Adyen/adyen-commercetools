@@ -1,15 +1,15 @@
-const { expect } = require('chai')
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp'
+import constants from '../../src/config/constants'
+import paymentUtils from '../../src/paymentHandler/payment-utils'
+import config from '../../src/config/config'
 
-const ctpClientBuilder = require('../../src/ctp')
 const {
   CTP_ADYEN_INTEGRATION,
   CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
   CTP_PAYMENT_CUSTOM_TYPE_KEY,
-} = require('../../src/config/constants')
-const {
-  createAddTransactionAction,
-} = require('../../src/paymentHandler/payment-utils')
-const config = require('../../src/config/config')
+} = constants
+const { createAddTransactionAction } = paymentUtils
 
 describe('::manualCapture::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

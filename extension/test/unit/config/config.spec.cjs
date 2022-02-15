@@ -1,6 +1,8 @@
-const { expect } = require('chai')
-const fs = require('fs')
-const homedir = require('os').homedir()
+import { expect } from 'chai'
+import fs from 'fs'
+import homedir from 'os'
+
+homedir.homedir()
 
 describe('::config::', () => {
   it('when config is provided, it should load correctly', () => {
@@ -320,7 +322,7 @@ describe('::config::', () => {
   )
 
   it(
-    'when removeSensitiveData is set as boolean false in config.js, ' +
+    'when removeSensitiveData is set as boolean false in config.mjs, ' +
       'it should load as false value in module config',
     () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
@@ -354,7 +356,7 @@ describe('::config::', () => {
   )
 
   it(
-    'when removeSensitiveData is set as boolean true in config.js, ' +
+    'when removeSensitiveData is set as boolean true in config.mjs, ' +
       'it should load as true value in module config',
     () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
@@ -388,7 +390,7 @@ describe('::config::', () => {
   )
 
   it(
-    'when removeSensitiveData is set as string false in config.js, ' +
+    'when removeSensitiveData is set as string false in config.mjs, ' +
       'it should load as false value in module config',
     () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
@@ -414,7 +416,7 @@ describe('::config::', () => {
   )
 
   it(
-    'when removeSensitiveData is set as string true in config.js, ' +
+    'when removeSensitiveData is set as string true in config.mjs, ' +
       'it should load as true value in module config',
     () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({

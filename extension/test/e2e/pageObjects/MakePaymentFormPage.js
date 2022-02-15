@@ -1,4 +1,4 @@
-module.exports = class MakePaymentFormPage {
+export default class MakePaymentFormPage {
   constructor(page, baseUrl) {
     this.page = page
     this.baseUrl = baseUrl

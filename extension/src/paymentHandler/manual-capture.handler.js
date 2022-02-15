@@ -1,6 +1,9 @@
-const pU = require('./payment-utils')
-const { manualCapture } = require('../service/web-component-service')
-const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = require('../config/constants')
+import pU from './payment-utils'
+import componentService from '../service/web-component-service'
+import constants from '../config/constants'
+
+const { manualCapture } = componentService
+const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
 
 async function execute(paymentObject) {
   const chargeInitialTransaction = pU.getChargeTransactionInitial(paymentObject)
@@ -50,4 +53,4 @@ async function execute(paymentObject) {
   }
 }
 
-module.exports = { execute }
+export default { execute }

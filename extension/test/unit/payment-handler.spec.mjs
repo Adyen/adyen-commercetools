@@ -1,15 +1,15 @@
-const nock = require('nock')
-const _ = require('lodash')
-const sinon = require('sinon')
-const { expect } = require('chai')
-const { handlePayment } = require('../../src/paymentHandler/payment-handler')
-const submitPaymentDetailsChallengeRes = require('./fixtures/adyen-submit-payment-details-challenge-shopper-response')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
-const errorMessage = require('../../src/validator/error-messages')
-const config = require('../../src/config/config')
+import nock from 'nock'
+import _ from 'lodash'
+import { expect } from 'chai'
+import handlePayment from '../../src/paymentHandler/payment-handler'
+import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response'
+import ctpPayment from './fixtures/ctp-payment.json'
+import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response'
+import config from '../../src/config/config'
+import c from '../../src/config/constants'
+import errorMessage from '../../src/validator/error-messages'
 
-describe('payment-handler-authorization::execute', () => {
+describe('payment-handler::execute', () => {
   let scope
   /* eslint-disable max-len */
   const submitPaymentDetailsRequest = {
@@ -22,21 +22,7 @@ describe('payment-handler-authorization::execute', () => {
   /* eslint-enable max-len */
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
-  const dummyModuleConfig = {
-    basicAuth: true,
-  }
-  const dummyCtpConfig = {
-    clientId: 'clientId',
-    clientSecret: 'clientSecret',
-    projectKey: 'ctpProjectKey1',
-    apiUrl: 'https://api.europe-west1.gcp.commercetools.com',
-    authUrl: 'https://auth.europe-west1.gcp.commercetools.com',
-    authentication: {
-      scheme: 'basic',
-      username: 'Aladdin',
-      password: 'open sesame',
-    },
-  }
+
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     scope = nock(`${adyenConfig.apiBaseUrl}`)
@@ -47,7 +33,7 @@ describe('payment-handler-authorization::execute', () => {
   })
 
   it(
-    'when endpoint authorization is enabled and request is authorized' +
+    'when payment contains "submitAdditionalPaymentDetailsRequest" with "makePaymentResponse", ' +
       'then it should call /payments/details on Adyen',
     async () => {
       scope
@@ -63,102 +49,114 @@ describe('payment-handler-authorization::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const sandbox = sinon.createSandbox()
-      sandbox.stub(config, 'getModuleConfig').returns(dummyModuleConfig)
-      sandbox.stub(config, 'getCtpConfig').returns(dummyCtpConfig)
-      const response = await handlePayment(
-        ctpPaymentClone,
-        'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
-      )
-      expect(response.actions).to.have.lengthOf.above(0)
-      sandbox.restore()
-    }
-  )
-
-  it(
-    'when endpoint authorization is enabled and request contains no authorization header value' +
-      'then it should fail to call /payments/details on Adyen',
-    async () => {
-      scope
-        .post('/payments/details')
-        .reply(200, submitPaymentDetailsChallengeRes)
-
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
-        makePaymentRedirectResponse
-      )
-      ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
-        JSON.stringify(submitPaymentDetailsRequest)
-      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
-      const sandbox = sinon.createSandbox()
-      sandbox.stub(config, 'getModuleConfig').returns(dummyModuleConfig)
-      sandbox.stub(config, 'getCtpConfig').returns(dummyCtpConfig)
       const response = await handlePayment(ctpPaymentClone)
 
-      expect(response.errors).to.have.lengthOf(1)
-      expect(response.errors[0].message).to.equal(
-        errorMessage.UNAUTHORIZED_REQUEST
-      )
-      sandbox.restore()
+      expect(response.actions).to.have.lengthOf.above(0)
     }
   )
 
   it(
-    'when endpoint authorization is enabled and request is not authorized' +
-      'then it should fail to call /payments/details on Adyen',
+    'when payment does not contain "makePaymentResponse", ' +
+      'then it should not call /payments/details on Adyen',
     async () => {
       scope
         .post('/payments/details')
         .reply(200, submitPaymentDetailsChallengeRes)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
-        makePaymentRedirectResponse
-      )
       ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
         JSON.stringify(submitPaymentDetailsRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
-      const sandbox = sinon.createSandbox()
-      sandbox.stub(config, 'getModuleConfig').returns(dummyModuleConfig)
-      sandbox.stub(config, 'getCtpConfig').returns(dummyCtpConfig)
-      const response = await handlePayment(ctpPaymentClone, 'Basic xxxyyyzzz')
 
-      expect(response.errors).to.have.lengthOf(1)
-      expect(response.errors[0].message).to.equal(
-        errorMessage.UNAUTHORIZED_REQUEST
-      )
-      sandbox.restore()
+      const response = await handlePayment(ctpPaymentClone)
+
+      expect(response.actions).to.have.lengthOf(0)
     }
   )
 
   it(
-    'when endpoint authorization is enabled, credential is given in request but not found in server config' +
-      'then it should fail to call /payments/details on Adyen',
+    'when "submitAdditionalPaymentDetailsRequest" contains the same request, ' +
+      'then it should NOT call /payments/details on Adyen if response exists',
+    async () => {
+      scope
+        .post('/payments/details')
+        .reply(200, submitPaymentDetailsChallengeRes)
+
+      const oldSubmitPaymentDetailsRequest = _.cloneDeep(
+        submitPaymentDetailsRequest
+      )
+      oldSubmitPaymentDetailsRequest.paymentData = JSON.parse(
+        makePaymentRedirectResponse
+      ).paymentData
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.interfaceInteractions = [
+        {
+          type: {
+            typeId: 'type',
+            id: 'bdbd6d06-9e29-4470-a3de-76b529c9eb5e',
+          },
+          fields: {
+            type: c.CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
+            request: JSON.stringify(oldSubmitPaymentDetailsRequest),
+          },
+        },
+      ]
+      ctpPaymentClone.custom.fields.makePaymentResponse =
+        makePaymentRedirectResponse
+      ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
+        JSON.stringify(submitPaymentDetailsRequest)
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
+
+      const response = await handlePayment(ctpPaymentClone)
+
+      expect(response.actions).to.have.lengthOf(0)
+    }
+  )
+
+  it(
+    'when "submitAdditionalPaymentDetailsRequest" contains a different request, ' +
+      'then it should call /payments/details on Adyen again',
     async () => {
       scope
         .post('/payments/details')
         .reply(200, submitPaymentDetailsChallengeRes)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
+      ctpPaymentClone.interfaceInteractions = [
+        {
+          type: {
+            typeId: 'type',
+            id: 'bdbd6d06-9e29-4470-a3de-76b529c9eb5e',
+          },
+          fields: {
+            type: c.CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
+            request: JSON.stringify(submitPaymentDetailsRequest),
+          },
+        },
+      ]
+      ctpPaymentClone.custom.fields.makePaymentResponse =
         makePaymentRedirectResponse
-      )
       ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
-        JSON.stringify(submitPaymentDetailsRequest)
+        JSON.stringify({
+          details: {
+            MD: 'newMD',
+            PaRes: 'newPaRes',
+          },
+        })
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
-      const sandbox = sinon.createSandbox()
-      sandbox.stub(config, 'getModuleConfig').returns(dummyModuleConfig)
 
-      await handlePayment(ctpPaymentClone, 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==')
-      sandbox.restore()
+      const response = await handlePayment(ctpPaymentClone)
+
+      expect(response.actions).to.have.lengthOf.above(0)
     }
   )
 
   it(
-    'when endpoint authorization is disabled and unauthorized request is sent' +
+    'when "submitAdditionalPaymentDetailsRequest" contains a request and payment has no interface interaction, ' +
       'then it should call /payments/details on Adyen',
     async () => {
       scope
@@ -166,16 +164,122 @@ describe('payment-handler-authorization::execute', () => {
         .reply(200, submitPaymentDetailsChallengeRes)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
+      ctpPaymentClone.interfaceInteractions = []
+      ctpPaymentClone.custom.fields.makePaymentResponse =
         makePaymentRedirectResponse
-      )
       ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
-        JSON.stringify(submitPaymentDetailsRequest)
+        JSON.stringify({
+          details: {
+            MD: 'newMD',
+            PaRes: 'newPaRes',
+          },
+        })
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
-      const response = await handlePayment(ctpPaymentClone, 'Basic xxxyyyzzz')
 
+      const response = await handlePayment(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf.above(0)
     }
   )
+
+  it(
+    'when "commercetoolsProjectKey" and "adyenMerchantAccount" are missing, ' +
+      'then it should fail to create payment and return errors',
+    async () => {
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+
+      const response = await handlePayment(ctpPaymentClone)
+
+      expect(response.errors).to.have.lengthOf(2)
+      expect(response.errors[0].message).to.equal(
+        errorMessage.MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
+      )
+      expect(response.errors[1].message).to.equal(
+        errorMessage.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
+      )
+    }
+  )
+
+  describe('amountPlanned', () => {
+    it(
+      'is different than the amount in makePayment request custom field and interface interaction is empty, ' +
+        'then it should return errors',
+      async () => {
+        const ctpPaymentClone = _.cloneDeep(ctpPayment)
+        ctpPaymentClone.amountPlanned.centAmount = 0
+        ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify({
+          reference: 'YOUR_REFERENCE',
+          amount: {
+            currency: 'EUR',
+            value: 1000,
+          },
+        })
+        ctpPaymentClone.interfaceInteractions = []
+        ctpPaymentClone.custom.fields.adyenMerchantAccount =
+          adyenMerchantAccount
+        ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
+
+        const response = await handlePayment(ctpPaymentClone)
+
+        expect(response.errors).to.have.lengthOf.above(0)
+        expect(response.errors[0].message).to.equal(
+          errorMessage.AMOUNT_PLANNED_NOT_SAME
+        )
+      }
+    )
+
+    it(
+      'is 10 and makePayment request does not exist and interface interaction is empty, ' +
+        'then it should not return errors',
+      async () => {
+        const ctpPaymentClone = _.cloneDeep(ctpPayment)
+        ctpPaymentClone.amountPlanned.centAmount = 10
+        ctpPaymentClone.custom.fields = {}
+        ctpPaymentClone.interfaceInteractions = []
+        ctpPaymentClone.custom.fields.adyenMerchantAccount =
+          adyenMerchantAccount
+        ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
+
+        const response = await handlePayment(ctpPaymentClone)
+
+        expect(response.actions).to.deep.equal([])
+      }
+    )
+
+    it('is different than makePayment interface interaction, then it should return errors', async () => {
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.amountPlanned.centAmount = 100
+      ctpPaymentClone.custom.fields = {
+        makePaymentRequest: JSON.stringify({
+          amount: {
+            currency: 'EUR',
+            value: 100,
+          },
+          reference: 'YOUR_REFERENCE',
+        }),
+      }
+      ctpPaymentClone.interfaceInteractions = [
+        {
+          fields: {
+            type: 'makePayment',
+            request: JSON.stringify({
+              amount: {
+                currency: 'EUR',
+                value: 10,
+              },
+            }),
+            createdAt: '2018-05-14T07:18:37.560Z',
+          },
+        },
+      ]
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
+
+      const response = await handlePayment(ctpPaymentClone)
+
+      expect(response.errors[0].message).to.equal(
+        errorMessage.AMOUNT_PLANNED_NOT_SAME
+      )
+    })
+  })
 })

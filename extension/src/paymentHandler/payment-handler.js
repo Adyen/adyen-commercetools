@@ -1,26 +1,27 @@
-const ValidatorBuilder = require('../validator/validator-builder')
-const getPaymentMethodsHandler = require('./get-payment-methods.handler')
-const makePaymentHandler = require('./make-payment.handler')
-const makeLineitemsPaymentHandler = require('./make-lineitems-payment.handler')
-const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
-const manualCaptureHandler = require('./manual-capture.handler')
-const cancelHandler = require('./cancel-payment.handler')
-const refundHandler = require('./refund-payment.handler')
-const getCarbonOffsetCostsHandler = require('./get-carbon-offset-costs.handler')
-const pU = require('./payment-utils')
-const auth = require('../validator/authentication')
-const errorMessages = require('../validator/error-messages')
+import ValidatorBuilder from '../validator/validator-builder'
+import getPaymentMethodsHandler from './get-payment-methods.handler'
+import makePaymentHandler from './make-payment.handler'
+import makeLineitemsPaymentHandler from './make-lineitems-payment.handler'
+import submitPaymentDetailsHandler from './submit-payment-details.handler'
+import manualCaptureHandler from './manual-capture.handler'
+import cancelHandler from './cancel-payment.handler'
+import refundHandler from './refund-payment.handler'
+import getCarbonOffsetCostsHandler from './get-carbon-offset-costs.handler'
+import pU from './payment-utils'
+import auth from '../validator/authentication'
+import errorMessages from '../validator/error-messages'
+import constants from '../config/constants'
 
 const {
   CTP_ADYEN_INTEGRATION,
   PAYMENT_METHOD_TYPE_KLARNA_METHODS,
   PAYMENT_METHOD_TYPE_AFFIRM_METHODS,
-} = require('../config/constants')
+} = constants
 const {
   getChargeTransactionInitial,
   getAuthorizationTransactionSuccess,
   getCancelAuthorizationTransactionInit,
-} = require('./payment-utils')
+} = pU
 
 async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
@@ -164,4 +165,4 @@ function _isCancelPayment(paymentObject) {
   )
 }
 
-module.exports = { handlePayment }
+export default handlePayment

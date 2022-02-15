@@ -1,16 +1,14 @@
-const nock = require('nock')
-const _ = require('lodash')
-const { expect } = require('chai')
-const sinon = require('sinon')
-const submitPaymentDetailsSuccessResponse = require('./fixtures/adyen-submit-payment-details-success-response')
-const submitPaymentDetailsChallengeRes = require('./fixtures/adyen-submit-payment-details-challenge-shopper-response')
-const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
-const {
-  execute,
-} = require('../../src/paymentHandler/submit-payment-details.handler')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const config = require('../../src/config/config')
-const c = require('../../src/config/constants')
+import nock from 'nock'
+import _ from 'lodash'
+import { expect } from 'chai'
+import sinon from 'sinon'
+import submitPaymentDetailsSuccessResponse from './fixtures/adyen-submit-payment-details-success-response'
+import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response'
+import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response'
+import execute from '../../src/paymentHandler/submit-payment-details.handler'
+import ctpPayment from './fixtures/ctp-payment.json'
+import config from '../../src/config/config'
+import c from '../../src/config/constants'
 
 describe('submit-additional-payment-details::execute', () => {
   let scope

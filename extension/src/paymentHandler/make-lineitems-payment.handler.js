@@ -1,7 +1,7 @@
-const _ = require('lodash')
-const ctpClientBuilder = require('../ctp')
-const makePaymentHandler = require('./make-payment.handler')
-const config = require('../config/config')
+import _ from 'lodash'
+import ctpClientBuilder from '../ctp'
+import makePaymentHandler from './make-payment.handler'
+import config from '../config/config'
 
 const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
 const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
@@ -130,4 +130,4 @@ function _localizeOrFallback(localizedString, locales, fallback) {
   return result
 }
 
-module.exports = { execute }
+export default execute

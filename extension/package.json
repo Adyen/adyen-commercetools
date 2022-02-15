@@ -3,6 +3,7 @@
   "version": "9.6.0",
   "description": "Integration between commercetools and Adyen payment service provider",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "check-coverage": "nyc check-coverage --lines 89",
     "test": "npm run check && npm run cover:unit && npm run cover:integration && npm run cover:e2e && npm run check-coverage",
@@ -10,8 +11,8 @@
     "cover:integration": "nyc --silent --no-clean npm run integration",
     "cover:e2e": "nyc --silent --no-clean npm run e2e",
     "unit": "nyc mocha --file ./test/unit/mock-default-confg.js \"test/unit/**/*.spec.js\"",
-    "integration": "nyc mocha --file ./test/initial-integration-test-set-up.js \"test/integration/**/*.spec.js\"",
-    "e2e": "nyc mocha --file ./test/initial-integration-test-set-up.js \"test/e2e/**/*.spec.js\"",
+    "integration": "nyc mocha --experimental-json-modules --file ./test/initial-integration-test-set-up.mjs \"test/integration/**/*.spec.js\"",
+    "e2e": "nyc mocha --file ./test/initial-integration-test-set-up.mjs \"test/e2e/**/*.spec.js\"",
     "start": "node ./src/init.js",
     "lint": "eslint ./src ./test",
     "check": "npm run lint && prettier --check .",
@@ -19,7 +20,7 @@
     "format": "prettier --write .",
     "zip-google-function": "cp index.googleFunction.js index.js && zip -r extension-module.zip src resources .extensionrc index.js package.json && rm index.js",
     "zip-lambda-function": "cp index.lambda.js index.js && npm ci --production && zip -r extension-module.zip . && rm index.js",
-    "setup-resources": "node -e 'require(\"./src/setup.js\").setupExtensionResources()'"
+    "setup-resources": "node -e 'require(\"./src/setup.mjs\").setupExtensionResources()'"
   },
   "keywords": [
     "Adyen",

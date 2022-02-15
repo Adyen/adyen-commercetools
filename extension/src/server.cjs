@@ -1,9 +1,16 @@
 const http = require('http')
 const url = require('url')
-const utils = require('./utils')
-const { routes: defaultRoutes } = require('./routes')
 
-const logger = utils.getLogger()
+let logger
+const utils = (async () => {
+  const utilsFile = await import('./utils.js')
+  logger = utilsFile.getLogger()
+  return utilsFile
+})().catch((err) => console.error(err))
+
+const defaultRoutes = (async () => {
+  return await import('./routes.mjs')
+})().catch((err) => console.error(err))
 
 function setupServer(routes = defaultRoutes) {
   return http.createServer(async (request, response) => {

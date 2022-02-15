@@ -1,4 +1,4 @@
-module.exports = class KlarnaPage {
+export default class KlarnaPage {
   constructor(page) {
     this.page = page
   }

@@ -1,7 +1,7 @@
-const fetch = require('node-fetch')
-const { serializeError } = require('serialize-error')
-const config = require('../config/config')
-const packageJson = require('../../package.json')
+import fetch from 'node-fetch'
+import { serializeError } from 'serialize-error'
+import config from '../config/config'
+import packageJson from '../../package.json'
 
 function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
@@ -165,7 +165,7 @@ function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj) {
   }
 }
 
-module.exports = {
+export default {
   getPaymentMethods,
   makePayment,
   submitAdditionalPaymentDetails,

@@ -1,14 +1,13 @@
-const _ = require('lodash')
-const proxyquire = require('proxyquire')
-const { expect } = require('chai')
-
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const errorMessages = require('../../src/validator/error-messages')
+import _ from 'lodash'
+import proxyquire from 'proxyquire'
+import { expect } from 'chai'
+import ctpPayment from './fixtures/ctp-payment.json'
+import errorMessages from '../../src/validator/error-messages'
 
 const utilsStub = {}
 const paymentController = proxyquire(
   '../../src/api/payment/payment.controller',
-  { '../../utils': utilsStub }
+  { '../../utils.mjs': utilsStub }
 )
 
 describe('Payment controller', () => {

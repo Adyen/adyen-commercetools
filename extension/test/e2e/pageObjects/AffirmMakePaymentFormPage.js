@@ -1,6 +1,6 @@
-const MakePaymentFormPage = require('./MakePaymentFormPage')
+import MakePaymentFormPage from './MakePaymentFormPage'
 
-module.exports = class AffirmMakePaymentFormPage extends MakePaymentFormPage {
+export default class AffirmMakePaymentFormPage extends MakePaymentFormPage {
   async getMakePaymentRequest(clientKey) {
     await this.generateAdyenMakePaymentForm(clientKey)
     await this.pasteValuesInAdyenMakePaymentForm()

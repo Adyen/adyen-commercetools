@@ -1,4 +1,4 @@
-module.exports = JSON.stringify({
+export default JSON.stringify({
   pspReference: '852588749855524C',
   resultCode: 'Authorised',
   amount: {

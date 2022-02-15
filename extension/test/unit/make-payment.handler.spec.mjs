@@ -1,14 +1,14 @@
-const nock = require('nock')
-const { expect } = require('chai')
-const _ = require('lodash')
-const config = require('../../src/config/config')
-const { execute } = require('../../src/paymentHandler/make-payment.handler')
-const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
-const paymentErrorResponse = require('./fixtures/adyen-make-payment-error-response')
-const paymentRefusedResponse = require('./fixtures/adyen-make-payment-refused-response')
-const paymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
-const paymentValidationFailedResponse = require('./fixtures/adyen-make-payment-validation-failed-response')
-const ctpPayment = require('./fixtures/ctp-payment.json')
+import nock from 'nock'
+import { expect } from 'chai'
+import _ from 'lodash'
+import config from '../../src/config/config'
+import execute from '../../src/paymentHandler/make-payment.handler'
+import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response'
+import paymentErrorResponse from './fixtures/adyen-make-payment-error-response'
+import paymentRefusedResponse from './fixtures/adyen-make-payment-refused-response'
+import paymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response'
+import paymentValidationFailedResponse from './fixtures/adyen-make-payment-validation-failed-response'
+import ctpPayment from './fixtures/ctp-payment.json'
 
 describe('make-payment::execute', () => {
   let scope
