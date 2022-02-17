@@ -161,6 +161,10 @@ function _requiresLineItems(makePaymentRequestObj) {
 }
 
 function _getAddCommercetoolsLineItemsFlag(makePaymentRequestObj) {
+  // The function is tend to be used to check values on the field: true, false, undefined,
+  // or the value set but not to true/false
+  // in case of the undefined or other than true/false, the function returns undefined:
+  // it means the other fallbacks have to be checked to decide adding line items
   let addCommercetoolsLineItems
   if ('addCommercetoolsLineItems' in makePaymentRequestObj) {
     if (
