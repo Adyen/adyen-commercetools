@@ -5,7 +5,7 @@
 3. Deployments work by uploading an archive containing your function's source code to a Google Cloud Storage bucket.
 To bundle the extension module, navigate to in `notification` folder run `npm run zip-google-function`. 
 4. Specify the `notificationTrigger` as the entry point function in your GCP Cloud Function configuration and runtime as `Node.js 16`.
-5. Please check our general [best practices](../../../../docs/BEST_PRACTICES.md) for your deployment.
+5. Please check our general [faq](../../../../docs/FAQ.md) for your deployment.
 
 ### Helpful Links: 
 - [commercetools HTTP API Extension](https://docs.commercetools.com/api/projects/api-extensions#http-destination)

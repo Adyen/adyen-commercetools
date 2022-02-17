@@ -89,4 +89,3 @@ If payment is not found then the notification will be skipped from processing.
 Before you go live please follow the official Adyen [go-live checklist](https://docs.adyen.com/development-resources/webhooks#test-and-go-live).
 
 - [Please check FAQ guide](../../docs/FAQ.md).
-- [Please refer to our best practices guide](../../docs/BEST_PRACTICES.md).
