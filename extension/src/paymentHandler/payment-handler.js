@@ -145,7 +145,8 @@ function _requiresLineItems(makePaymentRequestObj) {
   const addCommercetoolsLineItemsFlag = _getAddCommercetoolsLineItemsFlag(
     makePaymentRequestObj
   )
-  if (addCommercetoolsLineItemsFlag) {
+  if (addCommercetoolsLineItemsFlag === true
+    || addCommercetoolsLineItemsFlag === false) {
     return addCommercetoolsLineItemsFlag
   }
 
