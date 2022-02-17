@@ -9,7 +9,6 @@ Find information on most frequently asked questions during integrating on **comm
 - [Can I use Adyen web components >= v5.0.0 with this integration ?](#can-i-use-adyen-web-components--v500-with-this-integration-)
 - [Does the integration support payment method X ?](#does-the-integration-support-payment-method-x-)
 - [Can I pass additional fields to payment requests?](#can-i-pass-additional-fields-to-payment-requests)
-- [Can I pass lineItems to makePayment requests ?](#can-i-pass-lineitems-to-makepayment-requests-)
 - [Why we need to pass submit payment details twice for some payment methods?](#why-we-need-to-pass-submit-payment-details-twice-for-some-payment-methods)
 - [Can I remove a subscription I created?](#can-i-remove-a-subscription-i-created)
 - [How does the notification module find a matching payment?](#how-does-the-notification-module-find-a-matching-payment)
