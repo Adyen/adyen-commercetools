@@ -751,7 +751,6 @@ has to be shown and order creation must be declined. In such a case, it might be
 Before you go live please follow [steps](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#testing-your-integration) described by Adyen.
 
 - [Please check FAQ guide](../../docs/FAQ.md).
-- [Please refer to our best practices guide](../../docs/BEST_PRACTICES.md).
 
 Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist).
 
