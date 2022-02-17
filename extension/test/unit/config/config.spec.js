@@ -319,125 +319,249 @@ describe('::config::', () => {
     }
   )
 
-  it(
-    'when removeSensitiveData is set as boolean false in config.js, ' +
-      'it should load as false value in module config',
-    () => {
-      process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
-        commercetools: {
-          ctpProjectKey1: {
-            clientId: 'clientId',
-            clientSecret: 'clientSecret',
-            apiUrl: 'host',
-            authUrl: 'authUrl',
-            authentication: {
-              scheme: 'basic',
-              username: 'username',
-              password: 'password',
+  describe('removeSentitiveData', () => {
+    it(
+      'when removeSensitiveData is set as boolean false in config.js, ' +
+        'it should load as false value in module config',
+      () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+              authentication: {
+                scheme: 'basic',
+                username: 'username',
+                password: 'password',
+              },
             },
           },
-        },
-        adyen: {
-          adyenMerchantAccount1: {
-            apiBaseUrl: 'apiBaseUrl',
-            apiKey: 'apiKey',
-            clientKey: 'clientKey',
-            legacyApiBaseUrl: 'legacyApiBaseUrl',
-          },
-        },
-        logLevel: 'DEBUG',
-        removeSensitiveData: false,
-      })
-      const config = requireUncached('../../../src/config/config')
-      expect(config.getModuleConfig().removeSensitiveData).to.eql(false)
-    }
-  )
-
-  it(
-    'when removeSensitiveData is set as boolean true in config.js, ' +
-      'it should load as true value in module config',
-    () => {
-      process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
-        commercetools: {
-          ctpProjectKey1: {
-            clientId: 'clientId',
-            clientSecret: 'clientSecret',
-            apiUrl: 'host',
-            authUrl: 'authUrl',
-            authentication: {
-              scheme: 'basic',
-              username: 'username',
-              password: 'password',
+          adyen: {
+            adyenMerchantAccount1: {
+              apiBaseUrl: 'apiBaseUrl',
+              apiKey: 'apiKey',
+              clientKey: 'clientKey',
+              legacyApiBaseUrl: 'legacyApiBaseUrl',
             },
           },
-        },
-        adyen: {
-          adyenMerchantAccount1: {
-            apiBaseUrl: 'apiBaseUrl',
-            apiKey: 'apiKey',
-            clientKey: 'clientKey',
-            legacyApiBaseUrl: 'legacyApiBaseUrl',
-          },
-        },
-        logLevel: 'DEBUG',
-        removeSensitiveData: true,
-      })
-      const config = requireUncached('../../../src/config/config')
-      expect(config.getModuleConfig().removeSensitiveData).to.eql(true)
-    }
-  )
+          logLevel: 'DEBUG',
+          removeSensitiveData: false,
+        })
+        const config = requireUncached('../../../src/config/config')
+        expect(config.getModuleConfig().removeSensitiveData).to.eql(false)
+      }
+    )
 
-  it(
-    'when removeSensitiveData is set as string false in config.js, ' +
-      'it should load as false value in module config',
-    () => {
-      process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
-        commercetools: {
-          ctpProjectKey1: {
-            clientId: 'clientId',
-            clientSecret: 'clientSecret',
-            apiUrl: 'host',
-            authUrl: 'authUrl',
+    it(
+      'when removeSensitiveData is set as boolean true in config.js, ' +
+        'it should load as true value in module config',
+      () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+              authentication: {
+                scheme: 'basic',
+                username: 'username',
+                password: 'password',
+              },
+            },
           },
-        },
-        adyen: {
-          adyenMerchantAccount1: {
-            enableHmacSignature: 'false',
+          adyen: {
+            adyenMerchantAccount1: {
+              apiBaseUrl: 'apiBaseUrl',
+              apiKey: 'apiKey',
+              clientKey: 'clientKey',
+              legacyApiBaseUrl: 'legacyApiBaseUrl',
+            },
           },
-        },
-        logLevel: 'DEBUG',
-        removeSensitiveData: 'false',
-      })
-      const config = requireUncached('../../../src/config/config')
-      expect(config.getModuleConfig().removeSensitiveData).to.eql(false)
-    }
-  )
+          logLevel: 'DEBUG',
+          removeSensitiveData: true,
+        })
+        const config = requireUncached('../../../src/config/config')
+        expect(config.getModuleConfig().removeSensitiveData).to.eql(true)
+      }
+    )
 
-  it(
-    'when removeSensitiveData is set as string true in config.js, ' +
-      'it should load as true value in module config',
-    () => {
-      process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
-        commercetools: {
-          ctpProjectKey1: {
-            clientId: 'clientId',
-            clientSecret: 'clientSecret',
-            apiUrl: 'host',
-            authUrl: 'authUrl',
+    it(
+      'when removeSensitiveData is set as string false in config.js, ' +
+        'it should load as false value in module config',
+      () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+            },
           },
-        },
-        adyen: {
-          adyenMerchantAccount1: {
-            enableHmacSignature: 'false',
+          adyen: {
+            adyenMerchantAccount1: {
+              enableHmacSignature: 'false',
+            },
           },
-        },
-        logLevel: 'DEBUG',
-        removeSensitiveData: 'true',
-      })
-      const config = requireUncached('../../../src/config/config')
-      expect(config.getModuleConfig().removeSensitiveData).to.eql(true)
-    }
-  )
+          logLevel: 'DEBUG',
+          removeSensitiveData: 'false',
+        })
+        const config = requireUncached('../../../src/config/config')
+        expect(config.getModuleConfig().removeSensitiveData).to.eql(false)
+      }
+    )
+
+    it(
+      'when removeSensitiveData is set as string true in config.js, ' +
+        'it should load as true value in module config',
+      () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              enableHmacSignature: 'false',
+            },
+          },
+          logLevel: 'DEBUG',
+          removeSensitiveData: 'true',
+        })
+        const config = requireUncached('../../../src/config/config')
+        expect(config.getModuleConfig().removeSensitiveData).to.eql(true)
+      }
+    )
+  })
+
+  describe('addCommercetoolsLineItems', () => {
+    it(
+      'when addCommercetoolsLineItems is set as boolean false in config.js, ' +
+        'it should load as false value in module config',
+      () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+              authentication: {
+                scheme: 'basic',
+                username: 'username',
+                password: 'password',
+              },
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              apiBaseUrl: 'apiBaseUrl',
+              apiKey: 'apiKey',
+              clientKey: 'clientKey',
+              legacyApiBaseUrl: 'legacyApiBaseUrl',
+            },
+          },
+          logLevel: 'DEBUG',
+          addCommercetoolsLineItems: false,
+        })
+        const config = requireUncached('../../../src/config/config')
+        expect(config.getModuleConfig().addCommercetoolsLineItems).to.eql(false)
+      }
+    )
+
+    it(
+      'when addCommercetoolsLineItems is set as boolean true in config.js, ' +
+        'it should load as true value in module config',
+      () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+              authentication: {
+                scheme: 'basic',
+                username: 'username',
+                password: 'password',
+              },
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              apiBaseUrl: 'apiBaseUrl',
+              apiKey: 'apiKey',
+              clientKey: 'clientKey',
+              legacyApiBaseUrl: 'legacyApiBaseUrl',
+            },
+          },
+          logLevel: 'DEBUG',
+          addCommercetoolsLineItems: true,
+        })
+        const config = requireUncached('../../../src/config/config')
+        expect(config.getModuleConfig().addCommercetoolsLineItems).to.eql(true)
+      }
+    )
+
+    it(
+      'when addCommercetoolsLineItems is set as string false in config.js, ' +
+        'it should load as false value in module config',
+      () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              enableHmacSignature: 'false',
+            },
+          },
+          logLevel: 'DEBUG',
+          addCommercetoolsLineItems: 'false',
+        })
+        const config = requireUncached('../../../src/config/config')
+        expect(config.getModuleConfig().addCommercetoolsLineItems).to.eql(false)
+      }
+    )
+
+    it(
+      'when addCommercetoolsLineItems is set as string true in config.js, ' +
+        'it should load as true value in module config',
+      () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              enableHmacSignature: 'false',
+            },
+          },
+          logLevel: 'DEBUG',
+          addCommercetoolsLineItems: 'true',
+        })
+        const config = requireUncached('../../../src/config/config')
+        expect(config.getModuleConfig().addCommercetoolsLineItems).to.eql(true)
+      }
+    )
+  })
 
   it('when ADYEN_INTEGRATION_CONFIG is not valid JSON, it should throw error', () => {
     process.env.ADYEN_INTEGRATION_CONFIG = '{"a"}'

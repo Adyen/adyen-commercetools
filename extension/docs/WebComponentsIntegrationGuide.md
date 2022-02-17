@@ -18,7 +18,7 @@
     - [Response](#response)
       - [Authorised Response](#authorised-response)
       - [Action Response](#action-response)
-    - [Klarna payment and Affirm payment](#klarna-payment-and-affirm-payment)
+    - [Adding cart and product informations (lineItems) to the request](#adding-cart-and-product-informations-lineitems-to-the-request)
   - [Step 6: Submit additional payment details](#step-6-submit-additional-payment-details)
     - [Response](#response-1)
       - [Authorised Response](#authorised-response-1)
@@ -344,7 +344,7 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
 ```
 </details>
 
-> For the sake of readability, the field [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is ommitted from all the examples in this document. In real requests, [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is always added.
+> For the sake of readability, the field [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is omitted from all the examples in this document. In real requests, [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is always added.
 
 ### Response
 
@@ -465,12 +465,17 @@ Pass the action object to your front end. The Adyen web component uses this to h
 
 > See [Adyen documentation](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-4-additional-front-end) for more information how to perform additional front end actions.
 
-### Klarna payment and Affirm payment
+### Adding cart and product informations (lineItems) to the request
 
-For Klarna payment and Affirm payment, it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) in `makePaymentRequest`.
-The extension module can add the line item details for you if [the payment is added to a cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
+For some payment methods, it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) within the `makePaymentRequest`.
 
-Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` attribute.
+Extension module can generate the line item automatically, but you need to do following steps:
+
+- The commercetools payment [referenced in the commercetools cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
+- Either `addCommercetoolsLineItems` property set to`true` within the `makePaymentRequest` or `addCommercetoolsLineItems` flag set to `true` within your extension [configuration](./HowToRun.md#other-configurations).
+  > In case you would like to override the generation of the lineItems please provide within the `makePaymentRequest` own `lineItems` data.
+
+Here's an example of the `makePaymentRequest` **WITHOUT** `lineItems` and `addCommercetoolsLineItems` property set to true.
 
 ```json
 {
@@ -499,7 +504,8 @@ Using Adyen Web Components, create `makePaymentRequest` **WITHOUT** `lineItems` 
     "postalCode": "12345",
     "street": "Stargatan"
   },
-  "returnUrl": "https://www.your-company.com/..."
+  "returnUrl": "https://www.your-company.com/...",
+  "addCommercetoolsLineItems": true
 }
 ```
 

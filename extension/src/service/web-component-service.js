@@ -21,12 +21,19 @@ function makePayment(
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(makePaymentRequestObj, commercetoolsProjectKey)
   extendRequestObjWithApplicationInfo(makePaymentRequestObj)
+  removeAddCommercetoolsLineItemsField(makePaymentRequestObj)
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/payments`,
     merchantAccount,
     adyenCredentials.apiKey,
     makePaymentRequestObj
   )
+}
+
+function removeAddCommercetoolsLineItemsField(makePaymentRequestObj) {
+  // Otherwise adyen might return a 400 response with the following message:
+  // Structure of PaymentRequest contains the following unknown fields: [addCommercetoolsLineItems]
+  delete makePaymentRequestObj.addCommercetoolsLineItems
 }
 
 function submitAdditionalPaymentDetails(

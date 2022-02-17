@@ -9,7 +9,6 @@ Find information on most frequently asked questions during integrating on **comm
 - [Can I use Adyen web components >= v5.0.0 with this integration ?](#can-i-use-adyen-web-components--v500-with-this-integration-)
 - [Does the integration support payment method X ?](#does-the-integration-support-payment-method-x-)
 - [Can I pass additional fields to payment requests?](#can-i-pass-additional-fields-to-payment-requests)
-- [Can I pass lineItems to makePayment requests ?](#can-i-pass-lineitems-to-makepayment-requests-)
 - [Why we need to pass submit payment details twice for some payment methods?](#why-we-need-to-pass-submit-payment-details-twice-for-some-payment-methods)
 - [Can I remove a subscription I created?](#can-i-remove-a-subscription-i-created)
 - [How does the notification module find a matching payment?](#how-does-the-notification-module-find-a-matching-payment)
@@ -40,10 +39,6 @@ If you encounter any problems during your integration, feel free to create a git
 ### Can I pass additional fields to payment requests?
 
 Yes, you could include additional fields to payment such as [add risk management fields](https://docs.adyen.com/risk-management/configure-standard-risk-rules/required-risk-field-reference), [activate 3D Secure 2](https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-component#make-a-payment) or [allow recurring payments](https://docs.adyen.com/payment-methods/cards/web-component#create-a-token) based on the payment method that you use, for more details please check the note in [important section](../extension/docs/WebComponentsIntegrationGuide.md#step-5-make-a-payment) on our integration docs.
-
-### Can I pass lineItems to makePayment requests ?
-
-Integration supports automatically adding lineItems from commercetools cart for klarna and affirm payments if the payment is referenced in the cart, beside that lineItems and other required data can be provided by the users of the integration within the makePaymentRequest as answered in the above question. If lineItems field is provided, integration will skip adding lineItems and leave the provided lineItems.
 
 ### Why we need to pass submit payment details twice for some payment methods?
 
