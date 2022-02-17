@@ -2,7 +2,7 @@ import _ from 'lodash'
 import proxyquire from 'proxyquire'
 import { expect } from 'chai'
 import ctpPayment from './fixtures/ctp-payment.json'
-import errorMessages from '../../src/validator/error-messages'
+import errorMessages from '../../src/validator/error-messages.mjs'
 
 const utilsStub = {}
 const paymentController = proxyquire(

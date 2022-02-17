@@ -6,7 +6,7 @@ import handlePayment from '../../src/paymentHandler/payment-handler'
 import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response'
 import ctpPayment from './fixtures/ctp-payment.json'
 import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response'
-import errorMessage from '../../src/validator/error-messages'
+import errorMessage from '../../src/validator/error-messages.mjs'
 import config from '../../src/config/config'
 
 describe('payment-handler-authorization::execute', () => {

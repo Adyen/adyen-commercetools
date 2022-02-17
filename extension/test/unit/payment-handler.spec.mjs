@@ -7,7 +7,7 @@ import ctpPayment from './fixtures/ctp-payment.json'
 import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response'
 import config from '../../src/config/config'
 import c from '../../src/config/constants'
-import errorMessage from '../../src/validator/error-messages'
+import errorMessage from '../../src/validator/error-messages.mjs'
 
 describe('payment-handler::execute', () => {
   let scope

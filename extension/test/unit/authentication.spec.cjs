@@ -2,7 +2,7 @@ const { expect } = require('chai')
 
 const sinon = require('sinon')
 const config = require('../../src/config/config.mjs')
-const auth = require('../../src/validator/authentication')
+const auth = require('../../src/validator/authentication.mjs')
 
 describe('Authentication unit test', () => {
   const ctpDummyConfig = {

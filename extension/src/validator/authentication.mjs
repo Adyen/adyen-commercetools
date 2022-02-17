@@ -1,4 +1,4 @@
-import config from '../config/config'
+import config from '../config/config.mjs'
 
 function getStoredCredential(ctpProjectKey) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)

@@ -1,6 +1,6 @@
 import { expect } from 'chai'
-import ValidatorBuilder from '../../src/validator/validator-builder'
-import errorMessages from '../../src/validator/error-messages'
+import ValidatorBuilder from '../../src/validator/validator-builder.mjs'
+import errorMessages from '../../src/validator/error-messages.mjs'
 
 const {
   GET_PAYMENT_METHODS_REQUEST_INVALID_JSON,

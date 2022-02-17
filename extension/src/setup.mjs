@@ -1,8 +1,8 @@
 import config from './config/config.mjs'
 import ctpClientBuilder from './ctp.js'
 import logger from './utils.mjs'
-import ensureResources from './config/init/ensure-resources.js'
-import auth from './validator/authentication.js'
+import ensureResources from './config/init/ensure-resources.mjs'
+import auth from './validator/authentication.mjs'
 
 logger.getLogger()
 

@@ -1,5 +1,5 @@
-import ensureCustomType from './ensure-custom-type'
-import ensureApiExtensions from './ensure-api-extensions'
+import ensureCustomType from './ensure-custom-type.mjs'
+import ensureApiExtensions from './ensure-api-extensions.mjs'
 
 const { ensurePaymentCustomType, ensureInterfaceInteractionCustomType } =
   ensureCustomType

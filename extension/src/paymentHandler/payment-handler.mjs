@@ -1,5 +1,5 @@
-import ValidatorBuilder from '../validator/validator-builder'
-import getPaymentMethodsHandler from './get-payment-methods.handler'
+import ValidatorBuilder from '../validator/validator-builder.mjs'
+import getPaymentMethodsHandler from './get-payment-methods.handler.mjs'
 import makePaymentHandler from './make-payment.handler'
 import makeLineitemsPaymentHandler from './make-lineitems-payment.handler'
 import submitPaymentDetailsHandler from './submit-payment-details.handler'

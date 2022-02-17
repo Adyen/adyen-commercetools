@@ -1,7 +1,7 @@
 import pU from '../paymentHandler/payment-utils'
-import errorMessages from './error-messages'
+import errorMessages from './error-messages.mjs'
 import c from '../config/constants'
-import auth from './authentication'
+import auth from './authentication.mjs'
 
 function withPayment(paymentObject) {
   const errors = {}

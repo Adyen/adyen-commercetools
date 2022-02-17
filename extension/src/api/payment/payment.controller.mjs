@@ -1,6 +1,6 @@
 import { serializeError } from 'serialize-error'
 import httpUtils from '../../utils.mjs'
-import auth from '../../validator/authentication.js'
+import auth from '../../validator/authentication.mjs'
 import paymentHandler from '../../paymentHandler/payment-handler.js'
 
 const logger = httpUtils.getLogger()
