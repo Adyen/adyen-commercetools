@@ -1,13 +1,13 @@
-const nock = require('nock')
-const _ = require('lodash')
-const { expect } = require('chai')
-const { handlePayment } = require('../../src/paymentHandler/payment-handler')
-const submitPaymentDetailsChallengeRes = require('./fixtures/adyen-submit-payment-details-challenge-shopper-response')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
-const config = require('../../src/config/config')
-const c = require('../../src/config/constants')
-const errorMessage = require('../../src/validator/error-messages')
+import nock from 'nock'
+import _ from 'lodash'
+import { expect } from 'chai'
+import { handlePayment } from '../../src/paymentHandler/payment-handler.cjs'
+import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response.cjs'
+import ctpPayment from './fixtures/ctp-payment.json'
+import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.cjs'
+import config from '../../src/config/config.cjs'
+import c from '../../src/config/constants.cjs'
+import errorMessage from '../../src/validator/error-messages.cjs'
 
 describe('payment-handler::execute', () => {
   let scope

@@ -144,6 +144,8 @@ describe('::config::', () => {
     }
   })
 
+  // Require cache equivalent in es modules
+  // https://github.com/nodejs/help/issues/2806
   function requireUncached(module) {
     delete require.cache[require.resolve(module)]
     // eslint-disable-next-line global-require,import/no-dynamic-require
