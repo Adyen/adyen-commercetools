@@ -1,6 +1,7 @@
-const { expect } = require('chai')
+import { expect } from 'chai'
+import ValidatorBuilder from '../../src/validator/validator-builder.cjs'
+import errorMessages from '../../src/validator/error-messages.cjs'
 
-const ValidatorBuilder = require('../../src/validator/validator-builder')
 const {
   GET_PAYMENT_METHODS_REQUEST_INVALID_JSON,
   MAKE_PAYMENT_REQUEST_INVALID_JSON,
@@ -10,7 +11,7 @@ const {
   MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT,
   MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY,
   GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON,
-} = require('../../src/validator/error-messages')
+} = errorMessages
 
 describe('Validator builder', () => {
   it('on invalid JSON validateRequestFields() should return error object', () => {

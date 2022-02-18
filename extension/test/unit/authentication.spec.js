@@ -1,8 +1,7 @@
-const { expect } = require('chai')
-
-const sinon = require('sinon')
-const config = require('../../src/config/config')
-const auth = require('../../src/validator/authentication')
+import { expect } from 'chai'
+import sinon from 'sinon'
+import config from '../../src/config/config.cjs'
+import auth from '../../src/validator/authentication.cjs'
 
 describe('Authentication unit test', () => {
   const ctpDummyConfig = {

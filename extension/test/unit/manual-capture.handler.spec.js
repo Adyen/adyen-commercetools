@@ -1,11 +1,12 @@
-const nock = require('nock')
-const { cloneDeep } = require('lodash')
-const { expect } = require('chai')
-const config = require('../../src/config/config')
-const { execute } = require('../../src/paymentHandler/manual-capture.handler')
-const {
-  CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
-} = require('../../src/config/constants')
+import nock from 'nock'
+import lodash from 'lodash'
+import { expect } from 'chai'
+import config from '../../src/config/config.cjs'
+import { execute } from '../../src/paymentHandler/manual-capture.handler.cjs'
+import constants from '../../src/config/constants.cjs'
+
+const { cloneDeep } = lodash
+const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
 
 describe('manual-capture.handler::execute::', () => {
   /* eslint-disable*/

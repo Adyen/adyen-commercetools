@@ -1,11 +1,9 @@
-const { expect } = require('chai')
-const sinon = require('sinon')
-const fetch = require('node-fetch')
-const c = require('../../src/config/constants')
-const {
-  execute,
-} = require('../../src/paymentHandler/get-payment-methods.handler')
-const config = require('../../src/config/config')
+import { expect } from 'chai'
+import sinon from 'sinon'
+import fetch from 'node-fetch'
+import c from '../../src/config/constants.cjs'
+import { execute } from '../../src/paymentHandler/get-payment-methods.handler.cjs'
+import config from '../../src/config/config.cjs'
 
 describe('get-payment-methods::execute::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

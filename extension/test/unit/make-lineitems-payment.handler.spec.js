@@ -1,14 +1,12 @@
-const nock = require('nock')
-const { expect } = require('chai')
-const _ = require('lodash')
-const config = require('../../src/config/config')
-const {
-  execute,
-} = require('../../src/paymentHandler/make-lineitems-payment.handler')
-const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const ctpCart = require('./fixtures/ctp-cart.json')
-const ctpCartWithCustomShippingMethod = require('./fixtures/ctp-cart-custom-shipping-method.json')
+import nock from 'nock'
+import { expect } from 'chai'
+import _ from 'lodash'
+import config from '../../src/config/config.cjs'
+import { execute } from '../../src/paymentHandler/make-lineitems-payment.handler.cjs'
+import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import ctpPayment from './fixtures/ctp-payment.json'
+import ctpCart from './fixtures/ctp-cart.json'
+import ctpCartWithCustomShippingMethod from './fixtures/ctp-cart-custom-shipping-method.json'
 
 describe('make-lineitems-payment::execute', () => {
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000

@@ -1,7 +1,7 @@
-const sinon = require('sinon')
-const { expect } = require('chai')
-const googleFunction = require('../../index.googleFunction')
-const paymentHandler = require('../../src/paymentHandler/payment-handler')
+import sinon from 'sinon'
+import { expect } from 'chai'
+import { extensionTrigger } from '../../index.googleFunction.cjs'
+import paymentHandler from '../../src/paymentHandler/payment-handler.cjs'
 
 let sandbox = null
 
@@ -37,7 +37,7 @@ describe('Google cloud function', () => {
     const actions = [{ some: 'action' }]
     sandbox.stub(paymentHandler, 'handlePayment').returns({ actions })
 
-    const result = await googleFunction.extensionTrigger(
+    const result = await extensionTrigger(
       mockRequest,
       mockResponse
     )
@@ -48,7 +48,7 @@ describe('Google cloud function', () => {
   })
 
   it('if accessing cloud function without payload, it should return 400 http status', async () => {
-    const result = await googleFunction.extensionTrigger({}, mockResponse)
+    const result = await extensionTrigger({}, mockResponse)
 
     expect(result.responseStatus).to.be.equal(400)
     expect(result.responseBody).to.deep.equal({
@@ -64,7 +64,7 @@ describe('Google cloud function', () => {
   it('if unexpected error is thrown from payment handling, it should return 400 http status', async () => {
     sandbox.stub(paymentHandler, 'handlePayment').throws()
 
-    const result = await googleFunction.extensionTrigger(
+    const result = await extensionTrigger(
       mockRequest,
       mockResponse
     )
@@ -85,7 +85,7 @@ describe('Google cloud function', () => {
 
     sandbox.stub(paymentHandler, 'handlePayment').returns({ errors })
 
-    const result = await googleFunction.extensionTrigger(
+    const result = await extensionTrigger(
       mockRequest,
       mockResponse
     )

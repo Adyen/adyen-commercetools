@@ -2,9 +2,9 @@ import nock from 'nock'
 import _ from 'lodash'
 import { expect } from 'chai'
 import sinon from 'sinon'
-import submitPaymentDetailsSuccessResponse from './fixtures/adyen-submit-payment-details-success-response.cjs'
-import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response.cjs'
-import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.cjs'
+import submitPaymentDetailsSuccessResponse from './fixtures/adyen-submit-payment-details-success-response.js'
+import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response.js'
+import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.js'
 import { execute } from '../../src/paymentHandler/submit-payment-details.handler.cjs'
 import ctpPayment from './fixtures/ctp-payment.json'
 import config from '../../src/config/config.cjs'
@@ -240,6 +240,7 @@ describe('submit-additional-payment-details::execute', () => {
         basicAuth: false,
         keepAliveTimeout: 10,
       }
+
       const sandbox = sinon.createSandbox()
       sandbox.stub(config, 'getModuleConfig').returns(extensionDummyConfig)
 
@@ -285,6 +286,7 @@ describe('submit-additional-payment-details::execute', () => {
         basicAuth: false,
         keepAliveTimeout: 10,
       }
+
       const sandbox = sinon.createSandbox()
       sandbox.stub(config, 'getModuleConfig').returns(extensionDummyConfig)
 

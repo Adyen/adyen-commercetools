@@ -1,13 +1,11 @@
-const { expect } = require('chai')
-const _ = require('lodash')
-const nock = require('nock')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const ctpCart = require('./fixtures/ctp-cart.json')
-const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
-const {
-  execute,
-} = require('../../src/paymentHandler/make-lineitems-payment.handler')
-const config = require('../../src/config/config')
+import { expect } from 'chai'
+import _ from 'lodash'
+import nock from 'nock'
+import ctpPayment from './fixtures/ctp-payment.json'
+import ctpCart from './fixtures/ctp-cart.json'
+import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import { execute } from '../../src/paymentHandler/make-lineitems-payment.handler.cjs'
+import config from '../../src/config/config.cjs'
 
 describe('::Multitenancy::', () => {
   let adyenApiScope

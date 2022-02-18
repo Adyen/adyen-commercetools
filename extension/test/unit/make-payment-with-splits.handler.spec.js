@@ -1,8 +1,8 @@
-const nock = require('nock')
-const { expect } = require('chai')
-const c = require('../../src/config/constants')
-const config = require('../../src/config/config')
-const { execute } = require('../../src/paymentHandler/make-payment.handler')
+import nock from 'nock'
+import { expect } from 'chai'
+import c from '../../src/config/constants.cjs'
+import config from '../../src/config/config.cjs'
+import { execute } from '../../src/paymentHandler/make-payment.handler.cjs'
 
 describe('make-payment-with-splits::execute', () => {
   let scope

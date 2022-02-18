@@ -1,11 +1,11 @@
-const sinon = require('sinon')
-const chai = require('chai')
-const { handler } = require('../../index.lambda')
-const paymentHandler = require('../../src/paymentHandler/payment-handler')
+import sinon from 'sinon'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+import { handler } from '../../index.lambda.cjs'
+import paymentHandler from '../../src/paymentHandler/payment-handler.cjs'
 
 const { expect } = chai
-
-chai.use(require('chai-as-promised'))
+chai.use(chaiAsPromised)
 
 describe('Lambda handler', () => {
   afterEach(() => {

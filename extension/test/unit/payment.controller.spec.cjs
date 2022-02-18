@@ -7,8 +7,8 @@ const errorMessages = require('../../src/validator/error-messages')
 
 const utilsStub = {}
 const paymentController = proxyquire(
-  '../../src/api/payment/payment.controller',
-  { '../../utils': utilsStub }
+  '../../src/api/payment/payment.controller.cjs',
+  { '../../utils.cjs': utilsStub }
 )
 
 describe('Payment controller', () => {
