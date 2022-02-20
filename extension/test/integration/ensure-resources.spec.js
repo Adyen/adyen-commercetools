@@ -1,13 +1,10 @@
-const { expect } = require('chai')
-
-const ctpClientBuilder = require('../../src/ctp')
-const config = require('../../src/config/config')
-
-const { ensureResources } = require('../../src/config/init/ensure-resources')
-
-const paymentCustomType = require('../../resources/web-components-payment-type.json')
-const interfaceInteractionType = require('../../resources/payment-interface-interaction-type.json')
-const apiExtensionTemplate = require('../../resources/api-extension.json')
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp.cjs'
+import config from '../../src/config/config.cjs'
+import { ensureResources } from '../../src/config/init/ensure-resources.cjs'
+import paymentCustomType from '../../resources/web-components-payment-type.json'
+import interfaceInteractionType from '../../resources/payment-interface-interaction-type.json'
+import apiExtensionTemplate from '../../resources/api-extension.json'
 
 describe('::ensure-resources::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()

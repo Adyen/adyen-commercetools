@@ -1,10 +1,9 @@
-const { expect } = require('chai')
-const _ = require('lodash')
-
-const ctpClientBuilder = require('../../src/ctp')
-const c = require('../../src/config/constants')
-const config = require('../../src/config/config')
-const packageJson = require('../../package.json')
+import { expect } from 'chai'
+import _ from 'lodash'
+import ctpClientBuilder from '../../src/ctp.cjs'
+import c from '../../src/config/constants.cjs'
+import config from '../../src/config/config.cjs'
+import packageJson from '../../package.json'
 
 describe('::getPaymentMethods::', () => {
   let ctpClient

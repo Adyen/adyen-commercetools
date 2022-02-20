@@ -1,8 +1,7 @@
-const { expect } = require('chai')
-
-const ctpClientBuilder = require('../../src/ctp')
-const config = require('../../src/config/config')
-const constants = require('../../src/config/constants')
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp.cjs'
+import config from '../../src/config/config.cjs'
+import constants from '../../src/config/constants.cjs'
 
 describe('::make-payment with multiple adyen accounts use case::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()

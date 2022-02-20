@@ -1,8 +1,7 @@
-const { expect } = require('chai')
-
-const ctpClientBuilder = require('../../src/ctp')
-const c = require('../../src/config/constants')
-const config = require('../../src/config/config')
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp.cjs'
+import c from '../../src/config/constants.cjs'
+import config from '../../src/config/config.cjs'
 
 describe('get-carbon-offset-costs', () => {
   let ctpClient

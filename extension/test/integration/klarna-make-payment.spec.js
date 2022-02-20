@@ -1,8 +1,7 @@
-const { expect } = require('chai')
-
-const ctpClientBuilder = require('../../src/ctp')
-const config = require('../../src/config/config')
-const iTSetUp = require('./integration-test-set-up')
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp.cjs'
+import config from '../../src/config/config.cjs'
+import iTSetUp from './integration-test-set-up.js'
 
 describe('::klarnaMakePayment with multiple projects use case::', () => {
   const [commercetoolsProjectKey1, commercetoolsProjectKey2] =

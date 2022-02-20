@@ -1,15 +1,15 @@
-const { expect } = require('chai')
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp.cjs'
+import constants from '../../src/config/constants.cjs'
+import paymentUtils from '../../src/paymentHandler/payment-utils.cjs'
+import config from '../../src/config/config.cjs';
 
-const ctpClientBuilder = require('../../src/ctp')
 const {
-  CTP_ADYEN_INTEGRATION,
-  CTP_INTERACTION_TYPE_CANCEL_PAYMENT,
-  CTP_PAYMENT_CUSTOM_TYPE_KEY,
-} = require('../../src/config/constants')
-const {
-  createAddTransactionAction,
-} = require('../../src/paymentHandler/payment-utils')
-const config = require('../../src/config/config')
+    CTP_ADYEN_INTEGRATION,
+    CTP_INTERACTION_TYPE_CANCEL_PAYMENT,
+    CTP_PAYMENT_CUSTOM_TYPE_KEY,
+} = constants
+const { createAddTransactionAction } = paymentUtils
 
 describe('::cancel::', () => {
   let ctpClient

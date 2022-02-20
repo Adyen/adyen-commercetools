@@ -1,4 +1,4 @@
-const { startIT, stopIT } = require('./test-utils')
+import { startIT, stopIT } from './test-utils.cjs'
 
 before(async () => {
   await startIT()
