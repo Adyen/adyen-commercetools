@@ -1,8 +1,9 @@
-const ctpClientBuilder = require('../../src/ctp')
-const { routes } = require('../../src/routes')
-const config = require('../../src/config/config')
-const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
-const httpUtils = require('../../src/utils')
+import ctpClientBuilder from '../../src/ctp.cjs'
+import { routes } from '../../src/routes.cjs'
+import config from '../../src/config/config.cjs'
+import MakePaymentFormPage from './pageObjects/CreditCardMakePaymentFormPage.js'
+import httpUtils from '../../src/utils.cjs'
+import testUtils from './e2e-test-utils.js'
 
 const logger = httpUtils.getLogger()
 const {
@@ -10,7 +11,7 @@ const {
   createPayment,
   initPuppeteerBrowser,
   serveFile,
-} = require('./e2e-test-utils')
+} = testUtils
 
 // Flow description: https://docs.adyen.com/checkout/components-web
 describe('::creditCardPayment::', () => {

@@ -1,10 +1,10 @@
-const { pasteValue } = require('../e2e-test-utils')
-
-const httpUtils = require('../../../src/utils')
+import testUtils from '../e2e-test-utils.js'
+import httpUtils from '../../../src/utils.cjs'
 
 const logger = httpUtils.getLogger()
+const { pasteValue } = testUtils
 
-module.exports = class RedirectPaymentFormPage {
+export default class RedirectPaymentFormPage {
   constructor(page, baseUrl) {
     this.page = page
     this.baseUrl = baseUrl

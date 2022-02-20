@@ -1,7 +1,9 @@
-const { executeInAdyenIframe } = require('../e2e-test-utils')
-const MakePaymentFormPage = require('./MakePaymentFormPage')
+import testUtils from '../e2e-test-utils.js'
+import MakePaymentFormPage from './MakePaymentFormPage.js'
 
-module.exports = class CreditCardMakePaymentFormPage extends (
+const { executeInAdyenIframe } = testUtils
+
+export default class CreditCardMakePaymentFormPage extends (
   MakePaymentFormPage
 ) {
   async getMakePaymentRequest({

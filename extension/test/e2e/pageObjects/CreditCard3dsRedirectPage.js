@@ -1,4 +1,4 @@
-module.exports = class CreditCard3dsRedirectPage {
+export default class CreditCard3dsRedirectPage {
   constructor(page) {
     this.page = page
   }

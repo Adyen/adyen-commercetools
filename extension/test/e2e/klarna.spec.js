@@ -1,23 +1,23 @@
-const { expect } = require('chai')
-const ctpClientBuilder = require('../../src/ctp')
-const config = require('../../src/config/config')
-const { routes } = require('../../src/routes')
-const httpUtils = require('../../src/utils')
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp.cjs'
+import config from '../../src/config/config.cjs'
+import { routes } from '../../src/routes.cjs'
+import httpUtils from '../../src/utils.cjs'
+import pU from '../../src/paymentHandler/payment-utils.cjs'
+import testUtils from './e2e-test-utils.js'
+import KlarnaMakePaymentFormPage from './pageObjects/KlarnaMakePaymentFormPage.js'
+import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
+import KlarnaPage from './pageObjects/KlarnaPage.js'
+import constants from '../../src/config/constants.cjs'
 
-const logger = httpUtils.getLogger()
-const pU = require('../../src/paymentHandler/payment-utils')
+const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
 const {
   assertPayment,
   createPayment,
   initPuppeteerBrowser,
   serveFile,
-} = require('./e2e-test-utils')
-const KlarnaMakePaymentFormPage = require('./pageObjects/KlarnaMakePaymentFormPage')
-const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
-const KlarnaPage = require('./pageObjects/KlarnaPage')
-const {
-  CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
-} = require('../../src/config/constants')
+} = testUtils
+const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction
 describe('::klarnaPayment::', () => {
