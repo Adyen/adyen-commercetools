@@ -8,12 +8,8 @@ import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
 import CreditCardNativePage from './pageObjects/CreditCard3dsNativePage.js'
 
 const logger = httpUtils.getLogger()
-const {
-  assertPayment,
-  createPayment,
-  initPuppeteerBrowser,
-  serveFile,
-} = testUtils
+const { assertPayment, createPayment, initPuppeteerBrowser, serveFile } =
+  testUtils
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
 describe('::creditCardPayment3dsNative::', () => {

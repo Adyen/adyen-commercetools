@@ -5,9 +5,9 @@ import paymentUtils from '../../src/paymentHandler/payment-utils.js'
 import config from '../../src/config/config.cjs'
 
 const {
-    CTP_ADYEN_INTEGRATION,
-    CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
-    CTP_PAYMENT_CUSTOM_TYPE_KEY,
+  CTP_ADYEN_INTEGRATION,
+  CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
+  CTP_PAYMENT_CUSTOM_TYPE_KEY,
 } = constants
 const { createAddTransactionAction } = paymentUtils
 

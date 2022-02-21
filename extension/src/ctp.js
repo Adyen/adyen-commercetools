@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import lodash from 'lodash';
+import lodash from 'lodash'
 import { createClient } from '@commercetools/sdk-client'
 import { createAuthMiddlewareForClientCredentialsFlow } from '@commercetools/sdk-middleware-auth'
 import { createUserAgentMiddleware } from '@commercetools/sdk-middleware-user-agent'
@@ -8,7 +8,7 @@ import { createQueueMiddleware } from '@commercetools/sdk-middleware-queue'
 import { createRequestBuilder } from '@commercetools/api-request-builder'
 import packageJson from '../package.json'
 
-const { merge } = lodash;
+const { merge } = lodash
 /**
 
 The token projectKeyToAuthResultMap caches the access tokens (based on projectKey) obtained through

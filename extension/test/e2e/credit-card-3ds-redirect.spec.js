@@ -9,12 +9,8 @@ import CreditCardRedirectPage from './pageObjects/CreditCard3dsRedirectPage.js'
 
 const logger = httpUtils.getLogger()
 
-const {
-  assertPayment,
-  createPayment,
-  initPuppeteerBrowser,
-  serveFile,
-} = testUtils
+const { assertPayment, createPayment, initPuppeteerBrowser, serveFile } =
+  testUtils
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/redirect-3ds2-3ds1/web-component
 describe('::creditCardPayment3dsRedirect::', () => {

@@ -6,12 +6,8 @@ import httpUtils from '../../src/utils.cjs'
 import testUtils from './e2e-test-utils.js'
 
 const logger = httpUtils.getLogger()
-const {
-  assertPayment,
-  createPayment,
-  initPuppeteerBrowser,
-  serveFile,
-} = testUtils
+const { assertPayment, createPayment, initPuppeteerBrowser, serveFile } =
+  testUtils
 
 // Flow description: https://docs.adyen.com/checkout/components-web
 describe('::creditCardPayment::', () => {

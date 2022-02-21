@@ -37,10 +37,7 @@ describe('Google cloud function', () => {
     const actions = [{ some: 'action' }]
     sandbox.stub(paymentHandler, 'handlePayment').returns({ actions })
 
-    const result = await extensionTrigger(
-      mockRequest,
-      mockResponse
-    )
+    const result = await extensionTrigger(mockRequest, mockResponse)
     expect(result.responseStatus).to.be.equal(200)
     expect(result.responseBody).to.deep.equal({
       actions: [{ some: 'action' }],
@@ -64,10 +61,7 @@ describe('Google cloud function', () => {
   it('if unexpected error is thrown from payment handling, it should return 400 http status', async () => {
     sandbox.stub(paymentHandler, 'handlePayment').throws()
 
-    const result = await extensionTrigger(
-      mockRequest,
-      mockResponse
-    )
+    const result = await extensionTrigger(mockRequest, mockResponse)
     expect(result.responseStatus).to.equal(400)
     expect(result.responseBody.errors).to.not.empty
     expect(result.responseBody.errors).to.have.lengthOf(1)
@@ -85,10 +79,7 @@ describe('Google cloud function', () => {
 
     sandbox.stub(paymentHandler, 'handlePayment').returns({ errors })
 
-    const result = await extensionTrigger(
-      mockRequest,
-      mockResponse
-    )
+    const result = await extensionTrigger(mockRequest, mockResponse)
 
     expect(result.responseStatus).to.equal(400)
     expect(result.responseBody.errors).to.not.empty

@@ -2,12 +2,12 @@ import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
 import constants from '../../src/config/constants.js'
 import paymentUtils from '../../src/paymentHandler/payment-utils.js'
-import config from '../../src/config/config.cjs';
+import config from '../../src/config/config.cjs'
 
 const {
-    CTP_ADYEN_INTEGRATION,
-    CTP_INTERACTION_TYPE_CANCEL_PAYMENT,
-    CTP_PAYMENT_CUSTOM_TYPE_KEY,
+  CTP_ADYEN_INTEGRATION,
+  CTP_INTERACTION_TYPE_CANCEL_PAYMENT,
+  CTP_PAYMENT_CUSTOM_TYPE_KEY,
 } = constants
 const { createAddTransactionAction } = paymentUtils
 

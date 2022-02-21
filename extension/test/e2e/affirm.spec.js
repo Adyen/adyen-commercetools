@@ -7,12 +7,8 @@ import AffirmMakePaymentFormPage from './pageObjects/AffirmMakePaymentFormPage.j
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
 import AffirmPage from './pageObjects/AffirmPage.js'
 
-const {
-  assertPayment,
-  createPayment,
-  initPuppeteerBrowser,
-  serveFile,
-} = testUtils
+const { assertPayment, createPayment, initPuppeteerBrowser, serveFile } =
+  testUtils
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/affirm/web-component#page-introduction

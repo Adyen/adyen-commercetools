@@ -1,7 +1,8 @@
 import ensureCustomType from './ensure-custom-type.js'
 import apiExtensions from './ensure-api-extensions.js'
 
-const { ensurePaymentCustomType, ensureInterfaceInteractionCustomType } = ensureCustomType
+const { ensurePaymentCustomType, ensureInterfaceInteractionCustomType } =
+  ensureCustomType
 const { ensureApiExtensions } = apiExtensions
 
 function ensureCustomTypes(ctpClient, ctpProjectKey) {

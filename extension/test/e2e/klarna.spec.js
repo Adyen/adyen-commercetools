@@ -11,12 +11,8 @@ import KlarnaPage from './pageObjects/KlarnaPage.js'
 import constants from '../../src/config/constants.js'
 
 const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
-const {
-  assertPayment,
-  createPayment,
-  initPuppeteerBrowser,
-  serveFile,
-} = testUtils
+const { assertPayment, createPayment, initPuppeteerBrowser, serveFile } =
+  testUtils
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction

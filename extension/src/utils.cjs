@@ -26,12 +26,12 @@ function sendResponse({ response, statusCode = 200, headers, data }) {
 
 function getLogger() {
   if (!logger)
-      logger = bunyan.createLogger({
-        name: 'ctp-adyen-integration-extension',
-        stream: process.stderr,
-        level: config.getModuleConfig().logLevel || bunyan.INFO,
-      })
-      return logger
+    logger = bunyan.createLogger({
+      name: 'ctp-adyen-integration-extension',
+      stream: process.stderr,
+      level: config.getModuleConfig().logLevel || bunyan.INFO,
+    })
+  return logger
 }
 
 function handleUnexpectedPaymentError(paymentObj, err) {

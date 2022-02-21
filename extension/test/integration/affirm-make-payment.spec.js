@@ -1,7 +1,7 @@
-import { expect } from 'chai';
-import ctpClientBuilder from '../../src/ctp.js';
-import config from '../../src/config/config.cjs';
-import iTSetUp from './integration-test-set-up.js';
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp.js'
+import config from '../../src/config/config.cjs'
+import iTSetUp from './integration-test-set-up.js'
 
 describe('::affirmMakePayment with multiple projects use case::', () => {
   const [commercetoolsProjectKey1, commercetoolsProjectKey2] =

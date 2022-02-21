@@ -3,9 +3,7 @@ import MakePaymentFormPage from './MakePaymentFormPage.js'
 
 const { executeInAdyenIframe } = testUtils
 
-export default class CreditCardMakePaymentFormPage extends (
-  MakePaymentFormPage
-) {
+export default class CreditCardMakePaymentFormPage extends MakePaymentFormPage {
   async getMakePaymentRequest({
     creditCardNumber,
     creditCardDate,
