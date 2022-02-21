@@ -1,7 +1,7 @@
-const http = require('http')
-const url = require('url')
-const utils = require('./utils')
-const { routes: defaultRoutes } = require('./routes')
+import http from 'http'
+import url from 'url'
+import utils from './utils.cjs'
+import { routes as defaultRoutes } from './routes.js'
 
 const logger = utils.getLogger()
 
@@ -24,4 +24,4 @@ function setupServer(routes = defaultRoutes) {
   })
 }
 
-module.exports = { setupServer }
+export default { setupServer }

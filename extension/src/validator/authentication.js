@@ -1,4 +1,4 @@
-const config = require('../config/config')
+import config from '../config/config.cjs'
 
 function getStoredCredential(ctpProjectKey) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
@@ -54,7 +54,7 @@ function generateBasicAuthorizationHeaderValue(ctpProjectKey) {
   return null
 }
 
-module.exports = {
+export default {
   hasValidAuthorizationHeader,
   getAuthorizationRequestHeader,
   generateBasicAuthorizationHeaderValue,

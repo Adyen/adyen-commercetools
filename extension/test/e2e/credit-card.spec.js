@@ -1,5 +1,5 @@
-import ctpClientBuilder from '../../src/ctp.cjs'
-import { routes } from '../../src/routes.cjs'
+import ctpClientBuilder from '../../src/ctp.js'
+import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.cjs'
 import MakePaymentFormPage from './pageObjects/CreditCardMakePaymentFormPage.js'
 import httpUtils from '../../src/utils.cjs'

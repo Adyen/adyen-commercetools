@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import _ from 'lodash'
-import ctpClientBuilder from '../../src/ctp.cjs'
-import c from '../../src/config/constants.cjs'
+import ctpClientBuilder from '../../src/ctp.js'
+import c from '../../src/config/constants.js'
 import config from '../../src/config/config.cjs'
 import packageJson from '../../package.json'
 

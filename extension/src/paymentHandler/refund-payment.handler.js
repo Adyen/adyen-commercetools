@@ -1,6 +1,9 @@
-const pU = require('./payment-utils')
-const { refund } = require('../service/web-component-service')
-const { CTP_INTERACTION_TYPE_REFUND } = require('../config/constants')
+import pU from './payment-utils.js'
+import componentService from '../service/web-component-service.js'
+import constants from '../config/constants.js'
+
+const { refund } = componentService
+const { CTP_INTERACTION_TYPE_REFUND } = constants
 
 async function execute(paymentObject) {
   const refundInitTransactions = pU.listRefundTransactionsInit(paymentObject)
@@ -54,4 +57,4 @@ async function execute(paymentObject) {
   }
 }
 
-module.exports = { execute }
+export default execute

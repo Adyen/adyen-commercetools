@@ -1,6 +1,6 @@
 import { expect } from 'chai'
-import ctpClientBuilder from '../../src/ctp.cjs'
-import c from '../../src/config/constants.cjs'
+import ctpClientBuilder from '../../src/ctp.js'
+import c from '../../src/config/constants.js'
 import config from '../../src/config/config.cjs'
 
 describe('get-carbon-offset-costs', () => {

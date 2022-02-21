@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import fetch from 'node-fetch'
-import c from '../../src/config/constants.cjs'
-import { execute } from '../../src/paymentHandler/get-payment-methods.handler.cjs'
+import c from '../../src/config/constants.js'
+import execute from '../../src/paymentHandler/get-payment-methods.handler.js'
 import config from '../../src/config/config.cjs'
 
 describe('get-payment-methods::execute::', () => {

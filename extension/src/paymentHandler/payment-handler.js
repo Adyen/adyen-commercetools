@@ -1,26 +1,27 @@
-const ValidatorBuilder = require('../validator/validator-builder')
-const getPaymentMethodsHandler = require('./get-payment-methods.handler')
-const makePaymentHandler = require('./make-payment.handler')
-const makeLineitemsPaymentHandler = require('./make-lineitems-payment.handler')
-const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
-const manualCaptureHandler = require('./manual-capture.handler')
-const cancelHandler = require('./cancel-payment.handler')
-const refundHandler = require('./refund-payment.handler')
-const getCarbonOffsetCostsHandler = require('./get-carbon-offset-costs.handler')
-const pU = require('./payment-utils')
-const auth = require('../validator/authentication')
-const errorMessages = require('../validator/error-messages')
+import ValidatorBuilder from '../validator/validator-builder.js'
+import getPaymentMethodsHandler from './get-payment-methods.handler.js'
+import makePaymentHandler from './make-payment.handler.js'
+import makeLineitemsPaymentHandler from './make-lineitems-payment.handler.js'
+import submitPaymentDetailsHandler from './submit-payment-details.handler.js'
+import manualCaptureHandler from './manual-capture.handler.js'
+import cancelHandler from './cancel-payment.handler.js'
+import refundHandler from './refund-payment.handler.js'
+import getCarbonOffsetCostsHandler from './get-carbon-offset-costs.handler.js'
+import pU from './payment-utils.js'
+import auth from '../validator/authentication.js'
+import errorMessages from '../validator/error-messages.js'
+import constants from '../config/constants.js'
 
 const {
   CTP_ADYEN_INTEGRATION,
   PAYMENT_METHOD_TYPE_KLARNA_METHODS,
   PAYMENT_METHOD_TYPE_AFFIRM_METHODS,
-} = require('../config/constants')
+} = constants
 const {
   getChargeTransactionInitial,
   getAuthorizationTransactionSuccess,
   getCancelAuthorizationTransactionInit,
-} = require('./payment-utils')
+} = pU
 
 async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
@@ -164,4 +165,4 @@ function _isCancelPayment(paymentObject) {
   )
 }
 
-module.exports = { handlePayment }
+export default { handlePayment }

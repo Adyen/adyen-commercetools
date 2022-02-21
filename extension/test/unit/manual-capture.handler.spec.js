@@ -2,8 +2,8 @@ import nock from 'nock'
 import lodash from 'lodash'
 import { expect } from 'chai'
 import config from '../../src/config/config.cjs'
-import { execute } from '../../src/paymentHandler/manual-capture.handler.cjs'
-import constants from '../../src/config/constants.cjs'
+import execute from '../../src/paymentHandler/manual-capture.handler.js'
+import constants from '../../src/config/constants.js'
 
 const { cloneDeep } = lodash
 const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants

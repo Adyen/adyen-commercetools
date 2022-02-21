@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import config from '../../src/config/config.cjs'
-import auth from '../../src/validator/authentication.cjs'
+import auth from '../../src/validator/authentication.js'
 
 describe('Authentication unit test', () => {
   const ctpDummyConfig = {

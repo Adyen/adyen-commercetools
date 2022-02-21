@@ -1,8 +1,8 @@
-const utils = require('./src/utils')
-const paymentHandler = require('./src/paymentHandler/payment-handler')
-const auth = require('./src/validator/authentication')
+import utils from './src/utils.cjs'
+import paymentHandler from './src/paymentHandler/payment-handler.js'
+import auth from './src/validator/authentication.js'
 
-exports.handler = async (event) => {
+export let handler = async (event) => {
   let paymentObj = {}
   try {
     const body = event.body ? JSON.parse(event.body) : event

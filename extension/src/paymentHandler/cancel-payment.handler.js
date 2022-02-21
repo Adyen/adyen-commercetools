@@ -1,6 +1,9 @@
-const pU = require('./payment-utils')
-const { cancelPayment } = require('../service/web-component-service')
-const { CTP_INTERACTION_TYPE_CANCEL_PAYMENT } = require('../config/constants')
+import pU from './payment-utils.js'
+import componentService from '../service/web-component-service.js'
+import constants from '../config/constants.js'
+
+const { CTP_INTERACTION_TYPE_CANCEL_PAYMENT } = constants
+const { cancelPayment } = componentService
 
 async function execute(paymentObject) {
   const authorizationTransaction =
@@ -47,4 +50,4 @@ function _createTransactionActions(paymentObject, pspReference) {
   ]
 }
 
-module.exports = { execute }
+export default execute

@@ -1,11 +1,10 @@
-const { createSyncTypes } = require('@commercetools/sync-actions')
-const { serializeError } = require('serialize-error')
-const utils = require('../../utils')
+import { createSyncTypes } from '@commercetools/sync-actions'
+import { serializeError } from 'serialize-error'
+import utils from '../../utils.cjs'
+import paymentCustomType from '../../../resources/web-components-payment-type.json'
+import interfaceInteractionType from '../../../resources/payment-interface-interaction-type.json'
 
 const mainLogger = utils.getLogger()
-
-const paymentCustomType = require('../../../resources/web-components-payment-type.json')
-const interfaceInteractionType = require('../../../resources/payment-interface-interaction-type.json')
 
 async function ensurePaymentCustomType(ctpClient, ctpProjectKey) {
   return syncCustomType(
@@ -68,7 +67,7 @@ async function fetchTypeByKey(ctpClient, key) {
   }
 }
 
-module.exports = {
+export default {
   ensurePaymentCustomType,
   ensureInterfaceInteractionCustomType,
 }

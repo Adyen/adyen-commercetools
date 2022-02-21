@@ -1,6 +1,8 @@
-const pU = require('./payment-utils')
-const c = require('../config/constants')
-const { getCarbonOffsetCosts } = require('../service/web-component-service')
+import pU from './payment-utils.js'
+import c from '../config/constants.js'
+import componentService from '../service/web-component-service.js'
+
+const { getCarbonOffsetCosts } = componentService
 
 async function execute(paymentObject) {
   const getCarbonOffsetCostsRequestObj = JSON.parse(
@@ -26,4 +28,4 @@ async function execute(paymentObject) {
   }
 }
 
-module.exports = { execute }
+export default execute

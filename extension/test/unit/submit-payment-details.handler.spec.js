@@ -5,10 +5,12 @@ import sinon from 'sinon'
 import submitPaymentDetailsSuccessResponse from './fixtures/adyen-submit-payment-details-success-response.js'
 import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response.js'
 import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.js'
-import { execute } from '../../src/paymentHandler/submit-payment-details.handler.cjs'
+import paymentDetailsHandler from '../../src/paymentHandler/submit-payment-details.handler.js'
 import ctpPayment from './fixtures/ctp-payment.json'
 import config from '../../src/config/config.cjs'
-import c from '../../src/config/constants.cjs'
+import c from '../../src/config/constants.js'
+
+const { execute } = paymentDetailsHandler
 
 describe('submit-additional-payment-details::execute', () => {
   let scope

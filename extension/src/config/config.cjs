@@ -1,4 +1,4 @@
-const loadConfig = require('./config-loader')
+const loadConfig = require('./config-loader.cjs')
 
 let config
 

@@ -322,7 +322,7 @@ describe('::config::', () => {
   )
 
   it(
-    'when removeSensitiveData is set as boolean false in config.js, ' +
+    'when removeSensitiveData is set as boolean false in config.cjs, ' +
       'it should load as false value in module config',
     () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
@@ -356,7 +356,7 @@ describe('::config::', () => {
   )
 
   it(
-    'when removeSensitiveData is set as boolean true in config.js, ' +
+    'when removeSensitiveData is set as boolean true in config.cjs, ' +
       'it should load as true value in module config',
     () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
@@ -390,7 +390,7 @@ describe('::config::', () => {
   )
 
   it(
-    'when removeSensitiveData is set as string false in config.js, ' +
+    'when removeSensitiveData is set as string false in config.cjs, ' +
       'it should load as false value in module config',
     () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
@@ -416,7 +416,7 @@ describe('::config::', () => {
   )
 
   it(
-    'when removeSensitiveData is set as string true in config.js, ' +
+    'when removeSensitiveData is set as string true in config.cjs, ' +
       'it should load as true value in module config',
     () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({

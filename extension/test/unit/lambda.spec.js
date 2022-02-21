@@ -1,8 +1,8 @@
 import sinon from 'sinon'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { handler } from '../../index.lambda.cjs'
-import paymentHandler from '../../src/paymentHandler/payment-handler.cjs'
+import { handler } from '../../index.lambda.js'
+import paymentHandler from '../../src/paymentHandler/payment-handler.js'
 
 const { expect } = chai
 chai.use(chaiAsPromised)

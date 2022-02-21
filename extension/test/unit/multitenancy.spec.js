@@ -4,7 +4,7 @@ import nock from 'nock'
 import ctpPayment from './fixtures/ctp-payment.json'
 import ctpCart from './fixtures/ctp-cart.json'
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
-import { execute } from '../../src/paymentHandler/make-lineitems-payment.handler.cjs'
+import execute from '../../src/paymentHandler/make-lineitems-payment.handler.js'
 import config from '../../src/config/config.cjs'
 
 describe('::Multitenancy::', () => {

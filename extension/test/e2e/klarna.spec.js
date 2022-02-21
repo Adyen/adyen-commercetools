@@ -1,14 +1,14 @@
 import { expect } from 'chai'
-import ctpClientBuilder from '../../src/ctp.cjs'
+import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.cjs'
-import { routes } from '../../src/routes.cjs'
+import { routes } from '../../src/routes.js'
 import httpUtils from '../../src/utils.cjs'
-import pU from '../../src/paymentHandler/payment-utils.cjs'
+import pU from '../../src/paymentHandler/payment-utils.js'
 import testUtils from './e2e-test-utils.js'
 import KlarnaMakePaymentFormPage from './pageObjects/KlarnaMakePaymentFormPage.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
 import KlarnaPage from './pageObjects/KlarnaPage.js'
-import constants from '../../src/config/constants.cjs'
+import constants from '../../src/config/constants.js'
 
 const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
 const {

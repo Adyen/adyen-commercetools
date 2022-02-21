@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import ctpClientBuilder from '../../src/ctp.cjs'
+import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.cjs'
 import iTSetUp from './integration-test-set-up.js'
 

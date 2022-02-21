@@ -1,7 +1,7 @@
 import sinon from 'sinon'
 import { expect } from 'chai'
-import { extensionTrigger } from '../../index.googleFunction.cjs'
-import paymentHandler from '../../src/paymentHandler/payment-handler.cjs'
+import { extensionTrigger } from '../../index.googleFunction.js'
+import paymentHandler from '../../src/paymentHandler/payment-handler.js'
 
 let sandbox = null
 

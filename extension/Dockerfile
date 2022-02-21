@@ -6,4 +6,4 @@ WORKDIR /app
 COPY . /app
 
 RUN npm ci --only=prod
-CMD [ "node", "src/init.cjs" ]
+CMD [ "node", "src/init.js" ]

@@ -1,13 +1,15 @@
 import nock from 'nock'
 import _ from 'lodash'
 import { expect } from 'chai'
-import { handlePayment } from '../../src/paymentHandler/payment-handler.cjs'
+import paymentHandler from '../../src/paymentHandler/payment-handler.js'
 import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response.js'
 import ctpPayment from './fixtures/ctp-payment.json'
 import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.js'
 import config from '../../src/config/config.cjs'
-import c from '../../src/config/constants.cjs'
-import errorMessage from '../../src/validator/error-messages.cjs'
+import c from '../../src/config/constants.js'
+import errorMessage from '../../src/validator/error-messages.js'
+
+const { handlePayment } = paymentHandler
 
 describe('payment-handler::execute', () => {
   let scope

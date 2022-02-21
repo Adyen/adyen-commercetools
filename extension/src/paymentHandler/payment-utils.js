@@ -1,6 +1,8 @@
-const _ = require('lodash')
-const c = require('../config/constants')
-const { getAdyenPaymentMethodsToNames } = require('../config/config')
+import _ from 'lodash'
+import c from '../config/constants.js'
+import config from '../config/config.cjs'
+
+const { getAdyenPaymentMethodsToNames } = config
 
 function getAuthorizationTransactionSuccess(paymentObject) {
   return getTransactionWithTypesAndStates(
@@ -186,7 +188,7 @@ function isValidMetadata(str) {
   return str.indexOf(' ') < 0
 }
 
-module.exports = {
+export default {
   getChargeTransactionInitial,
   getChargeTransactionPending,
   getAuthorizationTransactionSuccess,

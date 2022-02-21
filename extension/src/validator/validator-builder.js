@@ -1,7 +1,7 @@
-const pU = require('../paymentHandler/payment-utils')
-const errorMessages = require('./error-messages')
-const c = require('../config/constants')
-const auth = require('./authentication')
+import pU from '../paymentHandler/payment-utils.js'
+import errorMessages from './error-messages.js'
+import c from '../config/constants.js'
+import auth from './authentication.js'
 
 function withPayment(paymentObject) {
   const errors = {}
@@ -119,4 +119,4 @@ function _getErrorResponseCode(value) {
   return 'InvalidField'
 }
 
-module.exports = { withPayment }
+export default { withPayment }

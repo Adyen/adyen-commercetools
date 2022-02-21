@@ -2,13 +2,15 @@ import nock from 'nock'
 import { expect } from 'chai'
 import _ from 'lodash'
 import config from '../../src/config/config.cjs'
-import { execute } from '../../src/paymentHandler/make-payment.handler.cjs'
+import makePaymentHandler from '../../src/paymentHandler/make-payment.handler.js'
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
 import paymentErrorResponse from './fixtures/adyen-make-payment-error-response.js'
 import paymentRefusedResponse from './fixtures/adyen-make-payment-refused-response.js'
 import paymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.js'
 import paymentValidationFailedResponse from './fixtures/adyen-make-payment-validation-failed-response.js'
 import ctpPayment from './fixtures/ctp-payment.json'
+
+const { execute } = makePaymentHandler
 
 describe('make-payment::execute', () => {
   let scope

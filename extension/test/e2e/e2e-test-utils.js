@@ -4,8 +4,8 @@ import { expect } from 'chai'
 import puppeteer from 'puppeteer'
 import path from 'path'
 import fs from 'fs'
-import { getLatestInterfaceInteraction } from '../../src/paymentHandler/payment-utils.cjs'
-import c from '../../src/config/constants.cjs'
+import { getLatestInterfaceInteraction } from '../../src/paymentHandler/payment-utils.js'
+import c from '../../src/config/constants.js'
 
 async function pasteValue(page, selector, value) {
   return page.evaluate(

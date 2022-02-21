@@ -3,7 +3,10 @@ const proxyquire = require('proxyquire')
 const { expect } = require('chai')
 
 const ctpPayment = require('./fixtures/ctp-payment.json')
-const errorMessages = require('../../src/validator/error-messages')
+
+const errorMessages = (async () => {
+  return await import('../../src/validator/error-messages.js');
+})().catch(err => console.error(err));
 
 const utilsStub = {}
 const paymentController = proxyquire(

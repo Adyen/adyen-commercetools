@@ -1,8 +1,10 @@
-const paymentHandler = require('./src/paymentHandler/payment-handler')
-const utils = require('./src/utils')
-const auth = require('./src/validator/authentication')
+import paymentHandler from './src/paymentHandler/payment-handler.js'
+import utils from './src/utils.cjs'
+import auth from './src/validator/authentication.js'
 
-exports.extensionTrigger = async (request, response) => {
+const { handleUnexpectedPaymentError } = utils
+
+export const extensionTrigger = async (request, response) => {
   const paymentObj = request?.body?.resource?.obj
   try {
     if (!paymentObj) {
@@ -31,6 +33,6 @@ exports.extensionTrigger = async (request, response) => {
   } catch (err) {
     return response
       .status(400)
-      .send(utils.handleUnexpectedPaymentError(paymentObj, err))
+      .send(handleUnexpectedPaymentError(paymentObj, err))
   }
 }

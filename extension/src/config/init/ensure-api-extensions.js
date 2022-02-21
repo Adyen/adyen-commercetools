@@ -1,7 +1,7 @@
-const _ = require('lodash')
-const { serializeError } = require('serialize-error')
-const utils = require('../../utils')
-const apiExtensionTemplate = require('../../../resources/api-extension.json')
+import _ from 'lodash'
+import { serializeError } from 'serialize-error'
+import utils from '../../utils.cjs'
+import apiExtensionTemplate from '../../../resources/api-extension.json'
 
 const mainLogger = utils.getLogger()
 
@@ -78,6 +78,6 @@ async function fetchExtensionByKey(ctpClient, key) {
   }
 }
 
-module.exports = {
+export default {
   ensureApiExtensions,
 }
