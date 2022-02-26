@@ -52,7 +52,7 @@
     "@commercetools/sdk-middleware-http": "6.1.1",
     "@commercetools/sdk-middleware-queue": "2.1.4",
     "@commercetools/sdk-middleware-user-agent": "2.1.5",
-    "@commercetools/sync-actions": "4.9.6",
+    "@commercetools/sync-actions": "4.10.1",
     "bunyan": "1.8.15",
     "lockfile-lint": "4.6.2",
     "lodash": "4.17.21",
@@ -64,7 +64,7 @@
   "devDependencies": {
     "chai": "4.3.6",
     "chai-as-promised": "7.1.1",
-    "eslint": "8.9.0",
+    "eslint": "8.10.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-config-prettier": "8.4.0",
     "eslint-plugin-import": "2.25.4",
