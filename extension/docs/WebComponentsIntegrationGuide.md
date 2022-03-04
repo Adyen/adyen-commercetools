@@ -764,7 +764,8 @@ Additionally, follow the official Adyen [integration checklist](https://docs.ady
 
 By default, payments are captured immediately (or with [delay](https://docs.adyen.com/online-payments/capture#capture-delay)) after authorisation. For payment methods that support separate authorization and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This also allows you to cancel the payment/authorization.
 
-Payments like [Klarna](https://docs.adyen.com/payment-methods/klarna/web-component#capture) or [Affirm](https://docs.adyen.com/payment-methods/affirm/web-component#capture-the-payment) have to be manually captured, even if you have enabled automatic capture for other payment methods.
+Payments like [Klarna](https://docs.adyen.com/payment-methods/klarna/web-component#capture) or [Affirm](https://docs.adyen.com/payment-methods/affirm/web-component#capture-the-payment) have to be manually captured by default, even if you have enabled automatic capture for other payment methods. Klarna can be configured to auto-capture if you contact Adyen Support.
+
 If you need to explicitly request a capture for each payment please follow our [manual capture documentation](./ManualCapture.md).
 
 # Cancel or refund
