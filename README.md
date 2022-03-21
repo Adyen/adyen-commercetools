@@ -61,6 +61,5 @@ The notification module will process the notification sent by Adyen and matches 
 
 ## Other guides
  
-- Follow the [FAQ](docs/FAQ.md) for the answers to frequently asked questions.
-- Follow the [Best Practices](docs/BEST_PRACTICES.md) for best practices such as order creation, deployment etc. 
+- Follow the [FAQ](docs/FAQ.md) for the answers to frequently asked questions, such as order creation, deployment etc. 
 - Follow the [Contribution Guide](docs/ContributionGuide.md) if you would like to run modules locally.

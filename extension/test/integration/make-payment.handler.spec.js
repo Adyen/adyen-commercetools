@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.cjs'
 import constants from '../../src/config/constants.js'
+const iTSetUp = require('./integration-test-set-up')
 
 describe('::make-payment with multiple adyen accounts use case::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
@@ -36,6 +37,68 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
           adyenMerchantAccount: adyenMerchantAccount2,
         }),
       ])
+    }
+  )
+
+  it(
+    'given a payment with cart ' +
+      'when makePayment custom field and the addCommercetoolsLineItems set to true ' +
+      'then should calculate and lineItems to the makePaymentRequest',
+    async () => {
+      const payment = await iTSetUp.initPaymentWithCart({
+        ctpClient,
+        adyenMerchantAccount: adyenMerchantAccount1,
+        commercetoolsProjectKey,
+      })
+
+      const makePaymentRequestDraft = {
+        amount: {
+          currency: 'EUR',
+          value: 1000,
+        },
+        reference: `makePayment3-${new Date().getTime()}`,
+        paymentMethod: {
+          type: 'scheme',
+          encryptedCardNumber: 'test_4111111111111111',
+          encryptedExpiryMonth: 'test_03',
+          encryptedExpiryYear: 'test_2030',
+          encryptedSecurityCode: 'test_737',
+        },
+        metadata: {
+          orderNumber: `externalOrderSystem-12345`,
+          receiptNumber: `externalOrderSystem-receipt123`,
+        },
+        returnUrl: 'https://your-company.com/',
+        addCommercetoolsLineItems: true,
+      }
+
+      const { statusCode, body: updatedPayment } = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'makePaymentRequest',
+            value: JSON.stringify(makePaymentRequestDraft),
+          },
+        ]
+      )
+
+      expect(statusCode).to.equal(200)
+      expect(updatedPayment.key).to.equal(makePaymentRequestDraft.reference)
+      expect(updatedPayment.paymentMethodInfo.method).to.equal('scheme')
+      expect(updatedPayment.paymentMethodInfo.name).to.eql({
+        en: 'Credit Card',
+      })
+
+      const interfaceInteraction = updatedPayment.interfaceInteractions.find(
+        (interaction) =>
+          interaction.fields.type ===
+          constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+      )
+      const makePaymentRequest = JSON.parse(interfaceInteraction.fields.request)
+      expect(makePaymentRequest.lineItems).to.have.lengthOf(3)
     }
   )
 
