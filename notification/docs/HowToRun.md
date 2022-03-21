@@ -4,8 +4,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Environment variable](#environment-variable)
-  - [Adyen](#adyen)
-  - [commercetools](#commercetools)
+  - [Preparing the credentials](#preparing-the-credentials)
+  - [Required attributes](#required-attributes)
+  - [Optional attributes](#optional-attributes)
   - [Other Configurations](#other-configurations)
   - [External file configuration](#external-file-configuration)
 - [Commercetools project requirements](#commercetools-project-requirements)
@@ -42,76 +43,38 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
       "secretHmacKey": "secretKey"
     }
   },
-  "getAdyenPaymentMethodsToNames": {
-    "visa": {"en": "Credit card visa"},
-    "gpay": {"en": "Google Pay"}
-  },
-  "logLevel": "DEBUG",
-  "port": "8081",
-  "keepAliveTimeout": 10000,
-  "removeSensitiveData": false
+  "port": 8081
 }
 ```
 
-The JSON structure will be described in detail in the next sections of this documentation.
+> Note that, multiple child attributes can be provided in the `adyen` and `commercetools` attribute group. Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION_CONFIG`.
 
-### Adyen
+#### Preparing the credentials
 
-Multiple child attributes can be provided in the `adyen` attribute. Each direct child attribute must represent 1 adyen
-merchant account like in the following example:
+- commercetools project credentials:
+  - If you don't have the commercetools OAuth credentials,[create a commercetools API Client](https://docs.commercetools.com/getting-started.html#create-an-api-client).
+    - Note that, extension module requires `manage_payments` [scopes](https://docs.commercetools.com/http-api-scopes) for the integration and `manage_types` [scopes](https://docs.commercetools.com/http-api-scopes) for setting up required resources.
 
-```
-{
-  "adyen": {
-    "adyenMerchantAccount1": {
-      "enableHmacSignature": "false"
-    },
-    "adyenMerchantAccount2": {
-      "enableHmacSignature": "true",
-      "secretHmacKey": "secretKey"
-    }
-  }
-}
-```
+### Required attributes
 
-| Name                  | Content                                                                                                                                            | Required | Default value |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------- |
-| `enableHmacSignature` | Verify the integrity of notifications using [Adyen HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures). | NO       | `true`        |
-| `secretHmacKey`       | The generated secret HMAC key that is linked to a Adyen **Standard Notification** endpoint                                                         | NO       |               |
+| Group           | Name           | Content                                                      |
+| --------------- | -------------- | ------------------------------------------------------------ |
+| `commercetools` | `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.     |
+| `commercetools` | `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token. |
 
-### commercetools
+### Optional attributes
 
-If you don't have the commercetools OAuth
-credentials,[create a commercetools API Client](https://docs.commercetools.com/getting-started.html#create-an-api-client)
-.
-
-> Note that, notification module requires `manage_payments` [scope](https://docs.commercetools.com/http-api-scopes) for the integration and `manage_types` [scope](https://docs.commercetools.com/http-api-scopes) for setting up required resources.
-
-Multiple child attributes can be provided in the `commercetools` attribute. Each direct child attribute must represent 1 commercetools project like in the following example:
-
-```
-{
-  "commercetools": {
-    "commercetoolsProjectKey1": {
-      "clientId": "xxx",
-      "clientSecret": "xxx"
-    },
-    "commercetoolsProjectKey2": {
-      "clientId": "xxx",
-      "clientSecret": "xxx"
-      "apiUrl": "https://api.us-east-2.aws.commercetools.com/"
-      "authUrl": "https://auth.us-east-2.aws.commercetools.com/"
-    }
-  }
-}
-```
-
-| Name           | Content                                                      | Required | Default value                                     |
-| -------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------- |
-| `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.     | YES      |                                                   |
-| `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token. | YES      |                                                   |
-| `apiUrl`       | The commercetools HTTP API is hosted at that URL.            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
-| `authUrl`      | The commercetools’ OAuth 2.0 service is hosted at that URL.  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
+| Group           | Name                         | Content                                                                                                                                                                         | Default value                                                                                         |
+| --------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `adyen`         | `enableHmacSignature`        | Verify the integrity of notifications using [Adyen HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures).                              | true                                                                                                  |
+| `adyen`         | `secretHmacKey`              | The generated secret HMAC key that is linked to a Adyen **Standard Notification** endpoint                                                                                      |                                                                                                       |
+| `commercetools` | `apiUrl`                     | The commercetools HTTP API is hosted at that URL.                                                                                                                               | `https://api.europe-west1.gcp.commercetools.com`                                                      |
+| `commercetools` | `authUrl`                    | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                                                                                     | `https://auth.europe-west1.gcp.commercetools.com`                                                     |
+| `other`         | `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod` returned in the notification and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.method`. | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}}` |
+| `other`         | `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.         | true                                                                                                  |
+| `other`         | `port`                       | The port number on which the application will run.                                                                                                                              | 443                                                                                                   |
+| `other`         | `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                             | `info`                                                                                                |
+| `other`         | `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                   | Node.js default (5 seconds)                                                                           |
 
 ### Other Configurations
 
