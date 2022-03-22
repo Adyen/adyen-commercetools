@@ -47,13 +47,13 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
 }
 ```
 
-> Note that, multiple child attributes can be provided in the `adyen` and `commercetools` attribute group. Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION_CONFIG`.
+> Note that multiple child attributes can be provided in the `adyen` and `commercetools` attribute group. Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION_CONFIG`.
 
 #### Preparing the credentials
 
 - commercetools project credentials:
   - If you don't have the commercetools OAuth credentials,[create a commercetools API Client](https://docs.commercetools.com/getting-started.html#create-an-api-client).
-    - Note that, extension module requires `manage_payments` [scopes](https://docs.commercetools.com/http-api-scopes) for the integration and `manage_types` [scopes](https://docs.commercetools.com/http-api-scopes) for setting up required resources.
+    - Note that extension module requires `manage_payments` [scopes](https://docs.commercetools.com/http-api-scopes) for the integration and `manage_types` [scopes](https://docs.commercetools.com/http-api-scopes) for setting up required resources.
 
 ### Required attributes
 
