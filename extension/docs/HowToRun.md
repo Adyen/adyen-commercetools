@@ -62,7 +62,11 @@ Extension module requires 1 environment variable to start. This environment vari
 }
 ```
 
-> Note that multiple child attributes can be provided in the `adyen` and `commercetools` attribute group. Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION_CONFIG`.
+`ADYEN_INTEGRATION_CONFIG` JSON structure contains different `attribute groups` as described below:
+
+- `adyen` attribute group: Multiple child attributes can be provided in the `adyen` attribute. Each direct child attribute must represent an adyen merchant account.
+- `commercetools` attribute group: Multiple child attributes can be provided in the `commercetools` attribute. Each direct child attribute must represent a commercetools project.
+- `other` attribute group: Attributes in this group can be set as direct child attributes in `the root of the JSON`.
 
 #### Preparing the credentials
 
