@@ -4,9 +4,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Environment variable](#environment-variable)
-  - [Adyen](#adyen)
-  - [commercetools](#commercetools)
-  - [Other Configurations](#other-configurations)
+  - [Preparing the credentials](#preparing-the-credentials)
+  - [Required attributes](#required-attributes)
+  - [Optional attributes](#optional-attributes)
   - [External file configuration](#external-file-configuration)
 - [Commercetools project requirements](#commercetools-project-requirements)
 - [Other requirements](#other-requirements)
@@ -43,113 +43,64 @@ Extension module requires 1 environment variable to start. This environment vari
     }
   },
   "adyenPaymentMethodsToNames": {
-    "visa": { "en": "Credit card visa" },
-    "gpay": { "en": "Google Pay" }
-  }
-}
-```
-
-The JSON structure will be described in details in the next sections of this documentation.
-
-### Adyen
-
-- For **test environment** follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your **test account**, get your API key.
-- For **live environment** follow the official Adyen [documentation](https://docs.adyen.com/user-management/get-started-with-adyen#step-2-apply-for-your-live-account) for details.
-
-Multiple child attributes can be provided in the `adyen` attribute. Each direct child attribute must represent 1 adyen merchant account like in the following example:
-
-```
-{
-  "adyen": {
-    "adyenMerchantAccount1": {  // The name of your first merchant account.
-      "apiKey": "xxx"
-      "apiBaseUrl": "https://checkout-test.adyen.com/v65",
-      "legacyApiBaseUrl": "https://pal-test.adyen.com/pal/servlet/Payment/v65"
+    "scheme": {
+      "en": "Credit Card"
     },
-    "adyenMerchantAccount2": {  // The name of your second merchant account.
-      "apiKey": "xxx"
+    "pp": {
+      "en": "PayPal"
+    },
+    "klarna": {
+      "en": "Klarna"
+    },
+    "gpay": {
+      "en": "Google Pay"
+    },
+    "affirm": {
+      "en": "Affirm"
     }
   }
 }
 ```
 
-| Name               | Content                                                                                                                                                  | Required | Default value (only for test environment)                                                                                                                                           |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apiKey`           | You'll be making API requests that are authenticated with an [API key](https://docs.adyen.com/user-management/how-to-get-the-api-key#page-introduction). | YES      |                                                                                                                                                                                     |
-| `apiBaseUrl`       | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                            | NO       | `https://checkout-test.adyen.com/v68` (even though it is not required, you **need** to specify a URL for live environment)                                                          |
-| `legacyApiBaseUrl` | [Standard payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                           | NO       | `https://pal-test.adyen.com/pal/servlet/Payment/v64` (even though it is not required, you **need** to specify a URL for live environment to use e.g. manualCapture, refund, cancel) |
+`ADYEN_INTEGRATION_CONFIG` JSON structure contains different `attribute groups` as described below:
 
-> Note: Sometimes it's necessary to regenerate the `apiKey`, when you get `403 Forbidden error` from Adyen.
+- `adyen` attribute group: Multiple child attributes can be provided in the `adyen` attribute. Each direct child attribute must represent an adyen merchant account.
+- `commercetools` attribute group: Multiple child attributes can be provided in the `commercetools` attribute. Each direct child attribute must represent a commercetools project.
+- `other` attribute group: Attributes in this group can be set as direct child attributes in `the root of the JSON`.
 
-### commercetools
+#### Preparing the credentials
 
-If you don't have the commercetools OAuth credentials,[create a commercetools API Client](https://docs.commercetools.com/getting-started.html#create-an-api-client).
+- Adyen credentials:
+  - For **test environment** follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your **test account**, get your API key.
+  - For **live environment** follow the official Adyen [documentation](https://docs.adyen.com/user-management/get-started-with-adyen#step-2-apply-for-your-live-account) for details.
+- commercetools project credentials:
+  - If you don't have the commercetools OAuth credentials,[create a commercetools API Client](https://docs.commercetools.com/getting-started.html#create-an-api-client).
+    - Note that extension module requires `manage_payments, view_orders` [scopes](https://docs.commercetools.com/http-api-scopes) for the integration and `manage_types, manage_extensions` [scopes](https://docs.commercetools.com/http-api-scopes) for setting up required resources.
 
-> Note that, extension module requires `manage_payments, view_orders` [scopes](https://docs.commercetools.com/http-api-scopes) for the integration and `manage_types, manage_extensions` [scopes](https://docs.commercetools.com/http-api-scopes) for setting up required resources.
+### Required attributes
 
-Multiple child attributes can be provided in the `commercetools` attribute. Each direct child attribute must represent 1 commercetools project like in the following example:
+| Group           | Name           | Content                                                                                                                                                        |
+| --------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `adyen`         | `apiKey`       | You'll be making API requests that are authenticated with an [Adyen API key](https://docs.adyen.com/user-management/how-to-get-the-api-key#page-introduction). |
+| `commercetools` | `clientId`     | OAuth 2.0 `client_id` and can be used to obtain a token.                                                                                                       |
+| `commercetools` | `clientSecret` | OAuth 2.0 `client_secret` and can be used to obtain a token.                                                                                                   |
 
-```
-{
-  "commercetools": {
-    "commercetoolsProjectKey1": { // commercetools project key of the first project
-      "clientId": "xxx",
-      "clientSecret": "xxx",
-      "apiUrl": "https://api.us-east-2.aws.commercetools.com/",
-      "authUrl": "https://auth.us-east-2.aws.commercetools.com/",
-      "authentication" : {
-        "scheme": "basic",
-        "username": "xxx",
-        "password": "xxx"
-      }
-    },
-    "commercetoolsProjectKey2": { // commercetools project key of the second project
-      "clientId": "xxx",
-      "clientSecret": "xxx"
-    }
-  }
-}
-```
+### Optional attributes
 
-| Name             | Content                                                                                                                                                                                                                                                                                                                                                                                                      | Required | Default value                                     |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ------------------------------------------------- |
-| `clientId`       | OAuth 2.0 `client_id` and can be used to obtain a token.                                                                                                                                                                                                                                                                                                                                                     | YES      |                                                   |
-| `clientSecret`   | OAuth 2.0 `client_secret` and can be used to obtain a token.                                                                                                                                                                                                                                                                                                                                                 | YES      |                                                   |
-| `apiUrl`         | The commercetools HTTP API is hosted at that URL.                                                                                                                                                                                                                                                                                                                                                            | NO       | `https://api.europe-west1.gcp.commercetools.com`  |
-| `authUrl`        | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                                                                                                                                                                                                                                                                                                                  | NO       | `https://auth.europe-west1.gcp.commercetools.com` |
-| `authentication` | This setting only takes effect when `basicAuth` ( a child attribute in `ADYEN_INTEGRATION_CONFIG` ) is set to `true`. It enables authentication mechanism to prevent unauthorized access to the extension module. When it is provided as a JSON object, it must contain 3 separate attributes. They are `scheme` attribute which supports `basic` type, `username` and `password` attribute defined by user. | NO       |                                                   |
-
-### Other Configurations
-
-Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION_CONFIG`.
-
-```
-{
-  "commercetools": {...},
-  "adyen": {...},
-  "adyenPaymentMethodsToNames": {
-    "klarna": {"en": "Klarna payment"},
-    "gpay": {"en": "Google Pay"},
-    "affirm": {"en": "Affirm"}
-  },
-  "logLevel": "DEBUG",
-  "port": 8080,
-  "keepAliveTimeout": 10000,
-  "basicAuth" : true,
-  "removeSensitiveData": false,
-  "addCommercetoolsLineItems": true
-}
-```
-
-| Name                         | Content                                                                                                                                                                                                                                                                                                                                                                                                                  | Required | Default value                                                                                                                |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod.type` in makePayment Adyen request and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.name`.                                                                                                                                                                                                                                       | NO       | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}, affirm: {en: 'Affirm'}` |
-| `port`                       | The port number on which the application will run.                                                                                                                                                                                                                                                                                                                                                                       | NO       | 8080                                                                                                                         |
-| `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                                                                                                                                                                                                                                                      | NO       | `info`                                                                                                                       |
-| `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                                                                                                                                                                                                                                                            | NO       | Node.js default (5 seconds)                                                                                                  |
-| `basicAuth`                  | Boolean attribute to enable/disable basic authentication to prevent unauthorized 3rd-party from accessing extension endpoint                                                                                                                                                                                                                                                                                             | NO       | false                                                                                                                        |
-| `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.                                                                                                                                                                                                                                                  | NO       | true                                                                                                                         |
-| `addCommercetoolsLineItems`  | Boolean attribute. If set to **true**, integration will add lineItems to payment methods that require lineItems on `makePaymentRequest`. Payment method types that requires [lineItems](https://docs.adyen.com/api-explorer/#/CheckoutService/latest/payments__reqParam_lineItems): `klarna`, `affirm`, `afterpay`, `afterpaytouch`, `klarna`, `ratepay`, `facilypay`, `clearpay`, `grabpay`, `paybright`, `pix`, `zip`. | NO       | false                                                                                                                        |
+| Group           | Name                         | Content                                                                                                                                                                                                                                                                                                                                                                                                                  | Default value                                                                                                                                                                           |
+| --------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `adyen`         | `apiBaseUrl`                 | [Checkout endpoint](https://docs.adyen.com/development-resources/live-endpoints#checkout-endpoints) of Adyen.                                                                                                                                                                                                                                                                                                            | `https://checkout-test.adyen.com/v68` (even though it is not required, you **need** to specify a URL for **live environment**)                                                          |
+| `adyen`         | `legacyApiBaseUrl`           | [Standard payment endpoint](https://docs.adyen.com/development-resources/live-endpoints#standard-payments-endpoints) of Adyen.                                                                                                                                                                                                                                                                                           | `https://pal-test.adyen.com/pal/servlet/Payment/v64` (even though it is not required, you **need** to specify a URL for **live environment** to use e.g. manualCapture, refund, cancel) |
+| `commercetools` | `apiUrl`                     | The commercetools HTTP API is hosted at that URL.                                                                                                                                                                                                                                                                                                                                                                        | `https://api.europe-west1.gcp.commercetools.com`                                                                                                                                        |
+| `commercetools` | `authUrl`                    | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                                                                                                                                                                                                                                                                                                                              | `https://auth.europe-west1.gcp.commercetools.com`                                                                                                                                       |
+| `commercetools` | `authentication`             | This setting only takes effect when `basicAuth` ( a child attribute in `ADYEN_INTEGRATION_CONFIG` ) is set to `true`. It enables authentication mechanism to prevent unauthorized access to the extension module. When it is provided as a JSON object, it must contain 3 separate attributes. They are `scheme` attribute which supports `basic` type, `username` and `password` attribute defined by user.             |                                                                                                                                                                                         |
+| `other`         | `basicAuth`                  | Boolean attribute to enable/disable basic authentication to prevent unauthorized 3rd-party from accessing extension endpoint                                                                                                                                                                                                                                                                                             | false                                                                                                                                                                                   |
+| `other`         | `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod.type` in makePayment Adyen request and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.name`.                                                                                                                                                                                                                                       | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}, affirm: {en: 'Affirm'}`                                                            |
+| `other`         | `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.                                                                                                                                                                                                                                                  | true                                                                                                                                                                                    |
+| `other`         | `addCommercetoolsLineItems`  | Boolean attribute. If set to **true**, integration will add lineItems to payment methods that require lineItems on `makePaymentRequest`. Payment method types that requires [lineItems](https://docs.adyen.com/api-explorer/#/CheckoutService/latest/payments__reqParam_lineItems): `klarna`, `affirm`, `afterpay`, `afterpaytouch`, `klarna`, `ratepay`, `facilypay`, `clearpay`, `grabpay`, `paybright`, `pix`, `zip`. | false                                                                                                                                                                                   |
+| `other`         | `port`                       | The port number on which the application will run.                                                                                                                                                                                                                                                                                                                                                                       | 8080                                                                                                                                                                                    |
+| `other`         | `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                                                                                                                                                                                                                                                      | `info`                                                                                                                                                                                  |
+| `other`         | `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                                                                                                                                                                                                                                                            | Node.js default (5 seconds)                                                                                                                                                             |
 
 ### External file configuration
 
