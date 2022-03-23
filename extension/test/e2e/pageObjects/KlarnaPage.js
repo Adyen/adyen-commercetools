@@ -11,7 +11,7 @@ module.exports = class KlarnaPage {
     await klarnaMainFrame.waitForSelector('#scheme-payment-selector')
     await this.page.click('#buy-button')
 
-    return await this.processOtpAndPay()
+    await this.processOtpAndPay()
   }
 
   async processOtpAndPay() {
