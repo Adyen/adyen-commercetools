@@ -1,5 +1,5 @@
-const http = require('http')
-const localtunnel = require('localtunnel')
+import http from 'http'
+import localtunnel from 'localtunnel'
 
 const tunnelDomain = 'ctp-adyen-integration-tests'
 let tunnel
@@ -46,7 +46,4 @@ async function stopFakeExtension() {
   await tunnel.close()
 }
 
-module.exports = {
-  startFakeExtension,
-  stopFakeExtension,
-}
+export { startFakeExtension, stopFakeExtension }

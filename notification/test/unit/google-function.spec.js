@@ -1,17 +1,16 @@
-const sinon = require('sinon')
-const chai = require('chai')
-const VError = require('verror')
-const { notificationTrigger } = require('../../index.googleFunction')
-const notificationHandler = require('../../src/handler/notification/notification.handler')
-const logger = require('../../src/utils/logger')
-const config = require('../../src/config/config')
+import sinon from 'sinon'
+import chai from 'chai'
+import VError from 'verror'
+import { notificationTrigger } from '../../index.googleFunction'
+import notificationHandler from '../../src/handler/notification/notification.handler'
+import logger from '../../src/utils/logger'
+import config from '../../src/config/config'
+import { getNotificationForTracking } from '../../src/utils/commons'
+import { buildMockErrorFromConcurrentModificaitonException } from '../test-utils'
+import chaiAsPromised from 'chai-as-promised'
 
 const { expect } = chai
-const { getNotificationForTracking } = require('../../src/utils/commons')
-const {
-  buildMockErrorFromConcurrentModificaitonException,
-} = require('../test-utils')
-chai.use(require('chai-as-promised'))
+chai.use(chaiAsPromised)
 
 describe('Google Function handler', () => {
   const sandbox = sinon.createSandbox()

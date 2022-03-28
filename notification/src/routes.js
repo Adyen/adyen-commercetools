@@ -1,9 +1,9 @@
-const healthController = require('./api/health/health.controller')
-const notificationController = require('./api/notification/notification.controller')
+import healthController from './api/health/health.controller'
+import notificationController from './api/notification/notification.controller'
 
 const routes = {
   '/': notificationController.handleNotification,
   '/health': healthController.processRequest,
 }
 
-module.exports = { routes }
+export { routes }

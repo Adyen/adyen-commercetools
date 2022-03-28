@@ -1,6 +1,6 @@
-const chai = require('chai')
+import chai from 'chai'
 
-const { getNotificationForTracking } = require('../../src/utils/commons')
+import { getNotificationForTracking } from '../../src/utils/commons'
 
 const { expect } = chai
 

@@ -1,12 +1,14 @@
-const _ = require('lodash')
-const { serializeError } = require('serialize-error')
-const VError = require('verror')
-const { validateHmacSignature } = require('../../utils/hmacValidator')
-const adyenEvents = require('../../../resources/adyen-events.json')
-const { getNotificationForTracking } = require('../../utils/commons')
-const ctp = require('../../utils/ctp')
-const config = require('../../config/config')
-const mainLogger = require('../../utils/logger').getLogger()
+import _ from 'lodash'
+import { serializeError } from 'serialize-error'
+import VError from 'verror'
+import { validateHmacSignature } from '../../utils/hmacValidator'
+import adyenEvents from '../../../resources/adyen-events.json'
+import { getNotificationForTracking } from '../../utils/commons'
+import ctp from '../../utils/ctp'
+import config from '../../config/config'
+import logg from '../../utils/logger'
+
+const mainLogger = logg.getLogger()
 
 async function processNotification(
   notification,
@@ -402,4 +404,4 @@ async function getPaymentByMerchantReference(merchantReference, ctpClient) {
   }
 }
 
-module.exports = { processNotification }
+export { processNotification }

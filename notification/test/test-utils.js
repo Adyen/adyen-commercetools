@@ -1,15 +1,12 @@
-const _ = require('lodash')
-const { address } = require('ip')
-const { hmacValidator } = require('@adyen/api-library')
-const config = require('../src/config/config')
-const concurrentModificationError = require('./resources/concurrent-modification-exception.json')
-const serverBuilder = require('../src/server')
-const { setupNotificationResources } = require('../src/setup')
-const payment = require('./resources/payment-draft.json')
-const {
-  startFakeExtension,
-  stopFakeExtension,
-} = require('./fake-extension-service')
+import _ from 'lodash'
+import { address } from 'ip'
+import { hmacValidator } from '@adyen/api-library'
+import config from '../src/config/config'
+import concurrentModificationError from './resources/concurrent-modification-exception.json'
+import serverBuilder from '../src/server'
+import { setupNotificationResources } from '../src/setup'
+import payment from './resources/payment-draft.json'
+import { startFakeExtension, stopFakeExtension } from './fake-extension-service'
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -149,7 +146,7 @@ function ensurePayment(
   return ctpClient.create(ctpClient.builder.payments, paymentDraft)
 }
 
-module.exports = {
+export {
   overrideAdyenConfig,
   restoreAdyenConfig,
   buildMockErrorFromConcurrentModificaitonException,

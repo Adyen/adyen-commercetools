@@ -1,18 +1,16 @@
-const _ = require('lodash')
-const sinon = require('sinon')
-const { cloneDeep } = require('lodash')
-const { expect } = require('chai')
+import _ from 'lodash'
+import sinon from 'sinon'
+import { cloneDeep } from 'lodash'
+import { expect } from 'chai'
 
-const config = require('../../src/config/config')
-const notificationController = require('../../src/api/notification/notification.controller')
-const httpUtils = require('../../src/utils/commons')
-const logger = require('../../src/utils/logger')
-const ctpClientMock = require('./ctp-client-mock')
-const ctp = require('../../src/utils/ctp')
-const paymentMock = require('../resources/payment-credit-card.json')
-const {
-  buildMockErrorFromConcurrentModificaitonException,
-} = require('../test-utils')
+import config from '../../src/config/config'
+import notificationController from '../../src/api/notification/notification.controller'
+import httpUtils from '../../src/utils/commons'
+import logger from '../../src/utils/logger'
+import ctpClientMock from './ctp-client-mock'
+import ctp from '../../src/utils/ctp'
+import paymentMock from '../resources/payment-credit-card.json'
+import { buildMockErrorFromConcurrentModificaitonException } from '../test-utils'
 
 const sandbox = sinon.createSandbox()
 describe('notification controller', () => {

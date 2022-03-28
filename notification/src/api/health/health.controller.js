@@ -1,7 +1,7 @@
-const httpUtils = require('../../utils/commons')
+import httpUtils from '../../utils/commons'
 
 function processRequest(request, response) {
   httpUtils.sendResponse(response, 200)
 }
 
-module.exports = { processRequest }
+export { processRequest }

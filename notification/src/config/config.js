@@ -1,5 +1,5 @@
-const { isEmpty } = require('lodash')
-const loadConfig = require('./config-loader')
+import { isEmpty } from 'lodash'
+import loadConfig from './config-loader'
 
 let config
 
@@ -111,7 +111,7 @@ function loadAndValidateConfig() {
 
 loadAndValidateConfig()
 
-module.exports = {
+export {
   getModuleConfig,
   getCtpConfig,
   getAdyenConfig,

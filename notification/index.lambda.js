@@ -1,10 +1,12 @@
-const handler = require('./src/handler/notification/notification.handler')
-const logger = require('./src/utils/logger').getLogger()
-const { getNotificationForTracking } = require('./src/utils/commons')
-const { getErrorCause, isRecoverableError } = require('./src/utils/error-utils')
-const { getCtpProjectConfig, getAdyenConfig } = require('./src/utils/parser')
+import handler from './src/handler/notification/notification.handler'
+import logg from './src/utils/logger'
+import { getNotificationForTracking } from './src/utils/commons'
+import { getErrorCause, isRecoverableError } from './src/utils/error-utils'
+import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser'
 
-exports.handler = async (event) => {
+const logger = logg.getLogger()
+
+export const handler = async (event) => {
   // Reason for this check: if AWS API Gateway is used then event.body is provided as a string payload.
   const body = event.body ? JSON.parse(event.body) : event
   const { notificationItems } = body

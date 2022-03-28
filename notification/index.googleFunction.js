@@ -1,11 +1,13 @@
-const handler = require('./src/handler/notification/notification.handler')
-const logger = require('./src/utils/logger').getLogger()
-const { getNotificationForTracking } = require('./src/utils/commons')
-const { getErrorCause, isRecoverableError } = require('./src/utils/error-utils')
+import handler from './src/handler/notification/notification.handler'
+import logg from './src/utils/logger'
+import { getNotificationForTracking } from './src/utils/commons'
+import { getErrorCause, isRecoverableError } from './src/utils/error-utils'
 
-const { getCtpProjectConfig, getAdyenConfig } = require('./src/utils/parser')
+import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser'
 
-exports.notificationTrigger = async (request, response) => {
+const logger = logg.getLogger()
+
+export const notificationTrigger = async (request, response) => {
   const { notificationItems } = request.body
   if (!notificationItems) {
     return response.status(400).send('No notification received.')

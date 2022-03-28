@@ -1,13 +1,13 @@
-const _ = require('lodash')
-const httpUtils = require('../../utils/commons')
-const { isRecoverableError, getErrorCause } = require('../../utils/error-utils')
+import _ from 'lodash'
+import httpUtils from '../../utils/commons'
+import { isRecoverableError, getErrorCause } from '../../utils/error-utils'
 
-const {
-  processNotification,
-} = require('../../handler/notification/notification.handler')
-const { getCtpProjectConfig, getAdyenConfig } = require('../../utils/parser')
+import { processNotification } from '../../handler/notification/notification.handler'
+import { getCtpProjectConfig, getAdyenConfig } from '../../utils/parser'
 
-const logger = require('../../utils/logger').getLogger()
+import logg from '../../utils/logger'
+
+const logger = logg.getLogger()
 
 async function handleNotification(request, response) {
   if (request.method !== 'POST') {
@@ -61,4 +61,4 @@ function sendAcceptedResponse(response) {
   )
 }
 
-module.exports = { handleNotification }
+export { handleNotification }

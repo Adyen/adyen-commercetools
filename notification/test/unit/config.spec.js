@@ -1,6 +1,8 @@
-const { expect } = require('chai')
-const fs = require('fs')
-const homedir = require('os').homedir()
+import { expect } from 'chai'
+import fs from 'fs'
+import os from 'os'
+
+const homedir = os.homedir()
 
 describe('::config::', () => {
   it('when hmac is enabled but no hmac key, it should throw an error', () => {

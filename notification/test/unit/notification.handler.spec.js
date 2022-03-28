@@ -1,22 +1,20 @@
-const sinon = require('sinon')
-const VError = require('verror')
-const { expect } = require('chai')
-const { cloneDeep } = require('lodash')
-const config = require('../../src/config/config')
-
-const notificationHandler = require('../../src/handler/notification/notification.handler')
-const notificationsMock =
-  require('../resources/notification.json').notificationItems
-
-const ctpClientMock = require('./ctp-client-mock')
-const paymentMock = require('../resources/payment-credit-card.json')
-const ctp = require('../../src/utils/ctp')
-const {
+import sinon from 'sinon'
+import VError from 'verror'
+import { expect } from 'chai'
+import { cloneDeep } from 'lodash'
+import config from '../../src/config/config'
+import notificationHandler from '../../src/handler/notification/notification.handler'
+import notifications from '../resources/notification.json'
+import ctpClientMock from './ctp-client-mock'
+import paymentMock from '../resources/payment-credit-card.json'
+import ctp from '../../src/utils/ctp'
+import {
   overrideAdyenConfig,
   restoreAdyenConfig,
   buildMockErrorFromConcurrentModificaitonException,
-} = require('../test-utils')
+} from '../test-utils'
 
+const notificationsMock = notifications.notificationItems
 const sandbox = sinon.createSandbox()
 
 describe('notification module', () => {

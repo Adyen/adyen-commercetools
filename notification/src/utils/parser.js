@@ -1,4 +1,4 @@
-const config = require('../config/config')
+import config from '../config/config'
 
 function getCtpProjectConfig(notification) {
   const commercetoolsProjectKey =
@@ -20,7 +20,4 @@ function getAdyenConfig(notification) {
   return config.getAdyenConfig(adyenMerchantAccount)
 }
 
-module.exports = {
-  getCtpProjectConfig,
-  getAdyenConfig,
-}
+export { getCtpProjectConfig, getAdyenConfig }

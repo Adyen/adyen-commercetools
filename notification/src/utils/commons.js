@@ -44,8 +44,4 @@ function getNotificationForTracking(notification) {
   return convertNotificationForTracking(notification)
 }
 
-module.exports = {
-  collectRequestData,
-  sendResponse,
-  getNotificationForTracking,
-}
+export { collectRequestData, sendResponse, getNotificationForTracking }
