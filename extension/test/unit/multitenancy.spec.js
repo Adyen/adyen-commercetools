@@ -4,7 +4,7 @@ import nock from 'nock'
 import ctpPayment from './fixtures/ctp-payment.json'
 import ctpCart from './fixtures/ctp-cart.json'
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
-import execute from '../../src/paymentHandler/make-lineitems-payment.handler.js'
+import makeLineItemsPaymentHandler from '../../src/paymentHandler/make-lineitems-payment.handler.js'
 import config from '../../src/config/config.cjs'
 
 describe('::Multitenancy::', () => {
@@ -42,7 +42,9 @@ describe('::Multitenancy::', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await execute(ctpPaymentClone)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentClone
+      )
       const adyenRequest = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request

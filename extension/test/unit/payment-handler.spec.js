@@ -9,8 +9,6 @@ import config from '../../src/config/config.cjs'
 import c from '../../src/config/constants.js'
 import errorMessage from '../../src/validator/error-messages.js'
 
-const { handlePayment } = paymentHandler
-
 describe('payment-handler::execute', () => {
   let scope
   /* eslint-disable max-len */
@@ -51,7 +49,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf.above(0)
     }
@@ -71,7 +69,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf(0)
     }
@@ -112,7 +110,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf(0)
     }
@@ -151,7 +149,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf.above(0)
     }
@@ -179,7 +177,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf.above(0)
     }
   )
@@ -190,7 +188,7 @@ describe('payment-handler::execute', () => {
     async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.errors).to.have.lengthOf(2)
       expect(response.errors[0].message).to.equal(
@@ -221,7 +219,7 @@ describe('payment-handler::execute', () => {
           adyenMerchantAccount
         ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-        const response = await handlePayment(ctpPaymentClone)
+        const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
         expect(response.errors).to.have.lengthOf.above(0)
         expect(response.errors[0].message).to.equal(
@@ -242,7 +240,7 @@ describe('payment-handler::execute', () => {
           adyenMerchantAccount
         ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-        const response = await handlePayment(ctpPaymentClone)
+        const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
         expect(response.actions).to.deep.equal([])
       }
@@ -277,7 +275,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.errors[0].message).to.equal(
         errorMessage.AMOUNT_PLANNED_NOT_SAME

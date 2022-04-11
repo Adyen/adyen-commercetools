@@ -2,7 +2,7 @@ import utils from './src/utils.cjs'
 import paymentHandler from './src/paymentHandler/payment-handler.js'
 import auth from './src/validator/authentication.js'
 
-export let handler = async (event) => {
+let handler = async (event) => {
   let paymentObj = {}
   try {
     const body = event.body ? JSON.parse(event.body) : event
@@ -36,3 +36,5 @@ export let handler = async (event) => {
     return errorObj
   }
 }
+
+export default { handler }

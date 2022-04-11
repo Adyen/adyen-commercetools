@@ -1,11 +1,13 @@
-const localtunnel = require('localtunnel')
-const serverBuilder = require('../src/server')
-const { routes } = require('../src/routes')
-const { setupExtensionResources } = require('../src/setup')
-const config = require('../src/config/config')
+import localtunnel from 'localtunnel'
+import serverBuilder from '../src/server.js'
+import routesJs from '../src/routes.js'
+import setup from '../src/setup.js'
+import config from '../src/config/config.cjs'
 
 global.window = {}
 global.navigator = {}
+const { setupExtensionResources } = setup
+const { routes } = routesJs
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -54,7 +56,6 @@ function overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   config.getModuleConfig = function getModuleConfig() {
     return moduleConfig
   }
-  module.exports = config
 }
 
 async function setupLocalTunnel() {
@@ -83,7 +84,4 @@ async function initTunnel() {
   return tunnel
 }
 
-module.exports = {
-  startIT,
-  stopIT,
-}
+export { startIT, stopIT }

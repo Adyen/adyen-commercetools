@@ -34,8 +34,7 @@ async function processRequest(request, response) {
         .debug(
           'Received payment object',
           JSON.stringify(paymentObject)
-        )
-        (async () => {
+        )(async () => {
           const paymentHandler = await import(
             '../../paymentHandler/payment-handler.js'
           )

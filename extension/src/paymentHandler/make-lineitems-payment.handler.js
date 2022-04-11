@@ -130,4 +130,4 @@ function _localizeOrFallback(localizedString, locales, fallback) {
   return result
 }
 
-export default execute
+export default { execute }

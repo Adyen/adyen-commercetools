@@ -1,11 +1,13 @@
 import http from 'http'
 import url from 'url'
 import utils from './utils.cjs'
-import { routes as defaultRoutes } from './routes.js'
+import defaultRoutes from './routes.js'
+
+const { routes } = defaultRoutes
 
 const logger = utils.getLogger()
 
-function setupServer(routes = defaultRoutes) {
+function setupServer() {
   return http.createServer(async (request, response) => {
     const parts = url.parse(request.url)
     const route = routes[parts.pathname]

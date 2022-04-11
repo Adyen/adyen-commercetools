@@ -1,6 +1,6 @@
 import ValidatorBuilder from '../validator/validator-builder.js'
 import getPaymentMethodsHandler from './get-payment-methods.handler.js'
-import makePaymentHandler from './make-payment.handler.js'
+import execute from './make-payment.handler.js'
 import makeLineitemsPaymentHandler from './make-lineitems-payment.handler.js'
 import submitPaymentDetailsHandler from './submit-payment-details.handler.js'
 import manualCaptureHandler from './manual-capture.handler.js'
@@ -11,7 +11,7 @@ import pU from './payment-utils.js'
 import auth from '../validator/authentication.js'
 import errorMessages from '../validator/error-messages.js'
 import constants from '../config/constants.js'
-const config = require('../config/config')
+import config from '../config/config.cjs'
 
 const {
   CTP_ADYEN_INTEGRATION,
@@ -94,7 +94,7 @@ function _getPaymentHandlers(paymentObject) {
     )
     if (_requiresLineItems(makePaymentRequestObj))
       handlers.push(makeLineitemsPaymentHandler)
-    else handlers.push(makePaymentHandler)
+    else handlers.push(execute)
   }
   if (
     paymentObject.custom.fields.makePaymentResponse &&

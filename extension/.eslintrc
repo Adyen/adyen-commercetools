@@ -30,6 +30,7 @@
     "prefer-destructuring": "off",
     "no-use-before-define": [ 2, "nofunc" ],
     "no-underscore-dangle": "off",
-    "dot-notation": "off"
+    "dot-notation": "off",
+    "import/extensions": "off"
   }
 }
