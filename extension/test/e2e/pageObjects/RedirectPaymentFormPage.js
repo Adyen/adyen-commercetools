@@ -1,5 +1,5 @@
 import testUtils from '../e2e-test-utils.js'
-import httpUtils from '../../../src/utils.cjs'
+import httpUtils from '../../../src/utils.js'
 
 const logger = httpUtils.getLogger()
 const { pasteValue } = testUtils

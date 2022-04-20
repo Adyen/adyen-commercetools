@@ -1,5 +1,5 @@
 import paymentHandler from './src/paymentHandler/payment-handler.js'
-import utils from './src/utils.cjs'
+import utils from './src/utils.js'
 import auth from './src/validator/authentication.js'
 
 const { handleUnexpectedPaymentError } = utils

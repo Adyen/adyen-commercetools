@@ -1,4 +1,4 @@
-import utils from './src/utils.cjs'
+import utils from './src/utils.js'
 import paymentHandler from './src/paymentHandler/payment-handler.js'
 import auth from './src/validator/authentication.js'
 

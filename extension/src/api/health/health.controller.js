@@ -1,4 +1,4 @@
-import httpUtils from '../../utils.cjs'
+import httpUtils from '../../utils.js'
 
 function processRequest(request, response) {
   httpUtils.sendResponse({ response, statusCode: 200 })

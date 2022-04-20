@@ -1,6 +1,6 @@
 import { createSyncTypes } from '@commercetools/sync-actions'
 import { serializeError } from 'serialize-error'
-import utils from '../../utils.cjs'
+import utils from '../../utils.js'
 import paymentCustomType from '../../../resources/web-components-payment-type.json'
 import interfaceInteractionType from '../../../resources/payment-interface-interaction-type.json'
 

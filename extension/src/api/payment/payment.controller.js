@@ -1,5 +1,5 @@
-const { serializeError } = require('serialize-error')
-const httpUtils = require('../../utils')
+import { serializeError } from 'serialize-error'
+import httpUtils from '../../utils.js'
 
 const logger = httpUtils.getLogger()
 
@@ -80,4 +80,4 @@ async function _getPaymentObject(request) {
   }
 }
 
-module.exports = { processRequest }
+export default { processRequest }

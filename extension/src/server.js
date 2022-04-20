@@ -1,6 +1,6 @@
 import http from 'http'
 import url from 'url'
-import utils from './utils.cjs'
+import utils from './utils.js'
 import defaultRoutes from './routes.js'
 
 const { routes } = defaultRoutes

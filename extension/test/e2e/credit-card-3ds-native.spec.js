@@ -1,7 +1,7 @@
 import ctpClientBuilder from '../../src/ctp.js'
 import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.cjs'
-import httpUtils from '../../src/utils.cjs'
+import httpUtils from '../../src/utils.js'
 import testUtils from './e2e-test-utils.js'
 import MakePaymentFormPage from './pageObjects/CreditCardMakePaymentFormPage.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'

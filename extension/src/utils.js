@@ -1,6 +1,6 @@
-const bunyan = require('bunyan')
-const { serializeError } = require('serialize-error')
-const config = require('./config/config.cjs')
+import bunyan from 'bunyan'
+import { serializeError } from 'serialize-error'
+import config from './config/config.cjs'
 
 let logger
 
@@ -50,7 +50,7 @@ function handleUnexpectedPaymentError(paymentObj, err) {
   }
 }
 
-module.exports = {
+export default {
   collectRequestData,
   sendResponse,
   getLogger,

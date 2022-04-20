@@ -1,5 +1,5 @@
 import server from './server.js'
-import logger from './utils.cjs'
+import logger from './utils.js'
 import config from './config/config.cjs'
 
 const moduleConfig = config.getModuleConfig()

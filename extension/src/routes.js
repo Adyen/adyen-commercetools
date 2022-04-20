@@ -1,5 +1,5 @@
 import healthController from './api/health/health.controller.js'
-import paymentController from './api/payment/payment.controller.cjs'
+import paymentController from './api/payment/payment.controller.js'
 
 const routes = {
   '/': paymentController.processRequest,

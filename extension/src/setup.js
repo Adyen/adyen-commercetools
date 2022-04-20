@@ -1,6 +1,6 @@
 import config from './config/config.cjs'
 import ctpClientBuilder from './ctp.js'
-import logger from './utils.cjs'
+import logger from './utils.js'
 import ensureResources from './config/init/ensure-resources.js'
 import auth from './validator/authentication.js'
 
