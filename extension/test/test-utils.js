@@ -20,15 +20,15 @@ let server
 
 async function startIT() {
   await setupLocalServer()
-  if (process.env.CI) {
-    // this part used only on github actions (CI)
-    await setupExtensionResources(process.env.CI_EXTENSION_BASE_URL)
-    // e2e requires this for static forms
-    overrideApiExtensionBaseUrlConfig(`http://localhost:${port}`)
-  } else {
-    await setupLocalTunnel()
-    await setupExtensionResources()
-  }
+  // if (process.env.CI) {
+  //   // this part used only on github actions (CI)
+  //   await setupExtensionResources(process.env.CI_EXTENSION_BASE_URL)
+  //   // e2e requires this for static forms
+  //   overrideApiExtensionBaseUrlConfig(`http://localhost:${port}`)
+  // } else {
+  await setupLocalTunnel()
+  await setupExtensionResources()
+  // }
 }
 
 async function stopIT() {
