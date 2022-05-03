@@ -8,7 +8,7 @@ function getCtpProjectConfig(notification, request) {
     notification?.NotificationRequestItem?.additionalData?.[
       `metadata.ctProjectKey`
     ]
-  logger.error(`DEBUG: request.url: ${JSON.stringify(request.url)}`)
+  logger.error(`DEBUG: request.url: ${JSON.stringify(request?.url)}`)
   if (!commercetoolsProjectKey && request) {
     const parts = url.parse(request.url)
     commercetoolsProjectKey = parts.path?.split('/')?.slice(-1)?.[0]
