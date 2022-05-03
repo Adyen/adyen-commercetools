@@ -1,5 +1,6 @@
 const { expect } = require('chai')
 const fetch = require('node-fetch')
+const url = require('url')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const config = require('../../src/config/config')
 const {
@@ -630,6 +631,16 @@ describe('notification module', () => {
         headers: { 'Content-Type': 'application/json' },
       }
     )
+
+    const parts = url.parse(
+      `${notificationURL}/notifications/${commercetoolsProjectKey}`
+    )
+    const path = parts.path?.split('/')?.slice(-2)?.[0] ?? ''
+    const key = parts.path?.split('/')?.slice(-1)?.[0]
+    console.log(`asdfdsf ${JSON.stringify(parts)}`)
+    console.log(`qweqwe ${JSON.stringify(path)}`)
+    console.log(`xvcyvcvcxy ${JSON.stringify(key)}`)
+
     const { status } = response
     const responseBody = await response.json()
 
