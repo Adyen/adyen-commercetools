@@ -622,11 +622,14 @@ describe('notification module', () => {
     )
 
     // Simulating a notification from Adyen
-    const response = await fetch(notificationURL + `/notifications/${commercetoolsProjectKey}`, {
-      method: 'post',
-      body: JSON.stringify(notificationPayload),
-      headers: { 'Content-Type': 'application/json' },
-    })
+    const response = await fetch(
+      `${notificationURL}/notifications/${commercetoolsProjectKey}`,
+      {
+        method: 'post',
+        body: JSON.stringify(notificationPayload),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    )
     const { status } = response
     const responseBody = await response.json()
 
@@ -641,7 +644,6 @@ describe('notification module', () => {
     expect(paymentAfter.transactions[0].type).to.equal('Authorization')
     expect(paymentAfter.transactions[0].state).to.equal('Success')
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
-
   })
 
   function _generateRandomNumber() {

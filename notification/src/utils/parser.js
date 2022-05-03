@@ -8,8 +8,8 @@ function getCtpProjectConfig(notification, request) {
       `metadata.ctProjectKey`
     ]
   if (!commercetoolsProjectKey && request) {
-      const parts = url.parse(request.url)
-      commercetoolsProjectKey = parts.path?.split("/")?.[2]
+    const parts = url.parse(request.url)
+    commercetoolsProjectKey = parts.path?.split('/')?.[2]
   }
 
   if (_.isEmpty(commercetoolsProjectKey)) {
