@@ -12,7 +12,7 @@ exports.notificationTrigger = async (request, response) => {
   }
   try {
     for (const notification of notificationItems) {
-      const ctpProjectConfig = getCtpProjectConfig(notification)
+      const ctpProjectConfig = getCtpProjectConfig(notification, request)
       const adyenConfig = getAdyenConfig(notification)
 
       await handler.processNotification(
