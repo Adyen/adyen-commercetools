@@ -1,7 +1,7 @@
 const url = require('url')
 const _ = require('lodash')
 const config = require('../config/config')
-const logger = require('../../utils/logger').getLogger()
+const logger = require('./logger').getLogger()
 
 function getCtpProjectConfig(notification, request) {
   let commercetoolsProjectKey =
