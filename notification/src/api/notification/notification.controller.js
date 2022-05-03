@@ -21,7 +21,7 @@ async function handleNotification(request, response) {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
     for (const notification of notifications) {
       logger.debug('Received notification', JSON.stringify(notification))
-      logger.warn(`DEBUG: 111111 request.url: ${JSON.stringify(request?.url)}`)
+      logger.error(`DEBUG: 111111 request.url: ${JSON.stringify(request?.url)}`)
       const ctpProjectConfig = getCtpProjectConfig(notification, request)
       const adyenConfig = getAdyenConfig(notification)
 
