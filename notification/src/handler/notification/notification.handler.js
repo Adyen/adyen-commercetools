@@ -82,6 +82,7 @@ async function updatePaymentWithRepeater(
       } with update actions [${JSON.stringify(updateActions)}]`
     )
     try {
+      console.log(`update actions ${JSON.stringify(updateActions)}`)
       /* eslint-disable-next-line no-await-in-loop */
       await ctpClient.update(
         ctpClient.builder.payments,

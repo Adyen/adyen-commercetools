@@ -10,6 +10,7 @@ function getCtpProjectConfig(notification, request) {
   if (!commercetoolsProjectKey && request) {
     const parts = url.parse(request.url)
     commercetoolsProjectKey = parts.path?.split('/')?.[2]
+    console.log('asfdjlfdasllksdaf ' + commercetoolsProjectKey)
   }
 
   if (_.isEmpty(commercetoolsProjectKey)) {
