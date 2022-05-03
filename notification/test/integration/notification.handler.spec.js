@@ -602,6 +602,48 @@ describe('notification module', () => {
     expect(paymentAfter.interfaceInteractions).to.have.lengthOf(0)
   })
 
+  it('should use URL path as a fallback when metadata.ctProjectKey is missing', async () => {
+    const paymentKey = `notificationPayment-${new Date().getTime()}`
+    const { body: paymentBefore } = await ensurePayment(
+      ctpClient,
+      paymentKey,
+      commercetoolsProjectKey,
+      adyenMerchantAccount
+    )
+    expect(paymentBefore.transactions).to.have.lengthOf(1)
+    expect(paymentBefore.transactions[0].type).to.equal('Authorization')
+    expect(paymentBefore.transactions[0].state).to.equal('Pending')
+    expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
+
+    const notificationPayload = createNotificationPayload(
+      null,
+      adyenMerchantAccount,
+      paymentKey
+    )
+
+    // Simulating a notification from Adyen
+    const response = await fetch(notificationURL + `/notifications/${commercetoolsProjectKey}`, {
+      method: 'post',
+      body: JSON.stringify(notificationPayload),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    const { status } = response
+    const responseBody = await response.json()
+
+    expect(responseBody).to.deep.equal({ notificationResponse: '[accepted]' })
+    expect(status).to.equal(200)
+
+    const { body: paymentAfter } = await ctpClient.fetchByKey(
+      ctpClient.builder.payments,
+      paymentKey
+    )
+    expect(paymentAfter.transactions).to.have.lengthOf(1)
+    expect(paymentAfter.transactions[0].type).to.equal('Authorization')
+    expect(paymentAfter.transactions[0].state).to.equal('Success')
+    expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
+
+  })
+
   function _generateRandomNumber() {
     return (
       new Date().getTime() + Math.floor(Math.random() * 100 + 1)
