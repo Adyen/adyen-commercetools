@@ -1,6 +1,5 @@
 const { expect } = require('chai')
 const fetch = require('node-fetch')
-const url = require('url')
 const ctpClientBuilder = require('../../src/utils/ctp')
 const config = require('../../src/config/config')
 const {
