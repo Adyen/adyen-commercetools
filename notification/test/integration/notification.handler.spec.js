@@ -632,15 +632,6 @@ describe('notification module', () => {
       }
     )
 
-    const parts = url.parse(
-      `${notificationURL}/notifications/${commercetoolsProjectKey}`
-    )
-    const path = parts.path?.split('/')?.slice(-2)?.[0] ?? ''
-    const key = parts.path?.split('/')?.slice(-1)?.[0]
-    console.log(`asdfdsf ${JSON.stringify(parts)}`)
-    console.log(`qweqwe ${JSON.stringify(path)}`)
-    console.log(`xvcyvcvcxy ${JSON.stringify(key)}`)
-
     const { status } = response
     const responseBody = await response.json()
 
