@@ -6,56 +6,56 @@ name: CI
 on: [push]
 
 jobs:
-#  extension_build:
-#    name: Extension Module
-#    concurrency: extension_build
-#    runs-on: ubuntu-latest
-#    env:
-#      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
-#      CI_EXTENSION_BASE_URL: ${{ secrets.CI_EXTENSION_BASE_URL }}
-#    defaults:
-#      run:
-#        working-directory: extension
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Use Node.js 16.x
-#        uses: actions/setup-node@v3
-#        with:
-#          node-version: '16.x'
-#      - run: npm ci
-#      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
-#      - run: npm run check
-#      - run: npm run cover:unit
-#      - name: prepare extensions folder
-#        run: |
-#          echo $ADYEN_INTEGRATION_CONFIG >> .extensionrc
-#          mkdir -p sources && cp index.googleFunction.js index.js
-#          cp -R {index.js,.extensionrc,src,resources,package.json} sources
-#          rm .extensionrc
-#        shell: bash
-#      - name: gcloud auth
-#        uses: google-github-actions/auth@v0
-#        with:
-#          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-#      - name: gcloud sdk
-#        uses: google-github-actions/setup-gcloud@v0.6.0
-#      - name: gcloud functions deploy
-#        run: |
-#          gcloud functions deploy extension-ci \
-#            --region europe-west3 \
-#            --source sources \
-#            --entry-point extensionTrigger \
-#            --runtime nodejs16 \
-#            --trigger-http \
-#            --allow-unauthenticated
-#      - run: npm run cover:integration
-#      - run: npm run cover:e2e
-#      - run: npm run check-coverage
+  extension_build:
+    name: Extension Module
+    concurrency: extension_build
+    runs-on: ubuntu-latest
+    env:
+      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
+      CI_EXTENSION_BASE_URL: ${{ secrets.CI_EXTENSION_BASE_URL }}
+    defaults:
+      run:
+        working-directory: extension
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - run: npm ci
+      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - run: npm run check
+      - run: npm run cover:unit
+      - name: prepare extensions folder
+        run: |
+          echo $ADYEN_INTEGRATION_CONFIG >> .extensionrc
+          mkdir -p sources && cp index.googleFunction.js index.js
+          cp -R {index.js,.extensionrc,src,resources,package.json} sources
+          rm .extensionrc
+        shell: bash
+      - name: gcloud auth
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - name: gcloud sdk
+        uses: google-github-actions/setup-gcloud@v0.6.0
+      - name: gcloud functions deploy
+        run: |
+          gcloud functions deploy extension-ci \
+            --region europe-west3 \
+            --source sources \
+            --entry-point extensionTrigger \
+            --runtime nodejs16 \
+            --trigger-http \
+            --allow-unauthenticated
+      - run: npm run cover:integration
+      - run: npm run cover:e2e
+      - run: npm run check-coverage
 
   notification_build:
     name: Notification Module
     concurrency: notification_build
-#    needs: extension_build
+    needs: extension_build
     runs-on: ubuntu-latest
     env:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
@@ -70,9 +70,9 @@ jobs:
         with:
           node-version: '16.x'
       - run: npm ci
-#      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
-#      - run: npm run check
-#      - run: npm run cover:unit
+      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - run: npm run check
+      - run: npm run cover:unit
       - name: prepare notifications folder
         run: |
           echo $ADYEN_INTEGRATION_CONFIG >> .notificationrc

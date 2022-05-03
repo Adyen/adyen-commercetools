@@ -1,20 +1,15 @@
 const url = require('url')
 const _ = require('lodash')
 const config = require('../config/config')
-const logger = require('./logger').getLogger()
-const util = require('util')
 
 function getCtpProjectConfig(notification, request) {
   let commercetoolsProjectKey =
     notification?.NotificationRequestItem?.additionalData?.[
       `metadata.ctProjectKey`
     ]
-  logger.error(`DEBUG: getCtpProjectConfig request: ${util.inspect(request, {depth: null})}`)
-  logger.error(`DEBUG: request.url: ${JSON.stringify(request?.url)}`)
   if (!commercetoolsProjectKey && request) {
     const parts = url.parse(request.url)
     commercetoolsProjectKey = parts.path?.split('/')?.slice(-1)?.[0]
-    logger.error(`DEBUG: parts: ${JSON.stringify(parts)}`)
   }
 
   if (_.isEmpty(commercetoolsProjectKey)) {
