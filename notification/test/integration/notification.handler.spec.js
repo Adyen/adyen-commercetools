@@ -621,10 +621,6 @@ describe('notification module', () => {
       paymentKey
     )
 
-    console.log(
-      `url is: ${notificationURL}/notifications/${commercetoolsProjectKey}`
-    )
-
     // Simulating a notification from Adyen
     const response = await fetch(
       `${notificationURL}/notifications/${commercetoolsProjectKey}`,
