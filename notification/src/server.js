@@ -8,6 +8,7 @@ function setupServer(routes = defaultRoutes) {
   return http.createServer(async (request, response) => {
     const parts = url.parse(request.url)
     const path = parts.path?.split('/')?.[1] ?? ''
+    console.log(`asdfasdfsadf ${JSON.stringify(parts)}`)
     const route = routes[`/${path}`]
 
     if (route)
