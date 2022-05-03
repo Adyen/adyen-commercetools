@@ -27,6 +27,21 @@ Please follow the [instructions](https://docs.adyen.com/development-resources/we
 
 > Note: HMAC verification is enabled by default. You could use "ADYEN_ENABLE_HMAC_SIGNATURE=false" environment variable to disable the verification feature.
 
+### Fallback in case `metadata` is not available
+In rare cases it could happen that notifications do not have `metadata.ctProjectKey` field. Without this field it is not possible to determine which commercetools project the notification belongs to. In order to avoid this rare issue, it is recommended to include the commercetools project key in the path of the URL. In this case, the `public URL` for the Notification module must have the following format:
+```
+https://your-notification-url.com/notifications/${ctp-project-key}
+```
+Notice that the URL path ends with `/notifications/${ctp-project-key}`, where `ctp-project-key` is the project key of the commercetools project that this notification belongs to. This part must always be in the end. See the following examples:
+```
+https://your-notification-url.com/some/other/part/notifications/${ctp-project-key} - valid
+https://your-notification-url.com/notifications/${ctp-project-key}/some/other/part - invalid
+https://your-notification-url.com/notifications/some/other/part/${ctp-project-key} - invalid
+https://your-notification-url.com/notifications/${ctp-project-key}/ - invalid
+```
+
+> Note: if you do not provide `public URL` like above, notification module will still work except for the rare cases.
+
 ## Step 2: Deploy the notification module
 
 In order to make the notification module up and running, follow our [how to run guide](./HowToRun.md).
