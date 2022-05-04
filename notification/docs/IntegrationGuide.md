@@ -41,7 +41,7 @@ Notice that the URL path ends with `/notifications/${ctp-project-key}`, where `c
 https://your-notification-url.com/some/other/part/notifications/${ctp-project-key} - valid
 https://your-notification-url.com/notifications/${ctp-project-key}/some/other/part - invalid
 https://your-notification-url.com/notifications/some/other/part/${ctp-project-key} - invalid
-https://your-notification-url.com/notifications/${ctp-project-key}/ - invalid
+https://your-notification-url.com/notifications/${ctp-project-key}/ - invalid (notice `/` in the end of the URL)
 ```
 
 > Note: if you do not provide `public URL` like above, notification module will still work except for the rare cases.
