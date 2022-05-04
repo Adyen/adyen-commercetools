@@ -9,6 +9,7 @@ module.exports = class KlarnaPage {
       .frames()
       .find((f) => f.name() === 'klarna-hpp-instance-main')
     await klarnaMainFrame.waitForSelector('#scheme-payment-selector')
+    await this.page.waitForTimeout(2_000)
     await this.page.click('#buy-button')
 
     await this.processOtpAndPay()

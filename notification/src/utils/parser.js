@@ -1,11 +1,18 @@
+const url = require('url')
+const _ = require('lodash')
 const config = require('../config/config')
 
-function getCtpProjectConfig(notification) {
-  const commercetoolsProjectKey =
+function getCtpProjectConfig(notification, request) {
+  let commercetoolsProjectKey =
     notification?.NotificationRequestItem?.additionalData?.[
       `metadata.ctProjectKey`
     ]
-  if (!commercetoolsProjectKey) {
+  if (!commercetoolsProjectKey && request) {
+    const parts = url.parse(request.url)
+    commercetoolsProjectKey = parts.path?.split('/')?.slice(-1)?.[0]
+  }
+
+  if (_.isEmpty(commercetoolsProjectKey)) {
     throw new Error(
       'Notification can not be processed as "metadata.ctProjectKey"  was not found on the notification.'
     )
