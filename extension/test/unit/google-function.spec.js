@@ -18,7 +18,7 @@ describe('Google cloud function', () => {
     body: {
       resource: { obj: {} },
     },
-    url: ''
+    url: '',
   }
 
   const mockResponse = {
