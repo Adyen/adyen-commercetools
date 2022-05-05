@@ -1,3 +1,4 @@
+const url = require('url')
 const handler = require('./src/handler/notification/notification.handler')
 const logger = require('./src/utils/logger').getLogger()
 const { getNotificationForTracking } = require('./src/utils/commons')
@@ -12,7 +13,8 @@ exports.notificationTrigger = async (request, response) => {
   }
   try {
     for (const notification of notificationItems) {
-      const ctpProjectConfig = getCtpProjectConfig(notification, request)
+      const parts = url.parse(request.url)
+      const ctpProjectConfig = getCtpProjectConfig(notification, parts.path)
       const adyenConfig = getAdyenConfig(notification)
 
       await handler.processNotification(
