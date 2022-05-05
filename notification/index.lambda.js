@@ -21,7 +21,7 @@ exports.handler = async (event) => {
   }
   try {
     for (const notification of notificationItems) {
-      const ctpProjectConfig = getCtpProjectConfig(notification)
+      const ctpProjectConfig = getCtpProjectConfig(notification, event.path)
       const adyenConfig = getAdyenConfig(notification)
 
       await handler.processNotification(
