@@ -7,8 +7,8 @@ const logger = require('./utils/logger').getLogger()
 function setupServer(routes = defaultRoutes) {
   return http.createServer(async (request, response) => {
     const parts = url.parse(request.url)
-    const route = routes[parts.pathname]
-
+    const path = parts.path?.split('/')?.slice(-2)?.[0] ?? ''
+    const route = routes[`/${path}`]
     if (route)
       try {
         await route(request, response)

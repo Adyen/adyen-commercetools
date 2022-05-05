@@ -9,6 +9,23 @@ export default class KlarnaPage {
       .frames()
       .find((f) => f.name() === 'klarna-hpp-instance-main')
     await klarnaMainFrame.waitForSelector('#scheme-payment-selector')
-    return this.page.click('#buy-button')
+    await this.page.waitForTimeout(2_000)
+    await this.page.click('#buy-button')
+
+    await this.processOtpAndPay()
+  }
+
+  async processOtpAndPay() {
+    const klarnaIframe = this.page
+      .frames()
+      .find((f) => f.name() === 'klarna-hpp-instance-fullscreen')
+    await klarnaIframe.waitForSelector('#onContinue')
+    await klarnaIframe.click('#onContinue')
+
+    await klarnaIframe.waitForSelector('#otp_field')
+    await klarnaIframe.type('#otp_field', '123456')
+
+    await klarnaIframe.waitForSelector('#mandate-review__confirmation-button')
+    await klarnaIframe.click('#mandate-review__confirmation-button')
   }
 }

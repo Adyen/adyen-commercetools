@@ -3,6 +3,7 @@ const notificationController = require('./api/notification/notification.controll
 
 const routes = {
   '/': notificationController.handleNotification,
+  '/notifications': notificationController.handleNotification,
   '/health': healthController.processRequest,
 }
 

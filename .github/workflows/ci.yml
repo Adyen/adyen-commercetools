@@ -17,7 +17,7 @@ jobs:
       run:
         working-directory: extension
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js 16.x
         uses: actions/setup-node@v3
         with:
@@ -38,7 +38,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: gcloud sdk
-        uses: google-github-actions/setup-gcloud@v0.5.1
+        uses: google-github-actions/setup-gcloud@v0.6.0
       - name: gcloud functions deploy
         run: |
           gcloud functions deploy extension-ci \
@@ -55,7 +55,6 @@ jobs:
   notification_build:
     name: Notification Module
     concurrency: notification_build
-    needs: extension_build
     runs-on: ubuntu-latest
     env:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
@@ -64,7 +63,7 @@ jobs:
       run:
         working-directory: notification
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js 16.x
         uses: actions/setup-node@v3
         with:
@@ -85,7 +84,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: gcloud sdk
-        uses: google-github-actions/setup-gcloud@v0.5.1
+        uses: google-github-actions/setup-gcloud@v0.6.0
       - name: gcloud functions deploy
         run: |
           gcloud functions deploy notification-ci \
