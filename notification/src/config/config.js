@@ -13,6 +13,7 @@ function getModuleConfig() {
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
+    notificationModuleBaseUrl: config.notificationModuleBaseUrl,
   }
 }
 
@@ -49,6 +50,9 @@ function getAdyenConfig(adyenMerchantAccount) {
   return {
     secretHmacKey: adyenConfig.secretHmacKey,
     enableHmacSignature,
+    apiKey: adyenConfig.apiKey,
+    apiManagementUrl:
+      adyenConfig.apiManagementUrl || 'https://management-test.adyen.com/v1',
   }
 }
 

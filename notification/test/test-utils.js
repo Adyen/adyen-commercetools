@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { address } = require('ip')
 const { hmacValidator } = require('@adyen/api-library')
+const fetch = require('node-fetch')
 const config = require('../src/config/config')
 const concurrentModificationError = require('./resources/concurrent-modification-exception.json')
 const serverBuilder = require('../src/server')
@@ -48,6 +49,7 @@ function buildMockErrorFromConcurrentModificaitonException() {
 const localhostIp = address()
 
 async function startIT() {
+  // await setupWebhooks()
   await setupNotificationResources()
   if (!process.env.CI) {
     await setupLocalServer(8000)
@@ -63,6 +65,7 @@ function getNotificationURL() {
 }
 
 let server
+
 async function setupLocalServer(testServerPort = 8000) {
   server = serverBuilder.setupServer()
   return new Promise((resolve) => {
@@ -70,6 +73,60 @@ async function setupLocalServer(testServerPort = 8000) {
       resolve()
     })
   })
+}
+
+async function setupWebhooks() {
+  const merchantAccounts = config.getAllAdyenMerchantAccounts()
+  const merchantAccount = merchantAccounts[0]
+  const adyenConfig = config.getAdyenConfig(merchantAccount)
+
+  const request = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Api-Key': adyenConfig.apiKey,
+    },
+  }
+
+  const webhookUrl = `${adyenConfig.apiManagementUrl}/merchants/${merchantAccount}/webhooks`
+  const getWebhookResponse = await fetch(webhookUrl, request)
+  const getWebhookResponseJson = await getWebhookResponse.json()
+
+  const existingWebhook = getWebhookResponseJson.data.find(
+    (hook) =>
+      hook.type === 'standard' &&
+      hook.url === adyenConfig.notificationModuleBaseUrl
+  )
+  if (!existingWebhook) {
+    const createWebhookRequestBody = {
+      type: 'standard',
+      url: 'https://www.test.com',
+      active: 'true',
+      communicationFormat: 'json',
+    }
+
+    const createWebhookResponse = await fetch(webhookUrl, {
+      method: 'POST',
+      body: JSON.stringify(createWebhookRequestBody),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': adyenConfig.apiKey,
+      },
+    })
+    const createWebhookResponseJson = await createWebhookResponse.json()
+
+    const generateHmacLink = createWebhookResponseJson._links.generateHmac.href
+    const generateHmacResponse = await fetch(generateHmacLink, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': adyenConfig.apiKey,
+      },
+    })
+    const generateHmacResponseJson = await generateHmacResponse.json()
+    const { hmacKey } = generateHmacResponseJson
+    console.log(hmacKey)
+  }
 }
 
 async function stopIT() {
