@@ -1,5 +1,7 @@
 import { serializeError } from 'serialize-error'
 import httpUtils from '../../utils.js'
+import auth from '../../validator/authentication.js'
+import paymentHandler from '../../paymentHandler/payment-handler.js'
 
 const logger = httpUtils.getLogger()
 
@@ -26,36 +28,24 @@ async function processRequest(request, response) {
 
   let paymentObject = {}
   try {
-    ;(async () => {
-      const auth = await import('../../validator/authentication.js')
-      const authToken = auth.getAuthorizationRequestHeader(request)
-      paymentObject = await _getPaymentObject(request)
-      logger
-        .debug(
-          'Received payment object',
-          JSON.stringify(paymentObject)
-        )(async () => {
-          const paymentHandler = await import(
-            '../../paymentHandler/payment-handler.js'
-          )
-          const paymentResult = await paymentHandler.handlePayment(
-            paymentObject,
-            authToken
-          )
-          const result = {
-            response,
-            statusCode: paymentResult.actions ? 200 : 400,
-            data: paymentResult.actions
-              ? { actions: paymentResult.actions }
-              : { errors: paymentResult.errors },
-          }
+    const authToken = auth.getAuthorizationRequestHeader(request)
+    paymentObject = await _getPaymentObject(request)
+    logger.debug('Received payment object', JSON.stringify(paymentObject))
+    const paymentResult = await paymentHandler.handlePayment(
+      paymentObject,
+      authToken
+    )
+    const result = {
+      response,
+      statusCode: paymentResult.actions ? 200 : 400,
+      data: paymentResult.actions
+        ? { actions: paymentResult.actions }
+        : { errors: paymentResult.errors },
+    }
 
-          logger.debug('Data to be returned', JSON.stringify(result.data))
+    logger.debug('Data to be returned', JSON.stringify(result.data))
 
-          return httpUtils.sendResponse(result)
-        })()
-        .catch((err) => console.error(err))
-    })().catch((err) => console.error(err))
+    return httpUtils.sendResponse(result)
   } catch (err) {
     return httpUtils.sendResponse({
       response,

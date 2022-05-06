@@ -1,16 +1,12 @@
 import _ from 'lodash'
-import proxyquire from 'proxyquire'
+import sinon from 'sinon'
 import { expect } from 'chai'
 import ctpPayment from './fixtures/ctp-payment.json'
 import errorMessages from '../../src/validator/error-messages.js'
+import paymentController from '../../src/api/payment/payment.controller.js'
+import utils from '../../src/utils.js'
 
 describe('Payment controller', () => {
-  const utilsStub = {}
-  const paymentController = proxyquire(
-    '../../src/api/payment/payment.controller.js',
-    { '../../utils.js': utilsStub }
-  )
-
   describe('Validation', () => {
     const mockRequest = { method: 'POST' }
 
@@ -18,9 +14,9 @@ describe('Payment controller', () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.paymentMethodInfo.paymentInterface = ''
 
-      utilsStub.collectRequestData = () =>
+      const utilsCollectRequestData = () =>
         JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, headers, data }) => {
+      const utilsSendResponse = ({ statusCode, headers, data }) => {
         expect(statusCode).to.equal(200)
         expect(headers).to.not.exist
         expect(data).to.deep.equal({
@@ -28,7 +24,13 @@ describe('Payment controller', () => {
         })
       }
 
+      sinon.stub(utils, 'collectRequestData').callsFake(utilsCollectRequestData)
+      sinon.stub(utils, 'sendResponse').callsFake(utilsSendResponse)
+
       await paymentController.processRequest(mockRequest)
+
+      utils.collectRequestData.restore()
+      utils.sendResponse.restore()
     })
 
     it('on invalid web component request should throw error', async () => {
@@ -37,9 +39,9 @@ describe('Payment controller', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = 'bar'
       ctpPaymentClone.custom.fields.getPaymentMethodsRequest = '{'
 
-      utilsStub.collectRequestData = () =>
+      const collectRequestData = () =>
         JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
+      const sendResponse = ({ statusCode, data }) => {
         expect(statusCode).to.equal(400)
         expect(data).to.deep.equal({
           errors: [
@@ -51,15 +53,21 @@ describe('Payment controller', () => {
         })
       }
 
+      sinon.stub(utils, 'collectRequestData').callsFake(collectRequestData)
+      sinon.stub(utils, 'sendResponse').callsFake(sendResponse)
+
       await paymentController.processRequest(mockRequest)
+
+      utils.collectRequestData.restore()
+      utils.sendResponse.restore()
     })
 
     it('on missing required custom fields should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
-      utilsStub.collectRequestData = () =>
+      const collectRequestData = () =>
         JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
+      const sendResponse = ({ statusCode, data }) => {
         expect(statusCode).to.equal(400)
         expect(data).to.deep.equal({
           errors: [
@@ -75,15 +83,22 @@ describe('Payment controller', () => {
           ],
         })
       }
+
+      sinon.stub(utils, 'collectRequestData').callsFake(collectRequestData)
+      sinon.stub(utils, 'sendResponse').callsFake(sendResponse)
+
       await paymentController.processRequest(mockRequest)
+
+      utils.collectRequestData.restore()
+      utils.sendResponse.restore()
     })
 
     it('on request with incorrect http method should return 400 status response', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
-      utilsStub.collectRequestData = () =>
+      const collectRequestData = () =>
         JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      utilsStub.sendResponse = ({ statusCode, data }) => {
+      const utilsSendResponse = ({ statusCode, data }) => {
         expect(statusCode).to.equal(400)
         expect(data).to.deep.equal({
           errors: [
@@ -94,19 +109,30 @@ describe('Payment controller', () => {
           ],
         })
       }
+
+      sinon.stub(utils, 'collectRequestData').callsFake(collectRequestData)
+      sinon.stub(utils, 'sendResponse').callsFake(utilsSendResponse)
+
       const mockGetRequest = { method: 'GET' }
       await paymentController.processRequest(mockGetRequest)
+
+      utils.sendResponse.restore()
+      utils.collectRequestData.restore()
     })
   })
 
   it('on request with missing body in http request should return 400 status response', async () => {
-    utilsStub.sendResponse = ({ statusCode, data }) => {
+    const sendResponse = ({ statusCode, data }) => {
       expect(statusCode).to.equal(400)
       expect(data.errors).to.not.empty
       expect(data.errors).to.have.lengthOf(1)
       expect(data.errors[0].code).to.equal('General')
     }
+
+    sinon.stub(utils, 'sendResponse').callsFake(sendResponse)
+
     const mockPostRequest = { method: 'POST' }
     await paymentController.processRequest(mockPostRequest)
+    utils.sendResponse.restore()
   })
 })
