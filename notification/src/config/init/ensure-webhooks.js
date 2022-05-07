@@ -29,7 +29,7 @@ async function ensureWebhooks() {
       if (!existingWebhook) {
         const createWebhookRequestBody = {
           type: 'standard',
-          url: 'https://www.test.com',
+          url: adyenConfig.notificationModuleBaseUrl,
           active: 'true',
           communicationFormat: 'json',
         }
