@@ -1,11 +1,15 @@
-const { isEmpty } = require('lodash')
 const loadConfig = require('./config-loader')
 
 let config
 
+function convertToBoolean(configValue) {
+  let removeSensitiveData = configValue !== 'false'
+  if (configValue === false) removeSensitiveData = false
+  return removeSensitiveData
+}
+
 function getModuleConfig() {
-  let removeSensitiveData = config.removeSensitiveData !== 'false'
-  if (config.removeSensitiveData === false) removeSensitiveData = false
+  const removeSensitiveData = convertToBoolean(config.removeSensitiveData)
   return {
     removeSensitiveData,
     port: config.port,
@@ -13,7 +17,8 @@ function getModuleConfig() {
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
-    notificationModuleBaseUrl: config.notificationModuleBaseUrl,
+    apiManagementUrl:
+      config.apiManagementUrl || 'https://management-test.adyen.com/v1',
   }
 }
 
@@ -45,14 +50,14 @@ function getAdyenConfig(adyenMerchantAccount) {
       )}`
     )
 
-  let enableHmacSignature = adyenConfig.enableHmacSignature !== 'false'
-  if (adyenConfig.enableHmacSignature === false) enableHmacSignature = false
+  const enableHmacSignature = convertToBoolean(adyenConfig.enableHmacSignature)
+  const generateHmacKey = convertToBoolean(adyenConfig.generateHmacKey)
   return {
     secretHmacKey: adyenConfig.secretHmacKey,
     enableHmacSignature,
     apiKey: adyenConfig.apiKey,
-    apiManagementUrl:
-      adyenConfig.apiManagementUrl || 'https://management-test.adyen.com/v1',
+    notificationModuleBaseUrl: adyenConfig.notificationModuleBaseUrl,
+    generateHmacKey,
   }
 }
 
@@ -95,20 +100,6 @@ function loadAndValidateConfig() {
       throw new Error(
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
           'Please verify that all projects have projectKey, clientId and clientSecret'
-      )
-  }
-
-  for (const [adyenMerchantAccount, adyenConfig] of Object.entries(
-    config.adyen
-  )) {
-    if (
-      adyenConfig.enableHmacSignature !== 'false' &&
-      isEmpty(adyenConfig.secretHmacKey)
-    )
-      throw new Error(
-        `[${adyenMerchantAccount}]: The "secretHmacKey" config variable is missing to be able to verify ` +
-          `notifications, please generate a secret HMAC key in Adyen Customer Area ` +
-          `or set "enableHmacSignature=false" to disable the verification feature.`
       )
   }
 }

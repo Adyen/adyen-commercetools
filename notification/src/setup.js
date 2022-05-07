@@ -1,4 +1,5 @@
 const config = require('./config/config')
+const { ensureWebhooks } = require('./config/init/ensure-webhooks')
 const logger = require('./utils/logger').getLogger()
 const {
   ensureInterfaceInteractionCustomTypeForAllProjects,
@@ -6,6 +7,7 @@ const {
 
 async function setupNotificationResources() {
   await ensureInterfaceInteractionCustomTypeForAllProjects()
+  await ensureWebhooks()
 
   const ctpProjectKeys = config.getAllCtpProjectKeys()
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
