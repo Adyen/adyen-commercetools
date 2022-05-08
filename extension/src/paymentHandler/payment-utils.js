@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import c from '../config/constants.js'
-import config from '../config/config.cjs'
+import config from '../config/config.js'
 
 const { getAdyenPaymentMethodsToNames } = config
 

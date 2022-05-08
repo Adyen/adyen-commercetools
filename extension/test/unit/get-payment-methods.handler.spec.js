@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import fetch from 'node-fetch'
 import c from '../../src/config/constants.js'
 import execute from '../../src/paymentHandler/get-payment-methods.handler.js'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 
 describe('get-payment-methods::execute::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

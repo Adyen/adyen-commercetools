@@ -67,7 +67,4 @@ async function fetchTypeByKey(ctpClient, key) {
   }
 }
 
-export default {
-  ensurePaymentCustomType,
-  ensureInterfaceInteractionCustomType,
-}
+export { ensurePaymentCustomType, ensureInterfaceInteractionCustomType }

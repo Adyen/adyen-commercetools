@@ -1,5 +1,5 @@
 import ctpClientBuilder from '../../src/ctp.js'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 import { routes } from '../../src/routes.js'
 import httpUtils from '../../src/utils.js'
 import testUtils from './e2e-test-utils.js'

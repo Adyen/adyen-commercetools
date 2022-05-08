@@ -1,7 +1,7 @@
 import nock from 'nock'
 import { expect } from 'chai'
 import _ from 'lodash'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 import makeLineItemsPaymentHandler from '../../src/paymentHandler/make-lineitems-payment.handler.js'
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
 import ctpPayment from './fixtures/ctp-payment.json'

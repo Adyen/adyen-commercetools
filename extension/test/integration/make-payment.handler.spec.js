@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 import constants from '../../src/config/constants.js'
 const iTSetUp = require('./integration-test-set-up')
 

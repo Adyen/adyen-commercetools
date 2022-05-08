@@ -11,7 +11,7 @@ import pU from './payment-utils.js'
 import auth from '../validator/authentication.js'
 import errorMessages from '../validator/error-messages.js'
 import constants from '../config/constants.js'
-import config from '../config/config.cjs'
+import config from '../config/config.js'
 
 const {
   CTP_ADYEN_INTEGRATION,

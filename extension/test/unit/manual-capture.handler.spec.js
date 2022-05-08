@@ -1,7 +1,7 @@
 import nock from 'nock'
 import lodash from 'lodash'
 import { expect } from 'chai'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 import execute from '../../src/paymentHandler/manual-capture.handler.js'
 import constants from '../../src/config/constants.js'
 

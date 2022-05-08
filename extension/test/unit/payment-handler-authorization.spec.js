@@ -7,7 +7,7 @@ import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-de
 import ctpPayment from './fixtures/ctp-payment.json'
 import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.js'
 import errorMessage from '../../src/validator/error-messages.js'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 
 const { handlePayment } = paymentHandler
 

@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import _ from 'lodash'
 import ctpClientBuilder from '../../src/ctp.js'
 import c from '../../src/config/constants.js'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 import packageJson from '../../package.json'
 
 describe('::getPaymentMethods::', () => {

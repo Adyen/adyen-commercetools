@@ -4,7 +4,7 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 import paymentHandler from '../../src/paymentHandler/payment-handler.js'
 import ctpPayment from './fixtures/ctp-payment.json'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 import ctpCart from './fixtures/ctp-cart.json'
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
 

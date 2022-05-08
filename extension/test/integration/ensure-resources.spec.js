@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 import e_resources from '../../src/config/init/ensure-resources.js'
 import paymentCustomType from '../../resources/web-components-payment-type.json'
 import interfaceInteractionType from '../../resources/payment-interface-interaction-type.json'

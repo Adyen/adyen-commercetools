@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import ctpClientBuilder from '../ctp.js'
 import makePaymentHandler from './make-payment.handler.js'
-import config from '../config/config.cjs'
+import config from '../config/config.js'
 
 const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
 const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'

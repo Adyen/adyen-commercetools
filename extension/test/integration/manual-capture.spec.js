@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
 import constants from '../../src/config/constants.js'
 import paymentUtils from '../../src/paymentHandler/payment-utils.js'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 
 const {
   CTP_ADYEN_INTEGRATION,

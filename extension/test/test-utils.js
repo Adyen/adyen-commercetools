@@ -2,7 +2,7 @@ import localtunnel from 'localtunnel'
 import serverBuilder from '../src/server.js'
 import routesJs from '../src/routes.js'
 import setup from '../src/setup.js'
-import config from '../src/config/config.cjs'
+import config from '../src/config/config.js'
 
 global.window = {}
 global.navigator = {}

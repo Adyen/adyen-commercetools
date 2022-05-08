@@ -1,7 +1,7 @@
 import nock from 'nock'
 import { expect } from 'chai'
 import c from '../../src/config/constants.js'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 import makePaymentHandler from '../../src/paymentHandler/make-payment.handler.js'
 
 const { execute } = makePaymentHandler

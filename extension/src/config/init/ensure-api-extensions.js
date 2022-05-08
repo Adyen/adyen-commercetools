@@ -78,6 +78,4 @@ async function fetchExtensionByKey(ctpClient, key) {
   }
 }
 
-export default {
-  ensureApiExtensions,
-}
+export { ensureApiExtensions }

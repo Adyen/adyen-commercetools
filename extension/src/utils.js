@@ -1,6 +1,6 @@
 import bunyan from 'bunyan'
 import { serializeError } from 'serialize-error'
-import config from './config/config.cjs'
+import config from './config/config.js'
 
 let logger
 

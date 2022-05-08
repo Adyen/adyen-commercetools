@@ -1,12 +1,10 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import _ from 'lodash'
-import e_resources from '../../../../src/config/init/ensure-resources.js'
+import { ensureResources } from '../../../../src/config/init/ensure-resources.js'
 import webComponentsPaymentType from '../../../../resources/web-components-payment-type.json'
 import apiExtension from '../../../../resources/api-extension.json'
 import interfaceInteractionType from '../../../../resources/payment-interface-interaction-type.json'
-
-const { ensureResources } = e_resources
 
 describe('Ensure resources', () => {
   const mockClient = {

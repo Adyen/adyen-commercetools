@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import { serializeError } from 'serialize-error'
-import config from '../config/config.cjs'
+import config from '../config/config.js'
 import packageJson from '../../package.json'
 
 function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {

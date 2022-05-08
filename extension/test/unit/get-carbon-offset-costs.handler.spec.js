@@ -2,7 +2,7 @@ import nock from 'nock'
 import { expect } from 'chai'
 import c from '../../src/config/constants.js'
 import execute from '../../src/paymentHandler/get-carbon-offset-costs.handler.js'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 
 describe('get-carbon-offset-costs::execute::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

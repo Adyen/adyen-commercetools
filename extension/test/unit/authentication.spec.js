@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import config from '../../src/config/config.cjs'
+import config from '../../src/config/config.js'
 import auth from '../../src/validator/authentication.js'
 
 describe('Authentication unit test', () => {
