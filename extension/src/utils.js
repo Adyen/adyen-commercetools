@@ -1,5 +1,8 @@
 import bunyan from 'bunyan'
 import { serializeError } from 'serialize-error'
+import { fileURLToPath } from 'url'
+import path from 'path'
+import fs from 'node:fs/promises'
 import config from './config/config.js'
 
 let logger
@@ -50,9 +53,23 @@ function handleUnexpectedPaymentError(paymentObj, err) {
   }
 }
 
+async function readAndParseJsonFile(pathToJsonFileFromProjectRoot) {
+  const currentFilePath = fileURLToPath(import.meta.url)
+  const currentDirPath = path.dirname(currentFilePath)
+  const projectRoot = path.resolve(currentDirPath, '../..')
+  const pathToFile = path.resolve(projectRoot, pathToJsonFileFromProjectRoot)
+  const fileContent = await fs.readFile(pathToFile)
+  return JSON.parse(fileContent)
+}
+
+async function getPackageJson() {
+  return readAndParseJsonFile('./package.json')
+}
+
 export default {
   collectRequestData,
   sendResponse,
   getLogger,
   handleUnexpectedPaymentError,
+  getPackageJson,
 }

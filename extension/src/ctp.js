@@ -6,7 +6,9 @@ import { createUserAgentMiddleware } from '@commercetools/sdk-middleware-user-ag
 import { createHttpMiddleware } from '@commercetools/sdk-middleware-http'
 import { createQueueMiddleware } from '@commercetools/sdk-middleware-queue'
 import { createRequestBuilder } from '@commercetools/api-request-builder'
-import packageJson from '../package.json'
+import utils from './utils.js'
+
+const packageJson = await utils.getPackageJson()
 
 const { merge } = lodash
 /**
