@@ -4,10 +4,14 @@ const utils = require('./utils/commons')
 const { routes: defaultRoutes } = require('./routes')
 const logger = require('./utils/logger').getLogger()
 
+function getHandlerNameFromUrl(parts) {
+  return parts.path?.split('/')?.slice(-2)?.[0] ?? ''
+}
+
 function setupServer(routes = defaultRoutes) {
   return http.createServer(async (request, response) => {
     const parts = url.parse(request.url)
-    const path = parts.path?.split('/')?.slice(-2)?.[0] ?? ''
+    const path = getHandlerNameFromUrl(parts)
     const route = routes[`/${path}`]
     if (route)
       try {

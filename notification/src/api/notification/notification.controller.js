@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const url = require('url')
 const httpUtils = require('../../utils/commons')
 const { isRecoverableError, getErrorCause } = require('../../utils/error-utils')
 
@@ -21,7 +22,8 @@ async function handleNotification(request, response) {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
     for (const notification of notifications) {
       logger.debug('Received notification', JSON.stringify(notification))
-      const ctpProjectConfig = getCtpProjectConfig(notification, request)
+      const parts = url.parse(request.url)
+      const ctpProjectConfig = getCtpProjectConfig(notification, parts.path)
       const adyenConfig = getAdyenConfig(notification)
 
       await processNotification(

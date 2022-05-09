@@ -1,15 +1,13 @@
-const url = require('url')
 const _ = require('lodash')
 const config = require('../config/config')
 
-function getCtpProjectConfig(notification, request) {
+function getCtpProjectConfig(notification, path) {
   let commercetoolsProjectKey =
     notification?.NotificationRequestItem?.additionalData?.[
       `metadata.ctProjectKey`
     ]
-  if (!commercetoolsProjectKey && request) {
-    const parts = url.parse(request.url)
-    commercetoolsProjectKey = parts.path?.split('/')?.slice(-1)?.[0]
+  if (!commercetoolsProjectKey && path) {
+    commercetoolsProjectKey = path.split('/')?.slice(-1)?.[0]
   }
 
   if (_.isEmpty(commercetoolsProjectKey)) {
