@@ -2,14 +2,17 @@ import ctpClientBuilder from '../../src/ctp.js'
 import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
 import httpUtils from '../../src/utils.js'
-import testUtils from './e2e-test-utils.js'
+import {
+  assertPayment,
+  createPayment,
+  initPuppeteerBrowser,
+  serveFile,
+} from './e2e-test-utils.js'
 import MakePaymentFormPage from './pageObjects/CreditCardMakePaymentFormPage.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
 import CreditCardNativePage from './pageObjects/CreditCard3dsNativePage.js'
 
 const logger = httpUtils.getLogger()
-const { assertPayment, createPayment, initPuppeteerBrowser, serveFile } =
-  testUtils
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
 describe('::creditCardPayment3dsNative::', () => {

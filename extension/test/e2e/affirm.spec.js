@@ -2,13 +2,16 @@ import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.js'
 import { routes } from '../../src/routes.js'
 import httpUtils from '../../src/utils.js'
-import testUtils from './e2e-test-utils.js'
+import {
+  assertPayment,
+  createPayment,
+  initPuppeteerBrowser,
+  serveFile,
+} from './e2e-test-utils.js'
 import AffirmMakePaymentFormPage from './pageObjects/AffirmMakePaymentFormPage.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
 import AffirmPage from './pageObjects/AffirmPage.js'
 
-const { assertPayment, createPayment, initPuppeteerBrowser, serveFile } =
-  testUtils
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/affirm/web-component#page-introduction

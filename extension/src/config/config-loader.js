@@ -33,4 +33,4 @@ function loadFromExternalFile() {
   return configFromExternalFile
 }
 
-export default loadConfig
+export { loadConfig }

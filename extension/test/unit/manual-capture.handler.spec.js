@@ -2,7 +2,7 @@ import nock from 'nock'
 import lodash from 'lodash'
 import { expect } from 'chai'
 import config from '../../src/config/config.js'
-import execute from '../../src/paymentHandler/manual-capture.handler.js'
+import manualCaptureHandler from '../../src/paymentHandler/manual-capture.handler.js'
 import constants from '../../src/config/constants.js'
 
 const { cloneDeep } = lodash
@@ -75,7 +75,7 @@ describe('manual-capture.handler::execute::', () => {
       paymentObject.transactions.push(chargeInitialTransaction)
       paymentObject.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
-      const { actions } = await execute(paymentObject)
+      const { actions } = await manualCaptureHandler.execute(paymentObject)
 
       expect(actions).to.have.lengthOf(3)
 
@@ -128,7 +128,7 @@ describe('manual-capture.handler::execute::', () => {
       paymentObject.transactions.push(chargeInitialTransaction)
       paymentObject.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
-      const { actions } = await execute(paymentObject)
+      const { actions } = await manualCaptureHandler.execute(paymentObject)
       expect(actions).to.have.lengthOf(1)
 
       const addInterfaceInteraction = actions.find(

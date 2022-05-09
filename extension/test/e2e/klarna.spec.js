@@ -8,15 +8,18 @@ import {
   getLatestInterfaceInteraction,
   getChargeTransactionPending,
 } from '../../src/paymentHandler/payment-utils.js'
-import testUtils from './e2e-test-utils.js'
+import {
+  assertPayment,
+  createPayment,
+  initPuppeteerBrowser,
+  serveFile,
+} from './e2e-test-utils.js'
 import KlarnaMakePaymentFormPage from './pageObjects/KlarnaMakePaymentFormPage.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
 import KlarnaPage from './pageObjects/KlarnaPage.js'
 import constants from '../../src/config/constants.js'
 
 const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
-const { assertPayment, createPayment, initPuppeteerBrowser, serveFile } =
-  testUtils
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction

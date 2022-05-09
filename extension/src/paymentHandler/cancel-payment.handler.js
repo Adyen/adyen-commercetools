@@ -5,11 +5,10 @@ import {
   createChangeTransactionStateAction,
   createChangeTransactionInteractionId,
 } from './payment-utils.js'
-import componentService from '../service/web-component-service.js'
+import { cancelPayment } from '../service/web-component-service.js'
 import constants from '../config/constants.js'
 
 const { CTP_INTERACTION_TYPE_CANCEL_PAYMENT } = constants
-const { cancelPayment } = componentService
 
 async function execute(paymentObject) {
   const authorizationTransaction =

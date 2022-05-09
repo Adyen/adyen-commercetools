@@ -1,4 +1,4 @@
-import loadConfig from './config-loader.js'
+import { loadConfig } from './config-loader.js'
 
 let config
 

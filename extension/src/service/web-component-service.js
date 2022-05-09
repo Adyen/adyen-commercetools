@@ -172,7 +172,7 @@ function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj) {
   }
 }
 
-export default {
+export {
   getPaymentMethods,
   makePayment,
   submitAdditionalPaymentDetails,

@@ -1,4 +1,4 @@
-import ValidatorBuilder from '../validator/validator-builder.js'
+import { withPayment } from '../validator/validator-builder.js'
 import getPaymentMethodsHandler from './get-payment-methods.handler.js'
 import execute from './make-payment.handler.js'
 import makeLineitemsPaymentHandler from './make-lineitems-payment.handler.js'
@@ -13,7 +13,7 @@ import {
   getCancelAuthorizationTransactionInit,
   listRefundTransactionsInit,
 } from './payment-utils.js'
-import auth from '../validator/authentication.js'
+import { isBasicAuthEnabled } from '../validator/authentication.js'
 import errorMessages from '../validator/error-messages.js'
 import constants from '../config/constants.js'
 import config from '../config/config.js'
@@ -29,7 +29,7 @@ async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
     // if it's not adyen payment, ignore the payment
     return { actions: [] }
-  if (auth.isBasicAuthEnabled() && !authToken) {
+  if (isBasicAuthEnabled() && !authToken) {
     return {
       errors: [
         {
@@ -117,8 +117,8 @@ function _isAdyenPayment(paymentObject) {
 }
 
 function _validatePaymentRequest(paymentObject, authToken) {
-  const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
-  if (!auth.isBasicAuthEnabled()) {
+  const paymentValidator = withPayment(paymentObject)
+  if (!isBasicAuthEnabled()) {
     paymentValidator
       .validateMetadataFields()
       .validateRequestFields()

@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import fetch from 'node-fetch'
 import c from '../../src/config/constants.js'
-import execute from '../../src/paymentHandler/get-payment-methods.handler.js'
+import getPaymentMethodsHandler from '../../src/paymentHandler/get-payment-methods.handler.js'
 import config from '../../src/config/config.js'
 
 describe('get-payment-methods::execute::', () => {
@@ -58,7 +58,7 @@ describe('get-payment-methods::execute::', () => {
       .stub(fetch, 'Promise')
       .resolves({ json: () => adyenGetPaymentResponse })
 
-    const result = await execute(paymentObject)
+    const result = await getPaymentMethodsHandler.execute(paymentObject)
 
     expect(result.actions.length).to.equal(2)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
@@ -87,7 +87,7 @@ describe('get-payment-methods::execute::', () => {
       const errorMsg = 'unexpected exception'
       sinon.stub(fetch, 'Promise').rejects(errorMsg)
 
-      const result = await execute(paymentObject)
+      const result = await getPaymentMethodsHandler.execute(paymentObject)
 
       expect(result.actions.length).to.equal(2)
       expect(result.actions[0].action).to.equal('addInterfaceInteraction')

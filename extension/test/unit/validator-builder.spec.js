@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import ValidatorBuilder from '../../src/validator/validator-builder.js'
+import { withPayment } from '../../src/validator/validator-builder.js'
 import errorMessages from '../../src/validator/error-messages.js'
 
 const {
@@ -26,7 +26,7 @@ describe('Validator builder', () => {
         },
       },
     }
-    const errorObject = ValidatorBuilder.withPayment(invalidPayment)
+    const errorObject = withPayment(invalidPayment)
       .validateRequestFields()
       .getErrors()
     expect(errorObject[0].message).to.equal(
@@ -65,7 +65,7 @@ describe('Validator builder', () => {
         },
         interfaceInteractions: [],
       }
-      const errorObject = ValidatorBuilder.withPayment(payment)
+      const errorObject = withPayment(payment)
         .validateAmountPlanned()
         .getErrors()
       expect(errorObject[0].message).to.equal(AMOUNT_PLANNED_NOT_SAME)
@@ -133,7 +133,7 @@ describe('Validator builder', () => {
         ],
       }
 
-      const errorObject = ValidatorBuilder.withPayment(payment)
+      const errorObject = withPayment(payment)
         .validateAmountPlanned()
         .getErrors()
       expect(errorObject[0].message).to.equal(AMOUNT_PLANNED_NOT_SAME)
@@ -162,7 +162,7 @@ describe('Validator builder', () => {
         },
       },
     }
-    const errorObject = ValidatorBuilder.withPayment(invalidPayment)
+    const errorObject = withPayment(invalidPayment)
       .validateReference()
       .getErrors()
 
@@ -179,7 +179,7 @@ describe('Validator builder', () => {
         },
       },
     }
-    const errorObject = ValidatorBuilder.withPayment(invalidPayment)
+    const errorObject = withPayment(invalidPayment)
       .validateMetadataFields()
       .getErrors()
 
@@ -196,7 +196,7 @@ describe('Validator builder', () => {
         },
       },
     }
-    const errorObject = ValidatorBuilder.withPayment(invalidPayment)
+    const errorObject = withPayment(invalidPayment)
       .validateMetadataFields()
       .getErrors()
 
@@ -214,7 +214,7 @@ describe('Validator builder', () => {
         },
       },
     }
-    const errorObject = ValidatorBuilder.withPayment(invalidPayment)
+    const errorObject = withPayment(invalidPayment)
       .validateMetadataFields()
       .getErrors()
 

@@ -5,10 +5,9 @@ import {
   createAddInterfaceInteractionAction,
   createChangeTransactionInteractionId,
 } from './payment-utils.js'
-import componentService from '../service/web-component-service.js'
+import { refund } from '../service/web-component-service.js'
 import constants from '../config/constants.js'
 
-const { refund } = componentService
 const { CTP_INTERACTION_TYPE_REFUND } = constants
 
 async function execute(paymentObject) {
@@ -64,4 +63,4 @@ async function execute(paymentObject) {
   }
 }
 
-export default execute
+export default { execute }

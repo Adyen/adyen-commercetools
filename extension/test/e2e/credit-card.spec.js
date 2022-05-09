@@ -3,11 +3,14 @@ import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
 import MakePaymentFormPage from './pageObjects/CreditCardMakePaymentFormPage.js'
 import httpUtils from '../../src/utils.js'
-import testUtils from './e2e-test-utils.js'
+import {
+  assertPayment,
+  createPayment,
+  initPuppeteerBrowser,
+  serveFile,
+} from './e2e-test-utils.js'
 
 const logger = httpUtils.getLogger()
-const { assertPayment, createPayment, initPuppeteerBrowser, serveFile } =
-  testUtils
 
 // Flow description: https://docs.adyen.com/checkout/components-web
 describe('::creditCardPayment::', () => {

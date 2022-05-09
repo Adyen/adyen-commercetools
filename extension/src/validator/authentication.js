@@ -54,7 +54,7 @@ function generateBasicAuthorizationHeaderValue(ctpProjectKey) {
   return null
 }
 
-export default {
+export {
   hasValidAuthorizationHeader,
   getAuthorizationRequestHeader,
   generateBasicAuthorizationHeaderValue,

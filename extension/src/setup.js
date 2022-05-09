@@ -2,7 +2,7 @@ import config from './config/config.js'
 import ctpClientBuilder from './ctp.js'
 import logger from './utils.js'
 import { ensureResources } from './config/init/ensure-resources.js'
-import auth from './validator/authentication.js'
+import { generateBasicAuthorizationHeaderValue } from './validator/authentication.js'
 
 logger.getLogger()
 
@@ -19,7 +19,7 @@ async function setupExtensionResources(apiExtensionBaseUrl) {
         ctpClient,
         ctpConfig.projectKey,
         apiExtensionBaseUrl || moduleConfig.apiExtensionBaseUrl,
-        auth.generateBasicAuthorizationHeaderValue(ctpConfig.projectKey)
+        generateBasicAuthorizationHeaderValue(ctpConfig.projectKey)
       )
     })
   )
@@ -34,6 +34,4 @@ async function setupExtensionResources(apiExtensionBaseUrl) {
   )
 }
 
-export {
-  setupExtensionResources,
-}
+export { setupExtensionResources }

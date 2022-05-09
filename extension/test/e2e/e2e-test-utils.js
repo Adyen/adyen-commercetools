@@ -134,7 +134,7 @@ function serveFile(pathName, req, res) {
   })
 }
 
-export default {
+export {
   pasteValue,
   executeInAdyenIframe,
   assertPayment,

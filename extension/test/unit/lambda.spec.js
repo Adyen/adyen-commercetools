@@ -1,7 +1,7 @@
 import sinon from 'sinon'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import indexLambda from '../../index.lambda.js'
+import { handler } from '../../index.lambda.js'
 import paymentHandler from '../../src/paymentHandler/payment-handler.js'
 
 const { expect } = chai
@@ -20,7 +20,7 @@ describe('Lambda handler', () => {
     const actions = [{ some: 'action' }]
     sinon.stub(paymentHandler, 'handlePayment').returns({ actions })
 
-    const result = await indexLambda.handler(event)
+    const result = await handler(event)
 
     expect(result.responseType).equals('UpdateRequest')
     expect(result.actions).equals(actions)
@@ -31,7 +31,7 @@ describe('Lambda handler', () => {
     const errors = [{ some: 'error' }]
     sinon.stub(paymentHandler, 'handlePayment').returns({ errors })
 
-    const result = await indexLambda.handler(event)
+    const result = await handler(event)
 
     expect(result.responseType).equals('FailedValidation')
     expect(result.errors).equals(errors)
@@ -41,7 +41,7 @@ describe('Lambda handler', () => {
   it('does not throw unhandled exception when handlePayment actions are empty', async () => {
     sinon.stub(paymentHandler, 'handlePayment').returns({ actions: [] })
 
-    const result = await indexLambda.handler(event)
+    const result = await handler(event)
 
     expect(result.responseType).equals('UpdateRequest')
     expect(result.errors).equals(undefined)
@@ -52,7 +52,7 @@ describe('Lambda handler', () => {
     sinon.stub(paymentHandler, 'handlePayment').throws(new Error('some error'))
 
     // const call = async () => handler(event)
-    const result = await indexLambda.handler(event)
+    const result = await handler(event)
     expect(result.responseType).equals('FailedValidation')
     expect(result.errors).to.not.empty
     expect(result.errors).to.have.lengthOf(1)
@@ -63,7 +63,7 @@ describe('Lambda handler', () => {
     const actions = [{ some: 'action' }]
     sinon.stub(paymentHandler, 'handlePayment').returns({ actions })
 
-    const result = await indexLambda.handler({})
+    const result = await handler({})
     expect(result.responseType).equals('FailedValidation')
     expect(result.errors).to.not.empty
     expect(result.errors).to.have.lengthOf(1)

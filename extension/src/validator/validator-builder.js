@@ -5,7 +5,10 @@ import {
 } from '../paymentHandler/payment-utils.js'
 import errorMessages from './error-messages.js'
 import c from '../config/constants.js'
-import auth from './authentication.js'
+import {
+  getStoredCredential,
+  hasValidAuthorizationHeader,
+} from './authentication.js'
 
 function withPayment(paymentObject) {
   const errors = {}
@@ -23,10 +26,10 @@ function withPayment(paymentObject) {
     },
     validateAuthorizationHeader(authToken) {
       const ctpProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
-      const storedCredential = auth.getStoredCredential(ctpProjectKey)
+      const storedCredential = getStoredCredential(ctpProjectKey)
       if (!storedCredential)
         errors.missingCredentials = errorMessages.MISSING_CREDENTIAL
-      else if (!auth.hasValidAuthorizationHeader(storedCredential, authToken)) {
+      else if (!hasValidAuthorizationHeader(storedCredential, authToken)) {
         errors.unauthorizedRequest = errorMessages.UNAUTHORIZED_REQUEST
       }
       return this
@@ -119,4 +122,4 @@ function _getErrorResponseCode(value) {
   return 'InvalidField'
 }
 
-export default { withPayment }
+export { withPayment }

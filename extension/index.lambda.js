@@ -1,6 +1,6 @@
 import utils from './src/utils.js'
 import paymentHandler from './src/paymentHandler/payment-handler.js'
-import auth from './src/validator/authentication.js'
+import { getAuthorizationRequestHeader } from './src/validator/authentication.js'
 
 let handler = async (event) => {
   let paymentObj = {}
@@ -18,7 +18,7 @@ let handler = async (event) => {
         ],
       }
 
-    const authToken = auth.getAuthorizationRequestHeader(event)
+    const authToken = getAuthorizationRequestHeader(event)
     const paymentResult = await paymentHandler.handlePayment(
       paymentObj,
       authToken
@@ -37,4 +37,4 @@ let handler = async (event) => {
   }
 }
 
-export default { handler }
+export { handler }

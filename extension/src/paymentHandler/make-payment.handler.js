@@ -6,9 +6,7 @@ import {
   createAddTransactionActionByResponse,
 } from './payment-utils.js'
 import c from '../config/constants.js'
-import componentService from '../service/web-component-service.js'
-
-const { makePayment } = componentService
+import { makePayment } from '../service/web-component-service.js'
 
 async function execute(paymentObject) {
   const makePaymentRequestObj = JSON.parse(

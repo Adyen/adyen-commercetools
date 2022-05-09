@@ -5,10 +5,9 @@ import {
   createChangeTransactionStateAction,
   createChangeTransactionInteractionId,
 } from './payment-utils.js'
-import componentService from '../service/web-component-service.js'
+import { manualCapture } from '../service/web-component-service.js'
 import constants from '../config/constants.js'
 
-const { manualCapture } = componentService
 const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
 
 async function execute(paymentObject) {
@@ -56,4 +55,4 @@ async function execute(paymentObject) {
   }
 }
 
-export default execute
+export default { execute }

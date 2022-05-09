@@ -3,9 +3,7 @@ import {
   createSetCustomFieldAction,
 } from './payment-utils.js'
 import c from '../config/constants.js'
-import componentService from '../service/web-component-service.js'
-
-const { getCarbonOffsetCosts } = componentService
+import { getCarbonOffsetCosts } from '../service/web-component-service.js'
 
 async function execute(paymentObject) {
   const getCarbonOffsetCostsRequestObj = JSON.parse(
@@ -28,4 +26,4 @@ async function execute(paymentObject) {
   }
 }
 
-export default execute
+export default { execute }

@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import componentService from '../service/web-component-service.js'
+import { submitAdditionalPaymentDetails } from '../service/web-component-service.js'
 import {
   createAddInterfaceInteractionAction,
   createSetCustomFieldAction,
@@ -8,7 +8,6 @@ import {
 import c from '../config/constants.js'
 
 const { CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = c
-const { submitAdditionalPaymentDetails } = componentService
 
 async function execute(paymentObject) {
   const actions = []
