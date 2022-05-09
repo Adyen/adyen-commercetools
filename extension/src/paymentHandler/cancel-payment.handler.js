@@ -55,4 +55,4 @@ function _createTransactionActions(paymentObject, pspReference) {
   ]
 }
 
-export default execute
+export default { execute }
