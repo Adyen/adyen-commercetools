@@ -31,6 +31,7 @@
     "no-use-before-define": [ 2, "nofunc" ],
     "no-underscore-dangle": "off",
     "dot-notation": "off",
-    "import/extensions": "off"
+    "import/extensions": "off",
+    "import/prefer-default-export": "off"
   }
 }

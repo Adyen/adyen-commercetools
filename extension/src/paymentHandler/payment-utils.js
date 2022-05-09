@@ -188,7 +188,7 @@ function isValidMetadata(str) {
   return str.indexOf(' ') < 0
 }
 
-export default {
+export {
   getChargeTransactionInitial,
   getChargeTransactionPending,
   getAuthorizationTransactionSuccess,

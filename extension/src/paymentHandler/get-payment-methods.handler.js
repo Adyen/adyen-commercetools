@@ -1,4 +1,7 @@
-import pU from './payment-utils.js'
+import {
+  createAddInterfaceInteractionAction,
+  createSetCustomFieldAction,
+} from './payment-utils.js'
 import c from '../config/constants.js'
 import componentService from '../service/web-component-service.js'
 
@@ -15,12 +18,12 @@ async function execute(paymentObject) {
   )
   return {
     actions: [
-      pU.createAddInterfaceInteractionAction({
+      createAddInterfaceInteractionAction({
         request,
         response,
         type: c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS,
       }),
-      pU.createSetCustomFieldAction(
+      createSetCustomFieldAction(
         c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE,
         response
       ),

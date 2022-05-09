@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.js'
 import constants from '../../src/config/constants.js'
-const iTSetUp = require('./integration-test-set-up')
+import { initPaymentWithCart } from './integration-test-set-up.js'
 
 describe('::make-payment with multiple adyen accounts use case::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
@@ -45,7 +45,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
       'when makePayment custom field and the addCommercetoolsLineItems set to true ' +
       'then should calculate and lineItems to the makePaymentRequest',
     async () => {
-      const payment = await iTSetUp.initPaymentWithCart({
+      const payment = await initPaymentWithCart({
         ctpClient,
         adyenMerchantAccount: adyenMerchantAccount1,
         commercetoolsProjectKey,

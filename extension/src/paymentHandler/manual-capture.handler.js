@@ -1,4 +1,10 @@
-import pU from './payment-utils.js'
+import {
+  getChargeTransactionInitial,
+  getAuthorizationTransactionSuccess,
+  createAddInterfaceInteractionAction,
+  createChangeTransactionStateAction,
+  createChangeTransactionInteractionId,
+} from './payment-utils.js'
 import componentService from '../service/web-component-service.js'
 import constants from '../config/constants.js'
 
@@ -6,9 +12,9 @@ const { manualCapture } = componentService
 const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
 
 async function execute(paymentObject) {
-  const chargeInitialTransaction = pU.getChargeTransactionInitial(paymentObject)
+  const chargeInitialTransaction = getChargeTransactionInitial(paymentObject)
   const authorizationSuccessTransaction =
-    pU.getAuthorizationTransactionSuccess(paymentObject)
+    getAuthorizationTransactionSuccess(paymentObject)
   const manualCaptureRequestObj = {
     modificationAmount: {
       value: chargeInitialTransaction.amount.centAmount,
@@ -27,7 +33,7 @@ async function execute(paymentObject) {
   )
 
   const actions = [
-    pU.createAddInterfaceInteractionAction({
+    createAddInterfaceInteractionAction({
       request,
       response,
       type: CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
@@ -35,13 +41,10 @@ async function execute(paymentObject) {
   ]
   if (!response.errorCode && response.pspReference) {
     actions.push(
-      pU.createChangeTransactionStateAction(
-        chargeInitialTransaction.id,
-        'Pending'
-      )
+      createChangeTransactionStateAction(chargeInitialTransaction.id, 'Pending')
     )
     actions.push(
-      pU.createChangeTransactionInteractionId(
+      createChangeTransactionInteractionId(
         chargeInitialTransaction.id,
         response.pspReference
       )

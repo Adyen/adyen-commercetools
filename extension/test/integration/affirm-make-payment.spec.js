@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.js'
-import iTSetUp from './integration-test-set-up.js'
+import { initCurrency, initPaymentWithCart } from './integration-test-set-up.js'
 
 describe('::affirmMakePayment with multiple projects use case::', () => {
   const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
@@ -19,11 +19,11 @@ describe('::affirmMakePayment with multiple projects use case::', () => {
     const ctpConfig2 = config.getCtpConfig(commercetoolsProjectKey2)
     ctpClientProject2 = ctpClientBuilder.get(ctpConfig2)
 
-    iTSetUp.initCurrency('USD')
+    initCurrency('USD')
   })
 
   afterEach(async () => {
-    iTSetUp.initCurrency('EUR')
+    initCurrency('EUR')
   })
 
   it(
@@ -55,7 +55,7 @@ describe('::affirmMakePayment with multiple projects use case::', () => {
     commercetoolsProjectKey,
     reference,
   }) {
-    const payment = await iTSetUp.initPaymentWithCart({
+    const payment = await initPaymentWithCart({
       ctpClient,
       adyenMerchantAccount,
       commercetoolsProjectKey,

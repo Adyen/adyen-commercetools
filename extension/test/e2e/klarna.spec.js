@@ -3,7 +3,11 @@ import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.js'
 import { routes } from '../../src/routes.js'
 import httpUtils from '../../src/utils.js'
-import pU from '../../src/paymentHandler/payment-utils.js'
+import {
+  createAddTransactionAction,
+  getLatestInterfaceInteraction,
+  getChargeTransactionPending,
+} from '../../src/paymentHandler/payment-utils.js'
 import testUtils from './e2e-test-utils.js'
 import KlarnaMakePaymentFormPage from './pageObjects/KlarnaMakePaymentFormPage.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
@@ -199,7 +203,7 @@ describe('::klarnaPayment::', () => {
         payment.id,
         payment.version,
         [
-          pU.createAddTransactionAction({
+          createAddTransactionAction({
             type: 'Charge',
             state: 'Initial',
             currency: transaction.amount.currencyCode,
@@ -220,7 +224,7 @@ describe('::klarnaPayment::', () => {
   }
 
   function assertManualCaptureResponse(paymentAfterCapture) {
-    const interfaceInteraction = pU.getLatestInterfaceInteraction(
+    const interfaceInteraction = getLatestInterfaceInteraction(
       paymentAfterCapture.interfaceInteractions,
       CTP_INTERACTION_TYPE_MANUAL_CAPTURE
     )
@@ -237,7 +241,7 @@ describe('::klarnaPayment::', () => {
     )
 
     const chargePendingTransaction =
-      pU.getChargeTransactionPending(paymentAfterCapture)
+      getChargeTransactionPending(paymentAfterCapture)
     expect(chargePendingTransaction.interactionId).to.equal(
       manualCaptureResponse.pspReference
     )

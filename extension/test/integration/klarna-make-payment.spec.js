@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.js'
-import iTSetUp from './integration-test-set-up.js'
+import { initPaymentWithCart } from './integration-test-set-up.js'
 
 describe('::klarnaMakePayment with multiple projects use case::', () => {
   const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
@@ -49,7 +49,7 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
     commercetoolsProjectKey,
     reference,
   }) {
-    const payment = await iTSetUp.initPaymentWithCart({
+    const payment = await initPaymentWithCart({
       ctpClient,
       adyenMerchantAccount,
       commercetoolsProjectKey,

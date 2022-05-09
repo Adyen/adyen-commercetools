@@ -1,4 +1,7 @@
-import pU from './payment-utils.js'
+import {
+  createAddInterfaceInteractionAction,
+  createSetCustomFieldAction,
+} from './payment-utils.js'
 import c from '../config/constants.js'
 import componentService from '../service/web-component-service.js'
 
@@ -15,15 +18,12 @@ async function execute(paymentObject) {
   )
   return {
     actions: [
-      pU.createAddInterfaceInteractionAction({
+      createAddInterfaceInteractionAction({
         request,
         response,
         type: c.CTP_INTERACTION_TYPE_GET_CARBON_OFFSET_COSTS,
       }),
-      pU.createSetCustomFieldAction(
-        c.CTP_CARBON_OFFSET_COSTS_RESPONSE,
-        response
-      ),
+      createSetCustomFieldAction(c.CTP_CARBON_OFFSET_COSTS_RESPONSE, response),
     ],
   }
 }

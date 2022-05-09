@@ -6,4 +6,4 @@ const routes = {
   '/health': healthController.processRequest,
 }
 
-export default { routes }
+export { routes }

@@ -1,4 +1,10 @@
-import pU from './payment-utils.js'
+import {
+  getAuthorizationTransactionSuccess,
+  createAddInterfaceInteractionAction,
+  getCancelAuthorizationTransactionInit,
+  createChangeTransactionStateAction,
+  createChangeTransactionInteractionId,
+} from './payment-utils.js'
 import componentService from '../service/web-component-service.js'
 import constants from '../config/constants.js'
 
@@ -7,7 +13,7 @@ const { cancelPayment } = componentService
 
 async function execute(paymentObject) {
   const authorizationTransaction =
-    pU.getAuthorizationTransactionSuccess(paymentObject)
+    getAuthorizationTransactionSuccess(paymentObject)
   // "originalReference: The original pspReference of the payment that you want to cancel.
   // This reference is returned in the response to your payment request, and in the AUTHORISATION notification."
   const cancelRequestObj = {
@@ -24,7 +30,7 @@ async function execute(paymentObject) {
     cancelRequestObj
   )
 
-  const addInterfaceInteractionAction = pU.createAddInterfaceInteractionAction({
+  const addInterfaceInteractionAction = createAddInterfaceInteractionAction({
     request,
     response,
     type: CTP_INTERACTION_TYPE_CANCEL_PAYMENT,
@@ -40,13 +46,12 @@ async function execute(paymentObject) {
 }
 
 function _createTransactionActions(paymentObject, pspReference) {
-  const cancelTransaction =
-    pU.getCancelAuthorizationTransactionInit(paymentObject)
+  const cancelTransaction = getCancelAuthorizationTransactionInit(paymentObject)
   const transactionId = cancelTransaction.id
 
   return [
-    pU.createChangeTransactionStateAction(transactionId, 'Pending'),
-    pU.createChangeTransactionInteractionId(transactionId, pspReference),
+    createChangeTransactionStateAction(transactionId, 'Pending'),
+    createChangeTransactionInteractionId(transactionId, pspReference),
   ]
 }
 

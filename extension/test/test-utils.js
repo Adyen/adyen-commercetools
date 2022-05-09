@@ -1,13 +1,11 @@
 import localtunnel from 'localtunnel'
-import serverBuilder from '../src/server.js'
-import routesJs from '../src/routes.js'
-import setup from '../src/setup.js'
+import { setupServer } from '../src/server.js'
+import { routes } from '../src/routes.js'
+import { setupExtensionResources } from '../src/setup.js'
 import config from '../src/config/config.js'
 
 global.window = {}
 global.navigator = {}
-const { setupExtensionResources } = setup
-const { routes } = routesJs
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -42,7 +40,7 @@ async function stopIT() {
 }
 
 function setupLocalServer() {
-  server = serverBuilder.setupServer(routes)
+  server = setupServer(routes)
   return new Promise((resolve) => {
     server.listen(port, async () => {
       resolve()

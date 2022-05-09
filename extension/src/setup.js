@@ -34,6 +34,6 @@ async function setupExtensionResources(apiExtensionBaseUrl) {
   )
 }
 
-export default {
+export {
   setupExtensionResources,
 }

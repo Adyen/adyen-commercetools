@@ -7,7 +7,12 @@ import manualCaptureHandler from './manual-capture.handler.js'
 import cancelHandler from './cancel-payment.handler.js'
 import refundHandler from './refund-payment.handler.js'
 import getCarbonOffsetCostsHandler from './get-carbon-offset-costs.handler.js'
-import pU from './payment-utils.js'
+import {
+  getChargeTransactionInitial,
+  getAuthorizationTransactionSuccess,
+  getCancelAuthorizationTransactionInit,
+  listRefundTransactionsInit,
+} from './payment-utils.js'
 import auth from '../validator/authentication.js'
 import errorMessages from '../validator/error-messages.js'
 import constants from '../config/constants.js'
@@ -19,11 +24,6 @@ const {
   PAYMENT_METHOD_TYPE_AFFIRM_METHODS,
   PAYMENT_METHODS_WITH_REQUIRED_LINE_ITEMS,
 } = constants
-const {
-  getChargeTransactionInitial,
-  getAuthorizationTransactionSuccess,
-  getCancelAuthorizationTransactionInit,
-} = pU
 
 async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
@@ -61,8 +61,8 @@ async function handlePayment(paymentObject, authToken) {
 
 function _isRefund(paymentObject) {
   return (
-    pU.listRefundTransactionsInit(paymentObject).length > 0 &&
-    pU.getAuthorizationTransactionSuccess(paymentObject)
+    listRefundTransactionsInit(paymentObject).length > 0 &&
+    getAuthorizationTransactionSuccess(paymentObject)
   )
 }
 

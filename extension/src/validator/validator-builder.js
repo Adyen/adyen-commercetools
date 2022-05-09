@@ -1,4 +1,8 @@
-import pU from '../paymentHandler/payment-utils.js'
+import {
+  isValidMetadata,
+  isValidJSON,
+  getLatestInterfaceInteraction,
+} from '../paymentHandler/payment-utils.js'
 import errorMessages from './error-messages.js'
 import c from '../config/constants.js'
 import auth from './authentication.js'
@@ -9,12 +13,10 @@ function withPayment(paymentObject) {
   return {
     validateMetadataFields() {
       if (!paymentObject.custom) return this
-      if (
-        !pU.isValidMetadata(paymentObject.custom.fields.commercetoolsProjectKey)
-      )
+      if (!isValidMetadata(paymentObject.custom.fields.commercetoolsProjectKey))
         errors.missingRequiredCtpProjectKey =
           errorMessages.MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
-      if (!pU.isValidMetadata(paymentObject.custom.fields.adyenMerchantAccount))
+      if (!isValidMetadata(paymentObject.custom.fields.adyenMerchantAccount))
         errors.missingRequiredAdyenMerchantAcc =
           errorMessages.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
       return this
@@ -31,22 +33,20 @@ function withPayment(paymentObject) {
     },
     validateRequestFields() {
       if (!paymentObject.custom) return this
-      if (!pU.isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
+      if (!isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
         errors.getPaymentMethodsRequest =
           errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
-      if (!pU.isValidJSON(paymentObject.custom.fields.makePaymentRequest))
+      if (!isValidJSON(paymentObject.custom.fields.makePaymentRequest))
         errors.makePaymentRequest =
           errorMessages.MAKE_PAYMENT_REQUEST_INVALID_JSON
       if (
-        !pU.isValidJSON(
+        !isValidJSON(
           paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
         )
       )
         errors.submitAdditionalPaymentDetailsRequest =
           errorMessages.SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
-      if (
-        !pU.isValidJSON(paymentObject.custom.fields.getCarbonOffsetCostsRequest)
-      )
+      if (!isValidJSON(paymentObject.custom.fields.getCarbonOffsetCostsRequest))
         errors.getCarbonOffsetCostsRequest =
           errorMessages.GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON
       return this
@@ -69,7 +69,7 @@ function withPayment(paymentObject) {
     validateAmountPlanned() {
       let amount
       const makePaymentRequestInterfaceInteraction =
-        pU.getLatestInterfaceInteraction(
+        getLatestInterfaceInteraction(
           paymentObject.interfaceInteractions,
           c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
         )

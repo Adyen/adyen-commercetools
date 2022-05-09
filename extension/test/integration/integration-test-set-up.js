@@ -300,7 +300,4 @@ async function initPaymentWithCart({
   })
 }
 
-export default {
-  initPaymentWithCart,
-  initCurrency,
-}
+export { initPaymentWithCart, initCurrency }

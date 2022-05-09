@@ -14,7 +14,7 @@
     "integration": "nyc mocha --experimental-json-modules --file ./test/initial-integration-test-set-up.js \"test/integration/**/*.spec.js\"",
     "e2e": "nyc mocha --file ./test/initial-integration-test-set-up.js \"test/e2e/**/*.spec.js\"",
     "start": "node ./src/init.js",
-    "lint": "eslint ./src/*.js ./test/*.js",
+    "lint": "eslint ./src ./test",
     "check": "npm run lint && prettier --check .",
     "doctoc": "doctoc . --github",
     "format": "prettier --write .",

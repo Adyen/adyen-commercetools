@@ -1,6 +1,10 @@
 import _ from 'lodash'
 import componentService from '../service/web-component-service.js'
-import pU from './payment-utils.js'
+import {
+  createAddInterfaceInteractionAction,
+  createSetCustomFieldAction,
+  createAddTransactionActionByResponse,
+} from './payment-utils.js'
 import c from '../config/constants.js'
 
 const { CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = c
@@ -28,18 +32,18 @@ async function execute(paymentObject) {
       submitAdditionalDetailsRequestObj
     )
     actions.push(
-      pU.createAddInterfaceInteractionAction({
+      createAddInterfaceInteractionAction({
         request,
         response,
         type: c.CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
       }),
-      pU.createSetCustomFieldAction(
+      createSetCustomFieldAction(
         c.CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE,
         response
       )
     )
 
-    const addTransactionAction = pU.createAddTransactionActionByResponse(
+    const addTransactionAction = createAddTransactionActionByResponse(
       paymentObject.amountPlanned.centAmount,
       paymentObject.amountPlanned.currencyCode,
       response
