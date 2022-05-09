@@ -32,6 +32,8 @@
     "no-underscore-dangle": "off",
     "dot-notation": "off",
     "import/extensions": "off",
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "import/no-named-as-default": "off",
+    "import/no-named-as-default-member": "off"
   }
 }

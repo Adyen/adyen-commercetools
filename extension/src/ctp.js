@@ -8,7 +8,9 @@ import { createQueueMiddleware } from '@commercetools/sdk-middleware-queue'
 import { createRequestBuilder } from '@commercetools/api-request-builder'
 import utils from './utils.js'
 
-const packageJson = await utils.getPackageJson()
+const packageJson = (async () => {
+  await utils.getPackageJson()
+})()
 
 const { merge } = lodash
 /**
