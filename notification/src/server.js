@@ -1,10 +1,10 @@
 import http from 'http'
 import url from 'url'
-import utils from './utils/commons'
-import routes from './routes'
-import logg from './utils/logger'
+import { sendResponse } from './utils/commons.js'
+import { routes } from './routes.js'
+import { getLogger } from './utils/logger.js'
 
-const logger = logg.getLogger()
+const logger = getLogger()
 
 function setupServer() {
   return http.createServer(async (request, response) => {
@@ -19,9 +19,9 @@ function setupServer() {
           err,
           `Unexpected error when processing URL ${JSON.stringify(parts)}`
         )
-        utils.sendResponse(response, 500)
+        sendResponse(response, 500)
       }
-    else utils.sendResponse(response, 404)
+    else sendResponse(response, 404)
   })
 }
 

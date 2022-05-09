@@ -1,18 +1,18 @@
 import { expect } from 'chai'
 import fetch from 'node-fetch'
-import ctpClientBuilder from '../../src/utils/ctp'
-import config from '../../src/config/config'
+import ctpClientBuilder from '../../src/utils/ctp.js'
+import config from '../../src/config/config.js'
 import {
   getNotificationURL,
   ensurePayment,
   createNotificationPayload,
-} from '../test-utils'
+} from '../test-utils.js'
 
 describe('::multitenancy::', () => {
   const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
-    config.getAllCtpProjectKeys()
+      config.getAllCtpProjectKeys()
   const [adyenMerchantAccount1, adyenMerchantAccount2] =
-    config.getAllAdyenMerchantAccounts()
+      config.getAllAdyenMerchantAccounts()
 
   let ctpClient1
   let ctpClient2
@@ -20,10 +20,10 @@ describe('::multitenancy::', () => {
 
   before(() => {
     ctpClient1 = ctpClientBuilder.get(
-      config.getCtpConfig(commercetoolsProjectKey1)
+        config.getCtpConfig(commercetoolsProjectKey1)
     )
     ctpClient2 = ctpClientBuilder.get(
-      config.getCtpConfig(commercetoolsProjectKey2)
+        config.getCtpConfig(commercetoolsProjectKey2)
     )
     notificationURL = getNotificationURL()
   })

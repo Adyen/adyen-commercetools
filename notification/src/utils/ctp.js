@@ -1,16 +1,12 @@
-const fetch = require('node-fetch')
-const { merge } = require('lodash')
-const { createClient } = require('@commercetools/sdk-client')
-const {
-  createAuthMiddlewareForClientCredentialsFlow,
-} = require('@commercetools/sdk-middleware-auth')
-const {
-  createUserAgentMiddleware,
-} = require('@commercetools/sdk-middleware-user-agent')
-const { createHttpMiddleware } = require('@commercetools/sdk-middleware-http')
-const { createQueueMiddleware } = require('@commercetools/sdk-middleware-queue')
-const { createRequestBuilder } = require('@commercetools/api-request-builder')
-const packageJson = require('../../package.json')
+import fetch from 'node-fetch'
+import { merge } from 'lodash'
+import { createClient } from '@commercetools/sdk-client'
+import { createAuthMiddlewareForClientCredentialsFlow } from '@commercetools/sdk-middleware-auth'
+import { createUserAgentMiddleware } from '@commercetools/sdk-middleware-user-agent'
+import { createHttpMiddleware } from '@commercetools/sdk-middleware-http'
+import { createQueueMiddleware } from '@commercetools/sdk-middleware-queue'
+import { createRequestBuilder } from '@commercetools/api-request-builder'
+import packageJson from '../../package.json'
 
 const tokenCache = {
   store: {},
@@ -140,6 +136,6 @@ function getRequestBuilder(projectKey) {
   return createRequestBuilder({ projectKey })
 }
 
-module.exports = {
+export default {
   get: (config) => setUpClient(config),
 }

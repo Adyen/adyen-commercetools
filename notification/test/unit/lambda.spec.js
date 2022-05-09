@@ -1,14 +1,15 @@
 import sinon from 'sinon'
 import chai from 'chai'
 import VError from 'verror'
-import { handler } from '../../index.lambda'
-import notificationHandler from '../../src/handler/notification/notification.handler'
-import logger from '../../src/utils/logger'
-import config from '../../src/config/config'
-import { getNotificationForTracking } from '../../src/utils/commons'
-import { buildMockErrorFromConcurrentModificaitonException } from '../test-utils'
 import chaiAsPromised from 'chai-as-promised'
+import { handler } from '../../index.lambda.js'
+import notificationHandler from '../../src/handler/notification/notification.handler.js'
+import { getLogger } from '../../src/utils/logger.js'
+import config from '../../src/config/config.js'
+import { getNotificationForTracking } from '../../src/utils/commons.js'
+import { buildMockErrorFromConcurrentModificaitonException } from '../test-utils.js'
 
+const logger = getLogger()
 const { expect, assert } = chai
 chai.use(chaiAsPromised)
 
@@ -67,11 +68,11 @@ describe('Lambda handler', () => {
   })
 
   it('throws and logs for concurrent modification exceptions', async () => {
-    const originalChildFn = logger.getLogger().child
+    const originalChildFn = logger.child
     try {
       const logSpy = sinon.spy()
-      logger.getLogger().error = logSpy
-      logger.getLogger().child = () => ({
+      logger.error = logSpy
+      logger.child = () => ({
         error: logSpy,
       })
 
@@ -93,16 +94,16 @@ describe('Lambda handler', () => {
         'Unexpected error when processing event'
       )
     } finally {
-      logger.getLogger().child = originalChildFn
+      logger.child = originalChildFn
     }
   })
 
   it('logs for unrecoverable and returns "accepted"', async () => {
-    const originalChildFn = logger.getLogger().child
+    const originalChildFn = logger.child
     try {
       const logSpy = sinon.spy()
-      logger.getLogger().error = logSpy
-      logger.getLogger().child = () => ({
+      logger.error = logSpy
+      logger.child = () => ({
         error: logSpy,
       })
 
@@ -121,14 +122,14 @@ describe('Lambda handler', () => {
         'Unexpected error when processing event'
       )
     } finally {
-      logger.getLogger().child = originalChildFn
+      logger.child = originalChildFn
     }
   })
 
   it('throws error if no notificationItems were received and logs properly', async () => {
     const logSpy = sinon.spy()
     sinon.stub(notificationHandler, 'processNotification').returns(undefined)
-    logger.getLogger().error = logSpy
+    logger.error = logSpy
 
     const error = new Error('No notification received.')
 

@@ -1,4 +1,4 @@
-import { startIT, stopIT } from './test-utils'
+import { startIT, stopIT } from './test-utils.js'
 
 before(async () => {
   await startIT()

@@ -1,11 +1,11 @@
 import { createSyncTypes } from '@commercetools/sync-actions'
 import { serializeError } from 'serialize-error'
-import logg from '../../utils/logger'
+import { getLogger } from '../../utils/logger.js'
+import config from '../config.js'
+import ctp from '../../utils/ctp.js'
 import interfaceInteractionType from '../../../resources/payment-interface-interaction-type.json'
-import config from '../config'
-import ctp from '../../utils/ctp'
 
-const mainLogger = logg.getLogger()
+const mainLogger = getLogger()
 
 async function ensureInterfaceInteractionCustomTypeForAllProjects() {
   const commercetoolsProjectKeys = config.getAllCtpProjectKeys()

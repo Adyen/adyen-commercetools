@@ -1,10 +1,10 @@
-import handler from './src/handler/notification/notification.handler'
-import logg from './src/utils/logger'
-import { getNotificationForTracking } from './src/utils/commons'
-import { getErrorCause, isRecoverableError } from './src/utils/error-utils'
-import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser'
+import notificationHandler from './src/handler/notification/notification.handler.js'
+import { getLogger } from './src/utils/logger.js'
+import { getNotificationForTracking } from './src/utils/commons.js'
+import { getErrorCause, isRecoverableError } from './src/utils/error-utils.js'
+import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser.js'
 
-const logger = logg.getLogger()
+const logger = getLogger()
 
 export const handler = async (event) => {
   // Reason for this check: if AWS API Gateway is used then event.body is provided as a string payload.
@@ -26,7 +26,7 @@ export const handler = async (event) => {
       const ctpProjectConfig = getCtpProjectConfig(notification)
       const adyenConfig = getAdyenConfig(notification)
 
-      await handler.processNotification(
+      await notificationHandler.processNotification(
         notification,
         adyenConfig.enableHmacSignature,
         ctpProjectConfig

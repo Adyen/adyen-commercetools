@@ -1,9 +1,7 @@
 import bunyan from 'bunyan'
-import config from '../config/config'
+import config from '../config/config.js'
 
-const { logLevel } = config
-
-logLevel.getModuleConfig()
+const { logLevel } = config.getModuleConfig
 
 let obj
 

@@ -1,12 +1,12 @@
 import _ from 'lodash'
 import { address } from 'ip'
 import { hmacValidator } from '@adyen/api-library'
-import config from '../src/config/config'
+import config from '../src/config/config.js'
+import { setupServer } from '../src/server.js'
+import { setupNotificationResources } from '../src/setup.js'
+import { startFakeExtension, stopFakeExtension } from './fake-extension-service.js'
 import concurrentModificationError from './resources/concurrent-modification-exception.json'
-import serverBuilder from '../src/server'
-import { setupNotificationResources } from '../src/setup'
 import payment from './resources/payment-draft.json'
-import { startFakeExtension, stopFakeExtension } from './fake-extension-service'
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -61,7 +61,7 @@ function getNotificationURL() {
 
 let server
 async function setupLocalServer(testServerPort = 8000) {
-  server = serverBuilder.setupServer()
+  server = setupServer()
   return new Promise((resolve) => {
     server.listen(testServerPort, async () => {
       resolve()

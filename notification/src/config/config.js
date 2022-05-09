@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash'
-import loadConfig from './config-loader'
+import { loadConfig } from './config-loader.js'
 
 let config
 
@@ -111,7 +111,7 @@ function loadAndValidateConfig() {
 
 loadAndValidateConfig()
 
-export {
+export default {
   getModuleConfig,
   getCtpConfig,
   getAdyenConfig,

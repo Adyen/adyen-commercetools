@@ -1,10 +1,10 @@
 import { expect } from 'chai'
-import { validateHmacSignature } from '../../src/utils/hmacValidator'
+import { validateHmacSignature } from '../../src/utils/hmacValidator.js'
 import {
   overrideAdyenConfig,
   restoreAdyenConfig,
   createNotificationPayload,
-} from '../test-utils'
+} from '../test-utils.js'
 
 describe('verify hmac signatures', () => {
   before(() => {

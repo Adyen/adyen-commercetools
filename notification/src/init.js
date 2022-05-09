@@ -1,9 +1,9 @@
-import serve from './server'
-import logg from './utils/logger'
-import config from './config/config'
+import { setupServer } from './server.js'
+import { getLogger } from './utils/logger.js'
+import config from './config/config.js'
 
-const server = serve.setupServer()
-const logger = logg.getLogger()
+const server = setupServer()
+const logger = getLogger()
 
 const moduleConfig = config.getModuleConfig()
 

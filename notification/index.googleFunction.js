@@ -1,11 +1,10 @@
-import handler from './src/handler/notification/notification.handler'
-import logg from './src/utils/logger'
-import { getNotificationForTracking } from './src/utils/commons'
-import { getErrorCause, isRecoverableError } from './src/utils/error-utils'
+import handler from './src/handler/notification/notification.handler.js'
+import { getLogger } from './src/utils/logger.js'
+import { getNotificationForTracking } from './src/utils/commons.js'
+import { getErrorCause, isRecoverableError } from './src/utils/error-utils.js'
+import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser.js'
 
-import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser'
-
-const logger = logg.getLogger()
+const logger = getLogger()
 
 export const notificationTrigger = async (request, response) => {
   const { notificationItems } = request.body

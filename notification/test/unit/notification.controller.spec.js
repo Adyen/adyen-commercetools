@@ -2,16 +2,16 @@ import _ from 'lodash'
 import sinon from 'sinon'
 import { cloneDeep } from 'lodash'
 import { expect } from 'chai'
-
-import config from '../../src/config/config'
-import notificationController from '../../src/api/notification/notification.controller'
-import httpUtils from '../../src/utils/commons'
-import logger from '../../src/utils/logger'
-import ctpClientMock from './ctp-client-mock'
-import ctp from '../../src/utils/ctp'
+import config from '../../src/config/config.js'
+import notificationController from '../../src/api/notification/notification.controller.js'
+import { collectRequestData } from '../../src/utils/commons.js'
+import { getLogger } from '../../src/utils/logger.js'
+import ctpClientMock from './ctp-client-mock.js'
+import ctp from '../../src/utils/ctp.js'
+import { buildMockErrorFromConcurrentModificaitonException } from '../test-utils.js'
 import paymentMock from '../resources/payment-credit-card.json'
-import { buildMockErrorFromConcurrentModificaitonException } from '../test-utils'
 
+const logger = getLogger()
 const sandbox = sinon.createSandbox()
 describe('notification controller', () => {
   const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
@@ -47,13 +47,13 @@ describe('notification controller', () => {
   let logSpy
 
   before(() => {
-    originalCollectRequestDataFn = httpUtils.collectRequestData
-    originalLogErrorFn = logger.getLogger().error
+    originalCollectRequestDataFn = collectRequestData
+    originalLogErrorFn = logger.error
   })
 
   afterEach(() => {
-    httpUtils.collectRequestData = originalCollectRequestDataFn
-    logger.getLogger().error = originalLogErrorFn
+    collectRequestData = originalCollectRequestDataFn
+    logger.error = originalLogErrorFn
     module.exports = httpUtils
     sandbox.restore()
   })
@@ -73,11 +73,11 @@ describe('notification controller', () => {
       const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
       const responseEndSpy = sandbox.spy(responseMock, 'end')
       const notificationJson = _.cloneDeep(mockNotificationJson)
-      httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
+      collectRequestData = () => JSON.stringify(notificationJson)
       module.exports = httpUtils
 
       logSpy = sinon.spy()
-      logger.getLogger().error = logSpy
+      logger.error = logSpy
 
       // test:
       await notificationController.handleNotification(requestMock, responseMock)
@@ -113,7 +113,7 @@ describe('notification controller', () => {
       }
     notificationJson.notificationItems[0].NotificationRequestItem.merchantAccountCode =
       'nonExistingMerchantAccount'
-    httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
+    collectRequestData = () => JSON.stringify(notificationJson)
     module.exports = httpUtils
 
     const configGetCtpConfigSpy = sandbox
@@ -123,7 +123,7 @@ describe('notification controller', () => {
     module.exports = config
 
     logSpy = sinon.spy()
-    logger.getLogger().error = logSpy
+    logger.error = logSpy
 
     // test:
     await notificationController.handleNotification(requestMock, responseMock)
@@ -156,11 +156,11 @@ describe('notification controller', () => {
       {
         'metadata.ctProjectKey': 'nonExistingCtpProjectKey',
       }
-    httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
+    collectRequestData = () => JSON.stringify(notificationJson)
     module.exports = httpUtils
 
     logSpy = sinon.spy()
-    logger.getLogger().error = logSpy
+    logger.error = logSpy
 
     // test:
     await notificationController.handleNotification(requestMock, responseMock)
@@ -207,11 +207,11 @@ describe('notification controller', () => {
       const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
       const responseEndSpy = sandbox.spy(responseMock, 'end')
       const notificationJson = mockNotificationJson
-      httpUtils.collectRequestData = () => JSON.stringify(notificationJson)
+      collectRequestData = () => JSON.stringify(notificationJson)
       module.exports = httpUtils
 
       logSpy = sinon.spy()
-      logger.getLogger().error = logSpy
+      logger.error = logSpy
 
       notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
         {

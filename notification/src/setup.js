@@ -1,8 +1,9 @@
-import config from './config/config'
-import logg from './utils/logger'
-import { ensureInterfaceInteractionCustomTypeForAllProjects } from './config/init/ensure-interface-interaction-custom-type'
+import config from './config/config.js'
+import { getLogger } from './utils/logger.js'
+import { ensureInterfaceInteractionCustomTypeForAllProjects } from
+      './config/init/ensure-interface-interaction-custom-type.js'
 
-const logger = logg.getLogger()
+const logger = getLogger()
 
 async function setupNotificationResources() {
   await ensureInterfaceInteractionCustomTypeForAllProjects()

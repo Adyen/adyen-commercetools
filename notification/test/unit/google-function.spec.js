@@ -1,13 +1,13 @@
 import sinon from 'sinon'
 import chai from 'chai'
 import VError from 'verror'
-import { notificationTrigger } from '../../index.googleFunction'
-import notificationHandler from '../../src/handler/notification/notification.handler'
-import logger from '../../src/utils/logger'
-import config from '../../src/config/config'
-import { getNotificationForTracking } from '../../src/utils/commons'
-import { buildMockErrorFromConcurrentModificaitonException } from '../test-utils'
 import chaiAsPromised from 'chai-as-promised'
+import { notificationTrigger } from '../../index.googleFunction.js'
+import notificationHandler from '../../src/handler/notification/notification.handler.js'
+import { getLogger } from '../../src/utils/logger.js'
+import config from '../../src/config/config.js'
+import { getNotificationForTracking } from '../../src/utils/commons.js'
+import { buildMockErrorFromConcurrentModificaitonException } from '../test-utils.js'
 
 const { expect } = chai
 chai.use(chaiAsPromised)
@@ -70,11 +70,11 @@ describe('Google Function handler', () => {
   })
 
   it('throws and logs for concurrent modification exceptions', async () => {
-    const originalChildFn = logger.getLogger().child
+    const originalChildFn = getLogger().child
     try {
       const logSpy = sinon.spy()
-      logger.getLogger().error = logSpy
-      logger.getLogger().child = () => ({
+      getLogger().error = logSpy
+      getLogger().child = () => ({
         error: logSpy,
       })
 
@@ -99,16 +99,16 @@ describe('Google Function handler', () => {
         'Unexpected exception occurred.'
       )
     } finally {
-      logger.getLogger().child = originalChildFn
+      getLogger().child = originalChildFn
     }
   })
 
   it('logs for unrecoverable and returns "accepted"', async () => {
-    const originalChildFn = logger.getLogger().child
+    const originalChildFn = getLogger().child
     try {
       const logSpy = sinon.spy()
-      logger.getLogger().error = logSpy
-      logger.getLogger().child = () => ({
+      getLogger().error = logSpy
+      getLogger().child = () => ({
         error: logSpy,
       })
 
@@ -128,7 +128,7 @@ describe('Google Function handler', () => {
         'Unexpected exception occurred.'
       )
     } finally {
-      logger.getLogger().child = originalChildFn
+      getLogger().child = originalChildFn
     }
   })
 })

@@ -1,14 +1,14 @@
 import _ from 'lodash'
 import { serializeError } from 'serialize-error'
 import VError from 'verror'
-import { validateHmacSignature } from '../../utils/hmacValidator'
+import { validateHmacSignature } from '../../utils/hmacValidator.js'
+import { getNotificationForTracking } from '../../utils/commons.js'
+import ctp from '../../utils/ctp.js'
+import config from '../../config/config.js'
+import { getLogger } from '../../utils/logger.js'
 import adyenEvents from '../../../resources/adyen-events.json'
-import { getNotificationForTracking } from '../../utils/commons'
-import ctp from '../../utils/ctp'
-import config from '../../config/config'
-import logg from '../../utils/logger'
 
-const mainLogger = logg.getLogger()
+const mainLogger = getLogger()
 
 async function processNotification(
   notification,
@@ -404,4 +404,4 @@ async function getPaymentByMerchantReference(merchantReference, ctpClient) {
   }
 }
 
-export { processNotification }
+export default { processNotification }

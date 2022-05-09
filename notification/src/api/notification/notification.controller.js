@@ -1,22 +1,24 @@
 import _ from 'lodash'
-import httpUtils from '../../utils/commons'
-import { isRecoverableError, getErrorCause } from '../../utils/error-utils'
+import {
+  sendResponse,
+  collectRequestData,
+  getNotificationForTracking,
+} from '../../utils/commons.js'
+import { isRecoverableError, getErrorCause } from '../../utils/error-utils.js'
+import notificationHandler from '../../handler/notification/notification.handler.js'
+import { getCtpProjectConfig, getAdyenConfig } from '../../utils/parser.js'
+import { getLogger } from '../../utils/logger.js'
 
-import { processNotification } from '../../handler/notification/notification.handler'
-import { getCtpProjectConfig, getAdyenConfig } from '../../utils/parser'
-
-import logg from '../../utils/logger'
-
-const logger = logg.getLogger()
+const logger = getLogger()
 
 async function handleNotification(request, response) {
   if (request.method !== 'POST') {
     logger.debug(
       `Received non-POST request: ${request.method}. The request will not be processed...`
     )
-    return httpUtils.sendResponse(response)
+    return sendResponse(response)
   }
-  const body = await httpUtils.collectRequestData(request)
+  const body = await collectRequestData(request)
   try {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
     for (const notification of notifications) {
@@ -24,7 +26,7 @@ async function handleNotification(request, response) {
       const ctpProjectConfig = getCtpProjectConfig(notification)
       const adyenConfig = getAdyenConfig(notification)
 
-      await processNotification(
+      await notificationHandler.processNotification(
         notification,
         adyenConfig.enableHmacSignature,
         ctpProjectConfig
@@ -36,13 +38,13 @@ async function handleNotification(request, response) {
     const cause = getErrorCause(err)
     logger.error(
       {
-        notification: httpUtils.getNotificationForTracking(notification),
+        notification: getNotificationForTracking(notification),
         cause,
       },
       'Unexpected exception occurred.'
     )
     if (isRecoverableError(err)) {
-      return httpUtils.sendResponse(response, 500)
+      return sendResponse(response, 500)
     }
     return sendAcceptedResponse(response)
   }
@@ -53,7 +55,7 @@ function sendAcceptedResponse(response) {
   // To ensure that your server is properly accepting notifications,
   // we require you to acknowledge every notification of any type with an [accepted] response.
 
-  return httpUtils.sendResponse(
+  return sendResponse(
     response,
     200,
     { 'Content-Type': 'application/json' },
@@ -61,4 +63,4 @@ function sendAcceptedResponse(response) {
   )
 }
 
-export { handleNotification }
+export default { handleNotification }

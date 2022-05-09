@@ -1,6 +1,5 @@
 import chai from 'chai'
-
-import { getNotificationForTracking } from '../../src/utils/commons'
+import { getNotificationForTracking } from '../../src/utils/commons.js'
 
 const { expect } = chai
 

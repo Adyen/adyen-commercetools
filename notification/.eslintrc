@@ -30,6 +30,8 @@
     "no-use-before-define": [ 2, "nofunc" ],
     "no-underscore-dangle": "off",
     "dot-notation": "off",
-    "default-param-last": "off"
+    "default-param-last": "off",
+    "import/extensions": "off",
+    "import/prefer-default-export": "off"
   }
 }

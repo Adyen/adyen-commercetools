@@ -2,19 +2,19 @@ import sinon from 'sinon'
 import VError from 'verror'
 import { expect } from 'chai'
 import { cloneDeep } from 'lodash'
-import config from '../../src/config/config'
-import notificationHandler from '../../src/handler/notification/notification.handler'
-import notifications from '../resources/notification.json'
-import ctpClientMock from './ctp-client-mock'
-import paymentMock from '../resources/payment-credit-card.json'
-import ctp from '../../src/utils/ctp'
+import config from '../../src/config/config.js'
+import notificationHandler from '../../src/handler/notification/notification.handler.js'
+import ctp from '../../src/utils/ctp.js'
+import ctpClientMock from './ctp-client-mock.js'
 import {
   overrideAdyenConfig,
   restoreAdyenConfig,
   buildMockErrorFromConcurrentModificaitonException,
-} from '../test-utils'
+} from '../test-utils.js'
+import paymentMock from '../resources/payment-credit-card.json'
+import notification from '../resources/notification.json'
 
-const notificationsMock = notifications.notificationItems
+const notificationsMock = notification.notificationItems
 const sandbox = sinon.createSandbox()
 
 describe('notification module', () => {

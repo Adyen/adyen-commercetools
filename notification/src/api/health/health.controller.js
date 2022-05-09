@@ -1,7 +1,7 @@
-import httpUtils from '../../utils/commons'
+import { sendResponse } from '../../utils/commons.js'
 
 function processRequest(request, response) {
-  httpUtils.sendResponse(response, 200)
+  sendResponse(response, 200)
 }
 
 export { processRequest }

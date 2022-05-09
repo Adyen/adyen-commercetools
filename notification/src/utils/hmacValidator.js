@@ -1,5 +1,5 @@
 import { hmacValidator } from '@adyen/api-library'
-import config from '../config/config'
+import config from '../config/config.js'
 
 /* eslint-disable new-cap */
 const validator = new hmacValidator()
