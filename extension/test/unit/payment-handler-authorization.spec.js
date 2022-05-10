@@ -4,10 +4,14 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 import paymentHandler from '../../src/paymentHandler/payment-handler.js'
 import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response.js'
-import ctpPayment from './fixtures/ctp-payment.json'
 import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.js'
 import errorMessage from '../../src/validator/error-messages.js'
 import config from '../../src/config/config.js'
+import utils from "../../src/utils";
+
+const ctpPayment = (async () => {
+    await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
+})()
 
 const { handlePayment } = paymentHandler
 
