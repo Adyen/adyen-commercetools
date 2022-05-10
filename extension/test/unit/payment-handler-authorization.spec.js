@@ -7,10 +7,10 @@ import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-de
 import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.js'
 import errorMessage from '../../src/validator/error-messages.js'
 import config from '../../src/config/config.js'
-import utils from "../../src/utils";
+import utils from '../../src/utils'
 
 const ctpPayment = (async () => {
-    await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
+  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
 })()
 
 const { handlePayment } = paymentHandler
