@@ -1,7 +1,11 @@
 import fetch from 'node-fetch'
 import { serializeError } from 'serialize-error'
 import config from '../config/config.js'
-import packageJson from '../../package.json'
+import utils from '../utils.js'
+
+const packageJson = (async () => {
+  await utils.readAndParseJsonFile('package.json')
+})()
 
 function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)

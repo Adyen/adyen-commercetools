@@ -56,14 +56,10 @@ function handleUnexpectedPaymentError(paymentObj, err) {
 async function readAndParseJsonFile(pathToJsonFileFromProjectRoot) {
   const currentFilePath = fileURLToPath(import.meta.url)
   const currentDirPath = path.dirname(currentFilePath)
-  const projectRoot = path.resolve(currentDirPath, '../..')
+  const projectRoot = path.resolve(currentDirPath, '..')
   const pathToFile = path.resolve(projectRoot, pathToJsonFileFromProjectRoot)
   const fileContent = await fs.readFile(pathToFile)
   return JSON.parse(fileContent)
-}
-
-async function getPackageJson() {
-  return readAndParseJsonFile('./package.json')
 }
 
 export default {
@@ -71,5 +67,5 @@ export default {
   sendResponse,
   getLogger,
   handleUnexpectedPaymentError,
-  getPackageJson,
+  readAndParseJsonFile,
 }

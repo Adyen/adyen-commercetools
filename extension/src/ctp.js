@@ -9,7 +9,7 @@ import { createRequestBuilder } from '@commercetools/api-request-builder'
 import utils from './utils.js'
 
 const packageJson = (async () => {
-  await utils.getPackageJson()
+  await utils.readAndParseJsonFile('package.json')
 })()
 
 const { merge } = lodash

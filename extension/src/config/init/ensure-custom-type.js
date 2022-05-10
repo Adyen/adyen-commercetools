@@ -1,8 +1,15 @@
 import { createSyncTypes } from '@commercetools/sync-actions'
 import { serializeError } from 'serialize-error'
 import utils from '../../utils.js'
-import paymentCustomType from '../../../resources/web-components-payment-type.json'
-import interfaceInteractionType from '../../../resources/payment-interface-interaction-type.json'
+
+const paymentCustomType = (async () => {
+  await utils.readAndParseJsonFile('resources/web-components-payment-type.json')
+})()
+const interfaceInteractionType = (async () => {
+  await utils.readAndParseJsonFile(
+    'resources/payment-interface-interaction-type.json'
+  )
+})()
 
 const mainLogger = utils.getLogger()
 

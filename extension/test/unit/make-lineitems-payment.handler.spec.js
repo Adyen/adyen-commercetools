@@ -4,9 +4,19 @@ import _ from 'lodash'
 import config from '../../src/config/config.js'
 import makeLineItemsPaymentHandler from '../../src/paymentHandler/make-lineitems-payment.handler.js'
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
-import ctpPayment from './fixtures/ctp-payment.json'
-import ctpCart from './fixtures/ctp-cart.json'
-import ctpCartWithCustomShippingMethod from './fixtures/ctp-cart-custom-shipping-method.json'
+import utils from '../../src/utils.js'
+
+const ctpPayment = (async () => {
+  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
+})()
+const ctpCart = (async () => {
+  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-cart.json')
+})()
+const ctpCartWithCustomShippingMethod = (async () => {
+  await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-cart-custom-shipping-method.json'
+  )
+})()
 
 describe('make-lineitems-payment::execute', () => {
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
