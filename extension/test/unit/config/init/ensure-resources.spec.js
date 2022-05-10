@@ -6,15 +6,15 @@ import utils from '../../../../src/utils.js'
 
 const webComponentsPaymentType = (async () => {
   await utils.readAndParseJsonFile('resources/web-components-payment-type.json')
-})()
+})
 const apiExtension = (async () => {
   await utils.readAndParseJsonFile('resources/api-extension.json')
-})()
+})
 const interfaceInteractionType = (async () => {
   await utils.readAndParseJsonFile(
     'resources/payment-interface-interaction-type.json'
   )
-})()
+})
 
 describe('Ensure resources', () => {
   const mockClient = {

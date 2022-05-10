@@ -12,7 +12,7 @@ import utils from '../../src/utils.js'
 
 const ctpPayment = (async () => {
   await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-})()
+})
 
 const { execute } = makePaymentHandler
 

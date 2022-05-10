@@ -6,15 +6,15 @@ import utils from '../../src/utils.js'
 
 const paymentCustomType = (async () => {
   await utils.readAndParseJsonFile('resources/web-components-payment-type.json')
-})()
+})
 const interfaceInteractionType = (async () => {
   await utils.readAndParseJsonFile(
     'resources/payment-interface-interaction-type.json'
   )
-})()
+})
 const apiExtensionTemplate = (async () => {
   await utils.readAndParseJsonFile('resources/api-extension.json')
-})()
+})
 
 describe('::ensure-resources::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()

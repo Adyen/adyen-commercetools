@@ -4,12 +4,12 @@ import utils from '../../utils.js'
 
 const paymentCustomType = (async () => {
   await utils.readAndParseJsonFile('resources/web-components-payment-type.json')
-})()
+})
 const interfaceInteractionType = (async () => {
   await utils.readAndParseJsonFile(
     'resources/payment-interface-interaction-type.json'
   )
-})()
+})
 
 const mainLogger = utils.getLogger()
 

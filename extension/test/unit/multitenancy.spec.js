@@ -1,11 +1,17 @@
 import { expect } from 'chai'
 import _ from 'lodash'
 import nock from 'nock'
-import ctpPayment from './fixtures/ctp-payment.json'
-import ctpCart from './fixtures/ctp-cart.json'
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
 import makeLineItemsPaymentHandler from '../../src/paymentHandler/make-lineitems-payment.handler.js'
 import config from '../../src/config/config.js'
+import utils from '../../src/utils.js'
+
+const ctpPayment = (async () => {
+    await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
+})
+const ctpCart = (async () => {
+    await utils.readAndParseJsonFile('test/unit/fixtures/ctp-cart.json')
+})
 
 describe('::Multitenancy::', () => {
   let adyenApiScope

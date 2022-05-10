@@ -1,10 +1,13 @@
 import _ from 'lodash'
 import sinon from 'sinon'
 import { expect } from 'chai'
-import ctpPayment from './fixtures/ctp-payment.json'
 import errorMessages from '../../src/validator/error-messages.js'
 import paymentController from '../../src/api/payment/payment.controller.js'
 import utils from '../../src/utils.js'
+
+const ctpPayment = (async () => {
+  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
+})
 
 describe('Payment controller', () => {
   describe('Validation', () => {

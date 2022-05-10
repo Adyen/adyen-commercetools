@@ -10,7 +10,7 @@ import utils from './utils.js'
 
 const packageJson = (async () => {
   await utils.readAndParseJsonFile('package.json')
-})()
+})
 
 const { merge } = lodash
 /**

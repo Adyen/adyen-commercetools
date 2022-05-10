@@ -3,10 +3,16 @@ import _ from 'lodash'
 import sinon from 'sinon'
 import { expect } from 'chai'
 import paymentHandler from '../../src/paymentHandler/payment-handler.js'
-import ctpPayment from './fixtures/ctp-payment.json'
 import config from '../../src/config/config.js'
-import ctpCart from './fixtures/ctp-cart.json'
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import utils from '../../src/utils.js'
+
+const ctpPayment = (async () => {
+    await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
+})
+const ctpCart = (async () => {
+    await utils.readAndParseJsonFile('test/unit/fixtures/ctp-cart.json')
+})
 
 const { handlePayment } = paymentHandler
 

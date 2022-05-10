@@ -8,15 +8,15 @@ import utils from '../../src/utils.js'
 
 const ctpPayment = (async () => {
   await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-})()
+})
 const ctpCart = (async () => {
   await utils.readAndParseJsonFile('test/unit/fixtures/ctp-cart.json')
-})()
+})
 const ctpCartWithCustomShippingMethod = (async () => {
   await utils.readAndParseJsonFile(
     'test/unit/fixtures/ctp-cart-custom-shipping-method.json'
   )
-})()
+})
 
 describe('make-lineitems-payment::execute', () => {
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000

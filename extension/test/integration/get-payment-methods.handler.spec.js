@@ -7,7 +7,7 @@ import utils from '../../src/utils.js'
 
 const packageJson = (async () => {
   await utils.readAndParseJsonFile('package.json')
-})()
+})
 
 describe('::getPaymentMethods::', () => {
   let ctpClient

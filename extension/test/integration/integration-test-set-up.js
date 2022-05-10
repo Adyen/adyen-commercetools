@@ -3,76 +3,76 @@ import utils from '../../src/utils.js'
 
 const ctpZone = (async () => {
   await utils.readAndParseJsonFile('test/integration/fixtures/ctp-zone.json')
-})()
+})
 const ctpTaxCategory = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-tax-category.json'
   )
-})()
+})
 const ctpShippingMethod = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-shipping-method.json'
   )
-})()
+})
 const ctpProductType = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-product-type.json'
   )
-})()
+})
 const ctpProduct = (async () => {
   await utils.readAndParseJsonFile('test/integration/fixtures/ctp-product.json')
-})()
+})
 const ctpPayment = (async () => {
   await utils.readAndParseJsonFile('test/integration/fixtures/ctp-payment.json')
-})()
+})
 const ctpProductUsd = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/usd/ctp-product.json'
   )
-})()
+})
 const ctpPaymentUsd = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/usd/ctp-payment.json'
   )
-})()
+})
 const ctpCartUsd = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/usd/ctp-cart.json'
   )
-})()
+})
 const ctpCart = (async () => {
   await utils.readAndParseJsonFile('test/integration/fixtures/ctp-cart.json')
-})()
+})
 const ctpCartDiscount = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-cart-discount.json'
   )
-})()
+})
 const ctpCartDiscountMultiBuy = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-cart-discount-multi-buy.json'
   )
-})()
+})
 const ctpCartDiscountShipping = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-cart-discount-shipping.json'
   )
-})()
+})
 const ctpDiscountCode = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-discount-code.json'
   )
-})()
+})
 const ctpDiscountCodeMultiBuy = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-discount-code-multi-buy.json'
   )
-})()
+})
 const ctpDiscountCodeShipping = (async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-discount-code-shipping.json'
   )
-})()
+})
 
 let currency = 'EUR'
 

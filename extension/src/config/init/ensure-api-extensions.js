@@ -4,7 +4,7 @@ import utils from '../../utils.js'
 
 const apiExtensionTemplate = (async () => {
   await utils.readAndParseJsonFile('resources/api-extension.json')
-})()
+})
 
 const mainLogger = utils.getLogger()
 
