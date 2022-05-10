@@ -9,9 +9,9 @@ import errorMessage from '../../src/validator/error-messages.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils'
 
-const ctpPayment = (async () => {
+const ctpPayment = async () => {
   await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-})
+}
 
 const { handlePayment } = paymentHandler
 

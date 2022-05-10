@@ -10,9 +10,9 @@ import paymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-
 import paymentValidationFailedResponse from './fixtures/adyen-make-payment-validation-failed-response.js'
 import utils from '../../src/utils.js'
 
-const ctpPayment = (async () => {
+const ctpPayment = async () => {
   await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-})
+}
 
 const { execute } = makePaymentHandler
 

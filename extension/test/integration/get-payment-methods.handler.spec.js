@@ -5,9 +5,9 @@ import c from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils.js'
 
-const packageJson = (async () => {
+const packageJson = async () => {
   await utils.readAndParseJsonFile('package.json')
-})
+}
 
 describe('::getPaymentMethods::', () => {
   let ctpClient

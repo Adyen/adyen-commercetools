@@ -1,78 +1,78 @@
 import _ from 'lodash'
 import utils from '../../src/utils.js'
 
-const ctpZone = (async () => {
+const ctpZone = async () => {
   await utils.readAndParseJsonFile('test/integration/fixtures/ctp-zone.json')
-})
-const ctpTaxCategory = (async () => {
+}
+const ctpTaxCategory = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-tax-category.json'
   )
-})
-const ctpShippingMethod = (async () => {
+}
+const ctpShippingMethod = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-shipping-method.json'
   )
-})
-const ctpProductType = (async () => {
+}
+const ctpProductType = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-product-type.json'
   )
-})
-const ctpProduct = (async () => {
+}
+const ctpProduct = async () => {
   await utils.readAndParseJsonFile('test/integration/fixtures/ctp-product.json')
-})
-const ctpPayment = (async () => {
+}
+const ctpPayment = async () => {
   await utils.readAndParseJsonFile('test/integration/fixtures/ctp-payment.json')
-})
-const ctpProductUsd = (async () => {
+}
+const ctpProductUsd = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/usd/ctp-product.json'
   )
-})
-const ctpPaymentUsd = (async () => {
+}
+const ctpPaymentUsd = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/usd/ctp-payment.json'
   )
-})
-const ctpCartUsd = (async () => {
+}
+const ctpCartUsd = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/usd/ctp-cart.json'
   )
-})
-const ctpCart = (async () => {
+}
+const ctpCart = async () => {
   await utils.readAndParseJsonFile('test/integration/fixtures/ctp-cart.json')
-})
-const ctpCartDiscount = (async () => {
+}
+const ctpCartDiscount = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-cart-discount.json'
   )
-})
-const ctpCartDiscountMultiBuy = (async () => {
+}
+const ctpCartDiscountMultiBuy = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-cart-discount-multi-buy.json'
   )
-})
-const ctpCartDiscountShipping = (async () => {
+}
+const ctpCartDiscountShipping = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-cart-discount-shipping.json'
   )
-})
-const ctpDiscountCode = (async () => {
+}
+const ctpDiscountCode = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-discount-code.json'
   )
-})
-const ctpDiscountCodeMultiBuy = (async () => {
+}
+const ctpDiscountCodeMultiBuy = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-discount-code-multi-buy.json'
   )
-})
-const ctpDiscountCodeShipping = (async () => {
+}
+const ctpDiscountCodeShipping = async () => {
   await utils.readAndParseJsonFile(
     'test/integration/fixtures/ctp-discount-code-shipping.json'
   )
-})
+}
 
 let currency = 'EUR'
 

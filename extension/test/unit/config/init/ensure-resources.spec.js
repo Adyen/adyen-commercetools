@@ -4,17 +4,17 @@ import _ from 'lodash'
 import { ensureResources } from '../../../../src/config/init/ensure-resources.js'
 import utils from '../../../../src/utils.js'
 
-const webComponentsPaymentType = (async () => {
+const webComponentsPaymentType = async () => {
   await utils.readAndParseJsonFile('resources/web-components-payment-type.json')
-})
-const apiExtension = (async () => {
+}
+const apiExtension = async () => {
   await utils.readAndParseJsonFile('resources/api-extension.json')
-})
-const interfaceInteractionType = (async () => {
+}
+const interfaceInteractionType = async () => {
   await utils.readAndParseJsonFile(
     'resources/payment-interface-interaction-type.json'
   )
-})
+}
 
 describe('Ensure resources', () => {
   const mockClient = {

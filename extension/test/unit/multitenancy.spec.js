@@ -6,12 +6,12 @@ import makeLineItemsPaymentHandler from '../../src/paymentHandler/make-lineitems
 import config from '../../src/config/config.js'
 import utils from '../../src/utils.js'
 
-const ctpPayment = (async () => {
-    await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-})
-const ctpCart = (async () => {
-    await utils.readAndParseJsonFile('test/unit/fixtures/ctp-cart.json')
-})
+const ctpPayment = async () => {
+  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
+}
+const ctpCart = async () => {
+  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-cart.json')
+}
 
 describe('::Multitenancy::', () => {
   let adyenApiScope

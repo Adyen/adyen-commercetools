@@ -9,9 +9,9 @@ import c from '../../src/config/constants.js'
 import errorMessage from '../../src/validator/error-messages.js'
 import utils from '../../src/utils.js'
 
-const ctpPayment = (async () => {
-    await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-})
+const ctpPayment = async () => {
+  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
+}
 
 describe('payment-handler::execute', () => {
   let scope

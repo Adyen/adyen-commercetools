@@ -6,17 +6,17 @@ import makeLineItemsPaymentHandler from '../../src/paymentHandler/make-lineitems
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
 import utils from '../../src/utils.js'
 
-const ctpPayment = (async () => {
+const ctpPayment = async () => {
   await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-})
-const ctpCart = (async () => {
+}
+const ctpCart = async () => {
   await utils.readAndParseJsonFile('test/unit/fixtures/ctp-cart.json')
-})
-const ctpCartWithCustomShippingMethod = (async () => {
+}
+const ctpCartWithCustomShippingMethod = async () => {
   await utils.readAndParseJsonFile(
     'test/unit/fixtures/ctp-cart-custom-shipping-method.json'
   )
-})
+}
 
 describe('make-lineitems-payment::execute', () => {
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000

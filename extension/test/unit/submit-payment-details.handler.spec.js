@@ -10,9 +10,9 @@ import config from '../../src/config/config.js'
 import c from '../../src/config/constants.js'
 import utils from '../../src/utils.js'
 
-const ctpPayment = (async () => {
-    await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-})
+const ctpPayment = async () => {
+  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
+}
 
 const { execute } = paymentDetailsHandler
 
