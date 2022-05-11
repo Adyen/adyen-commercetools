@@ -88,7 +88,6 @@ async function createCtpClient({
 
 async function setUpClient(config) {
   const ctpClient = await createCtpClient(config)
-  console.log(ctpClient)
   const customMethods = {
     get builder() {
       return getRequestBuilder(config.projectKey)
@@ -120,7 +119,6 @@ async function setUpClient(config) {
     },
 
     fetch(uri) {
-      // console.log(uri)
       return ctpClient.execute(this.buildRequestOptions(uri.build()))
     },
 

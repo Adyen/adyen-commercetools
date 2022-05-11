@@ -14,7 +14,9 @@ const { execute } = makePaymentHandler
 
 describe('make-payment::execute', async () => {
   let scope
-  const ctpPayment = await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
+  const ctpPayment = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-payment.json'
+  )
 
   /* eslint-disable max-len */
   const makePaymentRequest = {

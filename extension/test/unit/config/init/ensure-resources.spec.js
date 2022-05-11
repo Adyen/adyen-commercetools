@@ -6,10 +6,14 @@ import utils from '../../../../src/utils.js'
 
 describe('Ensure resources', async () => {
   const webComponentsPaymentType = await utils.readAndParseJsonFile(
-      'resources/web-components-payment-type.json')
-  const apiExtension = await utils.readAndParseJsonFile('resources/api-extension.json')
+    'resources/web-components-payment-type.json'
+  )
+  const apiExtension = await utils.readAndParseJsonFile(
+    'resources/api-extension.json'
+  )
   const interfaceInteractionType = await utils.readAndParseJsonFile(
-      'resources/payment-interface-interaction-type.json')
+    'resources/payment-interface-interaction-type.json'
+  )
   const mockClient = {
     get builder() {
       return {

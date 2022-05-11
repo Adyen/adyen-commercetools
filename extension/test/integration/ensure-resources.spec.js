@@ -14,7 +14,9 @@ describe('::ensure-resources::', () => {
   })
 
   it('should ensure types', async () => {
-    const apiExtensionTemplate = await utils.readAndParseJsonFile('resources/api-extension.json')
+    const apiExtensionTemplate = await utils.readAndParseJsonFile(
+      'resources/api-extension.json'
+    )
     const {
       body: {
         destination: { url },
@@ -100,8 +102,11 @@ describe('::ensure-resources::', () => {
 
   async function fetchTypes() {
     const interfaceInteractionType = await utils.readAndParseJsonFile(
-          'resources/payment-interface-interaction-type.json')
-    const paymentCustomType = await utils.readAndParseJsonFile('resources/web-components-payment-type.json')
+      'resources/payment-interface-interaction-type.json'
+    )
+    const paymentCustomType = await utils.readAndParseJsonFile(
+      'resources/web-components-payment-type.json'
+    )
     const {
       body: { results },
     } = await ctpClient.fetch(

@@ -10,7 +10,9 @@ async function ensureApiExtensions(
   ctpAdyenIntegrationBaseUrl,
   ctpAuthHeaderValue
 ) {
-  const apiExtensionTemplate = await utils.readAndParseJsonFile('resources/api-extension.json')
+  const apiExtensionTemplate = await utils.readAndParseJsonFile(
+    'resources/api-extension.json'
+  )
   try {
     const logger = mainLogger.child({
       commercetools_project_key: ctpProjectKey,

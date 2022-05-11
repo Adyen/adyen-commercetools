@@ -10,8 +10,12 @@ import utils from '../../src/utils.js'
 const { handlePayment } = paymentHandler
 
 describe('payment-handler-lineItems::execute', async () => {
-  const ctpPayment = await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-  const ctpCart = await utils.readAndParseJsonFile('test/unit/fixtures/ctp-cart.json')
+  const ctpPayment = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-payment.json'
+  )
+  const ctpCart = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-cart.json'
+  )
   let scope
 
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

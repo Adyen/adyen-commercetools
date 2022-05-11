@@ -13,8 +13,12 @@ describe('::Multitenancy::', async () => {
   const adyenMerchantAccount = `adyenMerchantAccount${
     Math.floor(Math.random() * 3) + 1
   }`
-  const ctpPayment = await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-  const ctpCart = await utils.readAndParseJsonFile('test/unit/fixtures/ctp-cart.json')
+  const ctpPayment = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-payment.json'
+  )
+  const ctpCart = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-cart.json'
+  )
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
