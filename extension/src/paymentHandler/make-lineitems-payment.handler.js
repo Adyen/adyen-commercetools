@@ -31,7 +31,7 @@ async function execute(paymentObject) {
 
 async function _fetchMatchingCart(paymentObject, ctpProjectKey) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
-  const ctpClient = ctpClientBuilder.get(ctpConfig)
+  const ctpClient = await ctpClientBuilder.get(ctpConfig)
   const { body } = await ctpClient.fetch(
     ctpClient.builder.carts
       .where(`paymentInfo(payments(id="${paymentObject.id}"))`)

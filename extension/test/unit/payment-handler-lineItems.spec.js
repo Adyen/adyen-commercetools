@@ -7,16 +7,11 @@ import config from '../../src/config/config.js'
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
 import utils from '../../src/utils.js'
 
-const ctpPayment = async () => {
-  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-}
-const ctpCart = async () => {
-  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-cart.json')
-}
-
 const { handlePayment } = paymentHandler
 
-describe('payment-handler-lineItems::execute', () => {
+describe('payment-handler-lineItems::execute', async () => {
+  const ctpPayment = await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
+  const ctpCart = await utils.readAndParseJsonFile('test/unit/fixtures/ctp-cart.json')
   let scope
 
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

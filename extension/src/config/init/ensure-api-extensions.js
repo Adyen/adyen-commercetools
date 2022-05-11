@@ -2,10 +2,6 @@ import _ from 'lodash'
 import { serializeError } from 'serialize-error'
 import utils from '../../utils.js'
 
-const apiExtensionTemplate = async () => {
-  await utils.readAndParseJsonFile('resources/api-extension.json')
-}
-
 const mainLogger = utils.getLogger()
 
 async function ensureApiExtensions(
@@ -14,6 +10,7 @@ async function ensureApiExtensions(
   ctpAdyenIntegrationBaseUrl,
   ctpAuthHeaderValue
 ) {
+  const apiExtensionTemplate = await utils.readAndParseJsonFile('resources/api-extension.json')
   try {
     const logger = mainLogger.child({
       commercetools_project_key: ctpProjectKey,

@@ -30,7 +30,7 @@ describe('::creditCardPayment::', () => {
       serveFile('./test/e2e/fixtures/make-payment-form.html', request, response)
     }
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
     browser = await initPuppeteerBrowser()
   })
 

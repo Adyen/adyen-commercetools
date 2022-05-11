@@ -4,28 +4,17 @@ import config from '../../src/config/config.js'
 import { ensureResources } from '../../src/config/init/ensure-resources.js'
 import utils from '../../src/utils.js'
 
-const paymentCustomType = async () => {
-  await utils.readAndParseJsonFile('resources/web-components-payment-type.json')
-}
-const interfaceInteractionType = async () => {
-  await utils.readAndParseJsonFile(
-    'resources/payment-interface-interaction-type.json'
-  )
-}
-const apiExtensionTemplate = async () => {
-  await utils.readAndParseJsonFile('resources/api-extension.json')
-}
-
 describe('::ensure-resources::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
   let ctpClient
 
   beforeEach(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
   })
 
   it('should ensure types', async () => {
+    const apiExtensionTemplate = await utils.readAndParseJsonFile('resources/api-extension.json')
     const {
       body: {
         destination: { url },
@@ -110,6 +99,9 @@ describe('::ensure-resources::', () => {
   }
 
   async function fetchTypes() {
+    const interfaceInteractionType = await utils.readAndParseJsonFile(
+          'resources/payment-interface-interaction-type.json')
+    const paymentCustomType = await utils.readAndParseJsonFile('resources/web-components-payment-type.json')
     const {
       body: { results },
     } = await ctpClient.fetch(

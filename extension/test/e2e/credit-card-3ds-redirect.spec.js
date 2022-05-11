@@ -58,7 +58,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
     }
 
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
     browser = await initPuppeteerBrowser()
   })
 

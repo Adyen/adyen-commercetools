@@ -17,7 +17,7 @@ describe('::refund::', () => {
 
   beforeEach(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
   })
 
   it(

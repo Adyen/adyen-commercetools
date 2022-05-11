@@ -3,28 +3,24 @@ import { serializeError } from 'serialize-error'
 import config from '../config/config.js'
 import utils from '../utils.js'
 
-const packageJson = async () => {
-  await utils.readAndParseJsonFile('package.json')
-}
-
-function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
+async function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/paymentMethods`,
     merchantAccount,
     adyenCredentials.apiKey,
-    extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj)
+    await extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj)
   )
 }
 
-function makePayment(
+async function makePayment(
   merchantAccount,
   commercetoolsProjectKey,
   makePaymentRequestObj
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(makePaymentRequestObj, commercetoolsProjectKey)
-  extendRequestObjWithApplicationInfo(makePaymentRequestObj)
+  await extendRequestObjWithApplicationInfo(makePaymentRequestObj)
   removeAddCommercetoolsLineItemsField(makePaymentRequestObj)
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/payments`,
@@ -109,7 +105,8 @@ function getCarbonOffsetCosts(merchantAccount, getCarbonOffsetCostsRequestObj) {
   )
 }
 
-function extendRequestObjWithApplicationInfo(requestObj) {
+async function extendRequestObjWithApplicationInfo(requestObj) {
+  const packageJson = await utils.readAndParseJsonFile('package.json')
   requestObj.applicationInfo = {
     merchantApplication: {
       name: packageJson.name,

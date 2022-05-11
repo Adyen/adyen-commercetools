@@ -10,13 +10,10 @@ import config from '../../src/config/config.js'
 import c from '../../src/config/constants.js'
 import utils from '../../src/utils.js'
 
-const ctpPayment = async () => {
-  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-}
-
 const { execute } = paymentDetailsHandler
 
-describe('submit-additional-payment-details::execute', () => {
+describe('submit-additional-payment-details::execute', async () => {
+  const ctpPayment = await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
   let scope
   /* eslint-disable max-len */
   const submitPaymentDetailsRequest = {

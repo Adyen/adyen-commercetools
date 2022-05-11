@@ -9,11 +9,8 @@ import c from '../../src/config/constants.js'
 import errorMessage from '../../src/validator/error-messages.js'
 import utils from '../../src/utils.js'
 
-const ctpPayment = async () => {
-  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-}
-
-describe('payment-handler::execute', () => {
+describe('payment-handler::execute', async () => {
+  const ctpPayment = await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
   let scope
   /* eslint-disable max-len */
   const submitPaymentDetailsRequest = {

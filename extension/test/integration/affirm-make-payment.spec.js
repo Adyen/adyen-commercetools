@@ -14,10 +14,10 @@ describe('::affirmMakePayment with multiple projects use case::', () => {
 
   beforeEach(async () => {
     const ctpConfig1 = config.getCtpConfig(commercetoolsProjectKey1)
-    ctpClientProject1 = ctpClientBuilder.get(ctpConfig1)
+    ctpClientProject1 = await ctpClientBuilder.get(ctpConfig1)
 
     const ctpConfig2 = config.getCtpConfig(commercetoolsProjectKey2)
-    ctpClientProject2 = ctpClientBuilder.get(ctpConfig2)
+    ctpClientProject2 = await ctpClientBuilder.get(ctpConfig2)
 
     initCurrency('USD')
   })

@@ -10,14 +10,11 @@ import paymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-
 import paymentValidationFailedResponse from './fixtures/adyen-make-payment-validation-failed-response.js'
 import utils from '../../src/utils.js'
 
-const ctpPayment = async () => {
-  await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
-}
-
 const { execute } = makePaymentHandler
 
-describe('make-payment::execute', () => {
+describe('make-payment::execute', async () => {
   let scope
+  const ctpPayment = await utils.readAndParseJsonFile('test/unit/fixtures/ctp-payment.json')
 
   /* eslint-disable max-len */
   const makePaymentRequest = {
