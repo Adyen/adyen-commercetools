@@ -1,10 +1,8 @@
-const nock = require('nock')
-const { expect } = require('chai')
-const c = require('../../src/config/constants')
-const {
-  execute,
-} = require('../../src/paymentHandler/get-carbon-offset-costs.handler')
-const config = require('../../src/config/config')
+import nock from 'nock'
+import { expect } from 'chai'
+import c from '../../src/config/constants.js'
+import getCarbonOffsetCostsHandler from '../../src/paymentHandler/get-carbon-offset-costs.handler.js'
+import config from '../../src/config/config.js'
 
 describe('get-carbon-offset-costs::execute::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
@@ -61,7 +59,7 @@ describe('get-carbon-offset-costs::execute::', () => {
 
     scope.post('/carbonOffsetCosts').reply(200, getCarbonOffsetCostsResponse)
 
-    const result = await execute(paymentObject)
+    const result = await getCarbonOffsetCostsHandler.execute(paymentObject)
 
     expect(result.actions.length).to.equal(2)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
@@ -95,7 +93,7 @@ describe('get-carbon-offset-costs::execute::', () => {
         .post('/carbonOffsetCosts')
         .reply(422, getCarbonOffsetCostsFailedResponse)
 
-      const result = await execute(paymentObject)
+      const result = await getCarbonOffsetCostsHandler.execute(paymentObject)
 
       expect(result.actions.length).to.equal(2)
       expect(result.actions[0].action).to.equal('addInterfaceInteraction')

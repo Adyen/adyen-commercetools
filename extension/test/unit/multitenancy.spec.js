@@ -1,26 +1,28 @@
-const { expect } = require('chai')
-const _ = require('lodash')
-const nock = require('nock')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const ctpCart = require('./fixtures/ctp-cart.json')
-const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
-const {
-  execute,
-} = require('../../src/paymentHandler/make-lineitems-payment.handler')
-const config = require('../../src/config/config')
+import { expect } from 'chai'
+import _ from 'lodash'
+import nock from 'nock'
+import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import makeLineItemsPaymentHandler from '../../src/paymentHandler/make-lineitems-payment.handler.js'
+import config from '../../src/config/config.js'
+import utils from '../../src/utils.js'
 
-describe('::Multitenancy::', () => {
+describe('::Multitenancy::', async () => {
   let adyenApiScope
   let ctpApiScope
   const ctpProjectKey = `ctpProjectKey${Math.floor(Math.random() * 3) + 1}`
   const adyenMerchantAccount = `adyenMerchantAccount${
     Math.floor(Math.random() * 3) + 1
   }`
+  const ctpPayment = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-payment.json'
+  )
+  const ctpCart = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-cart.json'
+  )
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     adyenApiScope = nock(`${adyenConfig.apiBaseUrl}`)
-    adyenApiScope.post('/payments').reply(200, paymentSuccessResponse)
   })
 
   it(
@@ -44,7 +46,9 @@ describe('::Multitenancy::', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await execute(ctpPaymentClone)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentClone
+      )
       const adyenRequest = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request

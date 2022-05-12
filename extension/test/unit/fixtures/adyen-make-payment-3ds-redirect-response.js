@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-module.exports = JSON.stringify({
+export default JSON.stringify({
   resultCode: 'RedirectShopper',
   action: {
     paymentData:

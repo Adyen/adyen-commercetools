@@ -1,19 +1,18 @@
-const ctpClientBuilder = require('../../src/ctp')
-const config = require('../../src/config/config')
-const { routes } = require('../../src/routes')
-const httpUtils = require('../../src/utils')
-
-const logger = httpUtils.getLogger()
-
-const {
+import ctpClientBuilder from '../../src/ctp.js'
+import config from '../../src/config/config.js'
+import { routes } from '../../src/routes.js'
+import httpUtils from '../../src/utils.js'
+import {
   assertPayment,
   createPayment,
   initPuppeteerBrowser,
   serveFile,
-} = require('./e2e-test-utils')
-const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
-const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
-const CreditCardRedirectPage = require('./pageObjects/CreditCard3dsRedirectPage')
+} from './e2e-test-utils.js'
+import MakePaymentFormPage from './pageObjects/CreditCardMakePaymentFormPage.js'
+import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
+import CreditCardRedirectPage from './pageObjects/CreditCard3dsRedirectPage.js'
+
+const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/redirect-3ds2-3ds1/web-component
 describe('::creditCardPayment3dsRedirect::', () => {
@@ -59,7 +58,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
     }
 
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
     browser = await initPuppeteerBrowser()
   })
 

@@ -1,13 +1,11 @@
-const server = require('./server').setupServer()
-const logger = require('./utils').getLogger()
-const config = require('./config/config')
+import { setupServer } from './server.js'
+import logger from './utils.js'
+import config from './config/config.js'
 
-const moduleConfig = config.getModuleConfig()
+const port = config.getModuleConfig().port || 8080
 
-const port = moduleConfig.port || 8080
-
-if (moduleConfig.keepAliveTimeout !== undefined)
-  server.keepAliveTimeout = moduleConfig.keepAliveTimeout
-server.listen(port, async () => {
+if (config.getModuleConfig().keepAliveTimeout !== undefined)
+  setupServer.keepAliveTimeout = config.getModuleConfig().keepAliveTimeout
+setupServer.listen(port, async () => {
   logger.info(`Extension module is running at http://localhost:${port}`)
 })

@@ -3,6 +3,7 @@
   "version": "9.8.0",
   "description": "Integration between commercetools and Adyen payment service provider",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "check-coverage": "nyc check-coverage --lines 89",
     "test": "npm run check && npm run cover:unit && npm run cover:integration && npm run cover:e2e && npm run check-coverage",

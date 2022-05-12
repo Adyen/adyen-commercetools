@@ -1,14 +1,21 @@
-const nock = require('nock')
-const _ = require('lodash')
-const sinon = require('sinon')
-const { expect } = require('chai')
-const { handlePayment } = require('../../src/paymentHandler/payment-handler')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const config = require('../../src/config/config')
-const ctpCart = require('./fixtures/ctp-cart.json')
-const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
+import nock from 'nock'
+import _ from 'lodash'
+import sinon from 'sinon'
+import { expect } from 'chai'
+import paymentHandler from '../../src/paymentHandler/payment-handler.js'
+import config from '../../src/config/config.js'
+import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import utils from '../../src/utils.js'
 
-describe('payment-handler-lineItems::execute', () => {
+const { handlePayment } = paymentHandler
+
+describe('payment-handler-lineItems::execute', async () => {
+  const ctpPayment = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-payment.json'
+  )
+  const ctpCart = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-cart.json'
+  )
   let scope
 
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
@@ -123,7 +130,7 @@ describe('payment-handler-lineItems::execute', () => {
         addCommercetoolsLineItems: false,
       })
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request

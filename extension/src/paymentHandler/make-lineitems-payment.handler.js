@@ -1,7 +1,7 @@
-const _ = require('lodash')
-const ctpClientBuilder = require('../ctp')
-const makePaymentHandler = require('./make-payment.handler')
-const config = require('../config/config')
+import _ from 'lodash'
+import ctpClientBuilder from '../ctp.js'
+import makePaymentHandler from './make-payment.handler.js'
+import config from '../config/config.js'
 
 const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
 const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
@@ -31,7 +31,7 @@ async function execute(paymentObject) {
 
 async function _fetchMatchingCart(paymentObject, ctpProjectKey) {
   const ctpConfig = config.getCtpConfig(ctpProjectKey)
-  const ctpClient = ctpClientBuilder.get(ctpConfig)
+  const ctpClient = await ctpClientBuilder.get(ctpConfig)
   const { body } = await ctpClient.fetch(
     ctpClient.builder.carts
       .where(`paymentInfo(payments(id="${paymentObject.id}"))`)
@@ -130,4 +130,4 @@ function _localizeOrFallback(localizedString, locales, fallback) {
   return result
 }
 
-module.exports = { execute }
+export default { execute }

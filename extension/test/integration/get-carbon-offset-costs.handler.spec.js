@@ -1,8 +1,7 @@
-const { expect } = require('chai')
-
-const ctpClientBuilder = require('../../src/ctp')
-const c = require('../../src/config/constants')
-const config = require('../../src/config/config')
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp.js'
+import c from '../../src/config/constants.js'
+import config from '../../src/config/config.js'
 
 describe('get-carbon-offset-costs', () => {
   let ctpClient
@@ -11,7 +10,7 @@ describe('get-carbon-offset-costs', () => {
 
   before(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
   })
 
   it('should calculate delivery offset', async () => {

@@ -1,15 +1,19 @@
-const { expect } = require('chai')
-const sinon = require('sinon')
-const _ = require('lodash')
-const {
-  ensureResources,
-} = require('../../../../src/config/init/ensure-resources')
+import { expect } from 'chai'
+import sinon from 'sinon'
+import _ from 'lodash'
+import { ensureResources } from '../../../../src/config/init/ensure-resources.js'
+import utils from '../../../../src/utils.js'
 
-const webComponentsPaymentType = require('../../../../resources/web-components-payment-type.json')
-const apiExtension = require('../../../../resources/api-extension.json')
-const interfaceInteractionType = require('../../../../resources/payment-interface-interaction-type.json')
-
-describe('Ensure resources', () => {
+describe('Ensure resources', async () => {
+  const webComponentsPaymentType = await utils.readAndParseJsonFile(
+    'resources/web-components-payment-type.json'
+  )
+  const apiExtension = await utils.readAndParseJsonFile(
+    'resources/api-extension.json'
+  )
+  const interfaceInteractionType = await utils.readAndParseJsonFile(
+    'resources/payment-interface-interaction-type.json'
+  )
   const mockClient = {
     get builder() {
       return {

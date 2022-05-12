@@ -1,8 +1,10 @@
-const config = require('./config/config')
-const ctpClientBuilder = require('./ctp')
-const logger = require('./utils').getLogger()
-const { ensureResources } = require('./config/init/ensure-resources')
-const auth = require('./validator/authentication')
+import config from './config/config.js'
+import ctpClientBuilder from './ctp.js'
+import utils from './utils.js'
+import { ensureResources } from './config/init/ensure-resources.js'
+import { generateBasicAuthorizationHeaderValue } from './validator/authentication.js'
+
+const logger = utils.getLogger()
 
 async function setupExtensionResources(apiExtensionBaseUrl) {
   const moduleConfig = config.getModuleConfig()
@@ -12,12 +14,12 @@ async function setupExtensionResources(apiExtensionBaseUrl) {
   await Promise.all(
     ctpProjectKeys.map(async (ctpProjectKey) => {
       const ctpConfig = config.getCtpConfig(ctpProjectKey)
-      const ctpClient = ctpClientBuilder.get(ctpConfig)
+      const ctpClient = await ctpClientBuilder.get(ctpConfig)
       await ensureResources(
         ctpClient,
         ctpConfig.projectKey,
         apiExtensionBaseUrl || moduleConfig.apiExtensionBaseUrl,
-        auth.generateBasicAuthorizationHeaderValue(ctpConfig.projectKey)
+        generateBasicAuthorizationHeaderValue(ctpConfig.projectKey)
       )
     })
   )
@@ -32,6 +34,4 @@ async function setupExtensionResources(apiExtensionBaseUrl) {
   )
 }
 
-module.exports = {
-  setupExtensionResources,
-}
+export { setupExtensionResources }

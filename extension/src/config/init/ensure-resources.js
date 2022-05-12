@@ -1,8 +1,8 @@
-const {
+import {
   ensurePaymentCustomType,
   ensureInterfaceInteractionCustomType,
-} = require('./ensure-custom-type')
-const { ensureApiExtensions } = require('./ensure-api-extensions')
+} from './ensure-custom-type.js'
+import { ensureApiExtensions } from './ensure-api-extensions.js'
 
 function ensureCustomTypes(ctpClient, ctpProjectKey) {
   return Promise.all([
@@ -28,6 +28,4 @@ function ensureResources(
   ])
 }
 
-module.exports = {
-  ensureResources,
-}
+export { ensureResources }

@@ -1,3 +1,5 @@
+import rc from 'rc'
+
 function loadConfig() {
   if (process.env.ADYEN_INTEGRATION_CONFIG) {
     return loadFromAdyenIntegrationEnvVar()
@@ -22,7 +24,7 @@ function loadFromExternalFile() {
    */
   const appName = 'extension'
   /* eslint-disable global-require */
-  const configFromExternalFile = require('rc')(appName)
+  const configFromExternalFile = rc(appName)
   /* eslint-enable global-require */
   const hasConfig = configFromExternalFile?.configs?.length > 0
   if (!hasConfig) {
@@ -31,4 +33,4 @@ function loadFromExternalFile() {
   return configFromExternalFile
 }
 
-module.exports = loadConfig
+export { loadConfig }

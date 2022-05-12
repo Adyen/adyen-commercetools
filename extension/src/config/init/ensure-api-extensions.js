@@ -1,7 +1,6 @@
-const _ = require('lodash')
-const { serializeError } = require('serialize-error')
-const utils = require('../../utils')
-const apiExtensionTemplate = require('../../../resources/api-extension.json')
+import _ from 'lodash'
+import { serializeError } from 'serialize-error'
+import utils from '../../utils.js'
 
 const mainLogger = utils.getLogger()
 
@@ -11,6 +10,9 @@ async function ensureApiExtensions(
   ctpAdyenIntegrationBaseUrl,
   ctpAuthHeaderValue
 ) {
+  const apiExtensionTemplate = await utils.readAndParseJsonFile(
+    'resources/api-extension.json'
+  )
   try {
     const logger = mainLogger.child({
       commercetools_project_key: ctpProjectKey,
@@ -78,6 +80,4 @@ async function fetchExtensionByKey(ctpClient, key) {
   }
 }
 
-module.exports = {
-  ensureApiExtensions,
-}
+export { ensureApiExtensions }

@@ -1,16 +1,16 @@
-const ctpClientBuilder = require('../../src/ctp')
-const { routes } = require('../../src/routes')
-const config = require('../../src/config/config')
-const MakePaymentFormPage = require('./pageObjects/CreditCardMakePaymentFormPage')
-const httpUtils = require('../../src/utils')
-
-const logger = httpUtils.getLogger()
-const {
+import ctpClientBuilder from '../../src/ctp.js'
+import { routes } from '../../src/routes.js'
+import config from '../../src/config/config.js'
+import MakePaymentFormPage from './pageObjects/CreditCardMakePaymentFormPage.js'
+import httpUtils from '../../src/utils.js'
+import {
   assertPayment,
   createPayment,
   initPuppeteerBrowser,
   serveFile,
-} = require('./e2e-test-utils')
+} from './e2e-test-utils.js'
+
+const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/checkout/components-web
 describe('::creditCardPayment::', () => {
@@ -30,7 +30,7 @@ describe('::creditCardPayment::', () => {
       serveFile('./test/e2e/fixtures/make-payment-form.html', request, response)
     }
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
     browser = await initPuppeteerBrowser()
   })
 

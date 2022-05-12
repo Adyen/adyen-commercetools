@@ -1,13 +1,8 @@
-const { expect } = require('chai')
-
-const ctpClientBuilder = require('../../src/ctp')
-const config = require('../../src/config/config')
-
-const { ensureResources } = require('../../src/config/init/ensure-resources')
-
-const paymentCustomType = require('../../resources/web-components-payment-type.json')
-const interfaceInteractionType = require('../../resources/payment-interface-interaction-type.json')
-const apiExtensionTemplate = require('../../resources/api-extension.json')
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp.js'
+import config from '../../src/config/config.js'
+import { ensureResources } from '../../src/config/init/ensure-resources.js'
+import utils from '../../src/utils.js'
 
 describe('::ensure-resources::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
@@ -15,10 +10,13 @@ describe('::ensure-resources::', () => {
 
   beforeEach(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
   })
 
   it('should ensure types', async () => {
+    const apiExtensionTemplate = await utils.readAndParseJsonFile(
+      'resources/api-extension.json'
+    )
     const {
       body: {
         destination: { url },
@@ -103,6 +101,12 @@ describe('::ensure-resources::', () => {
   }
 
   async function fetchTypes() {
+    const interfaceInteractionType = await utils.readAndParseJsonFile(
+      'resources/payment-interface-interaction-type.json'
+    )
+    const paymentCustomType = await utils.readAndParseJsonFile(
+      'resources/web-components-payment-type.json'
+    )
     const {
       body: { results },
     } = await ctpClient.fetch(

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   CTP_ADYEN_INTEGRATION: 'ctp-adyen-integration',
   CTP_PAYMENT_INTERACTION_CUSTOM_TYPE_KEY:
     'ctp-adyen-integration-interaction-payment-type',

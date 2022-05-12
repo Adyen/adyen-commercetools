@@ -1,12 +1,13 @@
-const _ = require('lodash')
-const {
-  submitAdditionalPaymentDetails,
-} = require('../service/web-component-service')
-const pU = require('./payment-utils')
-const c = require('../config/constants')
-const {
-  CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
-} = require('../config/constants')
+import _ from 'lodash'
+import { submitAdditionalPaymentDetails } from '../service/web-component-service.js'
+import {
+  createAddInterfaceInteractionAction,
+  createSetCustomFieldAction,
+  createAddTransactionActionByResponse,
+} from './payment-utils.js'
+import c from '../config/constants.js'
+
+const { CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = c
 
 async function execute(paymentObject) {
   const actions = []
@@ -30,18 +31,18 @@ async function execute(paymentObject) {
       submitAdditionalDetailsRequestObj
     )
     actions.push(
-      pU.createAddInterfaceInteractionAction({
+      createAddInterfaceInteractionAction({
         request,
         response,
         type: c.CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
       }),
-      pU.createSetCustomFieldAction(
+      createSetCustomFieldAction(
         c.CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE,
         response
       )
     )
 
-    const addTransactionAction = pU.createAddTransactionActionByResponse(
+    const addTransactionAction = createAddTransactionActionByResponse(
       paymentObject.amountPlanned.centAmount,
       paymentObject.amountPlanned.currencyCode,
       response
@@ -81,4 +82,4 @@ function _isNewRequest(
   return false
 }
 
-module.exports = { execute }
+export default { execute }
