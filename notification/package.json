@@ -1,6 +1,6 @@
 {
   "name": "commercetools-adyen-integration-notification",
-  "version": "9.7.0",
+  "version": "9.8.0",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "scripts": {
     "check-coverage": "nyc check-coverage --lines 83",
@@ -64,18 +64,18 @@
   "devDependencies": {
     "chai": "4.3.6",
     "chai-as-promised": "7.1.1",
-    "eslint": "8.14.0",
+    "eslint": "8.15.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
-    "husky": "7.0.4",
+    "husky": "8.0.0",
     "ip": "1.1.5",
     "lint-staged": "12.4.1",
     "mocha": "10.0.0",
     "nyc": "15.1.0",
     "p-map": "5.3.0",
     "prettier": "2.6.2",
-    "sinon": "13.0.2",
+    "sinon": "14.0.0",
     "localtunnel": "2.0.2"
   },
   "husky": {

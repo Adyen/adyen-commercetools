@@ -29,6 +29,7 @@ describe('Google Function handler', () => {
         },
       ],
     },
+    url: '',
   }
 
   const mockResponse = {
