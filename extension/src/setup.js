@@ -1,10 +1,10 @@
 import config from './config/config.js'
 import ctpClientBuilder from './ctp.js'
-import logger from './utils.js'
+import utils from './utils.js'
 import { ensureResources } from './config/init/ensure-resources.js'
 import { generateBasicAuthorizationHeaderValue } from './validator/authentication.js'
 
-logger.getLogger()
+const logger = utils.getLogger()
 
 async function setupExtensionResources(apiExtensionBaseUrl) {
   const moduleConfig = config.getModuleConfig()
