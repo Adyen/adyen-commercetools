@@ -23,7 +23,6 @@ describe('::Multitenancy::', async () => {
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     adyenApiScope = nock(`${adyenConfig.apiBaseUrl}`)
-    adyenApiScope.post('/payments').reply(200, paymentSuccessResponse)
   })
 
   it(

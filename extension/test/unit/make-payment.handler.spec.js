@@ -14,8 +14,9 @@ const { execute } = makePaymentHandler
 
 describe('make-payment::execute', async () => {
   let scope
+
   const ctpPayment = await utils.readAndParseJsonFile(
-    'test/unit/fixtures/ctp-payment.json'
+      'test/unit/fixtures/ctp-payment.json'
   )
 
   /* eslint-disable max-len */
@@ -57,6 +58,10 @@ describe('make-payment::execute', async () => {
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     scope = nock(`${adyenConfig.apiBaseUrl}`)
+  })
+
+  afterEach(() => {
+      nock.cleanAll()
   })
 
   it(
