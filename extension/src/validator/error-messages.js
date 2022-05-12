@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   GET_PAYMENT_METHODS_REQUEST_INVALID_JSON:
     'getPaymentMethodsRequest does not contain valid JSON.',
   MAKE_PAYMENT_REQUEST_INVALID_JSON:

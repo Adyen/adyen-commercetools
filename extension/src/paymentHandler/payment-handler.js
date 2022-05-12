@@ -1,34 +1,35 @@
-const ValidatorBuilder = require('../validator/validator-builder')
-const getPaymentMethodsHandler = require('./get-payment-methods.handler')
-const makePaymentHandler = require('./make-payment.handler')
-const makeLineitemsPaymentHandler = require('./make-lineitems-payment.handler')
-const submitPaymentDetailsHandler = require('./submit-payment-details.handler')
-const manualCaptureHandler = require('./manual-capture.handler')
-const cancelHandler = require('./cancel-payment.handler')
-const refundHandler = require('./refund-payment.handler')
-const getCarbonOffsetCostsHandler = require('./get-carbon-offset-costs.handler')
-const pU = require('./payment-utils')
-const auth = require('../validator/authentication')
-const errorMessages = require('../validator/error-messages')
-const config = require('../config/config')
+import { withPayment } from '../validator/validator-builder.js'
+import getPaymentMethodsHandler from './get-payment-methods.handler.js'
+import execute from './make-payment.handler.js'
+import makeLineitemsPaymentHandler from './make-lineitems-payment.handler.js'
+import submitPaymentDetailsHandler from './submit-payment-details.handler.js'
+import manualCaptureHandler from './manual-capture.handler.js'
+import cancelHandler from './cancel-payment.handler.js'
+import refundHandler from './refund-payment.handler.js'
+import getCarbonOffsetCostsHandler from './get-carbon-offset-costs.handler.js'
+import {
+  getChargeTransactionInitial,
+  getAuthorizationTransactionSuccess,
+  getCancelAuthorizationTransactionInit,
+  listRefundTransactionsInit,
+} from './payment-utils.js'
+import { isBasicAuthEnabled } from '../validator/authentication.js'
+import errorMessages from '../validator/error-messages.js'
+import constants from '../config/constants.js'
+import config from '../config/config.js'
 
 const {
   CTP_ADYEN_INTEGRATION,
   PAYMENT_METHOD_TYPE_KLARNA_METHODS,
   PAYMENT_METHOD_TYPE_AFFIRM_METHODS,
   PAYMENT_METHODS_WITH_REQUIRED_LINE_ITEMS,
-} = require('../config/constants')
-const {
-  getChargeTransactionInitial,
-  getAuthorizationTransactionSuccess,
-  getCancelAuthorizationTransactionInit,
-} = require('./payment-utils')
+} = constants
 
 async function handlePayment(paymentObject, authToken) {
   if (!_isAdyenPayment(paymentObject))
     // if it's not adyen payment, ignore the payment
     return { actions: [] }
-  if (auth.isBasicAuthEnabled() && !authToken) {
+  if (isBasicAuthEnabled() && !authToken) {
     return {
       errors: [
         {
@@ -60,8 +61,8 @@ async function handlePayment(paymentObject, authToken) {
 
 function _isRefund(paymentObject) {
   return (
-    pU.listRefundTransactionsInit(paymentObject).length > 0 &&
-    pU.getAuthorizationTransactionSuccess(paymentObject)
+    listRefundTransactionsInit(paymentObject).length > 0 &&
+    getAuthorizationTransactionSuccess(paymentObject)
   )
 }
 
@@ -93,7 +94,7 @@ function _getPaymentHandlers(paymentObject) {
     )
     if (_requiresLineItems(makePaymentRequestObj))
       handlers.push(makeLineitemsPaymentHandler)
-    else handlers.push(makePaymentHandler)
+    else handlers.push(execute)
   }
   if (
     paymentObject.custom.fields.makePaymentResponse &&
@@ -116,8 +117,8 @@ function _isAdyenPayment(paymentObject) {
 }
 
 function _validatePaymentRequest(paymentObject, authToken) {
-  const paymentValidator = ValidatorBuilder.withPayment(paymentObject)
-  if (!auth.isBasicAuthEnabled()) {
+  const paymentValidator = withPayment(paymentObject)
+  if (!isBasicAuthEnabled()) {
     paymentValidator
       .validateMetadataFields()
       .validateRequestFields()
@@ -218,4 +219,4 @@ function _isCancelPayment(paymentObject) {
   )
 }
 
-module.exports = { handlePayment }
+export default { handlePayment }

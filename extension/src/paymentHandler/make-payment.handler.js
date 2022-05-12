@@ -1,6 +1,12 @@
-const { makePayment } = require('../service/web-component-service')
-const pU = require('./payment-utils')
-const c = require('../config/constants')
+import {
+  createAddInterfaceInteractionAction,
+  createSetCustomFieldAction,
+  createSetMethodInfoMethodAction,
+  createSetMethodInfoNameAction,
+  createAddTransactionActionByResponse,
+} from './payment-utils.js'
+import c from '../config/constants.js'
+import { makePayment } from '../service/web-component-service.js'
 
 async function execute(paymentObject) {
   const makePaymentRequestObj = JSON.parse(
@@ -15,12 +21,12 @@ async function execute(paymentObject) {
     makePaymentRequestObj
   )
   const actions = [
-    pU.createAddInterfaceInteractionAction({
+    createAddInterfaceInteractionAction({
       request,
       response,
       type: c.CTP_INTERACTION_TYPE_MAKE_PAYMENT,
     }),
-    pU.createSetCustomFieldAction(
+    createSetCustomFieldAction(
       c.CTP_CUSTOM_FIELD_MAKE_PAYMENT_RESPONSE,
       response
     ),
@@ -28,8 +34,8 @@ async function execute(paymentObject) {
 
   const paymentMethod = request.paymentMethod?.type
   if (paymentMethod) {
-    actions.push(pU.createSetMethodInfoMethodAction(paymentMethod))
-    const action = pU.createSetMethodInfoNameAction(paymentMethod)
+    actions.push(createSetMethodInfoMethodAction(paymentMethod))
+    const action = createSetMethodInfoNameAction(paymentMethod)
     if (action) actions.push(action)
   }
 
@@ -44,7 +50,7 @@ async function execute(paymentObject) {
       key: reference,
     })
 
-  const addTransactionAction = pU.createAddTransactionActionByResponse(
+  const addTransactionAction = createAddTransactionActionByResponse(
     paymentObject.amountPlanned.centAmount,
     paymentObject.amountPlanned.currencyCode,
     response
@@ -57,4 +63,4 @@ async function execute(paymentObject) {
   }
 }
 
-module.exports = { execute }
+export default { execute }

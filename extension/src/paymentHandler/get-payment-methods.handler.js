@@ -1,6 +1,9 @@
-const pU = require('./payment-utils')
-const c = require('../config/constants')
-const { getPaymentMethods } = require('../service/web-component-service')
+import {
+  createAddInterfaceInteractionAction,
+  createSetCustomFieldAction,
+} from './payment-utils.js'
+import c from '../config/constants.js'
+import { getPaymentMethods } from '../service/web-component-service.js'
 
 async function execute(paymentObject) {
   const getPaymentMethodsRequestObj = JSON.parse(
@@ -13,12 +16,12 @@ async function execute(paymentObject) {
   )
   return {
     actions: [
-      pU.createAddInterfaceInteractionAction({
+      createAddInterfaceInteractionAction({
         request,
         response,
         type: c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS,
       }),
-      pU.createSetCustomFieldAction(
+      createSetCustomFieldAction(
         c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE,
         response
       ),
@@ -26,4 +29,4 @@ async function execute(paymentObject) {
   }
 }
 
-module.exports = { execute }
+export default { execute }

@@ -1,8 +1,7 @@
-const { expect } = require('chai')
-
-const sinon = require('sinon')
-const config = require('../../src/config/config')
-const auth = require('../../src/validator/authentication')
+import { expect } from 'chai'
+import sinon from 'sinon'
+import config from '../../src/config/config.js'
+import { generateBasicAuthorizationHeaderValue } from '../../src/validator/authentication.js'
 
 describe('Authentication unit test', () => {
   const ctpDummyConfig = {
@@ -20,7 +19,7 @@ describe('Authentication unit test', () => {
   it('if authentication object is found in config, it generates basic authorization header value', () => {
     const sandbox = sinon.createSandbox()
     sandbox.stub(config, 'getCtpConfig').returns(ctpDummyConfig)
-    const result = auth.generateBasicAuthorizationHeaderValue(
+    const result = generateBasicAuthorizationHeaderValue(
       ctpDummyConfig.projectKey
     )
     expect(result).to.equal('Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==')
@@ -31,7 +30,7 @@ describe('Authentication unit test', () => {
     ctpDummyConfig.authentication = undefined
     const sandbox = sinon.createSandbox()
     sandbox.stub(config, 'getCtpConfig').returns(ctpDummyConfig)
-    const result = auth.generateBasicAuthorizationHeaderValue(
+    const result = generateBasicAuthorizationHeaderValue(
       ctpDummyConfig.projectKey
     )
     expect(result).to.not.exist

@@ -1,11 +1,9 @@
-const { expect } = require('chai')
-const sinon = require('sinon')
-const fetch = require('node-fetch')
-const c = require('../../src/config/constants')
-const {
-  execute,
-} = require('../../src/paymentHandler/get-payment-methods.handler')
-const config = require('../../src/config/config')
+import { expect } from 'chai'
+import sinon from 'sinon'
+import fetch from 'node-fetch'
+import c from '../../src/config/constants.js'
+import getPaymentMethodsHandler from '../../src/paymentHandler/get-payment-methods.handler.js'
+import config from '../../src/config/config.js'
 
 describe('get-payment-methods::execute::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
@@ -60,7 +58,7 @@ describe('get-payment-methods::execute::', () => {
       .stub(fetch, 'Promise')
       .resolves({ json: () => adyenGetPaymentResponse })
 
-    const result = await execute(paymentObject)
+    const result = await getPaymentMethodsHandler.execute(paymentObject)
 
     expect(result.actions.length).to.equal(2)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
@@ -89,7 +87,7 @@ describe('get-payment-methods::execute::', () => {
       const errorMsg = 'unexpected exception'
       sinon.stub(fetch, 'Promise').rejects(errorMsg)
 
-      const result = await execute(paymentObject)
+      const result = await getPaymentMethodsHandler.execute(paymentObject)
 
       expect(result.actions.length).to.equal(2)
       expect(result.actions[0].action).to.equal('addInterfaceInteraction')

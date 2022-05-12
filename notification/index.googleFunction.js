@@ -1,10 +1,11 @@
+import url from 'url'
 import handler from './src/handler/notification/notification.handler.js'
 import { getLogger } from './src/utils/logger.js'
 import { getNotificationForTracking } from './src/utils/commons.js'
 import { getErrorCause, isRecoverableError } from './src/utils/error-utils.js'
 import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser.js'
 
-const logger = getLogger()
+const logger = getLogger
 
 export const notificationTrigger = async (request, response) => {
   const { notificationItems } = request.body
@@ -13,7 +14,8 @@ export const notificationTrigger = async (request, response) => {
   }
   try {
     for (const notification of notificationItems) {
-      const ctpProjectConfig = getCtpProjectConfig(notification)
+      const parts = url.parse(request.url)
+      const ctpProjectConfig = getCtpProjectConfig(notification, parts.path)
       const adyenConfig = getAdyenConfig(notification)
 
       await handler.processNotification(

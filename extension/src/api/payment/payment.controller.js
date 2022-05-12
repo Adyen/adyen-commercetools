@@ -1,7 +1,7 @@
-const { serializeError } = require('serialize-error')
-const httpUtils = require('../../utils')
-const auth = require('../../validator/authentication')
-const paymentHandler = require('../../paymentHandler/payment-handler')
+import { serializeError } from 'serialize-error'
+import httpUtils from '../../utils.js'
+import { getAuthorizationRequestHeader } from '../../validator/authentication.js'
+import paymentHandler from '../../paymentHandler/payment-handler.js'
 
 const logger = httpUtils.getLogger()
 
@@ -28,7 +28,7 @@ async function processRequest(request, response) {
 
   let paymentObject = {}
   try {
-    const authToken = auth.getAuthorizationRequestHeader(request)
+    const authToken = getAuthorizationRequestHeader(request)
     paymentObject = await _getPaymentObject(request)
     logger.debug('Received payment object', JSON.stringify(paymentObject))
     const paymentResult = await paymentHandler.handlePayment(
@@ -70,4 +70,4 @@ async function _getPaymentObject(request) {
   }
 }
 
-module.exports = { processRequest }
+export default { processRequest }

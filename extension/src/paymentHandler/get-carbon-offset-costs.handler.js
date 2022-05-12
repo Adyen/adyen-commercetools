@@ -1,6 +1,9 @@
-const pU = require('./payment-utils')
-const c = require('../config/constants')
-const { getCarbonOffsetCosts } = require('../service/web-component-service')
+import {
+  createAddInterfaceInteractionAction,
+  createSetCustomFieldAction,
+} from './payment-utils.js'
+import c from '../config/constants.js'
+import { getCarbonOffsetCosts } from '../service/web-component-service.js'
 
 async function execute(paymentObject) {
   const getCarbonOffsetCostsRequestObj = JSON.parse(
@@ -13,17 +16,14 @@ async function execute(paymentObject) {
   )
   return {
     actions: [
-      pU.createAddInterfaceInteractionAction({
+      createAddInterfaceInteractionAction({
         request,
         response,
         type: c.CTP_INTERACTION_TYPE_GET_CARBON_OFFSET_COSTS,
       }),
-      pU.createSetCustomFieldAction(
-        c.CTP_CARBON_OFFSET_COSTS_RESPONSE,
-        response
-      ),
+      createSetCustomFieldAction(c.CTP_CARBON_OFFSET_COSTS_RESPONSE, response),
     ],
   }
 }
 
-module.exports = { execute }
+export default { execute }

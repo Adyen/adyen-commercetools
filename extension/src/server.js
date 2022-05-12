@@ -1,11 +1,11 @@
-const http = require('http')
-const url = require('url')
-const utils = require('./utils')
-const { routes: defaultRoutes } = require('./routes')
+import http from 'http'
+import url from 'url'
+import utils from './utils.js'
+import { routes } from './routes.js'
 
 const logger = utils.getLogger()
 
-function setupServer(routes = defaultRoutes) {
+function setupServer() {
   return http.createServer(async (request, response) => {
     const parts = url.parse(request.url)
     const route = routes[parts.pathname]
@@ -24,4 +24,4 @@ function setupServer(routes = defaultRoutes) {
   })
 }
 
-module.exports = { setupServer }
+export { setupServer }

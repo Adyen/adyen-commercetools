@@ -65,6 +65,7 @@ describe('notification controller', () => {
       // prepare:
       const requestMock = {
         method: 'POST',
+        url: '/',
       }
       const responseMock = {
         writeHead: () => {},
@@ -98,6 +99,7 @@ describe('notification controller', () => {
     // prepare:
     const requestMock = {
       method: 'POST',
+      url: '/',
     }
     const responseMock = {
       writeHead: () => {},
@@ -144,6 +146,7 @@ describe('notification controller', () => {
     // prepare:
     const requestMock = {
       method: 'POST',
+      url: '/',
     }
     const responseMock = {
       writeHead: () => {},
@@ -185,6 +188,7 @@ describe('notification controller', () => {
       // prepare:
       const requestMock = {
         method: 'POST',
+        url: '/',
       }
       const responseMock = {
         writeHead: () => {},

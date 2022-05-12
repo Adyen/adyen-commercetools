@@ -1,19 +1,19 @@
-const { expect } = require('chai')
-const _ = require('lodash')
+import { expect } from 'chai'
+import _ from 'lodash'
+import ctpClientBuilder from '../../src/ctp.js'
+import c from '../../src/config/constants.js'
+import config from '../../src/config/config.js'
+import utils from '../../src/utils.js'
 
-const ctpClientBuilder = require('../../src/ctp')
-const c = require('../../src/config/constants')
-const config = require('../../src/config/config')
-const packageJson = require('../../package.json')
-
-describe('::getPaymentMethods::', () => {
+describe('::getPaymentMethods::', async () => {
+  const packageJson = await utils.readAndParseJsonFile('package.json')
   let ctpClient
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
   const [adyenMerchantAccount] = config.getAllAdyenMerchantAccounts()
 
   before(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
   })
 
   it(

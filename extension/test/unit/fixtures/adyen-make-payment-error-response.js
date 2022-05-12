@@ -1,4 +1,4 @@
-module.exports = JSON.stringify({
+export default JSON.stringify({
   additionalData: {
     cvcResult: '1 Matches',
     avsResult: '4 AVS not supported for this card type',

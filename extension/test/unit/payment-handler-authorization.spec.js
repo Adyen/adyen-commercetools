@@ -1,15 +1,20 @@
-const nock = require('nock')
-const _ = require('lodash')
-const sinon = require('sinon')
-const { expect } = require('chai')
-const { handlePayment } = require('../../src/paymentHandler/payment-handler')
-const submitPaymentDetailsChallengeRes = require('./fixtures/adyen-submit-payment-details-challenge-shopper-response')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
-const errorMessage = require('../../src/validator/error-messages')
-const config = require('../../src/config/config')
+import nock from 'nock'
+import _ from 'lodash'
+import sinon from 'sinon'
+import { expect } from 'chai'
+import paymentHandler from '../../src/paymentHandler/payment-handler.js'
+import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response.js'
+import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.js'
+import errorMessage from '../../src/validator/error-messages.js'
+import config from '../../src/config/config.js'
+import utils from '../../src/utils.js'
 
-describe('payment-handler-authorization::execute', () => {
+const { handlePayment } = paymentHandler
+
+describe('payment-handler-authorization::execute', async () => {
+  const ctpPayment = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-payment.json'
+  )
   let scope
   /* eslint-disable max-len */
   const submitPaymentDetailsRequest = {

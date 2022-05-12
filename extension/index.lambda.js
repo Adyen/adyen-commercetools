@@ -1,8 +1,8 @@
-const utils = require('./src/utils')
-const paymentHandler = require('./src/paymentHandler/payment-handler')
-const auth = require('./src/validator/authentication')
+import utils from './src/utils.js'
+import paymentHandler from './src/paymentHandler/payment-handler.js'
+import { getAuthorizationRequestHeader } from './src/validator/authentication.js'
 
-exports.handler = async (event) => {
+let handler = async (event) => {
   let paymentObj = {}
   try {
     const body = event.body ? JSON.parse(event.body) : event
@@ -18,7 +18,7 @@ exports.handler = async (event) => {
         ],
       }
 
-    const authToken = auth.getAuthorizationRequestHeader(event)
+    const authToken = getAuthorizationRequestHeader(event)
     const paymentResult = await paymentHandler.handlePayment(
       paymentObj,
       authToken
@@ -36,3 +36,5 @@ exports.handler = async (event) => {
     return errorObj
   }
 }
+
+export { handler }

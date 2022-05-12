@@ -1,17 +1,23 @@
-const nock = require('nock')
-const { expect } = require('chai')
-const _ = require('lodash')
-const config = require('../../src/config/config')
-const { execute } = require('../../src/paymentHandler/make-payment.handler')
-const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
-const paymentErrorResponse = require('./fixtures/adyen-make-payment-error-response')
-const paymentRefusedResponse = require('./fixtures/adyen-make-payment-refused-response')
-const paymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
-const paymentValidationFailedResponse = require('./fixtures/adyen-make-payment-validation-failed-response')
-const ctpPayment = require('./fixtures/ctp-payment.json')
+import nock from 'nock'
+import { expect } from 'chai'
+import _ from 'lodash'
+import config from '../../src/config/config.js'
+import makePaymentHandler from '../../src/paymentHandler/make-payment.handler.js'
+import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import paymentErrorResponse from './fixtures/adyen-make-payment-error-response.js'
+import paymentRefusedResponse from './fixtures/adyen-make-payment-refused-response.js'
+import paymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.js'
+import paymentValidationFailedResponse from './fixtures/adyen-make-payment-validation-failed-response.js'
+import utils from '../../src/utils.js'
 
-describe('make-payment::execute', () => {
+const { execute } = makePaymentHandler
+
+describe('make-payment::execute', async () => {
   let scope
+
+  const ctpPayment = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-payment.json'
+  )
 
   /* eslint-disable max-len */
   const makePaymentRequest = {
@@ -52,6 +58,10 @@ describe('make-payment::execute', () => {
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     scope = nock(`${adyenConfig.apiBaseUrl}`)
+  })
+
+  afterEach(() => {
+    nock.cleanAll()
   })
 
   it(

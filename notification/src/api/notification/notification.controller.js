@@ -1,15 +1,12 @@
 import _ from 'lodash'
-import {
-  sendResponse,
-  collectRequestData,
-  getNotificationForTracking,
-} from '../../utils/commons.js'
+import url from 'url'
+import { sendResponse, collectRequestData, getNotificationForTracking } from '../../utils/commons.js'
 import { isRecoverableError, getErrorCause } from '../../utils/error-utils.js'
 import notificationHandler from '../../handler/notification/notification.handler.js'
 import { getCtpProjectConfig, getAdyenConfig } from '../../utils/parser.js'
 import { getLogger } from '../../utils/logger.js'
 
-const logger = getLogger()
+const logger = getLogger
 
 async function handleNotification(request, response) {
   if (request.method !== 'POST') {
@@ -23,7 +20,8 @@ async function handleNotification(request, response) {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
     for (const notification of notifications) {
       logger.debug('Received notification', JSON.stringify(notification))
-      const ctpProjectConfig = getCtpProjectConfig(notification)
+      const parts = url.parse(request.url)
+      const ctpProjectConfig = getCtpProjectConfig(notification, parts.path)
       const adyenConfig = getAdyenConfig(notification)
 
       await notificationHandler.processNotification(
@@ -63,4 +61,4 @@ function sendAcceptedResponse(response) {
   )
 }
 
-export default { handleNotification }
+export { handleNotification }

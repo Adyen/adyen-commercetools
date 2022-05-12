@@ -1,19 +1,18 @@
-const ctpClientBuilder = require('../../src/ctp')
-const config = require('../../src/config/config')
-const { routes } = require('../../src/routes')
-const httpUtils = require('../../src/utils')
-
-const logger = httpUtils.getLogger()
-
-const {
+import ctpClientBuilder from '../../src/ctp.js'
+import config from '../../src/config/config.js'
+import { routes } from '../../src/routes.js'
+import httpUtils from '../../src/utils.js'
+import {
   assertPayment,
   createPayment,
   initPuppeteerBrowser,
   serveFile,
-} = require('./e2e-test-utils')
-const AffirmMakePaymentFormPage = require('./pageObjects/AffirmMakePaymentFormPage')
-const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
-const AffirmPage = require('./pageObjects/AffirmPage')
+} from './e2e-test-utils.js'
+import AffirmMakePaymentFormPage from './pageObjects/AffirmMakePaymentFormPage.js'
+import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
+import AffirmPage from './pageObjects/AffirmPage.js'
+
+const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/affirm/web-component#page-introduction
 describe('::affirmPayment::', () => {
@@ -51,7 +50,7 @@ describe('::affirmPayment::', () => {
       })
 
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
     browser = await initPuppeteerBrowser()
   })
 

@@ -1,13 +1,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { expect } = require('chai')
+import { expect } from 'chai'
 // eslint-disable-next-line import/no-extraneous-dependencies
-const puppeteer = require('puppeteer')
-const path = require('path')
-const fs = require('fs')
-const {
-  getLatestInterfaceInteraction,
-} = require('../../src/paymentHandler/payment-utils')
-const c = require('../../src/config/constants')
+import puppeteer from 'puppeteer'
+import path from 'path'
+import fs from 'fs'
+import { getLatestInterfaceInteraction } from '../../src/paymentHandler/payment-utils.js'
+import c from '../../src/config/constants.js'
 
 async function pasteValue(page, selector, value) {
   return page.evaluate(
@@ -136,7 +134,7 @@ function serveFile(pathName, req, res) {
   })
 }
 
-module.exports = {
+export {
   pasteValue,
   executeInAdyenIframe,
   assertPayment,

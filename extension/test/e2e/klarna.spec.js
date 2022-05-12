@@ -1,23 +1,26 @@
-const { expect } = require('chai')
-const ctpClientBuilder = require('../../src/ctp')
-const config = require('../../src/config/config')
-const { routes } = require('../../src/routes')
-const httpUtils = require('../../src/utils')
-
-const logger = httpUtils.getLogger()
-const pU = require('../../src/paymentHandler/payment-utils')
-const {
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp.js'
+import config from '../../src/config/config.js'
+import { routes } from '../../src/routes.js'
+import httpUtils from '../../src/utils.js'
+import {
+  createAddTransactionAction,
+  getLatestInterfaceInteraction,
+  getChargeTransactionPending,
+} from '../../src/paymentHandler/payment-utils.js'
+import {
   assertPayment,
   createPayment,
   initPuppeteerBrowser,
   serveFile,
-} = require('./e2e-test-utils')
-const KlarnaMakePaymentFormPage = require('./pageObjects/KlarnaMakePaymentFormPage')
-const RedirectPaymentFormPage = require('./pageObjects/RedirectPaymentFormPage')
-const KlarnaPage = require('./pageObjects/KlarnaPage')
-const {
-  CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
-} = require('../../src/config/constants')
+} from './e2e-test-utils.js'
+import KlarnaMakePaymentFormPage from './pageObjects/KlarnaMakePaymentFormPage.js'
+import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
+import KlarnaPage from './pageObjects/KlarnaPage.js'
+import constants from '../../src/config/constants.js'
+
+const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
+const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction
 describe('::klarnaPayment::', () => {
@@ -55,7 +58,7 @@ describe('::klarnaPayment::', () => {
       })
 
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
     browser = await initPuppeteerBrowser()
   })
 
@@ -203,7 +206,7 @@ describe('::klarnaPayment::', () => {
         payment.id,
         payment.version,
         [
-          pU.createAddTransactionAction({
+          createAddTransactionAction({
             type: 'Charge',
             state: 'Initial',
             currency: transaction.amount.currencyCode,
@@ -224,7 +227,7 @@ describe('::klarnaPayment::', () => {
   }
 
   function assertManualCaptureResponse(paymentAfterCapture) {
-    const interfaceInteraction = pU.getLatestInterfaceInteraction(
+    const interfaceInteraction = getLatestInterfaceInteraction(
       paymentAfterCapture.interfaceInteractions,
       CTP_INTERACTION_TYPE_MANUAL_CAPTURE
     )
@@ -241,7 +244,7 @@ describe('::klarnaPayment::', () => {
     )
 
     const chargePendingTransaction =
-      pU.getChargeTransactionPending(paymentAfterCapture)
+      getChargeTransactionPending(paymentAfterCapture)
     expect(chargePendingTransaction.interactionId).to.equal(
       manualCaptureResponse.pspReference
     )

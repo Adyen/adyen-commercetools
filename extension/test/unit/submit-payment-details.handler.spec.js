@@ -1,18 +1,21 @@
-const nock = require('nock')
-const _ = require('lodash')
-const { expect } = require('chai')
-const sinon = require('sinon')
-const submitPaymentDetailsSuccessResponse = require('./fixtures/adyen-submit-payment-details-success-response')
-const submitPaymentDetailsChallengeRes = require('./fixtures/adyen-submit-payment-details-challenge-shopper-response')
-const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
-const {
-  execute,
-} = require('../../src/paymentHandler/submit-payment-details.handler')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const config = require('../../src/config/config')
-const c = require('../../src/config/constants')
+import nock from 'nock'
+import _ from 'lodash'
+import { expect } from 'chai'
+import sinon from 'sinon'
+import submitPaymentDetailsSuccessResponse from './fixtures/adyen-submit-payment-details-success-response.js'
+import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response.js'
+import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.js'
+import paymentDetailsHandler from '../../src/paymentHandler/submit-payment-details.handler.js'
+import config from '../../src/config/config.js'
+import c from '../../src/config/constants.js'
+import utils from '../../src/utils.js'
 
-describe('submit-additional-payment-details::execute', () => {
+const { execute } = paymentDetailsHandler
+
+describe('submit-additional-payment-details::execute', async () => {
+  const ctpPayment = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-payment.json'
+  )
   let scope
   /* eslint-disable max-len */
   const submitPaymentDetailsRequest = {
@@ -242,6 +245,7 @@ describe('submit-additional-payment-details::execute', () => {
         basicAuth: false,
         keepAliveTimeout: 10,
       }
+
       const sandbox = sinon.createSandbox()
       sandbox.stub(config, 'getModuleConfig').returns(extensionDummyConfig)
 
@@ -287,6 +291,7 @@ describe('submit-additional-payment-details::execute', () => {
         basicAuth: false,
         keepAliveTimeout: 10,
       }
+
       const sandbox = sinon.createSandbox()
       sandbox.stub(config, 'getModuleConfig').returns(extensionDummyConfig)
 

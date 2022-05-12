@@ -1,9 +1,8 @@
-const { expect } = require('chai')
-
-const ctpClientBuilder = require('../../src/ctp')
-const config = require('../../src/config/config')
-const constants = require('../../src/config/constants')
-const iTSetUp = require('./integration-test-set-up')
+import { expect } from 'chai'
+import ctpClientBuilder from '../../src/ctp.js'
+import config from '../../src/config/config.js'
+import constants from '../../src/config/constants.js'
+import { initPaymentWithCart } from './integration-test-set-up.js'
 
 describe('::make-payment with multiple adyen accounts use case::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
@@ -14,7 +13,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
 
   beforeEach(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
-    ctpClient = ctpClientBuilder.get(ctpConfig)
+    ctpClient = await ctpClientBuilder.get(ctpConfig)
   })
 
   it(
@@ -46,7 +45,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
       'when makePayment custom field and the addCommercetoolsLineItems set to true ' +
       'then should calculate and lineItems to the makePaymentRequest',
     async () => {
-      const payment = await iTSetUp.initPaymentWithCart({
+      const payment = await initPaymentWithCart({
         ctpClient,
         adyenMerchantAccount: adyenMerchantAccount1,
         commercetoolsProjectKey,

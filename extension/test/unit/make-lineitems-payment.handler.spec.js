@@ -1,16 +1,21 @@
-const nock = require('nock')
-const { expect } = require('chai')
-const _ = require('lodash')
-const config = require('../../src/config/config')
-const {
-  execute,
-} = require('../../src/paymentHandler/make-lineitems-payment.handler')
-const paymentSuccessResponse = require('./fixtures/adyen-make-payment-success-response')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const ctpCart = require('./fixtures/ctp-cart.json')
-const ctpCartWithCustomShippingMethod = require('./fixtures/ctp-cart-custom-shipping-method.json')
+import nock from 'nock'
+import { expect } from 'chai'
+import _ from 'lodash'
+import config from '../../src/config/config.js'
+import makeLineItemsPaymentHandler from '../../src/paymentHandler/make-lineitems-payment.handler.js'
+import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import utils from '../../src/utils.js'
 
-describe('make-lineitems-payment::execute', () => {
+describe('make-lineitems-payment::execute', async () => {
+  const ctpPayment = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-payment.json'
+  )
+  const ctpCart = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-cart.json'
+  )
+  const ctpCartWithCustomShippingMethod = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-cart-custom-shipping-method.json'
+  )
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
   const DEFAULT_PAYMENT_LANGUAGE = 'en'
   let scope
@@ -49,7 +54,9 @@ describe('make-lineitems-payment::execute', () => {
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
 
-      const response = await execute(ctpPaymentClone)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentClone
+      )
       expect(response.actions).to.have.lengthOf(6)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
@@ -111,7 +118,9 @@ describe('make-lineitems-payment::execute', () => {
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
 
-      const response = await execute(ctpPaymentClone)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentClone
+      )
       expect(response.actions).to.have.lengthOf(6)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
@@ -173,7 +182,9 @@ describe('make-lineitems-payment::execute', () => {
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
-      const response = await execute(ctpPaymentClone)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentClone
+      )
       expect(response.actions).to.have.lengthOf(6)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
@@ -207,7 +218,9 @@ describe('make-lineitems-payment::execute', () => {
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
-      const response = await execute(ctpPaymentClone)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentClone
+      )
       expect(response.actions).to.have.lengthOf(6)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
@@ -237,7 +250,9 @@ describe('make-lineitems-payment::execute', () => {
           },
         },
       }
-      const response = await execute(ctpPaymentToTest)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentToTest
+      )
       const { lineItems } = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
@@ -276,7 +291,9 @@ describe('make-lineitems-payment::execute', () => {
         },
       }
 
-      const response = await execute(ctpPaymentToTest)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentToTest
+      )
       const { lineItems } = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
@@ -310,7 +327,9 @@ describe('make-lineitems-payment::execute', () => {
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
 
-      const response = await execute(ctpPaymentClone)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentClone
+      )
       expect(response.actions).to.have.lengthOf(6)
       const { lineItems } = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
@@ -352,7 +371,9 @@ describe('make-lineitems-payment::execute', () => {
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
 
-      const response = await execute(ctpPaymentClone)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentClone
+      )
       expect(response.actions).to.have.lengthOf(6)
       const { lineItems } = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
@@ -393,7 +414,7 @@ describe('make-lineitems-payment::execute', () => {
         },
       },
     }
-    const response = await execute(ctpPaymentToTest)
+    const response = await makeLineItemsPaymentHandler.execute(ctpPaymentToTest)
     const { lineItems } = JSON.parse(
       response.actions.find((a) => a.action === 'addInterfaceInteraction')
         .fields.request
@@ -426,7 +447,9 @@ describe('make-lineitems-payment::execute', () => {
           },
         },
       }
-      const response = await execute(ctpPaymentToTest)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentToTest
+      )
       const { lineItems } = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
@@ -459,7 +482,9 @@ describe('make-lineitems-payment::execute', () => {
           },
         },
       }
-      const response = await execute(ctpPaymentToTest)
+      const response = await makeLineItemsPaymentHandler.execute(
+        ctpPaymentToTest
+      )
       const { lineItems } = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request

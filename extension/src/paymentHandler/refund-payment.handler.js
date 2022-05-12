@@ -1,10 +1,18 @@
-const pU = require('./payment-utils')
-const { refund } = require('../service/web-component-service')
-const { CTP_INTERACTION_TYPE_REFUND } = require('../config/constants')
+import {
+  listRefundTransactionsInit,
+  getAuthorizationTransactionSuccess,
+  createChangeTransactionStateAction,
+  createAddInterfaceInteractionAction,
+  createChangeTransactionInteractionId,
+} from './payment-utils.js'
+import { refund } from '../service/web-component-service.js'
+import constants from '../config/constants.js'
+
+const { CTP_INTERACTION_TYPE_REFUND } = constants
 
 async function execute(paymentObject) {
-  const refundInitTransactions = pU.listRefundTransactionsInit(paymentObject)
-  const transaction = pU.getAuthorizationTransactionSuccess(paymentObject)
+  const refundInitTransactions = listRefundTransactionsInit(paymentObject)
+  const transaction = getAuthorizationTransactionSuccess(paymentObject)
   const interactionId = transaction.interactionId
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
@@ -28,19 +36,20 @@ async function execute(paymentObject) {
         commercetoolsProjectKey,
         refundRequestObjects
       )
-      const addInterfaceInteractionAction =
-        pU.createAddInterfaceInteractionAction({
+      const addInterfaceInteractionAction = createAddInterfaceInteractionAction(
+        {
           request,
           response,
           type: CTP_INTERACTION_TYPE_REFUND,
-        })
+        }
+      )
       actions.push(addInterfaceInteractionAction)
       if (!response.errorCode && response.pspReference) {
         actions.push(
-          pU.createChangeTransactionStateAction(refundTransaction.id, 'Pending')
+          createChangeTransactionStateAction(refundTransaction.id, 'Pending')
         )
         actions.push(
-          pU.createChangeTransactionInteractionId(
+          createChangeTransactionInteractionId(
             refundTransaction.id,
             response.pspReference
           )
@@ -54,4 +63,4 @@ async function execute(paymentObject) {
   }
 }
 
-module.exports = { execute }
+export default { execute }

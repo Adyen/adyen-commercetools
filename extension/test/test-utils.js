@@ -1,8 +1,8 @@
-const localtunnel = require('localtunnel')
-const serverBuilder = require('../src/server')
-const { routes } = require('../src/routes')
-const { setupExtensionResources } = require('../src/setup')
-const config = require('../src/config/config')
+import localtunnel from 'localtunnel'
+import { setupServer } from '../src/server.js'
+import { routes } from '../src/routes.js'
+import { setupExtensionResources } from '../src/setup.js'
+import config from '../src/config/config.js'
 
 global.window = {}
 global.navigator = {}
@@ -40,7 +40,7 @@ async function stopIT() {
 }
 
 function setupLocalServer() {
-  server = serverBuilder.setupServer(routes)
+  server = setupServer(routes)
   return new Promise((resolve) => {
     server.listen(port, async () => {
       resolve()
@@ -54,7 +54,6 @@ function overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   config.getModuleConfig = function getModuleConfig() {
     return moduleConfig
   }
-  module.exports = config
 }
 
 async function setupLocalTunnel() {
@@ -83,7 +82,4 @@ async function initTunnel() {
   return tunnel
 }
 
-module.exports = {
-  startIT,
-  stopIT,
-}
+export { startIT, stopIT }

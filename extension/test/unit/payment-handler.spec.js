@@ -1,15 +1,18 @@
-const nock = require('nock')
-const _ = require('lodash')
-const { expect } = require('chai')
-const { handlePayment } = require('../../src/paymentHandler/payment-handler')
-const submitPaymentDetailsChallengeRes = require('./fixtures/adyen-submit-payment-details-challenge-shopper-response')
-const ctpPayment = require('./fixtures/ctp-payment.json')
-const makePaymentRedirectResponse = require('./fixtures/adyen-make-payment-3ds-redirect-response')
-const config = require('../../src/config/config')
-const c = require('../../src/config/constants')
-const errorMessage = require('../../src/validator/error-messages')
+import nock from 'nock'
+import _ from 'lodash'
+import { expect } from 'chai'
+import paymentHandler from '../../src/paymentHandler/payment-handler.js'
+import submitPaymentDetailsChallengeRes from './fixtures/adyen-submit-payment-details-challenge-shopper-response.js'
+import makePaymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-response.js'
+import config from '../../src/config/config.js'
+import c from '../../src/config/constants.js'
+import errorMessage from '../../src/validator/error-messages.js'
+import utils from '../../src/utils.js'
 
-describe('payment-handler::execute', () => {
+describe('payment-handler::execute', async () => {
+  const ctpPayment = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-payment.json'
+  )
   let scope
   /* eslint-disable max-len */
   const submitPaymentDetailsRequest = {
@@ -49,7 +52,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf.above(0)
     }
@@ -69,7 +72,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf(0)
     }
@@ -110,7 +113,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf(0)
     }
@@ -149,7 +152,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf.above(0)
     }
@@ -177,7 +180,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf.above(0)
     }
   )
@@ -188,7 +191,7 @@ describe('payment-handler::execute', () => {
     async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.errors).to.have.lengthOf(2)
       expect(response.errors[0].message).to.equal(
@@ -219,7 +222,7 @@ describe('payment-handler::execute', () => {
           adyenMerchantAccount
         ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-        const response = await handlePayment(ctpPaymentClone)
+        const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
         expect(response.errors).to.have.lengthOf.above(0)
         expect(response.errors[0].message).to.equal(
@@ -240,7 +243,7 @@ describe('payment-handler::execute', () => {
           adyenMerchantAccount
         ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-        const response = await handlePayment(ctpPaymentClone)
+        const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
         expect(response.actions).to.deep.equal([])
       }
@@ -275,7 +278,7 @@ describe('payment-handler::execute', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await handlePayment(ctpPaymentClone)
+      const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.errors[0].message).to.equal(
         errorMessage.AMOUNT_PLANNED_NOT_SAME

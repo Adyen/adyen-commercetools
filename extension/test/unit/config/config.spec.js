@@ -1,9 +1,12 @@
-const { expect } = require('chai')
-const fs = require('fs')
-const homedir = require('os').homedir()
+import { expect } from 'chai'
+import fs from 'fs'
+import { randomUUID } from 'crypto'
+import os from 'os'
+
+const homedir = os.homedir()
 
 describe('::config::', () => {
-  it('when config is provided, it should load correctly', () => {
+  it('when config is provided, it should load correctly', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
       commercetools: {
         ctpProjectKey1: {
@@ -28,14 +31,14 @@ describe('::config::', () => {
       },
       logLevel: 'DEBUG',
     })
-    const config = requireUncached('../../../src/config/config')
+    const config = await reloadModule('../../../src/config/config.js')
 
-    expect(config.getAllCtpProjectKeys()).to.eql(['ctpProjectKey1'])
-    expect(config.getAllAdyenMerchantAccounts()).to.eql([
+    expect(config.default.getAllCtpProjectKeys()).to.eql(['ctpProjectKey1'])
+    expect(config.default.getAllAdyenMerchantAccounts()).to.eql([
       'adyenMerchantAccount1',
     ])
 
-    expect(config.getCtpConfig('ctpProjectKey1')).to.eql({
+    expect(config.default.getCtpConfig('ctpProjectKey1')).to.eql({
       apiUrl: 'host',
       clientId: 'clientId',
       clientSecret: 'clientSecret',
@@ -47,7 +50,7 @@ describe('::config::', () => {
         password: 'password',
       },
     })
-    expect(config.getAdyenConfig('adyenMerchantAccount1')).to.eql({
+    expect(config.default.getAdyenConfig('adyenMerchantAccount1')).to.eql({
       apiBaseUrl: 'apiBaseUrl',
       apiKey: 'apiKey',
       clientKey: 'clientKey',
@@ -55,7 +58,7 @@ describe('::config::', () => {
     })
   })
 
-  it('when some values are not provided, it should provide default values', () => {
+  it('when some values are not provided, it should provide default values', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
       commercetools: {
         ctpProjectKey1: {
@@ -71,20 +74,20 @@ describe('::config::', () => {
       },
       logLevel: 'DEBUG',
     })
-    const config = requireUncached('../../../src/config/config')
+    const config = await reloadModule('../../../src/config/config.js')
 
-    expect(config.getAllCtpProjectKeys()).to.eql(['ctpProjectKey1'])
-    expect(config.getAllAdyenMerchantAccounts()).to.eql([
+    expect(config.default.getAllCtpProjectKeys()).to.eql(['ctpProjectKey1'])
+    expect(config.default.getAllAdyenMerchantAccounts()).to.eql([
       'adyenMerchantAccount1',
     ])
-    expect(config.getCtpConfig('ctpProjectKey1')).to.eql({
+    expect(config.default.getCtpConfig('ctpProjectKey1')).to.eql({
       apiUrl: 'https://api.europe-west1.gcp.commercetools.com',
       authUrl: 'https://auth.europe-west1.gcp.commercetools.com',
       clientId: 'clientId',
       clientSecret: 'clientSecret',
       projectKey: 'ctpProjectKey1',
     })
-    expect(config.getAdyenConfig('adyenMerchantAccount1')).to.eql({
+    expect(config.default.getAdyenConfig('adyenMerchantAccount1')).to.eql({
       apiBaseUrl: 'https://checkout-test.adyen.com/v68',
       apiKey: 'apiKey',
       clientKey: 'clientKey',
@@ -92,17 +95,17 @@ describe('::config::', () => {
     })
   })
 
-  it('when whole config is missing, it should throw error', () => {
+  it('when whole config is missing, it should throw error', async () => {
     delete process.env.ADYEN_INTEGRATION_CONFIG
     try {
-      requireUncached('../../../src/config/config')
+      await reloadModule('../../../src/config/config.js')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain('configuration is not provided')
     }
   })
 
-  it('when no commercetools project is provided, it should throw error', () => {
+  it('when no commercetools project is provided, it should throw error', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
       commercetools: {},
       adyen: {
@@ -116,14 +119,14 @@ describe('::config::', () => {
       logLevel: 'DEBUG',
     })
     try {
-      requireUncached('../../../src/config/config')
+      await reloadModule('../../../src/config/config.js')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain('add at least one commercetools project')
     }
   })
 
-  it('when no adyen merchant account is provided, it should throw error', () => {
+  it('when no adyen merchant account is provided, it should throw error', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
       commercetools: {
         ctpProjectKey1: {
@@ -137,20 +140,21 @@ describe('::config::', () => {
       logLevel: 'DEBUG',
     })
     try {
-      requireUncached('../../../src/config/config')
+      await reloadModule('../../../src/config/config.js')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain('add at least one Adyen merchant account')
     }
   })
 
-  function requireUncached(module) {
-    delete require.cache[require.resolve(module)]
-    // eslint-disable-next-line global-require,import/no-dynamic-require
-    return require(module)
+  async function reloadModule(module) {
+    // const cacheBustingModulePath = `${module}?update=${Date.now()}`
+    // return (await import(cacheBustingModulePath)).default
+
+    return import(`${module}?testName=${randomUUID()}`)
   }
 
-  it('when basicAuth is true but authetication object is not provided, it should throw error', () => {
+  it('when basicAuth is true but authetication object is not provided, it should throw error', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
       commercetools: {
         ctpProjectKey1: {
@@ -172,8 +176,8 @@ describe('::config::', () => {
       basicAuth: true,
     })
     try {
-      const config = requireUncached('../../../src/config/config')
-      config.getCtpConfig('ctpProjectKey1')
+      const config = await reloadModule('../../../src/config/config.js')
+      config.default.getCtpConfig('ctpProjectKey1')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain(
@@ -182,7 +186,7 @@ describe('::config::', () => {
     }
   })
 
-  it('when authetication object is provided by scheme is absent in it, it should throw error', () => {
+  it('when authentication object is provided by scheme is absent in it, it should throw error', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
       commercetools: {
         ctpProjectKey1: {
@@ -207,8 +211,8 @@ describe('::config::', () => {
       logLevel: 'DEBUG',
     })
     try {
-      const config = requireUncached('../../../src/config/config')
-      config.getCtpConfig('ctpProjectKey1')
+      const config = await reloadModule('../../../src/config/config.js')
+      config.default.getCtpConfig('ctpProjectKey1')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain(
@@ -217,7 +221,7 @@ describe('::config::', () => {
     }
   })
 
-  it('when authetication object is provided by scheme is not valid, it should throw error', () => {
+  it('when authetication object is provided by scheme is not valid, it should throw error', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
       commercetools: {
         ctpProjectKey1: {
@@ -243,8 +247,8 @@ describe('::config::', () => {
       logLevel: 'DEBUG',
     })
     try {
-      const config = requireUncached('../../../src/config/config')
-      config.getCtpConfig('ctpProjectKey1')
+      const config = await reloadModule('../../../src/config/config.js')
+      config.default.getCtpConfig('ctpProjectKey1')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain(
@@ -256,7 +260,7 @@ describe('::config::', () => {
   it(
     'when extra adyenPaymentMethodsToNames config is not provided, ' +
       'it should return default adyenPaymentMethodsToNames config',
-    () => {
+    async () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
         commercetools: {
           ctpProjectKey1: {
@@ -272,9 +276,9 @@ describe('::config::', () => {
         },
         logLevel: 'DEBUG',
       })
-      const config = requireUncached('../../../src/config/config')
+      const config = await reloadModule('../../../src/config/config.js')
 
-      expect(config.getAdyenPaymentMethodsToNames()).to.eql({
+      expect(config.default.getAdyenPaymentMethodsToNames()).to.eql({
         scheme: { en: 'Credit Card' },
         pp: { en: 'PayPal' },
         klarna: { en: 'Klarna' },
@@ -287,7 +291,7 @@ describe('::config::', () => {
   it(
     'when extra adyenPaymentMethodsToNames config is provided, ' +
       'it should return merged adyenPaymentMethodsToNames config',
-    () => {
+    async () => {
       process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
         commercetools: {
           ctpProjectKey1: {
@@ -307,9 +311,9 @@ describe('::config::', () => {
         },
         logLevel: 'DEBUG',
       })
-      const config = requireUncached('../../../src/config/config')
+      const config = await reloadModule('../../../src/config/config.js')
 
-      expect(config.getAdyenPaymentMethodsToNames()).to.eql({
+      expect(config.default.getAdyenPaymentMethodsToNames()).to.eql({
         scheme: { en: 'Credit Card' },
         pp: { en: 'Paypal standard' },
         klarna: { en: 'Klarna' },
@@ -323,7 +327,7 @@ describe('::config::', () => {
     it(
       'when removeSensitiveData is set as boolean false in config.js, ' +
         'it should load as false value in module config',
-      () => {
+      async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
             ctpProjectKey1: {
@@ -349,15 +353,17 @@ describe('::config::', () => {
           logLevel: 'DEBUG',
           removeSensitiveData: false,
         })
-        const config = requireUncached('../../../src/config/config')
-        expect(config.getModuleConfig().removeSensitiveData).to.eql(false)
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(config.default.getModuleConfig().removeSensitiveData).to.eql(
+          false
+        )
       }
     )
 
     it(
       'when removeSensitiveData is set as boolean true in config.js, ' +
         'it should load as true value in module config',
-      () => {
+      async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
             ctpProjectKey1: {
@@ -383,15 +389,17 @@ describe('::config::', () => {
           logLevel: 'DEBUG',
           removeSensitiveData: true,
         })
-        const config = requireUncached('../../../src/config/config')
-        expect(config.getModuleConfig().removeSensitiveData).to.eql(true)
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(config.default.getModuleConfig().removeSensitiveData).to.eql(
+          true
+        )
       }
     )
 
     it(
       'when removeSensitiveData is set as string false in config.js, ' +
         'it should load as false value in module config',
-      () => {
+      async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
             ctpProjectKey1: {
@@ -409,15 +417,17 @@ describe('::config::', () => {
           logLevel: 'DEBUG',
           removeSensitiveData: 'false',
         })
-        const config = requireUncached('../../../src/config/config')
-        expect(config.getModuleConfig().removeSensitiveData).to.eql(false)
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(config.default.getModuleConfig().removeSensitiveData).to.eql(
+          false
+        )
       }
     )
 
     it(
       'when removeSensitiveData is set as string true in config.js, ' +
         'it should load as true value in module config',
-      () => {
+      async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
             ctpProjectKey1: {
@@ -435,8 +445,10 @@ describe('::config::', () => {
           logLevel: 'DEBUG',
           removeSensitiveData: 'true',
         })
-        const config = requireUncached('../../../src/config/config')
-        expect(config.getModuleConfig().removeSensitiveData).to.eql(true)
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(config.default.getModuleConfig().removeSensitiveData).to.eql(
+          true
+        )
       }
     )
   })
@@ -445,7 +457,7 @@ describe('::config::', () => {
     it(
       'when addCommercetoolsLineItems is set as boolean false in config.js, ' +
         'it should load as false value in module config',
-      () => {
+      async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
             ctpProjectKey1: {
@@ -471,15 +483,17 @@ describe('::config::', () => {
           logLevel: 'DEBUG',
           addCommercetoolsLineItems: false,
         })
-        const config = requireUncached('../../../src/config/config')
-        expect(config.getModuleConfig().addCommercetoolsLineItems).to.eql(false)
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(
+          config.default.getModuleConfig().addCommercetoolsLineItems
+        ).to.eql(false)
       }
     )
 
     it(
       'when addCommercetoolsLineItems is set as boolean true in config.js, ' +
         'it should load as true value in module config',
-      () => {
+      async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
             ctpProjectKey1: {
@@ -505,15 +519,17 @@ describe('::config::', () => {
           logLevel: 'DEBUG',
           addCommercetoolsLineItems: true,
         })
-        const config = requireUncached('../../../src/config/config')
-        expect(config.getModuleConfig().addCommercetoolsLineItems).to.eql(true)
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(
+          config.default.getModuleConfig().addCommercetoolsLineItems
+        ).to.eql(true)
       }
     )
 
     it(
       'when addCommercetoolsLineItems is set as string false in config.js, ' +
         'it should load as false value in module config',
-      () => {
+      async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
             ctpProjectKey1: {
@@ -531,15 +547,17 @@ describe('::config::', () => {
           logLevel: 'DEBUG',
           addCommercetoolsLineItems: 'false',
         })
-        const config = requireUncached('../../../src/config/config')
-        expect(config.getModuleConfig().addCommercetoolsLineItems).to.eql(false)
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(
+          config.default.getModuleConfig().addCommercetoolsLineItems
+        ).to.eql(false)
       }
     )
 
     it(
       'when addCommercetoolsLineItems is set as string true in config.js, ' +
         'it should load as true value in module config',
-      () => {
+      async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
             ctpProjectKey1: {
@@ -557,16 +575,18 @@ describe('::config::', () => {
           logLevel: 'DEBUG',
           addCommercetoolsLineItems: 'true',
         })
-        const config = requireUncached('../../../src/config/config')
-        expect(config.getModuleConfig().addCommercetoolsLineItems).to.eql(true)
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(
+          config.default.getModuleConfig().addCommercetoolsLineItems
+        ).to.eql(true)
       }
     )
   })
 
-  it('when ADYEN_INTEGRATION_CONFIG is not valid JSON, it should throw error', () => {
+  it('when ADYEN_INTEGRATION_CONFIG is not valid JSON, it should throw error', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = '{"a"}'
     try {
-      requireUncached('../../../src/config/config')
+      await reloadModule('../../../src/config/config.js')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain(
@@ -578,7 +598,7 @@ describe('::config::', () => {
   it(
     'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
       'then it should load configuration correctly',
-    () => {
+    async () => {
       const filePath = `${homedir}/.extensionrc`
       try {
         delete process.env.ADYEN_INTEGRATION_CONFIG
@@ -608,8 +628,10 @@ describe('::config::', () => {
         }
         fs.writeFileSync(filePath, JSON.stringify(config), 'utf-8')
 
-        const loadedConfig = requireUncached('../../../src/config/config')
-        expect(loadedConfig.getCtpConfig('ctpProjectKey1')).to.deep.equal({
+        const loadedConfig = await reloadModule('../../../src/config/config.js')
+        expect(
+          loadedConfig.default.getCtpConfig('ctpProjectKey1')
+        ).to.deep.equal({
           clientId: 'clientId',
           clientSecret: 'clientSecret',
           apiUrl: 'host',
@@ -622,7 +644,7 @@ describe('::config::', () => {
           },
         })
         expect(
-          loadedConfig.getAdyenConfig('adyenMerchantAccount1')
+          loadedConfig.default.getAdyenConfig('adyenMerchantAccount1')
         ).to.deep.equal({
           apiBaseUrl: 'apiBaseUrl',
           apiKey: 'apiKey',

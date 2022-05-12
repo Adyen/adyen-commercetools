@@ -1,11 +1,16 @@
-import config from '../config/config.js'
+const _ = require('lodash')
+const config = require('../config/config')
 
-function getCtpProjectConfig(notification) {
-  const commercetoolsProjectKey =
+function getCtpProjectConfig(notification, path) {
+  let commercetoolsProjectKey =
     notification?.NotificationRequestItem?.additionalData?.[
       `metadata.ctProjectKey`
     ]
-  if (!commercetoolsProjectKey) {
+  if (!commercetoolsProjectKey && path) {
+    commercetoolsProjectKey = path.split('/')?.slice(-1)?.[0]
+  }
+
+  if (_.isEmpty(commercetoolsProjectKey)) {
     throw new Error(
       'Notification can not be processed as "metadata.ctProjectKey"  was not found on the notification.'
     )
@@ -20,4 +25,7 @@ function getAdyenConfig(notification) {
   return config.getAdyenConfig(adyenMerchantAccount)
 }
 
-export { getCtpProjectConfig, getAdyenConfig }
+module.exports = {
+  getCtpProjectConfig,
+  getAdyenConfig,
+}
