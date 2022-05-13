@@ -1,6 +1,7 @@
-import { isEmpty } from 'lodash'
+import lodash from 'lodash'
 import { loadConfig } from './config-loader.js'
 
+const { isEmpty } = lodash
 let config
 
 function getModuleConfig() {
