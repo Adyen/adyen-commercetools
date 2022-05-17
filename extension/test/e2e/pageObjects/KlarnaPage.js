@@ -25,7 +25,9 @@ export default class KlarnaPage {
     await klarnaIframe.waitForSelector('#otp_field')
     await klarnaIframe.type('#otp_field', '123456')
 
-    await klarnaIframe.waitForSelector('#mandate-review__confirmation-button')
-    await klarnaIframe.click('#mandate-review__confirmation-button')
+    await klarnaIframe.waitForSelector(
+      '#invoice_kp-purchase-review-continue-button'
+    )
+    await klarnaIframe.click('#invoice_kp-purchase-review-continue-button')
   }
 }
