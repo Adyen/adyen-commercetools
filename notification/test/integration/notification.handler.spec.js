@@ -15,8 +15,8 @@ describe('notification module', () => {
 
   let notificationURL
   let ctpClient
-  before(() => {
-    ctpClient = ctpClientBuilder.get(
+  before(async () => {
+    ctpClient = await ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey)
     )
     notificationURL = getNotificationURL()
