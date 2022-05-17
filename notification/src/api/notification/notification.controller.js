@@ -1,25 +1,21 @@
 import _ from 'lodash'
 import url from 'url'
-import {
-  sendResponse,
-  collectRequestData,
-  getNotificationForTracking,
-} from '../../utils/commons.js'
+import utils from '../../utils/commons.js'
 import { isRecoverableError, getErrorCause } from '../../utils/error-utils.js'
 import notificationHandler from '../../handler/notification/notification.handler.js'
 import { getCtpProjectConfig, getAdyenConfig } from '../../utils/parser.js'
 import { getLogger } from '../../utils/logger.js'
 
-const logger = getLogger
+const logger = getLogger()
 
 async function handleNotification(request, response) {
   if (request.method !== 'POST') {
     logger.debug(
       `Received non-POST request: ${request.method}. The request will not be processed...`
     )
-    return sendResponse(response)
+    return utils.sendResponse(response)
   }
-  const body = await collectRequestData(request)
+  const body = await utils.collectRequestData(request)
   try {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
     for (const notification of notifications) {
@@ -40,13 +36,13 @@ async function handleNotification(request, response) {
     const cause = getErrorCause(err)
     logger.error(
       {
-        notification: getNotificationForTracking(notification),
+        notification: utils.getNotificationForTracking(notification),
         cause,
       },
       'Unexpected exception occurred.'
     )
     if (isRecoverableError(err)) {
-      return sendResponse(response, 500)
+      return utils.sendResponse(response, 500)
     }
     return sendAcceptedResponse(response)
   }
@@ -57,7 +53,7 @@ function sendAcceptedResponse(response) {
   // To ensure that your server is properly accepting notifications,
   // we require you to acknowledge every notification of any type with an [accepted] response.
 
-  return sendResponse(
+  return utils.sendResponse(
     response,
     200,
     { 'Content-Type': 'application/json' },

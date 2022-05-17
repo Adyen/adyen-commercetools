@@ -1,17 +1,15 @@
 import sinon from 'sinon'
-import { cloneDeep } from 'lodash'
+import lodash from 'lodash'
 import { expect } from 'chai'
 import config from '../../src/config/config.js'
 import { handleNotification } from '../../src/api/notification/notification.controller.js'
-import {
-  collectRequestData,
-  readAndParseJsonFile,
-} from '../../src/utils/commons.js'
+import utils from '../../src/utils/commons.js'
 import { getLogger } from '../../src/utils/logger.js'
 import ctpClientMock from './ctp-client-mock.js'
 import ctp from '../../src/utils/ctp.js'
 import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
 
+const { cloneDeep } = lodash
 const logger = getLogger()
 const sandbox = sinon.createSandbox()
 describe('notification controller', () => {
@@ -48,12 +46,12 @@ describe('notification controller', () => {
   let logSpy
 
   before(() => {
-    originalCollectRequestDataFn = collectRequestData
+    originalCollectRequestDataFn = utils.collectRequestData
     originalLogErrorFn = logger.error
   })
 
   afterEach(() => {
-    collectRequestData = originalCollectRequestDataFn
+    utils.collectRequestData = originalCollectRequestDataFn
     logger.error = originalLogErrorFn
     sandbox.restore()
   })
@@ -74,7 +72,7 @@ describe('notification controller', () => {
       const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
       const responseEndSpy = sandbox.spy(responseMock, 'end')
       const notificationJson = cloneDeep(mockNotificationJson)
-      collectRequestData = () => JSON.stringify(notificationJson)
+      utils.collectRequestData = () => JSON.stringify(notificationJson)
 
       logSpy = sinon.spy()
       logger.error = logSpy
@@ -114,7 +112,7 @@ describe('notification controller', () => {
       }
     notificationJson.notificationItems[0].NotificationRequestItem.merchantAccountCode =
       'nonExistingMerchantAccount'
-    collectRequestData = () => JSON.stringify(notificationJson)
+    utils.collectRequestData = () => JSON.stringify(notificationJson)
 
     const configGetCtpConfigSpy = sandbox
       .stub(config, 'getCtpConfig')
@@ -156,7 +154,7 @@ describe('notification controller', () => {
       {
         'metadata.ctProjectKey': 'nonExistingCtpProjectKey',
       }
-    collectRequestData = () => JSON.stringify(notificationJson)
+    utils.collectRequestData = () => JSON.stringify(notificationJson)
 
     logSpy = sinon.spy()
     logger.error = logSpy
@@ -182,7 +180,7 @@ describe('notification controller', () => {
       'it should return 500 HTTP response and log error',
     async () => {
       // prepare:
-      const paymentMock = await readAndParseJsonFile(
+      const paymentMock = await utils.readAndParseJsonFile(
         'test/resources/payment-credit-card.json'
       )
       const requestMock = {
@@ -209,7 +207,7 @@ describe('notification controller', () => {
       const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
       const responseEndSpy = sandbox.spy(responseMock, 'end')
       const notificationJson = mockNotificationJson
-      collectRequestData = () => JSON.stringify(notificationJson)
+      utils.collectRequestData = () => JSON.stringify(notificationJson)
 
       logSpy = sinon.spy()
       logger.error = logSpy

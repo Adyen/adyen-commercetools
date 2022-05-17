@@ -1,12 +1,14 @@
 import fetch from 'node-fetch'
-import { merge } from 'lodash'
+import lodash from 'lodash'
 import { createClient } from '@commercetools/sdk-client'
 import { createAuthMiddlewareForClientCredentialsFlow } from '@commercetools/sdk-middleware-auth'
 import { createUserAgentMiddleware } from '@commercetools/sdk-middleware-user-agent'
 import { createHttpMiddleware } from '@commercetools/sdk-middleware-http'
 import { createQueueMiddleware } from '@commercetools/sdk-middleware-queue'
 import { createRequestBuilder } from '@commercetools/api-request-builder'
-import { readAndParseJsonFile } from './commons'
+import utils from './commons.js'
+
+const { merge } = lodash
 
 const tokenCache = {
   store: {},
@@ -37,7 +39,7 @@ async function createCtpClient({
     tokenCache,
   })
 
-  const packageJson = await readAndParseJsonFile('package.json')
+  const packageJson = await utils.readAndParseJsonFile('package.json')
 
   const userAgentMiddleware = createUserAgentMiddleware({
     libraryName: packageJson.name,

@@ -1,6 +1,8 @@
-import { merge } from 'lodash'
+import lodash from 'lodash'
 import { createClient } from '@commercetools/sdk-client'
 import { createRequestBuilder } from '@commercetools/api-request-builder'
+
+const { merge } = lodash
 
 function createCtpClient() {
   const httpMockSuccessMiddleware = (next) => (request, response) => {

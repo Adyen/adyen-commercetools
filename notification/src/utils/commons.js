@@ -1,3 +1,7 @@
+import { fileURLToPath } from 'url'
+import path from 'path'
+import fs from 'node:fs/promises'
+
 function collectRequestData(request) {
   return new Promise((resolve) => {
     const data = []
@@ -53,7 +57,7 @@ async function readAndParseJsonFile(pathToJsonFileFromProjectRoot) {
   return JSON.parse(fileContent)
 }
 
-export {
+export default {
   collectRequestData,
   sendResponse,
   getNotificationForTracking,

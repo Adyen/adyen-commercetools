@@ -1,6 +1,6 @@
 import notificationHandler from './src/handler/notification/notification.handler.js'
 import { getLogger } from './src/utils/logger.js'
-import { getNotificationForTracking } from './src/utils/commons.js'
+import utils from './src/utils/commons.js'
 import { getErrorCause, isRecoverableError } from './src/utils/error-utils.js'
 import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser.js'
 
@@ -35,7 +35,7 @@ export const handler = async (event) => {
   } catch (err) {
     const cause = getErrorCause(err)
     logger.error(
-      { notification: getNotificationForTracking(notificationItems), cause },
+      { notification: utils.getNotificationForTracking(notificationItems), cause },
       'Unexpected exception occurred.'
     )
     if (isRecoverableError(err)) {

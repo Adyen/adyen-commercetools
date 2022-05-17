@@ -6,7 +6,7 @@ import { handler } from '../../index.lambda.js'
 import notificationHandler from '../../src/handler/notification/notification.handler.js'
 import { getLogger } from '../../src/utils/logger.js'
 import config from '../../src/config/config.js'
-import { getNotificationForTracking } from '../../src/utils/commons.js'
+import utils from '../../src/utils/commons.js'
 import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
 
 const logger = getLogger()
@@ -46,13 +46,11 @@ describe('Lambda handler', () => {
       .stub(config, 'getCtpConfig')
       .callsFake(() => ({}))
     config.getCtpConfig = configGetCtpConfigSpy
-    module.exports = config
 
     const configGetAdyenConfigSpy = sandbox
       .stub(config, 'getAdyenConfig')
       .callsFake(() => ({}))
     config.getAdyenConfig = configGetAdyenConfigSpy
-    module.exports = config
   })
   afterEach(() => {
     notificationHandler.processNotification.restore()
@@ -88,7 +86,7 @@ describe('Lambda handler', () => {
       const notificationItem = event.notificationItems.pop()
       logSpy.calledWith(
         {
-          notification: getNotificationForTracking(notificationItem),
+          notification: utils.getNotificationForTracking(notificationItem),
           err: errorWrapper,
         },
         'Unexpected error when processing event'
@@ -116,7 +114,7 @@ describe('Lambda handler', () => {
       const notificationItem = event.notificationItems.pop()
       logSpy.calledWith(
         {
-          notification: getNotificationForTracking(notificationItem),
+          notification: utils.getNotificationForTracking(notificationItem),
           err: error,
         },
         'Unexpected error when processing event'

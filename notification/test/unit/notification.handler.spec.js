@@ -1,7 +1,7 @@
 import sinon from 'sinon'
 import VError from 'verror'
 import { expect } from 'chai'
-import { cloneDeep } from 'lodash'
+import lodash from 'lodash'
 import config from '../../src/config/config.js'
 import notificationHandler from '../../src/handler/notification/notification.handler.js'
 import ctp from '../../src/utils/ctp.js'
@@ -11,15 +11,16 @@ import {
   restoreAdyenConfig,
   buildMockErrorFromConcurrentModificationException,
 } from '../test-utils.js'
-import { readAndParseJsonFile } from '../../src/utils/commons'
+import utils from '../../src/utils/commons.js'
 
+const { cloneDeep } = lodash
 const sandbox = sinon.createSandbox()
 
 describe('notification module', async () => {
-  const paymentMock = await readAndParseJsonFile(
+  const paymentMock = await utils.readAndParseJsonFile(
     'test/resources/payment-credit-card.json'
   )
-  const notification = await readAndParseJsonFile(
+  const notification = await utils.readAndParseJsonFile(
     'test/resources/notification.json'
   )
   const notificationsMock = notification.notificationItems

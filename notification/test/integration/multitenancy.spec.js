@@ -18,17 +18,17 @@ describe('::multitenancy::', () => {
   let ctpClient2
   let notificationURL
 
-  before(() => {
-    ctpClient1 = ctpClientBuilder.get(
+  before(async () => {
+    ctpClient1 = await ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey1)
     )
-    ctpClient2 = ctpClientBuilder.get(
+    ctpClient2 = await ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey2)
     )
     notificationURL = getNotificationURL()
   })
 
-  it('should process payment correctly when notifications are from different projects', async () => {
+  it.only('should process payment correctly when notifications are from different projects', async () => {
     const payment1Key = `notificationPayment1-${new Date().getTime()}`
     const payment2Key = `notificationPayment2-${new Date().getTime()}`
     await Promise.all([

@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { address } from 'ip'
+import ip from 'ip'
 import { hmacValidator } from '@adyen/api-library'
 import config from '../src/config/config.js'
 import { setupServer } from '../src/server.js'
@@ -8,7 +8,9 @@ import {
   startFakeExtension,
   stopFakeExtension,
 } from './fake-extension-service.js'
-import { readAndParseJsonFile } from '../src/utils/commons.js'
+import utils from '../src/utils/commons.js'
+
+const { address } = ip
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -28,7 +30,7 @@ function restoreAdyenConfig() {
 }
 
 async function buildMockErrorFromConcurrentModificationException() {
-  const concurrentModificationError = await readAndParseJsonFile(
+  const concurrentModificationError = await utils.readAndParseJsonFile(
     'test/resources/concurrent-modification-exception.json'
   )
   const error = new Error(concurrentModificationError.message)
@@ -139,7 +141,7 @@ async function ensurePayment(
   commercetoolsProjectKey,
   adyenMerchantAccount
 ) {
-  const payment = await readAndParseJsonFile(
+  const payment = await utils.readAndParseJsonFile(
     'test/resources/payment-draft.json'
   )
   const paymentDraft = _.cloneDeep(payment)

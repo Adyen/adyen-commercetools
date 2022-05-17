@@ -2,10 +2,7 @@ import _ from 'lodash'
 import { serializeError } from 'serialize-error'
 import VError from 'verror'
 import { validateHmacSignature } from '../../utils/hmacValidator.js'
-import {
-  getNotificationForTracking,
-  readAndParseJsonFile,
-} from '../../utils/commons.js'
+import utils from '../../utils/commons.js'
 import ctp from '../../utils/ctp.js'
 import config from '../../config/config.js'
 import { getLogger } from '../../utils/logger.js'
@@ -25,7 +22,7 @@ async function processNotification(
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
       logger.error(
-        { notification: getNotificationForTracking(notification) },
+        { notification: utils.getNotificationForTracking(notification) },
         `HMAC validation failed. Reason: "${errorMessage}"`
       )
       return
@@ -39,7 +36,7 @@ async function processNotification(
   )
   if (merchantReference === null) {
     logger.error(
-      { notification: getNotificationForTracking(notification) },
+      { notification: utils.getNotificationForTracking(notification) },
       "Can't extract merchantReference from the notification"
     )
     return
@@ -144,7 +141,7 @@ function _obfuscateNotificationInfoFromActionFields(updateActions) {
     .filter((value) => value.action === 'addInterfaceInteraction')
     .filter((value) => value?.fields?.notification)
     .forEach((value) => {
-      value.fields.notification = getNotificationForTracking(
+      value.fields.notification = utils.getNotificationForTracking(
         JSON.parse(value.fields.notification)
       )
     })
@@ -314,7 +311,7 @@ function getChangeTransactionTimestampUpdateAction(
 }
 
 async function getTransactionTypeAndStateOrNull(notificationRequestItem) {
-  const adyenEvents = await readAndParseJsonFile('resources/adyen-events.json')
+  const adyenEvents = await utils.readAndParseJsonFile('resources/adyen-events.json')
   const adyenEventCode = notificationRequestItem.eventCode
   const adyenEventSuccess = notificationRequestItem.success
 

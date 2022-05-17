@@ -1,5 +1,5 @@
 import chai from 'chai'
-import { getNotificationForTracking } from '../../src/utils/commons.js'
+import utils from '../../src/utils/commons.js'
 
 const { expect } = chai
 
@@ -40,7 +40,7 @@ describe('notification module common utility', () => {
         },
       },
     ]
-    const actualNotificationResult = await getNotificationForTracking(
+    const actualNotificationResult = await utils.getNotificationForTracking(
       notifications
     )
     const expectedNotificationResult = [
@@ -81,7 +81,7 @@ describe('notification module common utility', () => {
       },
     }
 
-    const actualNotificationResult = await getNotificationForTracking(
+    const actualNotificationResult = await utils.getNotificationForTracking(
       notifications
     )
     const expectedNotificationResult = {

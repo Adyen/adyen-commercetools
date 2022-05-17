@@ -1,14 +1,16 @@
-const http = require('http')
-const url = require('url')
-const utils = require('./utils/commons')
-const { routes: defaultRoutes } = require('./routes')
-const logger = require('./utils/logger').getLogger()
+import http from 'http'
+import url from 'url'
+import utils from './utils/commons.js'
+import { routes } from './routes.js'
+import { getLogger } from './utils/logger.js'
+
+const logger = getLogger()
 
 function getHandlerNameFromUrl(parts) {
   return parts.path?.split('/')?.slice(-2)?.[0] ?? ''
 }
 
-function setupServer(routes = defaultRoutes) {
+function setupServer() {
   return http.createServer(async (request, response) => {
     const parts = url.parse(request.url)
     const path = getHandlerNameFromUrl(parts)
@@ -27,4 +29,4 @@ function setupServer(routes = defaultRoutes) {
   })
 }
 
-module.exports = { setupServer }
+export { setupServer }

@@ -3,7 +3,7 @@ import { serializeError } from 'serialize-error'
 import { getLogger } from '../../utils/logger.js'
 import config from '../config.js'
 import ctp from '../../utils/ctp.js'
-import { readAndParseJsonFile } from '../../utils/commons.js'
+import utils from '../../utils/commons.js'
 
 const mainLogger = getLogger()
 
@@ -17,7 +17,7 @@ async function ensureInterfaceInteractionCustomTypeForAllProjects() {
 }
 
 async function ensureInterfaceInteractionCustomType(ctpClient, ctpProjectKey) {
-  const interfaceInteractionType = await readAndParseJsonFile(
+  const interfaceInteractionType = await utils.readAndParseJsonFile(
     'resources/payment-interface-interaction-type.json'
   )
   return syncCustomType(
