@@ -28,7 +28,7 @@ describe('::multitenancy::', () => {
     notificationURL = getNotificationURL()
   })
 
-  it.only('should process payment correctly when notifications are from different projects', async () => {
+  it('should process payment correctly when notifications are from different projects', async () => {
     const payment1Key = `notificationPayment1-${new Date().getTime()}`
     const payment2Key = `notificationPayment2-${new Date().getTime()}`
     await Promise.all([
