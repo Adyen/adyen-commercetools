@@ -1,4 +1,4 @@
-const healthController = require('./api/health/health.controller')
+import healthController from './api/health/health.controller.js'
 const notificationController = require('./api/notification/notification.controller')
 
 const routes = {

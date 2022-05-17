@@ -2,11 +2,13 @@ import _ from 'lodash'
 import { serializeError } from 'serialize-error'
 import VError from 'verror'
 import { validateHmacSignature } from '../../utils/hmacValidator.js'
-import { getNotificationForTracking } from '../../utils/commons.js'
+import {
+  getNotificationForTracking,
+  readAndParseJsonFile,
+} from '../../utils/commons.js'
 import ctp from '../../utils/ctp.js'
 import config from '../../config/config.js'
 import { getLogger } from '../../utils/logger.js'
-import adyenEvents from '../../../resources/adyen-events.json'
 
 const mainLogger = getLogger()
 
@@ -43,7 +45,7 @@ async function processNotification(
     return
   }
 
-  const ctpClient = ctp.get(ctpProjectConfig)
+  const ctpClient = await ctp.get(ctpProjectConfig)
 
   const payment = await getPaymentByMerchantReference(
     merchantReference,
@@ -70,7 +72,7 @@ async function updatePaymentWithRepeater(
   let retryMessage
   let updateActions
   while (true) {
-    updateActions = calculateUpdateActionsForPayment(
+    updateActions = await calculateUpdateActionsForPayment(
       currentPayment,
       notification,
       logger
@@ -149,7 +151,7 @@ function _obfuscateNotificationInfoFromActionFields(updateActions) {
   return copyOfUpdateActions
 }
 
-function calculateUpdateActionsForPayment(payment, notification, logger) {
+async function calculateUpdateActionsForPayment(payment, notification, logger) {
   const updateActions = []
   const notificationRequestItem = notification.NotificationRequestItem
   const stringifiedNotification = JSON.stringify(notification)
@@ -163,7 +165,7 @@ function calculateUpdateActionsForPayment(payment, notification, logger) {
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
 
   const { transactionType, transactionState } =
-    getTransactionTypeAndStateOrNull(notificationRequestItem)
+    await getTransactionTypeAndStateOrNull(notificationRequestItem)
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
@@ -311,7 +313,8 @@ function getChangeTransactionTimestampUpdateAction(
   }
 }
 
-function getTransactionTypeAndStateOrNull(notificationRequestItem) {
+async function getTransactionTypeAndStateOrNull(notificationRequestItem) {
+  const adyenEvents = await readAndParseJsonFile('resources/adyen-events.json')
   const adyenEventCode = notificationRequestItem.eventCode
   const adyenEventSuccess = notificationRequestItem.success
 

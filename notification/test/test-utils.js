@@ -4,9 +4,11 @@ import { hmacValidator } from '@adyen/api-library'
 import config from '../src/config/config.js'
 import { setupServer } from '../src/server.js'
 import { setupNotificationResources } from '../src/setup.js'
-import { startFakeExtension, stopFakeExtension } from './fake-extension-service.js'
-import concurrentModificationError from './resources/concurrent-modification-exception.json'
-import payment from './resources/payment-draft.json'
+import {
+  startFakeExtension,
+  stopFakeExtension,
+} from './fake-extension-service.js'
+import { readAndParseJsonFile } from '../src/utils/commons.js'
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -19,15 +21,16 @@ let originalGetAdyenConfigFn
 function overrideAdyenConfig(newAdyenConfig) {
   originalGetAdyenConfigFn = config.getAdyenConfig
   config.getAdyenConfig = () => newAdyenConfig
-  module.exports = config
 }
 
 function restoreAdyenConfig() {
   config.getAdyenConfig = originalGetAdyenConfigFn
-  module.exports = config
 }
 
-function buildMockErrorFromConcurrentModificaitonException() {
+async function buildMockErrorFromConcurrentModificationException() {
+  const concurrentModificationError = await readAndParseJsonFile(
+    'test/resources/concurrent-modification-exception.json'
+  )
   const error = new Error(concurrentModificationError.message)
   error.body = concurrentModificationError.body
   error.name = concurrentModificationError.name
@@ -130,12 +133,15 @@ function createNotificationPayload(
   return notification
 }
 
-function ensurePayment(
+async function ensurePayment(
   ctpClient,
   paymentKey,
   commercetoolsProjectKey,
   adyenMerchantAccount
 ) {
+  const payment = await readAndParseJsonFile(
+    'test/resources/payment-draft.json'
+  )
   const paymentDraft = _.cloneDeep(payment)
   paymentDraft.key = paymentKey
   paymentDraft.custom.fields = {
@@ -149,7 +155,7 @@ function ensurePayment(
 export {
   overrideAdyenConfig,
   restoreAdyenConfig,
-  buildMockErrorFromConcurrentModificaitonException,
+  buildMockErrorFromConcurrentModificationException,
   startIT,
   getNotificationURL,
   stopIT,

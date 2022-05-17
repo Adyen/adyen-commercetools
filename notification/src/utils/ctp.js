@@ -6,7 +6,7 @@ import { createUserAgentMiddleware } from '@commercetools/sdk-middleware-user-ag
 import { createHttpMiddleware } from '@commercetools/sdk-middleware-http'
 import { createQueueMiddleware } from '@commercetools/sdk-middleware-queue'
 import { createRequestBuilder } from '@commercetools/api-request-builder'
-import packageJson from '../../package.json'
+import { readAndParseJsonFile } from './commons'
 
 const tokenCache = {
   store: {},
@@ -18,7 +18,7 @@ const tokenCache = {
   },
 }
 
-function createCtpClient({
+async function createCtpClient({
   clientId,
   clientSecret,
   projectKey,
@@ -36,6 +36,8 @@ function createCtpClient({
     fetch,
     tokenCache,
   })
+
+  const packageJson = await readAndParseJsonFile('package.json')
 
   const userAgentMiddleware = createUserAgentMiddleware({
     libraryName: packageJson.name,
@@ -65,8 +67,8 @@ function createCtpClient({
   })
 }
 
-function setUpClient(config) {
-  const ctpClient = createCtpClient(config)
+async function setUpClient(config) {
+  const ctpClient = await createCtpClient(config)
   const customMethods = {
     get builder() {
       return getRequestBuilder(config.projectKey)

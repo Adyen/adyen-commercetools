@@ -44,4 +44,18 @@ function getNotificationForTracking(notification) {
   return convertNotificationForTracking(notification)
 }
 
-export { collectRequestData, sendResponse, getNotificationForTracking }
+async function readAndParseJsonFile(pathToJsonFileFromProjectRoot) {
+  const currentFilePath = fileURLToPath(import.meta.url)
+  const currentDirPath = path.dirname(currentFilePath)
+  const projectRoot = path.resolve(currentDirPath, '../..')
+  const pathToFile = path.resolve(projectRoot, pathToJsonFileFromProjectRoot)
+  const fileContent = await fs.readFile(pathToFile)
+  return JSON.parse(fileContent)
+}
+
+export {
+  collectRequestData,
+  sendResponse,
+  getNotificationForTracking,
+  readAndParseJsonFile,
+}

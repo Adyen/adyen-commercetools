@@ -1,6 +1,10 @@
 import _ from 'lodash'
 import url from 'url'
-import { sendResponse, collectRequestData, getNotificationForTracking } from '../../utils/commons.js'
+import {
+  sendResponse,
+  collectRequestData,
+  getNotificationForTracking,
+} from '../../utils/commons.js'
 import { isRecoverableError, getErrorCause } from '../../utils/error-utils.js'
 import notificationHandler from '../../handler/notification/notification.handler.js'
 import { getCtpProjectConfig, getAdyenConfig } from '../../utils/parser.js'

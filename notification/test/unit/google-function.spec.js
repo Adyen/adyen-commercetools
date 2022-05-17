@@ -7,7 +7,7 @@ import notificationHandler from '../../src/handler/notification/notification.han
 import { getLogger } from '../../src/utils/logger.js'
 import config from '../../src/config/config.js'
 import { getNotificationForTracking } from '../../src/utils/commons.js'
-import { buildMockErrorFromConcurrentModificaitonException } from '../test-utils.js'
+import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
 
 const { expect } = chai
 chai.use(chaiAsPromised)
@@ -79,7 +79,7 @@ describe('Google Function handler', () => {
         error: logSpy,
       })
 
-      const error = buildMockErrorFromConcurrentModificaitonException()
+      const error = await buildMockErrorFromConcurrentModificationException()
       const errorWrapper = new VError(error)
       sinon
         .stub(notificationHandler, 'processNotification')

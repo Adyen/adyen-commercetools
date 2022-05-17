@@ -180,7 +180,9 @@ describe('::config::', () => {
         fs.writeFileSync(filePath, JSON.stringify(config), 'utf-8')
 
         const loadedConfig = await reloadModule('../../src/config/config.js')
-        expect(loadedConfig.default.getCtpConfig('ctpProjectKey1')).to.deep.equal({
+        expect(
+          loadedConfig.default.getCtpConfig('ctpProjectKey1')
+        ).to.deep.equal({
           clientId: 'clientId',
           clientSecret: 'clientSecret',
           apiUrl: 'host',

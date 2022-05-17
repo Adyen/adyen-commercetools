@@ -1,7 +1,6 @@
 import config from './config/config.js'
 import { getLogger } from './utils/logger.js'
-import { ensureInterfaceInteractionCustomTypeForAllProjects } from
-      './config/init/ensure-interface-interaction-custom-type.js'
+import { ensureInterfaceInteractionCustomTypeForAllProjects } from './config/init/ensure-interface-interaction-custom-type.js'
 
 const logger = getLogger()
 

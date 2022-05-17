@@ -17,7 +17,7 @@ describe('notification module', () => {
   let ctpClient
   before(() => {
     ctpClient = ctpClientBuilder.get(
-        config.getCtpConfig(commercetoolsProjectKey)
+      config.getCtpConfig(commercetoolsProjectKey)
     )
     notificationURL = getNotificationURL()
   })
