@@ -22,9 +22,9 @@ exports.handler = async (event) => {
   }
   try {
     for (const notification of notificationItems) {
-      console.log('event is ' + util.inspect(event, {depth: null}))
-      console.log('event path is ' + JSON.stringify(event.path))
-      const ctpProjectConfig = getCtpProjectConfig(notification, event.path)
+      console.log('event is ' + util.inspect(event, { depth: null }))
+      console.log('event path is ' + JSON.stringify(event.rawPath))
+      const ctpProjectConfig = getCtpProjectConfig(notification, event.rawPath)
       const adyenConfig = getAdyenConfig(notification)
 
       await handler.processNotification(
