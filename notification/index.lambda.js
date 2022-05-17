@@ -1,3 +1,4 @@
+const util = require('util')
 const handler = require('./src/handler/notification/notification.handler')
 const logger = require('./src/utils/logger').getLogger()
 const { getNotificationForTracking } = require('./src/utils/commons')
@@ -21,6 +22,8 @@ exports.handler = async (event) => {
   }
   try {
     for (const notification of notificationItems) {
+      console.log('event is ' + util.inspect(event, {depth: null}))
+      console.log('event path is ' + JSON.stringify(event.path))
       const ctpProjectConfig = getCtpProjectConfig(notification, event.path)
       const adyenConfig = getAdyenConfig(notification)
 

@@ -2,6 +2,7 @@ const _ = require('lodash')
 const config = require('../config/config')
 
 function getCtpProjectConfig(notification, path) {
+  console.log(`path is ${JSON.stringify(path)}`)
   let commercetoolsProjectKey =
     notification?.NotificationRequestItem?.additionalData?.[
       `metadata.ctProjectKey`
@@ -9,6 +10,7 @@ function getCtpProjectConfig(notification, path) {
   if (!commercetoolsProjectKey && path) {
     commercetoolsProjectKey = path.split('/')?.slice(-1)?.[0]
   }
+  console.log(`commercetoolsProjectKey is ${JSON.stringify(commercetoolsProjectKey)}`)
 
   if (_.isEmpty(commercetoolsProjectKey)) {
     throw new Error(
