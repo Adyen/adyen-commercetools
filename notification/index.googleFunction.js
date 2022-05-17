@@ -27,7 +27,10 @@ export const notificationTrigger = async (request, response) => {
   } catch (err) {
     const cause = getErrorCause(err)
     logger.error(
-      { notification: utils.getNotificationForTracking(notificationItems), cause },
+      {
+        notification: utils.getNotificationForTracking(notificationItems),
+        cause,
+      },
       'Unexpected exception occurred.'
     )
     if (isRecoverableError(err)) {

@@ -311,7 +311,9 @@ function getChangeTransactionTimestampUpdateAction(
 }
 
 async function getTransactionTypeAndStateOrNull(notificationRequestItem) {
-  const adyenEvents = await utils.readAndParseJsonFile('resources/adyen-events.json')
+  const adyenEvents = await utils.readAndParseJsonFile(
+    'resources/adyen-events.json'
+  )
   const adyenEventCode = notificationRequestItem.eventCode
   const adyenEventSuccess = notificationRequestItem.success
 
