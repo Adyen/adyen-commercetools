@@ -112,6 +112,7 @@ function loadAndValidateConfig() {
 
 loadAndValidateConfig()
 
+// Using default, because the file needs to be exported as object.
 export default {
   getModuleConfig,
   getCtpConfig,
