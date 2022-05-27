@@ -66,7 +66,7 @@ describe('::klarnaPayment::', () => {
     await browser.close()
   })
 
-  it(
+  it.skip(
     'when payment method is klarna and process is done correctly, ' +
       'then it should successfully finish the payment',
     async () => {

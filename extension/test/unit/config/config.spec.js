@@ -148,9 +148,6 @@ describe('::config::', () => {
   })
 
   async function reloadModule(module) {
-    // const cacheBustingModulePath = `${module}?update=${Date.now()}`
-    // return (await import(cacheBustingModulePath)).default
-
     return import(`${module}?testName=${randomUUID()}`)
   }
 

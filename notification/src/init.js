@@ -1,6 +1,9 @@
-const server = require('./server').setupServer()
-const logger = require('./utils/logger').getLogger()
-const config = require('./config/config')
+import { setupServer } from './server.js'
+import { getLogger } from './utils/logger.js'
+import config from './config/config.js'
+
+const server = setupServer()
+const logger = getLogger()
 
 const moduleConfig = config.getModuleConfig()
 

@@ -1,10 +1,10 @@
-const { expect } = require('chai')
-const { validateHmacSignature } = require('../../src/utils/hmacValidator')
-const {
+import { expect } from 'chai'
+import { validateHmacSignature } from '../../src/utils/hmacValidator.js'
+import {
   overrideAdyenConfig,
   restoreAdyenConfig,
   createNotificationPayload,
-} = require('../test-utils')
+} from '../test-utils.js'
 
 describe('verify hmac signatures', () => {
   before(() => {

@@ -1,25 +1,29 @@
-const sinon = require('sinon')
-const VError = require('verror')
-const { expect } = require('chai')
-const { cloneDeep } = require('lodash')
-const config = require('../../src/config/config')
-
-const notificationHandler = require('../../src/handler/notification/notification.handler')
-const notificationsMock =
-  require('../resources/notification.json').notificationItems
-
-const ctpClientMock = require('./ctp-client-mock')
-const paymentMock = require('../resources/payment-credit-card.json')
-const ctp = require('../../src/utils/ctp')
-const {
+import sinon from 'sinon'
+import VError from 'verror'
+import { expect } from 'chai'
+import lodash from 'lodash'
+import config from '../../src/config/config.js'
+import notificationHandler from '../../src/handler/notification/notification.handler.js'
+import ctp from '../../src/utils/ctp.js'
+import ctpClientMock from './ctp-client-mock.js'
+import {
   overrideAdyenConfig,
   restoreAdyenConfig,
-  buildMockErrorFromConcurrentModificaitonException,
-} = require('../test-utils')
+  buildMockErrorFromConcurrentModificationException,
+} from '../test-utils.js'
+import utils from '../../src/utils/commons.js'
 
+const { cloneDeep } = lodash
 const sandbox = sinon.createSandbox()
 
-describe('notification module', () => {
+describe('notification module', async () => {
+  const paymentMock = await utils.readAndParseJsonFile(
+    'test/resources/payment-credit-card.json'
+  )
+  const notification = await utils.readAndParseJsonFile(
+    'test/resources/notification.json'
+  )
+  const notificationsMock = notification.notificationItems
   const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
   const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
   let originalCtpGetFn
@@ -34,13 +38,12 @@ describe('notification module', () => {
     restoreAdyenConfig()
   })
 
-  beforeEach(() => {
-    originalCtpGetFn = ctp.get
+  beforeEach(async () => {
+    originalCtpGetFn = await ctp.get
   })
 
   afterEach(() => {
     ctp.get = originalCtpGetFn
-    module.exports = ctp
     sandbox.restore()
   })
 
@@ -90,7 +93,6 @@ describe('notification module', () => {
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
-    module.exports = ctp
 
     // process
     await notificationHandler.processNotification(
@@ -190,7 +192,6 @@ describe('notification module', () => {
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
-    module.exports = ctp
 
     // process
     await notificationHandler.processNotification(
@@ -283,7 +284,6 @@ describe('notification module', () => {
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
-    module.exports = ctp
 
     // process
     await notificationHandler.processNotification(
@@ -339,7 +339,6 @@ describe('notification module', () => {
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
-    module.exports = ctp
 
     // process
     await notificationHandler.processNotification(
@@ -436,7 +435,6 @@ describe('notification module', () => {
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
-    module.exports = ctp
 
     // process
     await notificationHandler.processNotification(
@@ -533,7 +531,6 @@ describe('notification module', () => {
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
-    module.exports = ctp
 
     // process
     await notificationHandler.processNotification(
@@ -610,11 +607,10 @@ describe('notification module', () => {
     }))
     const ctpClientUpdateSpy = sandbox
       .stub(ctpClient, 'update')
-      .callsFake(() => {
-        throw buildMockErrorFromConcurrentModificaitonException()
+      .callsFake(async () => {
+        throw await buildMockErrorFromConcurrentModificationException()
       })
     ctp.get = () => ctpClient
-    module.exports = ctp
 
     let err
     // process
@@ -640,7 +636,6 @@ describe('notification module', () => {
     const ctpClientFetchByIdSpy = sandbox.spy(ctpClient, 'fetchById')
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
-    module.exports = ctp
 
     // process
     await notificationHandler.processNotification(
@@ -704,7 +699,6 @@ describe('notification module', () => {
       }))
       const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
       ctp.get = () => ctpClient
-      module.exports = ctp
 
       // process
       await notificationHandler.processNotification(
@@ -773,7 +767,6 @@ describe('notification module', () => {
       }))
       const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
       ctp.get = () => ctpClient
-      module.exports = ctp
 
       // process
       await notificationHandler.processNotification(
@@ -834,7 +827,6 @@ describe('notification module', () => {
     })
 
     ctp.get = () => ctpClient
-    module.exports = ctp
     let error
     // process
     try {

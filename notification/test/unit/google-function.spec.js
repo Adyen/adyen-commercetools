@@ -1,17 +1,16 @@
-const sinon = require('sinon')
-const chai = require('chai')
-const VError = require('verror')
-const { notificationTrigger } = require('../../index.googleFunction')
-const notificationHandler = require('../../src/handler/notification/notification.handler')
-const logger = require('../../src/utils/logger')
-const config = require('../../src/config/config')
+import sinon from 'sinon'
+import chai from 'chai'
+import VError from 'verror'
+import chaiAsPromised from 'chai-as-promised'
+import { notificationTrigger } from '../../index.googleFunction.js'
+import notificationHandler from '../../src/handler/notification/notification.handler.js'
+import { getLogger } from '../../src/utils/logger.js'
+import config from '../../src/config/config.js'
+import utils from '../../src/utils/commons.js'
+import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
 
 const { expect } = chai
-const { getNotificationForTracking } = require('../../src/utils/commons')
-const {
-  buildMockErrorFromConcurrentModificaitonException,
-} = require('../test-utils')
-chai.use(require('chai-as-promised'))
+chai.use(chaiAsPromised)
 
 describe('Google Function handler', () => {
   const sandbox = sinon.createSandbox()
@@ -49,13 +48,11 @@ describe('Google Function handler', () => {
       .stub(config, 'getCtpConfig')
       .callsFake(() => ({}))
     config.getCtpConfig = configGetCtpConfigSpy
-    module.exports = config
 
     const configGetAdyenConfigSpy = sandbox
       .stub(config, 'getAdyenConfig')
       .callsFake(() => ({}))
     config.getAdyenConfig = configGetAdyenConfigSpy
-    module.exports = config
   })
   afterEach(() => {
     notificationHandler.processNotification.restore()
@@ -72,15 +69,15 @@ describe('Google Function handler', () => {
   })
 
   it('throws and logs for concurrent modification exceptions', async () => {
-    const originalChildFn = logger.getLogger().child
+    const originalChildFn = getLogger().child
     try {
       const logSpy = sinon.spy()
-      logger.getLogger().error = logSpy
-      logger.getLogger().child = () => ({
+      getLogger().error = logSpy
+      getLogger().child = () => ({
         error: logSpy,
       })
 
-      const error = buildMockErrorFromConcurrentModificaitonException()
+      const error = await buildMockErrorFromConcurrentModificationException()
       const errorWrapper = new VError(error)
       sinon
         .stub(notificationHandler, 'processNotification')
@@ -95,22 +92,22 @@ describe('Google Function handler', () => {
       const notificationItem = mockRequest.body.notificationItems.pop()
       logSpy.calledWith(
         {
-          notification: getNotificationForTracking(notificationItem),
+          notification: utils.getNotificationForTracking(notificationItem),
           err: errorWrapper,
         },
         'Unexpected exception occurred.'
       )
     } finally {
-      logger.getLogger().child = originalChildFn
+      getLogger().child = originalChildFn
     }
   })
 
   it('logs for unrecoverable and returns "accepted"', async () => {
-    const originalChildFn = logger.getLogger().child
+    const originalChildFn = getLogger().child
     try {
       const logSpy = sinon.spy()
-      logger.getLogger().error = logSpy
-      logger.getLogger().child = () => ({
+      getLogger().error = logSpy
+      getLogger().child = () => ({
         error: logSpy,
       })
 
@@ -124,13 +121,13 @@ describe('Google Function handler', () => {
       const notificationItem = mockRequest.body.notificationItems.pop()
       logSpy.calledWith(
         {
-          notification: getNotificationForTracking(notificationItem),
+          notification: utils.getNotificationForTracking(notificationItem),
           err: error,
         },
         'Unexpected exception occurred.'
       )
     } finally {
-      logger.getLogger().child = originalChildFn
+      getLogger().child = originalChildFn
     }
   })
 })

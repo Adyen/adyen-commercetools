@@ -1,13 +1,13 @@
-const { expect } = require('chai')
-const fetch = require('node-fetch')
-const ctpClientBuilder = require('../../src/utils/ctp')
-const config = require('../../src/config/config')
-const {
+import { expect } from 'chai'
+import fetch from 'node-fetch'
+import ctpClientBuilder from '../../src/utils/ctp.js'
+import config from '../../src/config/config.js'
+import {
   getNotificationURL,
   overrideAdyenConfig,
   ensurePayment,
   createNotificationPayload,
-} = require('../test-utils')
+} from '../test-utils.js'
 
 describe('notification module', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
@@ -15,8 +15,8 @@ describe('notification module', () => {
 
   let notificationURL
   let ctpClient
-  before(() => {
-    ctpClient = ctpClientBuilder.get(
+  before(async () => {
+    ctpClient = await ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey)
     )
     notificationURL = getNotificationURL()

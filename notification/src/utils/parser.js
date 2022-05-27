@@ -1,5 +1,5 @@
-const _ = require('lodash')
-const config = require('../config/config')
+import _ from 'lodash'
+import config from '../config/config.js'
 
 function getCtpProjectConfig(notification, path) {
   let commercetoolsProjectKey =
@@ -25,7 +25,4 @@ function getAdyenConfig(notification) {
   return config.getAdyenConfig(adyenMerchantAccount)
 }
 
-module.exports = {
-  getCtpProjectConfig,
-  getAdyenConfig,
-}
+export { getCtpProjectConfig, getAdyenConfig }
