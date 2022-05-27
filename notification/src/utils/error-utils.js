@@ -1,4 +1,4 @@
-const VError = require('verror')
+import VError from 'verror'
 
 /*
  * recoverable: notification delivery can be retried by Adyen (return 500)
@@ -26,7 +26,4 @@ function getErrorCause(err) {
   return err
 }
 
-module.exports = {
-  isRecoverableError,
-  getErrorCause,
-}
+export { isRecoverableError, getErrorCause }

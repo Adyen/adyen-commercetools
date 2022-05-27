@@ -1,5 +1,7 @@
-const bunyan = require('bunyan')
-const { logLevel } = require('../config/config').getModuleConfig()
+import bunyan from 'bunyan'
+import config from '../config/config.js'
+
+const { logLevel } = config.getModuleConfig
 
 let obj
 
@@ -19,4 +21,4 @@ function getLogger() {
   return obj
 }
 
-module.exports = { getLogger }
+export { getLogger }

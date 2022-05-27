@@ -1,12 +1,12 @@
-const { expect } = require('chai')
-const fetch = require('node-fetch')
-const ctpClientBuilder = require('../../src/utils/ctp')
-const config = require('../../src/config/config')
-const {
+import { expect } from 'chai'
+import fetch from 'node-fetch'
+import ctpClientBuilder from '../../src/utils/ctp.js'
+import config from '../../src/config/config.js'
+import {
   getNotificationURL,
   ensurePayment,
   createNotificationPayload,
-} = require('../test-utils')
+} from '../test-utils.js'
 
 describe('::multitenancy::', () => {
   const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
@@ -18,11 +18,11 @@ describe('::multitenancy::', () => {
   let ctpClient2
   let notificationURL
 
-  before(() => {
-    ctpClient1 = ctpClientBuilder.get(
+  before(async () => {
+    ctpClient1 = await ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey1)
     )
-    ctpClient2 = ctpClientBuilder.get(
+    ctpClient2 = await ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey2)
     )
     notificationURL = getNotificationURL()

@@ -1,6 +1,8 @@
-const { merge } = require('lodash')
-const { createClient } = require('@commercetools/sdk-client')
-const { createRequestBuilder } = require('@commercetools/api-request-builder')
+import lodash from 'lodash'
+import { createClient } from '@commercetools/sdk-client'
+import { createRequestBuilder } from '@commercetools/api-request-builder'
+
+const { merge } = lodash
 
 function createCtpClient() {
   const httpMockSuccessMiddleware = (next) => (request, response) => {
@@ -89,7 +91,7 @@ function compareTransactionStates(currentState, newState) {
   return 0
 }
 
-module.exports = {
+export default {
   get: (config) => setUpClient(config),
   compareTransactionStates,
 }

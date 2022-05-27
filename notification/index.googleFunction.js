@@ -1,12 +1,13 @@
-const url = require('url')
-const handler = require('./src/handler/notification/notification.handler')
-const logger = require('./src/utils/logger').getLogger()
-const { getNotificationForTracking } = require('./src/utils/commons')
-const { getErrorCause, isRecoverableError } = require('./src/utils/error-utils')
+import url from 'url'
+import handler from './src/handler/notification/notification.handler.js'
+import { getLogger } from './src/utils/logger.js'
+import utils from './src/utils/commons.js'
+import { getErrorCause, isRecoverableError } from './src/utils/error-utils.js'
+import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser.js'
 
-const { getCtpProjectConfig, getAdyenConfig } = require('./src/utils/parser')
+const logger = getLogger()
 
-exports.notificationTrigger = async (request, response) => {
+export const notificationTrigger = async (request, response) => {
   const { notificationItems } = request.body
   if (!notificationItems) {
     return response.status(400).send('No notification received.')
@@ -26,7 +27,10 @@ exports.notificationTrigger = async (request, response) => {
   } catch (err) {
     const cause = getErrorCause(err)
     logger.error(
-      { notification: getNotificationForTracking(notificationItems), cause },
+      {
+        notification: utils.getNotificationForTracking(notificationItems),
+        cause,
+      },
       'Unexpected exception occurred.'
     )
     if (isRecoverableError(err)) {

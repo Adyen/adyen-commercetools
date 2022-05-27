@@ -1,5 +1,5 @@
-const { hmacValidator } = require('@adyen/api-library')
-const config = require('../config/config')
+import { hmacValidator } from '@adyen/api-library'
+import config from '../config/config.js'
 
 /* eslint-disable new-cap */
 const validator = new hmacValidator()
@@ -45,4 +45,4 @@ function validateHmacSignature(notification) {
   return null
 }
 
-module.exports = { validateHmacSignature }
+export { validateHmacSignature }

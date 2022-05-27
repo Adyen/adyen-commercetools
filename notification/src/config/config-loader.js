@@ -1,3 +1,5 @@
+import rc from 'rc'
+
 function loadConfig() {
   if (process.env.ADYEN_INTEGRATION_CONFIG) {
     return loadFromAdyenIntegrationEnvVar()
@@ -21,9 +23,7 @@ function loadFromExternalFile() {
   see: https://github.com/dominictarr/rc#standards for file precedence.
    */
   const appName = 'notification'
-  /* eslint-disable global-require */
-  const configFromExternalFile = require('rc')(appName)
-  /* eslint-enable global-require */
+  const configFromExternalFile = rc(appName)
   const hasConfig = configFromExternalFile?.configs?.length > 0
   if (!hasConfig) {
     throw new Error('Adyen integration configuration is not provided.')
@@ -31,4 +31,4 @@ function loadFromExternalFile() {
   return configFromExternalFile
 }
 
-module.exports = loadConfig
+export { loadConfig }

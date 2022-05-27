@@ -1,6 +1,7 @@
-const { isEmpty } = require('lodash')
-const loadConfig = require('./config-loader')
+import lodash from 'lodash'
+import { loadConfig } from './config-loader.js'
 
+const { isEmpty } = lodash
 let config
 
 function getModuleConfig() {
@@ -111,7 +112,8 @@ function loadAndValidateConfig() {
 
 loadAndValidateConfig()
 
-module.exports = {
+// Using default, because the file needs to be exported as object.
+export default {
   getModuleConfig,
   getCtpConfig,
   getAdyenConfig,

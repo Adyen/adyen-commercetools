@@ -1,12 +1,13 @@
-const _ = require('lodash')
-const { serializeError } = require('serialize-error')
-const VError = require('verror')
-const { validateHmacSignature } = require('../../utils/hmacValidator')
-const adyenEvents = require('../../../resources/adyen-events.json')
-const { getNotificationForTracking } = require('../../utils/commons')
-const ctp = require('../../utils/ctp')
-const config = require('../../config/config')
-const mainLogger = require('../../utils/logger').getLogger()
+import _ from 'lodash'
+import { serializeError } from 'serialize-error'
+import VError from 'verror'
+import { validateHmacSignature } from '../../utils/hmacValidator.js'
+import utils from '../../utils/commons.js'
+import ctp from '../../utils/ctp.js'
+import config from '../../config/config.js'
+import { getLogger } from '../../utils/logger.js'
+
+const mainLogger = getLogger()
 
 async function processNotification(
   notification,
@@ -21,7 +22,7 @@ async function processNotification(
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
       logger.error(
-        { notification: getNotificationForTracking(notification) },
+        { notification: utils.getNotificationForTracking(notification) },
         `HMAC validation failed. Reason: "${errorMessage}"`
       )
       return
@@ -35,13 +36,13 @@ async function processNotification(
   )
   if (merchantReference === null) {
     logger.error(
-      { notification: getNotificationForTracking(notification) },
+      { notification: utils.getNotificationForTracking(notification) },
       "Can't extract merchantReference from the notification"
     )
     return
   }
 
-  const ctpClient = ctp.get(ctpProjectConfig)
+  const ctpClient = await ctp.get(ctpProjectConfig)
 
   const payment = await getPaymentByMerchantReference(
     merchantReference,
@@ -68,7 +69,7 @@ async function updatePaymentWithRepeater(
   let retryMessage
   let updateActions
   while (true) {
-    updateActions = calculateUpdateActionsForPayment(
+    updateActions = await calculateUpdateActionsForPayment(
       currentPayment,
       notification,
       logger
@@ -140,14 +141,14 @@ function _obfuscateNotificationInfoFromActionFields(updateActions) {
     .filter((value) => value.action === 'addInterfaceInteraction')
     .filter((value) => value?.fields?.notification)
     .forEach((value) => {
-      value.fields.notification = getNotificationForTracking(
+      value.fields.notification = utils.getNotificationForTracking(
         JSON.parse(value.fields.notification)
       )
     })
   return copyOfUpdateActions
 }
 
-function calculateUpdateActionsForPayment(payment, notification, logger) {
+async function calculateUpdateActionsForPayment(payment, notification, logger) {
   const updateActions = []
   const notificationRequestItem = notification.NotificationRequestItem
   const stringifiedNotification = JSON.stringify(notification)
@@ -161,7 +162,7 @@ function calculateUpdateActionsForPayment(payment, notification, logger) {
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
 
   const { transactionType, transactionState } =
-    getTransactionTypeAndStateOrNull(notificationRequestItem)
+    await getTransactionTypeAndStateOrNull(notificationRequestItem)
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
@@ -309,7 +310,10 @@ function getChangeTransactionTimestampUpdateAction(
   }
 }
 
-function getTransactionTypeAndStateOrNull(notificationRequestItem) {
+async function getTransactionTypeAndStateOrNull(notificationRequestItem) {
+  const adyenEvents = await utils.readAndParseJsonFile(
+    'resources/adyen-events.json'
+  )
   const adyenEventCode = notificationRequestItem.eventCode
   const adyenEventSuccess = notificationRequestItem.success
 
@@ -402,4 +406,4 @@ async function getPaymentByMerchantReference(merchantReference, ctpClient) {
   }
 }
 
-module.exports = { processNotification }
+export default { processNotification }

@@ -1,6 +1,5 @@
-const chai = require('chai')
-
-const { getNotificationForTracking } = require('../../src/utils/commons')
+import chai from 'chai'
+import utils from '../../src/utils/commons.js'
 
 const { expect } = chai
 
@@ -41,7 +40,7 @@ describe('notification module common utility', () => {
         },
       },
     ]
-    const actualNotificationResult = await getNotificationForTracking(
+    const actualNotificationResult = await utils.getNotificationForTracking(
       notifications
     )
     const expectedNotificationResult = [
@@ -82,7 +81,7 @@ describe('notification module common utility', () => {
       },
     }
 
-    const actualNotificationResult = await getNotificationForTracking(
+    const actualNotificationResult = await utils.getNotificationForTracking(
       notifications
     )
     const expectedNotificationResult = {

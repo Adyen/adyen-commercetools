@@ -1,17 +1,17 @@
-const sinon = require('sinon')
-const chai = require('chai')
-const VError = require('verror')
-const { handler } = require('../../index.lambda')
-const notificationHandler = require('../../src/handler/notification/notification.handler')
-const logger = require('../../src/utils/logger')
-const config = require('../../src/config/config')
+import sinon from 'sinon'
+import chai from 'chai'
+import VError from 'verror'
+import chaiAsPromised from 'chai-as-promised'
+import { handler } from '../../index.lambda.js'
+import notificationHandler from '../../src/handler/notification/notification.handler.js'
+import { getLogger } from '../../src/utils/logger.js'
+import config from '../../src/config/config.js'
+import utils from '../../src/utils/commons.js'
+import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
 
+const logger = getLogger()
 const { expect, assert } = chai
-const { getNotificationForTracking } = require('../../src/utils/commons')
-const {
-  buildMockErrorFromConcurrentModificaitonException,
-} = require('../test-utils')
-chai.use(require('chai-as-promised'))
+chai.use(chaiAsPromised)
 
 describe('Lambda handler', () => {
   const sandbox = sinon.createSandbox()
@@ -46,13 +46,11 @@ describe('Lambda handler', () => {
       .stub(config, 'getCtpConfig')
       .callsFake(() => ({}))
     config.getCtpConfig = configGetCtpConfigSpy
-    module.exports = config
 
     const configGetAdyenConfigSpy = sandbox
       .stub(config, 'getAdyenConfig')
       .callsFake(() => ({}))
     config.getAdyenConfig = configGetAdyenConfigSpy
-    module.exports = config
   })
   afterEach(() => {
     notificationHandler.processNotification.restore()
@@ -68,15 +66,15 @@ describe('Lambda handler', () => {
   })
 
   it('throws and logs for concurrent modification exceptions', async () => {
-    const originalChildFn = logger.getLogger().child
+    const originalChildFn = logger.child
     try {
       const logSpy = sinon.spy()
-      logger.getLogger().error = logSpy
-      logger.getLogger().child = () => ({
+      logger.error = logSpy
+      logger.child = () => ({
         error: logSpy,
       })
 
-      const error = buildMockErrorFromConcurrentModificaitonException()
+      const error = await buildMockErrorFromConcurrentModificationException()
       const errorWrapper = new VError(error)
       sinon
         .stub(notificationHandler, 'processNotification')
@@ -88,22 +86,22 @@ describe('Lambda handler', () => {
       const notificationItem = event.notificationItems.pop()
       logSpy.calledWith(
         {
-          notification: getNotificationForTracking(notificationItem),
+          notification: utils.getNotificationForTracking(notificationItem),
           err: errorWrapper,
         },
         'Unexpected error when processing event'
       )
     } finally {
-      logger.getLogger().child = originalChildFn
+      logger.child = originalChildFn
     }
   })
 
   it('logs for unrecoverable and returns "accepted"', async () => {
-    const originalChildFn = logger.getLogger().child
+    const originalChildFn = logger.child
     try {
       const logSpy = sinon.spy()
-      logger.getLogger().error = logSpy
-      logger.getLogger().child = () => ({
+      logger.error = logSpy
+      logger.child = () => ({
         error: logSpy,
       })
 
@@ -116,20 +114,20 @@ describe('Lambda handler', () => {
       const notificationItem = event.notificationItems.pop()
       logSpy.calledWith(
         {
-          notification: getNotificationForTracking(notificationItem),
+          notification: utils.getNotificationForTracking(notificationItem),
           err: error,
         },
         'Unexpected error when processing event'
       )
     } finally {
-      logger.getLogger().child = originalChildFn
+      logger.child = originalChildFn
     }
   })
 
   it('throws error if no notificationItems were received and logs properly', async () => {
     const logSpy = sinon.spy()
     sinon.stub(notificationHandler, 'processNotification').returns(undefined)
-    logger.getLogger().error = logSpy
+    logger.error = logSpy
 
     const error = new Error('No notification received.')
 

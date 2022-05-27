@@ -1,21 +1,25 @@
-const { createSyncTypes } = require('@commercetools/sync-actions')
-const { serializeError } = require('serialize-error')
-const mainLogger = require('../../utils/logger').getLogger()
+import { createSyncTypes } from '@commercetools/sync-actions'
+import { serializeError } from 'serialize-error'
+import { getLogger } from '../../utils/logger.js'
+import config from '../config.js'
+import ctp from '../../utils/ctp.js'
+import utils from '../../utils/commons.js'
 
-const interfaceInteractionType = require('../../../resources/payment-interface-interaction-type.json')
-const config = require('../config')
-const ctp = require('../../utils/ctp')
+const mainLogger = getLogger()
 
 async function ensureInterfaceInteractionCustomTypeForAllProjects() {
   const commercetoolsProjectKeys = config.getAllCtpProjectKeys()
   for (const commercetoolsProjectKey of commercetoolsProjectKeys) {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
-    const ctpClient = ctp.get(ctpConfig)
+    const ctpClient = await ctp.get(ctpConfig)
     await ensureInterfaceInteractionCustomType(ctpClient, ctpConfig.projectKey)
   }
 }
 
 async function ensureInterfaceInteractionCustomType(ctpClient, ctpProjectKey) {
+  const interfaceInteractionType = await utils.readAndParseJsonFile(
+    'resources/payment-interface-interaction-type.json'
+  )
   return syncCustomType(
     ctpClient,
     createChildLogger(ctpProjectKey),
@@ -68,7 +72,7 @@ async function fetchTypeByKey(ctpClient, key) {
   }
 }
 
-module.exports = {
+export {
   ensureInterfaceInteractionCustomTypeForAllProjects,
   ensureInterfaceInteractionCustomType,
 }

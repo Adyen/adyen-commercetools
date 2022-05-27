@@ -1,15 +1,16 @@
-const _ = require('lodash')
-const { address } = require('ip')
-const { hmacValidator } = require('@adyen/api-library')
-const config = require('../src/config/config')
-const concurrentModificationError = require('./resources/concurrent-modification-exception.json')
-const serverBuilder = require('../src/server')
-const { setupNotificationResources } = require('../src/setup')
-const payment = require('./resources/payment-draft.json')
-const {
+import _ from 'lodash'
+import ip from 'ip'
+import { hmacValidator } from '@adyen/api-library'
+import config from '../src/config/config.js'
+import { setupServer } from '../src/server.js'
+import { setupNotificationResources } from '../src/setup.js'
+import {
   startFakeExtension,
   stopFakeExtension,
-} = require('./fake-extension-service')
+} from './fake-extension-service.js'
+import utils from '../src/utils/commons.js'
+
+const { address } = ip
 
 process.on('unhandledRejection', (reason) => {
   /* eslint-disable no-console */
@@ -22,15 +23,16 @@ let originalGetAdyenConfigFn
 function overrideAdyenConfig(newAdyenConfig) {
   originalGetAdyenConfigFn = config.getAdyenConfig
   config.getAdyenConfig = () => newAdyenConfig
-  module.exports = config
 }
 
 function restoreAdyenConfig() {
   config.getAdyenConfig = originalGetAdyenConfigFn
-  module.exports = config
 }
 
-function buildMockErrorFromConcurrentModificaitonException() {
+async function buildMockErrorFromConcurrentModificationException() {
+  const concurrentModificationError = await utils.readAndParseJsonFile(
+    'test/resources/concurrent-modification-exception.json'
+  )
   const error = new Error(concurrentModificationError.message)
   error.body = concurrentModificationError.body
   error.name = concurrentModificationError.name
@@ -64,7 +66,7 @@ function getNotificationURL() {
 
 let server
 async function setupLocalServer(testServerPort = 8000) {
-  server = serverBuilder.setupServer()
+  server = setupServer()
   return new Promise((resolve) => {
     server.listen(testServerPort, async () => {
       resolve()
@@ -133,12 +135,15 @@ function createNotificationPayload(
   return notification
 }
 
-function ensurePayment(
+async function ensurePayment(
   ctpClient,
   paymentKey,
   commercetoolsProjectKey,
   adyenMerchantAccount
 ) {
+  const payment = await utils.readAndParseJsonFile(
+    'test/resources/payment-draft.json'
+  )
   const paymentDraft = _.cloneDeep(payment)
   paymentDraft.key = paymentKey
   paymentDraft.custom.fields = {
@@ -149,10 +154,10 @@ function ensurePayment(
   return ctpClient.create(ctpClient.builder.payments, paymentDraft)
 }
 
-module.exports = {
+export {
   overrideAdyenConfig,
   restoreAdyenConfig,
-  buildMockErrorFromConcurrentModificaitonException,
+  buildMockErrorFromConcurrentModificationException,
   startIT,
   getNotificationURL,
   stopIT,
