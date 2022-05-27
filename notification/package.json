@@ -1,6 +1,6 @@
 {
   "name": "commercetools-adyen-integration-notification",
-  "version": "9.8.0",
+  "version": "9.8.1",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "type": "module",
   "scripts": {
@@ -18,7 +18,7 @@
     "rename-indexfile": "cp index.googleFunction.js index.js",
     "zip-google-function": "cp index.googleFunction.js index.js && zip -r notification-module.zip src resources .notificationrc index.js package.json && rm index.js",
     "zip-lambda-function": "cp index.lambda.js index.js && npm ci --production && zip -r notification-module.zip . && rm index.js",
-    "setup-resources": "node -e 'require(\"./src/setup.js\").setupNotificationResources()'"
+    "setup-resources": "run-func ./src/setup.js setupNotificationResources"
   },
   "keywords": [
     "adyen",
@@ -59,6 +59,7 @@
     "lodash": "4.17.21",
     "node-fetch": "2.6.7",
     "rc": "1.2.8",
+    "run-func": "^3.0.0",
     "serialize-error": "8.1.0",
     "verror": "1.10.1"
   },
@@ -72,12 +73,12 @@
     "husky": "8.0.1",
     "ip": "1.1.8",
     "lint-staged": "12.4.1",
+    "localtunnel": "2.0.2",
     "mocha": "10.0.0",
     "nyc": "15.1.0",
     "p-map": "5.4.0",
     "prettier": "2.6.2",
-    "sinon": "14.0.0",
-    "localtunnel": "2.0.2"
+    "sinon": "14.0.0"
   },
   "husky": {
     "hooks": {
