@@ -72,7 +72,7 @@
     "eslint-plugin-import": "2.26.0",
     "husky": "8.0.1",
     "ip": "1.1.8",
-    "lint-staged": "12.4.1",
+    "lint-staged": "12.4.2",
     "localtunnel": "2.0.2",
     "mocha": "10.0.0",
     "nyc": "15.1.0",
