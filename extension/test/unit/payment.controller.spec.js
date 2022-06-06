@@ -5,10 +5,15 @@ import errorMessages from '../../src/validator/error-messages.js'
 import paymentController from '../../src/api/payment/payment.controller.js'
 import utils from '../../src/utils.js'
 
-describe('Payment controller', async () => {
-  const ctpPayment = await utils.readAndParseJsonFile(
-    'test/unit/fixtures/ctp-payment.json'
-  )
+describe('Payment controller', () => {
+  let ctpPayment
+
+  beforeEach(async () => {
+    ctpPayment = await utils.readAndParseJsonFile(
+      'test/unit/fixtures/ctp-payment.json'
+    )
+  })
+
   describe('Validation', () => {
     const mockRequest = { method: 'POST' }
 

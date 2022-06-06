@@ -4,16 +4,10 @@ import _ from 'lodash'
 import { ensureResources } from '../../../../src/config/init/ensure-resources.js'
 import utils from '../../../../src/utils.js'
 
-describe('Ensure resources', async () => {
-  const webComponentsPaymentType = await utils.readAndParseJsonFile(
-    'resources/web-components-payment-type.json'
-  )
-  const apiExtension = await utils.readAndParseJsonFile(
-    'resources/api-extension.json'
-  )
-  const interfaceInteractionType = await utils.readAndParseJsonFile(
-    'resources/payment-interface-interaction-type.json'
-  )
+describe('Ensure resources', () => {
+  let webComponentsPaymentType
+  let apiExtension
+  let interfaceInteractionType
   const mockClient = {
     get builder() {
       return {
@@ -28,6 +22,18 @@ describe('Ensure resources', async () => {
     fetchByKey() {},
     create() {},
   }
+
+  before(async() => {
+    webComponentsPaymentType = await utils.readAndParseJsonFile(
+      'resources/web-components-payment-type.json'
+    )
+    apiExtension = await utils.readAndParseJsonFile(
+      'resources/api-extension.json'
+    )
+    interfaceInteractionType = await utils.readAndParseJsonFile(
+      'resources/payment-interface-interaction-type.json'
+    )
+  })
 
   afterEach(() => {
     sinon.restore()

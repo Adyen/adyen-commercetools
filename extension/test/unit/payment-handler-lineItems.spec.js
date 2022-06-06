@@ -9,19 +9,25 @@ import utils from '../../src/utils.js'
 
 const { handlePayment } = paymentHandler
 
-describe('payment-handler-lineItems::execute', async () => {
-  const ctpPayment = await utils.readAndParseJsonFile(
-    'test/unit/fixtures/ctp-payment.json'
-  )
-  const ctpCart = await utils.readAndParseJsonFile(
-    'test/unit/fixtures/ctp-cart.json'
-  )
+describe('payment-handler-lineItems::execute', () => {
+  let ctpPayment
+  let ctpCart
   let scope
 
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
 
   let sandbox
+
+  before(async () => {
+    ctpPayment = await utils.readAndParseJsonFile(
+      'test/unit/fixtures/ctp-payment.json'
+    )
+    ctpCart = await utils.readAndParseJsonFile(
+      'test/unit/fixtures/ctp-cart.json'
+    )
+  })
+
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     scope = nock(`${adyenConfig.apiBaseUrl}`)

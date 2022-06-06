@@ -5,13 +5,14 @@ import c from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils.js'
 
-describe('::getPaymentMethods::', async () => {
-  const packageJson = await utils.readAndParseJsonFile('package.json')
+describe('::getPaymentMethods::', () => {
+  let packageJson
   let ctpClient
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
   const [adyenMerchantAccount] = config.getAllAdyenMerchantAccounts()
 
   before(async () => {
+    packageJson = await utils.readAndParseJsonFile('package.json')
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = await ctpClientBuilder.get(ctpConfig)
   })
