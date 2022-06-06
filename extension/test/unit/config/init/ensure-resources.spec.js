@@ -23,7 +23,7 @@ describe('Ensure resources', () => {
     create() {},
   }
 
-  before(async() => {
+  before(async () => {
     webComponentsPaymentType = await utils.readAndParseJsonFile(
       'resources/web-components-payment-type.json'
     )
