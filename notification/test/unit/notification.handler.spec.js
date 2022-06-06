@@ -587,6 +587,102 @@ describe('notification module', () => {
     )
   })
 
+  it(`given that ADYEN sends a "CAPTURE_FAILED notification"
+      when payment has a successful Charged transaction 
+      then notification module should add notification to the interface interaction 
+      and should update successful Charge transaction to failed Charge transaction`, async () => {
+    // prepare data
+    const notifications = [
+      {
+        NotificationRequestItem: {
+          additionalData: {
+            paypalErrorCode: '10606',
+            paypalErrorDescription:
+              'Transaction rejected, please contact the buyer.',
+            'metadata.ctProjectKey': '****',
+            acquirerErrorCode: '10606',
+            paymentMethodVariant: 'paypal',
+            acquirerErrorDescription:
+              'Transaction rejected, please contact the buyer.',
+            hmacSignature: '****',
+          },
+          amount: {
+            currency: 'AUD',
+            value: 72400,
+          },
+          eventCode: 'CAPTURE_FAILED',
+          eventDate: '2022-04-13T07:17:29+02:00',
+          merchantAccountCode: '****',
+          merchantReference: '****',
+          originalReference: '****',
+          paymentMethod: 'visa',
+          pspReference: 'test_AUTHORISATION_1',
+          success: 'true',
+        },
+      },
+    ]
+    const payment = cloneDeep(paymentMock)
+    payment.transactions.push({
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Charge',
+      amount: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 55,
+        fractionDigits: 2,
+      },
+      state: 'Success',
+      interactionId: 'test_AUTHORISATION_1',
+    })
+    const ctpClient = ctpClientMock.get(ctpConfig)
+    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
+      body: payment,
+    }))
+    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+
+    // process
+    await notificationHandler.processNotification(
+      notifications[0],
+      false,
+      config
+    )
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notifications[0].NotificationRequestItem.additionalData
+    }
+    const expectedUpdateActions = [
+      {
+        action: 'addInterfaceInteraction',
+        type: {
+          key: 'ctp-adyen-integration-interaction-notification',
+          typeId: 'type',
+        },
+        fields: {
+          status: 'capture_failed',
+          type: 'notification',
+          notification: JSON.stringify(notifications[0]),
+        },
+      },
+      {
+        action: 'changeTransactionState',
+        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+        state: 'Failure',
+      },
+      {
+        action: 'changeTransactionTimestamp',
+        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+        timestamp: '2022-04-13T05:17:29.000Z',
+      },
+    ]
+
+    const actualUpdateActions = ctpClientUpdateSpy.args[0][3]
+    expect(actualUpdateActions[0].fields.createdAt).to.exist
+    // createdAt is set to the current date during the update action calculation
+    // We can't know what is set there
+    delete actualUpdateActions[0].fields.createdAt
+    expect(actualUpdateActions).to.deep.equal(expectedUpdateActions)
+  })
+
   it('should repeat on concurrent modification errors ', async () => {
     const modifiedPaymentMock = cloneDeep(paymentMock)
     modifiedPaymentMock.transactions.push({

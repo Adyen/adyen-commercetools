@@ -231,7 +231,7 @@ function compareTransactionStates(currentState, newState) {
     Initial: 0,
     Pending: 1,
     Success: 2,
-    Failure: 2,
+    Failure: 3,
   }
   if (
     !transactionStateFlow.hasOwnProperty(currentState) ||
