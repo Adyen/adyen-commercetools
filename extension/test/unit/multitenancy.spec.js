@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import _ from 'lodash'
 import nock from 'nock'
+import { randomInt } from 'node:crypto'
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
 import makeLineItemsPaymentHandler from '../../src/paymentHandler/make-lineitems-payment.handler.js'
 import config from '../../src/config/config.js'
@@ -9,10 +10,8 @@ import utils from '../../src/utils.js'
 describe('::Multitenancy::', () => {
   let adyenApiScope
   let ctpApiScope
-  const ctpProjectKey = `ctpProjectKey${Math.floor(Math.random() * 3) + 1}`
-  const adyenMerchantAccount = `adyenMerchantAccount${
-    Math.floor(Math.random() * 3) + 1
-  }`
+  const ctpProjectKey = `ctpProjectKey${randomInt(1, 4)}`
+  const adyenMerchantAccount = `adyenMerchantAccount${randomInt(1, 4)}`
   let ctpPayment
   let ctpCart
 
