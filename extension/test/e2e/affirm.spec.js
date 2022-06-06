@@ -137,7 +137,7 @@ describe('::affirmPayment::', () => {
     await redirectPaymentFormPage.redirectToAdyenPaymentPage(
       makePaymentResponse
     )
-    await browserTab.waitForSelector('.propvHOJQwT:not([disabled])')
+    await browserTab.waitForSelector('[data-testid="phone-number-field"]')
 
     const affirmPage = new AffirmPage(browserTab)
 

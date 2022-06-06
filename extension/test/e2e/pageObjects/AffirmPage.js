@@ -24,20 +24,20 @@ export default class AffirmPage {
 
   async clickTermCardAndProceed() {
     await this.page.click('[data-test="term-card"]')
-    await this.page.waitForSelector('[data-test="confirm-submit"]')
+    await this.page.waitForSelector('[data-testid="confirm-submit"]')
   }
 
   async clickAutoPayToggleAndProceed() {
     const autoPayToggle = await this.page.$('#autopay-toggle')
     await this.page.evaluate((cb) => cb.click(), autoPayToggle)
     await this.page.waitForTimeout(1_000) // Wait for the page refreshes after toggling the autopay
-    await this.page.click('[data-test="confirm-submit"]')
+    await this.page.click('[data-testid="confirm-submit"]')
     await this.page.waitForSelector('#confirm-disclosure-checkbox')
   }
 
   async enterConfirmationPageAndClickConfirmButton() {
     const confirmCheckbox = await this.page.$('#confirm-disclosure-checkbox')
     await this.page.evaluate((cb) => cb.click(), confirmCheckbox)
-    return this.page.click('[data-test="confirm-loan-submit"]')
+    return this.page.click('[data-testid="confirm-loan-submit"]')
   }
 }
