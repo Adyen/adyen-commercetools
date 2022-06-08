@@ -12,10 +12,8 @@ import utils from '../../src/utils.js'
 
 const { execute } = paymentDetailsHandler
 
-describe('submit-additional-payment-details::execute', async () => {
-  const ctpPayment = await utils.readAndParseJsonFile(
-    'test/unit/fixtures/ctp-payment.json'
-  )
+describe('submit-additional-payment-details::execute', () => {
+  let ctpPayment
   let scope
   /* eslint-disable max-len */
   const submitPaymentDetailsRequest = {
@@ -27,6 +25,12 @@ describe('submit-additional-payment-details::execute', async () => {
   }
   /* eslint-enable max-len */
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+
+  before(async () => {
+    ctpPayment = await utils.readAndParseJsonFile(
+      'test/unit/fixtures/ctp-payment.json'
+    )
+  })
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)

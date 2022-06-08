@@ -12,12 +12,10 @@ import utils from '../../src/utils.js'
 
 const { execute } = makePaymentHandler
 
-describe('make-payment::execute', async () => {
+describe('make-payment::execute', () => {
   let scope
 
-  const ctpPayment = await utils.readAndParseJsonFile(
-    'test/unit/fixtures/ctp-payment.json'
-  )
+  let ctpPayment
 
   /* eslint-disable max-len */
   const makePaymentRequest = {
@@ -54,6 +52,12 @@ describe('make-payment::execute', async () => {
     },
   }
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+
+  before(async () => {
+    ctpPayment = await utils.readAndParseJsonFile(
+      'test/unit/fixtures/ctp-payment.json'
+    )
+  })
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)

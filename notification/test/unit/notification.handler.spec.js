@@ -16,19 +16,22 @@ import utils from '../../src/utils/commons.js'
 const { cloneDeep } = lodash
 const sandbox = sinon.createSandbox()
 
-describe('notification module', async () => {
-  const paymentMock = await utils.readAndParseJsonFile(
-    'test/resources/payment-credit-card.json'
-  )
-  const notification = await utils.readAndParseJsonFile(
-    'test/resources/notification.json'
-  )
-  const notificationsMock = notification.notificationItems
+describe('notification module', () => {
+  let paymentMock
+  let notification
+  let notificationsMock
   const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
   const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
   let originalCtpGetFn
 
-  before(() => {
+  before(async () => {
+    paymentMock = await utils.readAndParseJsonFile(
+      'test/resources/payment-credit-card.json'
+    )
+    notification = await utils.readAndParseJsonFile(
+      'test/resources/notification.json'
+    )
+    notificationsMock = notification.notificationItems
     overrideAdyenConfig({
       enableHmacSignature: false,
     })

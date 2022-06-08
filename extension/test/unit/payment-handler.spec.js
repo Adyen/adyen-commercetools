@@ -9,10 +9,8 @@ import c from '../../src/config/constants.js'
 import errorMessage from '../../src/validator/error-messages.js'
 import utils from '../../src/utils.js'
 
-describe('payment-handler::execute', async () => {
-  const ctpPayment = await utils.readAndParseJsonFile(
-    'test/unit/fixtures/ctp-payment.json'
-  )
+describe('payment-handler::execute', () => {
+  let ctpPayment
   let scope
   /* eslint-disable max-len */
   const submitPaymentDetailsRequest = {
@@ -25,6 +23,12 @@ describe('payment-handler::execute', async () => {
   /* eslint-enable max-len */
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
+
+  before(async () => {
+    ctpPayment = await utils.readAndParseJsonFile(
+      'test/unit/fixtures/ctp-payment.json'
+    )
+  })
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)

@@ -11,10 +11,8 @@ import utils from '../../src/utils.js'
 
 const { handlePayment } = paymentHandler
 
-describe('payment-handler-authorization::execute', async () => {
-  const ctpPayment = await utils.readAndParseJsonFile(
-    'test/unit/fixtures/ctp-payment.json'
-  )
+describe('payment-handler-authorization::execute', () => {
+  let ctpPayment
   let scope
   /* eslint-disable max-len */
   const submitPaymentDetailsRequest = {
@@ -42,6 +40,13 @@ describe('payment-handler-authorization::execute', async () => {
       password: 'open sesame',
     },
   }
+
+  before(async () => {
+    ctpPayment = await utils.readAndParseJsonFile(
+      'test/unit/fixtures/ctp-payment.json'
+    )
+  })
+
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     scope = nock(`${adyenConfig.apiBaseUrl}`)
