@@ -11,7 +11,6 @@ export default class KlarnaPage {
     await klarnaMainFrame.waitForSelector('#scheme-payment-selector')
     await this.page.waitForTimeout(2_000)
     await this.page.click('#buy-button')
-
     await this.processOtpAndPay()
   }
 
@@ -26,8 +25,15 @@ export default class KlarnaPage {
     await klarnaIframe.type('#otp_field', '123456')
 
     await klarnaIframe.waitForSelector(
-      '#invoice_kp-purchase-review-continue-button'
+      '#dd-confirmation-dialog__footer-button-wrapper'
     )
-    await klarnaIframe.click('#invoice_kp-purchase-review-continue-button')
+    const confirmDialog = await klarnaIframe.$(
+      '#dd-confirmation-dialog__footer-button-wrapper'
+    )
+
+    await klarnaIframe.evaluate((cb) => cb.click(), confirmDialog)
+    await klarnaIframe.waitForTimeout(2_000)
+
+    await klarnaIframe.click('#dd-confirmation-dialog__footer-button-wrapper')
   }
 }
