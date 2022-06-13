@@ -1,4 +1,4 @@
-# 5. Adding line items
+# 6. Update transaction success to failure state
 
 Date: 2022-06-06
 
