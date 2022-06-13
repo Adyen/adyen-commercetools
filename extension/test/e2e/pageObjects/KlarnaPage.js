@@ -32,8 +32,6 @@ export default class KlarnaPage {
     )
 
     await klarnaIframe.evaluate((cb) => cb.click(), confirmDialog)
-    await klarnaIframe.waitForTimeout(2_000)
-
     await klarnaIframe.click('#dd-confirmation-dialog__footer-button-wrapper')
   }
 }
