@@ -7,6 +7,7 @@ import manualCaptureHandler from './manual-capture.handler.js'
 import cancelHandler from './cancel-payment.handler.js'
 import refundHandler from './refund-payment.handler.js'
 import getCarbonOffsetCostsHandler from './get-carbon-offset-costs.handler.js'
+import amountUpdatesHandler from './amount-updates.handler.js'
 import {
   getChargeTransactionInitial,
   getAuthorizationTransactionSuccess,
@@ -102,6 +103,11 @@ function _getPaymentHandlers(paymentObject) {
     !paymentObject.custom.fields.submitAdditionalPaymentDetailsResponse
   )
     handlers.push(submitPaymentDetailsHandler)
+  if (
+    paymentObject.custom.fields.amountUpdatesRequest &&
+    !paymentObject.custom.fields.amountUpdatesResponse
+  )
+    handlers.push(amountUpdatesHandler)
   if (
     getAuthorizationTransactionSuccess(paymentObject) &&
     getChargeTransactionInitial(paymentObject)
