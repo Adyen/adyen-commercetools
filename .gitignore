@@ -21,8 +21,9 @@ node_modules/
 
 secrets.yaml
 
-# NYC test coverage
-.nyc_output/
+# c8 test coverage
+/extension/coverage/tmp/
+/notification/coverage/tmp/
 
 *.zip
 .extensionrc
