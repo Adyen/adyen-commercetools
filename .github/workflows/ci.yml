@@ -47,7 +47,7 @@ jobs:
             --runtime nodejs16 \
             --trigger-http \
             --allow-unauthenticated
-      - run: npm run test-coverage-run
+      - run: npm run test
 
   notification_build:
     name: Notification Module
@@ -90,4 +90,4 @@ jobs:
             --runtime nodejs16 \
             --trigger-http \
             --allow-unauthenticated
-      - run: npm run test-coverage-run
+      - run: npm run test

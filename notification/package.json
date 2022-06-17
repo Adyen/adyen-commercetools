@@ -6,8 +6,7 @@
   "scripts": {
     "check-coverage": "c8 check-coverage --lines 83",
     "test-run": "npm run unit && npm run integration",
-    "test-coverage-run": "c8 npm run test-run && npm run check-coverage",
-    "test": "npm run check && npm run test-coverage-run",
+    "test": "c8 npm run test-run && npm run check-coverage",
     "unit": "mocha --check-leaks --no-clean --timeout 30000 --full-trace --recursive \"./test/unit/**/*.spec.js\"",
     "integration": "mocha --file ./test/initial-integration-test-set-up.js --check-leaks --no-clean --timeout 30000 --full-trace --recursive \"./test/integration/**/*.spec.js\"",
     "start": "node ./src/init.js",
