@@ -25,8 +25,7 @@ jobs:
       - run: npm ci
       - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
       - run: npm run check
-      - run: npm run cover:unit
-      - run: npm run check-coverage
+      - run: npm run test-coverage-run
       - name: prepare extensions folder
         run: |
           echo $ADYEN_INTEGRATION_CONFIG >> .extensionrc
@@ -49,8 +48,6 @@ jobs:
             --runtime nodejs16 \
             --trigger-http \
             --allow-unauthenticated
-      - run: npm run cover:integration
-      - run: npm run cover:e2e
 
   notification_build:
     name: Notification Module
@@ -71,8 +68,7 @@ jobs:
       - run: npm ci
       - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
       - run: npm run check
-      - run: npm run cover:unit
-      - run: npm run check-coverage
+      - run: npm run test-coverage-run
       - name: prepare notifications folder
         run: |
           echo $ADYEN_INTEGRATION_CONFIG >> .notificationrc
@@ -95,4 +91,3 @@ jobs:
             --runtime nodejs16 \
             --trigger-http \
             --allow-unauthenticated
-      - run: npm run cover:integration
