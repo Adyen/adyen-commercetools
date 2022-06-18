@@ -65,17 +65,17 @@
   "devDependencies": {
     "chai": "4.3.6",
     "chai-as-promised": "7.1.1",
-    "eslint": "8.17.0",
+    "eslint": "8.18.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
     "husky": "8.0.1",
     "ip": "1.1.8",
-    "lint-staged": "13.0.1",
+    "lint-staged": "13.0.2",
     "localtunnel": "2.0.2",
     "mocha": "10.0.0",
     "p-map": "5.5.0",
-    "prettier": "2.7.0",
+    "prettier": "2.7.1",
     "sinon": "14.0.0"
   },
   "husky": {
