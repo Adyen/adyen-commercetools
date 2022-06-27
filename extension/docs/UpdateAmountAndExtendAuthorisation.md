@@ -145,12 +145,10 @@ Example of a successful notification
 
 ## Extend the period of the authorisation
 
-To extend the period of the authorisation, create `amountUpdatesRequest` custom field with the same `amount` as the current balance on the authorisation:
+To extend the period of the authorisation, create [`amountUpdatesRequest` custom field as described above](#3-amount-updates-request). Set `amount` as the current balance on the authorisation:
 
 - If you haven't adjusted the authorisation yet, use the amount from the original pre-authorisation request.
 - If you did adjust the authorisation, use the amount from the last amount updates request.
-
-Source: https://docs.adyen.com/online-payments/adjust-authorisation?tab=asynchronous_authorisation_adjustment_1#extend-authorisation
 
 ### Possible issues
 
@@ -186,3 +184,7 @@ Source: https://docs.adyen.com/online-payments/adjust-authorisation?tab=asynchro
 
 1. Notification module returns an error `"Notification can not be processed as \"metadata.ctProjectKey\" was not found on the notification nor the path is containing the commercetools project key.",`
    > Check if the notification received from Adyen contains a field called `metadata.ctProjectKey`. This field is currently unavailable for `AUTHORISATION_ADJUSTMENT` notifications. Please [set up notifications URL with CTP project key](/notification/docs/IntegrationGuide.md#fallback-in-case-metadata-is-not-available).
+
+
+### Sources
+https://docs.adyen.com/online-payments/adjust-authorisation
