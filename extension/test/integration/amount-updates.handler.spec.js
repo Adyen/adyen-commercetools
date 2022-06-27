@@ -55,10 +55,14 @@ describe('::amount updates::', () => {
       ]
     )
     expect(statusCode).to.equal(200)
-    const amountUpdatesResponse = JSON.parse(updatedPayment.custom.fields.amountUpdatesResponse);
+    const amountUpdatesResponse = JSON.parse(
+      updatedPayment.custom.fields.amountUpdatesResponse
+    )
     expect(amountUpdatesResponse.status).to.equal('received')
-    const amountUpdatesInterfaceInteractions = updatedPayment.interfaceInteractions
-      .filter(ii => ii.fields.type === 'amountUpdates')
+    const amountUpdatesInterfaceInteractions =
+      updatedPayment.interfaceInteractions.filter(
+        (ii) => ii.fields.type === 'amountUpdates'
+      )
     expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
   })
 
@@ -100,10 +104,14 @@ describe('::amount updates::', () => {
       ]
     )
     expect(statusCode).to.equal(200)
-    const amountUpdatesResponse = JSON.parse(updatedPayment.custom.fields.amountUpdatesResponse);
+    const amountUpdatesResponse = JSON.parse(
+      updatedPayment.custom.fields.amountUpdatesResponse
+    )
     expect(amountUpdatesResponse.status).to.equal('received')
-    const amountUpdatesInterfaceInteractions = updatedPayment.interfaceInteractions
-      .filter(ii => ii.fields.type === 'amountUpdates')
+    const amountUpdatesInterfaceInteractions =
+      updatedPayment.interfaceInteractions.filter(
+        (ii) => ii.fields.type === 'amountUpdates'
+      )
     expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
   })
 
@@ -132,7 +140,9 @@ describe('::amount updates::', () => {
       reference: payment.key,
     }
 
-    let { body: { version } } = await ctpClient.update(
+    let {
+      body: { version },
+    } = await ctpClient.update(
       ctpClient.builder.payments,
       payment.id,
       payment.version,
@@ -154,7 +164,7 @@ describe('::amount updates::', () => {
           [
             {
               action: 'setCustomField',
-              name: 'amountUpdatesResponse'
+              name: 'amountUpdatesResponse',
             },
             {
               action: 'setCustomField',
@@ -164,11 +174,15 @@ describe('::amount updates::', () => {
           ]
         )
         expect(statusCode).to.equal(200)
-        const amountUpdatesResponse = JSON.parse(updatedPayment.custom.fields.amountUpdatesResponse);
+        const amountUpdatesResponse = JSON.parse(
+          updatedPayment.custom.fields.amountUpdatesResponse
+        )
         expect(amountUpdatesResponse.status).to.equal('received')
 
-        const amountUpdatesInterfaceInteractions = updatedPayment.interfaceInteractions
-          .filter(ii => ii.fields.type === 'amountUpdates')
+        const amountUpdatesInterfaceInteractions =
+          updatedPayment.interfaceInteractions.filter(
+            (ii) => ii.fields.type === 'amountUpdates'
+          )
         expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(2)
         break
       } catch (e) {

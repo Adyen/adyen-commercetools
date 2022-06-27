@@ -155,34 +155,34 @@ Source: https://docs.adyen.com/online-payments/adjust-authorisation?tab=asynchro
 ### Possible issues
 
 1. Unsuccessful notification with a reason `Insufficient balance on payment`
-    <details>
-    <summary>Example of the error notification</summary>
-    
-    ```json
-    {
-      "NotificationRequestItem": {
-        "additionalData": {
-          "bookingDate": "2022-06-12T16:31:30Z"
-        },
-        "amount": {
-          "currency": "EUR",
-          "value": 10
-        },
-        "eventCode": "AUTHORISATION_ADJUSTMENT",
-        "eventDate": "2022-06-12T16:30:54+02:00",
-        "merchantAccountCode": "YOUR_MECHANT_ACCOUNT",
-        "merchantReference": "YOUR_MERCHANT_REFERENCE",
-        "originalReference": "ORIGINAL_REFERENCE",
-        "pspReference": "PSP_REFERENCE",
-        "reason": "Insufficient balance on payment",
-        "success": "false"
-      }
-    }
-    ```
-    
-    </details>
+   <details>
+   <summary>Example of the error notification</summary>
 
-    > Verify if you have automatic capture disabled. You can also set `captureDelayHours` parameter in the `makePaymentRequest`. For more info see https://docs.adyen.com/online-payments/capture#automatic-capture
+   ```json
+   {
+     "NotificationRequestItem": {
+       "additionalData": {
+         "bookingDate": "2022-06-12T16:31:30Z"
+       },
+       "amount": {
+         "currency": "EUR",
+         "value": 10
+       },
+       "eventCode": "AUTHORISATION_ADJUSTMENT",
+       "eventDate": "2022-06-12T16:30:54+02:00",
+       "merchantAccountCode": "YOUR_MECHANT_ACCOUNT",
+       "merchantReference": "YOUR_MERCHANT_REFERENCE",
+       "originalReference": "ORIGINAL_REFERENCE",
+       "pspReference": "PSP_REFERENCE",
+       "reason": "Insufficient balance on payment",
+       "success": "false"
+     }
+   }
+   ```
+
+   </details>
+
+   > Verify if you have automatic capture disabled. You can also set `captureDelayHours` parameter in the `makePaymentRequest`. For more info see https://docs.adyen.com/online-payments/capture#automatic-capture
 
 1. Notification module returns an error `"Notification can not be processed as \"metadata.ctProjectKey\" was not found on the notification nor the path is containing the commercetools project key.",`
-    > Check if the notification received from Adyen contains a field called `metadata.ctProjectKey`. This field is currently unavailable for `AUTHORISATION_ADJUSTMENT` notifications. Please [set up notifications URL with CTP project key](/notification/docs/IntegrationGuide.md#fallback-in-case-metadata-is-not-available).
+   > Check if the notification received from Adyen contains a field called `metadata.ctProjectKey`. This field is currently unavailable for `AUTHORISATION_ADJUSTMENT` notifications. Please [set up notifications URL with CTP project key](/notification/docs/IntegrationGuide.md#fallback-in-case-metadata-is-not-available).
