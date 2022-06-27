@@ -84,7 +84,7 @@ To update the amount from the make payment request, set `amountUpdatesRequest` c
 
 </details>
 
-After making the request, Adyen will save a response into a custom field `amountUpdatesResponse`. Be aware that this response only indicates that the request was accepted by Adyen.
+After making the request, the Extension module saves a response into a custom field `amountUpdatesResponse`. Be aware that this response only indicates the request was accepted by Adyen.
 
 <details>
 <summary>Example of the formatted JSON value of `amountUpdatesResponse` field</summary>
