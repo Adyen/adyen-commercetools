@@ -5,6 +5,7 @@ Sometimes you may want to change the amount or extend the length of the authoris
 ## Amount update
 
 ### Prerequisites
+
 1. In order to update the amount, do not have immediate capture. You can disable Immediate capture in the Adyen Customer area or add a parameter `captureDelayHours` to `makePaymentRequest`. For details see the [Adyen documentation](https://docs.adyen.com/online-payments/capture#manual-capture).
 
 2. It is required to [set up notifications URL with CTP project key](/notification/docs/IntegrationGuide.md#fallback-in-case-metadata-is-not-available). The reason is notifications for amount updates do not contain `metadata` and thus the corresponding project key must be obtained from the URL path.
@@ -12,7 +13,9 @@ Sometimes you may want to change the amount or extend the length of the authoris
 ### Steps
 
 #### 1. Make payment with an additional parameter
+
 In order to enable amount adjustment, make a payment and additionally specify
+
 ```
 additionalData.authorisationType: PreAuth
 ```
@@ -34,9 +37,11 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
   ]
 }
 ```
+
 </details>
 
 #### 2. Authorize the payment
+
 To update the amount, it is necessary to get to `Authorised Response` and obtain the `pspReference`. For some payment methods it is necessary to do multiple steps after Make payment. For the sake of readability these steps won't be described here.
 
 <details>
@@ -53,9 +58,11 @@ To update the amount, it is necessary to get to `Authorised Response` and obtain
   "merchantReference": "YOUR_REFERENCE"
 }
 ```
+
 </details>
 
 #### 3. Amount updates request
+
 To update the amount from the make payment request, set `amountUpdatesRequest` custom field. This field should contain the fields as described in the Adyen documentation. Additionally, it must contain `paymentPspReference` field.
 `paymentPspReference` field contains `pspReference` from the previous makePaymentResponse. How such response could look like see [our Web Components Integeration Guide](./WebComponentsIntegrationGuide.md#authorised-response). Be aware that `amount` is the sum of the current amount + additional amount.
 
@@ -74,31 +81,34 @@ To update the amount from the make payment request, set `amountUpdatesRequest` c
   ]
 }
 ```
+
 </details>
 
-After making the request, Adyen will save a response into a custom field `amountUpdatesResponse`. Be aware that this response only indicates that the request was accepted by Adyen. 
+After making the request, Adyen will save a response into a custom field `amountUpdatesResponse`. Be aware that this response only indicates that the request was accepted by Adyen.
 
 <details>
 <summary>Example of the formatted JSON value of `amountUpdatesResponse` field</summary>
 
 ```json
 {
-    "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
-    "paymentPspReference": "AUTHORIZATION_RESPONSE_PSP_REFERENCE",
-    "pspReference": "NEW_PSP_REFERENCE",
-    "reference": "YOUR_PAYMENT_REFERENCE",
-    "status": "received",
-    "amount": {
-        "currency": "EUR",
-        "value": 1000
-    }
+  "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
+  "paymentPspReference": "AUTHORIZATION_RESPONSE_PSP_REFERENCE",
+  "pspReference": "NEW_PSP_REFERENCE",
+  "reference": "YOUR_PAYMENT_REFERENCE",
+  "status": "received",
+  "amount": {
+    "currency": "EUR",
+    "value": 1000
+  }
 }
 ```
+
 </details>
 
 The response does not confirm the request was successfully processed or not. For the confirmation you have to wait for the notification.
 
 #### 4. Process notification
+
 A notification comes to confirm if the amount update was successful or not. Only after the successful notification you can be sure that amount update is finished.
 
 <details>
@@ -130,9 +140,11 @@ Example of a successful notification
   }
 ]
 ```
+
 </details>
 
 ## Extend the length of the authorisation
+
 To extend the length of the authorisation, create `amountUpdatesRequest` custom field with the same `amount` as the current balance on the authorisation:
 
 - If you haven't adjusted the authorisation yet, use the amount from the original pre-authorisation request.
@@ -141,6 +153,7 @@ To extend the length of the authorisation, create `amountUpdatesRequest` custom 
 Source: https://docs.adyen.com/online-payments/adjust-authorisation?tab=asynchronous_authorisation_adjustment_1#extend-authorisation
 
 ### Possible issues
+
 1. Unsuccessful notification with a reason `Insufficient balance on payment`
 <details>
 <summary>Example of the error notification</summary>
@@ -166,7 +179,7 @@ Source: https://docs.adyen.com/online-payments/adjust-authorisation?tab=asynchro
   }
 }
 ```
+
 </details>
 
 In this case verify if you have automatic capture disabled. You can also set `captureDelayHours` parameter in the `makePaymentRequest`. For more info see https://docs.adyen.com/online-payments/capture#automatic-capture
-

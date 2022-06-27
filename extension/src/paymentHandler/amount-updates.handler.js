@@ -10,7 +10,8 @@ async function execute(paymentObject) {
     paymentObject.custom.fields.amountUpdatesRequest
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
-  const commercetoolsProjectKey = paymentObject.custom.fields.commercetoolsProjectKey
+  const commercetoolsProjectKey =
+    paymentObject.custom.fields.commercetoolsProjectKey
   const { request, response } = await updateAmount(
     adyenMerchantAccount,
     commercetoolsProjectKey,

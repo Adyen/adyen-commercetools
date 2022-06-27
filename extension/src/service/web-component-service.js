@@ -105,7 +105,11 @@ function getCarbonOffsetCosts(merchantAccount, getCarbonOffsetCostsRequestObj) {
   )
 }
 
-function updateAmount(merchantAccount, commercetoolsProjectKey, amountUpdatesRequestObj) {
+function updateAmount(
+  merchantAccount,
+  commercetoolsProjectKey,
+  amountUpdatesRequestObj
+) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   // extendRequestObjWithMetadata(amountUpdatesRequestObj, commercetoolsProjectKey)
   const paymentPspReference = amountUpdatesRequestObj.paymentPspReference
