@@ -87,7 +87,8 @@ describe('notification controller', () => {
         JSON.stringify({ notificationResponse: '[accepted]' })
       )
       expect(cause.message).to.equal(
-        'Notification can not be processed as "metadata.ctProjectKey"  was not found on the notification.'
+        'Notification can not be processed as "metadata.ctProjectKey" was not found on the notification ' +
+          'nor the path is containing the commercetools project key.'
       )
     }
   )
