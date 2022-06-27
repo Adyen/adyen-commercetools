@@ -1,6 +1,6 @@
 # Authorisation amount adjustment and extending the period authorisation
 
-Sometimes you may want to change the amount or extend the length of the authorisation. You can use `amountUpdates` endpoint for this.
+Sometimes you may want to change the amount or extend the period of the authorisation. You can use `amountUpdates` endpoint for this.
 
 ## Amount update
 
@@ -143,9 +143,9 @@ Example of a successful notification
 
 </details>
 
-## Extend the length of the authorisation
+## Extend the period of the authorisation
 
-To extend the length of the authorisation, create `amountUpdatesRequest` custom field with the same `amount` as the current balance on the authorisation:
+To extend the period of the authorisation, create `amountUpdatesRequest` custom field with the same `amount` as the current balance on the authorisation:
 
 - If you haven't adjusted the authorisation yet, use the amount from the original pre-authorisation request.
 - If you did adjust the authorisation, use the amount from the last amount updates request.
@@ -155,31 +155,34 @@ Source: https://docs.adyen.com/online-payments/adjust-authorisation?tab=asynchro
 ### Possible issues
 
 1. Unsuccessful notification with a reason `Insufficient balance on payment`
-<details>
-<summary>Example of the error notification</summary>
+    <details>
+    <summary>Example of the error notification</summary>
+    
+    ```json
+    {
+      "NotificationRequestItem": {
+        "additionalData": {
+          "bookingDate": "2022-06-12T16:31:30Z"
+        },
+        "amount": {
+          "currency": "EUR",
+          "value": 10
+        },
+        "eventCode": "AUTHORISATION_ADJUSTMENT",
+        "eventDate": "2022-06-12T16:30:54+02:00",
+        "merchantAccountCode": "YOUR_MECHANT_ACCOUNT",
+        "merchantReference": "YOUR_MERCHANT_REFERENCE",
+        "originalReference": "ORIGINAL_REFERENCE",
+        "pspReference": "PSP_REFERENCE",
+        "reason": "Insufficient balance on payment",
+        "success": "false"
+      }
+    }
+    ```
+    
+    </details>
 
-```json
-{
-  "NotificationRequestItem": {
-    "additionalData": {
-      "bookingDate": "2022-06-12T16:31:30Z"
-    },
-    "amount": {
-      "currency": "EUR",
-      "value": 10
-    },
-    "eventCode": "AUTHORISATION_ADJUSTMENT",
-    "eventDate": "2022-06-12T16:30:54+02:00",
-    "merchantAccountCode": "YOUR_MECHANT_ACCOUNT",
-    "merchantReference": "YOUR_MERCHANT_REFERENCE",
-    "originalReference": "ORIGINAL_REFERENCE",
-    "pspReference": "PSP_REFERENCE",
-    "reason": "Insufficient balance on payment",
-    "success": "false"
-  }
-}
-```
+    > Verify if you have automatic capture disabled. You can also set `captureDelayHours` parameter in the `makePaymentRequest`. For more info see https://docs.adyen.com/online-payments/capture#automatic-capture
 
-</details>
-
-In this case verify if you have automatic capture disabled. You can also set `captureDelayHours` parameter in the `makePaymentRequest`. For more info see https://docs.adyen.com/online-payments/capture#automatic-capture
+1. Notification module returns an error `"Notification can not be processed as \"metadata.ctProjectKey\" was not found on the notification nor the path is containing the commercetools project key.",`
+    > Check if the notification received from Adyen contains a field called `metadata.ctProjectKey`. This field is currently unavailable for `AUTHORISATION_ADJUSTMENT` notifications. Please [set up notifications URL with CTP project key](/notification/docs/IntegrationGuide.md#fallback-in-case-metadata-is-not-available).
