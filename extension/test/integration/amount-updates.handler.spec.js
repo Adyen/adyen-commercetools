@@ -55,7 +55,11 @@ describe('::amount updates::', () => {
       ]
     )
     expect(statusCode).to.equal(200)
-    expect(updatedPayment).to.exist
+    const amountUpdatesResponse = JSON.parse(updatedPayment.custom.fields.amountUpdatesResponse);
+    expect(amountUpdatesResponse.status).to.equal('received')
+    const amountUpdatesInterfaceInteractions = updatedPayment.interfaceInteractions
+      .filter(ii => ii.fields.type === 'amountUpdates')
+    expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
   })
 
   it('should extend the authorisation when amount is the same', async () => {
@@ -96,7 +100,89 @@ describe('::amount updates::', () => {
       ]
     )
     expect(statusCode).to.equal(200)
-    expect(updatedPayment).to.exist
+    const amountUpdatesResponse = JSON.parse(updatedPayment.custom.fields.amountUpdatesResponse);
+    expect(amountUpdatesResponse.status).to.equal('received')
+    const amountUpdatesInterfaceInteractions = updatedPayment.interfaceInteractions
+      .filter(ii => ii.fields.type === 'amountUpdates')
+    expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
+  })
+
+  it('should repeatedly update amount', async () => {
+    const randomNumber = new Date().getTime()
+    // 1. make payment
+    const payment = await makePayment({
+      reference: `makePayment1-${new Date().getTime()}`,
+      adyenMerchantAccount: adyenMerchantAccount1,
+      metadata: {
+        orderNumber: `externalOrderSystem-${randomNumber}`,
+      },
+    })
+    // 2. Modify the authorisation
+    const paymentPspReference = JSON.parse(
+      payment.custom.fields.makePaymentResponse
+    ).pspReference
+
+    const amountUpdatesRequestDraft = {
+      paymentPspReference,
+      amount: {
+        currency: 'EUR',
+        value: 1000,
+      },
+      reason: 'DelayedCharge',
+      reference: payment.key,
+    }
+
+    let { body: { version } } = await ctpClient.update(
+      ctpClient.builder.payments,
+      payment.id,
+      payment.version,
+      [
+        {
+          action: 'setCustomField',
+          name: 'amountUpdatesRequest',
+          value: JSON.stringify(amountUpdatesRequestDraft),
+        },
+      ]
+    )
+
+    while (true) {
+      try {
+        const { statusCode, body: updatedPayment } = await ctpClient.update(
+          ctpClient.builder.payments,
+          payment.id,
+          version,
+          [
+            {
+              action: 'setCustomField',
+              name: 'amountUpdatesResponse'
+            },
+            {
+              action: 'setCustomField',
+              name: 'amountUpdatesRequest',
+              value: JSON.stringify(amountUpdatesRequestDraft),
+            },
+          ]
+        )
+        expect(statusCode).to.equal(200)
+        const amountUpdatesResponse = JSON.parse(updatedPayment.custom.fields.amountUpdatesResponse);
+        expect(amountUpdatesResponse.status).to.equal('received')
+
+        const amountUpdatesInterfaceInteractions = updatedPayment.interfaceInteractions
+          .filter(ii => ii.fields.type === 'amountUpdates')
+        expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(2)
+        break
+      } catch (e) {
+        if (e.statusCode === 409) {
+          const { body } = await ctpClient.fetchByKey(
+            ctpClient.builder.payments,
+            payment.key
+          )
+          version = body.version
+        } else {
+          throw e
+        }
+      }
+    }
   })
 
   async function makePayment({ reference, adyenMerchantAccount, metadata }) {
