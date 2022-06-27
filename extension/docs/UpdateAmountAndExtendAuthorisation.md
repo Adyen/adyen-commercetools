@@ -1,6 +1,6 @@
 # Authorisation amount adjustment and extending the period authorisation
 
-Sometimes you may want to change the amount or extend the period of the authorisation. You can use `amountUpdates` endpoint for this.
+Sometimes you may want to change the amount or extend the period of the authorisation. You can use `amountUpdates` endpoint for this. There are also [test cases available for all the described flows](../test/integration/amount-updates.handler.spec.js).
 
 ## Amount update
 
@@ -63,11 +63,11 @@ To update the amount, it is necessary to get to `Authorised Response` and obtain
 
 #### 3. Amount updates request
 
-To update the amount from the make payment request, set `amountUpdatesRequest` custom field. This field should contain the fields as described in the Adyen documentation. Additionally, it must contain `paymentPspReference` field.
+To update the amount from the make payment request, [set `amountUpdatesRequest` custom field](https://docs.commercetools.com/http-api-projects-payments#update-payment). This field should contain the fields as described in the Adyen documentation. Additionally, it must contain `paymentPspReference` field.
 `paymentPspReference` field contains `pspReference` from the previous makePaymentResponse. How such response could look like see [our Web Components Integeration Guide](./WebComponentsIntegrationGuide.md#authorised-response). Be aware that `amount` is the sum of the current amount + additional amount.
 
 <details>
-<summary>An example of payment [setCustomField](https://docs.commercetools.com/http-api-projects-payments#update-payment) action for amountUpdatesRequest.</summary>
+<summary>An example of payment setCustomField action for amountUpdatesRequest.</summary>
 
 ```json
 {
@@ -145,12 +145,38 @@ Example of a successful notification
 
 ## Extend the period of the authorisation
 
-To extend the period of the authorisation, create [`amountUpdatesRequest` custom field as described above](#3-amount-updates-request). Set `amount` as the current balance on the authorisation:
+To extend the period of the authorisation, set [`amountUpdatesRequest` custom field as described above](#3-amount-updates-request). Set `amount` as the current balance on the authorisation:
 
 - If you haven't adjusted the authorisation yet, use the amount from the original pre-authorisation request.
 - If you did adjust the authorisation, use the amount from the last amount updates request.
 
-### Possible issues
+## Updating amount multiple times
+
+To do `amountUpdatesRequest` multiple times, you need to remove the custom field `amountUpdatesResponse` from the payment when setting the new `amountUpdatesRequest`.
+
+<details>
+<summary>Example of updating amount repeatedly</summary>
+
+```json
+{
+  "version": "PAYMENT_VERSION",
+  "actions": [
+    {
+      "action": "setCustomField",
+      "name": "amountUpdatesRequest",
+      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reason\":\"DelayedCharge\",\"reference\":\"YOUR_PAYMENT_REFERENCE\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
+    },
+    {
+      "action": "setCustomField",
+      "name": "amountUpdatesResponse"
+    }
+  ]
+}
+```
+
+</details>
+
+## Possible issues
 
 1. Unsuccessful notification with a reason `Insufficient balance on payment`
    <details>
@@ -185,6 +211,6 @@ To extend the period of the authorisation, create [`amountUpdatesRequest` custom
 1. Notification module returns an error `"Notification can not be processed as \"metadata.ctProjectKey\" was not found on the notification nor the path is containing the commercetools project key.",`
    > Check if the notification received from Adyen contains a field called `metadata.ctProjectKey`. This field is currently unavailable for `AUTHORISATION_ADJUSTMENT` notifications. Please [set up notifications URL with CTP project key](/notification/docs/IntegrationGuide.md#fallback-in-case-metadata-is-not-available).
 
-
 ### Sources
+
 https://docs.adyen.com/online-payments/adjust-authorisation
