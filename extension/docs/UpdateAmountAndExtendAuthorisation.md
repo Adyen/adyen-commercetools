@@ -64,7 +64,7 @@ To update the amount, it is necessary to get to `Authorised Response` and obtain
 #### 3. Amount updates request
 
 To update the amount from the make payment request, [set `amountUpdatesRequest` custom field](https://docs.commercetools.com/http-api-projects-payments#update-payment). This field should contain the fields as described in the Adyen documentation. Be aware that `amount` is the sum of the current amount + additional amount.
-Additionally, it must contain `paymentPspReference` field. `paymentPspReference` field contains `pspReference` from the pre-authorisation response (e.g. from `makePaymentResponse` or `submitAdditionalPaymentDetailsResponse`). How such response could look like see [the previous point](#2-authorize-the-payment). 
+Additionally, it must contain `paymentPspReference` field. `paymentPspReference` field contains `pspReference` from the pre-authorisation response (e.g. from `makePaymentResponse` or `submitAdditionalPaymentDetailsResponse`). How such response could look like see [the previous point](#2-authorize-the-payment).
 
 <details>
 <summary>An example of payment setCustomField action for amountUpdatesRequest.</summary>
