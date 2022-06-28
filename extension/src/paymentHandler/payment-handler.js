@@ -130,6 +130,7 @@ function _validatePaymentRequest(paymentObject, authToken) {
       .validateRequestFields()
       .validateReference()
       .validateAmountPlanned()
+      .validatePaymentPspReference()
     if (paymentValidator.hasErrors()) return paymentValidator.getErrors()
   } else {
     paymentValidator.validateMetadataFields()

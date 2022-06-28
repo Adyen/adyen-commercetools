@@ -11,6 +11,7 @@ const {
   MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT,
   MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY,
   GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON,
+  AMOUNT_UPDATES_REQUEST_MISSING_PSP_REFERENCE,
 } = errorMessages
 
 describe('Validator builder', () => {
@@ -223,6 +224,34 @@ describe('Validator builder', () => {
     )
     expect(errorObject[1].message).to.equal(
       MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
+    )
+  })
+
+  it('on missing required paymentIspReference should return error object', () => {
+    const amountUpdatesRequestDraft = {
+      amount: {
+        currency: 'EUR',
+        value: 1010,
+      },
+      reason: 'DelayedCharge',
+      reference: 'test',
+      merchantAccount: 'test',
+    }
+
+    const invalidPayment = {
+      custom: {
+        fields: {
+          amountUpdatesRequest: JSON.stringify(amountUpdatesRequestDraft),
+        },
+      },
+    }
+
+    const errorObject = withPayment(invalidPayment)
+      .validatePaymentPspReference()
+      .getErrors()
+
+    expect(errorObject[0].message).to.equal(
+      AMOUNT_UPDATES_REQUEST_MISSING_PSP_REFERENCE
     )
   })
 })

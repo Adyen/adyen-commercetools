@@ -52,6 +52,9 @@ function withPayment(paymentObject) {
       if (!isValidJSON(paymentObject.custom.fields.getCarbonOffsetCostsRequest))
         errors.getCarbonOffsetCostsRequest =
           errorMessages.GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON
+      if (!isValidJSON(paymentObject.custom.fields.amountUpdatesRequest))
+        errors.amountUpdatesRequest =
+          errorMessages.AMOUNT_UPDATES_REQUEST_INVALID_JSON
       return this
     },
     validateReference() {
@@ -98,6 +101,21 @@ function withPayment(paymentObject) {
           currencyInMakePaymentRequest !== currencyInAmountPlanned
         )
           errors.amountPlanned = errorMessages.AMOUNT_PLANNED_NOT_SAME
+      }
+      return this
+    },
+    validatePaymentPspReference() {
+      if (!paymentObject.custom || errors.amountUpdatesRequest) return this
+      if (
+        paymentObject.custom.fields.amountUpdatesRequest &&
+        !paymentObject.custom.fields.amountUpdatesResponse
+      ) {
+        const amountUpdatesRequestObj = JSON.parse(
+          paymentObject.custom.fields.amountUpdatesRequest
+        )
+        if (!amountUpdatesRequestObj.paymentPspReference)
+          errors.missingPspReference =
+            errorMessages.AMOUNT_UPDATES_REQUEST_MISSING_PSP_REFERENCE
       }
       return this
     },
