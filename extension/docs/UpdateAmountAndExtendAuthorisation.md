@@ -1,3 +1,21 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Authorisation amount adjustment and extending the period authorisation](#authorisation-amount-adjustment-and-extending-the-period-authorisation)
+  - [Amount update](#amount-update)
+    - [Prerequisites](#prerequisites)
+    - [Steps](#steps)
+      - [1. Make payment with an additional parameter](#1-make-payment-with-an-additional-parameter)
+      - [2. Authorize the payment](#2-authorize-the-payment)
+      - [3. Amount updates request](#3-amount-updates-request)
+      - [4. Process notification](#4-process-notification)
+  - [Extend the period of the authorisation](#extend-the-period-of-the-authorisation)
+  - [Updating amount multiple times](#updating-amount-multiple-times)
+  - [Possible issues](#possible-issues)
+  - [Sources](#sources)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Authorisation amount adjustment and extending the period authorisation
 
 Sometimes you may want to change the amount or extend the period of the authorisation. You can use `amountUpdates` endpoint for this. There are also [test cases available for all the described flows](../test/integration/amount-updates.handler.spec.js).
@@ -211,6 +229,6 @@ To do `amountUpdatesRequest` multiple times, you need to remove the custom field
 1. Notification module returns an error `"Notification can not be processed as \"metadata.ctProjectKey\" was not found on the notification nor the path is containing the commercetools project key.",`
    > Check if the notification received from Adyen contains a field called `metadata.ctProjectKey`. This field is currently unavailable for `AUTHORISATION_ADJUSTMENT` notifications. Please [set up notifications URL with CTP project key](/notification/docs/IntegrationGuide.md#fallback-in-case-metadata-is-not-available).
 
-### Sources
+## Sources
 
 https://docs.adyen.com/online-payments/adjust-authorisation

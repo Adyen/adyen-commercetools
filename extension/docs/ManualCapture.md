@@ -3,7 +3,8 @@
 
 - [Manual Capture](#manual-capture)
   - [Make an API call to capture a payment:](#make-an-api-call-to-capture-a-payment)
-    - [More info](#more-info)
+  - [Partial capture](#partial-capture)
+  - [More info](#more-info)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -99,6 +100,10 @@ The commercetools payment representation after a successful capture:
 
 Once Adyen have processed your capture request, Adyen will send a notification to our [Notification module](./../../notification/README.md).
 
-#### More info
+### Partial capture
+
+In order to enable multiple partial captures, it is necessary to contact Adyen Support team. For more info, see [Adyen's documentation](https://docs.adyen.com/online-payments/capture#multiple-partial-captures)
+
+### More info
 
 For more detailed information from Adyen's perspective, see [Adyen's documentation](https://docs.adyen.com/checkout/capture#manual-capture).

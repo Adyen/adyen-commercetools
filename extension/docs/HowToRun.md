@@ -4,7 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Environment variable](#environment-variable)
-  - [Preparing the credentials](#preparing-the-credentials)
+    - [Preparing the credentials](#preparing-the-credentials)
   - [Required attributes](#required-attributes)
   - [Optional attributes](#optional-attributes)
   - [External file configuration](#external-file-configuration)
