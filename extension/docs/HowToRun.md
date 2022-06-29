@@ -4,7 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Environment variable](#environment-variable)
-    - [Preparing the credentials](#preparing-the-credentials)
+  - [Preparing the credentials](#preparing-the-credentials)
   - [Required attributes](#required-attributes)
   - [Optional attributes](#optional-attributes)
   - [External file configuration](#external-file-configuration)
@@ -68,7 +68,7 @@ Extension module requires 1 environment variable to start. This environment vari
 - `commercetools` attribute group: Multiple child attributes can be provided in the `commercetools` attribute. Each direct child attribute must represent a commercetools project.
 - `other` attribute group: Attributes in this group can be set as direct child attributes in `the root of the JSON`.
 
-#### Preparing the credentials
+### Preparing the credentials
 
 - Adyen credentials:
   - For **test environment** follow the official Adyen [get started guide](https://docs.adyen.com/checkout/get-started) to set up your **test account**, get your API key.
