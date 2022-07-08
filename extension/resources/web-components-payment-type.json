@@ -125,6 +125,28 @@
       },
       "inputHint": "MultiLine",
       "required": false
+    },
+    {
+      "name": "amountUpdatesRequest",
+      "label": {
+        "en": "amountUpdatesRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "amountUpdatesResponse",
+      "label": {
+        "en": "amountUpdatesResponse"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
     }
   ]
 }

@@ -19,4 +19,8 @@ export default {
     'Credential is missing in required project configuration.',
   GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON:
     'getCarbonOffsetCostsRequest does not contain valid JSON.',
+  AMOUNT_UPDATES_REQUEST_INVALID_JSON:
+    'amountUpdatesRequest does not contain valid JSON.',
+  AMOUNT_UPDATES_REQUEST_MISSING_PSP_REFERENCE:
+    'Required "paymentPspReference" field is missing in amountUpdatesRequest.',
 }

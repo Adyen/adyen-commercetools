@@ -105,6 +105,22 @@ function getCarbonOffsetCosts(merchantAccount, getCarbonOffsetCostsRequestObj) {
   )
 }
 
+function updateAmount(
+  merchantAccount,
+  commercetoolsProjectKey,
+  amountUpdatesRequestObj
+) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+  // extendRequestObjWithMetadata(amountUpdatesRequestObj, commercetoolsProjectKey)
+  const paymentPspReference = amountUpdatesRequestObj.paymentPspReference
+  return callAdyen(
+    `${adyenCredentials.apiBaseUrl}/payments/${paymentPspReference}/amountUpdates`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    amountUpdatesRequestObj
+  )
+}
+
 async function extendRequestObjWithApplicationInfo(requestObj) {
   const packageJson = await utils.readAndParseJsonFile('package.json')
   requestObj.applicationInfo = {
@@ -181,4 +197,5 @@ export {
   refund,
   cancelPayment,
   getCarbonOffsetCosts,
+  updateAmount,
 }

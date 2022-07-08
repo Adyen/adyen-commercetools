@@ -12,7 +12,8 @@ function getCtpProjectConfig(notification, path) {
 
   if (_.isEmpty(commercetoolsProjectKey)) {
     throw new Error(
-      'Notification can not be processed as "metadata.ctProjectKey"  was not found on the notification.'
+      'Notification can not be processed as "metadata.ctProjectKey" was not found on the notification ' +
+        'nor the path is containing the commercetools project key.'
     )
   }
 

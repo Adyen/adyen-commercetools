@@ -37,4 +37,6 @@ export default {
   ],
   CTP_CARBON_OFFSET_COSTS_RESPONSE: 'getCarbonOffsetCostsResponse',
   CTP_INTERACTION_TYPE_GET_CARBON_OFFSET_COSTS: 'getCarbonOffsetCosts',
+  CTP_CUSTOM_FIELD_AMOUNT_UPDATES_RESPONSE: 'amountUpdatesResponse',
+  CTP_INTERACTION_TYPE_AMOUNT_UPDATES: 'amountUpdates',
 }
