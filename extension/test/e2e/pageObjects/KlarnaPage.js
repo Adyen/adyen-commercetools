@@ -18,7 +18,7 @@ export default class KlarnaPage {
     const klarnaIframe = this.page
       .frames()
       .find((f) => f.name() === 'klarna-hpp-instance-fullscreen')
-    await klarnaIframe.waitForSelector('#onContinue')
+    await klarnaIframe.waitForSelector('#onContinue', { visible: true })
     await klarnaIframe.click('#onContinue')
 
     await klarnaIframe.waitForSelector('#otp_field')
