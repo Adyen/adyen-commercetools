@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import fetch from 'node-fetch'
 import nock from 'nock'
 import c from '../../src/config/constants.js'
 import getPaymentMethodsHandler from '../../src/paymentHandler/get-payment-methods.handler.js'
