@@ -151,7 +151,7 @@ describe('::config::', () => {
     return import(`${module}?testName=${randomUUID()}`)
   }
 
-  it('when basicAuth is true but authetication object is not provided, it should throw error', async () => {
+  it('when basicAuth is true but authentication object is not provided, it should throw error', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
       commercetools: {
         ctpProjectKey1: {
