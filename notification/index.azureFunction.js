@@ -7,7 +7,7 @@ import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser.js'
 const logger = getLogger()
 
 export const azureExtensionTrigger = async function (context, event) {
-  const { notificationItems } = event.body
+  const { notificationItems } = event?.body || {}
   if (!notificationItems) {
     context.res = {
       body: {
