@@ -32,19 +32,6 @@ describe('Google Function handler', () => {
   }
 
   const context = {}
-
-  const mockResponse = {
-    responseStatus: 200,
-    responseBody: {},
-    status(value) {
-      this.responseStatus = value
-      return this
-    },
-    send(value) {
-      this.responseBody = value
-      return this
-    },
-  }
   beforeEach(() => {
     const configGetCtpConfigSpy = sandbox
       .stub(config, 'getCtpConfig')
