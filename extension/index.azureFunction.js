@@ -22,22 +22,21 @@ function handleErrorResponse(context, errors) {
 }
 
 export const azureExtensionTrigger = async function (context, req) {
-  let paymentObj = {}
-  try {
-    const { body } = req
-    paymentObj = body?.resource?.obj
-    if (!paymentObj) {
-      const errors = [
-        {
-          code: 'InvalidInput',
-          message: 'Invalid request body.',
-        },
-      ]
-      handleErrorResponse(context, errors)
-      return
-    }
+  const paymentObj = req.body?.resource?.obj
+  if (!paymentObj) {
+    const errors = [
+      {
+        code: 'InvalidInput',
+        message: 'Invalid request body.',
+      },
+    ]
+    handleErrorResponse(context, errors)
+    return
+  }
 
-    const authToken = getAuthorizationRequestHeader(req)
+  const authToken = getAuthorizationRequestHeader(req)
+
+  try {
     const paymentResult = await paymentHandler.handlePayment(
       paymentObj,
       authToken
