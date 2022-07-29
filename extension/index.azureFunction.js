@@ -2,45 +2,49 @@ import utils from './src/utils.js'
 import paymentHandler from './src/paymentHandler/payment-handler.js'
 import { getAuthorizationRequestHeader } from './src/validator/authentication.js'
 
-export const azureExtensionTrigger = async function (context, event) {
+const FAILED_VALIDATION = 'FailedValidation'
+
+function handleSuccessResponse(context, paymentResult) {
+  context.res = {
+    status: paymentResult.actions ? 200 : 400,
+    responseType: paymentResult.actions ? 'UpdateRequest' : FAILED_VALIDATION,
+    errors: paymentResult.errors,
+    actions: paymentResult.actions || [],
+  }
+}
+
+function handleErrorResponse(context, errors) {
+  context.res = {
+    status: 400,
+    responseType: FAILED_VALIDATION,
+    errors: errors,
+  }
+}
+
+export const azureExtensionTrigger = async function (context, req) {
   let paymentObj = {}
   try {
-    const { body } = event
+    const { body } = req
     paymentObj = body?.resource?.obj
     if (!paymentObj) {
-      context.res = {
-        body: {
-          responseType: 'FailedValidation',
-          errors: [
-            {
-              code: 'InvalidInput',
-              message: 'Invalid event body',
-            },
-          ],
+      const errors = [
+        {
+          code: 'InvalidInput',
+          message: 'Invalid request body.',
         },
-      }
+      ]
+      handleErrorResponse(context, errors)
       return
     }
 
-    const authToken = getAuthorizationRequestHeader(event)
+    const authToken = getAuthorizationRequestHeader(req)
     const paymentResult = await paymentHandler.handlePayment(
       paymentObj,
       authToken
     )
-    context.res = {
-      body: {
-        responseType: paymentResult.actions
-          ? 'UpdateRequest'
-          : 'FailedValidation',
-        errors: paymentResult.errors,
-        actions: paymentResult.actions || [],
-      },
-    }
+    handleSuccessResponse(context, paymentResult)
   } catch (e) {
     const errorObj = utils.handleUnexpectedPaymentError(paymentObj, e)
-    errorObj.responseType = 'FailedValidation'
-    context.res = {
-      body: errorObj,
-    }
+    handleErrorResponse(context, errorObj.errors)
   }
 }

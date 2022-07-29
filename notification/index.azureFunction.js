@@ -6,25 +6,25 @@ import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser.js'
 
 const logger = getLogger()
 
-export const azureExtensionTrigger = async function (context, event) {
-  const { notificationItems } = event?.body || {}
+function handleErrorResponse(context, status, message) {
+  context.res = {
+    status,
+    error: {
+      message,
+    },
+  }
+}
+
+export const azureNotificationTrigger = async function (context, req) {
+  const { notificationItems } = req?.body || {}
   if (!notificationItems) {
-    context.res = {
-      body: {
-        errors: [
-          {
-            status: 400,
-            message: 'No notification received.',
-          },
-        ],
-      },
-    }
+    handleErrorResponse(context, 400, 'No notification received.')
     return
   }
 
   try {
     for (const notification of notificationItems) {
-      const ctpProjectConfig = getCtpProjectConfig(notification, event.rawPath)
+      const ctpProjectConfig = getCtpProjectConfig(notification, req.url)
       const adyenConfig = getAdyenConfig(notification)
 
       await notificationHandler.processNotification(
@@ -44,23 +44,13 @@ export const azureExtensionTrigger = async function (context, event) {
     )
 
     if (isRecoverableError(err)) {
-      context.res = {
-        body: {
-          errors: [
-            {
-              status: 500,
-              message: cause.message,
-            },
-          ],
-        },
-      }
+      handleErrorResponse(context, 500, cause.message)
+      return
     }
-    return
   }
 
   context.res = {
-    body: {
-      notificationResponse: '[accepted]',
-    },
+    status: 200,
+    notificationResponse: '[accepted]',
   }
 }
