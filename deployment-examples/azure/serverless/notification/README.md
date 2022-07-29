@@ -7,7 +7,7 @@ You could use a deployment package to deploy your function code to Azure functio
 To bundle the notification module, navigate into `notification` folder and run `npm run zip-azure-function`. 
 4. By default, the Functions runtime looks for your function in index.js.
     > In the default case, your exported function should be the only export from its file or the export named run or index.
-5. Please check our [faq](../../../../docs/FAQ.md) for your deployment.
+5. Please check our [FAQ](../../../../docs/FAQ.md) for your deployment.
 
 ### Helpful Links: 
 - [commercetools HTTP API Extension](https://docs.commercetools.com/api/projects/api-extensions#http-destination)
