@@ -6,6 +6,13 @@ import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser.js'
 
 const logger = getLogger()
 
+function handleSuccessResponse(context) {
+  context.res = {
+    status: 200,
+    notificationResponse: '[accepted]',
+  }
+}
+
 function handleErrorResponse(context, status, message) {
   context.res = {
     status,
@@ -49,8 +56,5 @@ export const azureNotificationTrigger = async function (context, req) {
     }
   }
 
-  context.res = {
-    status: 200,
-    notificationResponse: '[accepted]',
-  }
+  handleSuccessResponse(context)
 }

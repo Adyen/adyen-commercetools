@@ -4,12 +4,12 @@ import { getAuthorizationRequestHeader } from './src/validator/authentication.js
 
 const FAILED_VALIDATION = 'FailedValidation'
 
-function handleResponse(context, paymentResult) {
+function handleSuccessResponse(context, paymentResult) {
   context.res = {
-    status: paymentResult.actions ? 200 : 400,
-    responseType: paymentResult.actions ? 'UpdateRequest' : FAILED_VALIDATION,
+    status: 200,
+    responseType: 'UpdateRequest',
     errors: paymentResult.errors,
-    actions: paymentResult.actions || [],
+    actions: paymentResult.actions,
   }
 }
 
@@ -17,7 +17,8 @@ function handleErrorResponse(context, errors) {
   context.res = {
     status: 400,
     responseType: FAILED_VALIDATION,
-    errors: errors,
+    errors,
+    actions: [],
   }
 }
 
@@ -41,7 +42,9 @@ export const azureExtensionTrigger = async function (context, req) {
       paymentObj,
       authToken
     )
-    handleResponse(context, paymentResult)
+
+    if (paymentResult.actions) handleSuccessResponse(context, paymentResult)
+    else handleErrorResponse(context, paymentResult)
   } catch (e) {
     const errorObj = utils.handleUnexpectedPaymentError(paymentObj, e)
     handleErrorResponse(context, errorObj.errors)

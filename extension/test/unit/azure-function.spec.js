@@ -67,7 +67,7 @@ describe('Azure function app', () => {
       },
     ]
 
-    sandbox.stub(paymentHandler, 'handlePayment').returns({ errors })
+    sandbox.stub(paymentHandler, 'handlePayment').returns(errors)
 
     await azureExtensionTrigger(context, mockRequest)
 
