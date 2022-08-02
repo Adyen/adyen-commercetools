@@ -16,7 +16,7 @@
     "rename-indexfile": "cp index.googleFunction.js index.js",
     "zip-google-function": "cp index.googleFunction.js index.js && zip -r notification-module.zip src resources .notificationrc index.js package.json && rm index.js",
     "zip-lambda-function": "cp index.lambda.js index.js && npm ci --production && zip -r notification-module.zip . && rm index.js",
-    "zip-azure-function": "cp index.azureFunction.js index.js && npm ci --production && zip -r notification-module.zip . && rm index.js",
+    "zip-azure-function": "cp notification-trigger/index.azureFunction.js notification-trigger/index.js && npm ci --production && zip -r notification-module.zip . && rm notification-trigger/index.js",
     "setup-resources": "run-func ./src/setup.js setupNotificationResources"
   },
   "keywords": [

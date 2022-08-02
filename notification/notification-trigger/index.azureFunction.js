@@ -1,8 +1,8 @@
-import notificationHandler from './src/handler/notification/notification.handler.js'
-import { getLogger } from './src/utils/logger.js'
-import utils from './src/utils/commons.js'
-import { getErrorCause, isRecoverableError } from './src/utils/error-utils.js'
-import { getCtpProjectConfig, getAdyenConfig } from './src/utils/parser.js'
+import notificationHandler from '../src/handler/notification/notification.handler.js'
+import { getLogger } from '../src/utils/logger.js'
+import utils from '../src/utils/commons.js'
+import { getErrorCause, isRecoverableError } from '../src/utils/error-utils.js'
+import { getCtpProjectConfig, getAdyenConfig } from '../src/utils/parser.js'
 
 const logger = getLogger()
 

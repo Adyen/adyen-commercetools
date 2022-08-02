@@ -7,7 +7,7 @@ import { getLogger } from '../../src/utils/logger.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils/commons.js'
 import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
-import { azureNotificationTrigger } from '../../index.azureFunction.js'
+import { azureNotificationTrigger } from '../../notification-trigger/index.azureFunction.js'
 
 const { expect } = chai
 chai.use(chaiAsPromised)
