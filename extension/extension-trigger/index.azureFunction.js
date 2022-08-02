@@ -1,6 +1,6 @@
-import utils from './src/utils.js'
-import paymentHandler from './src/paymentHandler/payment-handler.js'
-import { getAuthorizationRequestHeader } from './src/validator/authentication.js'
+import utils from '../src/utils.js'
+import paymentHandler from '../src/paymentHandler/payment-handler.js'
+import { getAuthorizationRequestHeader } from '../src/validator/authentication.js'
 
 const FAILED_VALIDATION = 'FailedValidation'
 

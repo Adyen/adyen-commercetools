@@ -1,6 +1,6 @@
 import sinon from 'sinon'
 import { expect } from 'chai'
-import { azureExtensionTrigger } from '../../index.azureFunction.js'
+import { azureExtensionTrigger } from '../../extension-trigger/index.azureFunction.js'
 import paymentHandler from '../../src/paymentHandler/payment-handler.js'
 
 let sandbox = null
