@@ -6,11 +6,5 @@
   "docker": {
     "enabled":  false
   },
-  "prConcurrentLimit": 10,
-  "packageRules": [
-    {
-      "matchPackageNames": ["node-fetch"],
-      "allowedVersions": "< 3.0.0"
-    }
-  ]
+  "prConcurrentLimit": 10
 }

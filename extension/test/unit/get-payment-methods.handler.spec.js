@@ -1,6 +1,5 @@
 import { expect } from 'chai'
-import sinon from 'sinon'
-import fetch from 'node-fetch'
+import nock from 'nock'
 import c from '../../src/config/constants.js'
 import getPaymentMethodsHandler from '../../src/paymentHandler/get-payment-methods.handler.js'
 import config from '../../src/config/config.js'
@@ -37,8 +36,12 @@ describe('get-payment-methods::execute::', () => {
     },
   }
 
+  const adyenCredentials = config.getAdyenConfig(
+    paymentObject.custom.fields.adyenMerchantAccount
+  )
+
   afterEach(() => {
-    sinon.restore()
+    nock.cleanAll()
   })
 
   it('handlePayment should return the right actions', async () => {
@@ -54,9 +57,10 @@ describe('get-payment-methods::execute::', () => {
       ],
     }
 
-    sinon
-      .stub(fetch, 'Promise')
-      .resolves({ json: () => adyenGetPaymentResponse })
+    nock(`${adyenCredentials.apiBaseUrl}`)
+      .post('/paymentMethods')
+      .query(true)
+      .reply(200, adyenGetPaymentResponse)
 
     const result = await getPaymentMethodsHandler.execute(paymentObject)
 
@@ -84,8 +88,12 @@ describe('get-payment-methods::execute::', () => {
     'when adyen request fails ' +
       'then handlePayment should return the right actions with failed responses',
     async () => {
-      const errorMsg = 'unexpected exception'
-      sinon.stub(fetch, 'Promise').rejects(errorMsg)
+      const errorMsg = 'Unexpected exception'
+
+      nock(`${adyenCredentials.apiBaseUrl}`)
+        .post('/paymentMethods')
+        .query(true)
+        .replyWithError(errorMsg)
 
       const result = await getPaymentMethodsHandler.execute(paymentObject)
 
