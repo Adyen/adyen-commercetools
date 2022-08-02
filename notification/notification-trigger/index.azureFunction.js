@@ -10,7 +10,7 @@ function handleSuccessResponse(context) {
   context.res = {
     status: 200,
     body: {
-      notificationResponse: '[accepted]'
+      notificationResponse: '[accepted]',
     },
   }
 }
@@ -19,7 +19,7 @@ function handleErrorResponse(context, status, errorMessage) {
   context.res = {
     status,
     body: {
-      error: errorMessage
+      error: errorMessage,
     },
   }
 }

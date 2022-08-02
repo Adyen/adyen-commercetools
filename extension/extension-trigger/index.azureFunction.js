@@ -9,7 +9,7 @@ function handleSuccessResponse(context, actions) {
     status: 200,
     responseType: 'UpdateRequest',
     body: {
-      actions
+      actions,
     },
   }
 }
@@ -19,7 +19,7 @@ function handleErrorResponse(context, errors) {
     status: 400,
     responseType: FAILED_VALIDATION,
     body: {
-      errors
+      errors,
     },
   }
 }
@@ -45,7 +45,8 @@ export const azureExtensionTrigger = async function (context, req) {
       authToken
     )
 
-    if (paymentResult.actions) handleSuccessResponse(context, paymentResult.actions)
+    if (paymentResult.actions)
+      handleSuccessResponse(context, paymentResult.actions)
     else handleErrorResponse(context, paymentResult.errors)
   } catch (e) {
     const errorObj = utils.handleUnexpectedPaymentError(paymentObj, e)
