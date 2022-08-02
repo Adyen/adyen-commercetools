@@ -54,7 +54,7 @@ describe('Google Function handler', () => {
 
     await azureNotificationTrigger(context, mockRequest)
     expect(context.res.status).to.eql(200)
-    expect(context.res.notificationResponse).to.eql('[accepted]')
+    expect(context.res.body.notificationResponse).to.eql('[accepted]')
   })
 
   it('throws and logs for concurrent modification exceptions', async () => {
@@ -74,7 +74,7 @@ describe('Google Function handler', () => {
 
       await azureNotificationTrigger(context, mockRequest)
       expect(context.res.status).to.equal(500)
-      expect(context.res.error.message).to.equal(
+      expect(context.res.body.error).to.equal(
         'Object 62f05181-4789-47ce-84f8-d27c895ee23c has a different version than expected. Expected: 1 - Actual: 2.'
       )
 
@@ -105,7 +105,7 @@ describe('Google Function handler', () => {
 
       await azureNotificationTrigger(context, mockRequest)
       expect(context.res.status).to.eql(200)
-      expect(context.res.notificationResponse).to.eql('[accepted]')
+      expect(context.res.body.notificationResponse).to.eql('[accepted]')
 
       const notificationItem = mockRequest.body.notificationItems.pop()
       logSpy.calledWith(

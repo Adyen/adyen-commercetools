@@ -9,15 +9,17 @@ const logger = getLogger()
 function handleSuccessResponse(context) {
   context.res = {
     status: 200,
-    notificationResponse: '[accepted]',
+    body: {
+      notificationResponse: '[accepted]'
+    },
   }
 }
 
-function handleErrorResponse(context, status, message) {
+function handleErrorResponse(context, status, errorMessage) {
   context.res = {
     status,
-    error: {
-      message,
+    body: {
+      error: errorMessage
     },
   }
 }

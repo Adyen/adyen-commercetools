@@ -30,7 +30,7 @@ describe('Azure function app', () => {
     await azureExtensionTrigger(context, mockRequest)
     expect(context.res.status).to.be.equal(200)
     expect(context.res.responseType).to.be.equal('UpdateRequest')
-    expect(context.res.actions).to.deep.equal([{ some: 'action' }])
+    expect(context.res.body.actions).to.deep.equal([{ some: 'action' }])
   })
 
   it('if accessing azure function without payload, it should return 400 http status', async () => {
@@ -38,7 +38,7 @@ describe('Azure function app', () => {
 
     expect(context.res.responseType).equals('FailedValidation')
     expect(context.res.status).to.be.equal(400)
-    expect(context.res.errors).to.deep.equal([
+    expect(context.res.body.errors).to.deep.equal([
       {
         code: 'InvalidInput',
         message: 'Invalid request body.',
@@ -53,9 +53,9 @@ describe('Azure function app', () => {
 
     expect(context.res.status).to.be.equal(400)
     expect(context.res.responseType).to.be.equal('FailedValidation')
-    expect(context.res.errors).to.not.empty
-    expect(context.res.errors).to.have.lengthOf(1)
-    expect(context.res.errors[0].code).to.equal('General')
+    expect(context.res.body.errors).to.not.empty
+    expect(context.res.body.errors).to.have.lengthOf(1)
+    expect(context.res.body.errors[0].code).to.equal('General')
   })
 
   it('if result is fail after payment handling, it should return 400 http status', async () => {
@@ -67,13 +67,13 @@ describe('Azure function app', () => {
       },
     ]
 
-    sandbox.stub(paymentHandler, 'handlePayment').returns(errors)
+    sandbox.stub(paymentHandler, 'handlePayment').returns({ errors })
 
     await azureExtensionTrigger(context, mockRequest)
 
     expect(context.res.status).to.equal(400)
-    expect(context.res.errors).to.not.empty
-    expect(context.res.errors).to.have.lengthOf(1)
-    expect(context.res.errors).to.deep.equal(errors)
+    expect(context.res.body).to.not.empty
+    expect(context.res.body.errors).to.have.lengthOf(1)
+    expect(context.res.body.errors).to.deep.equal(errors)
   })
 })
