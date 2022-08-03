@@ -29,6 +29,3 @@ secrets.yaml
 .extensionrc
 .notificationrc
 /sources/
-
-/extension/local.settings.json
-/notification/local.settings.json
