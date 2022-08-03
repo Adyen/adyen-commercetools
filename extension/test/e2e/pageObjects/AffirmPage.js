@@ -38,6 +38,6 @@ export default class AffirmPage {
   async enterConfirmationPageAndClickConfirmButton() {
     const confirmCheckbox = await this.page.$('#confirm-disclosure-checkbox')
     await this.page.evaluate((cb) => cb.click(), confirmCheckbox)
-    return this.page.click('[data-testid="confirm-loan-submit"]')
+    return this.page.click('[data-testid="confirm-submit"]')
   }
 }
