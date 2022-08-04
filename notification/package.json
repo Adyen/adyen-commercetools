@@ -60,7 +60,7 @@
     "node-fetch": "3.2.10",
     "rc": "1.2.8",
     "run-func": "3.0.0",
-    "serialize-error": "^11.0.0",
+    "serialize-error": "11.0.0",
     "verror": "1.10.1"
   },
   "devDependencies": {
