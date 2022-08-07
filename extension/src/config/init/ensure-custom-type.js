@@ -26,6 +26,17 @@ async function ensureInterfaceInteractionCustomType(ctpClient, ctpProjectKey) {
   )
 }
 
+async function ensureTransactionCustomType(ctpClient, ctpProjectKey) {
+  const interfaceInteractionType = await utils.readAndParseJsonFile(
+    'resources/payment-transaction-type.json'
+  )
+  return syncCustomType(
+    ctpClient,
+    createChildLogger(ctpProjectKey),
+    interfaceInteractionType
+  )
+}
+
 function createChildLogger(ctpProjectKey) {
   return mainLogger.child({
     commercetools_project_key: ctpProjectKey,
@@ -71,4 +82,8 @@ async function fetchTypeByKey(ctpClient, key) {
   }
 }
 
-export { ensurePaymentCustomType, ensureInterfaceInteractionCustomType }
+export {
+  ensurePaymentCustomType,
+  ensureInterfaceInteractionCustomType,
+  ensureTransactionCustomType,
+}
