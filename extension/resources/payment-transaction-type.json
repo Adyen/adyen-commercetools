@@ -1,0 +1,20 @@
+{
+  "key": "ctp-adyen-integration-transaction-payment-type",
+  "name": {
+    "en": "commercetools Adyen integration payment transaction type"
+  },
+  "resourceTypeIds": ["transaction"],
+  "fieldDefinitions": [
+    {
+      "name": "reference",
+      "label": {
+        "en": "reference"
+      },
+      "required": false,
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine"
+    }
+  ]
+}

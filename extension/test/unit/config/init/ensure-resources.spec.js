@@ -47,7 +47,7 @@ describe('Ensure resources', () => {
 
     await ensureResources(mockClient)
 
-    expect(createStub.callCount).to.equal(3)
+    expect(createStub.callCount).to.equal(4)
 
     const callArgs = _.flattenDeep(createStub.args)
     const createdPaymentType = callArgs.find(

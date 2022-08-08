@@ -28,7 +28,8 @@ async function execute(paymentObject) {
           currency: refundTransaction.amount.currencyCode,
         },
         originalReference: interactionId,
-        reference: paymentObject.key,
+        reference:
+          refundTransaction.custom?.fields?.reference || paymentObject.key,
       }
 
       const { request, response } = await refund(

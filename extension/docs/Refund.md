@@ -5,6 +5,7 @@
   - [Make an API call to refund a payment](#make-an-api-call-to-refund-a-payment)
     - [Prerequisites](#prerequisites)
     - [Steps](#steps)
+  - [Custom refund reference](#custom-refund-reference)
   - [Additional information](#additional-information)
   - [Further resources](#further-resources)
 
@@ -119,6 +120,33 @@ The commercetools payment representation after a successful refund:
 }
 ```
 
+### Custom refund reference
+
+By default, the refund reference field is taken from the payment key. If you need to customize the value of the refund reference, add a transaction custom field with key `reference` to the custom type with key `ctp-adyen-integration-transaction-payment-type`. The `addTransaction` action will look like following:
+
+```
+{
+  "action": "addTransaction",
+  "transaction": {
+    "type": "Refund",
+    "amount": {
+      "currencyCode": "EUR",
+      "centAmount": 500
+    },
+    "state": "Initial",
+    "custom": {
+      "type": {
+        "typeId": "type",
+        "key": "ctp-adyen-integration-transaction-payment-type"
+      },
+      "fields": {
+        "reference": "your-custom-refund-reference"
+      }
+    }
+  }
+}
+```
+
 ### Additional information
 
 1. Don't add too many `Refund` transactions at once because [API Extension endpoint has a time limit](https://docs.commercetools.com/api/projects/api-extensions#time-limits).
@@ -130,3 +158,4 @@ The commercetools payment representation after a successful refund:
 ### Further resources
 
 1. [Adyen refund documentation](https://docs.adyen.com/checkout/refund)
+1. [Adyen refund API](https://docs.adyen.com/api-explorer/#/Payment/v68/post/refund)
