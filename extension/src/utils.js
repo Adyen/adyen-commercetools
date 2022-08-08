@@ -38,7 +38,9 @@ function getLogger() {
 }
 
 function handleUnexpectedPaymentError(paymentObj, err) {
-  const errorMessage = `Unexpected error (Payment ID: ${paymentObj?.id}): ${err.message}.`
+  const errorMessage =
+    '[commercetools-adyen-integration-extension] ' +
+    `Unexpected error (Payment ID: ${paymentObj?.id}): ${err.message}.`
   const errorStackTrace = `Unexpected error (Payment ID: ${
     paymentObj?.id
   }): ${JSON.stringify(serializeError(err))}`
