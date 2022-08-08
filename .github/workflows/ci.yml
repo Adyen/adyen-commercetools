@@ -52,6 +52,7 @@ jobs:
   notification_build:
     name: Notification Module
     concurrency: notification_build
+    needs: extension_build
     runs-on: ubuntu-latest
     env:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
