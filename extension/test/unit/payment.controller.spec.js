@@ -134,6 +134,10 @@ describe('Payment controller', () => {
       expect(data.errors).to.not.empty
       expect(data.errors).to.have.lengthOf(1)
       expect(data.errors[0].code).to.equal('General')
+      expect(data.errors[0].message).to.equal(
+        '[commercetools-adyen-integration-extension] ' +
+          'Unexpected error (Payment ID: undefined): request.on is not a function.'
+      )
     }
 
     sinon.stub(utils, 'sendResponse').callsFake(sendResponse)
