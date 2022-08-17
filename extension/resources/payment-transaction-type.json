@@ -15,6 +15,17 @@
         "name": "String"
       },
       "inputHint": "SingleLine"
+    },
+    {
+      "name": "idempotencyKey",
+      "label": {
+        "en": "idempotencyKey"
+      },
+      "required": false,
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine"
     }
   ]
 }
