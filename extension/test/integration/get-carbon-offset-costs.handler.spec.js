@@ -112,7 +112,9 @@ describe('get-carbon-offset-costs', () => {
       interfaceInteraction.fields.response
     )
 
-    expect(JSON.parse(interfaceInteraction.fields.request)).to.be.deep.equal({
+    const request = JSON.parse(interfaceInteraction.fields.request)
+    const requestBody = JSON.parse(request.body)
+    expect(requestBody).to.be.deep.equal({
       merchantAccount: adyenMerchantAccount,
       ...getCarbonOffsetCostsRequestDraft,
     })

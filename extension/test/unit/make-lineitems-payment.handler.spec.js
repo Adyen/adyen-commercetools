@@ -68,8 +68,11 @@ describe('make-lineitems-payment::execute', () => {
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
+      const makePaymentRequestJson = JSON.parse(
+        makePaymentRequestInteraction.body
+      )
       const ctpLineItem = ctpCart.lineItems[0]
-      const adyenLineItem = makePaymentRequestInteraction.lineItems.find(
+      const adyenLineItem = makePaymentRequestJson.lineItems.find(
         (item) => item.id === 'test-product-sku-1'
       )
       expect(ctpLineItem.price.value.centAmount).to.equal(
@@ -90,7 +93,7 @@ describe('make-lineitems-payment::execute', () => {
       expect(setMethodInfoName.name).to.eql({ en: 'Klarna' })
 
       const ctpShippingInfo = ctpCart.shippingInfo
-      const adyenShippingInfo = makePaymentRequestInteraction.lineItems.find(
+      const adyenShippingInfo = makePaymentRequestJson.lineItems.find(
         (item) => item.id === ctpShippingInfo.shippingMethodName
       )
       expect(ctpShippingInfo.price.centAmount).to.equal(
@@ -132,8 +135,11 @@ describe('make-lineitems-payment::execute', () => {
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
+      const makePaymentRequestJson = JSON.parse(
+        makePaymentRequestInteraction.body
+      )
       const ctpLineItem = ctpCart.lineItems[0]
-      const adyenLineItem = makePaymentRequestInteraction.lineItems.find(
+      const adyenLineItem = makePaymentRequestJson.lineItems.find(
         (item) => item.id === 'test-product-sku-1'
       )
       expect(ctpLineItem.price.value.centAmount).to.equal(
@@ -154,7 +160,7 @@ describe('make-lineitems-payment::execute', () => {
       expect(setMethodInfoName.name).to.eql({ en: 'Affirm' })
 
       const ctpShippingInfo = ctpCart.shippingInfo
-      const adyenShippingInfo = makePaymentRequestInteraction.lineItems.find(
+      const adyenShippingInfo = makePaymentRequestJson.lineItems.find(
         (item) => item.id === ctpShippingInfo.shippingMethodName
       )
       expect(ctpShippingInfo.price.centAmount).to.equal(
@@ -196,7 +202,10 @@ describe('make-lineitems-payment::execute', () => {
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      expect(makePaymentRequestInteraction.lineItems).to.deep.equal(
+      const makePaymentRequestJson = JSON.parse(
+        makePaymentRequestInteraction.body
+      )
+      expect(makePaymentRequestJson.lineItems).to.deep.equal(
         klarnaMakePaymentRequest.lineItems
       )
     }
@@ -232,7 +241,10 @@ describe('make-lineitems-payment::execute', () => {
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      expect(makePaymentRequestInteraction.lineItems).to.deep.equal(
+      const makePaymentRequestJson = JSON.parse(
+        makePaymentRequestInteraction.body
+      )
+      expect(makePaymentRequestJson.lineItems).to.deep.equal(
         affirmMakePaymentRequest.lineItems
       )
     }
@@ -259,10 +271,11 @@ describe('make-lineitems-payment::execute', () => {
       const response = await makeLineItemsPaymentHandler.execute(
         ctpPaymentToTest
       )
-      const { lineItems } = JSON.parse(
+      const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
+      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
       expect(lineItems).to.have.lengthOf(3)
       expect(lineItems[0].description).to.equal(
         Object.values(ctpCart.lineItems[0].name)[0]
@@ -300,10 +313,11 @@ describe('make-lineitems-payment::execute', () => {
       const response = await makeLineItemsPaymentHandler.execute(
         ctpPaymentToTest
       )
-      const { lineItems } = JSON.parse(
+      const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
+      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
       expect(lineItems[2].description).to.equal(
         ctpCart.shippingInfo.shippingMethodName
       )
@@ -337,10 +351,11 @@ describe('make-lineitems-payment::execute', () => {
         ctpPaymentClone
       )
       expect(response.actions).to.have.lengthOf(6)
-      const { lineItems } = JSON.parse(
+      const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
+      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
       const shippingMethodItem = lineItems[lineItems.length - 1]
       expect(shippingMethodItem.id).to.equal(
         ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
@@ -381,10 +396,11 @@ describe('make-lineitems-payment::execute', () => {
         ctpPaymentClone
       )
       expect(response.actions).to.have.lengthOf(6)
-      const { lineItems } = JSON.parse(
+      const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
+      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
       const shippingMethodItem = lineItems[lineItems.length - 1]
       expect(shippingMethodItem.id).to.equal(
         ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
@@ -421,10 +437,11 @@ describe('make-lineitems-payment::execute', () => {
       },
     }
     const response = await makeLineItemsPaymentHandler.execute(ctpPaymentToTest)
-    const { lineItems } = JSON.parse(
+    const makePaymentRequestInteraction = JSON.parse(
       response.actions.find((a) => a.action === 'addInterfaceInteraction')
         .fields.request
     )
+    const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
     expect(lineItems[0].description).to.equal('test-de')
   })
 
@@ -456,10 +473,11 @@ describe('make-lineitems-payment::execute', () => {
       const response = await makeLineItemsPaymentHandler.execute(
         ctpPaymentToTest
       )
-      const { lineItems } = JSON.parse(
+      const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
+      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
       expect(lineItems[0].description).to.equal('test-fr')
     }
   )
@@ -491,10 +509,11 @@ describe('make-lineitems-payment::execute', () => {
       const response = await makeLineItemsPaymentHandler.execute(
         ctpPaymentToTest
       )
-      const { lineItems } = JSON.parse(
+      const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
+      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
       expect(lineItems[0].description).to.equal('test-de')
     }
   )

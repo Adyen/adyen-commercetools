@@ -32,7 +32,8 @@ async function execute(paymentObject) {
     ),
   ]
 
-  const paymentMethod = request.paymentMethod?.type
+  const requestBodyJson = JSON.parse(request.body)
+  const paymentMethod = requestBodyJson.paymentMethod?.type
   if (paymentMethod) {
     actions.push(createSetMethodInfoMethodAction(paymentMethod))
     const action = createSetMethodInfoNameAction(paymentMethod)
@@ -41,7 +42,7 @@ async function execute(paymentObject) {
 
   const paymentKey = paymentObject.key
   // ensure the key is a string, otherwise the error with "code": "InvalidJsonInput" will return by commercetools API.
-  const reference = request.reference.toString()
+  const reference = requestBodyJson.reference?.toString()
   // ensure the key and new reference is different, otherwise the error with
   // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
   if (reference !== paymentKey)

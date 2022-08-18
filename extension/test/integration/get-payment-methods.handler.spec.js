@@ -89,7 +89,13 @@ describe('::getPaymentMethods::', () => {
         interfaceInteraction.fields.response
       )
 
-      expect(JSON.parse(interfaceInteraction.fields.request)).to.be.deep.equal({
+      const getPaymentMethodsRequestInteraction = JSON.parse(
+        interfaceInteraction.fields.request
+      )
+      const getPaymentMethodsRequestBody = JSON.parse(
+        getPaymentMethodsRequestInteraction.body
+      )
+      expect(getPaymentMethodsRequestBody).to.be.deep.equal({
         merchantAccount: adyenMerchantAccount,
         ...getPaymentMethodsRequestExtended,
       })
@@ -176,9 +182,13 @@ describe('::getPaymentMethods::', () => {
         paymentMethodsInteraction.fields.response
       )
 
-      expect(
-        JSON.parse(paymentMethodsInteraction.fields.request)
-      ).to.be.deep.equal({
+      const getPaymentMethodsRequestInteraction = JSON.parse(
+        paymentMethodsInteraction.fields.request
+      )
+      const getPaymentMethodsRequestBody = JSON.parse(
+        getPaymentMethodsRequestInteraction.body
+      )
+      expect(getPaymentMethodsRequestBody).to.be.deep.equal({
         merchantAccount: adyenMerchantAccount,
         ...getPaymentMethodsRequestExtended,
       })

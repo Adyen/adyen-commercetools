@@ -57,7 +57,8 @@ describe('::Multitenancy::', () => {
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      expect(adyenRequest.merchantAccount).to.equal(adyenMerchantAccount)
+      const adyenRequestBody = JSON.parse(adyenRequest.body)
+      expect(adyenRequestBody.merchantAccount).to.equal(adyenMerchantAccount)
       expect(ctpApiScope.isDone()).to.be.true
     }
   )

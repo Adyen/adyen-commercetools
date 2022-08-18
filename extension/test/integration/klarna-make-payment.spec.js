@@ -93,12 +93,16 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
     const makePaymentRequest = JSON.parse(makePaymentInteraction.request)
     const makePaymentResponse = JSON.parse(makePaymentInteraction.response)
 
-    expect(makePaymentRequest.metadata).to.deep.equal({
+    const makePaymentRequestBody = JSON.parse(makePaymentRequest.body)
+
+    expect(makePaymentRequestBody.metadata).to.deep.equal({
       ctProjectKey: commercetoolsProjectKey,
     })
-    expect(makePaymentRequest.merchantAccount).to.be.equal(adyenMerchantAccount)
+    expect(makePaymentRequestBody.merchantAccount).to.be.equal(
+      adyenMerchantAccount
+    )
 
-    expect(makePaymentRequest.lineItems).to.have.lengthOf(3)
+    expect(makePaymentRequestBody.lineItems).to.have.lengthOf(3)
     expect(makePaymentResponse.resultCode).to.be.equal('RedirectShopper')
   }
 })

@@ -3,6 +3,7 @@ import ctpClientBuilder from '../../src/ctp.js'
 import constants from '../../src/config/constants.js'
 import { createAddTransactionAction } from '../../src/paymentHandler/payment-utils.js'
 import config from '../../src/config/config.js'
+import crypto from 'crypto'
 
 const {
   CTP_ADYEN_INTEGRATION,
@@ -13,6 +14,8 @@ const {
 describe('::refund::', () => {
   const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const idempotencyKey1 = crypto.randomBytes(20).toString('hex')
+  const idempotencyKey2 = crypto.randomBytes(20).toString('hex')
   let ctpClient
 
   beforeEach(async () => {
@@ -72,12 +75,30 @@ describe('::refund::', () => {
             state: 'Initial',
             currency: 'EUR',
             amount: 500,
+            custom: {
+              type: {
+                typeId: 'type',
+                key: 'ctp-adyen-integration-transaction-payment-type',
+              },
+              fields: {
+                idempotencyKey: idempotencyKey1,
+              },
+            },
           }),
           createAddTransactionAction({
             type: 'Refund',
             state: 'Initial',
             currency: 'EUR',
             amount: 300,
+            custom: {
+              type: {
+                typeId: 'type',
+                key: 'ctp-adyen-integration-transaction-payment-type',
+              },
+              fields: {
+                idempotencyKey: idempotencyKey2,
+              },
+            },
           }),
           createAddTransactionAction({
             type: 'Refund',
@@ -113,6 +134,8 @@ describe('::refund::', () => {
             transaction.interactionId === adyenResponse.pspReference
         )
         expect(refundTransaction).to.exist
+        const adyenRequest = JSON.parse(interfaceInteraction.fields.request)
+        expect(adyenRequest.headers['Idempotency-Key']).to.equal(refundTransaction.custom?.fields?.idempotencyKey)
       }
     }
   )

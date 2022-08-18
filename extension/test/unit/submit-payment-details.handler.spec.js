@@ -71,20 +71,23 @@ describe('submit-additional-payment-details::execute', () => {
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const request = JSON.parse(addInterfaceInteraction.fields.request)
-      expect(request.reference).to.deep.equal(
+      const requestBody = JSON.parse(request.body)
+      expect(requestBody.reference).to.deep.equal(
         submitPaymentDetailsRequest.reference
       )
-      expect(request.riskData).to.deep.equal(
+      expect(requestBody.riskData).to.deep.equal(
         submitPaymentDetailsRequest.riskData
       )
-      expect(request.paymentMethod).to.deep.equal(
+      expect(requestBody.paymentMethod).to.deep.equal(
         submitPaymentDetailsRequest.paymentMethod
       )
-      expect(request.browserInfo).to.deep.equal(
+      expect(requestBody.browserInfo).to.deep.equal(
         submitPaymentDetailsRequest.browserInfo
       )
-      expect(request.amount).to.deep.equal(submitPaymentDetailsRequest.amount)
-      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
+      expect(requestBody.amount).to.deep.equal(
+        submitPaymentDetailsRequest.amount
+      )
+      expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -147,20 +150,23 @@ describe('submit-additional-payment-details::execute', () => {
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const request = JSON.parse(addInterfaceInteraction.fields.request)
-      expect(request.reference).to.deep.equal(
+      const requestBody = JSON.parse(request.body)
+      expect(requestBody.reference).to.deep.equal(
         submitPaymentDetailsRequest.reference
       )
-      expect(request.riskData).to.deep.equal(
+      expect(requestBody.riskData).to.deep.equal(
         submitPaymentDetailsRequest.riskData
       )
-      expect(request.paymentMethod).to.deep.equal(
+      expect(requestBody.paymentMethod).to.deep.equal(
         submitPaymentDetailsRequest.paymentMethod
       )
-      expect(request.browserInfo).to.deep.equal(
+      expect(requestBody.browserInfo).to.deep.equal(
         submitPaymentDetailsRequest.browserInfo
       )
-      expect(request.amount).to.deep.equal(submitPaymentDetailsRequest.amount)
-      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
+      expect(requestBody.amount).to.deep.equal(
+        submitPaymentDetailsRequest.amount
+      )
+      expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -202,7 +208,8 @@ describe('submit-additional-payment-details::execute', () => {
         (a) => a.action === 'addInterfaceInteraction'
       )
       const request = JSON.parse(addInterfaceInteraction.fields.request)
-      expect(request.paymentData).to.equal(
+      const requestBody = JSON.parse(request.body)
+      expect(requestBody.paymentData).to.equal(
         JSON.parse(makePaymentRedirectResponse).paymentData
       )
     }
@@ -233,7 +240,8 @@ describe('submit-additional-payment-details::execute', () => {
         (a) => a.action === 'addInterfaceInteraction'
       )
       const request = JSON.parse(addInterfaceInteraction.fields.request)
-      expect(request.paymentData).to.equal(testPaymentData)
+      const requestBody = JSON.parse(request.body)
+      expect(requestBody.paymentData).to.equal(testPaymentData)
     }
   )
 

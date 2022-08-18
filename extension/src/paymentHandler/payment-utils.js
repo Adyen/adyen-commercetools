@@ -102,6 +102,7 @@ function createAddTransactionAction({
   amount,
   currency,
   interactionId,
+  custom,
 }) {
   return {
     action: 'addTransaction',
@@ -113,6 +114,7 @@ function createAddTransactionAction({
       },
       state,
       interactionId,
+      custom,
     },
   }
 }
