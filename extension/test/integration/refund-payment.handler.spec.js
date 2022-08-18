@@ -1,9 +1,9 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import ctpClientBuilder from '../../src/ctp.js'
 import constants from '../../src/config/constants.js'
 import { createAddTransactionAction } from '../../src/paymentHandler/payment-utils.js'
 import config from '../../src/config/config.js'
-import crypto from 'crypto'
 
 const {
   CTP_ADYEN_INTEGRATION,
@@ -135,7 +135,9 @@ describe('::refund::', () => {
         )
         expect(refundTransaction).to.exist
         const adyenRequest = JSON.parse(interfaceInteraction.fields.request)
-        expect(adyenRequest.headers['Idempotency-Key']).to.equal(refundTransaction.custom?.fields?.idempotencyKey)
+        expect(adyenRequest.headers['Idempotency-Key']).to.equal(
+          refundTransaction.custom?.fields?.idempotencyKey
+        )
       }
     }
   )

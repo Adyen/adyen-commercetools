@@ -1,9 +1,9 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import ctpClientBuilder from '../../src/ctp.js'
 import constants from '../../src/config/constants.js'
 import { createAddTransactionAction } from '../../src/paymentHandler/payment-utils.js'
 import config from '../../src/config/config.js'
-import crypto from 'crypto'
 
 const {
   CTP_ADYEN_INTEGRATION,
@@ -81,7 +81,7 @@ describe('::manualCapture::', () => {
                 key: 'ctp-adyen-integration-transaction-payment-type',
               },
               fields: {
-                idempotencyKey: idempotencyKey,
+                idempotencyKey,
               },
             },
           }),
