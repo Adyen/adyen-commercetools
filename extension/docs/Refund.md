@@ -147,6 +147,37 @@ By default, the refund reference field is taken from the payment key. If you nee
 }
 ```
 
+### Retry refund requests
+
+To be able to retry refund requests in case of failure, you need to add a custom field with key `idempotencyKey` to the custom type with key `ctp-adyen-integration-transaction-payment-type`. The `addTransaction` action will look like following:
+```
+{
+  "action": "addTransaction",
+  "transaction": {
+    "type": "Refund",
+    "amount": {
+      "currencyCode": "EUR",
+      "centAmount": 500
+    },
+    "state": "Initial",
+    "custom": {
+      "type": {
+        "typeId": "type",
+        "key": "ctp-adyen-integration-transaction-payment-type"
+      },
+      "fields": {
+        "idempotencyKey": "your-unique-idempotency-key"
+      }
+    }
+  }
+}
+```
+
+Follow these recommendations when using the idempotency key:
+- `idempotencyKey` must be unique per request so that in case the request fails, it can be retried with the same key. Additionally `idempotencyKey` is valid for a minimum period of 31 days after first submission (but may be retained for longer). Source:
+- Generate idempotency keys using the version 4 (random) UUID type to prevent two API credentials under the same account from accessing each others responses.
+- Use [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) when retrying.
+
 ### Additional information
 
 1. Don't add too many `Refund` transactions at once because [API Extension endpoint has a time limit](https://docs.commercetools.com/api/projects/api-extensions#time-limits).
@@ -159,3 +190,4 @@ By default, the refund reference field is taken from the payment key. If you nee
 
 1. [Adyen refund documentation](https://docs.adyen.com/checkout/refund)
 1. [Adyen refund API](https://docs.adyen.com/api-explorer/#/Payment/v68/post/refund)
+1. [API idempotency](https://docs.adyen.com/development-resources/api-idempotency)
