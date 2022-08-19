@@ -6,6 +6,7 @@
     - [Prerequisites](#prerequisites)
     - [Steps](#steps)
   - [Custom refund reference](#custom-refund-reference)
+  - [Retry refund requests](#retry-refund-requests)
   - [Additional information](#additional-information)
   - [Further resources](#further-resources)
 

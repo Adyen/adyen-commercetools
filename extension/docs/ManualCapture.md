@@ -4,7 +4,8 @@
 - [Manual Capture](#manual-capture)
   - [Make an API call to capture a payment:](#make-an-api-call-to-capture-a-payment)
   - [Partial capture](#partial-capture)
-  - [More info](#more-info)
+  - [Retry capture requests](#retry-capture-requests)
+  - [More info on capture](#more-info-on-capture)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
