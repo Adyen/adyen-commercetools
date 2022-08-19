@@ -150,6 +150,7 @@ By default, the refund reference field is taken from the payment key. If you nee
 ### Retry refund requests
 
 To be able to retry refund requests in case of failure, you need to add a custom field with key `idempotencyKey` to the custom type with key `ctp-adyen-integration-transaction-payment-type`. The `addTransaction` action will look like following:
+
 ```
 {
   "action": "addTransaction",
@@ -174,6 +175,7 @@ To be able to retry refund requests in case of failure, you need to add a custom
 ```
 
 Follow these recommendations when using the idempotency key:
+
 - `idempotencyKey` must be unique per request so that in case the request fails, it can be retried with the same key. Additionally `idempotencyKey` is valid for a minimum period of 31 days after first submission (but may be retained for longer). Source:
 - Generate idempotency keys using the version 4 (random) UUID type to prevent two API credentials under the same account from accessing each others responses.
 - Use [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) when retrying.
