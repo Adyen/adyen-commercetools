@@ -4,7 +4,7 @@ Date: 2022-08-17
 
 ## Status
 
-Approved (https://github.com/commercetools/commercetools-adyen-integration/pull/1000)
+[Approved](https://github.com/commercetools/commercetools-adyen-integration/pull/1000)
 
 ## Context
 Payment modifications actions are using POST requests. POST is not idempotent by definition. Therefore, by default it is not possible to retry when payment modification requests fail if you want to avoid unwanted duplications. For example, when partial capture gets a timeout error from Adyen, it could cause double-processing of the same request when retry as Adyen will consider the retry request as a new partial capture request.
