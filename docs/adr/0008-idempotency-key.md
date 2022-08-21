@@ -1,4 +1,4 @@
-# 7. Idempotency key
+# 8. Idempotency key
 
 Date: 2022-08-17
 
