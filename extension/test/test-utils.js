@@ -112,4 +112,22 @@ async function updatePaymentWithRetry(ctpClient, actions, payment) {
   return { statusCode, updatedPayment }
 }
 
-export { startIT, stopIT, updatePaymentWithRetry }
+let originalGetModuleConfigFn
+
+function overrideModuleConfig(newModuleConfig) {
+  originalGetModuleConfigFn = config.getModuleConfig
+  const oldModuleConfig = originalGetModuleConfigFn()
+  config.getModuleConfig = () => ({ ...oldModuleConfig, ...newModuleConfig })
+}
+
+function restoreModuleConfig() {
+  config.getModuleConfig = originalGetModuleConfigFn
+}
+
+export {
+  startIT,
+  stopIT,
+  updatePaymentWithRetry,
+  overrideModuleConfig,
+  restoreModuleConfig,
+}

@@ -56,7 +56,7 @@ describe('manual-capture.handler::execute::', () => {
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-    scope = nock(`${adyenConfig.legacyApiBaseUrl}`)
+    scope = nock(`${adyenConfig.legacyApiBaseUrl}/Payment/v64`)
   })
 
   it(

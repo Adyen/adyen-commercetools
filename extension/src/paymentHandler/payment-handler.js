@@ -8,6 +8,7 @@ import cancelHandler from './cancel-payment.handler.js'
 import refundHandler from './refund-payment.handler.js'
 import getCarbonOffsetCostsHandler from './get-carbon-offset-costs.handler.js'
 import amountUpdatesHandler from './amount-updates.handler.js'
+import disableStoredPaymentHandler from './disable-stored-payment.handler.js'
 import {
   getChargeTransactionInitial,
   getAuthorizationTransactionSuccess,
@@ -113,6 +114,11 @@ function _getPaymentHandlers(paymentObject) {
     getChargeTransactionInitial(paymentObject)
   )
     handlers.push(manualCaptureHandler)
+  if (
+    paymentObject.custom.fields.disableStoredPaymentRequest &&
+    !paymentObject.custom.fields.disableStoredPaymentResponse
+  )
+    handlers.push(disableStoredPaymentHandler)
   return handlers
 }
 

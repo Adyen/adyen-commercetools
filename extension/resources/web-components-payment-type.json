@@ -147,6 +147,28 @@
       },
       "inputHint": "MultiLine",
       "required": false
+    },
+    {
+      "name": "disableStoredPaymentRequest",
+      "label": {
+        "en": "disableStoredPaymentRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "disableStoredPaymentResponse",
+      "label": {
+        "en": "disableStoredPaymentResponse"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
     }
   ]
 }
