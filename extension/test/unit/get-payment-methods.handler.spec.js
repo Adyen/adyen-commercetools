@@ -67,7 +67,8 @@ describe('get-payment-methods::execute::', () => {
     expect(result.actions.length).to.equal(2)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
     expect(result.actions[1].action).to.equal('setCustomField')
-    expect(JSON.parse(result.actions[0].fields.request)).to.be.deep.includes(
+    const request = JSON.parse(result.actions[0].fields.request)
+    expect(JSON.parse(request.body)).to.be.deep.includes(
       getPaymentMethodsRequest
     )
     expect(result.actions[0].fields.response).to.be.deep.equal(
@@ -100,7 +101,8 @@ describe('get-payment-methods::execute::', () => {
       expect(result.actions.length).to.equal(2)
       expect(result.actions[0].action).to.equal('addInterfaceInteraction')
       expect(result.actions[1].action).to.equal('setCustomField')
-      expect(JSON.parse(result.actions[0].fields.request)).to.be.deep.includes(
+      const request = JSON.parse(result.actions[0].fields.request)
+      expect(JSON.parse(request.body)).to.be.deep.includes(
         getPaymentMethodsRequest
       )
       expect(result.actions[0].fields.response).to.be.includes(errorMsg)

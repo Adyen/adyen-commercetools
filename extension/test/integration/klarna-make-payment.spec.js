@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.js'
 import { initPaymentWithCart } from './integration-test-set-up.js'
+import { updatePaymentWithRetry } from '../test-utils.js'
 
 describe('::klarnaMakePayment with multiple projects use case::', () => {
   const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
@@ -74,17 +75,16 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
       returnUrl: 'https://www.yourshop.com/checkout/result',
     }
 
-    const { statusCode, body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
+    const { statusCode, updatedPayment } = await updatePaymentWithRetry(
+      ctpClient,
       [
         {
           action: 'setCustomField',
           name: 'makePaymentRequest',
           value: JSON.stringify(makePaymentRequestDraft),
         },
-      ]
+      ],
+      payment
     )
 
     expect(statusCode).to.be.equal(200)
@@ -93,12 +93,16 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
     const makePaymentRequest = JSON.parse(makePaymentInteraction.request)
     const makePaymentResponse = JSON.parse(makePaymentInteraction.response)
 
-    expect(makePaymentRequest.metadata).to.deep.equal({
+    const makePaymentRequestBody = JSON.parse(makePaymentRequest.body)
+
+    expect(makePaymentRequestBody.metadata).to.deep.equal({
       ctProjectKey: commercetoolsProjectKey,
     })
-    expect(makePaymentRequest.merchantAccount).to.be.equal(adyenMerchantAccount)
+    expect(makePaymentRequestBody.merchantAccount).to.be.equal(
+      adyenMerchantAccount
+    )
 
-    expect(makePaymentRequest.lineItems).to.have.lengthOf(3)
+    expect(makePaymentRequestBody.lineItems).to.have.lengthOf(3)
     expect(makePaymentResponse.resultCode).to.be.equal('RedirectShopper')
   }
 })

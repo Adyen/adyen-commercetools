@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import constants from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
 import ctpClientBuilder from '../../src/ctp.js'
+import { updatePaymentWithRetry } from '../test-utils.js'
 
 /**
  * Flow description: https://docs.adyen.com/online-payments/adjust-authorisation
@@ -140,9 +141,7 @@ describe('::amount updates::', () => {
       reference: payment.key,
     }
 
-    let {
-      body: { version },
-    } = await ctpClient.update(
+    const { body: updatedPayment1 } = await ctpClient.update(
       ctpClient.builder.payments,
       payment.id,
       payment.version,
@@ -155,48 +154,34 @@ describe('::amount updates::', () => {
       ]
     )
 
-    while (true) {
-      try {
-        const { statusCode, body: updatedPayment } = await ctpClient.update(
-          ctpClient.builder.payments,
-          payment.id,
-          version,
-          [
-            {
-              action: 'setCustomField',
-              name: 'amountUpdatesResponse',
-            },
-            {
-              action: 'setCustomField',
-              name: 'amountUpdatesRequest',
-              value: JSON.stringify(amountUpdatesRequestDraft),
-            },
-          ]
-        )
-        expect(statusCode).to.equal(200)
-        const amountUpdatesResponse = JSON.parse(
-          updatedPayment.custom.fields.amountUpdatesResponse
-        )
-        expect(amountUpdatesResponse.status).to.equal('received')
+    const { statusCode, updatedPayment: updatedPayment2 } =
+      await updatePaymentWithRetry(
+        ctpClient,
+        [
+          {
+            action: 'setCustomField',
+            name: 'amountUpdatesResponse',
+          },
+          {
+            action: 'setCustomField',
+            name: 'amountUpdatesRequest',
+            value: JSON.stringify(amountUpdatesRequestDraft),
+          },
+        ],
+        updatedPayment1
+      )
 
-        const amountUpdatesInterfaceInteractions =
-          updatedPayment.interfaceInteractions.filter(
-            (ii) => ii.fields.type === 'amountUpdates'
-          )
-        expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(2)
-        break
-      } catch (e) {
-        if (e.statusCode === 409) {
-          const { body } = await ctpClient.fetchByKey(
-            ctpClient.builder.payments,
-            payment.key
-          )
-          version = body.version
-        } else {
-          throw e
-        }
-      }
-    }
+    expect(statusCode).to.equal(200)
+    const amountUpdatesResponse = JSON.parse(
+      updatedPayment2.custom.fields.amountUpdatesResponse
+    )
+    expect(amountUpdatesResponse.status).to.equal('received')
+
+    const amountUpdatesInterfaceInteractions =
+      updatedPayment2.interfaceInteractions.filter(
+        (ii) => ii.fields.type === 'amountUpdates'
+      )
+    expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(2)
   })
 
   async function makePayment({ reference, adyenMerchantAccount, metadata }) {

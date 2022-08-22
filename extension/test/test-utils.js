@@ -82,4 +82,34 @@ async function initTunnel() {
   return tunnel
 }
 
-export { startIT, stopIT }
+async function updatePaymentWithRetry(ctpClient, actions, payment) {
+  let version = payment.version
+  let statusCode
+  let updatedPayment
+  while (true) {
+    try {
+      const response = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        version,
+        actions
+      )
+      statusCode = response.statusCode
+      updatedPayment = response.body
+      break
+    } catch (e) {
+      if (e.statusCode === 409) {
+        const { body } = await ctpClient.fetchById(
+          ctpClient.builder.payments,
+          payment.id
+        )
+        version = body.version
+      } else {
+        throw e
+      }
+    }
+  }
+  return { statusCode, updatedPayment }
+}
+
+export { startIT, stopIT, updatePaymentWithRetry }

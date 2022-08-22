@@ -102,14 +102,17 @@ describe('make-payment::execute', () => {
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const request = JSON.parse(addInterfaceInteraction.fields.request)
-      expect(request.reference).to.deep.equal(makePaymentRequest.reference)
-      expect(request.riskData).to.deep.equal(makePaymentRequest.riskData)
-      expect(request.paymentMethod).to.deep.equal(
+      const requestBody = JSON.parse(request.body)
+      expect(requestBody.reference).to.deep.equal(makePaymentRequest.reference)
+      expect(requestBody.riskData).to.deep.equal(makePaymentRequest.riskData)
+      expect(requestBody.paymentMethod).to.deep.equal(
         makePaymentRequest.paymentMethod
       )
-      expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
-      expect(request.amount).to.deep.equal(makePaymentRequest.amount)
-      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
+      expect(requestBody.browserInfo).to.deep.equal(
+        makePaymentRequest.browserInfo
+      )
+      expect(requestBody.amount).to.deep.equal(makePaymentRequest.amount)
+      expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -159,14 +162,17 @@ describe('make-payment::execute', () => {
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const request = JSON.parse(addInterfaceInteraction.fields.request)
-      expect(request.reference).to.deep.equal(makePaymentRequest.reference)
-      expect(request.riskData).to.deep.equal(makePaymentRequest.riskData)
-      expect(request.paymentMethod).to.deep.equal(
+      const requestBody = JSON.parse(request.body)
+      expect(requestBody.reference).to.deep.equal(makePaymentRequest.reference)
+      expect(requestBody.riskData).to.deep.equal(makePaymentRequest.riskData)
+      expect(requestBody.paymentMethod).to.deep.equal(
         makePaymentRequest.paymentMethod
       )
-      expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
-      expect(request.amount).to.deep.equal(makePaymentRequest.amount)
-      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
+      expect(requestBody.browserInfo).to.deep.equal(
+        makePaymentRequest.browserInfo
+      )
+      expect(requestBody.amount).to.deep.equal(makePaymentRequest.amount)
+      expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -206,14 +212,17 @@ describe('make-payment::execute', () => {
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const request = JSON.parse(addInterfaceInteraction.fields.request)
-      expect(request.reference).to.deep.equal(makePaymentRequest.reference)
-      expect(request.riskData).to.deep.equal(makePaymentRequest.riskData)
-      expect(request.paymentMethod).to.deep.equal(
+      const requestBody = JSON.parse(request.body)
+      expect(requestBody.reference).to.deep.equal(makePaymentRequest.reference)
+      expect(requestBody.riskData).to.deep.equal(makePaymentRequest.riskData)
+      expect(requestBody.paymentMethod).to.deep.equal(
         makePaymentRequest.paymentMethod
       )
-      expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
-      expect(request.amount).to.deep.equal(makePaymentRequest.amount)
-      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
+      expect(requestBody.browserInfo).to.deep.equal(
+        makePaymentRequest.browserInfo
+      )
+      expect(requestBody.amount).to.deep.equal(makePaymentRequest.amount)
+      expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -254,14 +263,17 @@ describe('make-payment::execute', () => {
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const request = JSON.parse(addInterfaceInteraction.fields.request)
-      expect(request.reference).to.deep.equal(makePaymentRequest.reference)
-      expect(request.riskData).to.deep.equal(makePaymentRequest.riskData)
-      expect(request.paymentMethod).to.deep.equal(
+      const requestBody = JSON.parse(request.body)
+      expect(requestBody.reference).to.deep.equal(makePaymentRequest.reference)
+      expect(requestBody.riskData).to.deep.equal(makePaymentRequest.riskData)
+      expect(requestBody.paymentMethod).to.deep.equal(
         makePaymentRequest.paymentMethod
       )
-      expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
-      expect(request.amount).to.deep.equal(makePaymentRequest.amount)
-      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
+      expect(requestBody.browserInfo).to.deep.equal(
+        makePaymentRequest.browserInfo
+      )
+      expect(requestBody.amount).to.deep.equal(makePaymentRequest.amount)
+      expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
@@ -312,14 +324,17 @@ describe('make-payment::execute', () => {
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const request = JSON.parse(addInterfaceInteraction.fields.request)
-      expect(request.reference).to.deep.equal(makePaymentRequest.reference)
-      expect(request.riskData).to.deep.equal(makePaymentRequest.riskData)
-      expect(request.paymentMethod).to.deep.equal(
+      const requestBody = JSON.parse(request.body)
+      expect(requestBody.reference).to.deep.equal(makePaymentRequest.reference)
+      expect(requestBody.riskData).to.deep.equal(makePaymentRequest.riskData)
+      expect(requestBody.paymentMethod).to.deep.equal(
         makePaymentRequest.paymentMethod
       )
-      expect(request.browserInfo).to.deep.equal(makePaymentRequest.browserInfo)
-      expect(request.amount).to.deep.equal(makePaymentRequest.amount)
-      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
+      expect(requestBody.browserInfo).to.deep.equal(
+        makePaymentRequest.browserInfo
+      )
+      expect(requestBody.amount).to.deep.equal(makePaymentRequest.amount)
+      expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'

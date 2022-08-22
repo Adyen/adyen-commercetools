@@ -70,7 +70,10 @@ describe('payment-handler-lineItems::execute', () => {
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      expect(makePaymentRequestInteraction.lineItems).to.have.lengthOf(3)
+      const makePaymentRequestJson = JSON.parse(
+        makePaymentRequestInteraction.body
+      )
+      expect(makePaymentRequestJson.lineItems).to.have.lengthOf(3)
     }
   )
 
@@ -106,7 +109,10 @@ describe('payment-handler-lineItems::execute', () => {
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      expect(makePaymentRequestInteraction.lineItems).to.have.lengthOf(3)
+      const makePaymentRequestJson = JSON.parse(
+        makePaymentRequestInteraction.body
+      )
+      expect(makePaymentRequestJson.lineItems).to.have.lengthOf(3)
     }
   )
 
@@ -141,7 +147,10 @@ describe('payment-handler-lineItems::execute', () => {
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      expect(makePaymentRequestInteraction.lineItems).to.undefined
+      const makePaymentRequestJson = JSON.parse(
+        makePaymentRequestInteraction.body
+      )
+      expect(makePaymentRequestJson.lineItems).to.undefined
     }
   )
 
@@ -175,7 +184,10 @@ describe('payment-handler-lineItems::execute', () => {
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      expect(makePaymentRequestInteraction.lineItems).to.have.lengthOf(3)
+      const makePaymentRequestJson = JSON.parse(
+        makePaymentRequestInteraction.body
+      )
+      expect(makePaymentRequestJson.lineItems).to.have.lengthOf(3)
     }
   )
 

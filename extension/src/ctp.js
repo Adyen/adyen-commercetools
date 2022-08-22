@@ -122,6 +122,10 @@ async function setUpClient(config) {
       return ctpClient.execute(this.buildRequestOptions(uri.build()))
     },
 
+    fetchById(uri, id) {
+      return ctpClient.execute(this.buildRequestOptions(uri.byId(id).build()))
+    },
+
     fetchByKey(uri, key) {
       return ctpClient.execute(this.buildRequestOptions(uri.byKey(key).build()))
     },
