@@ -98,7 +98,8 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
           constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
       )
       const makePaymentRequest = JSON.parse(interfaceInteraction.fields.request)
-      expect(makePaymentRequest.lineItems).to.have.lengthOf(3)
+      const makePaymentRequestBody = JSON.parse(makePaymentRequest.body)
+      expect(makePaymentRequestBody.lineItems).to.have.lengthOf(3)
     }
   )
 
@@ -156,18 +157,21 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
         interaction.fields.type === constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
     )
     const makePaymentRequest = JSON.parse(interfaceInteraction.fields.request)
+    const makePaymentRequestBody = JSON.parse(makePaymentRequest.body)
     if (metadata) {
-      expect(makePaymentRequest.metadata).to.deep.equal({
+      expect(makePaymentRequestBody.metadata).to.deep.equal({
         ctProjectKey: commercetoolsProjectKey,
         ...metadata,
       })
     } else {
-      expect(makePaymentRequest.metadata).to.deep.equal({
+      expect(makePaymentRequestBody.metadata).to.deep.equal({
         ctProjectKey: commercetoolsProjectKey,
       })
     }
 
-    expect(makePaymentRequest.merchantAccount).to.be.equal(adyenMerchantAccount)
+    expect(makePaymentRequestBody.merchantAccount).to.be.equal(
+      adyenMerchantAccount
+    )
 
     const { makePaymentResponse } = payment.custom.fields
 

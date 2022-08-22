@@ -4,7 +4,8 @@
 - [Manual Capture](#manual-capture)
   - [Make an API call to capture a payment:](#make-an-api-call-to-capture-a-payment)
   - [Partial capture](#partial-capture)
-  - [More info](#more-info)
+  - [Retry capture requests](#retry-capture-requests)
+  - [More info on capture](#more-info-on-capture)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -104,6 +105,41 @@ Once Adyen have processed your capture request, Adyen will send a notification t
 
 In order to enable multiple partial captures, it is necessary to contact Adyen Support team. For more info, see [Adyen's documentation](https://docs.adyen.com/online-payments/capture#multiple-partial-captures)
 
-### More info
+### Retry capture requests
+
+To be able to retry capture requests in case of failure, you need to add a custom field with key `idempotencyKey` to the custom type with key `ctp-adyen-integration-transaction-payment-type`. The `addTransaction` action will look like following:
+
+```
+{
+  "action": "addTransaction",
+  "transaction": {
+    "type": "Charge",
+    "amount": {
+      "currencyCode": "EUR",
+      "centAmount": 500
+    },
+    "state": "Initial",
+    "custom": {
+      "type": {
+        "typeId": "type",
+        "key": "ctp-adyen-integration-transaction-payment-type"
+      },
+      "fields": {
+        "idempotencyKey": "your-unique-idempotency-key"
+      }
+    }
+  }
+}
+```
+
+Follow these recommendations when using the idempotency key:
+
+- `idempotencyKey` must be unique per request so that in case the request fails, it can be retried with the same key. Additionally `idempotencyKey` is valid for a minimum period of 31 days after first submission (but may be retained for longer). Source:
+- Generate idempotency keys using the version 4 (random) UUID type to prevent two API credentials under the same account from accessing each others responses.
+- Use [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) when retrying.
+
+For in-depth information about API idempotency in Adyen, please check [the documentation from Adyen](https://docs.adyen.com/development-resources/api-idempotency)
+
+### More info on capture
 
 For more detailed information from Adyen's perspective, see [Adyen's documentation](https://docs.adyen.com/checkout/capture#manual-capture).

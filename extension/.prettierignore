@@ -5,3 +5,4 @@ package.json
 package-lock.json
 .prettierignore
 .eslintrc
+.prettierrc.json

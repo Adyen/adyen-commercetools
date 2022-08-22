@@ -119,13 +119,16 @@ describe('::affirmMakePayment with multiple projects use case::', () => {
       updatedPayment.interfaceInteractions[0].fields
     const makePaymentRequest = JSON.parse(makePaymentInteraction.request)
     const makePaymentResponse = JSON.parse(makePaymentInteraction.response)
+    const makePaymentRequestBody = JSON.parse(makePaymentRequest.body)
 
-    expect(makePaymentRequest.metadata).to.deep.equal({
+    expect(makePaymentRequestBody.metadata).to.deep.equal({
       ctProjectKey: commercetoolsProjectKey,
     })
-    expect(makePaymentRequest.merchantAccount).to.be.equal(adyenMerchantAccount)
+    expect(makePaymentRequestBody.merchantAccount).to.be.equal(
+      adyenMerchantAccount
+    )
 
-    expect(makePaymentRequest.lineItems).to.have.lengthOf(3)
+    expect(makePaymentRequestBody.lineItems).to.have.lengthOf(3)
     expect(makePaymentResponse.resultCode).to.be.equal('RedirectShopper')
   }
 })

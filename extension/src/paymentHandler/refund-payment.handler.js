@@ -32,9 +32,11 @@ async function execute(paymentObject) {
           refundTransaction.custom?.fields?.reference || paymentObject.key,
       }
 
+      const idempotencyKey = refundTransaction.custom?.fields?.idempotencyKey
       const { request, response } = await refund(
         adyenMerchantAccount,
         commercetoolsProjectKey,
+        idempotencyKey,
         refundRequestObjects
       )
       const addInterfaceInteractionAction = createAddInterfaceInteractionAction(

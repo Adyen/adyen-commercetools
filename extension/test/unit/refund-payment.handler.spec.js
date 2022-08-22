@@ -63,8 +63,9 @@ describe('refund-payment::execute', () => {
       (action) => action.action === 'addInterfaceInteraction'
     ).fields.request
     const adyenRequestJson = JSON.parse(adyenRequest)
+    const requestBody = JSON.parse(adyenRequestJson.body)
 
-    expect(adyenRequestJson.reference).to.equal(
+    expect(requestBody.reference).to.equal(
       refundPaymentTransaction.custom.fields.reference
     )
   })

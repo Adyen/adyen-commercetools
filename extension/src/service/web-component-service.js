@@ -57,6 +57,7 @@ function submitAdditionalPaymentDetails(
 function manualCapture(
   merchantAccount,
   commercetoolsProjectKey,
+  idempotencyKey,
   manualCaptureRequestObj
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
@@ -65,7 +66,8 @@ function manualCapture(
     `${adyenCredentials.legacyApiBaseUrl}/capture`,
     merchantAccount,
     adyenCredentials.apiKey,
-    manualCaptureRequestObj
+    manualCaptureRequestObj,
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey }
   )
 }
 
@@ -84,14 +86,20 @@ function cancelPayment(
   )
 }
 
-function refund(merchantAccount, commercetoolsProjectKey, refundRequestObj) {
+function refund(
+  merchantAccount,
+  commercetoolsProjectKey,
+  idempotencyKey,
+  refundRequestObj
+) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(refundRequestObj, commercetoolsProjectKey)
   return callAdyen(
     `${adyenCredentials.legacyApiBaseUrl}/refund`,
     merchantAccount,
     adyenCredentials.apiKey,
-    refundRequestObj
+    refundRequestObj,
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey }
   )
 }
 
@@ -151,29 +159,57 @@ function extendRequestObjWithMetadata(requestObj, commercetoolsProjectKey) {
   }
 }
 
-async function callAdyen(url, adyenMerchantAccount, adyenApiKey, request) {
-  let response
+async function callAdyen(
+  url,
+  adyenMerchantAccount,
+  adyenApiKey,
+  requestArg,
+  headers
+) {
+  let returnedRequest
+  let returnedResponse
   try {
-    response = await fetchAsync(url, adyenMerchantAccount, adyenApiKey, request)
+    const { response, request } = await fetchAsync(
+      url,
+      adyenMerchantAccount,
+      adyenApiKey,
+      requestArg,
+      headers
+    )
+    returnedRequest = request
+    returnedResponse = response
   } catch (err) {
-    response = serializeError(err)
+    returnedRequest = { body: JSON.stringify(requestArg) }
+    returnedResponse = serializeError(err)
   }
-  return { request, response }
+  return { request: returnedRequest, response: returnedResponse }
 }
 
-async function fetchAsync(url, adyenMerchantAccount, adyenApiKey, requestObj) {
-  const request = buildRequest(adyenMerchantAccount, adyenApiKey, requestObj)
+async function fetchAsync(
+  url,
+  adyenMerchantAccount,
+  adyenApiKey,
+  requestObj,
+  headers
+) {
+  const request = buildRequest(
+    adyenMerchantAccount,
+    adyenApiKey,
+    requestObj,
+    headers
+  )
   const response = await fetch(url, request)
   const responseBody = await response.json()
   // strip away sensitive data from the adyen response.
+  request.headers['X-Api-Key'] = '***'
   const moduleConfig = config.getModuleConfig()
   if (moduleConfig.removeSensitiveData) {
     delete responseBody.additionalData
   }
-  return responseBody
+  return { response: responseBody, request }
 }
 
-function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj) {
+function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj, headers) {
   // Note: ensure the merchantAccount is set with request, otherwise set
   // it with the value from adyenMerchantAccount payment custom field
   if (!requestObj.merchantAccount)
@@ -185,6 +221,7 @@ function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj) {
     headers: {
       'Content-Type': 'application/json',
       'X-Api-Key': adyenApiKey,
+      ...headers,
     },
   }
 }

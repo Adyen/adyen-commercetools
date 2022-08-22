@@ -110,20 +110,23 @@ describe('make-payment-with-splits::execute', () => {
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const request = JSON.parse(addInterfaceInteraction.fields.request)
-      expect(request.reference).to.deep.equal(
+      const requestBody = JSON.parse(request.body)
+      expect(requestBody.reference).to.deep.equal(
         makePaymentWithSplitsRequest.reference
       )
-      expect(request.riskData).to.deep.equal(
+      expect(requestBody.riskData).to.deep.equal(
         makePaymentWithSplitsRequest.riskData
       )
-      expect(request.paymentMethod).to.deep.equal(
+      expect(requestBody.paymentMethod).to.deep.equal(
         makePaymentWithSplitsRequest.paymentMethod
       )
-      expect(request.browserInfo).to.deep.equal(
+      expect(requestBody.browserInfo).to.deep.equal(
         makePaymentWithSplitsRequest.browserInfo
       )
-      expect(request.amount).to.deep.equal(makePaymentWithSplitsRequest.amount)
-      expect(request.merchantAccount).to.equal(adyenMerchantAccount)
+      expect(requestBody.amount).to.deep.equal(
+        makePaymentWithSplitsRequest.amount
+      )
+      expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'

@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import ctpClientBuilder from '../../src/ctp.js'
 import constants from '../../src/config/constants.js'
 import { createAddTransactionAction } from '../../src/paymentHandler/payment-utils.js'
@@ -13,6 +14,7 @@ const {
 describe('::manualCapture::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
+  const idempotencyKey = crypto.randomBytes(20).toString('hex')
   let ctpClient
   let payment
 
@@ -73,6 +75,15 @@ describe('::manualCapture::', () => {
             state: 'Initial',
             currency: 'EUR',
             amount: 500,
+            custom: {
+              type: {
+                typeId: 'type',
+                key: 'ctp-adyen-integration-transaction-payment-type',
+              },
+              fields: {
+                idempotencyKey,
+              },
+            },
           }),
         ]
       )
@@ -89,6 +100,8 @@ describe('::manualCapture::', () => {
           interaction.fields.type === CTP_INTERACTION_TYPE_MANUAL_CAPTURE
       )
 
+      const adyenRequest = JSON.parse(interfaceInteraction.fields.request)
+      expect(adyenRequest.headers['Idempotency-Key']).to.equal(idempotencyKey)
       const adyenResponse = JSON.parse(interfaceInteraction.fields.response)
       expect(adyenResponse.response).to.equal('[capture-received]')
       expect(transaction.interactionId).to.equal(adyenResponse.pspReference)
