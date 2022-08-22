@@ -14,7 +14,7 @@ To enable retry on failure for payment modifications, an idempotency key needs t
 There are 2 payment modification actions currently supported in Adyen-integration and that could be affected by the idempotency problem: [partial capture](../../extension/docs/ManualCapture.md) and [partial refund](../../extension/docs/Refund.md). Both payment modifications are triggered by adding a payment transaction.   
 
 ## Decision
-A new String custom field called `idempotencyKey` will be added to the payment transaction. When this field is present, Adyen-integration will take its value and send it as a value for `Idempotency-Key` header. 
+A new String custom field called `idempotencyKey` will be added to the payment transaction custom type `key="ctp-adyen-integration-transaction-payment-type"`. When this field `idempotencyKey` is present in the payment transaction, Adyen-integration will take its value and send it as a value for `Idempotency-Key` header. 
 
 ## Source
 https://docs.adyen.com/development-resources/api-idempotency
