@@ -31,7 +31,6 @@ describe('disable stored payment', () => {
     const payment = await createOneOffPayment({
       reference: `makePayment1-reference-${currentTime}`,
       shopperReference,
-      adyenMerchantAccount,
     })
 
     const makePaymentResponseJson = JSON.parse(
@@ -60,7 +59,6 @@ describe('disable stored payment', () => {
     const payment = await createSubscriptionsPayment({
       reference: `makePayment1-reference-${currentTime}`,
       shopperReference,
-      adyenMerchantAccount,
     })
 
     const makePaymentResponseJson = JSON.parse(
@@ -89,7 +87,6 @@ describe('disable stored payment', () => {
     const payment = await createAutomaticTopUpPayment({
       reference: `makePayment1-reference-${currentTime}`,
       shopperReference,
-      adyenMerchantAccount,
     })
 
     const makePaymentResponseJson = JSON.parse(
@@ -112,41 +109,26 @@ describe('disable stored payment', () => {
     ).to.be.equal('{"response":"[detail-successfully-disabled]"}')
   })
 
-  async function createOneOffPayment({
-    reference,
-    shopperReference,
-    adyenMerchantAccount,
-  }) {
+  async function createOneOffPayment({ reference, shopperReference }) {
     return await makePayment({
       reference,
       shopperReference,
-      adyenMerchantAccount,
       recurringProcessingModel: 'CardOnFile',
     })
   }
 
-  async function createSubscriptionsPayment({
-    reference,
-    shopperReference,
-    adyenMerchantAccount,
-  }) {
+  async function createSubscriptionsPayment({ reference, shopperReference }) {
     return await makePayment({
       reference,
       shopperReference,
-      adyenMerchantAccount,
       recurringProcessingModel: 'Subscription',
     })
   }
 
-  async function createAutomaticTopUpPayment({
-    reference,
-    shopperReference,
-    adyenMerchantAccount,
-  }) {
+  async function createAutomaticTopUpPayment({ reference, shopperReference }) {
     return await makePayment({
       reference,
       shopperReference,
-      adyenMerchantAccount,
       recurringProcessingModel: 'UnscheduledCardOnFile',
     })
   }
@@ -154,7 +136,6 @@ describe('disable stored payment', () => {
   async function makePayment({
     reference,
     shopperReference,
-    adyenMerchantAccount,
     recurringProcessingModel,
   }) {
     const makePaymentRequestDraft = {
