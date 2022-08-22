@@ -33,7 +33,7 @@ async function execute(paymentObject) {
   ]
 
   const requestBodyJson = JSON.parse(request.body)
-  const paymentMethod = requestBodyJson.paymentMethod?.type
+  const paymentMethod = requestBodyJson?.paymentMethod?.type
   if (paymentMethod) {
     actions.push(createSetMethodInfoMethodAction(paymentMethod))
     const action = createSetMethodInfoNameAction(paymentMethod)
