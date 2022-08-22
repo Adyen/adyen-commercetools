@@ -5,5 +5,4 @@ package.json
 package-lock.json
 .prettierignore
 .eslintrc
-.nyc_output
 .prettierrc.json
