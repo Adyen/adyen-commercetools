@@ -4,7 +4,7 @@ Date: 2022-08-22
 
 ## Status
 
-Approved
+[Approved](https://github.com/commercetools/commercetools-adyen-integration/pull/1004)
 
 ## Context
 
