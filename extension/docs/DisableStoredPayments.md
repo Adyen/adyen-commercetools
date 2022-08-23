@@ -3,7 +3,6 @@
 
 - [Disable stored payments](#disable-stored-payments)
   - [Make an API call to disable a stored payment](#make-an-api-call-to-disable-a-stored-payment)
-    - [Steps](#steps)
   - [Resources](#resources)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -11,6 +10,7 @@
 **Please see [Integration Guide](WebComponentsIntegrationGuide.md) first before continuing with this document.**
 
 ## Disable stored payments
+
 A shopper may request to delete their saved details for a certain payment method.
 
 ### Make an API call to disable a stored payment
@@ -70,9 +70,11 @@ To disable a stored payment, create a new payment with `amountPlanned=0` and the
   }
 }
 ```
+
 </details>
 
 > Note: It is recommended to create a new payment instead of reusing existing payment and adding `disableStoredPaymentRequest`. The reason is disable stored payment is rather a non-payment operation and as such it should not be bound to a real payment. We use payment resource here in commercetools because it has particular benefits for us. For details on this topic [see our ADR](../../docs/adr/0009-non-payment-operations-using-payment.md).
 
 ### Resources
+
 https://docs.adyen.com/online-payments/tokenization
