@@ -1,8 +1,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-**Table of Contents** _generated with [DocToc](https://github.com/thlorenz/doctoc)_
-
 - [Store payment details](#store-payment-details)
   - [Make an API call to store payment details](#make-an-api-call-to-store-payment-details)
     - [One-off payments](#one-off-payments)
