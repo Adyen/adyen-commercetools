@@ -2,23 +2,12 @@ import { expect } from 'chai'
 import constants from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
 import ctpClientBuilder from '../../src/ctp.js'
-import { overrideModuleConfig, restoreModuleConfig } from '../test-utils.js'
 
 describe('disable stored payment', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
   const [adyenMerchantAccount] = config.getAllAdyenMerchantAccounts()
 
   let ctpClient
-
-  before(() => {
-    overrideModuleConfig({
-      removeSensitiveData: false,
-    })
-  })
-
-  after(() => {
-    restoreModuleConfig()
-  })
 
   beforeEach(async () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
@@ -156,6 +145,7 @@ describe('disable stored payment', () => {
       shopperInteraction: 'Ecommerce',
       recurringProcessingModel,
       returnUrl: 'https://your-company.com/',
+      removeSensitiveData: false,
     }
     const paymentDraft = {
       amountPlanned: {

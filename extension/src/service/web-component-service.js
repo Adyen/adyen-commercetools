@@ -202,6 +202,10 @@ async function fetchAsync(
   requestObj,
   headers
 ) {
+  const moduleConfig = config.getModuleConfig()
+  const removeSensitiveData =
+    requestObj.removeSensitiveData ?? moduleConfig.removeSensitiveData
+  delete requestObj.removeSensitiveData
   const request = buildRequest(
     adyenMerchantAccount,
     adyenApiKey,
@@ -212,8 +216,7 @@ async function fetchAsync(
   const responseBody = await response.json()
   // strip away sensitive data from the adyen response.
   request.headers['X-Api-Key'] = '***'
-  const moduleConfig = config.getModuleConfig()
-  if (moduleConfig.removeSensitiveData) {
+  if (removeSensitiveData) {
     delete responseBody.additionalData
   }
   return { response: responseBody, request }
