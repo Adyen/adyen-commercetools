@@ -16,7 +16,7 @@ There are use cases that are not payment related. For this use case we are consi
 
 ## Decision Outcome
 Chose option: payment, because
-- adyen-integration already use payments and have code base ready.
+- adyen-integration already uses payments and has code base ready.
 - The flow would be similar to other payment methods that are already in place.
 - It is extendable for further backoffice actions in the future in case they are not related to customers anymore.
 
