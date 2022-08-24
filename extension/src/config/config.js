@@ -94,8 +94,7 @@ function getAdyenConfig(adyenMerchantAccount) {
     apiKey: adyenConfig.apiKey,
     apiBaseUrl: adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v68',
     legacyApiBaseUrl:
-      adyenConfig.legacyApiBaseUrl ||
-      'https://pal-test.adyen.com/pal/servlet/Payment/v64',
+      adyenConfig.legacyApiBaseUrl || 'https://pal-test.adyen.com/pal/servlet',
     clientKey: adyenConfig.clientKey || '', // used only for development purpose
   }
 }

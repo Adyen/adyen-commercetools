@@ -91,7 +91,7 @@ describe('::config::', () => {
       apiBaseUrl: 'https://checkout-test.adyen.com/v68',
       apiKey: 'apiKey',
       clientKey: 'clientKey',
-      legacyApiBaseUrl: 'https://pal-test.adyen.com/pal/servlet/Payment/v64',
+      legacyApiBaseUrl: 'https://pal-test.adyen.com/pal/servlet',
     })
   })
 

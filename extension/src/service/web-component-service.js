@@ -63,7 +63,7 @@ function manualCapture(
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(manualCaptureRequestObj, commercetoolsProjectKey)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/capture`,
+    `${adyenCredentials.legacyApiBaseUrl}/Payment/v64/capture`,
     merchantAccount,
     adyenCredentials.apiKey,
     manualCaptureRequestObj,
@@ -79,7 +79,7 @@ function cancelPayment(
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(cancelPaymentRequestObj)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/cancel`,
+    `${adyenCredentials.legacyApiBaseUrl}/Payment/v64/cancel`,
     merchantAccount,
     adyenCredentials.apiKey,
     cancelPaymentRequestObj
@@ -95,7 +95,7 @@ function refund(
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(refundRequestObj, commercetoolsProjectKey)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/refund`,
+    `${adyenCredentials.legacyApiBaseUrl}/Payment/v64/refund`,
     merchantAccount,
     adyenCredentials.apiKey,
     refundRequestObj,
@@ -126,6 +126,16 @@ function updateAmount(
     merchantAccount,
     adyenCredentials.apiKey,
     amountUpdatesRequestObj
+  )
+}
+
+function disableStoredPayment(merchantAccount, disableStoredPaymentRequestObj) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+  return callAdyen(
+    `${adyenCredentials.legacyApiBaseUrl}/Recurring/v68/disable`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    disableStoredPaymentRequestObj
   )
 }
 
@@ -192,6 +202,10 @@ async function fetchAsync(
   requestObj,
   headers
 ) {
+  const moduleConfig = config.getModuleConfig()
+  const removeSensitiveData =
+    requestObj.removeSensitiveData ?? moduleConfig.removeSensitiveData
+  delete requestObj.removeSensitiveData
   const request = buildRequest(
     adyenMerchantAccount,
     adyenApiKey,
@@ -202,8 +216,7 @@ async function fetchAsync(
   const responseBody = await response.json()
   // strip away sensitive data from the adyen response.
   request.headers['X-Api-Key'] = '***'
-  const moduleConfig = config.getModuleConfig()
-  if (moduleConfig.removeSensitiveData) {
+  if (removeSensitiveData) {
     delete responseBody.additionalData
   }
   return { response: responseBody, request }
@@ -235,4 +248,5 @@ export {
   cancelPayment,
   getCarbonOffsetCosts,
   updateAmount,
+  disableStoredPayment,
 }
