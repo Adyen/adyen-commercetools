@@ -1,0 +1,14 @@
+[
+  {
+    "applicationType": "service",
+    "dockerFilePath": "extension/",
+    "name": "Extension",
+    "properties": {}
+  },
+  {
+    "applicationType": "service",
+    "dockerFilePath": "notification/",
+    "name": "Notification",
+    "properties": {}
+  }
+]
