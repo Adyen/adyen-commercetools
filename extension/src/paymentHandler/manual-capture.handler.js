@@ -4,6 +4,7 @@ import {
   createAddInterfaceInteractionAction,
   createChangeTransactionStateAction,
   createChangeTransactionInteractionId,
+  getIdempotencyKey,
 } from './payment-utils.js'
 import { manualCapture } from '../service/web-component-service.js'
 import constants from '../config/constants.js'
@@ -21,7 +22,7 @@ async function execute(paymentObject) {
     },
     originalReference: authorizationSuccessTransaction.interactionId,
   }
-  const idempotencyKey = chargeInitialTransaction.custom?.fields?.idempotencyKey
+  const idempotencyKey = getIdempotencyKey(chargeInitialTransaction)
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey

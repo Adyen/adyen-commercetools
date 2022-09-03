@@ -4,6 +4,7 @@ import {
   createChangeTransactionStateAction,
   createAddInterfaceInteractionAction,
   createChangeTransactionInteractionId,
+  getIdempotencyKey,
 } from './payment-utils.js'
 import { refund } from '../service/web-component-service.js'
 import constants from '../config/constants.js'
@@ -32,7 +33,7 @@ async function execute(paymentObject) {
           refundTransaction.custom?.fields?.reference || paymentObject.key,
       }
 
-      const idempotencyKey = refundTransaction.custom?.fields?.idempotencyKey
+      const idempotencyKey = getIdempotencyKey(refundTransaction)
       const { request, response } = await refund(
         adyenMerchantAccount,
         commercetoolsProjectKey,
