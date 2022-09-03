@@ -583,7 +583,7 @@ describe('::config::', () => {
   describe('generateIdempotencyKey', () => {
     it(
       'when generateIdempotencyKey is set as boolean false in config.js, ' +
-      'it should load as false value in module config',
+        'it should load as false value in module config',
       async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
@@ -611,15 +611,15 @@ describe('::config::', () => {
           generateIdempotencyKey: false,
         })
         const config = await reloadModule('../../../src/config/config.js')
-        expect(
-          config.default.getModuleConfig().generateIdempotencyKey
-        ).to.eql(false)
+        expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
+          false
+        )
       }
     )
 
     it(
       'when generateIdempotencyKey is set as boolean true in config.js, ' +
-      'it should load as true value in module config',
+        'it should load as true value in module config',
       async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
@@ -647,15 +647,15 @@ describe('::config::', () => {
           generateIdempotencyKey: true,
         })
         const config = await reloadModule('../../../src/config/config.js')
-        expect(
-          config.default.getModuleConfig().generateIdempotencyKey
-        ).to.eql(true)
+        expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
+          true
+        )
       }
     )
 
     it(
       'when generateIdempotencyKey is set as string false in config.js, ' +
-      'it should load as false value in module config',
+        'it should load as false value in module config',
       async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
@@ -675,15 +675,15 @@ describe('::config::', () => {
           generateIdempotencyKey: 'false',
         })
         const config = await reloadModule('../../../src/config/config.js')
-        expect(
-          config.default.getModuleConfig().generateIdempotencyKey
-        ).to.eql(false)
+        expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
+          false
+        )
       }
     )
 
     it(
       'when generateIdempotencyKey is set as string true in config.js, ' +
-      'it should load as true value in module config',
+        'it should load as true value in module config',
       async () => {
         process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
           commercetools: {
@@ -703,9 +703,9 @@ describe('::config::', () => {
           generateIdempotencyKey: 'true',
         })
         const config = await reloadModule('../../../src/config/config.js')
-        expect(
-          config.default.getModuleConfig().generateIdempotencyKey
-        ).to.eql(true)
+        expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
+          true
+        )
       }
     )
   })

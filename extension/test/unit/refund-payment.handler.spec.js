@@ -5,6 +5,7 @@ import config from '../../src/config/config.js'
 import refundPaymentHandler from '../../src/paymentHandler/refund-payment.handler.js'
 import utils from '../../src/utils.js'
 import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import { overrideGenerateIdempotencyKeyConfig } from '../test-utils.js'
 
 const { execute } = refundPaymentHandler
 
@@ -13,6 +14,7 @@ describe('refund-payment::execute', () => {
   let ctpPayment
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const refundPaymentTransaction = {
+    id: 'refundTransactionId',
     key: 'payment-key',
     type: 'Refund',
     amount: {
@@ -69,4 +71,30 @@ describe('refund-payment::execute', () => {
       refundPaymentTransaction.custom.fields.reference
     )
   })
+
+  it(
+    'given a payment ' +
+      'when generateIdempotencyKey is true ' +
+      'then it should get the idempotency key from transaction id',
+    async () => {
+      overrideGenerateIdempotencyKeyConfig(true)
+
+      scope.post('/payments').reply(200, paymentSuccessResponse)
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+
+      ctpPaymentClone.transactions.push(refundPaymentTransaction)
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
+      const { actions } = await execute(ctpPaymentClone)
+
+      const addInterfaceInteraction = actions.find(
+        (a) => a.action === 'addInterfaceInteraction'
+      )
+      const requestJson = JSON.parse(addInterfaceInteraction.fields.request)
+      expect(requestJson.headers['Idempotency-Key']).to.equal(
+        refundPaymentTransaction.id
+      )
+    }
+  )
 })

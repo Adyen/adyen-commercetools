@@ -56,6 +56,14 @@ function overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
   }
 }
 
+function overrideGenerateIdempotencyKeyConfig(generateIdempotencyKey) {
+  const moduleConfig = config.getModuleConfig()
+  moduleConfig.generateIdempotencyKey = generateIdempotencyKey
+  config.getModuleConfig = function getModuleConfig() {
+    return moduleConfig
+  }
+}
+
 async function setupLocalTunnel() {
   tunnel = await initTunnel(port)
   const apiExtensionBaseUrl = tunnel.url
@@ -112,4 +120,9 @@ async function updatePaymentWithRetry(ctpClient, actions, payment) {
   return { statusCode, updatedPayment }
 }
 
-export { startIT, stopIT, updatePaymentWithRetry }
+export {
+  startIT,
+  stopIT,
+  updatePaymentWithRetry,
+  overrideGenerateIdempotencyKeyConfig,
+}
