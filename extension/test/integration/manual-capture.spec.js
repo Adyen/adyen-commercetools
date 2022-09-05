@@ -4,6 +4,7 @@ import ctpClientBuilder from '../../src/ctp.js'
 import constants from '../../src/config/constants.js'
 import { createAddTransactionAction } from '../../src/paymentHandler/payment-utils.js'
 import config from '../../src/config/config.js'
+import { overrideGenerateIdempotencyKeyConfig } from '../test-utils.js'
 
 const {
   CTP_ADYEN_INTEGRATION,
@@ -59,12 +60,47 @@ describe('::manualCapture::', () => {
     payment = result.body
   })
 
+  async function testGenerateIdempotencyKey(chargedPayment) {
+    const { body: chargedPayment1 } = await ctpClient.update(
+      ctpClient.builder.payments,
+      chargedPayment.id,
+      chargedPayment.version,
+      [
+        createAddTransactionAction({
+          type: 'Charge',
+          state: 'Initial',
+          currency: 'EUR',
+          amount: 100,
+          custom: {
+            type: {
+              typeId: 'type',
+              key: 'ctp-adyen-integration-transaction-payment-type',
+            },
+          },
+        }),
+      ]
+    )
+
+    const transaction1 = chargedPayment1.transactions[2]
+    const interfaceInteraction1 = chargedPayment1.interfaceInteractions.filter(
+      (interaction) =>
+        interaction.fields.type === CTP_INTERACTION_TYPE_MANUAL_CAPTURE
+    )[1]
+    const adyenRequest1 = JSON.parse(interfaceInteraction1.fields.request)
+    expect(adyenRequest1.headers['Idempotency-Key']).to.equal(transaction1.id)
+    const adyenResponse1 = JSON.parse(interfaceInteraction1.fields.response)
+    expect(adyenResponse1.response).to.equal('[capture-received]')
+    expect(transaction1.interactionId).to.equal(adyenResponse1.pspReference)
+  }
+
   it(
     'given a payment ' +
       'when "charge initial transaction" is added to the payment' +
       'then Adyen should response with [capture-received] ' +
       'and payment should has a "Charge" transaction with "Pending" status',
     async () => {
+      overrideGenerateIdempotencyKeyConfig(true)
+
       const { statusCode, body: chargedPayment } = await ctpClient.update(
         ctpClient.builder.payments,
         payment.id,
@@ -105,6 +141,8 @@ describe('::manualCapture::', () => {
       const adyenResponse = JSON.parse(interfaceInteraction.fields.response)
       expect(adyenResponse.response).to.equal('[capture-received]')
       expect(transaction.interactionId).to.equal(adyenResponse.pspReference)
+
+      await testGenerateIdempotencyKey(chargedPayment)
     }
   )
 })
