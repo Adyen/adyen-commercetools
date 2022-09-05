@@ -135,11 +135,18 @@ To be able to retry capture requests in case of failure, you need to add a custo
 Follow these recommendations when using the idempotency key:
 
 - `idempotencyKey` must be unique per request so that in case the request fails, it can be retried with the same key. Additionally `idempotencyKey` is valid for a minimum period of 31 days after first submission (but may be retained for longer). Source:
-- Generate idempotency keys using the version 4 (random) UUID type to prevent two API credentials under the same account from accessing each others responses.
+- Generate idempotency keys using the version 4 (random) UUID type to prevent two API credentials under the same account from accessing each other's responses.
 - Use [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) when retrying.
 
-For in-depth information about API idempotency in Adyen, please check [the documentation from Adyen](https://docs.adyen.com/development-resources/api-idempotency)
+#### Generating idempotency key by adyen-integration
+
+adyen-integration can automatically generate unique idempotency key for manual capture requests. It uses transaction ID as the idempotency key.
+
+In order to use this feature, set the option [`generateIdempotencyKey=true`](./HowToRun.md#optional-attributes). For every manual capture request adyen-integration will add an idempotency key if the custom field `idempotencyKey` is not present. If the custom field `idempotencyKey` is present, its value will be taken as the idempotency key.
 
 ### More info on capture
 
 For more detailed information from Adyen's perspective, see [Adyen's documentation](https://docs.adyen.com/checkout/capture#manual-capture).
+
+For in-depth information about API idempotency in Adyen, see [Adyen's documentation](https://docs.adyen.com/development-resources/api-idempotency).
+

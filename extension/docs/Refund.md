@@ -181,6 +181,12 @@ Follow these recommendations when using the idempotency key:
 - Generate idempotency keys using the version 4 (random) UUID type to prevent two API credentials under the same account from accessing each others responses.
 - Use [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) when retrying.
 
+#### Generating idempotency key by adyen-integration
+
+adyen-integration can automatically generate unique idempotency key for refund requests. It uses transaction ID as the idempotency key.
+
+In order to use this feature, set the option [`generateIdempotencyKey=true`](./HowToRun.md#optional-attributes). For every refund request adyen-integration will add an idempotency key if the custom field `idempotencyKey` is not present. If the custom field `idempotencyKey` is present, its value will be taken as the idempotency key.
+
 ### Additional information
 
 1. Don't add too many `Refund` transactions at once because [API Extension endpoint has a time limit](https://docs.commercetools.com/api/projects/api-extensions#time-limits).
