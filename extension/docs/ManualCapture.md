@@ -149,4 +149,3 @@ In order to use this feature, set the option [`generateIdempotencyKey=true`](./H
 For more detailed information from Adyen's perspective, see [Adyen's documentation](https://docs.adyen.com/checkout/capture#manual-capture).
 
 For in-depth information about API idempotency in Adyen, see [Adyen's documentation](https://docs.adyen.com/development-resources/api-idempotency).
-
