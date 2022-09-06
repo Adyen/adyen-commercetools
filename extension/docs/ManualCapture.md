@@ -5,6 +5,7 @@
   - [Make an API call to capture a payment:](#make-an-api-call-to-capture-a-payment)
   - [Partial capture](#partial-capture)
   - [Retry capture requests](#retry-capture-requests)
+  - [Custom refund reference](#custom-refund-reference)
   - [More info on capture](#more-info-on-capture)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -140,6 +141,35 @@ Follow these recommendations when using the idempotency key:
 
 For in-depth information about API idempotency in Adyen, please check [the documentation from Adyen](https://docs.adyen.com/development-resources/api-idempotency)
 
+### Custom manual capture reference
+
+By default, the manual capture reference field is taken from the payment key. If you need to customize the value of the manual capture reference, add a transaction custom field with key `reference` to the custom type with key `ctp-adyen-integration-transaction-payment-type`. The `addTransaction` action will look like following:
+
+```
+{
+  "action": "addTransaction",
+  "transaction": {
+    "type": "Charge",
+    "amount": {
+      "currencyCode": "EUR",
+      "centAmount": 500
+    },
+    "state": "Initial",
+    "custom": {
+      "type": {
+        "typeId": "type",
+        "key": "ctp-adyen-integration-transaction-payment-type"
+      },
+      "fields": {
+        "reference": "your-custom-manual-capture-reference"
+      }
+    }
+  }
+}
+```
+
 ### More info on capture
 
-For more detailed information from Adyen's perspective, see [Adyen's documentation](https://docs.adyen.com/checkout/capture#manual-capture).
+For more detailed information from Adyen's perspective, see following documentation
+- [Adyen's documentation](https://docs.adyen.com/checkout/capture#manual-capture).
+- [Adyen refund API](https://docs.adyen.com/api-explorer/#/Payment/v68/post/capture).
