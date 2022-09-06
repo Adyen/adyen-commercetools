@@ -63,7 +63,7 @@ function manualCapture(
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(manualCaptureRequestObj, commercetoolsProjectKey)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/Payment/v68/capture`,
+    `${adyenCredentials.legacyApiBaseUrl}/Payment/v64/capture`,
     merchantAccount,
     adyenCredentials.apiKey,
     manualCaptureRequestObj,
