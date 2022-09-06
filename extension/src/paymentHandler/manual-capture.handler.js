@@ -20,6 +20,8 @@ async function execute(paymentObject) {
       currency: chargeInitialTransaction.amount.currencyCode,
     },
     originalReference: authorizationSuccessTransaction.interactionId,
+    reference:
+        chargeInitialTransaction.custom?.fields?.reference || paymentObject.key,
   }
   const idempotencyKey = chargeInitialTransaction.custom?.fields?.idempotencyKey
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
