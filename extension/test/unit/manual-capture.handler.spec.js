@@ -4,7 +4,6 @@ import { expect } from 'chai'
 import config from '../../src/config/config.js'
 import manualCaptureHandler from '../../src/paymentHandler/manual-capture.handler.js'
 import constants from '../../src/config/constants.js'
-import captureSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
 
 const { cloneDeep } = lodash
 const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
@@ -61,6 +60,11 @@ describe('manual-capture.handler::execute::', () => {
     state: 'Initial',
   }
 
+  const manualCaptureResponse = {
+    pspReference: '8825408195409505',
+    response: '[capture-received]',
+  }
+
   let scope
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
@@ -75,10 +79,6 @@ describe('manual-capture.handler::execute::', () => {
       'then it should return actions "addInterfaceInteraction", ' +
       '"changeTransactionState" and "changeTransactionInteractionId"',
     async () => {
-      const manualCaptureResponse = {
-        pspReference: '8825408195409505',
-        response: '[capture-received]',
-      }
       scope.post('/capture').reply(200, manualCaptureResponse)
 
       const paymentObject = cloneDeep(authorisedPayment)
@@ -159,7 +159,7 @@ describe('manual-capture.handler::execute::', () => {
   )
 
   it('when manual capture payment request contains reference, then it should send this reference to Adyen', async () => {
-    scope.post('/capture').reply(200, captureSuccessResponse)
+    scope.post('/capture').reply(200, manualCaptureResponse)
 
     const paymentObject = cloneDeep(authorisedPayment)
     paymentObject.transactions.push(chargeInitialTransaction)
