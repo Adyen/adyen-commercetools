@@ -171,5 +171,6 @@ By default, the manual capture reference field is taken from the payment key. If
 ### More info on capture
 
 For more detailed information from Adyen's perspective, see following documentation
+
 - [Adyen's documentation](https://docs.adyen.com/checkout/capture#manual-capture).
 - [Adyen refund API](https://docs.adyen.com/api-explorer/#/Payment/v68/post/capture).
