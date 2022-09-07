@@ -144,6 +144,8 @@ adyen-integration can automatically generate unique idempotency key for manual c
 
 In order to use this feature, set the option [`generateIdempotencyKey=true`](./HowToRun.md#optional-attributes). For every manual capture request adyen-integration will add an idempotency key if the custom field `idempotencyKey` is not present. If the custom field `idempotencyKey` is present, its value will be taken as the idempotency key.
 
+> Note: the generated idempotency key will NOT be saved to the custom field `idempotencyKey`. If you want to see this generated key, you can find it in the interface interactions.
+
 ### More info on capture
 
 For more detailed information from Adyen's perspective, see [Adyen's documentation](https://docs.adyen.com/checkout/capture#manual-capture).
