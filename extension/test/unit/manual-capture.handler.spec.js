@@ -158,23 +158,27 @@ describe('manual-capture.handler::execute::', () => {
     }
   )
 
-  it('when manual capture payment request contains reference, then it should send this reference to Adyen', async () => {
-    scope.post('/capture').reply(200, manualCaptureResponse)
+  it(
+    'when manual capture payment request contains reference, then it should send this reference to ' +
+      'Adyen',
+    async () => {
+      scope.post('/capture').reply(200, manualCaptureResponse)
 
-    const paymentObject = cloneDeep(authorisedPayment)
-    paymentObject.transactions.push(chargeInitialTransaction)
-    paymentObject.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      const paymentObject = cloneDeep(authorisedPayment)
+      paymentObject.transactions.push(chargeInitialTransaction)
+      paymentObject.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
-    const { actions } = await manualCaptureHandler.execute(paymentObject)
+      const { actions } = await manualCaptureHandler.execute(paymentObject)
 
-    const adyenRequest = actions.find(
-      (action) => action.action === 'addInterfaceInteraction'
-    ).fields.request
-    const adyenRequestJson = JSON.parse(adyenRequest)
-    const requestBody = JSON.parse(adyenRequestJson.body)
+      const adyenRequest = actions.find(
+        (action) => action.action === 'addInterfaceInteraction'
+      ).fields.request
+      const adyenRequestJson = JSON.parse(adyenRequest)
+      const requestBody = JSON.parse(adyenRequestJson.body)
 
-    expect(requestBody.reference).to.equal(
-      chargeInitialTransaction.custom.fields.reference
-    )
-  })
+      expect(requestBody.reference).to.equal(
+        chargeInitialTransaction.custom.fields.reference
+      )
+    }
+  )
 })
