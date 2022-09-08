@@ -21,7 +21,7 @@ async function execute(paymentObject) {
     },
     originalReference: authorizationSuccessTransaction.interactionId,
     reference:
-      chargeInitialTransaction.custom?.fields?.reference,
+      chargeInitialTransaction.custom?.fields?.reference || paymentObject.key,
   }
   const idempotencyKey = chargeInitialTransaction.custom?.fields?.idempotencyKey
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
