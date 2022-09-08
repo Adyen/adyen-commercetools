@@ -143,7 +143,7 @@ For in-depth information about API idempotency in Adyen, please check [the docum
 
 ### Custom manual capture reference
 
-By default, the manual capture reference field is taken from the payment key. If you need to customize the value of the manual capture reference, add a transaction custom field with key `reference` to the custom type with key `ctp-adyen-integration-transaction-payment-type`. The `addTransaction` action will look like following:
+If you need to customize the value of the manual capture reference, add a transaction custom field with key `reference` to the custom type with key `ctp-adyen-integration-transaction-payment-type`. The `addTransaction` action will look like following:
 
 ```
 {
