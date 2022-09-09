@@ -49,7 +49,21 @@ describe('manual-capture.handler::execute::', () => {
       currencyCode: 'EUR',
       centAmount: 1000,
     },
+    custom: {
+      type: {
+        typeId: 'type',
+        id: '9f7d21aa-264e-43ea-a540-acb9c28aa6be',
+      },
+      fields: {
+        reference: '123456789',
+      },
+    },
     state: 'Initial',
+  }
+
+  const manualCaptureResponse = {
+    pspReference: '8825408195409505',
+    response: '[capture-received]',
   }
 
   let scope
@@ -66,10 +80,6 @@ describe('manual-capture.handler::execute::', () => {
       'then it should return actions "addInterfaceInteraction", ' +
       '"changeTransactionState" and "changeTransactionInteractionId"',
     async () => {
-      const manualCaptureResponse = {
-        pspReference: '8825408195409505',
-        response: '[capture-received]',
-      }
       scope.post('/capture').reply(200, manualCaptureResponse)
 
       const paymentObject = cloneDeep(authorisedPayment)
@@ -150,16 +160,36 @@ describe('manual-capture.handler::execute::', () => {
   )
 
   it(
+    'when manual capture payment request contains reference, then it should send this reference to ' +
+      'Adyen',
+    async () => {
+      scope.post('/capture').reply(200, manualCaptureResponse)
+
+      const paymentObject = cloneDeep(authorisedPayment)
+      paymentObject.transactions.push(chargeInitialTransaction)
+      paymentObject.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
+      const { actions } = await manualCaptureHandler.execute(paymentObject)
+
+      const adyenRequest = actions.find(
+        (action) => action.action === 'addInterfaceInteraction'
+      ).fields.request
+      const adyenRequestJson = JSON.parse(adyenRequest)
+      const requestBody = JSON.parse(adyenRequestJson.body)
+
+      expect(requestBody.reference).to.equal(
+        chargeInitialTransaction.custom.fields.reference
+      )
+    }
+  )
+
+  it(
     'given a payment ' +
       'when generateIdempotencyKey is true ' +
       'then it should get the idempotency key from transaction id',
     async () => {
       overrideGenerateIdempotencyKeyConfig(true)
 
-      const manualCaptureResponse = {
-        pspReference: '8825408195409505',
-        response: '[capture-received]',
-      }
       scope.post('/capture').reply(200, manualCaptureResponse)
 
       const paymentObject = cloneDeep(authorisedPayment)
