@@ -4,6 +4,7 @@ import { expect } from 'chai'
 import config from '../../src/config/config.js'
 import manualCaptureHandler from '../../src/paymentHandler/manual-capture.handler.js'
 import constants from '../../src/config/constants.js'
+import { overrideGenerateIdempotencyKeyConfig } from '../test-utils.js'
 
 const { cloneDeep } = lodash
 const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
@@ -178,6 +179,31 @@ describe('manual-capture.handler::execute::', () => {
 
       expect(requestBody.reference).to.equal(
         chargeInitialTransaction.custom.fields.reference
+      )
+    }
+  )
+
+  it(
+    'given a payment ' +
+      'when generateIdempotencyKey is true ' +
+      'then it should get the idempotency key from transaction id',
+    async () => {
+      overrideGenerateIdempotencyKeyConfig(true)
+
+      scope.post('/capture').reply(200, manualCaptureResponse)
+
+      const paymentObject = cloneDeep(authorisedPayment)
+      paymentObject.transactions.push(chargeInitialTransaction)
+      paymentObject.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
+      const { actions } = await manualCaptureHandler.execute(paymentObject)
+
+      const addInterfaceInteraction = actions.find(
+        (a) => a.action === 'addInterfaceInteraction'
+      )
+      const requestJson = JSON.parse(addInterfaceInteraction.fields.request)
+      expect(requestJson.headers['Idempotency-Key']).to.equal(
+        chargeInitialTransaction.id
       )
     }
   )

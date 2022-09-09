@@ -19,6 +19,10 @@ function getModuleConfig() {
       config.addCommercetoolsLineItems,
       true
     ),
+    generateIdempotencyKey: _getValueOfBooleanFlag(
+      config.generateIdempotencyKey,
+      false
+    ),
   }
 }
 

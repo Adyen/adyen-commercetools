@@ -178,8 +178,16 @@ To be able to retry refund requests in case of failure, you need to add a custom
 Follow these recommendations when using the idempotency key:
 
 - `idempotencyKey` must be unique per request so that in case the request fails, it can be retried with the same key. Additionally `idempotencyKey` is valid for a minimum period of 31 days after first submission (but may be retained for longer). Source:
-- Generate idempotency keys using the version 4 (random) UUID type to prevent two API credentials under the same account from accessing each others responses.
+- Generate idempotency keys using the version 4 (random) UUID type to prevent two API credentials under the same account from accessing each other's responses.
 - Use [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) when retrying.
+
+#### Generating idempotency key by adyen-integration
+
+adyen-integration can automatically generate unique idempotency key for refund requests. It uses transaction ID as the idempotency key.
+
+In order to use this feature, set the option [`generateIdempotencyKey=true`](./HowToRun.md#optional-attributes). For every refund request adyen-integration will add an idempotency key if the custom field `idempotencyKey` is not present. If the custom field `idempotencyKey` is present, its value will be taken as the idempotency key.
+
+> Note: the generated idempotency key will NOT be saved to the custom field `idempotencyKey`. If you want to see this generated key, you can find it in the interface interactions.
 
 ### Additional information
 

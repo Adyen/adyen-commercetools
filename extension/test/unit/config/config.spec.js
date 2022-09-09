@@ -580,6 +580,136 @@ describe('::config::', () => {
     )
   })
 
+  describe('generateIdempotencyKey', () => {
+    it(
+      'when generateIdempotencyKey is set as boolean false in config.js, ' +
+        'it should load as false value in module config',
+      async () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+              authentication: {
+                scheme: 'basic',
+                username: 'username',
+                password: 'password',
+              },
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              apiBaseUrl: 'apiBaseUrl',
+              apiKey: 'apiKey',
+              clientKey: 'clientKey',
+              legacyApiBaseUrl: 'legacyApiBaseUrl',
+            },
+          },
+          logLevel: 'DEBUG',
+          generateIdempotencyKey: false,
+        })
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
+          false
+        )
+      }
+    )
+
+    it(
+      'when generateIdempotencyKey is set as boolean true in config.js, ' +
+        'it should load as true value in module config',
+      async () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+              authentication: {
+                scheme: 'basic',
+                username: 'username',
+                password: 'password',
+              },
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              apiBaseUrl: 'apiBaseUrl',
+              apiKey: 'apiKey',
+              clientKey: 'clientKey',
+              legacyApiBaseUrl: 'legacyApiBaseUrl',
+            },
+          },
+          logLevel: 'DEBUG',
+          generateIdempotencyKey: true,
+        })
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
+          true
+        )
+      }
+    )
+
+    it(
+      'when generateIdempotencyKey is set as string false in config.js, ' +
+        'it should load as false value in module config',
+      async () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              enableHmacSignature: 'false',
+            },
+          },
+          logLevel: 'DEBUG',
+          generateIdempotencyKey: 'false',
+        })
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
+          false
+        )
+      }
+    )
+
+    it(
+      'when generateIdempotencyKey is set as string true in config.js, ' +
+        'it should load as true value in module config',
+      async () => {
+        process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              enableHmacSignature: 'false',
+            },
+          },
+          logLevel: 'DEBUG',
+          generateIdempotencyKey: 'true',
+        })
+        const config = await reloadModule('../../../src/config/config.js')
+        expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
+          true
+        )
+      }
+    )
+  })
+
   it('when ADYEN_INTEGRATION_CONFIG is not valid JSON, it should throw error', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = '{"a"}'
     try {

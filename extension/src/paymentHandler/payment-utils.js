@@ -190,6 +190,13 @@ function isValidMetadata(str) {
   return str.indexOf(' ') < 0
 }
 
+function getIdempotencyKey(transaction) {
+  let idempotencyKey = transaction.custom?.fields?.idempotencyKey
+  if (!idempotencyKey && config.getModuleConfig().generateIdempotencyKey)
+    idempotencyKey = transaction.id
+  return idempotencyKey
+}
+
 export {
   getChargeTransactionInitial,
   getChargeTransactionPending,
@@ -208,4 +215,5 @@ export {
   getLatestInterfaceInteraction,
   isValidJSON,
   isValidMetadata,
+  getIdempotencyKey,
 }

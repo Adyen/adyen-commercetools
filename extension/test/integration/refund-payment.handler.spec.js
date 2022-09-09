@@ -4,6 +4,7 @@ import ctpClientBuilder from '../../src/ctp.js'
 import constants from '../../src/config/constants.js'
 import { createAddTransactionAction } from '../../src/paymentHandler/payment-utils.js'
 import config from '../../src/config/config.js'
+import { overrideGenerateIdempotencyKeyConfig } from '../test-utils.js'
 
 const {
   CTP_ADYEN_INTEGRATION,
@@ -23,12 +24,27 @@ describe('::refund::', () => {
     ctpClient = await ctpClientBuilder.get(ctpConfig)
   })
 
+  function assertIdempotencyKey(interfaceInteraction, refundTransaction) {
+    const adyenRequest = JSON.parse(interfaceInteraction.fields.request)
+    const adyenRequestBody = JSON.parse(adyenRequest.body)
+    if (adyenRequestBody.modificationAmount.value === 100) {
+      expect(adyenRequest.headers['Idempotency-Key']).to.equal(
+        refundTransaction.id
+      )
+    } else {
+      expect(adyenRequest.headers['Idempotency-Key']).to.equal(
+        refundTransaction.custom?.fields?.idempotencyKey
+      )
+    }
+  }
+
   it(
     'given a payment with "authorization success transaction" ' +
       'when multiple "refund initial transactions" are added ' +
       'then Adyen should response with [refund-received] for each transaction ' +
       'and payment should have "refund pending transactions"',
     async () => {
+      overrideGenerateIdempotencyKeyConfig(true)
       const paymentDraft = {
         amountPlanned: {
           currencyCode: 'EUR',
@@ -134,10 +150,7 @@ describe('::refund::', () => {
             transaction.interactionId === adyenResponse.pspReference
         )
         expect(refundTransaction).to.exist
-        const adyenRequest = JSON.parse(interfaceInteraction.fields.request)
-        expect(adyenRequest.headers['Idempotency-Key']).to.equal(
-          refundTransaction.custom?.fields?.idempotencyKey
-        )
+        assertIdempotencyKey(interfaceInteraction, refundTransaction)
       }
     }
   )
