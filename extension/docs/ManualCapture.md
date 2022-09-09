@@ -5,7 +5,7 @@
   - [Make an API call to capture a payment:](#make-an-api-call-to-capture-a-payment)
   - [Partial capture](#partial-capture)
   - [Retry capture requests](#retry-capture-requests)
-  - [Custom refund reference](#custom-refund-reference)
+  - [Custom manual capture reference](#custom-manual-capture-reference)
   - [More info on capture](#more-info-on-capture)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
