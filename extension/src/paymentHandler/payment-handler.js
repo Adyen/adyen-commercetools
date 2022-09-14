@@ -21,16 +21,12 @@ import constants from '../config/constants.js'
 import config from '../config/config.js'
 
 const {
-  CTP_ADYEN_INTEGRATION,
   PAYMENT_METHOD_TYPE_KLARNA_METHODS,
   PAYMENT_METHOD_TYPE_AFFIRM_METHODS,
   PAYMENT_METHODS_WITH_REQUIRED_LINE_ITEMS,
 } = constants
 
 async function handlePayment(paymentObject, authToken) {
-  if (!_isAdyenPayment(paymentObject))
-    // if it's not adyen payment, ignore the payment
-    return { actions: [] }
   if (isBasicAuthEnabled() && !authToken) {
     return {
       errors: [
@@ -120,12 +116,6 @@ function _getPaymentHandlers(paymentObject) {
   )
     handlers.push(disableStoredPaymentHandler)
   return handlers
-}
-
-function _isAdyenPayment(paymentObject) {
-  return (
-    paymentObject.paymentMethodInfo.paymentInterface === CTP_ADYEN_INTEGRATION
-  )
 }
 
 function _validatePaymentRequest(paymentObject, authToken) {
