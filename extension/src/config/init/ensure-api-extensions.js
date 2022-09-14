@@ -63,18 +63,16 @@ async function ensureApiExtensions(
 
 function buildUpdateActions(existingExtension, extensionDraft) {
   const actions = []
-  if (
-    !_.isEqual(existingExtension.destination, extensionDraft.destination)
-  )
+  if (!_.isEqual(existingExtension.destination, extensionDraft.destination))
     actions.push({
       action: 'changeDestination',
       destination: extensionDraft.destination,
     })
 
-  if(!_.isEqual(existingExtension.triggers, extensionDraft.triggers))
+  if (!_.isEqual(existingExtension.triggers, extensionDraft.triggers))
     actions.push({
       action: 'changeTriggers',
-      triggers: extensionDraft.triggers
+      triggers: extensionDraft.triggers,
     })
 
   return actions

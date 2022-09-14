@@ -8,7 +8,7 @@
     {
       "resourceTypeId": "payment",
       "actions": ["Create", "Update"],
-      "condition": "paymentMethodInfo(paymentInterface=\"ctp-adyen-integration\")"
+      "condition": "paymentMethodInfo is defined AND paymentMethodInfo(paymentInterface is defined) AND paymentMethodInfo(paymentInterface=\"ctp-adyen-integration\")"
     }
   ],
   "timeoutInMs": 10000
