@@ -17,29 +17,6 @@ describe('Payment controller', () => {
   describe('Validation', () => {
     const mockRequest = { method: 'POST' }
 
-    it('on missing adyen payment interface should skip processing', async () => {
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.paymentMethodInfo.paymentInterface = ''
-
-      const utilsCollectRequestData = () =>
-        JSON.stringify({ resource: { obj: ctpPaymentClone } })
-      const utilsSendResponse = ({ statusCode, headers, data }) => {
-        expect(statusCode).to.equal(200)
-        expect(headers).to.not.exist
-        expect(data).to.deep.equal({
-          actions: [],
-        })
-      }
-
-      sinon.stub(utils, 'collectRequestData').callsFake(utilsCollectRequestData)
-      sinon.stub(utils, 'sendResponse').callsFake(utilsSendResponse)
-
-      await paymentController.processRequest(mockRequest)
-
-      utils.collectRequestData.restore()
-      utils.sendResponse.restore()
-    })
-
     it('on invalid web component request should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = 'foo'
