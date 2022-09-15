@@ -584,6 +584,8 @@ By default, the extension module will populate `lineItems` for you but in case y
 
 ## Step 6: Submit additional payment details
 
+Before executing this step, verify if payment has already any transactions. Based on its state decide if you skip the submit additional details step and show order confirmation page or restart the payment process since transaction state was Failure.
+
 If the shopper performed an additional action (e.g. redirect, threeDS2) in the [Step-5](#step-5-make-a-payment), you need to make `submitAdditionalPaymentDetailsRequest` in order to complete the payment.
 
 Pass the generated component data to your merchant server, the data is available either in `state.data` from the `onAdditionalDetails` event or, for redirects, the parameters you received when the shopper redirected back to your website.
