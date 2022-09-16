@@ -40,19 +40,13 @@ async function ensureApiExtensions(
         'Successfully created an API extension for payment resource type ' +
           `(key=${apiExtensionTemplate.key})`
       )
-    } else if (
-      !_.isEqual(existingExtension.destination, extensionDraft.destination)
-    ) {
+    } else {
+      const actions = buildUpdateActions(existingExtension, extensionDraft)
       await ctpClient.update(
         ctpClient.builder.extensions,
         existingExtension.id,
         existingExtension.version,
-        [
-          {
-            action: 'changeDestination',
-            destination: extensionDraft.destination,
-          },
-        ]
+        actions
       )
       logger.info(
         'Successfully updated the API extension for payment resource type ' +
@@ -65,6 +59,23 @@ async function ensureApiExtensions(
         `Error: ${JSON.stringify(serializeError(err))}`
     )
   }
+}
+
+function buildUpdateActions(existingExtension, extensionDraft) {
+  const actions = []
+  if (!_.isEqual(existingExtension.destination, extensionDraft.destination))
+    actions.push({
+      action: 'changeDestination',
+      destination: extensionDraft.destination,
+    })
+
+  if (!_.isEqual(existingExtension.triggers, extensionDraft.triggers))
+    actions.push({
+      action: 'changeTriggers',
+      triggers: extensionDraft.triggers,
+    })
+
+  return actions
 }
 
 async function fetchExtensionByKey(ctpClient, key) {

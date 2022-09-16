@@ -10,7 +10,7 @@ function getModuleConfig() {
     ),
     port: config.port,
     logLevel: config.logLevel,
-    apiExtensionBaseUrl: config.apiExtensionBaseUrl, // used only for development purpose
+    apiExtensionBaseUrl: config.apiExtensionBaseUrl, // used for development purpose and for setup-resources command
     basicAuth: config.basicAuth || false,
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
