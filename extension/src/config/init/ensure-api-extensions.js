@@ -42,16 +42,18 @@ async function ensureApiExtensions(
       )
     } else {
       const actions = buildUpdateActions(existingExtension, extensionDraft)
-      await ctpClient.update(
-        ctpClient.builder.extensions,
-        existingExtension.id,
-        existingExtension.version,
-        actions
-      )
-      logger.info(
-        'Successfully updated the API extension for payment resource type ' +
-          `(key=${apiExtensionTemplate.key})`
-      )
+      if (actions.length > 0) {
+        await ctpClient.update(
+          ctpClient.builder.extensions,
+          existingExtension.id,
+          existingExtension.version,
+          actions
+        )
+        logger.info(
+          'Successfully updated the API extension for payment resource type ' +
+            `(key=${apiExtensionTemplate.key})`
+        )
+      }
     }
   } catch (err) {
     throw Error(
