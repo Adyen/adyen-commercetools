@@ -42,13 +42,17 @@ async function execute(paymentObject) {
       )
     )
 
-    const addTransactionAction = createAddTransactionActionByResponse(
-      paymentObject.amountPlanned.centAmount,
-      paymentObject.amountPlanned.currencyCode,
-      response
-    )
+    if (
+      !_hasTransactionWithPspReference(response.pspReference, paymentObject)
+    ) {
+      const addTransactionAction = createAddTransactionActionByResponse(
+        paymentObject.amountPlanned.centAmount,
+        paymentObject.amountPlanned.currencyCode,
+        response
+      )
 
-    if (addTransactionAction) actions.push(addTransactionAction)
+      if (addTransactionAction) actions.push(addTransactionAction)
+    }
   }
   return {
     actions,
@@ -80,6 +84,12 @@ function _isNewRequest(
   }
 
   return false
+}
+
+function _hasTransactionWithPspReference(pspReference, paymentObject) {
+  return paymentObject.transactions.some(
+    (transaction) => transaction.interactionId === pspReference
+  )
 }
 
 export default { execute }

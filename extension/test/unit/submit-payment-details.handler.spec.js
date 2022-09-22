@@ -336,4 +336,42 @@ describe('submit-additional-payment-details::execute', () => {
       sandbox.restore()
     }
   )
+
+  it(
+    'when transaction already exists in the payment, ' +
+      'then it should not add new transaction',
+    async () => {
+      scope
+        .post('/payments/details')
+        .reply(200, submitPaymentDetailsSuccessResponse)
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
+        JSON.stringify(submitPaymentDetailsRequest)
+      ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
+        makePaymentRedirectResponse
+      )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.transactions.push({
+        id: 'e759b1a7-3666-46d0-80fa-051849144087',
+        type: 'Authorization',
+        amount: {
+          type: 'centPrecision',
+          currencyCode: 'EUR',
+          centAmount: 1000,
+          fractionDigits: 2,
+        },
+        interactionId: '852588749855524C',
+        state: 'Success',
+      })
+
+      const response = await execute(ctpPaymentClone)
+
+      expect(response.actions).to.have.lengthOf(2)
+      const addTransaction = response.actions.find(
+        (a) => a.action === 'addTransaction'
+      )
+      expect(addTransaction).to.be.undefined
+    }
+  )
 })
