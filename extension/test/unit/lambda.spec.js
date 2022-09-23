@@ -24,7 +24,7 @@ describe('Lambda handler', () => {
 
     expect(result.responseType).equals('UpdateRequest')
     expect(result.actions).equals(actions)
-    expect(result.errors).to.equal(undefined)
+    expect(result.errors).to.equal(1)
   })
 
   it('returns correct failed response', async () => {
