@@ -37,7 +37,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: gcloud sdk
-        uses: google-github-actions/setup-gcloud@v0.6.1
+        uses: google-github-actions/setup-gcloud@v0.6.2
       - name: gcloud functions deploy
         run: |
           gcloud functions deploy extension-ci \
@@ -81,7 +81,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: gcloud sdk
-        uses: google-github-actions/setup-gcloud@v0.6.1
+        uses: google-github-actions/setup-gcloud@v0.6.2
       - name: gcloud functions deploy
         run: |
           gcloud functions deploy notification-ci \
