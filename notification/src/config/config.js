@@ -95,19 +95,19 @@ function loadAndValidateConfig() {
       )
   }
 
-  // for (const [adyenMerchantAccount, adyenConfig] of Object.entries(
-  //   config.adyen
-  // )) {
-  //   if (
-  //     adyenConfig.enableHmacSignature !== 'false' &&
-  //     isEmpty(adyenConfig.secretHmacKey)
-  //   )
-  //     throw new Error(
-  //       `[${adyenMerchantAccount}]: The "secretHmacKey" config variable is missing to be able to verify ` +
-  //         `notifications, please generate a secret HMAC key in Adyen Customer Area ` +
-  //         `or set "enableHmacSignature=false" to disable the verification feature.`
-  //     )
-  // }
+  for (const [adyenMerchantAccount, adyenConfig] of Object.entries(
+    config.adyen
+  )) {
+    if (
+      adyenConfig.enableHmacSignature !== 'false' &&
+      isEmpty(adyenConfig.secretHmacKey)
+    )
+      throw new Error(
+        `[${adyenMerchantAccount}]: The "secretHmacKey" config variable is missing to be able to verify ` +
+          `notifications, please generate a secret HMAC key in Adyen Customer Area ` +
+          `or set "enableHmacSignature=false" to disable the verification feature.`
+      )
+  }
 }
 
 loadAndValidateConfig()
