@@ -50,6 +50,7 @@ function getAdyenConfig(adyenMerchantAccount) {
   return {
     secretHmacKey: adyenConfig.secretHmacKey,
     enableHmacSignature,
+    apiKey: adyenConfig.apiKey
   }
 }
 
