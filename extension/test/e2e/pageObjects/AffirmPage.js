@@ -31,7 +31,7 @@ export default class AffirmPage {
     const autoPayToggle = await this.page.$('#autopay-toggle')
     await this.page.evaluate((cb) => cb.click(), autoPayToggle)
     await this.page.waitForTimeout(1_000) // Wait for the page refreshes after toggling the autopay
-    const confirmCheckbox = await this.page.$('#confirm-disclosure-checkbox')
+    const confirmCheckbox = await this.page.$('[data-testid="disclosure-checkbox"]')
     await this.page.evaluate((cb) => cb.click(), confirmCheckbox)
     await this.page.click('[data-testid="submit-button"]')
   }
