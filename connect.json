@@ -8,7 +8,8 @@
     {
       "applicationType": "service",
       "dockerFilePath": "notification/",
-      "name": "Notification"
+      "name": "Notification",
+      "containerPort": 443
     }
   ]
 }
