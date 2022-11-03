@@ -4,6 +4,11 @@
       "applicationType": "service",
       "dockerFilePath": "extension/",
       "name": "Extension"
+    },
+    {
+      "applicationType": "service",
+      "dockerFilePath": "notification/",
+      "name": "Notification"
     }
   ]
 }
