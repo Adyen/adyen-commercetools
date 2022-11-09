@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import {getLogger} from "../../utils/logger.js"
-import config from '../../config/config.js'
+import config from "../config.js";
 
 const mainLogger = getLogger()
 
@@ -44,7 +44,8 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
 
   mainLogger.info(`New webhook was created with ID ${webhookId}`)
 
-  const generateHmacResponse = await fetch(`https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${webhookId}/generateHmac`, {
+  const generateHmacResponse = await fetch(
+    `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${webhookId}/generateHmac`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -53,13 +54,20 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
   })
 
   const generateHmacResponseJson = await generateHmacResponse.json()
-  const hmacKey = generateHmacResponseJson.hmacKey
+  const { hmacKey } = generateHmacResponseJson
 
   mainLogger.info(`HMAC key generated ${hmacKey}`)
 }
 
-await ensureAdyenWebhook(
-  config.getAdyenConfig(config.getAllAdyenMerchantAccounts()[1]).apiKey,
-  'https://fea7-94-142-239-39.ngrok.io',
-  config.getAllAdyenMerchantAccounts()[1]
-)
+async function ensureAdyenWebhooksForAllProjects() {
+  const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
+  for (const adyenMerchantId of adyenMerchantAccounts) {
+    const adyenConfig = config.getAdyenConfig(adyenMerchantId)
+    await ensureAdyenWebhook(adyenConfig.apiKey, adyenConfig.notificationBaseUrl, adyenMerchantId)
+  }
+}
+
+
+export {
+  ensureAdyenWebhooksForAllProjects
+}

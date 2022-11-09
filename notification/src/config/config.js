@@ -9,6 +9,7 @@ function getModuleConfig() {
   if (config.removeSensitiveData === false) removeSensitiveData = false
   return {
     removeSensitiveData,
+    notificationBaseUrl: config.notificationBaseUrl,
     port: config.port,
     logLevel: config.logLevel,
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
