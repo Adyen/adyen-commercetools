@@ -81,7 +81,6 @@
   },
   "mocha": {
     "timeout": 120000,
-    "exit": true,
     "full-trace": true
   },
   "husky": {
