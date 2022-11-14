@@ -9,7 +9,6 @@ function getModuleConfig() {
   if (config.removeSensitiveData === false) removeSensitiveData = false
   return {
     removeSensitiveData,
-    notificationBaseUrl: config.notificationBaseUrl,
     port: config.port,
     logLevel: config.logLevel,
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
@@ -50,8 +49,9 @@ function getAdyenConfig(adyenMerchantAccount) {
   if (adyenConfig.enableHmacSignature === false) enableHmacSignature = false
   return {
     secretHmacKey: adyenConfig.secretHmacKey,
+    notificationBaseUrl: adyenConfig.notificationBaseUrl,
     enableHmacSignature,
-    apiKey: adyenConfig.apiKey
+    apiKey: adyenConfig.apiKey,
   }
 }
 
