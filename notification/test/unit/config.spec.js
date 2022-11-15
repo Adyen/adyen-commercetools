@@ -194,6 +194,8 @@ describe('::config::', () => {
         ).to.deep.equal({
           enableHmacSignature: false,
           secretHmacKey: undefined,
+          notificationBaseUrl: undefined,
+          apiKey: undefined,
         })
       } finally {
         fs.unlinkSync(filePath)
