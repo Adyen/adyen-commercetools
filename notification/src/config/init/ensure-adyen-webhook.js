@@ -29,9 +29,9 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
         },
       }
     )
-    const getWebhookResponseResponseJson = await getWebhookResponse.json()
+    const getWebhookResponseJson = await getWebhookResponse.json()
 
-    const existingWebhook = getWebhookResponseResponseJson.data?.find(
+    const existingWebhook = getWebhookResponseJson.data?.find(
       (webhook) =>
         webhook.url === webhookConfig.url && webhook.type === webhookConfig.type
     )
