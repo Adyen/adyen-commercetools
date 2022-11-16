@@ -2,6 +2,7 @@ import fetch from 'node-fetch'
 import { serializeError } from 'serialize-error'
 import { getLogger } from '../../utils/logger.js'
 import config from '../config.js'
+import { loadConfig } from "../config-loader.js";
 
 const mainLogger = getLogger()
 
@@ -40,7 +41,7 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
       logger.info(
         `Webhook already existed with ID ${existingWebhook.id}. Skipping webhook creation...`
       )
-      return
+      return existingWebhook.id
     }
 
     const createWebhookResponse = await fetch(
@@ -59,41 +60,51 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
     const webhookId = createWebhookResponseJson.id
 
     logger.info(`New webhook was created with ID ${webhookId}`)
+    return webhookId
   } catch (err) {
     throw Error(
       `Failed to ensure adyen webhook for project ${merchantId}.` +
         `Error: ${JSON.stringify(serializeError(err))}`
     )
   }
+}
 
-  // todo: will be done later
-  // const generateHmacResponse = await fetch(
-  //   `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${webhookId}/generateHmac`, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     'X-Api-Key': adyenApiKey
-  //   },
-  // })
-  //
-  // const generateHmacResponseJson = await generateHmacResponse.json()
-  // const { hmacKey } = generateHmacResponseJson
-  //
-  // logger.info(`HMAC key generated ${hmacKey}`)
+async function ensureAdyenHmac(adyenApiKey, merchantId, webhookId) {
+  const generateHmacResponse = await fetch(
+    `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${webhookId}/generateHmac`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': adyenApiKey
+      },
+    })
+
+  const generateHmacResponseJson = await generateHmacResponse.json()
+  const { hmacKey } = generateHmacResponseJson
+
+  return hmacKey
 }
 
 async function ensureAdyenWebhooksForAllProjects() {
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
+  const jsonConfig = loadConfig()
   for (const adyenMerchantId of adyenMerchantAccounts) {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
     if (adyenConfig.notificationBaseUrl) {
-      await ensureAdyenWebhook(
+      const webhookId = await ensureAdyenWebhook(
         adyenConfig.apiKey,
         adyenConfig.notificationBaseUrl,
         adyenMerchantId
       )
+      if (adyenConfig.enableHmacSignature && !adyenConfig.secretHmacKey) {
+        const hmacKey = await ensureAdyenHmac(adyenConfig.apiKey, adyenMerchantId, webhookId)
+        jsonConfig.adyen[adyenMerchantId].secretHmacKey = hmacKey
+      }
     }
   }
+
+  mainLogger.info('Set the following environmental variable')
+  console.log(`ADYEN_INTEGRATION_CONFIG='${JSON.stringify(jsonConfig)}'`)
 }
 
 export { ensureAdyenWebhooksForAllProjects }
