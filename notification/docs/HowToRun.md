@@ -99,13 +99,15 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
 }
 ```
 
-| Name                         | Content                                                                                                                                                                         | Required | Default value                                                                                         |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
-| `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod` returned in the notification and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.method`. | NO       | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}}` |
-| `port`                       | The port number on which the application will run.                                                                                                                              | NO       | 443                                                                                                   |
-| `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                             | NO       | `info`                                                                                                |
-| `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                   | NO       | Node.js default (5 seconds)                                                                           |
-| `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.         | NO       | true                                                                                                  |
+| Name                         | Content                                                                                                                                                                                                      | Default value                                                                                         |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod` returned in the notification and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.method`.                              | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}}` |
+| `port`                       | The port number on which the application will run.                                                                                                                                                           | 443                                                                                                   |
+| `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                                          | `info`                                                                                                |
+| `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                                                | Node.js default (5 seconds)                                                                           |
+| `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.                                      | true                                                                                                  |
+| `notificationBaseUrl`        | Publicly available URL of the Notification module. In case of any payment changes, Adyen will call this URL and pass the notification in body. This attribute is used when calling `npm run setup-resources` |                                                                                                       |
+| `apiKey`                     | This key will be used to make authenticated API requests to Adyen. This attribute is used when calling `npm run setup-resources`                                                                             |                                                                                                       |
 
 ### External file configuration
 
@@ -117,7 +119,7 @@ Resources below are required for the notification module to operate correctly.
 
 1. [Payment-interface-interaction custom type](../resources/payment-interface-interaction-type.json)
 
-You can create these by running the command `npm run setup-resources` as below, the command requires the `ADYEN_INTEGRATION_CONFIG` to be set as an environment variable.
+You can create these by running the command `npm run setup-resources` as below, the command requires the `ADYEN_INTEGRATION_CONFIG` to be set as an environment variable. Be aware that this command also sets up [the notification webhook in Adyen](./IntegrationGuide.md#step-1-set-up-notification-webhook-and-generate-hmac-signature).
 
 ```bash
 export ADYEN_INTEGRATION_CONFIG=xxxx
