@@ -1,10 +1,15 @@
-import config from "../../src/config/config.js";
-import {routes} from "../../src/routes.js";
-import {assertPayment, createPayment, initPuppeteerBrowser, serveFile} from "./e2e-test-utils.js";
-import ctpClientBuilder from "../../src/ctp.js";
+import config from '../../src/config/config.js'
+import { routes } from '../../src/routes.js'
+import {
+  assertPayment,
+  createPayment,
+  initPuppeteerBrowser,
+  serveFile,
+} from './e2e-test-utils.js'
+import ctpClientBuilder from '../../src/ctp.js'
 import MakePaymentFormPage from './pageObjects/PaypalMakePaymentFormPage.js'
 import PaypalPopupPage from './pageObjects/PaypalPopupPage.js'
-import httpUtils from "../../src/utils.js";
+import httpUtils from '../../src/utils.js'
 
 describe('::paypalPayment::', () => {
   let browser
@@ -16,7 +21,11 @@ describe('::paypalPayment::', () => {
 
   beforeEach(async () => {
     routes['/make-payment-form'] = async (request, response) => {
-      serveFile('./test/e2e/fixtures/paypal-make-payment-form.html', request, response)
+      serveFile(
+        './test/e2e/fixtures/paypal-make-payment-form.html',
+        request,
+        response
+      )
     }
     routes['/make-payment'] = async (request, response) => {
       const body = await httpUtils.collectRequestData(request)
@@ -28,7 +37,8 @@ describe('::paypalPayment::', () => {
       )
       const makePaymentResponse = payment.custom.fields.makePaymentResponse
       return httpUtils.sendResponse({
-        response, data: makePaymentResponse
+        response,
+        data: makePaymentResponse,
       })
     }
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
@@ -40,30 +50,32 @@ describe('::paypalPayment::', () => {
     await browser.close()
   })
 
-  it('when payment method is paypal and process is done correctly, ' +
-    'then it should successfully finish the payment', async () => {
-    const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-    const browserTab = await browser.newPage()
-    const clientKey =
-      config.getAdyenConfig(adyenMerchantAccount).clientKey
+  it(
+    'when payment method is paypal and process is done correctly, ' +
+      'then it should successfully finish the payment',
+    async () => {
+      const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+      const browserTab = await browser.newPage()
+      const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
 
-    await makePayment({
-      browserTab,
-      baseUrl,
-      clientKey
-    })
+      await makePayment({
+        browserTab,
+        baseUrl,
+        clientKey,
+      })
 
-    const pages = await browser.pages()
-    const popup = pages[pages.length - 1]
+      const pages = await browser.pages()
+      const popup = pages[pages.length - 1]
 
-    await handlePaypalPopUp(popup)
+      await handlePaypalPopUp(popup)
 
-    const updatedPayment = await handleRedirect(browserTab)
+      const updatedPayment = await handleRedirect(browserTab)
 
-    assertPayment(updatedPayment)
-  })
+      assertPayment(updatedPayment)
+    }
+  )
 
-  async function makePayment({browserTab, baseUrl, clientKey}) {
+  async function makePayment({ browserTab, baseUrl, clientKey }) {
     paypalMakePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
     await paypalMakePaymentFormPage.goToThisPage()
     await paypalMakePaymentFormPage.generateAdyenMakePaymentForm(clientKey)
@@ -77,9 +89,10 @@ describe('::paypalPayment::', () => {
   }
 
   async function handleRedirect() {
-    const submitAdditionalPaymentDetailsRequest = await paypalMakePaymentFormPage.getAdditionalPaymentDetails()
+    const submitAdditionalPaymentDetailsRequest =
+      await paypalMakePaymentFormPage.getAdditionalPaymentDetails()
 
-    const {body: updatedPayment} = await ctpClient.update(
+    const { body: updatedPayment } = await ctpClient.update(
       ctpClient.builder.payments,
       payment.id,
       payment.version,
@@ -93,5 +106,4 @@ describe('::paypalPayment::', () => {
     )
     return updatedPayment
   }
-
 })
