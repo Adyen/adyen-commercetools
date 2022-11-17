@@ -33,6 +33,10 @@
         countryCode: "NL", // Only needed for test. When live, this is retrieved automatically. https://docs.adyen.com/payment-methods/paypal/web-component?tab=_code_payments_code__2#step-2-create-an-instance-of-the-component
         showPayButton: true,
         paymentMethodsConfiguration: { paypal: { intent: "authorize" } },
+        amount: {
+          currency: "EUR",
+          value: 1000
+        },
         onSubmit: handleOnSubmit,
         onAdditionalDetails: handleAdditionalDetails
       }
@@ -62,13 +66,14 @@
         }
       }
 
-      async function handleAdditionalDetails(state, component) {
-        const response = await fetch(window.location.origin + '/submit-additional-payment-details', {
-          method: 'POST',
-          body: JSON.stringify(state.data)
-        })
+      async function handleAdditionalDetails(state) {
+        const additionalDetailsDiv = document.createElement("div");
+        additionalDetailsDiv.id = 'adyen-additional-payment-details'
+        const additionalDetails = document.createTextNode(JSON.stringify(state.data));
+        additionalDetailsDiv.appendChild(additionalDetails);
 
-        console.log(response)
+        const paypalContainer = document.getElementById("paypal-container");
+        document.body.insertBefore(additionalDetailsDiv, paypalContainer);
       }
 
       const clientKeyElement = document.getElementById('adyen-client-key')

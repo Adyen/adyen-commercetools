@@ -3,12 +3,14 @@ import {routes} from "../../src/routes.js";
 import {assertPayment, createPayment, initPuppeteerBrowser, serveFile} from "./e2e-test-utils.js";
 import ctpClientBuilder from "../../src/ctp.js";
 import MakePaymentFormPage from './pageObjects/PaypalMakePaymentFormPage.js'
+import PaypalPopupPage from './pageObjects/PaypalPopupPage.js'
 import httpUtils from "../../src/utils.js";
 
 describe('::paypalPayment::', () => {
   let browser
   let ctpClient
   let payment
+  let paypalMakePaymentFormPage
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
 
@@ -28,24 +30,6 @@ describe('::paypalPayment::', () => {
       return httpUtils.sendResponse({
         response, data: makePaymentResponse
       })
-    }
-    routes['/submit-additional-payment-details'] = async (request, response) => {
-      const body = await httpUtils.collectRequestData(request)
-      const result = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          {
-            action: 'setCustomField',
-            name: 'submitAdditionalPaymentDetailsRequest',
-            value: body,
-          },
-        ]
-      )
-      return httpUtils.sendResponse({
-        response, data: 'Hello'
-      });
     }
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
     ctpClient = await ctpClientBuilder.get(ctpConfig)
@@ -72,45 +56,42 @@ describe('::paypalPayment::', () => {
     const pages = await browser.pages()
     const popup = pages[pages.length - 1]
 
-    await browserTab.waitForTimeout(1_000_000)
-    await handlePaypalPopUp({
-      browserTab: popup
-    })
+    await handlePaypalPopUp(popup)
 
-    const paymentAfterHandleRedirect = await handleRedirect({
-      browserTab,
-      baseUrl
-    })
+    const updatedPayment = await handleRedirect(browserTab)
 
-    await browserTab.waitForTimeout(1_000_000)
-
-    assertPayment(paymentAfterHandleRedirect)
+    assertPayment(updatedPayment)
   })
 
   async function makePayment({browserTab, baseUrl, clientKey}) {
-    const paypalMakePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
+    paypalMakePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
     await paypalMakePaymentFormPage.goToThisPage()
     await paypalMakePaymentFormPage.generateAdyenMakePaymentForm(clientKey)
     await browserTab.waitForTimeout(2_000)
     await paypalMakePaymentFormPage.clickOnPaypalButton()
   }
 
-  async function handlePaypalPopUp({browserTab}) {
-    await browserTab.waitForSelector('#email')
-    await browserTab.type('#email', 'sb-u4765x21503145@personal.example.com')
-    await browserTab.click('#btnNext')
-
-    await browserTab.waitForTimeout(1000)
-
-    await browserTab.click('#acceptAllButton')
-    await browserTab.type('#password', '3xG5+#+T')
-    await browserTab.click('#btnLogin')
-
-    await browserTab.waitForSelector('#payment-submit-btn')
-    await browserTab.click('#payment-submit-btn')
+  async function handlePaypalPopUp(browserTab) {
+    const paypalPopupPage = new PaypalPopupPage(browserTab)
+    await paypalPopupPage.handlePaypalPopUp()
   }
 
-  async function handleRedirect({browserTab, baseUrl, payment}) {
+  async function handleRedirect() {
+    const submitAdditionalPaymentDetailsRequest = await paypalMakePaymentFormPage.getAdditionalPaymentDetails()
+
+    const {body: updatedPayment} = await ctpClient.update(
+      ctpClient.builder.payments,
+      payment.id,
+      payment.version,
+      [
+        {
+          action: 'setCustomField',
+          name: 'submitAdditionalPaymentDetailsRequest',
+          value: submitAdditionalPaymentDetailsRequest,
+        },
+      ]
+    )
+    return updatedPayment
   }
 
 })
