@@ -49,7 +49,9 @@ function getAdyenConfig(adyenMerchantAccount) {
   if (adyenConfig.enableHmacSignature === false) enableHmacSignature = false
   return {
     secretHmacKey: adyenConfig.secretHmacKey,
+    notificationBaseUrl: adyenConfig.notificationBaseUrl,
     enableHmacSignature,
+    apiKey: adyenConfig.apiKey,
   }
 }
 
