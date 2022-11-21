@@ -23,7 +23,7 @@ The following diagram shows the integration flow of the notification module base
 You have to register the Notification module `public URL` in the Adyen Customer Area in order to receive notifications.
 To protect your server from unauthorized notifications, we strongly recommend that you activate Hash-based message authentication code (HMAC) signatures during the setup.
 
-You can set up the webhooks and generate HMAC by running the command `npm run setup-resources` as below, the command requires the `ADYEN_INTEGRATION_CONFIG` to be set as an environment variable. Be aware that this command also sets up [the commercetools resources required for the notification module](./HowToRun.md#commercetools-project-requirements).
+You can set up the webhooks and generate HMAC by running the command `npm run setup-resources` as below, the command requires the `ADYEN_INTEGRATION_CONFIG` to be set as an environment variable. For every project you want to generate HMAC key set the attribute `enableHmacSignature: true` and do not have the attribute `secretHmacKey`. The new HMAC key will be generated and the updated `ADYEN_INTEGRATION_CONFIG` will be printed to you. Use this updated `ADYEN_INTEGRATION_CONFIG` to replace the existing one in environment variable and run the notification module. Be aware that this command also sets up [the commercetools resources required for the notification module](./HowToRun.md#commercetools-project-requirements).
 
 ```bash
 export ADYEN_INTEGRATION_CONFIG=xxxx

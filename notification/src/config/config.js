@@ -97,6 +97,13 @@ function loadAndValidateConfig() {
       )
   }
 
+  const argv = process.argv[3]
+
+  if (argv === 'setupNotificationResources')
+    // skip validation of HMAC because this command is setting them up
+    // and validation at this point would fail
+    return
+
   for (const [adyenMerchantAccount, adyenConfig] of Object.entries(
     config.adyen
   )) {
