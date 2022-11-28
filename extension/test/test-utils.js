@@ -1,5 +1,9 @@
 import localtunnel from 'localtunnel'
 import { setupServer } from '../src/server.js'
+// eslint-disable-next-line import/no-relative-packages
+import { setupServer as setupNotificationModuleServer } from '../../notification/src/server.js'
+// eslint-disable-next-line import/no-relative-packages
+import { ensureAdyenWebhook } from '../../notification/src/config/init/ensure-adyen-webhook.js'
 import { routes } from '../src/routes.js'
 import { setupExtensionResources } from '../src/setup.js'
 import config from '../src/config/config.js'
@@ -13,10 +17,11 @@ process.on('unhandledRejection', (reason) => {
   process.exit(1)
 })
 
-const port = 3000
-const tunnelDomain = 'ctp-adyen-integration-tests'
+const extensionPort = 3000
 let tunnel
 let server
+let notificationTunnel
+let notificationServer
 
 async function startIT() {
   await setupLocalServer()
@@ -24,25 +29,30 @@ async function startIT() {
     // this part used only on github actions (CI)
     await setupExtensionResources(process.env.CI_EXTENSION_BASE_URL)
     // e2e requires this for static forms
-    overrideApiExtensionBaseUrlConfig(`http://localhost:${port}`)
+    overrideApiExtensionBaseUrlConfig(`http://localhost:${extensionPort}`)
   } else {
     await setupLocalTunnel()
     await setupExtensionResources()
+    await setUpWebhooksAndNotificationModule()
   }
 }
 
 async function stopIT() {
   server.close()
+  notificationServer.close()
   if (!process.env.CI) {
     // this part is not used on github actions (CI)
     await tunnel.close()
+    await notificationTunnel.close()
   }
+
+  // todo: disable webhook in adyen
 }
 
 function setupLocalServer() {
   server = setupServer(routes)
   return new Promise((resolve) => {
-    server.listen(port, async () => {
+    server.listen(extensionPort, async () => {
       resolve()
     })
   })
@@ -65,12 +75,13 @@ function overrideGenerateIdempotencyKeyConfig(generateIdempotencyKey) {
 }
 
 async function setupLocalTunnel() {
-  tunnel = await initTunnel(port)
+  const extensionTunnelDomain = 'ctp-adyen-integration-tests'
+  tunnel = await initTunnel(extensionTunnelDomain, extensionPort)
   const apiExtensionBaseUrl = tunnel.url
   overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
 }
 
-async function initTunnel() {
+async function initTunnel(subdomain, port) {
   let repeaterCounter = 0
   // eslint-disable-next-line no-shadow
   let tunnel
@@ -79,7 +90,7 @@ async function initTunnel() {
     try {
       tunnel = await localtunnel({
         port,
-        subdomain: tunnelDomain,
+        subdomain,
       })
       break
     } catch (e) {
@@ -120,9 +131,54 @@ async function updatePaymentWithRetry(ctpClient, actions, payment) {
   return { statusCode, updatedPayment }
 }
 
+async function setUpWebhooksAndNotificationModule() {
+  const notificationPort = 3001
+  const notificationTunnelDomain = 'ctp-adyen-integration-tests-notifications'
+  notificationServer = await setupNotificationModuleServer()
+  await new Promise((resolve) => {
+    notificationServer.listen(notificationPort, async () => {
+      resolve()
+    })
+  })
+
+  const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
+  for (const adyenMerchantId of adyenMerchantAccounts) {
+    const adyenConfig = config.getAdyenConfig(adyenMerchantId)
+    await ensureAdyenWebhook(
+      adyenConfig.apiKey,
+      'https://ctp-adyen-integration-tests-notifications.loca.lt',
+      adyenMerchantId
+    )
+  }
+  notificationTunnel = await initTunnel(notificationTunnelDomain, 3001)
+}
+
+async function waitUntil(
+  waitCondition,
+  maxRetry = 10,
+  maxWaitingTimePerRetryInMs = 32000
+) {
+  let counter = 0
+  while (true) {
+    const shouldContinue = await waitCondition()
+    if (shouldContinue || counter >= maxRetry) break
+    else {
+      await sleep(Math.min(2 * counter * 1000, maxWaitingTimePerRetryInMs))
+      counter++
+    }
+  }
+}
+
+async function sleep(ms) {
+  await new Promise((resolve) => {
+    setTimeout(() => resolve(), ms)
+  })
+}
+
 export {
   startIT,
   stopIT,
   updatePaymentWithRetry,
   overrideGenerateIdempotencyKeyConfig,
+  waitUntil,
 }

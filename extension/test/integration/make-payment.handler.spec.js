@@ -3,6 +3,7 @@ import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.js'
 import constants from '../../src/config/constants.js'
 import { initPaymentWithCart } from './integration-test-set-up.js'
+import { waitUntil } from '../test-utils.js'
 
 describe('::make-payment with multiple adyen accounts use case::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
@@ -43,7 +44,8 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
   it(
     'given a payment with cart ' +
       'when makePayment custom field and the addCommercetoolsLineItems set to true ' +
-      'then should calculate and lineItems to the makePaymentRequest',
+      'then should calculate and lineItems to the makePaymentRequest' +
+      'and receive correct notifications',
     async () => {
       const payment = await initPaymentWithCart({
         ctpClient,
@@ -100,6 +102,13 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
       const makePaymentRequest = JSON.parse(interfaceInteraction.fields.request)
       const makePaymentRequestBody = JSON.parse(makePaymentRequest.body)
       expect(makePaymentRequestBody.lineItems).to.have.lengthOf(3)
+
+      await waitUntil(
+        async () => await fetchNotificationInterfaceInteraction(payment.id)
+      )
+      const notificationInteraction =
+        await fetchNotificationInterfaceInteraction(payment.id)
+      expect(notificationInteraction.fields.status).to.equal('authorisation')
     }
   )
 
@@ -189,5 +198,15 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
       paymentDraft.amountPlanned.centAmount
     )
     expect(transaction.interactionId).to.be.a('string')
+  }
+
+  async function fetchNotificationInterfaceInteraction(paymentId) {
+    const { body } = await ctpClient.fetchById(
+      ctpClient.builder.payments,
+      paymentId
+    )
+    return body.interfaceInteractions.find(
+      (interaction) => interaction.fields.type === 'notification'
+    )
   }
 })
