@@ -99,7 +99,8 @@ function getAdyenConfig(adyenMerchantAccount) {
     apiBaseUrl: adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v68',
     legacyApiBaseUrl:
       adyenConfig.legacyApiBaseUrl || 'https://pal-test.adyen.com/pal/servlet',
-    clientKey: adyenConfig.clientKey || '', // used only for development purpose
+    clientKey: adyenConfig.clientKey || '', // used only for development purpose,
+    paypalMerchantId: adyenConfig.paypalMerchantId || '', // used only for development purpose
   }
 }
 

@@ -6,6 +6,11 @@ export default class PaypalMakePaymentFormPage extends MakePaymentFormPage {
     await executeInAdyenIframe(this.page, '.paypal-button', (el) => el.click())
   }
 
+  async generateAdyenMakePaymentForm(clientKey, paypalMerchantId) {
+    await this.page.type('#paypal-merchant-id', paypalMerchantId)
+    await super.generateAdyenMakePaymentForm(clientKey)
+  }
+
   async getAdditionalPaymentDetails() {
     await this.page.waitForSelector('#adyen-additional-payment-details')
     const additionalPaymenDetailsTextArea = await this.page.$(
