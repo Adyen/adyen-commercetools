@@ -22,12 +22,14 @@ let tunnel
 let server
 let notificationTunnel
 let notificationServer
+const merchantIdToWebhookIdMap = new Map()
 
 async function startIT() {
   await setupLocalServer()
   if (process.env.CI) {
     // this part used only on github actions (CI)
     await setupExtensionResources(process.env.CI_EXTENSION_BASE_URL)
+    await ensureAdyenWebhookForAllAdyenAccounts(process.env.CI_NOTIFICATION_BASE_URL)
     // e2e requires this for static forms
     overrideApiExtensionBaseUrlConfig(`http://localhost:${extensionPort}`)
   } else {
@@ -46,7 +48,9 @@ async function stopIT() {
     await notificationTunnel.close()
   }
 
-  // todo: disable webhook in adyen
+  // If you don't deactivate the webhooks, other tests will pollute this webhook with many notifications
+  // and your test might not get the right notification next time.
+  await deactivateWebhooks()
 }
 
 function setupLocalServer() {
@@ -131,6 +135,19 @@ async function updatePaymentWithRetry(ctpClient, actions, payment) {
   return { statusCode, updatedPayment }
 }
 
+async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
+  const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
+  for (const adyenMerchantId of adyenMerchantAccounts) {
+    const adyenConfig = config.getAdyenConfig(adyenMerchantId)
+    const webhookId = await ensureAdyenWebhook(
+      adyenConfig.apiKey,
+      webhookUrl,
+      adyenMerchantId
+    )
+    merchantIdToWebhookIdMap.set(adyenMerchantId, webhookId)
+  }
+}
+
 async function setUpWebhooksAndNotificationModule() {
   const notificationPort = 3001
   const notificationTunnelDomain = 'ctp-adyen-integration-tests-notifications'
@@ -141,16 +158,27 @@ async function setUpWebhooksAndNotificationModule() {
     })
   })
 
+  const webhookUrl = `https://${notificationTunnelDomain}.loca.lt`
+  await ensureAdyenWebhookForAllAdyenAccounts(webhookUrl)
+  notificationTunnel = await initTunnel(notificationTunnelDomain, 3001)
+}
+
+async function deactivateWebhooks() {
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
   for (const adyenMerchantId of adyenMerchantAccounts) {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
-    await ensureAdyenWebhook(
-      adyenConfig.apiKey,
-      'https://ctp-adyen-integration-tests-notifications.loca.lt',
-      adyenMerchantId
-    )
+    const webhookId = merchantIdToWebhookIdMap.get(adyenMerchantId)
+    await fetch(`https://management-test.adyen.com/v1/merchants/${adyenMerchantId}/webhooks/${webhookId}`, {
+      body: JSON.stringify({
+        'active': false
+      }),
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': adyenConfig.apiKey,
+      },
+    })
   }
-  notificationTunnel = await initTunnel(notificationTunnelDomain, 3001)
 }
 
 async function waitUntil(
