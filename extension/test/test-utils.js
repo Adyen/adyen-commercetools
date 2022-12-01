@@ -168,16 +168,19 @@ async function deactivateWebhooks() {
   for (const adyenMerchantId of adyenMerchantAccounts) {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
     const webhookId = merchantIdToWebhookIdMap.get(adyenMerchantId)
-    await fetch(`https://management-test.adyen.com/v1/merchants/${adyenMerchantId}/webhooks/${webhookId}`, {
-      body: JSON.stringify({
-        'active': false
-      }),
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Api-Key': adyenConfig.apiKey,
-      },
-    })
+    await fetch(
+      `https://management-test.adyen.com/v1/merchants/${adyenMerchantId}/webhooks/${webhookId}`,
+      {
+        body: JSON.stringify({
+          active: false,
+        }),
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Api-Key': adyenConfig.apiKey,
+        },
+      }
+    )
   }
 }
 
