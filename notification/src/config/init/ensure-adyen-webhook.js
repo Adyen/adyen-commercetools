@@ -128,4 +128,4 @@ async function ensureAdyenWebhooksForAllProjects() {
   console.log(`ADYEN_INTEGRATION_CONFIG='${JSON.stringify(jsonConfig)}'`)
 }
 
-export { ensureAdyenWebhooksForAllProjects, ensureAdyenWebhook }
+export { ensureAdyenWebhooksForAllProjects }
