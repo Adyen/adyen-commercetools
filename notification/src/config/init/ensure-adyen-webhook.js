@@ -1,4 +1,3 @@
-import fetch from 'node-fetch'
 import { serializeError } from 'serialize-error'
 import { getLogger } from '../../utils/logger.js'
 import config from '../config.js'
