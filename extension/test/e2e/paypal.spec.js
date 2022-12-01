@@ -57,13 +57,14 @@ describe('::paypalPayment::', () => {
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
       const browserTab = await browser.newPage()
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
-      const paypalMerchantId = config.getAdyenConfig(adyenMerchantAccount).paypalMerchantId
+      const paypalMerchantId =
+        config.getAdyenConfig(adyenMerchantAccount).paypalMerchantId
 
       await makePayment({
         browserTab,
         baseUrl,
         clientKey,
-        paypalMerchantId
+        paypalMerchantId,
       })
 
       const pages = await browser.pages()
@@ -77,10 +78,18 @@ describe('::paypalPayment::', () => {
     }
   )
 
-  async function makePayment({ browserTab, baseUrl, clientKey, paypalMerchantId }) {
+  async function makePayment({
+    browserTab,
+    baseUrl,
+    clientKey,
+    paypalMerchantId,
+  }) {
     paypalMakePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
     await paypalMakePaymentFormPage.goToThisPage()
-    await paypalMakePaymentFormPage.generateAdyenMakePaymentForm(clientKey, paypalMerchantId)
+    await paypalMakePaymentFormPage.generateAdyenMakePaymentForm(
+      clientKey,
+      paypalMerchantId
+    )
     await browserTab.waitForTimeout(2_000)
     await paypalMakePaymentFormPage.clickOnPaypalButton()
   }

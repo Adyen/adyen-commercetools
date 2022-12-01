@@ -13,8 +13,12 @@
   <body>
     <div>
       <input type="text" id="adyen-client-key" placeholder="Adyen client key" />
-      <br/>
-      <input type="text" id="paypal-merchant-id" placeholder="Paypal merchant ID" />
+      <br />
+      <input
+        type="text"
+        id="paypal-merchant-id"
+        placeholder="Paypal merchant ID"
+      />
     </div>
     <div id="paypal-container"></div>
 
@@ -83,11 +87,13 @@
         const paypalConfiguration = {
           configuration: {
             merchantId: merchantIdElement.value,
-            intent: "authorize"
-          }
-        };
+            intent: 'authorize',
+          },
+        }
         const checkout = new AdyenCheckout(configuration)
-        checkout.create('paypal', paypalConfiguration).mount('#paypal-container')
+        checkout
+          .create('paypal', paypalConfiguration)
+          .mount('#paypal-container')
       })
     </script>
   </body>
