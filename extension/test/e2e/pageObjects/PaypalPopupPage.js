@@ -5,13 +5,13 @@ export default class PaypalPopupPage {
 
   async handlePaypalPopUp() {
     await this.page.waitForSelector('#email')
-    await this.page.type('#email', 'sb-u4765x21503145@personal.example.com')
+    await this.page.type('#email', 'sb-urfdg23058190@personal.example.com')
     await this.page.click('#btnNext')
 
     await this.page.waitForTimeout(1000)
 
     await this.page.click('#acceptAllButton')
-    await this.page.type('#password', '3xG5+#+T')
+    await this.page.type('#password', '!nh-NNS1')
     await this.page.click('#btnLogin')
 
     await this.page.waitForSelector('#payment-submit-btn')
