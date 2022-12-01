@@ -168,7 +168,8 @@ async function deleteWebhooks() {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
     const webhookId = merchantIdToWebhookIdMap.get(adyenMerchantId)
     await fetch(
-      `https://management-test.adyen.com/v1/merchants/${adyenMerchantId}/webhooks/${webhookId}`,{
+      `https://management-test.adyen.com/v1/merchants/${adyenMerchantId}/webhooks/${webhookId}`,
+      {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
