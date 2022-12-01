@@ -1,3 +1,5 @@
+import fetch from 'node-fetch'
+import { serializeError } from 'serialize-error'
 import { getLogger } from '../../utils/logger.js'
 import config from '../config.js'
 import { loadConfig } from '../config-loader.js'
@@ -37,20 +39,23 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
 
     if (existingWebhook) {
       logger.info(
-        `Webhook already existed with ID ${existingWebhook.id}. `
-        + 'Skipping webhook creation and ensuring the webhook is active'
+        `Webhook already existed with ID ${existingWebhook.id}. ` +
+          'Skipping webhook creation and ensuring the webhook is active'
       )
       if (!existingWebhook.active)
-        await fetch(`https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${existingWebhook.id}`, {
-          body: JSON.stringify({
-            'active': true
-          }),
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Api-Key': adyenApiKey,
-          },
-        })
+        await fetch(
+          `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${existingWebhook.id}`,
+          {
+            body: JSON.stringify({
+              active: true,
+            }),
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Api-Key': adyenApiKey,
+            },
+          }
+        )
       return existingWebhook.id
     }
 
@@ -72,9 +77,10 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
     logger.info(`New webhook was created with ID ${webhookId}`)
     return webhookId
   } catch (err) {
-    throw Error(`Failed to ensure adyen webhook for project ${merchantId}.`, {
-      cause: err,
-    })
+    throw Error(
+      `Failed to ensure adyen webhook for project ${merchantId}.` +
+        `Error: ${JSON.stringify(serializeError(err))}`
+    )
   }
 }
 

@@ -3,7 +3,6 @@ import { setupServer } from '../src/server.js'
 // eslint-disable-next-line import/no-relative-packages
 import { setupServer as setupNotificationModuleServer } from '../../notification/src/server.js'
 // eslint-disable-next-line import/no-relative-packages
-import { ensureAdyenWebhook } from '../../notification/src/config/init/ensure-adyen-webhook.js'
 import { routes } from '../src/routes.js'
 import { setupExtensionResources } from '../src/setup.js'
 import config from '../src/config/config.js'
@@ -48,9 +47,9 @@ async function stopIT() {
     await notificationTunnel.close()
   }
 
-  // If you don't deactivate the webhooks, other tests will pollute this webhook with many notifications
-  // and your test might not get the right notification next time.
-  await deactivateWebhooks()
+  // If you don't delete the webhooks, other tests will pollute this webhook with many notifications
+  // the webhook will get stuck and your test might not get the notifications next time.
+  await deleteWebhooks()
 }
 
 function setupLocalServer() {
@@ -163,18 +162,14 @@ async function setUpWebhooksAndNotificationModule() {
   notificationTunnel = await initTunnel(notificationTunnelDomain, 3001)
 }
 
-async function deactivateWebhooks() {
+async function deleteWebhooks() {
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
   for (const adyenMerchantId of adyenMerchantAccounts) {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
     const webhookId = merchantIdToWebhookIdMap.get(adyenMerchantId)
     await fetch(
-      `https://management-test.adyen.com/v1/merchants/${adyenMerchantId}/webhooks/${webhookId}`,
-      {
-        body: JSON.stringify({
-          active: false,
-        }),
-        method: 'PATCH',
+      `https://management-test.adyen.com/v1/merchants/${adyenMerchantId}/webhooks/${webhookId}`,{
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           'X-Api-Key': adyenConfig.apiKey,
@@ -204,6 +199,77 @@ async function sleep(ms) {
   await new Promise((resolve) => {
     setTimeout(() => resolve(), ms)
   })
+}
+
+/**
+ * This method is copied from notification module. The reason is we cannot import
+ * JS files from another modules.
+ */
+async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
+  try {
+    const webhookConfig = {
+      type: 'standard',
+      url: webhookUrl,
+      active: 'true',
+      communicationFormat: 'json',
+      description: 'commercetools-adyen-integration notification webhook',
+    }
+
+    const getWebhookResponse = await fetch(
+      `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Api-Key': adyenApiKey,
+        },
+      }
+    )
+    const getWebhookResponseJson = await getWebhookResponse.json()
+
+    const existingWebhook = getWebhookResponseJson.data?.find(
+      (webhook) =>
+        webhook.url === webhookConfig.url && webhook.type === webhookConfig.type
+    )
+
+    if (existingWebhook) {
+      if (!existingWebhook.active)
+        await fetch(
+          `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${existingWebhook.id}`,
+          {
+            body: JSON.stringify({
+              active: true,
+            }),
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Api-Key': adyenApiKey,
+            },
+          }
+        )
+      return existingWebhook.id
+    }
+
+    const createWebhookResponse = await fetch(
+      `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks`,
+      {
+        body: JSON.stringify(webhookConfig),
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Api-Key': adyenApiKey,
+        },
+      }
+    )
+
+    const createWebhookResponseJson = await createWebhookResponse.json()
+    const webhookId = createWebhookResponseJson.id
+    return webhookId
+  } catch (err) {
+    throw Error(`Failed to ensure adyen webhook for project ${merchantId}.`, {
+      cause: err,
+    })
+  }
 }
 
 export {
