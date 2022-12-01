@@ -16,8 +16,8 @@ process.on('unhandledRejection', (reason) => {
 })
 
 const extensionPort = 3000
-let tunnel
-let server
+let extensionTunnel
+let extensionServer
 let notificationTunnel
 let notificationServer
 const merchantIdToWebhookIdMap = new Map()
@@ -38,11 +38,11 @@ async function startIT() {
 }
 
 async function stopIT() {
-  server.close()
-  notificationServer.close()
+  extensionServer.close()
   if (!process.env.CI) {
     // this part is not used on github actions (CI)
-    await tunnel.close()
+    notificationServer.close()
+    await extensionTunnel.close()
     await notificationTunnel.close()
   }
 
@@ -52,9 +52,9 @@ async function stopIT() {
 }
 
 function setupLocalServer() {
-  server = setupServer(routes)
+  extensionServer = setupServer(routes)
   return new Promise((resolve) => {
-    server.listen(extensionPort, async () => {
+    extensionServer.listen(extensionPort, async () => {
       resolve()
     })
   })
@@ -78,8 +78,8 @@ function overrideGenerateIdempotencyKeyConfig(generateIdempotencyKey) {
 
 async function setupLocalTunnel() {
   const extensionTunnelDomain = 'ctp-adyen-integration-tests'
-  tunnel = await initTunnel(extensionTunnelDomain, extensionPort)
-  const apiExtensionBaseUrl = tunnel.url
+  extensionTunnel = await initTunnel(extensionTunnelDomain, extensionPort)
+  const apiExtensionBaseUrl = extensionTunnel.url
   overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
 }
 
