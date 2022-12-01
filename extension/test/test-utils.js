@@ -178,7 +178,10 @@ async function setUpWebhooksAndNotificationModule() {
 
   const webhookUrl = `https://${notificationTunnelDomain}.loca.lt`
   await ensureAdyenWebhookForAllAdyenAccounts(webhookUrl)
-  notificationTunnel = await initTunnel(notificationTunnelDomain, notificationPort)
+  notificationTunnel = await initTunnel(
+    notificationTunnelDomain,
+    notificationPort
+  )
 }
 
 async function deleteWebhooks() {
