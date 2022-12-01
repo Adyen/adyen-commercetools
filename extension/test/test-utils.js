@@ -1,5 +1,6 @@
 import localtunnel from 'localtunnel'
 import { serializeError } from 'serialize-error'
+import fetch from 'node-fetch'
 import { setupServer } from '../src/server.js'
 import { routes } from '../src/routes.js'
 import { setupExtensionResources } from '../src/setup.js'
