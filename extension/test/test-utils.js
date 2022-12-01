@@ -1,8 +1,5 @@
 import localtunnel from 'localtunnel'
 import { setupServer } from '../src/server.js'
-// eslint-disable-next-line import/no-relative-packages
-import { setupServer as setupNotificationModuleServer } from '../../notification/src/server.js'
-// eslint-disable-next-line import/no-relative-packages
 import { routes } from '../src/routes.js'
 import { setupExtensionResources } from '../src/setup.js'
 import config from '../src/config/config.js'
@@ -150,6 +147,11 @@ async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
 async function setUpWebhooksAndNotificationModule() {
   const notificationPort = 3001
   const notificationTunnelDomain = 'ctp-adyen-integration-tests-notifications'
+  // Starting up server is needed only locally, on CI we deploy to GCP
+  const { setupServer: setupNotificationModuleServer } = await import(
+    // eslint-disable-next-line import/no-relative-packages
+    '../../notification/src/server.js'
+  )
   notificationServer = await setupNotificationModuleServer()
   await new Promise((resolve) => {
     notificationServer.listen(notificationPort, async () => {
