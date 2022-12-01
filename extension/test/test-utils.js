@@ -1,4 +1,5 @@
 import localtunnel from 'localtunnel'
+import { serializeError } from 'serialize-error'
 import { setupServer } from '../src/server.js'
 import { routes } from '../src/routes.js'
 import { setupExtensionResources } from '../src/setup.js'
@@ -269,9 +270,10 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
     const webhookId = createWebhookResponseJson.id
     return webhookId
   } catch (err) {
-    throw Error(`Failed to ensure adyen webhook for project ${merchantId}.`, {
-      cause: err,
-    })
+    throw Error(
+      `Failed to ensure adyen webhook for project ${merchantId}.` +
+      `Error: ${JSON.stringify(serializeError(err))}`
+    )
   }
 }
 
