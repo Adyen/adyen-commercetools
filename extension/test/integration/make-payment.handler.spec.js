@@ -87,8 +87,6 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
         ]
       )
 
-      console.log(`testxxxx ${payment.id}`)
-
       expect(statusCode).to.equal(200)
       expect(updatedPayment.key).to.equal(makePaymentRequestDraft.reference)
       expect(updatedPayment.paymentMethodInfo.method).to.equal('scheme')

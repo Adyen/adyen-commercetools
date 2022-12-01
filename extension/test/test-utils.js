@@ -18,6 +18,8 @@ process.on('unhandledRejection', (reason) => {
 const extensionPort = 3000
 let extensionTunnel
 let extensionServer
+
+const notificationPort = 3001
 let notificationTunnel
 let notificationServer
 const merchantIdToWebhookIdMap = new Map()
@@ -161,7 +163,6 @@ async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
 }
 
 async function setUpWebhooksAndNotificationModule() {
-  const notificationPort = 3001
   const notificationTunnelDomain = 'ctp-adyen-integration-tests-notifications'
   // Starting up server is needed only locally, on CI we deploy to GCP
   const { setupServer: setupNotificationModuleServer } = await import(
@@ -177,7 +178,7 @@ async function setUpWebhooksAndNotificationModule() {
 
   const webhookUrl = `https://${notificationTunnelDomain}.loca.lt`
   await ensureAdyenWebhookForAllAdyenAccounts(webhookUrl)
-  notificationTunnel = await initTunnel(notificationTunnelDomain, 3001)
+  notificationTunnel = await initTunnel(notificationTunnelDomain, notificationPort)
 }
 
 async function deleteWebhooks() {
