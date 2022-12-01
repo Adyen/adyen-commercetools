@@ -32,7 +32,7 @@ npm run setup-resources
 
 If you want to do the setup manually, please follow the [instructions](https://docs.adyen.com/development-resources/webhooks#set-up-notifications-in-your-customer-area) described by Adyen to set up notifications in your live Customer Area.
 
-> Note: HMAC verification is enabled by default. You could use "ADYEN_ENABLE_HMAC_SIGNATURE=false" environment variable to disable the verification feature.
+> Note: HMAC verification is enabled by default. You could use "enableHmacSignature=false" environment variable to disable the verification feature.
 
 ### Fallback in case `metadata` is not available
 

@@ -44,9 +44,12 @@ function getAdyenConfig(adyenMerchantAccount) {
         adyenMerchantAccount
       )}`
     )
-
-  let enableHmacSignature = adyenConfig.enableHmacSignature !== 'false'
-  if (adyenConfig.enableHmacSignature === false) enableHmacSignature = false
+  let enableHmacSignature
+  if (process.env.DISABLE_HMAC_SIGNATURE === 'true') enableHmacSignature = false
+  else {
+    enableHmacSignature = adyenConfig.enableHmacSignature !== 'false'
+    if (adyenConfig.enableHmacSignature === false) enableHmacSignature = false
+  }
   return {
     secretHmacKey: adyenConfig.secretHmacKey,
     notificationBaseUrl: adyenConfig.notificationBaseUrl,
@@ -107,8 +110,6 @@ function loadAndValidateConfig() {
   for (const [adyenMerchantAccount, adyenConfig] of Object.entries(
     config.adyen
   )) {
-    adyenConfig.enableHmacSignature =
-      process.env.ENABLE_HMAC_SIGNATURE || adyenConfig.enableHmacSignature
     if (
       adyenConfig.enableHmacSignature !== 'false' &&
       isEmpty(adyenConfig.secretHmacKey)
