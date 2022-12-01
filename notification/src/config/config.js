@@ -107,6 +107,8 @@ function loadAndValidateConfig() {
   for (const [adyenMerchantAccount, adyenConfig] of Object.entries(
     config.adyen
   )) {
+    adyenConfig.enableHmacSignature =
+      process.env.ENABLE_HMAC_SIGNATURE || adyenConfig.enableHmacSignature
     if (
       adyenConfig.enableHmacSignature !== 'false' &&
       isEmpty(adyenConfig.secretHmacKey)
