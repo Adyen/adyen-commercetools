@@ -1,4 +1,3 @@
-import { serializeError } from 'serialize-error'
 import { getLogger } from '../../utils/logger.js'
 import config from '../config.js'
 import { loadConfig } from '../config-loader.js'
@@ -73,10 +72,9 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
     logger.info(`New webhook was created with ID ${webhookId}`)
     return webhookId
   } catch (err) {
-    throw Error(
-      `Failed to ensure adyen webhook for project ${merchantId}.` +
-        `Error: ${JSON.stringify(serializeError(err))}`
-    )
+    throw Error(`Failed to ensure adyen webhook for project ${merchantId}.`, {
+      cause: err,
+    })
   }
 }
 
