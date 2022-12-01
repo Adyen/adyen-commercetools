@@ -76,6 +76,19 @@ function overrideGenerateIdempotencyKeyConfig(generateIdempotencyKey) {
   }
 }
 
+function overrideEnableHmacSignatureConfig(enableHmacSignature) {
+  const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
+  const updatedAdyenMerchantAccounts = new Map()
+  for (const adyenMerchantId of adyenMerchantAccounts) {
+    const adyenConfig = config.getAdyenConfig(adyenMerchantId)
+    adyenConfig.enableHmacSignature = enableHmacSignature
+    updatedAdyenMerchantAccounts.set(adyenMerchantId, adyenConfig)
+  }
+  config.getAdyenConfig = function getAdyenConfig(adyenMerchantId) {
+    return updatedAdyenMerchantAccounts.get(adyenMerchantId)
+  }
+}
+
 async function setupLocalTunnel() {
   const extensionTunnelDomain = 'ctp-adyen-integration-tests'
   extensionTunnel = await initTunnel(extensionTunnelDomain, extensionPort)
@@ -134,6 +147,7 @@ async function updatePaymentWithRetry(ctpClient, actions, payment) {
 }
 
 async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
+  overrideEnableHmacSignatureConfig(false)
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
   for (const adyenMerchantId of adyenMerchantAccounts) {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
