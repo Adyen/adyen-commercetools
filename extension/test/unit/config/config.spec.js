@@ -55,6 +55,7 @@ describe('::config::', () => {
       apiKey: 'apiKey',
       clientKey: 'clientKey',
       legacyApiBaseUrl: 'legacyApiBaseUrl',
+      paypalMerchantId: '',
     })
   })
 
@@ -92,6 +93,7 @@ describe('::config::', () => {
       apiKey: 'apiKey',
       clientKey: 'clientKey',
       legacyApiBaseUrl: 'https://pal-test.adyen.com/pal/servlet',
+      paypalMerchantId: '',
     })
   })
 
@@ -777,6 +779,7 @@ describe('::config::', () => {
           apiKey: 'apiKey',
           clientKey: 'clientKey',
           legacyApiBaseUrl: 'legacyApiBaseUrl',
+          paypalMerchantId: '',
         })
       } finally {
         fs.unlinkSync(filePath)
