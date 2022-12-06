@@ -4,7 +4,10 @@ import ctpClientBuilder from '../../src/ctp.js'
 import constants from '../../src/config/constants.js'
 import { createAddTransactionAction } from '../../src/paymentHandler/payment-utils.js'
 import config from '../../src/config/config.js'
-import { overrideGenerateIdempotencyKeyConfig } from '../test-utils.js'
+import {
+  overrideGenerateIdempotencyKeyConfig,
+  waitUntil,
+} from '../test-utils.js'
 
 const {
   CTP_ADYEN_INTEGRATION,
@@ -23,6 +26,7 @@ describe('::manualCapture::', () => {
     const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
     ctpClient = await ctpClientBuilder.get(ctpConfig)
     const paymentDraft = {
+      key: new Date().getTime().toString(),
       amountPlanned: {
         currencyCode: 'EUR',
         centAmount: 1000,
@@ -76,6 +80,9 @@ describe('::manualCapture::', () => {
               typeId: 'type',
               key: 'ctp-adyen-integration-transaction-payment-type',
             },
+            fields: {
+              reference: payment.key,
+            },
           },
         }),
       ]
@@ -118,6 +125,7 @@ describe('::manualCapture::', () => {
               },
               fields: {
                 idempotencyKey,
+                reference: payment.key,
               },
             },
           }),
@@ -143,6 +151,24 @@ describe('::manualCapture::', () => {
       expect(transaction.interactionId).to.equal(adyenResponse.pspReference)
 
       await testGenerateIdempotencyKey(chargedPayment)
+
+      await waitUntil(
+        async () =>
+          await fetchNotificationInterfaceInteraction(chargedPayment.id)
+      )
+      const notificationInteraction =
+        await fetchNotificationInterfaceInteraction(chargedPayment.id)
+      expect(notificationInteraction.fields.status).to.equal('capture')
     }
   )
+
+  async function fetchNotificationInterfaceInteraction(paymentId) {
+    const { body } = await ctpClient.fetchById(
+      ctpClient.builder.payments,
+      paymentId
+    )
+    return body.interfaceInteractions.find(
+      (interaction) => interaction.fields.type === 'notification'
+    )
+  }
 })

@@ -151,11 +151,12 @@ async function updatePaymentWithRetry(ctpClient, actions, payment) {
 async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
   overrideEnableHmacSignatureConfig(false)
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
+  const ctpProjectKey = config.getAllCtpProjectKeys()[0]
   for (const adyenMerchantId of adyenMerchantAccounts) {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
     const webhookId = await ensureAdyenWebhook(
       adyenConfig.apiKey,
-      webhookUrl,
+      `${webhookUrl}/notifications/${ctpProjectKey}`,
       adyenMerchantId
     )
     merchantIdToWebhookIdMap.set(adyenMerchantId, webhookId)
