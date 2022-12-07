@@ -3,6 +3,7 @@ import ctpClientBuilder from '../../src/ctp.js'
 import constants from '../../src/config/constants.js'
 import { createAddTransactionAction } from '../../src/paymentHandler/payment-utils.js'
 import config from '../../src/config/config.js'
+import { waitUntil } from '../test-utils.js'
 
 const {
   CTP_ADYEN_INTEGRATION,
@@ -21,6 +22,7 @@ describe('::cancel::', () => {
     ctpClient = await ctpClientBuilder.get(ctpConfig)
 
     const paymentDraft = {
+      key: new Date().getTime().toString(),
       amountPlanned: {
         currencyCode: 'EUR',
         centAmount: 1000,
@@ -93,6 +95,24 @@ describe('::cancel::', () => {
       const adyenResponse = JSON.parse(interfaceInteraction.fields.response)
       expect(adyenResponse.response).to.equal('[cancel-received]')
       expect(transaction.interactionId).to.equal(adyenResponse.pspReference)
+
+      await waitUntil(
+        async () =>
+          await fetchNotificationInterfaceInteraction(cancelledPayment.id)
+      )
+      const notificationInteraction =
+        await fetchNotificationInterfaceInteraction(cancelledPayment.id)
+      expect(notificationInteraction.fields.status).to.equal('cancellation')
     }
   )
+
+  async function fetchNotificationInterfaceInteraction(paymentId) {
+    const { body } = await ctpClient.fetchById(
+      ctpClient.builder.payments,
+      paymentId
+    )
+    return body.interfaceInteractions.find(
+      (interaction) => interaction.fields.type === 'notification'
+    )
+  }
 })
