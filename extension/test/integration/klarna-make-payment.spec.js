@@ -52,7 +52,9 @@ describe('::klarnaMakePayment with multiple projects use case::', () => {
     commercetoolsProjectKey,
     reference,
   }) {
-    console.log(`makePayment: commercetoolsProjectKey: ${commercetoolsProjectKey}`)
+    console.log(
+      `makePayment: commercetoolsProjectKey: ${commercetoolsProjectKey}`
+    )
     const payment = await initPaymentWithCart({
       ctpClient,
       adyenMerchantAccount,

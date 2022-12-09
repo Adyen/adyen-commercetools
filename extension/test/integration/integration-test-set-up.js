@@ -12,7 +12,9 @@ async function _ensureCtpResources({
   adyenMerchantAccount,
   commercetoolsProjectKey,
 }) {
-  console.log(`_ensureCtpResources: commercetoolsProjectKey: ${commercetoolsProjectKey}`)
+  console.log(
+    `_ensureCtpResources: commercetoolsProjectKey: ${commercetoolsProjectKey}`
+  )
   const {
     body: { id: zoneId },
   } = await _ensureZones(ctpClient)
