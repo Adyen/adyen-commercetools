@@ -12,6 +12,7 @@ async function _ensureCtpResources({
   adyenMerchantAccount,
   commercetoolsProjectKey,
 }) {
+  console.log(`_ensureCtpResources: commercetoolsProjectKey: ${commercetoolsProjectKey}`)
   const {
     body: { id: zoneId },
   } = await _ensureZones(ctpClient)
@@ -274,6 +275,7 @@ async function _ensurePayment({
   }
   ctpPayment.custom.fields.adyenMerchantAccount = adyenMerchantAccount
   ctpPayment.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
+  console.log(`_ensurePayment: ctpPayment: ${ctpPayment}`)
   return ctpClient.create(ctpClient.builder.payments, ctpPayment)
 }
 
