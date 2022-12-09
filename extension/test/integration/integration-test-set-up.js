@@ -277,7 +277,7 @@ async function _ensurePayment({
   }
   ctpPayment.custom.fields.adyenMerchantAccount = adyenMerchantAccount
   ctpPayment.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
-  console.log(`_ensurePayment: ctpPayment: ${ctpPayment}`)
+  console.log(`_ensurePayment: ctpPayment: ${JSON.stringify(ctpPayment)}`)
   return ctpClient.create(ctpClient.builder.payments, ctpPayment)
 }
 
