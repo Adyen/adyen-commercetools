@@ -42,10 +42,23 @@ async function processNotification(
     return
   }
 
+  const pspReference = _.get(
+    notification,
+    'NotificationRequestItem.pspReference',
+    null
+  )
+
+  const originalReference = _.get(
+    notification,
+    'NotificationRequestItem.originalReference',
+    null
+  )
+
   const ctpClient = await ctp.get(ctpProjectConfig)
 
   const payment = await getPaymentByMerchantReference(
     merchantReference,
+    originalReference || pspReference,
     ctpClient
   )
   if (payment !== null)
@@ -160,13 +173,13 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
     )
   if (isNotificationInInterfaceInteraction === false)
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
-
+  const { pspReference } = notificationRequestItem
   const { transactionType, transactionState } =
     await getTransactionTypeAndStateOrNull(notificationRequestItem)
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
-    const { pspReference } = notificationRequestItem
+
     const { eventDate } = notificationRequestItem
     const oldTransaction = _.find(
       payment.transactions,
@@ -212,6 +225,17 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
     )
     const action = getSetMethodInfoNameAction(paymentMethodFromNotification)
     if (action) updateActions.push(action)
+  }
+  const paymentKey = payment.key
+  if (
+    notificationRequestItem.eventCode === 'AUTHORISATION' &&
+    notificationRequestItem.success === true &&
+    pspReference !== paymentKey
+  ) {
+    updateActions.push({
+      action: 'setKey',
+      key: pspReference,
+    })
   }
 
   return updateActions
@@ -390,13 +414,15 @@ function getSetMethodInfoNameAction(paymentMethod) {
   return null
 }
 
-async function getPaymentByMerchantReference(merchantReference, ctpClient) {
+async function getPaymentByMerchantReference(
+  merchantReference,
+  pspReference,
+  ctpClient
+) {
   try {
-    const result = await ctpClient.fetchByKey(
-      ctpClient.builder.payments,
-      merchantReference
-    )
-    return result.body
+    const keys = [merchantReference, pspReference, '1670715051384']
+    const result = await ctpClient.fetchByKeys(ctpClient.builder.payments, keys)
+    return result.body[0]
   } catch (err) {
     if (err.statusCode === 404) return null
     const errMsg =
