@@ -4,9 +4,9 @@ import {
   createAddInterfaceInteractionAction,
   createSetCustomFieldAction,
   createAddTransactionActionByResponse,
+  getPaymentKeyUpdateAction
 } from './payment-utils.js'
 import c from '../config/constants.js'
-import {getPaymentKeyUpdateAction} from "./payment-utils";
 
 const { CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = c
 
