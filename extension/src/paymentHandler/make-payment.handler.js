@@ -43,12 +43,14 @@ async function execute(paymentObject) {
   const paymentKey = paymentObject.key
   // ensure the key is a string, otherwise the error with "code": "InvalidJsonInput" will return by commercetools API.
   const reference = requestBodyJson.reference?.toString()
+  const pspReference = response.pspReference?.toString()
+  const newReference = pspReference || reference
   // ensure the key and new reference is different, otherwise the error with
   // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
-  if (reference !== paymentKey)
+  if (newReference !== paymentKey)
     actions.push({
       action: 'setKey',
-      key: reference,
+      key: newReference,
     })
 
   const addTransactionAction = createAddTransactionActionByResponse(
