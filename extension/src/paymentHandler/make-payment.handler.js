@@ -4,7 +4,7 @@ import {
   createSetMethodInfoMethodAction,
   createSetMethodInfoNameAction,
   createAddTransactionActionByResponse,
-  getPaymentKeyUpdateAction
+  getPaymentKeyUpdateAction,
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import { makePayment } from '../service/web-component-service.js'
@@ -41,7 +41,11 @@ async function execute(paymentObject) {
     if (action) actions.push(action)
   }
 
-  const updatePaymentAction = getPaymentKeyUpdateAction(paymentObject.key, request, response)
+  const updatePaymentAction = getPaymentKeyUpdateAction(
+    paymentObject.key,
+    request,
+    response
+  )
   if (updatePaymentAction) actions.push(updatePaymentAction)
 
   const addTransactionAction = createAddTransactionActionByResponse(

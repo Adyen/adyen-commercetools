@@ -4,7 +4,7 @@ import {
   createAddInterfaceInteractionAction,
   createSetCustomFieldAction,
   createAddTransactionActionByResponse,
-  getPaymentKeyUpdateAction
+  getPaymentKeyUpdateAction,
 } from './payment-utils.js'
 import c from '../config/constants.js'
 
@@ -54,9 +54,12 @@ async function execute(paymentObject) {
 
       if (addTransactionAction) actions.push(addTransactionAction)
     }
-    const updatePaymentAction = getPaymentKeyUpdateAction(paymentObject.key, request, response)
+    const updatePaymentAction = getPaymentKeyUpdateAction(
+      paymentObject.key,
+      request,
+      response
+    )
     if (updatePaymentAction) actions.push(updatePaymentAction)
-
   }
   return {
     actions,

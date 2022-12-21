@@ -197,7 +197,7 @@ function getIdempotencyKey(transaction) {
   return idempotencyKey
 }
 
-function getPaymentKeyUpdateAction(paymentKey, request, response ) {
+function getPaymentKeyUpdateAction(paymentKey, request, response) {
   const requestBodyJson = JSON.parse(request.body)
   const reference = requestBodyJson.reference?.toString()
   const pspReference = response.pspReference?.toString()
@@ -233,5 +233,5 @@ export {
   isValidJSON,
   isValidMetadata,
   getIdempotencyKey,
-  getPaymentKeyUpdateAction
+  getPaymentKeyUpdateAction,
 }
