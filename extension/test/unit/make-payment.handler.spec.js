@@ -124,7 +124,9 @@ describe('make-payment::execute', () => {
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
+      expect(setKeyAction.key).to.equal(
+        JSON.parse(paymentSuccessResponse).pspReference
+      )
 
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction'
@@ -184,7 +186,7 @@ describe('make-payment::execute', () => {
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
+      expect(setKeyAction.key).to.equal(makePaymentRequest.reference) // no pspReference until submitting additional details in redirect flow
     }
   )
 
@@ -285,7 +287,9 @@ describe('make-payment::execute', () => {
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
+      expect(setKeyAction.key).to.equal(
+        JSON.parse(paymentRefusedResponse).pspReference
+      )
 
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction'
@@ -346,7 +350,9 @@ describe('make-payment::execute', () => {
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
+      expect(setKeyAction.key).to.equal(
+        JSON.parse(paymentErrorResponse).pspReference
+      )
 
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction'
