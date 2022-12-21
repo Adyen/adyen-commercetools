@@ -6,6 +6,7 @@ import {
   createAddTransactionActionByResponse,
 } from './payment-utils.js'
 import c from '../config/constants.js'
+import {getPaymentKeyUpdateAction} from "./payment-utils";
 
 const { CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = c
 
@@ -53,6 +54,9 @@ async function execute(paymentObject) {
 
       if (addTransactionAction) actions.push(addTransactionAction)
     }
+    const updatePaymentAction = getPaymentKeyUpdateAction(paymentObject.key, request, response)
+    if (updatePaymentAction) actions.push(updatePaymentAction)
+
   }
   return {
     actions,
