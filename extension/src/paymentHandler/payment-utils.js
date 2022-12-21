@@ -202,7 +202,7 @@ function getPaymentKeyUpdateAction(paymentKey, request, response) {
   const reference = requestBodyJson.reference?.toString()
   const pspReference = response.pspReference?.toString()
   const newReference = pspReference || reference
-  let paymentKeyUpdateAction = {}
+  let paymentKeyUpdateAction
   // ensure the key and new reference is different, otherwise the error with
   // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
   if (newReference !== paymentKey) {
