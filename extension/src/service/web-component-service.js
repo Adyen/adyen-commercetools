@@ -129,6 +129,20 @@ function updateAmount(
   )
 }
 
+function createSessionRequest(
+  merchantAccount,
+  commercetoolsProjectKey,
+  requestObject
+) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+  return callAdyen(
+    `${adyenCredentials.apiBaseUrl}/sessions`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    requestObject
+  )
+}
+
 function disableStoredPayment(merchantAccount, disableStoredPaymentRequestObj) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   return callAdyen(
@@ -249,4 +263,5 @@ export {
   getCarbonOffsetCosts,
   updateAmount,
   disableStoredPayment,
+  createSessionRequest,
 }

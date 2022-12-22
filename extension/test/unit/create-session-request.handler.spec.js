@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 import nock from 'nock'
 import c from '../../src/config/constants.js'
-import getPaymentMethodsHandler from '../../src/paymentHandler/get-payment-methods.handler.js'
 import config from '../../src/config/config.js'
+import sessionRequestHandler from '../../src/paymentHandler/sessions-request.handler.js'
 
-describe('get-payment-methods::execute::', () => {
+describe('create-session-request::execute::', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
-  const getPaymentMethodsRequest = {
+  const getSessionRequest = {
     countryCode: 'DE',
-    shopperLocale: 'de-DE',
+    reference: 'UNIQUE_PAYMENT_REFERENCE',
     amount: {
       currency: 'EUR',
       value: 1000,
@@ -30,7 +30,7 @@ describe('get-payment-methods::execute::', () => {
       },
       fields: {
         commercetoolsProjectKey: 'commercetoolsProjectKey',
-        getPaymentMethodsRequest: JSON.stringify(getPaymentMethodsRequest),
+        createSessionRequest: JSON.stringify(getSessionRequest),
         adyenMerchantAccount,
       },
     },
@@ -45,43 +45,45 @@ describe('get-payment-methods::execute::', () => {
   })
 
   it('handlePayment should return the right actions', async () => {
-    const adyenGetPaymentResponse = {
+    const adyenGetSessionResponse = {
       paymentMethods: [
         {
-          configuration: {
-            intent: 'capture',
+          amount: {
+            currency: 'EUR',
+            value: 1000,
           },
-          name: 'PayPal',
-          type: 'paypal',
+          countryCode: 'DE',
+          expiresAt: '2022-12-24T13:35:16+02:00',
+          id: 'CSD9CAC34EBAE225DD',
+          reference: 'UNIQUE_PAYMENT_REFERENCE',
+          sessionData: 'Ab02b4c...',
         },
       ],
     }
 
     nock(`${adyenCredentials.apiBaseUrl}`)
-      .post('/paymentMethods')
+      .post('/sessions')
       .query(true)
-      .reply(200, adyenGetPaymentResponse)
+      .reply(200, adyenGetSessionResponse)
 
-    const result = await getPaymentMethodsHandler.execute(paymentObject)
+    const result = await sessionRequestHandler.execute(paymentObject)
 
     expect(result.actions.length).to.equal(2)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
     expect(result.actions[1].action).to.equal('setCustomField')
     const request = JSON.parse(result.actions[0].fields.request)
-    expect(JSON.parse(request.body)).to.be.deep.includes(
-      getPaymentMethodsRequest
-    )
+    expect(JSON.parse(request.body)).to.be.deep.includes(getSessionRequest)
     expect(result.actions[0].fields.response).to.be.deep.equal(
-      JSON.stringify(adyenGetPaymentResponse)
+      JSON.stringify(adyenGetSessionResponse)
     )
     expect(result.actions[0].fields.response).to.be.deep.equal(
       result.actions[1].value
     )
     expect(result.actions[0].fields.type).to.equal(
-      c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS
+      c.CTP_INTERACTION_TYPE_CREATE_SESSION
     )
     expect(result.actions[1].name).to.equal(
-      c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE
+      c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE
     )
   })
 
@@ -92,25 +94,23 @@ describe('get-payment-methods::execute::', () => {
       const errorMsg = 'Unexpected exception'
 
       nock(`${adyenCredentials.apiBaseUrl}`)
-        .post('/paymentMethods')
+        .post('/sessions')
         .query(true)
         .replyWithError(errorMsg)
 
-      const result = await getPaymentMethodsHandler.execute(paymentObject)
+      const result = await sessionRequestHandler.execute(paymentObject)
 
       expect(result.actions.length).to.equal(2)
       expect(result.actions[0].action).to.equal('addInterfaceInteraction')
       expect(result.actions[1].action).to.equal('setCustomField')
       const request = JSON.parse(result.actions[0].fields.request)
-      expect(JSON.parse(request.body)).to.be.deep.includes(
-        getPaymentMethodsRequest
-      )
+      expect(JSON.parse(request.body)).to.be.deep.includes(getSessionRequest)
       expect(result.actions[0].fields.response).to.be.includes(errorMsg)
       expect(result.actions[0].fields.type).to.equal(
-        c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS
+        c.CTP_INTERACTION_TYPE_CREATE_SESSION
       )
       expect(result.actions[1].name).to.equal(
-        c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE
+        c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE
       )
     }
   )
