@@ -29,18 +29,22 @@ describe('::multitenancy::', () => {
   })
 
   it('should process payment correctly when notifications are from different projects', async () => {
-    const payment1Key = `notificationPayment1-${new Date().getTime()}`
-    const payment2Key = `notificationPayment2-${new Date().getTime()}`
+    const merchantReference1 = `notificationPayment1-${new Date().getTime()}`
+    const merchantReference2 = `notificationPayment2-${new Date().getTime()}`
+    const pspReference1 = `pspReference1-${new Date().getTime()}`
+    const pspReference2 = `pspReference2-${new Date().getTime()}`
     await Promise.all([
       ensurePayment(
         ctpClient1,
-        payment1Key,
+        merchantReference1,
+        pspReference1,
         commercetoolsProjectKey1,
         adyenMerchantAccount1
       ),
       ensurePayment(
         ctpClient2,
-        payment2Key,
+        merchantReference2,
+        pspReference2,
         commercetoolsProjectKey2,
         adyenMerchantAccount2
       ),
@@ -49,13 +53,15 @@ describe('::multitenancy::', () => {
     const notificationPayload1 = createNotificationPayload(
       commercetoolsProjectKey1,
       adyenMerchantAccount1,
-      payment1Key
+      merchantReference1,
+      pspReference1
     )
 
     const notificationPayload2 = createNotificationPayload(
       commercetoolsProjectKey2,
       adyenMerchantAccount2,
-      payment2Key
+      merchantReference2,
+      pspReference2
     )
 
     const [response1, response2] = await Promise.all([
@@ -78,12 +84,12 @@ describe('::multitenancy::', () => {
 
     const { body: paymentAfter1 } = await ctpClient1.fetchByKey(
       ctpClient1.builder.payments,
-      payment1Key
+      pspReference1 // pspReference is the key of authorized payment
     )
 
     const { body: paymentAfter2 } = await ctpClient2.fetchByKey(
       ctpClient2.builder.payments,
-      payment2Key
+      pspReference2 // pspReference is the key of authorized payment
     )
 
     expect(paymentAfter1.transactions).to.have.lengthOf(1)
