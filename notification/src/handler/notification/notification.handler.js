@@ -229,7 +229,7 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
   const paymentKey = payment.key
   if (
     notificationRequestItem.eventCode === 'AUTHORISATION' &&
-    notificationRequestItem.success === true &&
+    JSON.parse(notificationRequestItem.success) === true && // convert 'success' from string to boolean type
     pspReference !== paymentKey
   ) {
     updateActions.push({
@@ -420,9 +420,9 @@ async function getPaymentByMerchantReference(
   ctpClient
 ) {
   try {
-    const keys = [merchantReference, pspReference, '1670715051384']
+    const keys = [merchantReference, pspReference]
     const result = await ctpClient.fetchByKeys(ctpClient.builder.payments, keys)
-    return result.body[0]
+    return result.body.results[0]
   } catch (err) {
     if (err.statusCode === 404) return null
     const errMsg =
