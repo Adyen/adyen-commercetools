@@ -213,7 +213,21 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
         )
       )
     }
+    const paymentKey = payment.key
+
+    if (
+      notificationRequestItem.eventCode === 'AUTHORISATION' &&
+      JSON.parse(notificationRequestItem.success) === true && // convert 'success' from string to boolean type
+      pspReference !== paymentKey &&
+      oldTransaction?.state !== 'Success'
+    ) {
+      updateActions.push({
+        action: 'setKey',
+        key: pspReference,
+      })
+    }
   }
+
   const paymentMethodFromPayment = payment.paymentMethodInfo.method
   const paymentMethodFromNotification = notificationRequestItem.paymentMethod
   if (
@@ -225,17 +239,6 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
     )
     const action = getSetMethodInfoNameAction(paymentMethodFromNotification)
     if (action) updateActions.push(action)
-  }
-  const paymentKey = payment.key
-  if (
-    notificationRequestItem.eventCode === 'AUTHORISATION' &&
-    JSON.parse(notificationRequestItem.success) === true && // convert 'success' from string to boolean type
-    pspReference !== paymentKey
-  ) {
-    updateActions.push({
-      action: 'setKey',
-      key: pspReference,
-    })
   }
 
   return updateActions
