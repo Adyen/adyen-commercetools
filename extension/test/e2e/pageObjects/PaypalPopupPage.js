@@ -13,7 +13,7 @@ export default class PaypalPopupPage {
     await this.page.click('#acceptAllButton')
     await this.page.type('#password', '!nh-NNS1')
     await this.page.click('#btnLogin')
-    
+
     await this.page.waitForSelector('#payment-submit-btn')
     await this.page.click('#payment-submit-btn')
 
