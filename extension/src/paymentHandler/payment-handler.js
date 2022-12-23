@@ -5,6 +5,7 @@ import refundHandler from './refund-payment.handler.js'
 import getCarbonOffsetCostsHandler from './get-carbon-offset-costs.handler.js'
 import amountUpdatesHandler from './amount-updates.handler.js'
 import disableStoredPaymentHandler from './disable-stored-payment.handler.js'
+import sessionRequestHandler from './sessions-request.handler.js'
 import {
   getChargeTransactionInitial,
   getAuthorizationTransactionSuccess,
@@ -61,6 +62,13 @@ function _getPaymentHandlers(paymentObject) {
   if (!paymentObject.custom) return []
 
   const handlers = []
+
+  if (
+      paymentObject.custom.fields.createSessionRequest &&
+      !paymentObject.custom.fields.createSessionResponse
+  ) {
+    handlers.push(sessionRequestHandler)
+  }
   if (
     paymentObject.custom.fields.getCarbonOffsetCostsRequest &&
     !paymentObject.custom.fields.getCarbonOffsetCostsResponse
