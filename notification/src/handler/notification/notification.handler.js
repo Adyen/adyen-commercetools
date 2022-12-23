@@ -34,13 +34,6 @@ async function processNotification(
     'NotificationRequestItem.merchantReference',
     null
   )
-  if (merchantReference === null) {
-    logger.error(
-      { notification: utils.getNotificationForTracking(notification) },
-      "Can't extract merchantReference from the notification"
-    )
-    return
-  }
 
   const pspReference = _.get(
     notification,
@@ -217,7 +210,8 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
 
     if (
       notificationRequestItem.eventCode === 'AUTHORISATION' &&
-      (notificationRequestItem.success === "true" || notificationRequestItem.success === true) &&
+      (notificationRequestItem.success === 'true' ||
+        notificationRequestItem.success === true) &&
       pspReference !== paymentKey &&
       oldTransaction?.state !== 'Success'
     ) {
