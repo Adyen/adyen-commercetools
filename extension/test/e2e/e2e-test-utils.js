@@ -179,6 +179,21 @@ function serveFile(pathName, req, res) {
   })
 }
 
+function getRequestParams(url) {
+  const queries = url.split('?')
+  const result = {}
+  if (queries.length >= 2) {
+    queries[1].split('&').forEach((item) => {
+      try {
+        result[item.split('=')[0]] = item.split('=')[1]
+      } catch (e) {
+        result[item.split('=')[0]] = ''
+      }
+    })
+  }
+  return result
+}
+
 export {
   pasteValue,
   executeInAdyenIframe,
@@ -188,4 +203,5 @@ export {
   initPuppeteerBrowser,
   serveFile,
   getCreateSessionRequest,
+  getRequestParams,
 }

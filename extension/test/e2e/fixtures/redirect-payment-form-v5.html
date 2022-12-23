@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Submit additional payment details</title>
+    <link
+      rel="stylesheet"
+      href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/4.3.0/adyen.css"
+      integrity="sha384-5CDvDZiVPuf+3ZID0lh0aaUHAeky3/ACF1YAKzPbn3GEmzWgO53gP6stiYHWIdpB"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div>
+      <input
+        type="text"
+        id="adyen-redirect-session-id"
+        placeholder="Adyen session ID"
+      /><br />
+      <input
+        type="text"
+        id="adyen-redirect-result"
+        placeholder="Adyen redirect result"
+      /><br />
+      <input
+        type="text"
+        id="adyen-client-key"
+        placeholder="Adyen client key"
+      /><br />
+      <button type="button" id="redirect-payment-button">
+        Redirect payment
+      </button>
+      <br />
+    </div>
+    <div id="component-container"></div>
+
+    <script
+      src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/4.3.0/adyen.js"
+      integrity="sha384-cNkiBPQRGouJfbstYuSccx2XkGe3RB28iYrjge6rLIDtex7fk5+3/E9f4EZ34fxE"
+      crossorigin="anonymous"
+    ></script>
+    <script type="application/javascript">
+      const configuration = {
+        locale: 'en_US',
+        environment: 'test',
+        clientKey: '', // init when button is clicked
+        sessionId: '', // init when button is clicked
+        onPaymentCompleted: (result, component) => {
+          console.log(result)
+          consoel.log(result.resultCode)
+          // TODO :
+          //  1. Forward the page to /return-url
+          //  2. Investivate how to return this result back to RedirectPaymentFormPage, so that we can do assertion in test case
+        },
+        onError: (error, component) => {
+          console.error(error.name, error.message, error.stack, component)
+        },
+      }
+
+      // Click the button to do two operations :
+      // 1. Instantiate AdyenCheckout object
+      // 2. Create FormAction
+      const actionFieldElemenet = document.getElementById(
+        'redirect-payment-button'
+      )
+      const sessionIdElement = document.getElementById(
+        'adyen-redirect-session-id'
+      )
+      const redirectResultElement = document.getElementById(
+        'adyen-redirect-result'
+      )
+      actionFieldElemenet.addEventListener('click', () => {
+        const clientKeyElement = document.getElementById('adyen-client-key')
+        configuration.clientKey = clientKeyElement.value
+        configuration.sessionId = sessionIdElement.value
+        const checkout = new AdyenCheckout(configuration)
+        // Submit the redirectResult value you extracted from the returnUrl.
+        checkout.submitDetails({
+          details: { redirectResult: redirectResultElement.value },
+        })
+      })
+    </script>
+  </body>
+</html>
