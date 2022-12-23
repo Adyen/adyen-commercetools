@@ -1,23 +1,24 @@
-import { executeInAdyenIframe } from '../e2e-test-utils.js'
-import CreateSessionFormPage from './CreateSessionFormPage'
+// import { executeInAdyenIframe } from '../e2e-test-utils.js'
+import CreateSessionFormPage from './CreateSessionFormPage.js'
 
-export default class CreditCardMakePaymentFormPage extends CreateSessionFormPage {
-  async getCreateSessionRequest({
-    creditCardNumber,
-    creditCardDate,
-    creditCardCvc,
-    clientKey,
-  }) {
-    await this.generateAdyenCreateSessionForm(clientKey)
-    await executeInAdyenIframe(this.page, '#encryptedCardNumber', (el) =>
-      el.type(creditCardNumber)
+export default class CreditCardCreateSessionFormPage extends CreateSessionFormPage {
+  async setupComponent({ clientKey, paymentAfterCreateSession }) {
+    await this.generateAdyenCreateSessionForm(
+      clientKey,
+      paymentAfterCreateSession
     )
-    await executeInAdyenIframe(this.page, '#encryptedExpiryDate', (el) =>
-      el.type(creditCardDate)
-    )
-    await executeInAdyenIframe(this.page, '#encryptedSecurityCode', (el) =>
-      el.type(creditCardCvc)
-    )
-    return this.getCreateSessionRequestTextAreaValue()
+
+    // TODO : Check if we still need to input credit card details in iFrame after setupComponent
+    // await executeInAdyenIframe(this.page, '#encryptedCardNumber', (el) =>
+    //     el.type(creditCardNumber)
+    // )
+    // await executeInAdyenIframe(this.page, '#encryptedExpiryDate', (el) =>
+    //     el.type(creditCardDate)
+    // )
+    // await executeInAdyenIframe(this.page, '#encryptedSecurityCode', (el) =>
+    //     el.type(creditCardCvc)
+    // )
+
+    return this.getInitSessionResultTextAreaValue()
   }
 }

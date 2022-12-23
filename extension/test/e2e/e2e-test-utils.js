@@ -40,6 +40,18 @@ async function initPuppeteerBrowser() {
   })
 }
 
+async function getCreateSessionRequest(clientKey) {
+  // TODO : Please check whether adyen apiKey is required here. Supposing it should be provided already in handler in extension module
+  return {
+    amount: {
+      currency: 'EUR',
+      value: 1000,
+    },
+    reference: new Date().getTime(),
+    returnUrl: 'https://ctp-adyen-integration-tests.loca.lt/return-url',
+  }
+}
+
 function assertPayment(
   payment,
   finalAdyenPaymentInteractionName = 'submitAdditionalPaymentDetails'
@@ -80,12 +92,11 @@ function assertPayment(
     payment.amountPlanned.currencyCode
   )
 }
-
 async function createPayment(
   ctpClient,
   adyenMerchantAccount,
   commercetoolsProjectKey,
-  makePaymentRequest,
+  paymentRequest,
   currency = 'EUR'
 ) {
   const paymentDraft = {
@@ -104,7 +115,41 @@ async function createPayment(
       fields: {
         adyenMerchantAccount,
         commercetoolsProjectKey,
-        makePaymentRequest,
+        paymentRequest,
+      },
+    },
+  }
+
+  const { body: payment } = await ctpClient.create(
+    ctpClient.builder.payments,
+    paymentDraft
+  )
+  return payment
+}
+async function createPaymentSession(
+  ctpClient,
+  adyenMerchantAccount,
+  commercetoolsProjectKey,
+  createSessionRequest,
+  currency = 'EUR'
+) {
+  const paymentDraft = {
+    amountPlanned: {
+      currencyCode: currency,
+      centAmount: 1000,
+    },
+    paymentMethodInfo: {
+      paymentInterface: c.CTP_ADYEN_INTEGRATION,
+    },
+    custom: {
+      type: {
+        typeId: 'type',
+        key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
+      },
+      fields: {
+        adyenMerchantAccount,
+        commercetoolsProjectKey,
+        createSessionRequest,
       },
     },
   }
@@ -139,6 +184,8 @@ export {
   executeInAdyenIframe,
   assertPayment,
   createPayment,
+  createPaymentSession,
   initPuppeteerBrowser,
   serveFile,
+  getCreateSessionRequest,
 }
