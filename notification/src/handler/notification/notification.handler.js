@@ -217,7 +217,7 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
 
     if (
       notificationRequestItem.eventCode === 'AUTHORISATION' &&
-      JSON.parse(notificationRequestItem.success) === true && // convert 'success' from string to boolean type
+      (notificationRequestItem.success === "true" || notificationRequestItem.success === true) &&
       pspReference !== paymentKey &&
       oldTransaction?.state !== 'Success'
     ) {
