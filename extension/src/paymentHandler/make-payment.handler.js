@@ -43,8 +43,8 @@ async function execute(paymentObject) {
 
   const updatePaymentAction = getPaymentKeyUpdateAction(
     paymentObject.key,
-    request,
-    response
+    adyenRequest,
+    adyenResponse
   )
   if (updatePaymentAction) actions.push(updatePaymentAction)
 
