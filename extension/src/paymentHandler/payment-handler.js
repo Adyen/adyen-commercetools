@@ -64,8 +64,8 @@ function _getPaymentHandlers(paymentObject) {
   const handlers = []
 
   if (
-      paymentObject.custom.fields.createSessionRequest &&
-      !paymentObject.custom.fields.createSessionResponse
+    paymentObject.custom.fields.createSessionRequest &&
+    !paymentObject.custom.fields.createSessionResponse
   ) {
     handlers.push(sessionRequestHandler)
   }
