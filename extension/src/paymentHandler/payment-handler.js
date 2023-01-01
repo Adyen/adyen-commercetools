@@ -1,4 +1,7 @@
 import { withPayment } from '../validator/validator-builder.js'
+import execute from './make-payment.handler.js'
+import makeLineitemsPaymentHandler from './make-lineitems-payment.handler.js'
+import submitPaymentDetailsHandler from './submit-payment-details.handler.js'
 import manualCaptureHandler from './manual-capture.handler.js'
 import cancelHandler from './cancel-payment.handler.js'
 import refundHandler from './refund-payment.handler.js'
@@ -83,20 +86,20 @@ function _getPaymentHandlers(paymentObject) {
   )
     handlers.push(getCarbonOffsetCostsHandler)
   if (
-      paymentObject.custom.fields.makePaymentRequest &&
-      !paymentObject.custom.fields.makePaymentResponse
+    paymentObject.custom.fields.makePaymentRequest &&
+    !paymentObject.custom.fields.makePaymentResponse
   ) {
     const makePaymentRequestObj = JSON.parse(
-        paymentObject.custom.fields.makePaymentRequest
+      paymentObject.custom.fields.makePaymentRequest
     )
     if (_requiresLineItems(makePaymentRequestObj))
       handlers.push(makeLineitemsPaymentHandler)
     else handlers.push(execute)
   }
   if (
-      paymentObject.custom.fields.makePaymentResponse &&
-      paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest &&
-      !paymentObject.custom.fields.submitAdditionalPaymentDetailsResponse
+    paymentObject.custom.fields.makePaymentResponse &&
+    paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest &&
+    !paymentObject.custom.fields.submitAdditionalPaymentDetailsResponse
   )
     handlers.push(submitPaymentDetailsHandler)
   if (
@@ -146,11 +149,11 @@ function _validatePaymentRequest(paymentObject, authToken) {
 
 function _requiresLineItems(makePaymentRequestObj) {
   const addCommercetoolsLineItemsFlag = _getAddCommercetoolsLineItemsFlag(
-      makePaymentRequestObj
+    makePaymentRequestObj
   )
   if (
-      addCommercetoolsLineItemsFlag === true ||
-      addCommercetoolsLineItemsFlag === false
+    addCommercetoolsLineItemsFlag === true ||
+    addCommercetoolsLineItemsFlag === false
   ) {
     return addCommercetoolsLineItemsFlag
   }
@@ -159,7 +162,7 @@ function _requiresLineItems(makePaymentRequestObj) {
     return true
 
   const addCommercetoolsLineItemsAppConfigFlag =
-      config.getModuleConfig().addCommercetoolsLineItems
+    config.getModuleConfig().addCommercetoolsLineItems
   if (addCommercetoolsLineItemsAppConfigFlag === true)
     return _isPaymentMethodRequiresLineItems(makePaymentRequestObj)
 
@@ -174,11 +177,11 @@ function _getAddCommercetoolsLineItemsFlag(makePaymentRequestObj) {
   let addCommercetoolsLineItems
   if ('addCommercetoolsLineItems' in makePaymentRequestObj) {
     if (
-        makePaymentRequestObj.addCommercetoolsLineItems === true ||
-        makePaymentRequestObj.addCommercetoolsLineItems === false
+      makePaymentRequestObj.addCommercetoolsLineItems === true ||
+      makePaymentRequestObj.addCommercetoolsLineItems === false
     ) {
       addCommercetoolsLineItems =
-          makePaymentRequestObj.addCommercetoolsLineItems
+        makePaymentRequestObj.addCommercetoolsLineItems
     }
   }
   return addCommercetoolsLineItems
@@ -186,19 +189,19 @@ function _getAddCommercetoolsLineItemsFlag(makePaymentRequestObj) {
 
 function _isKlarna(makePaymentRequestObj) {
   return (
-      makePaymentRequestObj.paymentMethod &&
-      PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(
-          makePaymentRequestObj.paymentMethod.type
-      )
+    makePaymentRequestObj.paymentMethod &&
+    PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(
+      makePaymentRequestObj.paymentMethod.type
+    )
   )
 }
 
 function _isAffirm(makePaymentRequestObj) {
   return (
-      makePaymentRequestObj.paymentMethod &&
-      PAYMENT_METHOD_TYPE_AFFIRM_METHODS.includes(
-          makePaymentRequestObj.paymentMethod.type
-      )
+    makePaymentRequestObj.paymentMethod &&
+    PAYMENT_METHOD_TYPE_AFFIRM_METHODS.includes(
+      makePaymentRequestObj.paymentMethod.type
+    )
   )
 }
 
