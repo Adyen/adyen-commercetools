@@ -46,19 +46,15 @@ describe('create-session-request::execute::', () => {
 
   it('handlePayment should return the right actions', async () => {
     const adyenGetSessionResponse = {
-      paymentMethods: [
-        {
-          amount: {
-            currency: 'EUR',
-            value: 1000,
-          },
-          countryCode: 'DE',
-          expiresAt: '2022-12-24T13:35:16+02:00',
-          id: 'CSD9CAC34EBAE225DD',
-          reference: 'UNIQUE_PAYMENT_REFERENCE',
-          sessionData: 'Ab02b4c...',
-        },
-      ],
+      amount: {
+        currency: 'EUR',
+        value: 1000,
+      },
+      countryCode: 'DE',
+      expiresAt: '2022-12-24T13:35:16+02:00',
+      id: 'CSD9CAC34EBAE225DD',
+      reference: 'UNIQUE_PAYMENT_REFERENCE',
+      sessionData: 'Ab02b4c...',
     }
 
     nock(`${adyenCredentials.apiBaseUrl}`)
