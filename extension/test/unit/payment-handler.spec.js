@@ -120,7 +120,7 @@ describe('payment-handler::execute', () => {
 
   describe('amountPlanned', () => {
     it(
-      'is different than the amount in create session request custom field and interface interaction is empty, ' +
+      'is different than the amount in makePayment request custom field and interface interaction is empty, ' +
         'then it should return errors',
       async () => {
         const ctpPaymentClone = _.cloneDeep(ctpPayment)
