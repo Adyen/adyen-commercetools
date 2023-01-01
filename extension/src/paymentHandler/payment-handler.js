@@ -14,6 +14,14 @@ import {
 } from './payment-utils.js'
 import { isBasicAuthEnabled } from '../validator/authentication.js'
 import errorMessages from '../validator/error-messages.js'
+import constants from '../config/constants.js'
+import config from '../config/config.js'
+
+const {
+  PAYMENT_METHOD_TYPE_KLARNA_METHODS,
+  PAYMENT_METHOD_TYPE_AFFIRM_METHODS,
+  PAYMENT_METHODS_WITH_REQUIRED_LINE_ITEMS,
+} = constants
 
 async function handlePayment(paymentObject, authToken) {
   if (isBasicAuthEnabled() && !authToken) {
@@ -75,6 +83,23 @@ function _getPaymentHandlers(paymentObject) {
   )
     handlers.push(getCarbonOffsetCostsHandler)
   if (
+      paymentObject.custom.fields.makePaymentRequest &&
+      !paymentObject.custom.fields.makePaymentResponse
+  ) {
+    const makePaymentRequestObj = JSON.parse(
+        paymentObject.custom.fields.makePaymentRequest
+    )
+    if (_requiresLineItems(makePaymentRequestObj))
+      handlers.push(makeLineitemsPaymentHandler)
+    else handlers.push(execute)
+  }
+  if (
+      paymentObject.custom.fields.makePaymentResponse &&
+      paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest &&
+      !paymentObject.custom.fields.submitAdditionalPaymentDetailsResponse
+  )
+    handlers.push(submitPaymentDetailsHandler)
+  if (
     paymentObject.custom.fields.amountUpdatesRequest &&
     !paymentObject.custom.fields.amountUpdatesResponse
   )
@@ -117,6 +142,76 @@ function _validatePaymentRequest(paymentObject, authToken) {
     if (paymentValidator.hasErrors()) return paymentValidator.getErrors()
   }
   return null
+}
+
+function _requiresLineItems(makePaymentRequestObj) {
+  const addCommercetoolsLineItemsFlag = _getAddCommercetoolsLineItemsFlag(
+      makePaymentRequestObj
+  )
+  if (
+      addCommercetoolsLineItemsFlag === true ||
+      addCommercetoolsLineItemsFlag === false
+  ) {
+    return addCommercetoolsLineItemsFlag
+  }
+
+  if (_isKlarna(makePaymentRequestObj) || _isAffirm(makePaymentRequestObj))
+    return true
+
+  const addCommercetoolsLineItemsAppConfigFlag =
+      config.getModuleConfig().addCommercetoolsLineItems
+  if (addCommercetoolsLineItemsAppConfigFlag === true)
+    return _isPaymentMethodRequiresLineItems(makePaymentRequestObj)
+
+  return false
+}
+
+function _getAddCommercetoolsLineItemsFlag(makePaymentRequestObj) {
+  // The function is tend to be used to check values on the field: true, false, undefined,
+  // or the value set but not to true/false
+  // in case of the undefined or other than true/false, the function returns undefined:
+  // it means the other fallbacks have to be checked to decide adding line items
+  let addCommercetoolsLineItems
+  if ('addCommercetoolsLineItems' in makePaymentRequestObj) {
+    if (
+        makePaymentRequestObj.addCommercetoolsLineItems === true ||
+        makePaymentRequestObj.addCommercetoolsLineItems === false
+    ) {
+      addCommercetoolsLineItems =
+          makePaymentRequestObj.addCommercetoolsLineItems
+    }
+  }
+  return addCommercetoolsLineItems
+}
+
+function _isKlarna(makePaymentRequestObj) {
+  return (
+      makePaymentRequestObj.paymentMethod &&
+      PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(
+          makePaymentRequestObj.paymentMethod.type
+      )
+  )
+}
+
+function _isAffirm(makePaymentRequestObj) {
+  return (
+      makePaymentRequestObj.paymentMethod &&
+      PAYMENT_METHOD_TYPE_AFFIRM_METHODS.includes(
+          makePaymentRequestObj.paymentMethod.type
+      )
+  )
+}
+
+function _isPaymentMethodRequiresLineItems(makePaymentRequestObj) {
+  if (makePaymentRequestObj.paymentMethod) {
+    const paymentMethodType = makePaymentRequestObj.paymentMethod.type
+    for (const type of PAYMENT_METHODS_WITH_REQUIRED_LINE_ITEMS) {
+      if (paymentMethodType.startsWith(type)) {
+        return true
+      }
+    }
+  }
+  return false
 }
 
 function _isCancelPayment(paymentObject) {

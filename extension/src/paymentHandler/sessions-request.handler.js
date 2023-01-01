@@ -6,7 +6,7 @@ import c from '../config/constants.js'
 import { createSessionRequest } from '../service/web-component-service.js'
 
 async function execute(paymentObject) {
-  const amountUpdatesRequestObj = JSON.parse(
+  const createSessionRequestObj = JSON.parse(
     paymentObject.custom.fields.createSessionRequest
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
@@ -15,7 +15,7 @@ async function execute(paymentObject) {
   const { request, response } = await createSessionRequest(
     adyenMerchantAccount,
     commercetoolsProjectKey,
-    amountUpdatesRequestObj
+    createSessionRequestObj
   )
   return {
     actions: [
