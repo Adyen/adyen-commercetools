@@ -40,29 +40,6 @@ describe('payment-handler::execute', () => {
   })
 
   it(
-    'when payment contains "submitAdditionalPaymentDetailsRequest" with "makePaymentResponse", ' +
-      'then it should call /payments/details on Adyen',
-    async () => {
-      scope
-        .post('/payments/details')
-        .reply(200, submitPaymentDetailsChallengeRes)
-
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
-        makePaymentRedirectResponse
-      )
-      ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
-        JSON.stringify(submitPaymentDetailsRequest)
-      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
-
-      const response = await paymentHandler.handlePayment(ctpPaymentClone)
-
-      expect(response.actions).to.have.lengthOf.above(0)
-    }
-  )
-
-  it(
     'when payment does not contain "makePaymentResponse", ' +
       'then it should not call /payments/details on Adyen',
     async () => {
@@ -120,72 +97,6 @@ describe('payment-handler::execute', () => {
       const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf(0)
-    }
-  )
-
-  it(
-    'when "submitAdditionalPaymentDetailsRequest" contains a different request, ' +
-      'then it should call /payments/details on Adyen again',
-    async () => {
-      scope
-        .post('/payments/details')
-        .reply(200, submitPaymentDetailsChallengeRes)
-
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.interfaceInteractions = [
-        {
-          type: {
-            typeId: 'type',
-            id: 'bdbd6d06-9e29-4470-a3de-76b529c9eb5e',
-          },
-          fields: {
-            type: c.CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
-            request: JSON.stringify(submitPaymentDetailsRequest),
-          },
-        },
-      ]
-      ctpPaymentClone.custom.fields.makePaymentResponse =
-        makePaymentRedirectResponse
-      ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
-        JSON.stringify({
-          details: {
-            MD: 'newMD',
-            PaRes: 'newPaRes',
-          },
-        })
-      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
-
-      const response = await paymentHandler.handlePayment(ctpPaymentClone)
-
-      expect(response.actions).to.have.lengthOf.above(0)
-    }
-  )
-
-  it(
-    'when "submitAdditionalPaymentDetailsRequest" contains a request and payment has no interface interaction, ' +
-      'then it should call /payments/details on Adyen',
-    async () => {
-      scope
-        .post('/payments/details')
-        .reply(200, submitPaymentDetailsChallengeRes)
-
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.interfaceInteractions = []
-      ctpPaymentClone.custom.fields.makePaymentResponse =
-        makePaymentRedirectResponse
-      ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
-        JSON.stringify({
-          details: {
-            MD: 'newMD',
-            PaRes: 'newPaRes',
-          },
-        })
-      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-      ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
-
-      const response = await paymentHandler.handlePayment(ctpPaymentClone)
-      expect(response.actions).to.have.lengthOf.above(0)
     }
   )
 

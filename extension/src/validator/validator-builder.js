@@ -36,9 +36,6 @@ function withPayment(paymentObject) {
     },
     validateRequestFields() {
       if (!paymentObject.custom) return this
-      if (!isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
-        errors.getPaymentMethodsRequest =
-          errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
       if (!isValidJSON(paymentObject.custom.fields.makePaymentRequest))
         errors.makePaymentRequest =
           errorMessages.MAKE_PAYMENT_REQUEST_INVALID_JSON
