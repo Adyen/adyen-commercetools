@@ -222,6 +222,10 @@ describe('notification module', () => {
           notification: JSON.stringify(notifications[0]),
         },
       },
+      {
+        action: 'setKey',
+        key: 'test_AUTHORISATION_1',
+      },
     ]
 
     // assert update actions
@@ -285,6 +289,12 @@ describe('notification module', () => {
         createdAt: '2019-02-05T12:29:36.028Z',
       },
     })
+    const expectedUpdateActions = [
+      {
+        action: 'setKey',
+        key: 'test_AUTHORISATION_1',
+      },
+    ]
     const ctpClient = ctpClientMock.get(ctpConfig)
     sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
       body: payment,
@@ -299,7 +309,13 @@ describe('notification module', () => {
       config
     )
     // assert
-    expect(ctpClientUpdateSpy.callCount).to.equal(0)
+    expect(ctpClientUpdateSpy.callCount).to.equal(1)
+
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
+      expectedUpdateActions
+    )
   })
 
   it(`given that ADYEN sends a "CANCELLATION is successful" notification
@@ -380,6 +396,10 @@ describe('notification module', () => {
           type: 'CancelAuthorization',
           interactionId: 'test_AUTHORISATION_1',
         },
+      },
+      {
+        action: 'setKey',
+        key: 'test_AUTHORISATION_1',
       },
     ]
 
@@ -477,6 +497,10 @@ describe('notification module', () => {
           interactionId: 'test_AUTHORISATION_1',
         },
       },
+      {
+        action: 'setKey',
+        key: 'test_AUTHORISATION_1',
+      },
     ]
 
     // assert update actions
@@ -573,6 +597,10 @@ describe('notification module', () => {
           interactionId: 'test_AUTHORISATION_1',
           timestamp: '',
         },
+      },
+      {
+        action: 'setKey',
+        key: 'test_AUTHORISATION_1',
       },
     ]
 
@@ -676,6 +704,10 @@ describe('notification module', () => {
         action: 'changeTransactionTimestamp',
         transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
         timestamp: '2022-04-13T05:17:29.000Z',
+      },
+      {
+        action: 'setKey',
+        key: '****',
       },
     ]
 

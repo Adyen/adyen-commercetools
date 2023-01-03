@@ -203,17 +203,12 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
       )
     }
     const paymentKey = payment.key
-
-    if (
-      notificationRequestItem.eventCode === 'AUTHORISATION' &&
-      (notificationRequestItem.success === 'true' ||
-        notificationRequestItem.success === true) &&
-      pspReference !== paymentKey &&
-      oldTransaction?.state !== 'Success'
-    ) {
+    const newPspReference =
+      notificationRequestItem.originalReference || pspReference
+    if (newPspReference && newPspReference !== paymentKey) {
       updateActions.push({
         action: 'setKey',
-        key: pspReference,
+        key: newPspReference,
       })
     }
   }
