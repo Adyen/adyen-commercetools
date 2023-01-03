@@ -1,6 +1,4 @@
 export default {
-  GET_PAYMENT_METHODS_REQUEST_INVALID_JSON:
-    'getPaymentMethodsRequest does not contain valid JSON.',
   MAKE_PAYMENT_REQUEST_INVALID_JSON:
     'makePaymentRequest does not contain valid JSON.',
   SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON:
