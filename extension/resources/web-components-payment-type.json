@@ -28,28 +28,6 @@
       "required": false
     },
     {
-      "name": "getPaymentMethodsRequest",
-      "label": {
-        "en": "getPaymentMethodsRequest"
-      },
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "MultiLine",
-      "required": false
-    },
-    {
-      "name": "getPaymentMethodsResponse",
-      "label": {
-        "en": "getPaymentMethodsResponse"
-      },
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "MultiLine",
-      "required": false
-    },
-    {
       "name": "makePaymentRequest",
       "label": {
         "en": "makePaymentRequest"
@@ -163,6 +141,28 @@
       "name": "disableStoredPaymentResponse",
       "label": {
         "en": "disableStoredPaymentResponse"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "createSessionRequest",
+      "label": {
+        "en": "createSessionRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "createSessionResponse",
+      "label": {
+        "en": "createSessionResponse"
       },
       "type": {
         "name": "String"

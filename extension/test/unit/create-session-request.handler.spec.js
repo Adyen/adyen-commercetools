@@ -76,7 +76,7 @@ describe('create-session-request::execute::', () => {
       result.actions[1].value
     )
     expect(result.actions[0].fields.type).to.equal(
-      c.CTP_INTERACTION_TYPE_CREATE_SESSION_REQUEST
+      c.CTP_INTERACTION_TYPE_CREATE_SESSION
     )
     expect(result.actions[1].name).to.equal(
       c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE
@@ -103,7 +103,7 @@ describe('create-session-request::execute::', () => {
       expect(JSON.parse(request.body)).to.be.deep.includes(getSessionRequest)
       expect(result.actions[0].fields.response).to.be.includes(errorMsg)
       expect(result.actions[0].fields.type).to.equal(
-        c.CTP_INTERACTION_TYPE_CREATE_SESSION_REQUEST
+        c.CTP_INTERACTION_TYPE_CREATE_SESSION
       )
       expect(result.actions[1].name).to.equal(
         c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE
