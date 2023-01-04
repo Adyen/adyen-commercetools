@@ -413,12 +413,13 @@ async function getPaymentByMerchantReference(
 ) {
   try {
     const keys = [merchantReference, pspReference]
+    console.log(keys)
     const result = await ctpClient.fetchByKeys(ctpClient.builder.payments, keys)
     return result.body.results[0]
   } catch (err) {
     if (err.statusCode === 404) return null
     const errMsg =
-      `Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
+      `Failed to fetch a payment with merchantReference ${merchantReference} and pspReference ${pspReference}. ` +
       `Error: ${JSON.stringify(serializeError(err))}`
     throw new VError(err, errMsg)
   }
