@@ -105,6 +105,7 @@ describe('::create-session-request::', () => {
         interfaceInteraction.fields.response
       )
       expect(interfaceInteractionResponse.additionalData).to.not.exist
+      expect(interfaceInteractionResponse.sessionData).to.not.undefined
     }
   )
 })
