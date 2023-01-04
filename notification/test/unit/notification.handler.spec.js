@@ -91,8 +91,8 @@ describe('notification module', () => {
       state: 'Initial',
     })
     const ctpClient = ctpClientMock.get(ctpConfig)
-    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
-      body: payment,
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
@@ -194,8 +194,8 @@ describe('notification module', () => {
       state: 'Pending',
     })
     const ctpClient = ctpClientMock.get(ctpConfig)
-    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
-      body: payment,
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
@@ -296,8 +296,8 @@ describe('notification module', () => {
       },
     ]
     const ctpClient = ctpClientMock.get(ctpConfig)
-    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
-      body: payment,
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
@@ -357,8 +357,8 @@ describe('notification module', () => {
       state: 'Pending',
     })
     const ctpClient = ctpClientMock.get(ctpConfig)
-    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
-      body: payment,
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
@@ -457,8 +457,8 @@ describe('notification module', () => {
       state: 'Success',
     })
     const ctpClient = ctpClientMock.get(ctpConfig)
-    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
-      body: payment,
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
@@ -557,8 +557,8 @@ describe('notification module', () => {
       state: 'Success',
     })
     const ctpClient = ctpClientMock.get(ctpConfig)
-    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
-      body: payment,
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
@@ -667,8 +667,8 @@ describe('notification module', () => {
       interactionId: 'test_AUTHORISATION_1',
     })
     const ctpClient = ctpClientMock.get(ctpConfig)
-    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
-      body: payment,
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
     }))
     const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
     ctp.get = () => ctpClient
@@ -734,8 +734,8 @@ describe('notification module', () => {
       state: 'Initial',
     })
     const ctpClient = ctpClientMock.get(ctpConfig)
-    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
-      body: modifiedPaymentMock,
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [modifiedPaymentMock] },
     }))
     sandbox.stub(ctpClient, 'fetchById').callsFake(() => ({
       body: modifiedPaymentMock,
@@ -765,6 +765,24 @@ describe('notification module', () => {
     expect(ctpClientUpdateSpy.callCount).to.equal(21)
   })
 
+  it('do not make any requests when merchantReference cannot be extracted from notification', async () => {
+    const ctpClient = ctpClientMock.get(ctpConfig)
+    const ctpClientFetchByKeySpy = sandbox.spy(ctpClient, 'fetchByKeys')
+    const ctpClientFetchByIdSpy = sandbox.spy(ctpClient, 'fetchById')
+    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+
+    // process
+    await notificationHandler.processNotification(
+      { name: 'some wrong notification' },
+      false,
+      config
+    )
+
+    expect(ctpClientFetchByKeySpy.callCount).to.equal(0)
+    expect(ctpClientFetchByIdSpy.callCount).to.equal(0)
+    expect(ctpClientUpdateSpy.callCount).to.equal(0)
+  })
   it(
     'when "removeSensitiveData" is false, ' +
       'then it should not remove sensitive data',
@@ -811,8 +829,8 @@ describe('notification module', () => {
       ]
       const payment = cloneDeep(paymentMock)
       const ctpClient = ctpClientMock.get(ctpConfig)
-      sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
-        body: payment,
+      sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+        body: { results: [payment] },
       }))
       const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
       ctp.get = () => ctpClient
@@ -879,8 +897,8 @@ describe('notification module', () => {
       ]
       const payment = cloneDeep(paymentMock)
       const ctpClient = ctpClientMock.get(ctpConfig)
-      sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
-        body: payment,
+      sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+        body: { results: [payment] },
       }))
       const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
       ctp.get = () => ctpClient
@@ -939,7 +957,7 @@ describe('notification module', () => {
       state: 'Success',
     })
     const ctpClient = ctpClientMock.get(ctpConfig)
-    sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => {
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => {
       throw new Error('error')
     })
 
@@ -956,6 +974,8 @@ describe('notification module', () => {
       error = e
     }
     expect(error instanceof VError).to.equal(true)
-    expect(error.message).to.contains('Failed to fetch a payment with key')
+    expect(error.message).to.contains(
+      'Failed to fetch a payment with merchantReference'
+    )
   })
 })

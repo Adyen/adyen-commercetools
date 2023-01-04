@@ -529,7 +529,6 @@ describe('notification module', () => {
       expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
 
       const cancellationInteractionId = _generateRandomNumber()
-
       const actions = [
         {
           action: 'addTransaction',
@@ -543,16 +542,6 @@ describe('notification module', () => {
             interactionId: cancellationInteractionId,
           },
         },
-        {
-          action: 'changeTransactionState',
-          state: 'Success',
-          transactionId: paymentBefore.transactions[0].id,
-        },
-        // Change the payment key to pspReference for authorized payment
-        {
-          action: 'setKey',
-          key: pspReference,
-        },
       ]
 
       const { body: updatedPayment } = await ctpClient.update(
@@ -564,7 +553,7 @@ describe('notification module', () => {
 
       expect(updatedPayment.transactions).to.have.lengthOf(2)
       expect(updatedPayment.transactions[0].type).to.equal('Authorization')
-      expect(updatedPayment.transactions[0].state).to.equal('Success')
+      expect(updatedPayment.transactions[0].state).to.equal('Pending')
       expect(updatedPayment.transactions[1].type).to.equal(
         'CancelAuthorization'
       )
@@ -594,12 +583,11 @@ describe('notification module', () => {
 
       const { body: paymentAfter } = await ctpClient.fetchByKey(
         ctpClient.builder.payments,
-        pspReference // pspReference is the key of authorized payment
+        merchantReference // merchantReference is the key of unauthorized payment
       )
-
       expect(paymentAfter.transactions).to.have.lengthOf(2)
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
-      expect(paymentAfter.transactions[0].state).to.equal('Success')
+      expect(paymentAfter.transactions[0].state).to.equal('Pending')
       expect(paymentAfter.transactions[1].type).to.equal('CancelAuthorization')
       expect(paymentAfter.transactions[1].state).to.equal('Success')
 

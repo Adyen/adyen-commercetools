@@ -35,6 +35,12 @@ async function processNotification(
     null
   )
 
+  const pspReference = _.get(
+    notification,
+    'NotificationRequestItem.pspReference',
+    null
+  )
+
   const originalReference = _.get(
     notification,
     'NotificationRequestItem.originalReference',
@@ -44,10 +50,10 @@ async function processNotification(
   const ctpClient = await ctp.get(ctpProjectConfig)
 
   const payment = await getPaymentByMerchantReference(
-    originalReference || merchantReference,
+    merchantReference,
+    originalReference || pspReference,
     ctpClient
   )
-
   if (payment !== null)
     await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
   else
@@ -161,10 +167,8 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
   if (isNotificationInInterfaceInteraction === false)
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
   const { pspReference } = notificationRequestItem
-
   const { transactionType, transactionState } =
     await getTransactionTypeAndStateOrNull(notificationRequestItem)
-
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
@@ -402,17 +406,19 @@ function getSetMethodInfoNameAction(paymentMethod) {
   return null
 }
 
-async function getPaymentByMerchantReference(paymentKey, ctpClient) {
+async function getPaymentByMerchantReference(
+  merchantReference,
+  pspReference,
+  ctpClient
+) {
   try {
-    const result = await ctpClient.fetchByKey(
-      ctpClient.builder.payments,
-      paymentKey
-    )
-    return result.body
+    const keys = [merchantReference, pspReference]
+    const result = await ctpClient.fetchByKeys(ctpClient.builder.payments, keys)
+    return result.body.results[0]
   } catch (err) {
     if (err.statusCode === 404) return null
     const errMsg =
-      `Failed to fetch a payment with key: ${paymentKey}. ` +
+      `Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
       `Error: ${JSON.stringify(serializeError(err))}`
     throw new VError(err, errMsg)
   }
