@@ -50,7 +50,7 @@ If you accidentally created a subscription you can edit it and uncheck the **Act
 
 ### How does the notification module find a matching payment?
 
-It first find the payment by `key` where `key=${merchantReference}` and then it finds in this payment the corresponding transaction by `interactionId` where `interactionId=${pspReference}`.
+It first find the payment by `key` where `key in (${merchantReference}, ${pspReference})`. If original reference exists in notification, the payment can be found by `key` where `key in (${merchantReference}, ${originalReference})`. And then it finds in this payment the corresponding transaction by `interactionId` where `interactionId=${pspReference}`.
 
 ### Will we lose a notification if it was not processed for some reason?
 

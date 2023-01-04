@@ -99,7 +99,7 @@ and [transactionState](https://docs.commercetools.com/http-api-projects-payments
 > All mappings can be found in the [adyen-events.json](./../resources/adyen-events.json) file.
 
 After finding a mapping the notification module will find a matching payment on a commercetools project.
-To find the matching payment, `merchantReference` field from the notification is used to find a payment by key
+To find the matching payment, `merchantReference`, `pspReference` and `originalReference` fields from the notification are used to find a payment by key
 and `pspReference` field from the notification is used to find a transaction by its interactionId.
 
 If there is no transaction on the payment found,
