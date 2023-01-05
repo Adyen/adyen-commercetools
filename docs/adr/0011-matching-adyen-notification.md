@@ -17,7 +17,7 @@ The alternative for that is the native payment `key` field.
 
 ## Decision
 
-- We will use both `pspReference` and `merchantReference` as payment key for matching payment for notification.
+- We will use either `pspReference` or `merchantReference` as payment key for matching payment for notification.
 - `merchantReference` is still used for payment lookup because `pspReference` is obtained in notification module instead of extension module in Adyen Web Component version 5.0.
 - For events other than AUTHORIZATION, such as REFUND, CAPTURE, CANCEL, we use `originalReference` from notification
 - The notification will use the native payment key to fetch payment. It first finds the payment by `key` where `key in (${merchantReference}, ${pspReference})`.
