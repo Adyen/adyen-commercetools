@@ -27,4 +27,4 @@ Once payment can be matched, update the payment key with `pspReference` obtained
 ## Consequences
 
 - It is possible to lookup payment for different transaction throughout the whole payment process
-- The payment key with `pspReference` (or `originalReference) is also unique for all payments.
+- The payment key with `pspReference` (or `originalReference`) is also unique for all payments.
