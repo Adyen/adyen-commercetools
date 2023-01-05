@@ -9,9 +9,9 @@ Date: 2023-01-03
 ## Context
 
 The Adyen notification needs to be matched by its commercetools payment equivalent.
-We are using the payment key for the merchantReference and fetching the commercetools payment object with query `key="${merchantReference}"`.
-Since we have introduced custom reference for refund 
-in [v9.10.0](https://github.com/commercetools/commercetools-adyen-integration/releases/tag/v9.10.0), payment is no long able to be obtained by merchant reference as key. 
+We are using the payment key for the `merchantReference` and fetching the commercetools payment object with query `key="${merchantReference}"`.
+Since [v9.10.0](https://github.com/commercetools/commercetools-adyen-integration/releases/tag/v9.10.0), we have introduced custom reference for refund.
+Payment key could be the custom field in payment transaction defined by user, therefore payment is no longer always able to be obtained by merchant reference as key. 
 
 The alternative for that is to use `pspReference` as payment `key` field.
 
