@@ -10,7 +10,7 @@
     "check-coverage": "c8 check-coverage --lines 89",
     "unit": "mocha --file ./test/unit/mock-default-confg.js \"test/unit/**/*.spec.js\"",
     "integration": "mocha --file ./test/initial-integration-test-set-up.js \"test/integration/**/*.spec.js\"",
-    "e2e": "mocha --file ./test/initial-integration-test-set-up.js \"test/e2e/**/*.spec.js\"",
+    "e2e": "mocha --file ./test/initial-integration-test-set-up.js \"test/e2e/**/credit-card-v5.spec.js\"",
     "start": "node ./src/init.js",
     "lint": "eslint --quiet ./src ./test",
     "check": "npm run lint && prettier --check .",

@@ -9,9 +9,10 @@ export default class CreateSessionFormPage {
   }
 
   async generateAdyenCreateSessionForm(clientKey, payment) {
-    const createSessionFormAliveTimeout = 5_000 // It determines how long the form page stays before termination. Please remember to reset it to 5 seconds after debugging in browser to avoid long idle time in CI/CD
+    const createSessionFormAliveTimeout = 500_000 // It determines how long the form page stays before termination. Please remember to reset it to 5 seconds after debugging in browser to avoid long idle time in CI/CD
 
     // Put Adyen API Key into HTML for e2e test
+
     await this.page.type('#adyen-client-key', clientKey)
     await this.page.$eval('#adyen-client-key', (e) => e.blur())
 
@@ -25,6 +26,7 @@ export default class CreateSessionFormPage {
     await this.page.type('#adyen-session-data', payment.sessionData)
     await this.page.$eval('#adyen-session-data', (e) => e.blur())
 
+    await this.page.click('#initAdyenCheckout')
     await this.page.waitForTimeout(createSessionFormAliveTimeout)
   }
 

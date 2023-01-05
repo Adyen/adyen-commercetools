@@ -45,13 +45,22 @@ Init session result will come here</textarea
     </div>
     <br />
     <div id="card-container"></div>
-
+    <input
+      type="button"
+      id="initAdyenCheckout"
+      value="button"
+      onclick="executeAdyenCheckout()"
+    />
     <script
       src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/4.3.0/adyen.js"
       integrity="sha384-cNkiBPQRGouJfbstYuSccx2XkGe3RB28iYrjge6rLIDtex7fk5+3/E9f4EZ34fxE"
       crossorigin="anonymous"
     ></script>
     <script type="application/javascript">
+      const executeAdyenCheckout = async () => {
+        console.log('executeAdyenCheckout')
+        const checkout = await AdyenCheckout(configuration)
+      }
       const configuration = {
         locale: 'en_US', // The shopper's locale. For a list of supported locales, see https://docs.adyen.com/checkout/components-web/localization-components.
         environment: 'test', // When you're ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
@@ -83,20 +92,14 @@ Init session result will come here</textarea
       // The adyen API Key is initialized in ADYEN_INTEGRATION_CONFIG and passed into HTML via FormPage.js
       const clientKeyElement = document.getElementById('adyen-client-key')
       const sessionDataElement = document.getElementById('adyen-session-data')
-      sessionDataElement.addEventListener('blur', async () => {
+      sessionDataElement.addEventListener('blur', () => {
         configuration.clientKey = clientKeyElement.value
         configuration.session.id =
           document.getElementById('adyen-session-id').value
         configuration.session.sessionData =
           document.getElementById('adyen-session-data').value
 
-        try {
-          console.log(JSON.stringify(configuration))
-          const checkout = await AdyenCheckout(configuration)
-        } catch (err) {
-          // TODO : Check why it fails to instantiate AdyenCheckout object. Needs support from Adyen techical team.
-          console.error(err)
-        }
+        console.log(JSON.stringify(configuration))
 
         // checkout.create('card').mount('#card-container')
       })
