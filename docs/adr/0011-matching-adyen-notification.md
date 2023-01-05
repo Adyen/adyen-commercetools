@@ -13,7 +13,7 @@ We are using the payment key for the merchantReference and fetching the commerce
 Since we have introduced custom reference for refund 
 in [v9.10.0](https://github.com/commercetools/commercetools-adyen-integration/releases/tag/v9.10.0), payment is no long able to be obtained by merchant reference as key. 
 
-The alternative for that is the native payment `key` field.
+The alternative for that is to use `pspReference` as payment `key` field.
 
 ## Decision
 
