@@ -4,7 +4,7 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 import paymentHandler from '../../src/paymentHandler/payment-handler.js'
 import config from '../../src/config/config.js'
-import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import createSessionSuccessResponse from './fixtures/adyen-create-session-success-response.js'
 import utils from '../../src/utils.js'
 
 const { handlePayment } = paymentHandler
@@ -41,12 +41,12 @@ describe('payment-handler-lineItems::execute', () => {
 
   it(
     'when addCommercetoolsLineItems is enabled on app config and payment type that requires lineItems' +
-      'then it should add lineItems to makePaymentRequest',
+      'then it should add lineItems to createSessionRequest',
     async () => {
       _mockCtpCartsEndpoint()
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
-      const makePaymentRequest = {
+      const createSessionRequest = {
         reference: 'YOUR_REFERENCE',
         paymentMethod: {
           type: 'clearpay',
@@ -54,8 +54,8 @@ describe('payment-handler-lineItems::execute', () => {
       }
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest =
-        JSON.stringify(makePaymentRequest)
+      ctpPaymentClone.custom.fields.createSessionRequest =
+        JSON.stringify(createSessionRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
@@ -66,35 +66,33 @@ describe('payment-handler-lineItems::execute', () => {
 
       const response = await handlePayment(ctpPaymentClone)
 
-      const makePaymentRequestInteraction = JSON.parse(
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const makePaymentRequestJson = JSON.parse(
-        makePaymentRequestInteraction.body
+      const createSessionRequestJson = JSON.parse(
+        createSessionRequestInteraction.body
       )
-      expect(makePaymentRequestJson.lineItems).to.have.lengthOf(3)
+      expect(createSessionRequestJson.lineItems).to.have.lengthOf(3)
     }
   )
 
   it(
-    'when addCommercetoolsLineItems set true on makePaymentRequest and payment type that does not require lineItems' +
-      'then it should add lineItems to makePaymentRequest',
+    'when addCommercetoolsLineItems set true on createSessionRequest' +
+      'then it should add lineItems to createSessionRequest',
     async () => {
       _mockCtpCartsEndpoint()
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
-      const makePaymentRequest = {
+      const createSessionRequest = {
         reference: 'YOUR_REFERENCE',
-        paymentMethod: {
-          type: 'gpay',
-        },
+
         addCommercetoolsLineItems: true,
       }
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest =
-        JSON.stringify(makePaymentRequest)
+      ctpPaymentClone.custom.fields.createSessionRequest =
+        JSON.stringify(createSessionRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
@@ -105,35 +103,33 @@ describe('payment-handler-lineItems::execute', () => {
 
       const response = await handlePayment(ctpPaymentClone)
 
-      const makePaymentRequestInteraction = JSON.parse(
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const makePaymentRequestJson = JSON.parse(
-        makePaymentRequestInteraction.body
+      const createSessionRequestJson = JSON.parse(
+        createSessionRequestInteraction.body
       )
-      expect(makePaymentRequestJson.lineItems).to.have.lengthOf(3)
+      expect(createSessionRequestJson.lineItems).to.have.lengthOf(3)
     }
   )
 
   it(
-    'when addCommercetoolsLineItems set false on makePaymentRequest' +
-      'then it should not add lineItems to makePaymentRequest',
+    'when addCommercetoolsLineItems set false on createSessionRequest' +
+      'then it should not add lineItems to createSessionRequest',
     async () => {
       _mockCtpCartsEndpoint()
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
-      const makePaymentRequest = {
+      const createSessionRequest = {
         reference: 'YOUR_REFERENCE',
-        paymentMethod: {
-          type: 'klarna',
-        },
+
         addCommercetoolsLineItems: false,
       }
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest =
-        JSON.stringify(makePaymentRequest)
+      ctpPaymentClone.custom.fields.createSessionRequest =
+        JSON.stringify(createSessionRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
@@ -143,34 +139,32 @@ describe('payment-handler-lineItems::execute', () => {
       })
 
       const response = await paymentHandler.handlePayment(ctpPaymentClone)
-      const makePaymentRequestInteraction = JSON.parse(
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const makePaymentRequestJson = JSON.parse(
-        makePaymentRequestInteraction.body
+      const createSessionRequestJson = JSON.parse(
+        createSessionRequestInteraction.body
       )
-      expect(makePaymentRequestJson.lineItems).to.undefined
+      expect(createSessionRequestJson.lineItems).to.undefined
     }
   )
 
   it(
-    'when addCommercetoolsLineItems is not enabled on app config, but makePaymentRequest for klarna payment type' +
-      'then it should add lineItems to makePaymentRequest',
+    'when addCommercetoolsLineItems is not enabled on app config, but addCommercetoolsLineItems set true ' +
+      'on createSessionRequest then it should add lineItems to createSessionRequest',
     async () => {
       _mockCtpCartsEndpoint()
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
-      const makePaymentRequest = {
+      const createSessionRequest = {
         reference: 'YOUR_REFERENCE',
-        paymentMethod: {
-          type: 'klarna',
-        },
+        addCommercetoolsLineItems: true,
       }
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest =
-        JSON.stringify(makePaymentRequest)
+      ctpPaymentClone.custom.fields.createSessionRequest =
+        JSON.stringify(createSessionRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
@@ -180,14 +174,15 @@ describe('payment-handler-lineItems::execute', () => {
       })
 
       const response = await handlePayment(ctpPaymentClone)
-      const makePaymentRequestInteraction = JSON.parse(
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const makePaymentRequestJson = JSON.parse(
-        makePaymentRequestInteraction.body
+      const createSessionRequestJson = JSON.parse(
+        createSessionRequestInteraction.body
       )
-      expect(makePaymentRequestJson.lineItems).to.have.lengthOf(3)
+      console.log(createSessionRequestJson)
+      expect(createSessionRequestJson.lineItems).to.have.lengthOf(3)
     }
   )
 

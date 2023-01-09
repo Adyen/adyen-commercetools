@@ -64,7 +64,7 @@ describe('create-session-request::execute::', () => {
 
     const result = await sessionRequestHandler.execute(paymentObject)
 
-    expect(result.actions.length).to.equal(2)
+    expect(result.actions.length).to.equal(3)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
     expect(result.actions[1].action).to.equal('setCustomField')
     const request = JSON.parse(result.actions[0].fields.request)
@@ -96,7 +96,7 @@ describe('create-session-request::execute::', () => {
 
       const result = await sessionRequestHandler.execute(paymentObject)
 
-      expect(result.actions.length).to.equal(2)
+      expect(result.actions.length).to.equal(3)
       expect(result.actions[0].action).to.equal('addInterfaceInteraction')
       expect(result.actions[1].action).to.equal('setCustomField')
       const request = JSON.parse(result.actions[0].fields.request)
