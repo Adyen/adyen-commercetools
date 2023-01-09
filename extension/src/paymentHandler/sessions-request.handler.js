@@ -22,7 +22,7 @@ async function execute(paymentObject) {
     createAddInterfaceInteractionAction({
       request,
       response,
-      type: c.CTP_INTERACTION_TYPE_CREATE_SESSION_REQUEST,
+      type: c.CTP_INTERACTION_TYPE_CREATE_SESSION,
     }),
     createSetCustomFieldAction(
       c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE,
@@ -41,6 +41,7 @@ async function execute(paymentObject) {
       action: 'setKey',
       key: reference,
     })
+
   return {
     actions,
   }
