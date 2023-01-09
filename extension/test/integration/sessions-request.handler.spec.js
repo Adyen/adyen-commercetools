@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 import _ from 'lodash'
 import ctpClientBuilder from '../../src/ctp.js'
-import c from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils.js'
 import { initPaymentWithCart } from './integration-test-set-up.js'
@@ -41,12 +40,12 @@ describe('::create-session-request::', () => {
           centAmount: 1000,
         },
         paymentMethodInfo: {
-          paymentInterface: c.CTP_ADYEN_INTEGRATION,
+          paymentInterface: constants.CTP_ADYEN_INTEGRATION,
         },
         custom: {
           type: {
             typeId: 'type',
-            key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
+            key: constants.CTP_PAYMENT_CUSTOM_TYPE_KEY,
           },
           fields: {
             createSessionRequest: JSON.stringify(createSessionRequestDraft),
@@ -85,7 +84,8 @@ describe('::create-session-request::', () => {
 
       const interfaceInteraction = payment.interfaceInteractions.find(
         (interaction) =>
-          interaction.fields.type === c.CTP_INTERACTION_TYPE_CREATE_SESSION
+          interaction.fields.type ===
+          constants.CTP_INTERACTION_TYPE_CREATE_SESSION
       )
       expect(interfaceInteraction).to.not.undefined
       expect(createSessionResponse).to.be.deep.equal(
@@ -120,7 +120,7 @@ describe('::create-session-request::', () => {
     async () => {
       const payment = await initPaymentWithCart({
         ctpClient,
-        adyenMerchantAccount: adyenMerchantAccount,
+        adyenMerchantAccount,
         commercetoolsProjectKey,
       })
 
