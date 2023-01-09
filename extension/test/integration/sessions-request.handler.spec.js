@@ -23,9 +23,10 @@ describe('::create-session-request::', () => {
       'then should set custom field createSessionResponse ' +
       'and interface interaction with type createSession',
     async () => {
+      const reference = `createSession-${new Date().getTime()}`
       const createSessionRequestDraft = {
         countryCode: 'DE',
-        reference: 'UNIQUE_PAYMENT_REFERENCE',
+        reference,
         returnUrl: '/',
         amount: {
           currency: 'EUR',
@@ -73,6 +74,7 @@ describe('::create-session-request::', () => {
       }
       expect(statusCode).to.equal(201)
 
+      expect(payment.key).to.equal(reference)
       const { createSessionRequest, createSessionResponse } =
         payment.custom.fields
       expect(createSessionRequest).to.be.deep.equal(
