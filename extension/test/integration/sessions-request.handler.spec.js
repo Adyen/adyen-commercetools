@@ -4,8 +4,8 @@ import ctpClientBuilder from '../../src/ctp.js'
 import c from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils.js'
-import {initPaymentWithCart} from "./integration-test-set-up.js";
-import constants from "../../src/config/constants.js";
+import { initPaymentWithCart } from './integration-test-set-up.js'
+import constants from '../../src/config/constants.js'
 
 describe('::create-session-request::', () => {
   let packageJson
@@ -113,55 +113,55 @@ describe('::create-session-request::', () => {
     }
   )
 
-    it(
-        'given a payment with cart ' +
-        'when createSession custom field and the addCommercetoolsLineItems set to true ' +
-        'then should calculate and lineItems to the createSessionRequest',
-        async () => {
+  it(
+    'given a payment with cart ' +
+      'when createSession custom field and the addCommercetoolsLineItems set to true ' +
+      'then should calculate and lineItems to the createSessionRequest',
+    async () => {
+      const payment = await initPaymentWithCart({
+        ctpClient,
+        adyenMerchantAccount: adyenMerchantAccount,
+        commercetoolsProjectKey,
+      })
 
-            const payment = await initPaymentWithCart({
-                ctpClient,
-                adyenMerchantAccount: adyenMerchantAccount,
-                commercetoolsProjectKey,
-            })
+      const createSessionRequestDraft = {
+        amount: {
+          currency: 'EUR',
+          value: 1000,
+        },
+        reference: `createSession3-${new Date().getTime()}`,
 
-            const createSessionRequestDraft = {
-                amount: {
-                    currency: 'EUR',
-                    value: 1000,
-                },
-                reference: `createSession3-${new Date().getTime()}`,
+        returnUrl: 'https://your-company.com/',
+        countryCode: 'NL',
+        addCommercetoolsLineItems: true,
+      }
 
-                returnUrl: 'https://your-company.com/',
-                countryCode: "NL",
-                addCommercetoolsLineItems: true,
-            }
+      const { statusCode, body: updatedPayment } = await ctpClient.update(
+        ctpClient.builder.payments,
+        payment.id,
+        payment.version,
+        [
+          {
+            action: 'setCustomField',
+            name: 'createSessionRequest',
+            value: JSON.stringify(createSessionRequestDraft),
+          },
+        ]
+      )
+      console.log(updatedPayment)
+      expect(statusCode).to.equal(200)
+      expect(updatedPayment.key).to.equal(createSessionRequestDraft.reference)
 
-            const { statusCode, body: updatedPayment } = await ctpClient.update(
-                ctpClient.builder.payments,
-                payment.id,
-                payment.version,
-                [
-                    {
-                        action: 'setCustomField',
-                        name: 'createSessionRequest',
-                        value: JSON.stringify(createSessionRequestDraft),
-                    },
-                ]
-            )
-            console.log(updatedPayment)
-            expect(statusCode).to.equal(200)
-            expect(updatedPayment.key).to.equal(createSessionRequestDraft.reference)
-
-
-            const interfaceInteraction = updatedPayment.interfaceInteractions.find(
-                (interaction) =>
-                    interaction.fields.type ===
-                    constants.CTP_INTERACTION_TYPE_CREATE_SESSION
-            )
-            const createSessionRequest = JSON.parse(interfaceInteraction.fields.request)
-            const createSessionRequestBody = JSON.parse(createSessionRequest.body)
-            expect(createSessionRequestBody.lineItems).to.have.lengthOf(3)
-        }
-    )
+      const interfaceInteraction = updatedPayment.interfaceInteractions.find(
+        (interaction) =>
+          interaction.fields.type ===
+          constants.CTP_INTERACTION_TYPE_CREATE_SESSION
+      )
+      const createSessionRequest = JSON.parse(
+        interfaceInteraction.fields.request
+      )
+      const createSessionRequestBody = JSON.parse(createSessionRequest.body)
+      expect(createSessionRequestBody.lineItems).to.have.lengthOf(3)
+    }
+  )
 })

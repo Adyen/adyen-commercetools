@@ -17,18 +17,7 @@ import {
 } from './payment-utils.js'
 import { isBasicAuthEnabled } from '../validator/authentication.js'
 import errorMessages from '../validator/error-messages.js'
-// import constants from '../config/constants.js'
 import config from '../config/config.js'
-
-/*
-
-const {
-  PAYMENT_METHOD_TYPE_KLARNA_METHODS,
-  PAYMENT_METHOD_TYPE_AFFIRM_METHODS,
-  PAYMENT_METHODS_WITH_REQUIRED_LINE_ITEMS,
-} = constants
-
- */
 
 async function handlePayment(paymentObject, authToken) {
   if (isBasicAuthEnabled() && !authToken) {
@@ -82,9 +71,10 @@ function _getPaymentHandlers(paymentObject) {
     paymentObject.custom.fields.createSessionRequest &&
     !paymentObject.custom.fields.createSessionResponse
   ) {
-    const createSessionRequest =
+    const createSessionRequestObj = JSON.parse(
       paymentObject.custom.fields.createSessionRequest
-    if (_requiresLineItems(createSessionRequest))
+    )
+    if (_requiresLineItems(createSessionRequestObj))
       handlers.push(lineItemSessionRequestHandler)
     else handlers.push(sessionRequestHandler)
   }
@@ -145,9 +135,10 @@ function _validatePaymentRequest(paymentObject, authToken) {
   return null
 }
 
-function _requiresLineItems(createSessionRequest) {
-  const addCommercetoolsLineItemsFlag =
-    _getAddCommercetoolsLineItemsFlag(createSessionRequest)
+function _requiresLineItems(createSessionRequestObj) {
+  const addCommercetoolsLineItemsFlag = _getAddCommercetoolsLineItemsFlag(
+    createSessionRequestObj
+  )
   if (
     addCommercetoolsLineItemsFlag === true ||
     addCommercetoolsLineItemsFlag === false
@@ -159,58 +150,26 @@ function _requiresLineItems(createSessionRequest) {
     config.getModuleConfig().addCommercetoolsLineItems
   if (addCommercetoolsLineItemsAppConfigFlag === true) return true
 
-  // TODO : Make sure with Adyen if payment method is not mandatory in web component 5
-  // return _isPaymentMethodRequiresLineItems(makePaymentRequestObj)
-
   return false
 }
 
-function _getAddCommercetoolsLineItemsFlag(createSessionRequest) {
+function _getAddCommercetoolsLineItemsFlag(createSessionRequestObj) {
   // The function is tend to be used to check values on the field: true, false, undefined,
   // or the value set but not to true/false
   // in case of the undefined or other than true/false, the function returns undefined:
   // it means the other fallbacks have to be checked to decide adding line items
   let addCommercetoolsLineItems
-  if ('addCommercetoolsLineItems' in createSessionRequest) {
+  if ('addCommercetoolsLineItems' in createSessionRequestObj) {
     if (
-      createSessionRequest.addCommercetoolsLineItems === true ||
-      createSessionRequest.addCommercetoolsLineItems === false
+      createSessionRequestObj.addCommercetoolsLineItems === true ||
+      createSessionRequestObj.addCommercetoolsLineItems === false
     ) {
-      addCommercetoolsLineItems = createSessionRequest.addCommercetoolsLineItems
+      addCommercetoolsLineItems =
+        createSessionRequestObj.addCommercetoolsLineItems
     }
   }
   return addCommercetoolsLineItems
 }
-
-// function _isKlarna(makePaymentRequestObj) {
-//   return (
-//     makePaymentRequestObj.paymentMethod &&
-//     PAYMENT_METHOD_TYPE_KLARNA_METHODS.includes(
-//       makePaymentRequestObj.paymentMethod.type
-//     )
-//   )
-// }
-//
-// function _isAffirm(makePaymentRequestObj) {
-//   return (
-//     makePaymentRequestObj.paymentMethod &&
-//     PAYMENT_METHOD_TYPE_AFFIRM_METHODS.includes(
-//       makePaymentRequestObj.paymentMethod.type
-//     )
-//   )
-// }
-//
-// function _isPaymentMethodRequiresLineItems(makePaymentRequestObj) {
-//   if (makePaymentRequestObj.paymentMethod) {
-//     const paymentMethodType = makePaymentRequestObj.paymentMethod.type
-//     for (const type of PAYMENT_METHODS_WITH_REQUIRED_LINE_ITEMS) {
-//       if (paymentMethodType.startsWith(type)) {
-//         return true
-//       }
-//     }
-//   }
-//   return false
-// }
 
 function _isCancelPayment(paymentObject) {
   return (
