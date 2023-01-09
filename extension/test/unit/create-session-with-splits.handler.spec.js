@@ -2,15 +2,15 @@ import nock from 'nock'
 import { expect } from 'chai'
 import c from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
-import makePaymentHandler from '../../src/paymentHandler/make-payment.handler.js'
+import sessionRequestHandler from '../../src/paymentHandler/sessions-request.handler.js'
 
-const { execute } = makePaymentHandler
+const { execute } = sessionRequestHandler
 
-describe('make-payment-with-splits::execute', () => {
+describe('create-session-with-splits::execute', () => {
   let scope
 
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
-  const makePaymentWithSplitsRequest = {
+  const createSessiontWithSplitsRequest = {
     amount: {
       currency: 'EUR',
       value: 512,
@@ -32,13 +32,6 @@ describe('make-payment-with-splits::execute', () => {
         reference: 'Payment',
       },
     ],
-    paymentMethod: {
-      type: 'scheme',
-      encryptedCardNumber: 'test_4111111111111111',
-      encryptedExpiryMonth: 'test_03',
-      encryptedExpiryYear: 'test_2030',
-      encryptedSecurityCode: 'test_737',
-    },
     reference: 'payment-with-planet-fees',
     merchantAccount: adyenMerchantAccount,
     returnUrl: 'https://planet-friendly.merchant/shopperReturn',
@@ -59,7 +52,7 @@ describe('make-payment-with-splits::execute', () => {
       },
       fields: {
         commercetoolsProjectKey: 'commercetoolsProjectKey',
-        makePaymentRequest: JSON.stringify(makePaymentWithSplitsRequest),
+        createSessionRequest: JSON.stringify(createSessiontWithSplitsRequest),
         adyenMerchantAccount,
       },
     },
@@ -75,9 +68,7 @@ describe('make-payment-with-splits::execute', () => {
       'when resultCode from Adyen is "Authorized", ' +
       'then it should return actions "addInterfaceInteraction", "setCustomField", "setKey" and "addTransaction"',
     async () => {
-      const paymentSuccessResponse = JSON.stringify({
-        pspReference: '853587031437598F',
-        resultCode: 'Authorised',
+      const createSessionSuccessResponse = JSON.stringify({
         amount: {
           currency: 'EUR',
           value: 512,
@@ -85,26 +76,16 @@ describe('make-payment-with-splits::execute', () => {
         merchantReference: 'payment-with-planet-fees',
       })
 
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const response = await execute(paymentObject)
 
-      expect(response.actions).to.have.lengthOf(6)
-
-      const setMethodInfoMethod = response.actions.find(
-        (a) => a.action === 'setMethodInfoMethod'
-      )
-      expect(setMethodInfoMethod.method).to.equal('scheme')
-
-      const setMethodInfoName = response.actions.find(
-        (a) => a.action === 'setMethodInfoName'
-      )
-      expect(setMethodInfoName.name).to.eql({ en: 'Credit Card' })
+      expect(response.actions).to.have.lengthOf(3)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction'
       )
-      expect(addInterfaceInteraction.fields.type).to.equal('makePayment')
+      expect(addInterfaceInteraction.fields.type).to.equal('createSession')
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
       expect(addInterfaceInteraction.fields.response).to.be.a('string')
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
@@ -112,43 +93,45 @@ describe('make-payment-with-splits::execute', () => {
       const request = JSON.parse(addInterfaceInteraction.fields.request)
       const requestBody = JSON.parse(request.body)
       expect(requestBody.reference).to.deep.equal(
-        makePaymentWithSplitsRequest.reference
+        createSessiontWithSplitsRequest.reference
       )
       expect(requestBody.riskData).to.deep.equal(
-        makePaymentWithSplitsRequest.riskData
+        createSessiontWithSplitsRequest.riskData
       )
-      expect(requestBody.paymentMethod).to.deep.equal(
-        makePaymentWithSplitsRequest.paymentMethod
-      )
+
       expect(requestBody.browserInfo).to.deep.equal(
-        makePaymentWithSplitsRequest.browserInfo
+        createSessiontWithSplitsRequest.browserInfo
       )
       expect(requestBody.amount).to.deep.equal(
-        makePaymentWithSplitsRequest.amount
+        createSessiontWithSplitsRequest.amount
       )
       expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField'
       )
-      expect(setCustomFieldAction.name).to.equal('makePaymentResponse')
+      expect(setCustomFieldAction.name).to.equal('createSessionResponse')
       expect(setCustomFieldAction.value).to.be.a('string')
       expect(setCustomFieldAction.value).to.equal(
         addInterfaceInteraction.fields.response
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(makePaymentWithSplitsRequest.reference)
+      expect(setKeyAction.key).to.equal(
+        createSessiontWithSplitsRequest.reference
+      )
+      // TODO : Checking if transaction is added after creating session
+      // const addTransaction = response.actions.find(
+      //   (a) => a.action === 'addTransaction'
+      // )
 
-      const addTransaction = response.actions.find(
-        (a) => a.action === 'addTransaction'
-      )
-      expect(addTransaction.transaction).to.be.a('object')
-      expect(addTransaction.transaction.type).to.equal('Authorization')
-      expect(addTransaction.transaction.state).to.equal('Success')
-      expect(addTransaction.transaction.interactionId).to.equal(
-        JSON.parse(paymentSuccessResponse).pspReference
-      )
+      // expect(addTransaction.transaction).to.be.a('object')
+      // expect(addTransaction.transaction.type).to.equal('Authorization')
+      // expect(addTransaction.transaction.state).to.equal('Success')
+
+      // expect(addTransaction.transaction.interactionId).to.equal(
+      //   JSON.parse(createSessiontWithSplitsRequest).pspReference
+      // )
     }
   )
 })
