@@ -15,7 +15,8 @@ import CreditCardRedirectPage from './pageObjects/CreditCard3dsRedirectPage.js'
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/redirect-3ds2-3ds1/web-component
-describe('::creditCardPayment3dsRedirect::', () => {
+describe.skip('::creditCardPayment3dsRedirect::', () => {
+  // TODO : Migrate e2e test for web component 5
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

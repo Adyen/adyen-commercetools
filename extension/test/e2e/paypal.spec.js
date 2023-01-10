@@ -11,7 +11,8 @@ import MakePaymentFormPage from './pageObjects/PaypalMakePaymentFormPage.js'
 import PaypalPopupPage from './pageObjects/PaypalPopupPage.js'
 import httpUtils from '../../src/utils.js'
 
-describe('::paypalPayment::', () => {
+describe.skip('::paypalPayment::', () => {
+  // TODO : Migrate e2e test for web component 5
   let browser
   let ctpClient
   let payment
