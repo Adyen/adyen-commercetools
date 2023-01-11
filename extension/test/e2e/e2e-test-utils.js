@@ -42,14 +42,14 @@ async function initPuppeteerBrowser() {
 
 async function getCreateSessionRequest(clientKey) {
   // TODO : Please check whether adyen apiKey is required here. Supposing it should be provided already in handler in extension module
-  return {
+  return JSON.stringify({
     amount: {
       currency: 'EUR',
       value: 1000,
     },
     reference: new Date().getTime(),
     returnUrl: 'https://ctp-adyen-integration-tests.loca.lt/return-url',
-  }
+  })
 }
 
 function assertPayment(
