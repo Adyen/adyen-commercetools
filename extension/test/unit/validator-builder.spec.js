@@ -3,7 +3,6 @@ import { withPayment } from '../../src/validator/validator-builder.js'
 import errorMessages from '../../src/validator/error-messages.js'
 
 const {
-  GET_PAYMENT_METHODS_REQUEST_INVALID_JSON,
   MAKE_PAYMENT_REQUEST_INVALID_JSON,
   SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON,
   AMOUNT_PLANNED_NOT_SAME,
@@ -30,14 +29,11 @@ describe('Validator builder', () => {
     const errorObject = withPayment(invalidPayment)
       .validateRequestFields()
       .getErrors()
-    expect(errorObject[0].message).to.equal(
-      GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
-    )
-    expect(errorObject[1].message).to.equal(MAKE_PAYMENT_REQUEST_INVALID_JSON)
-    expect(errorObject[2].message).to.equal(
+    expect(errorObject[0].message).to.equal(MAKE_PAYMENT_REQUEST_INVALID_JSON)
+    expect(errorObject[1].message).to.equal(
       SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
     )
-    expect(errorObject[3].message).to.equal(
+    expect(errorObject[2].message).to.equal(
       GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON
     )
   })

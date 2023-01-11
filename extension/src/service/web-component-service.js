@@ -3,16 +3,6 @@ import { serializeError } from 'serialize-error'
 import config from '../config/config.js'
 import utils from '../utils.js'
 
-async function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
-  const adyenCredentials = config.getAdyenConfig(merchantAccount)
-  return callAdyen(
-    `${adyenCredentials.apiBaseUrl}/paymentMethods`,
-    merchantAccount,
-    adyenCredentials.apiKey,
-    await extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj)
-  )
-}
-
 async function makePayment(
   merchantAccount,
   commercetoolsProjectKey,
@@ -129,6 +119,20 @@ function updateAmount(
   )
 }
 
+function createSessionRequest(
+  merchantAccount,
+  commercetoolsProjectKey,
+  requestObject
+) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+  return callAdyen(
+    `${adyenCredentials.apiBaseUrl}/sessions`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    requestObject
+  )
+}
+
 function disableStoredPayment(merchantAccount, disableStoredPaymentRequestObj) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   return callAdyen(
@@ -240,7 +244,6 @@ function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj, headers) {
 }
 
 export {
-  getPaymentMethods,
   makePayment,
   submitAdditionalPaymentDetails,
   manualCapture,
@@ -249,4 +252,5 @@ export {
   getCarbonOffsetCosts,
   updateAmount,
   disableStoredPayment,
+  createSessionRequest,
 }

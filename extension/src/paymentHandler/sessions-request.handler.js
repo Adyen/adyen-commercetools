@@ -3,26 +3,29 @@ import {
   createSetCustomFieldAction,
 } from './payment-utils.js'
 import c from '../config/constants.js'
-import { getPaymentMethods } from '../service/web-component-service.js'
+import { createSessionRequest } from '../service/web-component-service.js'
 
 async function execute(paymentObject) {
-  const getPaymentMethodsRequestObj = JSON.parse(
-    paymentObject.custom.fields.getPaymentMethodsRequest
+  const createSessionRequestObj = JSON.parse(
+    paymentObject.custom.fields.createSessionRequest
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
-  const { request, response } = await getPaymentMethods(
+  const commercetoolsProjectKey =
+    paymentObject.custom.fields.commercetoolsProjectKey
+  const { request, response } = await createSessionRequest(
     adyenMerchantAccount,
-    getPaymentMethodsRequestObj
+    commercetoolsProjectKey,
+    createSessionRequestObj
   )
   return {
     actions: [
       createAddInterfaceInteractionAction({
         request,
         response,
-        type: c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS,
+        type: c.CTP_INTERACTION_TYPE_CREATE_SESSION_REQUEST,
       }),
       createSetCustomFieldAction(
-        c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE,
+        c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE,
         response
       ),
     ],
