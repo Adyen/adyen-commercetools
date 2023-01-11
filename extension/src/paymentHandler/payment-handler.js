@@ -1,6 +1,5 @@
 import { withPayment } from '../validator/validator-builder.js'
 
-import submitPaymentDetailsHandler from './submit-payment-details.handler.js'
 import manualCaptureHandler from './manual-capture.handler.js'
 import cancelHandler from './cancel-payment.handler.js'
 import refundHandler from './refund-payment.handler.js'
@@ -84,12 +83,6 @@ function _getPaymentHandlers(paymentObject) {
   )
     handlers.push(getCarbonOffsetCostsHandler)
 
-  if (
-    paymentObject.custom.fields.makePaymentResponse &&
-    paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest &&
-    !paymentObject.custom.fields.submitAdditionalPaymentDetailsResponse
-  )
-    handlers.push(submitPaymentDetailsHandler)
   if (
     paymentObject.custom.fields.amountUpdatesRequest &&
     !paymentObject.custom.fields.amountUpdatesResponse
