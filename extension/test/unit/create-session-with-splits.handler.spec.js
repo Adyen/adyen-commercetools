@@ -120,18 +120,6 @@ describe('create-session-with-splits::execute', () => {
       expect(setKeyAction.key).to.equal(
         createSessiontWithSplitsRequest.reference
       )
-      // TODO : Checking if transaction is added after creating session
-      // const addTransaction = response.actions.find(
-      //   (a) => a.action === 'addTransaction'
-      // )
-
-      // expect(addTransaction.transaction).to.be.a('object')
-      // expect(addTransaction.transaction.type).to.equal('Authorization')
-      // expect(addTransaction.transaction.state).to.equal('Success')
-
-      // expect(addTransaction.transaction.interactionId).to.equal(
-      //   JSON.parse(createSessiontWithSplitsRequest).pspReference
-      // )
     }
   )
 })
