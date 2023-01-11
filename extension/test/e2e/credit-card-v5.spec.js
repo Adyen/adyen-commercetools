@@ -67,10 +67,11 @@ describe('::creditCardPayment v5::', () => {
             const browserTab = await browser.newPage()
 
             // Step #1 - Create a payment session
+
             // https://docs.adyen.com/online-payments/web-components#create-payment-session
             paymentAfterCreateSession = await createSession(clientKey)
             logger.debug(
-              'credit-card::paymentAfterMakePayment:',
+              'credit-card::paymentAfterCreateSession:',
               JSON.stringify(paymentAfterCreateSession)
             )
 
@@ -109,18 +110,12 @@ describe('::creditCardPayment v5::', () => {
         createSessionRequest
       )
     } catch (err) {
-      console.log(err)
+      //console.log(err)
     } finally {
       const endTime = new Date().getTime()
       logger.debug('credit-card::createSession:', endTime - startTime)
     }
 
-    // Dummy create session response obtained by running CURL command in bash
-    // payment = JSON.parse(
-    //   '{"amount":{"currency":"EUR","value":1000},"expiresAt":"2022-12-23T13:24:14+01:00","id":"CS3DFE06619E8F50DB","merchantAccount":"CommercetoolsGmbHDE775","reference":"123","returnUrl":"https://your-company.com/checkout?shopperOrder=12xy..","sessionData":"Ab02b4c0!BQABAgCtnn7IuEvI9iTWn4i7lUTx5k38uajIUtqaFDxLTj4J1FeRr4iOm3/4BemGiQIHxR8ild82mHy4LBh3zC+V0+CEhw6DiNvdt/qBjUFJbINLWYfA7tm59HJB1hWI9naFpMJzGeHwXOeuoJwMODRMKOl0Py1Wnu7k6ZgE5F6z9w9oU4wREsEE68bmMFMrTJGy5x6S7pATfPtz3I/L16ls42BxQCyM0NM+Rfu2rQ6zOrBvXUpR+gfmgezpskZWQcIqY9dHTnOuG3srpcfwOtc6/xG6bEAHOe6GB53GmKqhEx7HV45HoJyEC31ifhSWsVwS8zHO6+dvbjBUsH2VJnfatSJyFS6GT37j090DPwri8DKz1OyQkHISVYq3cbcUbHP74kpHPDcE6PkMvQY1rNO+P2UpLSvuJ5Y1N6cjwuPu7jADC0KUqyGWj1RI6vw6fKNyEEDwvUolX2UPRmB1s7uT4gByMyj9yFrOpBwQBMTo1z8ZkpJaWb24OaqPsCnREkLNyfwguhPv751tPB19iQgwbW5JJEZs9UvTWBfBt0MHRAworXG6UyBHjjc2Q+QaD5GNijqQ5X/AYzuERIoHyTxEHZ9P+/q0bQwOWeRSjj1bNH42Q5VYxxkwToLMRUDvYfcl94KBByBbDf6ltXnV0iwybuvc1lYEuwJJdGEJWOkhucRYbhDmuch6BoVEOsLNwokxEWWIAEp7ImtleSI6IkFGMEFBQTEwM0NBNTM3RUFFRDg3QzI0REQ1MzkwOUI4MEE3OEE5MjNFMzgyM0Q2OERBQ0M5NEI5RkY4MzA1REMifbdSGVyFAqh0VtSGCb8665WQDL5SO64CKWln3OieaYcGkEdFyeTPXz0OzFZqSeTn8cEVZkqpcslZ6BuUV0MD9PEGd6tp71jrS0Z5yPuVw8DhE1EGaM73yQBqNXDCT6iMsz/hnrbDRh5v6+freqPatUYTy++IxQoHF0CDMTaJOeQiVrb0ReRJpQl/W9iSvODpkRJPVuxN5EiknVqItIZRGuhVNweBKPm705ls0frFA8HprjVU7DM9cPKOpSUUfVCpm8qROF5El/tyZ1AWCG9ydWbsi8fzkF6xxeMNhQyKMj2XgE7N97fu9imh2GrWqH3QvYCDdqKr1cQKDmN/SFcK592/8qD8rQuu4NwFgRs2MK+ghfRBdcBKHqS7iPOmYFJk51+AaXyQlgARy38gdI1MgMDEPo858Wl+vIvv7U9uliyi8+KS6X22gYtX0fGZ1LJ0FekGZtnCHDExYzSlpWJUHieIJZAIH7CvxMPh+JhGAyTdYqU="}'
-    // )
-    console.log('payment ### ')
-    console.log(payment)
     return payment
   }
 
