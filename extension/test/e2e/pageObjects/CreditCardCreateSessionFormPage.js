@@ -1,24 +1,41 @@
-// import { executeInAdyenIframe } from '../e2e-test-utils.js'
+import { executeInAdyenIframe } from '../e2e-test-utils.js'
 import CreateSessionFormPage from './CreateSessionFormPage.js'
 
 export default class CreditCardCreateSessionFormPage extends CreateSessionFormPage {
-  async setupComponent({ clientKey, paymentAfterCreateSession }) {
+  async setupComponent({
+    clientKey,
+    paymentAfterCreateSession,
+    creditCardNumber,
+    creditCardDate,
+    creditCardCvc,
+  }) {
+    const createSessionFormAliveTimeout = 120_000 // It determines how long the form page stays before termination. Please remember to reset it to 5 seconds after debugging in browser to avoid long idle time in CI/CD
+
     await this.generateAdyenCreateSessionForm(
       clientKey,
       paymentAfterCreateSession
     )
 
-    // TODO : Check if we still need to input credit card details in iFrame after setupComponent
-    // await executeInAdyenIframe(this.page, '#encryptedCardNumber', (el) =>
-    //     el.type(creditCardNumber)
-    // )
-    // await executeInAdyenIframe(this.page, '#encryptedExpiryDate', (el) =>
-    //     el.type(creditCardDate)
-    // )
-    // await executeInAdyenIframe(this.page, '#encryptedSecurityCode', (el) =>
-    //     el.type(creditCardCvc)
-    // )
+    await this.page.waitForTimeout(3_000)
 
-    return this.getInitSessionResultTextAreaValue()
+    await executeInAdyenIframe(
+      this.page,
+      '[data-fieldtype=encryptedCardNumber]',
+      (el) => el.type(creditCardNumber)
+    )
+
+    await executeInAdyenIframe(
+      this.page,
+      '[data-fieldtype=encryptedExpiryDate]',
+      (el) => el.type(creditCardDate)
+    )
+
+    await executeInAdyenIframe(
+      this.page,
+      '[data-fieldtype=encryptedSecurityCode]',
+      (el) => el.type(creditCardCvc)
+    )
+    await this.page.waitForTimeout(createSessionFormAliveTimeout)
+    //return this.getInitSessionResultTextAreaValue()
   }
 }

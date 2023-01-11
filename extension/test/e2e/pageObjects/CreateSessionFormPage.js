@@ -14,9 +14,9 @@ export default class CreateSessionFormPage {
     let createSessionResponse
 
     createSessionResponse = JSON.parse(createSessionResponseStr)
-
-    await this.page.waitForTimeout(10_000)
-    const createSessionFormAliveTimeout = 120_000 // It determines how long the form page stays before termination. Please remember to reset it to 5 seconds after debugging in browser to avoid long idle time in CI/CD
+    // console.log(`createSessionResponse`)
+    // console.log(createSessionResponse)
+    await this.page.waitForTimeout(5_000)
 
     // Put Adyen API Key into HTML for e2e test
 
@@ -37,7 +37,6 @@ export default class CreateSessionFormPage {
     await this.page.$eval('#adyen-session-data', (e) => e.blur())
 
     await this.page.click('#initAdyenCheckout')
-    await this.page.waitForTimeout(createSessionFormAliveTimeout)
   }
 
   async getInitSessionResultTextAreaValue() {

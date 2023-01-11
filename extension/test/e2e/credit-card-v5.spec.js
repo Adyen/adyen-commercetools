@@ -82,6 +82,9 @@ describe('::creditCardPayment v5::', () => {
               baseUrl,
               clientKey,
               paymentAfterCreateSession,
+              creditCardNumber,
+              creditCardDate,
+              creditCardCvc,
             })
           } catch (err) {
             logger.error('credit-card::errors:', JSON.stringify(err))
@@ -124,12 +127,18 @@ describe('::creditCardPayment v5::', () => {
     baseUrl,
     clientKey,
     paymentAfterCreateSession,
+    creditCardNumber,
+    creditCardDate,
+    creditCardCvc,
   }) {
     const createSessionFormPage = new CreateSessionFormPage(browserTab, baseUrl)
     await createSessionFormPage.goToThisPage()
     return await createSessionFormPage.setupComponent({
       clientKey,
       paymentAfterCreateSession,
+      creditCardNumber,
+      creditCardDate,
+      creditCardCvc,
     })
   }
 })

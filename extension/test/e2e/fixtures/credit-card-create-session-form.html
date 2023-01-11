@@ -60,6 +60,8 @@ Init session result will come here</textarea
       const executeAdyenCheckout = async () => {
         console.log('executeAdyenCheckout')
         const checkout = await AdyenCheckout(configuration)
+        console.log(checkout.paymentMethodsResponse)
+        checkout.create('card').mount('#card-container')
       }
       const configuration = {
         locale: 'en_US', // The shopper's locale. For a list of supported locales, see https://docs.adyen.com/checkout/components-web/localization-components.
@@ -100,8 +102,6 @@ Init session result will come here</textarea
           document.getElementById('adyen-session-data').value
 
         console.log(JSON.stringify(configuration))
-
-        // checkout.create('card').mount('#card-container')
       })
     </script>
   </body>
