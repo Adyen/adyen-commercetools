@@ -169,6 +169,28 @@
       },
       "inputHint": "MultiLine",
       "required": false
+    },
+    {
+      "name": "createSessionRequest",
+      "label": {
+        "en": "createSessionRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "createSessionResponse",
+      "label": {
+        "en": "createSessionResponse"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
     }
   ]
 }
