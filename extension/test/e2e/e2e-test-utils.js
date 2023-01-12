@@ -52,6 +52,17 @@ async function getCreateSessionRequest(clientKey) {
   })
 }
 
+function assertCreatePaymentSession(
+  paymentAfterCreateSession,
+  initPaymentSessionResult
+) {
+  const { createSessionResponse } = paymentAfterCreateSession.custom.fields
+  const createSessionResponseJson = JSON.parse(createSessionResponse)
+
+  const finalAdyenPaymentInteraction = getLatestInterfaceInteraction(
+    payment.interfaceInteractions
+  )
+}
 function assertPayment(
   payment,
   finalAdyenPaymentInteractionName = 'submitAdditionalPaymentDetails'
@@ -197,7 +208,7 @@ function getRequestParams(url) {
 export {
   pasteValue,
   executeInAdyenIframe,
-  assertPayment,
+  assertCreatePaymentSession,
   createPayment,
   createPaymentSession,
   initPuppeteerBrowser,

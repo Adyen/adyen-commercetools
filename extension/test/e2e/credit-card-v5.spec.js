@@ -5,7 +5,7 @@ import CreateSessionFormPage from './pageObjects/CreditCardCreateSessionFormPage
 import httpUtils from '../../src/utils.js'
 
 import {
-  assertPayment,
+  assertCreatePaymentSession,
   createPaymentSession,
   initPuppeteerBrowser,
   serveFile,
@@ -60,6 +60,7 @@ describe('::creditCardPayment v5::', () => {
           'then it should successfully finish the payment',
         async () => {
           let paymentAfterCreateSession
+          let initPaymentSessionResult
           try {
             const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
             const clientKey =
@@ -77,7 +78,8 @@ describe('::creditCardPayment v5::', () => {
 
             // Step #2 - Setup Component
             // https://docs.adyen.com/online-payments/web-components#set-up
-            const setupComponentResult = await setupComponent({
+
+            initPaymentSessionResult = await initPaymentSession({
               browserTab,
               baseUrl,
               clientKey,
@@ -89,12 +91,11 @@ describe('::creditCardPayment v5::', () => {
           } catch (err) {
             logger.error('credit-card::errors:', JSON.stringify(err))
           }
-          // TODO : Please do assertion here to verify the interaction name in payment after create session
-          // let finalAdyenPaymentInteractionName
-          // assertPayment(
-          //   paymentAfterCreateSession,
-          //   finalAdyenPaymentInteractionName
-          // )
+
+          assertCreatePaymentSession(
+            paymentAfterCreateSession,
+            initPaymentSessionResult
+          )
         }
       )
     }
@@ -122,7 +123,7 @@ describe('::creditCardPayment v5::', () => {
     return payment
   }
 
-  async function setupComponent({
+  async function initPaymentSession({
     browserTab,
     baseUrl,
     clientKey,
@@ -133,7 +134,7 @@ describe('::creditCardPayment v5::', () => {
   }) {
     const createSessionFormPage = new CreateSessionFormPage(browserTab, baseUrl)
     await createSessionFormPage.goToThisPage()
-    return await createSessionFormPage.setupComponent({
+    return await createSessionFormPage.initPaymentSession({
       clientKey,
       paymentAfterCreateSession,
       creditCardNumber,

@@ -2,21 +2,19 @@ import { executeInAdyenIframe } from '../e2e-test-utils.js'
 import CreateSessionFormPage from './CreateSessionFormPage.js'
 
 export default class CreditCardCreateSessionFormPage extends CreateSessionFormPage {
-  async setupComponent({
+  async initPaymentSession({
     clientKey,
     paymentAfterCreateSession,
     creditCardNumber,
     creditCardDate,
     creditCardCvc,
   }) {
-    const createSessionFormAliveTimeout = 120_000 // It determines how long the form page stays before termination. Please remember to reset it to 5 seconds after debugging in browser to avoid long idle time in CI/CD
-
     await this.generateAdyenCreateSessionForm(
       clientKey,
       paymentAfterCreateSession
     )
 
-    await this.page.waitForTimeout(3_000)
+    await this.page.waitForTimeout(2_000)
 
     await executeInAdyenIframe(
       this.page,
@@ -26,16 +24,27 @@ export default class CreditCardCreateSessionFormPage extends CreateSessionFormPa
 
     await executeInAdyenIframe(
       this.page,
-      '[data-fieldtype=encryptedExpiryDate]',
+      'input[data-fieldtype^=encryptedExpiry]',
       (el) => el.type(creditCardDate)
     )
 
     await executeInAdyenIframe(
       this.page,
-      '[data-fieldtype=encryptedSecurityCode]',
+      'input[data-fieldtype^=encryptedSecurity]',
       (el) => el.type(creditCardCvc)
     )
-    await this.page.waitForTimeout(createSessionFormAliveTimeout)
-    //return this.getInitSessionResultTextAreaValue()
+
+    await this.page.waitForTimeout(2_000)
+    const checkoutButton = await this.page.$('.adyen-checkout__button--pay')
+
+    await this.page.evaluate((cb) => cb.click(), checkoutButton)
+
+    await this.page.waitForTimeout(1_000)
+    const authResultEle = await this.page.$('#adyen-payment-auth-result')
+    const authResultJson = await (
+      await authResultEle.getProperty('innerHTML')
+    ).jsonValue()
+    await this.page.waitForTimeout(1_000)
+    return authResultJson
   }
 }

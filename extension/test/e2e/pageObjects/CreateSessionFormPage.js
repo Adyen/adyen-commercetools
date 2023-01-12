@@ -14,8 +14,7 @@ export default class CreateSessionFormPage {
     let createSessionResponse
 
     createSessionResponse = JSON.parse(createSessionResponseStr)
-    // console.log(`createSessionResponse`)
-    // console.log(createSessionResponse)
+
     await this.page.waitForTimeout(5_000)
 
     // Put Adyen API Key into HTML for e2e test
@@ -24,12 +23,12 @@ export default class CreateSessionFormPage {
     await this.page.$eval('#adyen-client-key', (e) => e.blur())
 
     // Put Session ID into HTML for e2e test
-    let sessionId // TODO Assign session ID by the payment obtained from the response of /session endpoint
+
     await this.page.type('#adyen-session-id', createSessionResponse.id)
     await this.page.$eval('#adyen-session-id', (e) => e.blur())
 
     // Put Session ID into HTML for e2e test
-    let sessionData // TODO Assign session data by the payment obtained from the response of /session endpoint
+
     await this.page.type(
       '#adyen-session-data',
       createSessionResponse.sessionData

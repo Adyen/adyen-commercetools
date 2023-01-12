@@ -39,7 +39,8 @@
         placeholder="Adyen session data"
       ></textarea
       ><br />
-      <textarea id="adyen-init-session-result">
+
+      <textarea id="adyen-payment-auth-result">
 Init session result will come here</textarea
       >
     </div>
@@ -74,21 +75,18 @@ Init session result will come here</textarea
           id: '',
           sessionData: '',
         },
-        paymentMethodsConfiguration: {
-          card: {
-            hasHolderName: true,
-            holderNameRequired: true,
-            billingAddressRequired: true,
-          },
-        },
+
         onPaymentCompleted: (result, component) => {
           console.info(result, component)
-          document.getElementById('adyen-init-session-result').innerHTML =
+          document.getElementById('adyen-payment-auth-result').innerHTML =
             JSON.stringify(result)
         },
         onError: (error, component) => {
           console.error(error.name, error.message, error.stack, component)
+          document.getElementById('adyen-payment-auth-result').innerHTML =
+            JSON.stringify(error)
         },
+        showPayButton: true,
       }
 
       // The adyen API Key is initialized in ADYEN_INTEGRATION_CONFIG and passed into HTML via FormPage.js
