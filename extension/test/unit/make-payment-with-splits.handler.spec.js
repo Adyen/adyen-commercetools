@@ -138,7 +138,9 @@ describe('make-payment-with-splits::execute', () => {
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(makePaymentWithSplitsRequest.reference)
+      expect(setKeyAction.key).to.equal(
+        JSON.parse(paymentSuccessResponse).pspReference
+      )
 
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction'

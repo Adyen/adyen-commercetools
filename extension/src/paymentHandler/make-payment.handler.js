@@ -4,6 +4,7 @@ import {
   createSetMethodInfoMethodAction,
   createSetMethodInfoNameAction,
   createAddTransactionActionByResponse,
+  getPaymentKeyUpdateAction,
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import { makePayment } from '../service/web-component-service.js'
@@ -40,16 +41,12 @@ async function execute(paymentObject) {
     if (action) actions.push(action)
   }
 
-  const paymentKey = paymentObject.key
-  // ensure the key is a string, otherwise the error with "code": "InvalidJsonInput" will return by commercetools API.
-  const reference = requestBodyJson.reference?.toString()
-  // ensure the key and new reference is different, otherwise the error with
-  // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
-  if (reference !== paymentKey)
-    actions.push({
-      action: 'setKey',
-      key: reference,
-    })
+  const updatePaymentAction = getPaymentKeyUpdateAction(
+    paymentObject.key,
+    request,
+    response
+  )
+  if (updatePaymentAction) actions.push(updatePaymentAction)
 
   const addTransactionAction = createAddTransactionActionByResponse(
     paymentObject.amountPlanned.centAmount,

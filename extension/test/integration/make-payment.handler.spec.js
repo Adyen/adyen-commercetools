@@ -85,8 +85,11 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
         ]
       )
 
+      const makePaymentResponse =
+        updatedPayment?.custom?.fields?.makePaymentResponse
+      const pspReference = JSON.parse(makePaymentResponse).pspReference
       expect(statusCode).to.equal(200)
-      expect(updatedPayment.key).to.equal(makePaymentRequestDraft.reference)
+      expect(updatedPayment.key).to.equal(pspReference)
       expect(updatedPayment.paymentMethodInfo.method).to.equal('scheme')
       expect(updatedPayment.paymentMethodInfo.name).to.eql({
         en: 'Credit Card',
@@ -147,8 +150,9 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     )
 
     expect(statusCode).to.equal(201)
-
-    expect(payment.key).to.equal(reference)
+    const { makePaymentResponse } = payment.custom.fields
+    const pspReference = JSON.parse(makePaymentResponse).pspReference
+    expect(payment.key).to.equal(pspReference)
     expect(payment.paymentMethodInfo.method).to.equal('scheme')
     expect(payment.paymentMethodInfo.name).to.eql({ en: 'Credit Card' })
 
@@ -172,8 +176,6 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     expect(makePaymentRequestBody.merchantAccount).to.be.equal(
       adyenMerchantAccount
     )
-
-    const { makePaymentResponse } = payment.custom.fields
 
     expect(makePaymentResponse).to.be.deep.equal(
       interfaceInteraction.fields.response

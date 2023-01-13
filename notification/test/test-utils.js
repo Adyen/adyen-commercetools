@@ -87,10 +87,11 @@ const validator = new hmacValidator()
 function createNotificationPayload(
   commercetoolsProjectKey,
   adyenMerchantAccount,
-  paymentKey,
+  merchantReference,
+  pspReference,
   eventCode = 'AUTHORISATION',
-  pspReference = 'test_AUTHORISATION_1',
-  success = 'true'
+  success = 'true',
+  originalReference
 ) {
   const notification = {
     live: 'false',
@@ -107,10 +108,11 @@ function createNotificationPayload(
           eventCode,
           eventDate: '2019-01-30T18:16:22+01:00',
           merchantAccountCode: adyenMerchantAccount,
-          merchantReference: paymentKey,
+          merchantReference,
           operations: ['CANCEL', 'CAPTURE', 'REFUND'],
           paymentMethod: 'visa',
           pspReference,
+          originalReference,
           success,
         },
       },
@@ -138,6 +140,7 @@ function createNotificationPayload(
 async function ensurePayment(
   ctpClient,
   paymentKey,
+  pspReference,
   commercetoolsProjectKey,
   adyenMerchantAccount
 ) {
@@ -150,7 +153,9 @@ async function ensurePayment(
     commercetoolsProjectKey,
     adyenMerchantAccount,
   }
-
+  if (pspReference) {
+    paymentDraft.transactions[0].interactionId = pspReference
+  }
   return ctpClient.create(ctpClient.builder.payments, paymentDraft)
 }
 

@@ -34,18 +34,24 @@ async function processNotification(
     'NotificationRequestItem.merchantReference',
     null
   )
-  if (merchantReference === null) {
-    logger.error(
-      { notification: utils.getNotificationForTracking(notification) },
-      "Can't extract merchantReference from the notification"
-    )
-    return
-  }
+
+  const pspReference = _.get(
+    notification,
+    'NotificationRequestItem.pspReference',
+    null
+  )
+
+  const originalReference = _.get(
+    notification,
+    'NotificationRequestItem.originalReference',
+    null
+  )
 
   const ctpClient = await ctp.get(ctpProjectConfig)
 
   const payment = await getPaymentByMerchantReference(
     merchantReference,
+    originalReference || pspReference,
     ctpClient
   )
   if (payment !== null)
@@ -160,13 +166,13 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
     )
   if (isNotificationInInterfaceInteraction === false)
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
-
+  const { pspReference } = notificationRequestItem
   const { transactionType, transactionState } =
     await getTransactionTypeAndStateOrNull(notificationRequestItem)
   if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
-    const { pspReference } = notificationRequestItem
+
     const { eventDate } = notificationRequestItem
     const oldTransaction = _.find(
       payment.transactions,
@@ -200,7 +206,17 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
         )
       )
     }
+    const paymentKey = payment.key
+    const newPspReference =
+      notificationRequestItem.originalReference || pspReference
+    if (newPspReference && newPspReference !== paymentKey) {
+      updateActions.push({
+        action: 'setKey',
+        key: newPspReference,
+      })
+    }
   }
+
   const paymentMethodFromPayment = payment.paymentMethodInfo.method
   const paymentMethodFromNotification = notificationRequestItem.paymentMethod
   if (
@@ -390,17 +406,20 @@ function getSetMethodInfoNameAction(paymentMethod) {
   return null
 }
 
-async function getPaymentByMerchantReference(merchantReference, ctpClient) {
+async function getPaymentByMerchantReference(
+  merchantReference,
+  pspReference,
+  ctpClient
+) {
   try {
-    const result = await ctpClient.fetchByKey(
-      ctpClient.builder.payments,
-      merchantReference
-    )
-    return result.body
+    const keys = [merchantReference, pspReference]
+    console.log(keys)
+    const result = await ctpClient.fetchByKeys(ctpClient.builder.payments, keys)
+    return result.body.results[0]
   } catch (err) {
     if (err.statusCode === 404) return null
     const errMsg =
-      `Failed to fetch a payment with merchantReference: ${merchantReference}. ` +
+      `Failed to fetch a payment with merchantReference ${merchantReference} and pspReference ${pspReference}. ` +
       `Error: ${JSON.stringify(serializeError(err))}`
     throw new VError(err, errMsg)
   }
