@@ -27,11 +27,11 @@ describe('manual-capture.handler::execute::', () => {
           typeId: 'type',
         },
         fields: {
-          type: 'makePayment',
+          type: constants.CTP_INTERACTION_TYPE_CREATE_SESSION,
           request:
-            '{"amount":{"currency":"EUR","value":500},"reference":"YOUR_UNIQUE_REFERENCE","paymentMethod":{"type":"scheme","encryptedCardNumber":"test_4111111111111111","encryptedExpiryMonth":"test_03","encryptedExpiryYear":"test_2030","encryptedSecurityCode":"test_737"},"returnUrl":"https://your-company.com/","merchantAccount":"YOUR_MERCHANT_ACCOUNT"}',
+            '{"amount":{"currency":"EUR","value":500},"reference":"YOUR_UNIQUE_REFERENCE","returnUrl":"https://your-company.com/","merchantAccount":"YOUR_MERCHANT_ACCOUNT"}',
           response:
-            '{"pspReference":"8313547924770610","resultCode":"Authorised","amount":{"currency":"EUR","value":500},"merchantReference":"YOUR_UNIQUE_REFERENCE"}',
+            '{"amount": {"currency": "EUR","value": 1000},"countryCode": "NL","expiresAt": "2021-08-24T13:35:16+02:00","id": "CSD9CAC34EBAE225DD","merchantAccount": "YOUR_MERCHANT_ACCOUNT","reference": "YOUR_UNIQUE_REFERENCE","returnUrl": "https://your-company.com/","sessionData": "Ab02b4c..."}',
           createdAt: '2020-06-10T12:37:00.010Z',
         },
       },

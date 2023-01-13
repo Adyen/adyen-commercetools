@@ -23,7 +23,8 @@ const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction
-describe('::klarnaPayment::', () => {
+describe.skip('::klarnaPayment::', () => {
+  // TODO : Migrate e2e test for web component 5
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

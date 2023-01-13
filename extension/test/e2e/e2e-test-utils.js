@@ -81,6 +81,7 @@ function assertPayment(
   )
 }
 
+// TODO : Remove this function after finishing e2e test migration
 async function createPayment(
   ctpClient,
   adyenMerchantAccount,
