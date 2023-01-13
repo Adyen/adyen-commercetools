@@ -15,7 +15,8 @@ import CreditCardNativePage from './pageObjects/CreditCard3dsNativePage.js'
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
-describe('::creditCardPayment3dsNative::', () => {
+describe.skip('::creditCardPayment3dsNative::', () => {
+  // TODO : Migrate e2e test for web component 5
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

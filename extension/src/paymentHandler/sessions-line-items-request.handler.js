@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import ctpClientBuilder from '../ctp.js'
-import makePaymentHandler from './make-payment.handler.js'
+import sessionRequestHandler from './sessions-request.handler.js'
 import config from '../config/config.js'
 
 const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
@@ -8,25 +8,28 @@ const KLARNA_DEFAULT_LINE_ITEM_NAME = 'item'
 const KLARNA_DEFAULT_SHIPPING_METHOD_DESCRIPTION = 'shipping'
 
 async function execute(paymentObject) {
-  const makePaymentRequestObj = JSON.parse(
-    paymentObject.custom.fields.makePaymentRequest
+  const createSessionRequestObj = JSON.parse(
+    paymentObject.custom.fields.createSessionRequest
   )
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
-  if (!makePaymentRequestObj.lineItems) {
+  if (!createSessionRequestObj.lineItems) {
     const ctpCart = await _fetchMatchingCart(
       paymentObject,
       commercetoolsProjectKey
     )
     if (ctpCart) {
-      makePaymentRequestObj.lineItems = createLineItems(paymentObject, ctpCart)
-      paymentObject.custom.fields.makePaymentRequest = JSON.stringify(
-        makePaymentRequestObj
+      createSessionRequestObj.lineItems = createLineItems(
+        paymentObject,
+        ctpCart
+      )
+      paymentObject.custom.fields.createSessionRequest = JSON.stringify(
+        createSessionRequestObj
       )
     }
   }
 
-  return makePaymentHandler.execute(paymentObject)
+  return sessionRequestHandler.execute(paymentObject)
 }
 
 async function _fetchMatchingCart(paymentObject, ctpProjectKey) {

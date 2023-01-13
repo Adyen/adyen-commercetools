@@ -2,11 +2,11 @@ import nock from 'nock'
 import { expect } from 'chai'
 import _ from 'lodash'
 import config from '../../src/config/config.js'
-import makeLineItemsPaymentHandler from '../../src/paymentHandler/make-lineitems-payment.handler.js'
-import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import createLineItemsSessionPaymentHandler from '../../src/paymentHandler/sessions-line-items-request.handler.js'
+import createSessionSuccessResponse from './fixtures/adyen-create-session-success-response.js'
 import utils from '../../src/utils.js'
 
-describe('make-lineitems-payment::execute', () => {
+describe('create-lineitems-session-request::execute', () => {
   let ctpPayment
   let ctpCart
   let ctpCartWithCustomShippingMethod
@@ -43,36 +43,33 @@ describe('make-lineitems-payment::execute', () => {
       'then it should add lineItems correctly',
     async () => {
       _mockCtpCartsEndpoint()
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
-      const klarnaMakePaymentRequest = {
+      const createSessionRequest = {
         reference: 'YOUR_REFERENCE',
-        paymentMethod: {
-          type: 'klarna',
-        },
       }
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        klarnaMakePaymentRequest
-      )
+      ctpPaymentClone.custom.fields.createSessionRequest =
+        JSON.stringify(createSessionRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
 
-      const response = await makeLineItemsPaymentHandler.execute(
+      const response = await createLineItemsSessionPaymentHandler.execute(
         ctpPaymentClone
       )
-      expect(response.actions).to.have.lengthOf(6)
-      const makePaymentRequestInteraction = JSON.parse(
+
+      expect(response.actions).to.have.lengthOf(3)
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const makePaymentRequestJson = JSON.parse(
-        makePaymentRequestInteraction.body
+      const createSessionRequestJson = JSON.parse(
+        createSessionRequestInteraction.body
       )
       const ctpLineItem = ctpCart.lineItems[0]
-      const adyenLineItem = makePaymentRequestJson.lineItems.find(
+      const adyenLineItem = createSessionRequestJson.lineItems.find(
         (item) => item.id === 'test-product-sku-1'
       )
       expect(ctpLineItem.price.value.centAmount).to.equal(
@@ -82,85 +79,8 @@ describe('make-lineitems-payment::execute', () => {
         adyenLineItem.taxPercentage
       )
 
-      const setMethodInfoMethod = response.actions.find(
-        (a) => a.action === 'setMethodInfoMethod'
-      )
-      expect(setMethodInfoMethod.method).to.equal('klarna')
-
-      const setMethodInfoName = response.actions.find(
-        (a) => a.action === 'setMethodInfoName'
-      )
-      expect(setMethodInfoName.name).to.eql({ en: 'Klarna' })
-
       const ctpShippingInfo = ctpCart.shippingInfo
-      const adyenShippingInfo = makePaymentRequestJson.lineItems.find(
-        (item) => item.id === ctpShippingInfo.shippingMethodName
-      )
-      expect(ctpShippingInfo.price.centAmount).to.equal(
-        adyenShippingInfo.amountIncludingTax
-      )
-      expect(
-        ctpShippingInfo.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT
-      ).to.equal(adyenShippingInfo.taxPercentage)
-    }
-  )
-
-  it(
-    'when affirm request does not contain lineItems, ' +
-      'then it should add lineItems correctly',
-    async () => {
-      _mockCtpCartsEndpoint()
-      scope.post('/payments').reply(200, paymentSuccessResponse)
-
-      const affirmMakePaymentRequest = {
-        reference: 'YOUR_REFERENCE',
-        paymentMethod: {
-          type: 'affirm',
-        },
-      }
-
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        affirmMakePaymentRequest
-      )
-      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-      ctpPaymentClone.custom.fields.commercetoolsProjectKey =
-        commercetoolsProjectKey
-
-      const response = await makeLineItemsPaymentHandler.execute(
-        ctpPaymentClone
-      )
-      expect(response.actions).to.have.lengthOf(6)
-      const makePaymentRequestInteraction = JSON.parse(
-        response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
-      )
-      const makePaymentRequestJson = JSON.parse(
-        makePaymentRequestInteraction.body
-      )
-      const ctpLineItem = ctpCart.lineItems[0]
-      const adyenLineItem = makePaymentRequestJson.lineItems.find(
-        (item) => item.id === 'test-product-sku-1'
-      )
-      expect(ctpLineItem.price.value.centAmount).to.equal(
-        adyenLineItem.amountIncludingTax
-      )
-      expect(ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT).to.equal(
-        adyenLineItem.taxPercentage
-      )
-
-      const setMethodInfoMethod = response.actions.find(
-        (a) => a.action === 'setMethodInfoMethod'
-      )
-      expect(setMethodInfoMethod.method).to.equal('affirm')
-
-      const setMethodInfoName = response.actions.find(
-        (a) => a.action === 'setMethodInfoName'
-      )
-      expect(setMethodInfoName.name).to.eql({ en: 'Affirm' })
-
-      const ctpShippingInfo = ctpCart.shippingInfo
-      const adyenShippingInfo = makePaymentRequestJson.lineItems.find(
+      const adyenShippingInfo = createSessionRequestJson.lineItems.find(
         (item) => item.id === ctpShippingInfo.shippingMethodName
       )
       expect(ctpShippingInfo.price.centAmount).to.equal(
@@ -178,74 +98,31 @@ describe('make-lineitems-payment::execute', () => {
     async () => {
       _mockCtpCartsEndpoint()
 
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
-      const klarnaMakePaymentRequest = {
+      const createSessionRequest = {
         reference: 'YOUR_REFERENCE',
-        paymentMethod: {
-          type: 'klarna',
-        },
         lineItems: [],
       }
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        klarnaMakePaymentRequest
-      )
+      ctpPaymentClone.custom.fields.createSessionRequest =
+        JSON.stringify(createSessionRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
-      const response = await makeLineItemsPaymentHandler.execute(
+      const response = await createLineItemsSessionPaymentHandler.execute(
         ctpPaymentClone
       )
-      expect(response.actions).to.have.lengthOf(6)
-      const makePaymentRequestInteraction = JSON.parse(
+      expect(response.actions).to.have.lengthOf(3)
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const makePaymentRequestJson = JSON.parse(
-        makePaymentRequestInteraction.body
+      const createSessionRequestJson = JSON.parse(
+        createSessionRequestInteraction.body
       )
-      expect(makePaymentRequestJson.lineItems).to.deep.equal(
-        klarnaMakePaymentRequest.lineItems
-      )
-    }
-  )
-
-  it(
-    'when affirm request does contain lineItems, ' +
-      'then it should not add lineItems',
-    async () => {
-      _mockCtpCartsEndpoint()
-
-      scope.post('/payments').reply(200, paymentSuccessResponse)
-
-      const affirmMakePaymentRequest = {
-        reference: 'YOUR_REFERENCE',
-        paymentMethod: {
-          type: 'affirm',
-        },
-        lineItems: [],
-      }
-
-      const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        affirmMakePaymentRequest
-      )
-      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-
-      const response = await makeLineItemsPaymentHandler.execute(
-        ctpPaymentClone
-      )
-      expect(response.actions).to.have.lengthOf(6)
-      const makePaymentRequestInteraction = JSON.parse(
-        response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
-      )
-      const makePaymentRequestJson = JSON.parse(
-        makePaymentRequestInteraction.body
-      )
-      expect(makePaymentRequestJson.lineItems).to.deep.equal(
-        affirmMakePaymentRequest.lineItems
+      expect(createSessionRequestJson.lineItems).to.deep.equal(
+        createSessionRequest.lineItems
       )
     }
   )
@@ -255,27 +132,29 @@ describe('make-lineitems-payment::execute', () => {
       'it should take the first locale in line item name',
     async () => {
       _mockCtpCartsEndpoint()
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentToTest = {
         amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
         custom: {
           fields: {
             languageCode: 'nonExistingLanguageCode',
-            makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
+            createSessionRequest: JSON.stringify({
+              reference: 'YOUR_REFERENCE',
+            }),
             adyenMerchantAccount,
             commercetoolsProjectKey,
           },
         },
       }
-      const response = await makeLineItemsPaymentHandler.execute(
+      const response = await createLineItemsSessionPaymentHandler.execute(
         ctpPaymentToTest
       )
-      const makePaymentRequestInteraction = JSON.parse(
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
+      const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       expect(lineItems).to.have.lengthOf(3)
       expect(lineItems[0].description).to.equal(
         Object.values(ctpCart.lineItems[0].name)[0]
@@ -296,28 +175,30 @@ describe('make-lineitems-payment::execute', () => {
       const clonedCtpCart = _.cloneDeep(ctpCart)
       delete clonedCtpCart.shippingInfo.shippingMethod.obj
       _mockCtpCartsEndpoint(clonedCtpCart)
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentToTest = {
         amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
         custom: {
           fields: {
             languageCode: 'nonExistingLanguageCode',
-            makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
+            createSessionRequest: JSON.stringify({
+              reference: 'YOUR_REFERENCE',
+            }),
             adyenMerchantAccount,
             commercetoolsProjectKey,
           },
         },
       }
 
-      const response = await makeLineItemsPaymentHandler.execute(
+      const response = await createLineItemsSessionPaymentHandler.execute(
         ctpPaymentToTest
       )
-      const makePaymentRequestInteraction = JSON.parse(
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
+      const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       expect(lineItems[2].description).to.equal(
         ctpCart.shippingInfo.shippingMethodName
       )
@@ -330,9 +211,9 @@ describe('make-lineitems-payment::execute', () => {
     async () => {
       const clonedCtpCart = _.cloneDeep(ctpCartWithCustomShippingMethod)
       _mockCtpCartsEndpoint(clonedCtpCart)
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/payments').reply(200, createSessionSuccessResponse)
 
-      const klarnaMakePaymentRequest = {
+      const klarnacreateSessionRequest = {
         reference: 'YOUR_REFERENCE',
         paymentMethod: {
           type: 'klarna',
@@ -340,22 +221,22 @@ describe('make-lineitems-payment::execute', () => {
       }
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        klarnaMakePaymentRequest
+      ctpPaymentClone.custom.fields.createSessionRequest = JSON.stringify(
+        klarnacreateSessionRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
 
-      const response = await makeLineItemsPaymentHandler.execute(
+      const response = await createLineItemsSessionPaymentHandler.execute(
         ctpPaymentClone
       )
-      expect(response.actions).to.have.lengthOf(6)
-      const makePaymentRequestInteraction = JSON.parse(
+      expect(response.actions).to.have.lengthOf(3)
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
+      const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       const shippingMethodItem = lineItems[lineItems.length - 1]
       expect(shippingMethodItem.id).to.equal(
         ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
@@ -375,9 +256,9 @@ describe('make-lineitems-payment::execute', () => {
     async () => {
       const clonedCtpCart = _.cloneDeep(ctpCartWithCustomShippingMethod)
       _mockCtpCartsEndpoint(clonedCtpCart)
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/payments').reply(200, createSessionSuccessResponse)
 
-      const affirmMakePaymentRequest = {
+      const affirmcreateSessionRequest = {
         reference: 'YOUR_REFERENCE',
         paymentMethod: {
           type: 'affirm',
@@ -385,22 +266,22 @@ describe('make-lineitems-payment::execute', () => {
       }
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        affirmMakePaymentRequest
+      ctpPaymentClone.custom.fields.createSessionRequest = JSON.stringify(
+        affirmcreateSessionRequest
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
 
-      const response = await makeLineItemsPaymentHandler.execute(
+      const response = await createLineItemsSessionPaymentHandler.execute(
         ctpPaymentClone
       )
-      expect(response.actions).to.have.lengthOf(6)
-      const makePaymentRequestInteraction = JSON.parse(
+      expect(response.actions).to.have.lengthOf(3)
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
+      const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       const shippingMethodItem = lineItems[lineItems.length - 1]
       expect(shippingMethodItem.id).to.equal(
         ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
@@ -423,25 +304,27 @@ describe('make-lineitems-payment::execute', () => {
       en: 'test-en',
     }
     _mockCtpCartsEndpoint(clonedCtpCart)
-    scope.post('/payments').reply(200, paymentSuccessResponse)
+    scope.post('/payments').reply(200, createSessionSuccessResponse)
 
     const ctpPaymentToTest = {
       amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
       custom: {
         fields: {
           languageCode: 'de',
-          makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
+          createSessionRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
           adyenMerchantAccount,
           commercetoolsProjectKey,
         },
       },
     }
-    const response = await makeLineItemsPaymentHandler.execute(ctpPaymentToTest)
-    const makePaymentRequestInteraction = JSON.parse(
+    const response = await createLineItemsSessionPaymentHandler.execute(
+      ctpPaymentToTest
+    )
+    const createSessionRequestInteraction = JSON.parse(
       response.actions.find((a) => a.action === 'addInterfaceInteraction')
         .fields.request
     )
-    const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
+    const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
     expect(lineItems[0].description).to.equal('test-de')
   })
 
@@ -458,26 +341,28 @@ describe('make-lineitems-payment::execute', () => {
         en: 'test-en',
       }
       _mockCtpCartsEndpoint(clonedCtpCart)
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/payments').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentToTest = {
         amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
         custom: {
           fields: {
-            makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
+            createSessionRequest: JSON.stringify({
+              reference: 'YOUR_REFERENCE',
+            }),
             adyenMerchantAccount,
             commercetoolsProjectKey,
           },
         },
       }
-      const response = await makeLineItemsPaymentHandler.execute(
+      const response = await createLineItemsSessionPaymentHandler.execute(
         ctpPaymentToTest
       )
-      const makePaymentRequestInteraction = JSON.parse(
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
+      const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       expect(lineItems[0].description).to.equal('test-fr')
     }
   )
@@ -494,26 +379,28 @@ describe('make-lineitems-payment::execute', () => {
         en: 'test-en',
       }
       _mockCtpCartsEndpoint(clonedCtpCart)
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/payments').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentToTest = {
         amountPlanned: { centAmount: 100, currencyCode: 'EUR' },
         custom: {
           fields: {
-            makePaymentRequest: JSON.stringify({ reference: 'YOUR_REFERENCE' }),
+            createSessionRequest: JSON.stringify({
+              reference: 'YOUR_REFERENCE',
+            }),
             adyenMerchantAccount,
             commercetoolsProjectKey,
           },
         },
       }
-      const response = await makeLineItemsPaymentHandler.execute(
+      const response = await createLineItemsSessionPaymentHandler.execute(
         ctpPaymentToTest
       )
-      const makePaymentRequestInteraction = JSON.parse(
+      const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
       )
-      const { lineItems } = JSON.parse(makePaymentRequestInteraction.body)
+      const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       expect(lineItems[0].description).to.equal('test-de')
     }
   )
