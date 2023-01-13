@@ -48,9 +48,11 @@ describe('payment-handler-lineItems::execute', () => {
 
       const createSessionRequest = {
         reference: 'YOUR_REFERENCE',
-        paymentMethod: {
-          type: 'clearpay',
+        amount: {
+          value: 1000,
+          currency: 'EUR',
         },
+        returnUrl: 'https://your-company.com/',
       }
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
@@ -65,7 +67,7 @@ describe('payment-handler-lineItems::execute', () => {
       })
 
       const response = await handlePayment(ctpPaymentClone)
-
+      console.log(response)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request

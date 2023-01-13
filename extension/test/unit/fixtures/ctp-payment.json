@@ -2,7 +2,7 @@
   "amountPlanned": {
     "type": "centPrecision",
     "currencyCode": "EUR",
-    "centAmount": 795,
+    "centAmount": 1000,
     "fractionDigits": 2
   },
   "paymentMethodInfo": {
@@ -36,7 +36,7 @@
         "key": "ctp-adyen-integration-interaction-payment-type"
       },
       "fields": {
-        "request": "{\\\"method\\\":\\\"POST\\\",\\\"body\\\":\\\"{\\\\\\\"amount\\\\\\\":{\\\\\\\"currency\\\\\\\":\\\\\\\"EUR\\\\\\\",\\\\\\\"value\\\\\\\":1000},\\\\\\\"reference\\\\\\\":1673539977614,\\\\\\\"returnUrl\\\\\\\":\\\\\\\"https://ctp-adyen-integration-tests.loca.lt/return-url\\\\\\\",\\\\\\\"merchantAccount\\\\\\\":\\\\\\\"CommercetoolsGmbHDE775\\\\\\\"}\\\",\\\"headers\\\":{\\\"Content-Type\\\":\\\"application/json\\\",\\\"X-Api-Key\\\":\\\"***\\\"}}",
+        "request": "{ \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\", \"amount\": { \"value\": 1000, \"currency\": \"EUR\" }, \"returnUrl\": \"https://your-company.com/checkout?shopperOrder=12xy..\", \"reference\": \"YOUR_REFERENCE\", \"countryCode\": \"NL\" }",
         "createdAt": "2019-02-28T22:16:04.246Z",
         "response": "response",
         "type": "createSession"
