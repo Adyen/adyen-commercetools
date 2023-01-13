@@ -57,13 +57,21 @@ function assertCreatePaymentSession(
   initPaymentSessionResult
 ) {
   const { createSessionResponse } = paymentAfterCreateSession.custom.fields
-  const createSessionResponseJson = JSON.parse(createSessionResponse)
+  const initPaymentSessionResultJson = JSON.parse(initPaymentSessionResult)
 
   const finalAdyenPaymentInteraction = getLatestInterfaceInteraction(
-    payment.interfaceInteractions
+    paymentAfterCreateSession.interfaceInteractions,
+    c.CTP_INTERACTION_TYPE_CREATE_SESSION
   )
+
+  expect(finalAdyenPaymentInteraction.fields.response).to.equal(
+    createSessionResponse
+  )
+  expect(initPaymentSessionResultJson.resultCode).to.equal('Authorised')
+  expect(initPaymentSessionResultJson.sessionData).to.not.equal('undefined')
 }
-function assertPayment(
+
+function assertPayment( // TODO : Remove this function after finishing e2e test migration
   payment,
   finalAdyenPaymentInteractionName = 'submitAdditionalPaymentDetails'
 ) {
@@ -103,7 +111,6 @@ function assertPayment(
     payment.amountPlanned.currencyCode
   )
 }
-
 
 // TODO : Remove this function after finishing e2e test migration
 
