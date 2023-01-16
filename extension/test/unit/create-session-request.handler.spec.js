@@ -64,7 +64,7 @@ describe('create-session-request::execute::', () => {
 
     const result = await sessionRequestHandler.execute(paymentObject)
 
-    expect(result.actions.length).to.equal(2)
+    expect(result.actions.length).to.equal(3)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
     expect(result.actions[1].action).to.equal('setCustomField')
     const request = JSON.parse(result.actions[0].fields.request)
@@ -76,7 +76,7 @@ describe('create-session-request::execute::', () => {
       result.actions[1].value
     )
     expect(result.actions[0].fields.type).to.equal(
-      c.CTP_INTERACTION_TYPE_CREATE_SESSION_REQUEST
+      c.CTP_INTERACTION_TYPE_CREATE_SESSION
     )
     expect(result.actions[1].name).to.equal(
       c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE
@@ -96,14 +96,14 @@ describe('create-session-request::execute::', () => {
 
       const result = await sessionRequestHandler.execute(paymentObject)
 
-      expect(result.actions.length).to.equal(2)
+      expect(result.actions.length).to.equal(3)
       expect(result.actions[0].action).to.equal('addInterfaceInteraction')
       expect(result.actions[1].action).to.equal('setCustomField')
       const request = JSON.parse(result.actions[0].fields.request)
       expect(JSON.parse(request.body)).to.be.deep.includes(getSessionRequest)
       expect(result.actions[0].fields.response).to.be.includes(errorMsg)
       expect(result.actions[0].fields.type).to.equal(
-        c.CTP_INTERACTION_TYPE_CREATE_SESSION_REQUEST
+        c.CTP_INTERACTION_TYPE_CREATE_SESSION
       )
       expect(result.actions[1].name).to.equal(
         c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE

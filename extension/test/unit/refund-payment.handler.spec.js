@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import config from '../../src/config/config.js'
 import refundPaymentHandler from '../../src/paymentHandler/refund-payment.handler.js'
 import utils from '../../src/utils.js'
-import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import createSessionSuccessResponse from './fixtures/adyen-create-session-success-response.js'
 import { overrideGenerateIdempotencyKeyConfig } from '../test-utils.js'
 
 const { execute } = refundPaymentHandler
@@ -52,7 +52,7 @@ describe('refund-payment::execute', () => {
   })
 
   it('when refund payment request contains reference, then it should send this reference to Adyen', async () => {
-    scope.post('/payments').reply(200, paymentSuccessResponse)
+    scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
     const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
@@ -79,7 +79,7 @@ describe('refund-payment::execute', () => {
     async () => {
       overrideGenerateIdempotencyKeyConfig(true)
 
-      scope.post('/payments').reply(200, paymentSuccessResponse)
+      scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
 

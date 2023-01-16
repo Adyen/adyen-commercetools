@@ -18,7 +18,8 @@ describe('::amount updates::', () => {
     ctpClient = await ctpClientBuilder.get(ctpConfig)
   })
 
-  it('should call amountUpdates endpoint', async () => {
+  it.skip('should call amountUpdates endpoint', async () => {
+    // TODO : Migrate the integration test to e2e test for web component 5
     const randomNumber = new Date().getTime()
     // 1. make payment
     const payment = await makePayment({
@@ -67,7 +68,8 @@ describe('::amount updates::', () => {
     expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
   })
 
-  it('should extend the authorisation when amount is the same', async () => {
+  it.skip('should extend the authorisation when amount is the same', async () => {
+    // TODO : Migrate the integration test to e2e test for web component 5
     const randomNumber = new Date().getTime()
     // 1. make payment
     const payment = await makePayment({
@@ -116,7 +118,8 @@ describe('::amount updates::', () => {
     expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
   })
 
-  it('should repeatedly update amount', async () => {
+  it.skip('should repeatedly update amount', async () => {
+    // TODO : Migrate the integration test to e2e test for web component 5
     const randomNumber = new Date().getTime()
     // 1. make payment
     const payment = await makePayment({

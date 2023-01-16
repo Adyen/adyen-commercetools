@@ -2,8 +2,8 @@ import { expect } from 'chai'
 import _ from 'lodash'
 import nock from 'nock'
 import { randomInt } from 'node:crypto'
-import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
-import makeLineItemsPaymentHandler from '../../src/paymentHandler/make-lineitems-payment.handler.js'
+import createSessionSuccessResponse from './fixtures/adyen-create-session-success-response.js'
+import lineItemsSessionRequestHandler from '../../src/paymentHandler/sessions-line-items-request.handler.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils.js'
 
@@ -34,23 +34,19 @@ describe('::Multitenancy::', () => {
       'extension should call the correct adyen and commercetools project',
     async () => {
       _mockCtpCartsEndpoint()
-      adyenApiScope.post('/payments').reply(200, paymentSuccessResponse)
+      adyenApiScope.post('/sessions').reply(200, createSessionSuccessResponse)
 
-      const klarnaMakePaymentRequest = {
+      const createSessionRequest = {
         reference: 'YOUR_REFERENCE',
-        paymentMethod: {
-          type: 'klarna',
-        },
       }
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
-      ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        klarnaMakePaymentRequest
-      )
+      ctpPaymentClone.custom.fields.createSessionRequest =
+        JSON.stringify(createSessionRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await makeLineItemsPaymentHandler.execute(
+      const response = await lineItemsSessionRequestHandler.execute(
         ctpPaymentClone
       )
       const adyenRequest = JSON.parse(
