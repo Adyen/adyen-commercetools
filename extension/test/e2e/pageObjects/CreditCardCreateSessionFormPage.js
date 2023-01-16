@@ -38,7 +38,9 @@ export default class CreditCardCreateSessionFormPage extends CreateSessionFormPa
     const checkoutButton = await this.page.$('.adyen-checkout__button--pay')
 
     await this.page.evaluate((cb) => cb.click(), checkoutButton)
+  }
 
+  async getPaymentAuthResult() {
     const authResultEle = await this.page.$('#adyen-payment-auth-result')
     const authResultJson = await (
       await authResultEle.getProperty('innerHTML')

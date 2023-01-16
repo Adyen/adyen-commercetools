@@ -12,7 +12,7 @@ import {
 } from './e2e-test-utils.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
 import CreditCardRedirectAuthenticationPage from './pageObjects/CreditCardRedirectAuthenticationPage.js'
-import CreateSessionFormPage from './pageObjects/CreditCard3dsCreateSessionFormPage.js'
+import CreateSessionFormPage from './pageObjects/CreditCardCreateSessionFormPage.js'
 const logger = httpUtils.getLogger()
 
 function setRoute() {

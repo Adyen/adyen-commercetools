@@ -133,12 +133,13 @@ describe('::creditCardPayment v5::', () => {
   }) {
     const createSessionFormPage = new CreateSessionFormPage(browserTab, baseUrl)
     await createSessionFormPage.goToThisPage()
-    return await createSessionFormPage.initPaymentSession({
+    await createSessionFormPage.initPaymentSession({
       clientKey,
       paymentAfterCreateSession,
       creditCardNumber,
       creditCardDate,
       creditCardCvc,
     })
+    return await createSessionFormPage.getPaymentAuthResult()
   }
 })
