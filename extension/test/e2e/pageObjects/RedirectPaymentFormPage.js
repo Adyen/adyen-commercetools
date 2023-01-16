@@ -13,23 +13,16 @@ export default class RedirectPaymentFormPage {
     await this.page.goto(`${this.baseUrl}/redirect-payment-form`)
   }
 
-  async redirectToAdyenPaymentPage(paymentDetailsResponse) {
-    logger.debug(
-      'redirectToAdyenPaymentPage::paymentDetailsResponse::',
-      paymentDetailsResponse
-    )
-
-    // TODO :
-    //  1. Get returnUrl from paymentDetailsResponse
-    //  2. Extract session ID and redirect result from URL parameters
-    //  3. Paste the session ID and redirectResult to HTML input textbox
-    const url = paymentDetailsResponse.returnUrl
-    const params = getRequestParams(url)
-    const sessionId = params.sessionId
-    const redirectResult = params.redirectResult
-
+  async redirectToAdyenPaymentPage(adyenClientKey, sessionId, redirectResult) {
+    await pasteValue(this.page, '#adyen-client-key', adyenClientKey)
     await pasteValue(this.page, '#adyen-redirect-session-id', sessionId)
     await pasteValue(this.page, '#adyen-redirect-result', redirectResult)
-    return this.page.click('#redirect-payment-button')
+
+    await this.page.click('#redirect-payment-button')
+    await this.page.waitForTimeout(1_000)
+    const redirectResultCodeEle = await this.page.$(
+      '#adyen-payment-auth-result'
+    )
+    return await this.page.evaluate((el) => el.value, redirectResultCodeEle)
   }
 }

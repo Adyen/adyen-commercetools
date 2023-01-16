@@ -4,6 +4,9 @@ export default class CreditCard3dsRedirectPage {
   }
 
   async finish3dsRedirectPayment() {
+    await this.page.waitForTimeout(2_000)
+    console.log('finish3dsRedirectPayment')
+    await this.page.waitForSelector('#username')
     await this.page.type('#username', 'user')
     await this.page.type('#password', 'password')
 
@@ -11,7 +14,18 @@ export default class CreditCard3dsRedirectPage {
       this.page.click('.paySubmit'),
       this.page.waitForSelector('#redirect-response'),
     ])
-    const element = await this.page.$('#redirect-response')
-    return this.page.evaluate((el) => el.textContent, element)
+
+    await this.page.waitForTimeout(2_000)
+    const sessionIdEle = await this.page.$('#sessionId')
+    const redirectResultEle = await this.page.$('#redirectResult')
+    const sessionId = await this.page.evaluate(
+      (el) => el.textContent,
+      sessionIdEle
+    )
+    const redirectResult = await this.page.evaluate(
+      (el) => el.textContent,
+      redirectResultEle
+    )
+    return { sessionId, redirectResult }
   }
 }

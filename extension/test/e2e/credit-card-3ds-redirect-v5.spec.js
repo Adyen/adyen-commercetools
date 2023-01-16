@@ -7,11 +7,12 @@ import {
   getCreateSessionRequest,
   initPuppeteerBrowser,
   serveFile,
-  getRequestParams
+  getRequestParams,
+  assertCreatePaymentSession,
 } from './e2e-test-utils.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
-import CreditCardRedirectPage from './pageObjects/CreditCard3dsRedirectPage.js'
-import CreateSessionFormPage from './pageObjects/CreditCardCreateSessionFormPage.js'
+import CreditCard3dsRedirectPage from './pageObjects/CreditCard3dsRedirectPage.js'
+import CreateSessionFormPage from './pageObjects/CreditCard3dsCreateSessionFormPage.js'
 const logger = httpUtils.getLogger()
 
 function setRoute() {
@@ -23,12 +24,38 @@ function setRoute() {
     )
   }
   routes['/redirect-payment-form'] = async (request, response) => {
+    console.log('return')
     serveFile(
       './test/e2e/fixtures/redirect-payment-form-v5.html',
       request,
       response
     )
   }
+  // routes['/return-url'] = async (request, response) => {
+  //
+  //   const params = getRequestParams(request.url)
+  //
+  //    sessionId = params.sessionId
+  //    redirectResult = params.redirectResult
+  //
+  //   if (browser && browserTab && baseUrl) {
+  //
+  //
+  //
+  //     const redirectPaymentFormPage = new RedirectPaymentFormPage(
+  //         browserTab,
+  //         baseUrl
+  //     )
+  //
+  //     await redirectPaymentFormPage.goToThisPage()
+  //     await redirectPaymentFormPage.redirectToAdyenPaymentPage(sessionId, redirectResult)
+  //
+  //     await Promise.all([
+  //       redirectPaymentFormPage.redirectToAdyenPaymentPage(sessionId, redirectResult),
+  //       newBrowserTab.waitForNavigation(),
+  //     ])
+  //   }
+  // }
   routes['/return-url'] = async (request, response) => {
     const params = getRequestParams(request.url)
     return httpUtils.sendResponse({
@@ -38,15 +65,20 @@ function setRoute() {
       },
       data:
         '<!DOCTYPE html><html><head></head>' +
-        `<body><div id=redirect-response>${params.redirectResult}</div></body></html>`,
+        '<body><div id=redirect-response>' +
+        `<div id=sessionId>${params.sessionId}</div><div id=redirectResult>${params.redirectResult}</div>` +
+        '</div></body></html>',
     })
   }
 }
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/redirect-3ds2-3ds1/web-component
 describe('::creditCardPayment3dsRedirect::', () => {
+  let baseUrl
   let browser
+
   let ctpClient
+
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
 
@@ -86,9 +118,10 @@ describe('::creditCardPayment3dsRedirect::', () => {
         `when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
           'then it should successfully finish the payment with 3DS redirect flow',
         async () => {
-          let paymentAfterRedirect
+          let paymentAfterCreateSession
+          let redirectPaymentResult
           try {
-            const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+            baseUrl = config.getModuleConfig().apiExtensionBaseUrl
             const clientKey =
               config.getAdyenConfig(adyenMerchantAccount).clientKey
 
@@ -96,15 +129,15 @@ describe('::creditCardPayment3dsRedirect::', () => {
 
             // Step #1 - Create a payment session
             // https://docs.adyen.com/online-payments/web-components#create-payment-session
-            const paymentAfterCreateSession = await createSession(clientKey)
+            paymentAfterCreateSession = await createSession(clientKey)
             logger.debug(
-              'credit-card::paymentAfterMakePayment:',
+              'credit-card::paymentAfterCreateSession:',
               JSON.stringify(paymentAfterCreateSession)
             )
 
             // Step #2 - Setup Component
             // https://docs.adyen.com/online-payments/web-components#set-up
-            const initPaymentSessionResult = await initPaymentSession({
+            await initPaymentSession({
               browserTab,
               baseUrl,
               clientKey,
@@ -114,27 +147,28 @@ describe('::creditCardPayment3dsRedirect::', () => {
               creditCardCvc,
             })
 
-            console.log('initPaymentSessionResult')
-            console.log(initPaymentSessionResult)
-
             // Step #3 - Handle Redirect
             // https://docs.adyen.com/online-payments/web-components#handle-redirect-result
-            paymentAfterRedirect = await handleRedirect({
+            redirectPaymentResult = await handleRedirect({
               browserTab,
               baseUrl,
-              payment: paymentAfterCreateSession,
+              clientKey,
             })
             logger.debug(
-              'credit-card-3ds-redirect::paymentAfterRedirect:',
-              JSON.stringify(paymentAfterRedirect)
+              'credit-card-3ds-redirect::redirectPaymentResult:',
+              JSON.stringify(redirectPaymentResult)
             )
           } catch (err) {
+            console.log(err)
             logger.error(
               'credit-card-3ds-redirect::errors',
               JSON.stringify(err)
             )
           }
-          // assertPayment(paymentAfterRedirect)
+          assertCreatePaymentSession(
+            paymentAfterCreateSession,
+            redirectPaymentResult
+          )
         }
       )
     }
@@ -146,13 +180,13 @@ describe('::creditCardPayment3dsRedirect::', () => {
     const startTime = new Date().getTime()
     try {
       payment = await createPaymentSession(
-          ctpClient,
-          adyenMerchantAccount,
-          ctpProjectKey,
-          createSessionRequest
+        ctpClient,
+        adyenMerchantAccount,
+        ctpProjectKey,
+        createSessionRequest
       )
     } catch (err) {
-      //console.log(err)
+      console.log(err)
     } finally {
       const endTime = new Date().getTime()
       logger.debug('credit-card::createSession:', endTime - startTime)
@@ -162,14 +196,14 @@ describe('::creditCardPayment3dsRedirect::', () => {
   }
 
   async function initPaymentSession({
-                                      browserTab,
-                                      baseUrl,
-                                      clientKey,
-                                      paymentAfterCreateSession,
-                                      creditCardNumber,
-                                      creditCardDate,
-                                      creditCardCvc,
-                                    }) {
+    browserTab,
+    baseUrl,
+    clientKey,
+    paymentAfterCreateSession,
+    creditCardNumber,
+    creditCardDate,
+    creditCardCvc,
+  }) {
     const createSessionFormPage = new CreateSessionFormPage(browserTab, baseUrl)
     await createSessionFormPage.goToThisPage()
     return await createSessionFormPage.initPaymentSession({
@@ -181,36 +215,30 @@ describe('::creditCardPayment3dsRedirect::', () => {
     })
   }
 
-  async function handleRedirect({ browserTab, baseUrl, payment }) {
+  async function handleRedirect({ browserTab, baseUrl, clientKey }) {
     let result = null
     const startTime = new Date().getTime()
-    console.log('handleRedirect ### ')
-    console.log('handleRedirect ### ')
-    console.log('handleRedirect ### ')
-    try {
-      // TODO : No need to submit additional payment details. Redirect should be done in front-end component above.
 
-      const { createSessionResponse: createSessionResponseString } =
-        payment.custom.fields
-      const createSessionResponse = await JSON.parse(
-        createSessionResponseString
-      )
+    try {
+      const creditCardRedirectPage = new CreditCard3dsRedirectPage(browserTab)
+      const { sessionId, redirectResult } =
+        await creditCardRedirectPage.finish3dsRedirectPayment()
 
       const redirectPaymentFormPage = new RedirectPaymentFormPage(
         browserTab,
         baseUrl
       )
+
       await redirectPaymentFormPage.goToThisPage()
 
-      await Promise.all([
-        redirectPaymentFormPage.redirectToAdyenPaymentPage(
-          createSessionResponse
-        ),
-        browserTab.waitForNavigation(),
-      ])
+      const resultCode =
+        await redirectPaymentFormPage.redirectToAdyenPaymentPage(
+          clientKey,
+          sessionId,
+          redirectResult
+        )
 
-      const creditCardRedirectPage = new CreditCardRedirectPage(browserTab)
-      const result = await creditCardRedirectPage.finish3dsRedirectPayment()
+      return resultCode
     } finally {
       const endTime = new Date().getTime()
       logger.debug(
