@@ -1,7 +1,4 @@
-import { pasteValue, getRequestParams } from '../e2e-test-utils.js'
-import httpUtils from '../../../src/utils.js'
-
-const logger = httpUtils.getLogger()
+import { pasteValue } from '../e2e-test-utils.js'
 
 export default class RedirectPaymentFormPage {
   constructor(page, baseUrl) {

@@ -1,20 +1,30 @@
 import ctpClientBuilder from '../../src/ctp.js'
 import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
-import MakePaymentFormPage from './pageObjects/CreditCardMakePaymentFormPage.js'
+import CreateSessionFormPage from './pageObjects/CreditCardCreateSessionFormPage.js'
 import httpUtils from '../../src/utils.js'
+
 import {
-  assertPayment,
-  createPayment,
+  assertCreatePaymentSession,
+  createPaymentSession,
   initPuppeteerBrowser,
   serveFile,
+  getCreateSessionRequest,
 } from './e2e-test-utils.js'
 
 const logger = httpUtils.getLogger()
 
+function setRoute() {
+  routes['/create-session-form'] = async (request, response) => {
+    serveFile(
+      './test/e2e/fixtures/credit-card-create-session-form.html',
+      request,
+      response
+    )
+  }
+}
 // Flow description: https://docs.adyen.com/checkout/components-web
-describe.skip('::creditCardPayment::', () => {
-  // TODO : Migrate e2e test for web component 5
+describe('::creditCardPayment v5::', () => {
   let browser
   let ctpClient
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
@@ -27,9 +37,7 @@ describe.skip('::creditCardPayment::', () => {
   ]
 
   beforeEach(async () => {
-    routes['/make-payment-form'] = async (request, response) => {
-      serveFile('./test/e2e/fixtures/make-payment-form.html', request, response)
-    }
+    setRoute()
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
     ctpClient = await ctpClientBuilder.get(ctpConfig)
     browser = await initPuppeteerBrowser()
@@ -51,64 +59,86 @@ describe.skip('::creditCardPayment::', () => {
         `when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
           'then it should successfully finish the payment',
         async () => {
-          let paymentAfterMakePayment
+          let paymentAfterCreateSession
+          let initPaymentSessionResult
           try {
             const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
             const clientKey =
               config.getAdyenConfig(adyenMerchantAccount).clientKey
             const browserTab = await browser.newPage()
 
-            paymentAfterMakePayment = await makePayment({
+            // Step #1 - Create a payment session
+
+            // https://docs.adyen.com/online-payments/web-components#create-payment-session
+            paymentAfterCreateSession = await createSession(clientKey)
+            logger.debug(
+              'credit-card::paymentAfterCreateSession:',
+              JSON.stringify(paymentAfterCreateSession)
+            )
+
+            // Step #2 - Setup Component
+            // https://docs.adyen.com/online-payments/web-components#set-up
+
+            initPaymentSessionResult = await initPaymentSession({
               browserTab,
               baseUrl,
+              clientKey,
+              paymentAfterCreateSession,
               creditCardNumber,
               creditCardDate,
               creditCardCvc,
-              clientKey,
             })
-            logger.debug(
-              'credit-card::paymentAfterMakePayment:',
-              JSON.stringify(paymentAfterMakePayment)
-            )
           } catch (err) {
             logger.error('credit-card::errors:', JSON.stringify(err))
           }
-          assertPayment(paymentAfterMakePayment, 'makePayment')
+
+          assertCreatePaymentSession(
+            paymentAfterCreateSession,
+            initPaymentSessionResult
+          )
         }
       )
     }
   )
 
-  async function makePayment({
-    browserTab,
-    baseUrl,
-    creditCardNumber,
-    creditCardDate,
-    creditCardCvc,
-    clientKey,
-  }) {
-    const makePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
-    await makePaymentFormPage.goToThisPage()
-    const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({
-      creditCardNumber,
-      creditCardDate,
-      creditCardCvc,
-      clientKey,
-    })
+  async function createSession(clientKey) {
+    const createSessionRequest = await getCreateSessionRequest(clientKey)
     let payment = null
     const startTime = new Date().getTime()
     try {
-      payment = await createPayment(
+      payment = await createPaymentSession(
         ctpClient,
         adyenMerchantAccount,
         ctpProjectKey,
-        makePaymentRequest
+        createSessionRequest
       )
+    } catch (err) {
+      logger.error('credit-card::createSession::errors', JSON.stringify(err))
     } finally {
       const endTime = new Date().getTime()
-      logger.debug('credit-card::makePayment:', endTime - startTime)
+      logger.debug('credit-card::createSession:', endTime - startTime)
     }
 
     return payment
+  }
+
+  async function initPaymentSession({
+    browserTab,
+    baseUrl,
+    clientKey,
+    paymentAfterCreateSession,
+    creditCardNumber,
+    creditCardDate,
+    creditCardCvc,
+  }) {
+    const createSessionFormPage = new CreateSessionFormPage(browserTab, baseUrl)
+    await createSessionFormPage.goToThisPage()
+    return await createSessionFormPage.initPaymentSession({
+      clientKey,
+      paymentAfterCreateSession,
+      creditCardNumber,
+      creditCardDate,
+      creditCardCvc,
+    })
   }
 })

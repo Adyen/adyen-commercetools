@@ -59,7 +59,6 @@ Init session result will come here</textarea
     ></script>
     <script type="application/javascript">
       const executeAdyenCheckout = async () => {
-
         const checkout = await AdyenCheckout(configuration)
         checkout.create('card').mount('#card-container')
       }
