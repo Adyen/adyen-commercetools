@@ -42,10 +42,11 @@ export default class CreditCardCreateSessionFormPage extends CreateSessionFormPa
 
   async getPaymentAuthResult() {
     const authResultEle = await this.page.$('#adyen-payment-auth-result')
+    await this.page.waitForTimeout(2_000)
     const authResultJson = await (
       await authResultEle.getProperty('innerHTML')
     ).jsonValue()
-    await this.page.waitForTimeout(1_000)
+
     return authResultJson
   }
 }

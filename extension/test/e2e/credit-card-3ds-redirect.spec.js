@@ -31,31 +31,6 @@ function setRoute() {
       response
     )
   }
-  // routes['/return-url'] = async (request, response) => {
-  //
-  //   const params = getRequestParams(request.url)
-  //
-  //    sessionId = params.sessionId
-  //    redirectResult = params.redirectResult
-  //
-  //   if (browser && browserTab && baseUrl) {
-  //
-  //
-  //
-  //     const redirectPaymentFormPage = new RedirectPaymentFormPage(
-  //         browserTab,
-  //         baseUrl
-  //     )
-  //
-  //     await redirectPaymentFormPage.goToThisPage()
-  //     await redirectPaymentFormPage.redirectToAdyenPaymentPage(sessionId, redirectResult)
-  //
-  //     await Promise.all([
-  //       redirectPaymentFormPage.redirectToAdyenPaymentPage(sessionId, redirectResult),
-  //       newBrowserTab.waitForNavigation(),
-  //     ])
-  //   }
-  // }
   routes['/return-url'] = async (request, response) => {
     const params = getRequestParams(request.url)
     return httpUtils.sendResponse({
@@ -88,10 +63,10 @@ describe('::creditCardPayment3dsRedirect::', () => {
       name: 'Mastercard',
       creditCardNumber: '5212 3456 7890 1234',
     },
-    // {
-    //   name: 'Visa',
-    //   creditCardNumber: '4212 3456 7890 1237',
-    // },
+    {
+      name: 'Visa',
+      creditCardNumber: '4212 3456 7890 1237',
+    },
   ]
 
   beforeEach(async () => {
