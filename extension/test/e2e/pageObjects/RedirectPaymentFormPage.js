@@ -11,12 +11,13 @@ export default class RedirectPaymentFormPage {
   }
 
   async redirectToAdyenPaymentPage(adyenClientKey, sessionId, redirectResult) {
+    await this.page.waitForSelector('#adyen-client-key')
     await pasteValue(this.page, '#adyen-client-key', adyenClientKey)
     await pasteValue(this.page, '#adyen-redirect-session-id', sessionId)
     await pasteValue(this.page, '#adyen-redirect-result', redirectResult)
 
     await this.page.click('#redirect-payment-button')
-    await this.page.waitForTimeout(1_000)
+    await this.page.waitForTimeout(3_000)
     const redirectResultCodeEle = await this.page.$(
       '#adyen-payment-auth-result'
     )

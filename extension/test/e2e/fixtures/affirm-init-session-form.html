@@ -2,7 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Create Session</title>
+    <title>Create Session for Affirm Payment</title>
+
     <link
       rel="stylesheet"
       href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.0.0/adyen.css"
@@ -11,18 +12,6 @@
     />
   </head>
   <body>
-    <div>
-      Use following credit card to test
-      <p>Card number: 5454 5454 5454 5454</p>
-      <p>Expiry date: 03/30</p>
-      <p>CVC: 737</p>
-      <a
-        target="_adyenCards"
-        href="https://docs.adyen.com/development-resources/test-cards/test-card-numbers#test-3d-secure-2-authentication"
-      >
-        More cards
-      </a>
-    </div>
     <div>
       <input
         type="text"
@@ -40,35 +29,22 @@
       ></textarea
       ><br />
 
-      <textarea id="adyen-payment-auth-result">
-Init session result will come here</textarea
-      >
+      <textarea id="adyen-payment-form-input"> </textarea>
+      <br />
+      <input type="text" class="firstname secondname" />
     </div>
     <br />
-    <div id="card-container"></div>
-    <input
-      type="button"
-      id="init-adyen-checkout-button"
-      value="button"
-      onclick="executeAdyenCheckout()"
-    />
+    <div id="affirm-container"></div>
+
     <script
       src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.0.0/adyen.js"
       integrity="sha384-kcKKvS6qZbXycrUw31OJ2/2Hz8A8FTsV9anjvpyQc/IWR1SmkFUw7w7F/t5S3qtA"
       crossorigin="anonymous"
     ></script>
     <script type="application/javascript">
-      const executeAdyenCheckout = async () => {
-        const checkout = await AdyenCheckout(configuration)
-        checkout.create('card').mount('#card-container')
-      }
       const configuration = {
-        locale: 'en_US', // The shopper's locale. For a list of supported locales, see https://docs.adyen.com/checkout/components-web/localization-components.
-        environment: 'test', // When you're ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
+        environment: 'test', // When you"re ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
         clientKey: '', // Your client key. To find out how to generate one, see https://docs.adyen.com/development-resources/client-side-authentication.
-        analytics: {
-          enabled: false, // Set to false to not send analytics data to Adyen.
-        },
         session: {
           id: '',
           sessionData: '',
@@ -85,20 +61,45 @@ Init session result will come here</textarea
             JSON.stringify(error)
         },
         showPayButton: true,
+        countryCode: 'US', // the country code from the
+      }
+      async function initConfiguration() {}
+      function buildCreateSessionFormInput() {
+        const createSessionFormInput = {}
+
+        createSessionFormInput.shopperEmail = 'test@test.com'
+        createSessionFormInput.telephoneNumber = '+31612345678'
+
+        createSessionFormInput.shopperName = {
+          firstName: 'firstName',
+          lastName: 'lastName',
+        }
+
+        createSessionFormInput.billingAddress = {
+          city: 'San Francisco',
+          country: 'US',
+          houseNumberOrName: '274',
+          postalCode: '94107',
+          street: 'Brannan St.',
+          stateCode: 'CA',
+        }
+        document.getElementById('adyen-payment-form-input').innerText =
+          JSON.stringify(createSessionFormInput)
       }
 
-      // The adyen API Key is initialized in ADYEN_INTEGRATION_CONFIG and passed into HTML via FormPage.js
       const clientKeyElement = document.getElementById('adyen-client-key')
       const sessionDataElement = document.getElementById('adyen-session-data')
-      sessionDataElement.addEventListener('blur', () => {
+      sessionDataElement.addEventListener('blur', async () => {
         configuration.clientKey = clientKeyElement.value
         configuration.session.id =
           document.getElementById('adyen-session-id').value
         configuration.session.sessionData =
           document.getElementById('adyen-session-data').value
-
-        console.log(JSON.stringify(configuration))
+        const checkout = await AdyenCheckout(configuration)
+        checkout.create('affirm').mount('#affirm-container')
       })
+
+      buildCreateSessionFormInput()
     </script>
   </body>
 </html>

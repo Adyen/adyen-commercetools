@@ -5,7 +5,7 @@ export default class CreateSessionFormPage {
   }
 
   async goToThisPage() {
-    await this.page.goto(`${this.baseUrl}/create-session-form`)
+    await this.page.goto(`${this.baseUrl}/init-session-form`)
   }
 
   async generateAdyenCreateSessionForm(clientKey, payment) {
@@ -34,12 +34,10 @@ export default class CreateSessionFormPage {
       createSessionResponse.sessionData
     )
     await this.page.$eval('#adyen-session-data', (e) => e.blur())
-
-    await this.page.click('#initAdyenCheckout')
   }
 
   async getInitSessionResultTextAreaValue() {
-    // TODO : Check the checkout buttom ID from the DOM element and see if it can be actually clicked.
+    await this.page.waitForSelector('.adyen-checkout__button--pay')
     await this.page.click('.adyen-checkout__button--pay')
     const initSessionResultTextArea = await this.page.$(
       '#adyen-init-session-result'

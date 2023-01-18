@@ -40,11 +40,10 @@ async function initPuppeteerBrowser() {
   })
 }
 
-async function getCreateSessionRequest(clientKey) {
-  // TODO : Please check whether adyen apiKey is required here. Supposing it should be provided already in handler in extension module
+async function getCreateSessionRequest(clientKey, currency = 'EUR') {
   return JSON.stringify({
     amount: {
-      currency: 'EUR',
+      currency,
       value: 1000,
     },
     reference: new Date().getTime(),

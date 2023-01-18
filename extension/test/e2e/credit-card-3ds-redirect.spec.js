@@ -24,9 +24,8 @@ function setRoute() {
     )
   }
   routes['/redirect-payment-form'] = async (request, response) => {
-    console.log('return')
     serveFile(
-      './test/e2e/fixtures/redirect-payment-form-v5.html',
+      './test/e2e/fixtures/redirect-payment-form.html',
       request,
       response
     )
