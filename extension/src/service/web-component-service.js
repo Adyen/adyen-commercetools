@@ -2,6 +2,7 @@ import fetch from 'node-fetch'
 import { serializeError } from 'serialize-error'
 import config from '../config/config.js'
 import utils from '../utils.js'
+import constants from '../config/constants.js'
 
 async function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
@@ -63,7 +64,7 @@ function manualCapture(
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(manualCaptureRequestObj, commercetoolsProjectKey)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/Payment/v64/capture`,
+    `${adyenCredentials.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.MANUAL_CAPTURE}/capture`,
     merchantAccount,
     adyenCredentials.apiKey,
     manualCaptureRequestObj,
@@ -79,7 +80,7 @@ function cancelPayment(
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(cancelPaymentRequestObj)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/Payment/v64/cancel`,
+    `${adyenCredentials.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.CANCEL}/cancel`,
     merchantAccount,
     adyenCredentials.apiKey,
     cancelPaymentRequestObj
@@ -95,7 +96,7 @@ function refund(
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(refundRequestObj, commercetoolsProjectKey)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/Payment/v64/refund`,
+    `${adyenCredentials.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.REFUND}/refund`,
     merchantAccount,
     adyenCredentials.apiKey,
     refundRequestObj,
@@ -132,7 +133,7 @@ function updateAmount(
 function disableStoredPayment(merchantAccount, disableStoredPaymentRequestObj) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/Recurring/v68/disable`,
+    `${adyenCredentials.legacyApiBaseUrl}/Recurring/${constants.ADYEN_LEGACY_API_VERSION.DISABLED_STORED_PAYMENT}/disable`,
     merchantAccount,
     adyenCredentials.apiKey,
     disableStoredPaymentRequestObj

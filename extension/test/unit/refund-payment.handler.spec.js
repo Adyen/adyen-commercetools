@@ -5,7 +5,7 @@ import config from '../../src/config/config.js'
 import refundPaymentHandler from '../../src/paymentHandler/refund-payment.handler.js'
 import utils from '../../src/utils.js'
 import { overrideGenerateIdempotencyKeyConfig } from '../test-utils.js'
-
+import constants from '../../src/config/constants.js'
 const { execute } = refundPaymentHandler
 
 describe('refund-payment::execute', () => {
@@ -43,7 +43,9 @@ describe('refund-payment::execute', () => {
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-    scope = nock(`${adyenConfig.legacyApiBaseUrl}/Payment/v64`)
+    scope = nock(
+      `${adyenConfig.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.REFUND}`
+    )
   })
 
   afterEach(() => {
