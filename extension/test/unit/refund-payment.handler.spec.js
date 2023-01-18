@@ -93,28 +93,32 @@ describe('refund-payment::execute', () => {
     }
   )
 
-  it('when refund payment response contains non-JSON format, then it should return the response in plain text inside interfaceInteraction', async () => {
-    scope.post('/refund').reply(200, 'non-json-response')
+  it(
+    'when refund payment response contains non-JSON format, ' +
+      'then it should return the response in plain text inside interfaceInteraction',
+    async () => {
+      scope.post('/refund').reply(200, 'non-json-response')
 
-    const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
-    ctpPaymentClone.transactions.push(refundPaymentTransaction)
-    ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.transactions.push(refundPaymentTransaction)
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
-    const response = await execute(ctpPaymentClone)
+      const response = await execute(ctpPaymentClone)
 
-    const adyenRequest = response.actions.find(
-      (action) => action.action === 'addInterfaceInteraction'
-    ).fields.request
-    const adyenResponse = response.actions.find(
-      (action) => action.action === 'addInterfaceInteraction'
-    ).fields.response
-    const adyenRequestJson = JSON.parse(adyenRequest)
-    const requestBody = JSON.parse(adyenRequestJson.body)
+      const adyenRequest = response.actions.find(
+        (action) => action.action === 'addInterfaceInteraction'
+      ).fields.request
+      const adyenResponse = response.actions.find(
+        (action) => action.action === 'addInterfaceInteraction'
+      ).fields.response
+      const adyenRequestJson = JSON.parse(adyenRequest)
+      const requestBody = JSON.parse(adyenRequestJson.body)
 
-    expect(requestBody.reference).to.equal(
-      refundPaymentTransaction.custom.fields.reference
-    )
-    expect(adyenResponse).to.equal('"non-json-response"')
-  })
+      expect(requestBody.reference).to.equal(
+        refundPaymentTransaction.custom.fields.reference
+      )
+      expect(adyenResponse).to.equal('"non-json-response"')
+    }
+  )
 })
