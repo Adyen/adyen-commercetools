@@ -225,7 +225,9 @@ async function fetchAsync(
   } catch (err) {
     if (response)
       // Handle non-JSON format response
-      responseBody = responseBodyInText
+      throw new Error(
+        `Unable to receive non-JSON format resposne from Adyen API : ${responseBodyInText}`
+      )
     // Error in fetching URL
     else throw err
   } finally {

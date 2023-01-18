@@ -112,13 +112,14 @@ describe('refund-payment::execute', () => {
       const adyenResponse = response.actions.find(
         (action) => action.action === 'addInterfaceInteraction'
       ).fields.response
+
       const adyenRequestJson = JSON.parse(adyenRequest)
       const requestBody = JSON.parse(adyenRequestJson.body)
 
       expect(requestBody.reference).to.equal(
         refundPaymentTransaction.custom.fields.reference
       )
-      expect(adyenResponse).to.equal('"non-json-response"')
+      expect(adyenResponse).to.contains('non-json-response')
     }
   )
 })
