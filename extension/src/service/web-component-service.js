@@ -192,6 +192,7 @@ async function callAdyen(
     returnedRequest = { body: JSON.stringify(requestArg) }
     returnedResponse = serializeError(err)
   }
+
   return { request: returnedRequest, response: returnedResponse }
 }
 
@@ -206,18 +207,33 @@ async function fetchAsync(
   const removeSensitiveData =
     requestObj.removeSensitiveData ?? moduleConfig.removeSensitiveData
   delete requestObj.removeSensitiveData
+  let response
+  let responseBody
+  let responseBodyInText
   const request = buildRequest(
     adyenMerchantAccount,
     adyenApiKey,
     requestObj,
     headers
   )
-  const response = await fetch(url, request)
-  const responseBody = await response.json()
-  // strip away sensitive data from the adyen response.
-  request.headers['X-Api-Key'] = '***'
-  if (removeSensitiveData) {
-    delete responseBody.additionalData
+
+  try {
+    response = await fetch(url, request)
+    responseBodyInText = await response.text()
+
+    responseBody = JSON.parse(responseBodyInText)
+  } catch (err) {
+    if (response)
+      // Handle non-JSON format response
+      responseBody = responseBodyInText
+    // Error in fetching URL
+    else throw err
+  } finally {
+    // strip away sensitive data from the adyen response.
+    request.headers['X-Api-Key'] = '***'
+    if (removeSensitiveData && responseBody) {
+      delete responseBody.additionalData
+    }
   }
   return { response: responseBody, request }
 }
