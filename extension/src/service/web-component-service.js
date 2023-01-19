@@ -132,9 +132,12 @@ function updateAmount(
 
 function disableStoredPayment(merchantAccount, disableStoredPaymentRequestObj) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
+  const url =
+    `${adyenCredentials.legacyApiBaseUrl}/Recurring/` +
+    `${constants.ADYEN_LEGACY_API_VERSION.DISABLED_STORED_PAYMENT}/disable`
+  console.log(url)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/Recurring/
-    ${constants.ADYEN_LEGACY_API_VERSION.DISABLED_STORED_PAYMENT}/disable`,
+    url,
     merchantAccount,
     adyenCredentials.apiKey,
     disableStoredPaymentRequestObj
