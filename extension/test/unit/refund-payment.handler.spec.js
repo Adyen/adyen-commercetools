@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import config from '../../src/config/config.js'
 import refundPaymentHandler from '../../src/paymentHandler/refund-payment.handler.js'
 import utils from '../../src/utils.js'
-import paymentSuccessResponse from './fixtures/adyen-make-payment-success-response.js'
+import constants from '../../src/config/constants.js'
 import { overrideGenerateIdempotencyKeyConfig } from '../test-utils.js'
 
 const { execute } = refundPaymentHandler
@@ -44,7 +44,9 @@ describe('refund-payment::execute', () => {
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-    scope = nock(`${adyenConfig.apiBaseUrl}`)
+    scope = nock(
+      `${adyenConfig.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.REFUND}`
+    )
   })
 
   afterEach(() => {
@@ -52,8 +54,6 @@ describe('refund-payment::execute', () => {
   })
 
   it('when refund payment request contains reference, then it should send this reference to Adyen', async () => {
-    scope.post('/payments').reply(200, paymentSuccessResponse)
-
     const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
     ctpPaymentClone.transactions.push(refundPaymentTransaction)
@@ -79,8 +79,6 @@ describe('refund-payment::execute', () => {
     async () => {
       overrideGenerateIdempotencyKeyConfig(true)
 
-      scope.post('/payments').reply(200, paymentSuccessResponse)
-
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
       ctpPaymentClone.transactions.push(refundPaymentTransaction)
@@ -95,6 +93,36 @@ describe('refund-payment::execute', () => {
       expect(requestJson.headers['Idempotency-Key']).to.equal(
         refundPaymentTransaction.id
       )
+    }
+  )
+
+  it(
+    'when refund payment response contains non-JSON format, ' +
+      'then it should return the response in plain text inside interfaceInteraction',
+    async () => {
+      scope.post('/refund').reply(200, 'non-json-response')
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+
+      ctpPaymentClone.transactions.push(refundPaymentTransaction)
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
+      const response = await execute(ctpPaymentClone)
+
+      const adyenRequest = response.actions.find(
+        (action) => action.action === 'addInterfaceInteraction'
+      ).fields.request
+      const adyenResponse = response.actions.find(
+        (action) => action.action === 'addInterfaceInteraction'
+      ).fields.response
+
+      const adyenRequestJson = JSON.parse(adyenRequest)
+      const requestBody = JSON.parse(adyenRequestJson.body)
+
+      expect(requestBody.reference).to.equal(
+        refundPaymentTransaction.custom.fields.reference
+      )
+      expect(adyenResponse).to.contains('non-json-response')
     }
   )
 })
