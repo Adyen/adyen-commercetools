@@ -46,12 +46,7 @@ Init session result will come here</textarea
     </div>
     <br />
     <div id="card-container"></div>
-    <input
-      type="button"
-      id="init-adyen-checkout-button"
-      value="button"
-      onclick="executeAdyenCheckout()"
-    />
+
     <script
       src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.0.0/adyen.js"
       integrity="sha384-kcKKvS6qZbXycrUw31OJ2/2Hz8A8FTsV9anjvpyQc/IWR1SmkFUw7w7F/t5S3qtA"
@@ -59,6 +54,12 @@ Init session result will come here</textarea
     ></script>
     <script type="application/javascript">
       const executeAdyenCheckout = async () => {
+        configuration.clientKey =
+          document.getElementById('adyen-client-key').value
+        configuration.session.id =
+          document.getElementById('adyen-session-id').value
+        configuration.session.sessionData =
+          document.getElementById('adyen-session-data').value
         const checkout = await AdyenCheckout(configuration)
         checkout.create('card').mount('#card-container')
       }
@@ -87,17 +88,9 @@ Init session result will come here</textarea
         showPayButton: true,
       }
 
-      // The adyen API Key is initialized in ADYEN_INTEGRATION_CONFIG and passed into HTML via FormPage.js
-      const clientKeyElement = document.getElementById('adyen-client-key')
       const sessionDataElement = document.getElementById('adyen-session-data')
       sessionDataElement.addEventListener('blur', () => {
-        configuration.clientKey = clientKeyElement.value
-        configuration.session.id =
-          document.getElementById('adyen-session-id').value
-        configuration.session.sessionData =
-          document.getElementById('adyen-session-data').value
-
-        console.log(JSON.stringify(configuration))
+        executeAdyenCheckout()
       })
     </script>
   </body>

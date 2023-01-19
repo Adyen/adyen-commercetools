@@ -63,7 +63,16 @@
         showPayButton: true,
         countryCode: 'US', // the country code from the
       }
-      async function initConfiguration() {}
+      async function renderAffirmWebComponent() {
+        const clientKeyElement = document.getElementById('adyen-client-key')
+        configuration.clientKey = clientKeyElement.value
+        configuration.session.id =
+          document.getElementById('adyen-session-id').value
+        configuration.session.sessionData =
+          document.getElementById('adyen-session-data').value
+        const checkout = await AdyenCheckout(configuration)
+        checkout.create('affirm').mount('#affirm-container')
+      }
       function buildCreateSessionFormInput() {
         const createSessionFormInput = {}
 
@@ -87,16 +96,9 @@
           JSON.stringify(createSessionFormInput)
       }
 
-      const clientKeyElement = document.getElementById('adyen-client-key')
       const sessionDataElement = document.getElementById('adyen-session-data')
-      sessionDataElement.addEventListener('blur', async () => {
-        configuration.clientKey = clientKeyElement.value
-        configuration.session.id =
-          document.getElementById('adyen-session-id').value
-        configuration.session.sessionData =
-          document.getElementById('adyen-session-data').value
-        const checkout = await AdyenCheckout(configuration)
-        checkout.create('affirm').mount('#affirm-container')
+      sessionDataElement.addEventListener('blur', () => {
+        renderAffirmWebComponent()
       })
 
       buildCreateSessionFormInput()

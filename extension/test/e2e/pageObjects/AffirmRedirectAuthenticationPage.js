@@ -1,4 +1,4 @@
-export default class AffirmPage {
+export default class AffirmRedirectAuthenticationPage {
   constructor(page) {
     this.page = page
   }
@@ -22,8 +22,6 @@ export default class AffirmPage {
       (el) => el.textContent,
       redirectResultEle
     )
-    console.log(sessionId)
-    console.log(redirectResult)
     return { sessionId, redirectResult }
   }
 

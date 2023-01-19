@@ -1,7 +1,7 @@
 import { executeInAdyenIframe } from '../e2e-test-utils.js'
-import CreateSessionFormPage from './CreateSessionFormPage.js'
+import InitSessionFormPage from './InitSessionFormPage.js'
 
-export default class CreditCardCreateSessionFormPage extends CreateSessionFormPage {
+export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
   async initPaymentSession({
     clientKey,
     paymentAfterCreateSession,
@@ -9,12 +9,24 @@ export default class CreditCardCreateSessionFormPage extends CreateSessionFormPa
     creditCardDate,
     creditCardCvc,
   }) {
-    await this.generateAdyenCreateSessionForm(
-      clientKey,
-      paymentAfterCreateSession
-    )
-
-    await this.page.waitForTimeout(2_000)
+    try {
+      await super.initPaymentSession(clientKey, paymentAfterCreateSession)
+      await this.pasteValuesInCreditCardWebComponent(
+        creditCardNumber,
+        creditCardDate,
+        creditCardCvc
+      )
+      await this.confirmCreditCardWebComopnent()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  async pasteValuesInCreditCardWebComponent(
+    creditCardNumber,
+    creditCardDate,
+    creditCardCvc
+  ) {
+    await this.page.waitForTimeout(3_000) // wait for web component rendering
 
     await executeInAdyenIframe(
       this.page,
@@ -33,13 +45,14 @@ export default class CreditCardCreateSessionFormPage extends CreateSessionFormPa
       'input[data-fieldtype^=encryptedSecurity]',
       (el) => el.type(creditCardCvc)
     )
+  }
 
-    await this.page.waitForTimeout(2_000)
+  async confirmCreditCardWebComopnent() {
+    await this.page.waitForSelector('.adyen-checkout__button--pay')
     const checkoutButton = await this.page.$('.adyen-checkout__button--pay')
 
     await this.page.evaluate((cb) => cb.click(), checkoutButton)
   }
-
   async getPaymentAuthResult() {
     const authResultEle = await this.page.$('#adyen-payment-auth-result')
     await this.page.waitForTimeout(2_000)

@@ -1,21 +1,15 @@
-import CreateSessionFormPage from './CreateSessionFormPage.js'
+import InitSessionFormPage from './InitSessionFormPage.js'
 
-export default class AffirmInitSessionFormPage extends CreateSessionFormPage {
+export default class AffirmInitSessionFormPage extends InitSessionFormPage {
   async initPaymentSession({ clientKey, paymentAfterCreateSession }) {
-    await this.generateAdyenCreateSessionForm(
-      clientKey,
-      paymentAfterCreateSession
-    )
-
+    await super.initPaymentSession(clientKey, paymentAfterCreateSession)
     await this.pasteValuesInAffirmWebComponent()
-
-    await this.getInitSessionResultTextAreaValue()
-    // return await this.getPaymentAuthResult()
-    // return this.getCreateSessionRequestTextAreaValue()
+    await this.confirmAffirmWebComponent()
   }
 
   async pasteValuesInAffirmWebComponent() {
-    await this.page.waitForSelector('.adyen-checkout__input--firstName')
+    await this.page.waitForSelector('.adyen-checkout__button--pay') // wait for rendering of web component
+
     const createSessionInputFormElement = await this.page.$(
       '#adyen-payment-form-input'
     )
@@ -62,10 +56,6 @@ export default class AffirmInitSessionFormPage extends CreateSessionFormPage {
     await this.fillDeliveryAddressStateDDL(
       createSessionInputFormJSON?.billingAddress?.stateCode
     )
-    // await this.page.waitForTimeout(2_000)
-    // const checkoutButton = await this.page.$('.adyen-checkout__button--pay')
-    //
-    // await this.page.evaluate((cb) => cb.click(), checkoutButton)
   }
 
   async fillDeliveryAddressStateDDL(stateCodeInput) {
@@ -85,18 +75,9 @@ export default class AffirmInitSessionFormPage extends CreateSessionFormPage {
     })
   }
 
-  async getInitSessionResultTextAreaValue() {
-    await this.page.waitForSelector('.adyen-checkout__button--pay')
-    await this.page.click('.adyen-checkout__button--pay')
-  }
-
-  async getPaymentAuthResult() {
-    const authResultEle = await this.page.$('#adyen-payment-auth-result')
-    await this.page.waitForTimeout(2_000)
-    const authResultJson = await (
-      await authResultEle.getProperty('innerHTML')
-    ).jsonValue()
-    console.log(authResultJson)
-    return authResultJson
+  async confirmAffirmWebComponent() {
+    await this.page.waitForTimeout(2_000) // wait for the form has been filled before checkout
+    const checkoutButton = await this.page.$('.adyen-checkout__button--pay')
+    await this.page.evaluate((cb) => cb.click(), checkoutButton)
   }
 }

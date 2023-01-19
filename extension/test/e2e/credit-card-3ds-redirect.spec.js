@@ -12,13 +12,13 @@ import {
 } from './e2e-test-utils.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
 import CreditCardRedirectAuthenticationPage from './pageObjects/CreditCardRedirectAuthenticationPage.js'
-import CreateSessionFormPage from './pageObjects/CreditCardCreateSessionFormPage.js'
+import CreditCardInitSessionFormPage from './pageObjects/CreditCardInitSessionFormPage.js'
 const logger = httpUtils.getLogger()
 
 function setRoute() {
-  routes['/create-session-form'] = async (request, response) => {
+  routes['/init-session-form'] = async (request, response) => {
     serveFile(
-      './test/e2e/fixtures/credit-card-create-session-form.html',
+      './test/e2e/fixtures/credit-card-init-session-form.html',
       request,
       response
     )
@@ -87,7 +87,6 @@ describe('::creditCardPayment3dsRedirect::', () => {
       creditCardDate = '03/30',
       creditCardCvc = '737',
     }) => {
-      // eslint-disable-next-line no-template-curly-in-string
       it(
         `when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
           'then it should successfully finish the payment with 3DS redirect flow',
@@ -178,9 +177,12 @@ describe('::creditCardPayment3dsRedirect::', () => {
     creditCardDate,
     creditCardCvc,
   }) {
-    const createSessionFormPage = new CreateSessionFormPage(browserTab, baseUrl)
-    await createSessionFormPage.goToThisPage()
-    return await createSessionFormPage.initPaymentSession({
+    const initSessionFormPage = new CreditCardInitSessionFormPage(
+      browserTab,
+      baseUrl
+    )
+    await initSessionFormPage.goToThisPage()
+    return await initSessionFormPage.initPaymentSession({
       clientKey,
       paymentAfterCreateSession,
       creditCardNumber,

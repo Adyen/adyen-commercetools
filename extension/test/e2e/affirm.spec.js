@@ -11,7 +11,7 @@ import {
   getRequestParams,
 } from './e2e-test-utils.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
-import AffirmPage from './pageObjects/AffirmPage.js'
+import AffirmRedirectAuthenticationPage from './pageObjects/AffirmRedirectAuthenticationPage.js'
 import AffirmInitSessionFormPage from './pageObjects/AffirmInitSessionFormPage.js'
 
 const logger = httpUtils.getLogger()
@@ -151,7 +151,7 @@ describe('::affirmPayment::', () => {
 
   async function handleRedirect({ browserTab, baseUrl, clientKey }) {
     // Redirect to Affirm page
-    const affirmPage = new AffirmPage(browserTab)
+    const affirmPage = new AffirmRedirectAuthenticationPage(browserTab)
 
     const { sessionId, redirectResult } =
       await affirmPage.doPaymentAuthentication()

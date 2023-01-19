@@ -1,7 +1,7 @@
 import ctpClientBuilder from '../../src/ctp.js'
 import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
-import CreateSessionFormPage from './pageObjects/CreditCardCreateSessionFormPage.js'
+import CreditCardInitSessionFormPage from './pageObjects/CreditCardInitSessionFormPage.js'
 import httpUtils from '../../src/utils.js'
 
 import {
@@ -15,9 +15,9 @@ import {
 const logger = httpUtils.getLogger()
 
 function setRoute() {
-  routes['/create-session-form'] = async (request, response) => {
+  routes['/init-session-form'] = async (request, response) => {
     serveFile(
-      './test/e2e/fixtures/credit-card-create-session-form.html',
+      './test/e2e/fixtures/credit-card-init-session-form.html',
       request,
       response
     )
@@ -131,15 +131,18 @@ describe('::creditCardPayment v5::', () => {
     creditCardDate,
     creditCardCvc,
   }) {
-    const createSessionFormPage = new CreateSessionFormPage(browserTab, baseUrl)
-    await createSessionFormPage.goToThisPage()
-    await createSessionFormPage.initPaymentSession({
+    const initSessionFormPage = new CreditCardInitSessionFormPage(
+      browserTab,
+      baseUrl
+    )
+    await initSessionFormPage.goToThisPage()
+    await initSessionFormPage.initPaymentSession({
       clientKey,
       paymentAfterCreateSession,
       creditCardNumber,
       creditCardDate,
       creditCardCvc,
     })
-    return await createSessionFormPage.getPaymentAuthResult()
+    return await initSessionFormPage.getPaymentAuthResult()
   }
 })

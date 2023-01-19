@@ -1,4 +1,4 @@
-export default class CreateSessionFormPage {
+export default class InitSessionFormPage {
   constructor(page, baseUrl) {
     this.page = page
     this.baseUrl = baseUrl
@@ -8,14 +8,14 @@ export default class CreateSessionFormPage {
     await this.page.goto(`${this.baseUrl}/init-session-form`)
   }
 
-  async generateAdyenCreateSessionForm(clientKey, payment) {
+  async initPaymentSession(clientKey, payment) {
     const createSessionResponseStr =
       payment?.custom?.fields?.createSessionResponse
     let createSessionResponse
 
     createSessionResponse = JSON.parse(createSessionResponseStr)
 
-    await this.page.waitForTimeout(5_000)
+    await this.page.waitForSelector('#adyen-client-key')
 
     // Put Adyen API Key into HTML for e2e test
 
@@ -34,16 +34,5 @@ export default class CreateSessionFormPage {
       createSessionResponse.sessionData
     )
     await this.page.$eval('#adyen-session-data', (e) => e.blur())
-  }
-
-  async getInitSessionResultTextAreaValue() {
-    await this.page.waitForSelector('.adyen-checkout__button--pay')
-    await this.page.click('.adyen-checkout__button--pay')
-    const initSessionResultTextArea = await this.page.$(
-      '#adyen-init-session-result'
-    )
-    return (
-      await initSessionResultTextArea.getProperty('innerHTML')
-    ).jsonValue()
   }
 }
