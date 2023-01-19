@@ -135,7 +135,6 @@ function disableStoredPayment(merchantAccount, disableStoredPaymentRequestObj) {
   const url =
     `${adyenCredentials.legacyApiBaseUrl}/Recurring/` +
     `${constants.ADYEN_LEGACY_API_VERSION.DISABLED_STORED_PAYMENT}/disable`
-  console.log(url)
   return callAdyen(
     url,
     merchantAccount,
