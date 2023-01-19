@@ -9,24 +9,20 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
     creditCardDate,
     creditCardCvc,
   }) {
-    try {
-      await super.initPaymentSession(clientKey, paymentAfterCreateSession)
-      await this.pasteValuesInCreditCardWebComponent(
-        creditCardNumber,
-        creditCardDate,
-        creditCardCvc
-      )
-      await this.confirmCreditCardWebComopnent()
-    } catch (err) {
-      console.log(err)
-    }
+    await super.initPaymentSession(clientKey, paymentAfterCreateSession)
+    await this.pasteValuesInCreditCardWebComponent(
+      creditCardNumber,
+      creditCardDate,
+      creditCardCvc
+    )
+    await this.confirmCreditCardWebComopnent()
   }
   async pasteValuesInCreditCardWebComponent(
     creditCardNumber,
     creditCardDate,
     creditCardCvc
   ) {
-    await this.page.waitForTimeout(3_000) // wait for web component rendering
+    await this.page.waitForTimeout(5_000) // wait for web component rendering
 
     await executeInAdyenIframe(
       this.page,
