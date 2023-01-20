@@ -3,6 +3,7 @@ import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
 import CreditCardInitSessionFormPage from './pageObjects/CreditCardInitSessionFormPage.js'
 import httpUtils from '../../src/utils.js'
+import { waitUntil } from '../test-utils.js'
 
 import {
   assertCreatePaymentSession,
@@ -88,6 +89,14 @@ describe('::creditCardPayment v5::', () => {
               creditCardDate,
               creditCardCvc,
             })
+            console.log('paymentAfterCreateSession.id')
+            console.log(paymentAfterCreateSession.id)
+            await waitUntil(
+                async () => await fetchNotificationInterfaceInteraction(paymentAfterCreateSession.id)
+            )
+            const notificationInteraction =
+                await fetchNotificationInterfaceInteraction(paymentAfterCreateSession.id)
+            console.log(notificationInteraction)
           } catch (err) {
             logger.error('credit-card::errors:', JSON.stringify(err))
           }
@@ -144,5 +153,15 @@ describe('::creditCardPayment v5::', () => {
       creditCardCvc,
     })
     return await initSessionFormPage.getPaymentAuthResult()
+  }
+
+  async function fetchNotificationInterfaceInteraction(paymentId) {
+    const { body } = await ctpClient.fetchById(
+        ctpClient.builder.payments,
+        paymentId
+    )
+    return body.interfaceInteractions.find(
+        (interaction) => interaction.fields.type === 'notification'
+    )
   }
 })
