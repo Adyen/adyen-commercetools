@@ -92,10 +92,15 @@ describe('::creditCardPayment v5::', () => {
             console.log('paymentAfterCreateSession.id')
             console.log(paymentAfterCreateSession.id)
             await waitUntil(
-                async () => await fetchNotificationInterfaceInteraction(paymentAfterCreateSession.id)
+              async () =>
+                await fetchNotificationInterfaceInteraction(
+                  paymentAfterCreateSession.id
+                )
             )
             const notificationInteraction =
-                await fetchNotificationInterfaceInteraction(paymentAfterCreateSession.id)
+              await fetchNotificationInterfaceInteraction(
+                paymentAfterCreateSession.id
+              )
             console.log(notificationInteraction)
           } catch (err) {
             logger.error('credit-card::errors:', JSON.stringify(err))
@@ -157,11 +162,11 @@ describe('::creditCardPayment v5::', () => {
 
   async function fetchNotificationInterfaceInteraction(paymentId) {
     const { body } = await ctpClient.fetchById(
-        ctpClient.builder.payments,
-        paymentId
+      ctpClient.builder.payments,
+      paymentId
     )
     return body.interfaceInteractions.find(
-        (interaction) => interaction.fields.type === 'notification'
+      (interaction) => interaction.fields.type === 'notification'
     )
   }
 })
