@@ -13,6 +13,7 @@ jobs:
     env:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
       CI_EXTENSION_BASE_URL: ${{ secrets.CI_EXTENSION_BASE_URL }}
+      CI_NOTIFICATION_URL: ${{ secrets.CI_NOTIFICATION_URL }}
     defaults:
       run:
         working-directory: extension
