@@ -169,8 +169,6 @@ describe.skip('::affirmPayment::', () => {
           sessionId,
           redirectResult
         )
-
-      console.log(submittedRedirectResult)
       return submittedRedirectResult
     } catch (err) {
       console.log(err)

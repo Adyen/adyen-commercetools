@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Klarna initialize payment session</title>
+    <link
+      rel="stylesheet"
+      href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.0.0/adyen.css"
+      integrity="sha384-0IvbHDeulbhdg1tMDeFeGlmjiYoVT6YsbfAMKFU2lFd6YKUVk0Hgivcmva3j6mkK"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div>
+      <input
+        type="text"
+        id="adyen-client-key"
+        placeholder="Adyen client key"
+      /><br />
+      <input
+        type="text"
+        id="adyen-session-id"
+        placeholder="Adyen session ID"
+      /><br />
+      <textarea
+        id="adyen-session-data"
+        placeholder="Adyen session data"
+      ></textarea
+      ><br />
+
+      <textarea id="adyen-payment-form-input"> </textarea>
+      <br />
+    </div>
+    <br />
+    <div id="klarna_paynow-container"></div>
+
+    <script
+      src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.0.0/adyen.js"
+      integrity="sha384-kcKKvS6qZbXycrUw31OJ2/2Hz8A8FTsV9anjvpyQc/IWR1SmkFUw7w7F/t5S3qtA"
+      crossorigin="anonymous"
+    ></script>
+    <script type="application/javascript">
+      async function renderKlarnaWebComponent() {
+        const clientKeyElement = document.getElementById('adyen-client-key')
+        configuration.clientKey = clientKeyElement.value
+        configuration.session.id =
+          document.getElementById('adyen-session-id').value
+        configuration.session.sessionData =
+          document.getElementById('adyen-session-data').value
+        console.log(configuration)
+        const checkout = await AdyenCheckout(configuration)
+        checkout.create('klarna_paynow').mount('#klarna_paynow-container')
+      }
+      const configuration = {
+        environment: 'test', // When you"re ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
+        clientKey: '', // Your client key. To find out how to generate one, see https://docs.adyen.com/development-resources/client-side-authentication.
+        session: {
+          id: '',
+          sessionData: '',
+        },
+        countryCode: 'DE',
+        shopperLocale: 'de-DE',
+        shopperReference: 'YOUR TEST REFERENCE',
+        shopperEmail: 'customer@email.de',
+        billingAddress: {
+          city: 'München',
+          country: 'DE',
+          houseNumberOrName: '44',
+          postalCode: '80797',
+          street: 'Adams-Lehmann-Straße',
+        },
+        shopperName: {
+          firstName: 'firstName',
+          gender: 'MALE',
+          lastName: 'lastName',
+        },
+        lineItems: [
+          {
+            quantity: '1',
+            amountExcludingTax: '331',
+            taxPercentage: '2100',
+            description: 'Shoes',
+            id: 'Item #1',
+            taxAmount: '69',
+            amountIncludingTax: '400',
+          },
+          {
+            quantity: '2',
+            amountExcludingTax: '248',
+            taxPercentage: '2100',
+            description: 'Socks',
+            id: 'Item #2',
+            taxAmount: '52',
+            amountIncludingTax: '300',
+          },
+        ],
+
+        onPaymentCompleted: (result, component) => {
+          console.info(result, component)
+          document.getElementById('adyen-payment-auth-result').innerHTML =
+            JSON.stringify(result)
+        },
+        onError: (error, component) => {
+          console.error(error.name, error.message, error.stack, component)
+          document.getElementById('adyen-payment-auth-result').innerHTML =
+            JSON.stringify(error)
+        },
+        showPayButton: true,
+      }
+      const sessionDataElement = document.getElementById('adyen-session-data')
+      sessionDataElement.addEventListener('blur', () => {
+        renderKlarnaWebComponent()
+      })
+    </script>
+  </body>
+</html>

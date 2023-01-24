@@ -1,9 +1,29 @@
-export default class KlarnaPage {
+export default class KlarnaAuthenticationPage {
   constructor(page) {
     this.page = page
   }
 
-  async finishKlarnaPayment() {
+  async doPaymentAuthentication() {
+    await this.clickProceedButton()
+    await this.processOtpAndPay()
+    return await this.redirectToResultPage()
+  }
+
+  async redirectToResultPage() {
+    const sessionIdEle = await this.page.$('#sessionId')
+    const redirectResultEle = await this.page.$('#redirectResult')
+    const sessionId = await this.page.evaluate(
+      (el) => el.textContent,
+      sessionIdEle
+    )
+    const redirectResult = await this.page.evaluate(
+      (el) => el.textContent,
+      redirectResultEle
+    )
+    return { sessionId, redirectResult }
+  }
+
+  async clickProceedButton() {
     // Wait for Klarna page being totally loaded
     const klarnaMainFrame = this.page
       .frames()
@@ -11,9 +31,7 @@ export default class KlarnaPage {
     await klarnaMainFrame.waitForSelector('#scheme-payment-selector')
     await this.page.waitForTimeout(2_000)
     await this.page.click('#buy-button')
-    await this.processOtpAndPay()
   }
-
   async processOtpAndPay() {
     const klarnaIframe = this.page
       .frames()
@@ -32,6 +50,9 @@ export default class KlarnaPage {
     )
 
     await klarnaIframe.evaluate((cb) => cb.click(), confirmDialog)
-    await klarnaIframe.click('#dd-confirmation-dialog__footer-button-wrapper')
+    await Promise.all([
+      klarnaIframe.click('#dd-confirmation-dialog__footer-button-wrapper'),
+      this.page.waitForSelector('#redirect-response'),
+    ])
   }
 }

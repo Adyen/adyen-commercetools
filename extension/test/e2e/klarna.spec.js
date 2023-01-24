@@ -9,31 +9,32 @@ import {
   getChargeTransactionPending,
 } from '../../src/paymentHandler/payment-utils.js'
 import {
-  assertPayment,
-  createPayment,
+  assertCreatePaymentSession,
+  getCreateSessionRequest,
+  createPaymentSession,
   initPuppeteerBrowser,
   serveFile,
+  getRequestParams,
 } from './e2e-test-utils.js'
-import KlarnaMakePaymentFormPage from './pageObjects/KlarnaMakePaymentFormPage.js'
+import KlarnaInitSessionFormPage from './pageObjects/KlarnaInitSessionFormPage.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
-import KlarnaPage from './pageObjects/KlarnaPage.js'
+import KlarnaAuthenticationPage from './pageObjects/KlarnaAuthenticationPage.js'
 import constants from '../../src/config/constants.js'
 
 const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction
-describe.skip('::klarnaPayment::', () => {
-  // TODO : Migrate e2e test for web component 5
+describe('::klarnaPayment::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
 
   beforeEach(async () => {
-    routes['/make-payment-form'] = async (request, response) => {
+    routes['/init-session-form'] = async (request, response) => {
       serveFile(
-        './test/e2e/fixtures/klarna-make-payment-form.html',
+        './test/e2e/fixtures/klarna-init-session-form.html',
         request,
         response
       )
@@ -45,18 +46,20 @@ describe.skip('::klarnaPayment::', () => {
         response
       )
     }
-    routes['/return-url'] = async (request, response) =>
-      httpUtils.sendResponse({
+    routes['/return-url'] = async (request, response) => {
+      const params = getRequestParams(request.url)
+      return httpUtils.sendResponse({
         response,
         headers: {
           'Content-Type': 'text/html',
         },
         data:
           '<!DOCTYPE html><html><head></head>' +
-          '<body id=redirect-response>' +
-          'This is a return page to show users after they finish the payment' +
-          '</body></html>',
+          '<body><div id=redirect-response>' +
+          `<div id=sessionId>${params.sessionId}</div><div id=redirectResult>${params.redirectResult}</div>` +
+          '</div></body></html>',
       })
+    }
 
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
     ctpClient = await ctpClientBuilder.get(ctpConfig)
@@ -77,124 +80,118 @@ describe.skip('::klarnaPayment::', () => {
         const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
 
         const browserTab = await browser.newPage()
-        const paymentAfterMakePayment = await makePayment({
+        // Step #1 - Create a payment session
+        // https://docs.adyen.com/online-payments/web-components#create-payment-session
+        const paymentAfterCreateSession = await createSession(clientKey)
+        logger.debug(
+          'klarna::paymentAfterCreateSession:',
+          JSON.stringify(paymentAfterCreateSession)
+        )
+
+        // Step #2 - Setup Component
+        // https://docs.adyen.com/online-payments/web-components#set-up
+        await initPaymentSession({
+          browserTab,
+          baseUrl,
+          clientKey,
+          paymentAfterCreateSession,
+        })
+
+        const redirectPaymentResult = await handleRedirect({
           browserTab,
           baseUrl,
           clientKey,
         })
         logger.debug(
-          'klarna::paymentAfterMakePayment:',
-          JSON.stringify(paymentAfterMakePayment)
+          'klarna::redirectPaymentResult:',
+          JSON.stringify(redirectPaymentResult)
         )
-        const paymentAfterHandleRedirect = await handleRedirect({
-          browserTab,
-          baseUrl,
-          payment: paymentAfterMakePayment,
-        })
-        logger.debug(
-          'klarna::paymentAfterHandleRedirect:',
-          JSON.stringify(paymentAfterHandleRedirect)
+        assertCreatePaymentSession(
+          paymentAfterCreateSession,
+          redirectPaymentResult
         )
-        assertPayment(paymentAfterHandleRedirect)
 
-        // Capture the payment
-        paymentAfterCapture = await capturePayment({
-          payment: paymentAfterHandleRedirect,
-        })
-        logger.debug(
-          'klarna::paymentAfterCapture:',
-          JSON.stringify(paymentAfterCapture)
-        )
+        // // Capture the payment
+        // paymentAfterCapture = await capturePayment({
+        //   payment: paymentAfterHandleRedirect,
+        // })
+        // logger.debug(
+        //   'klarna::paymentAfterCapture:',
+        //   JSON.stringify(paymentAfterCapture)
+        // )
       } catch (err) {
         logger.error('klarna::errors', err)
       }
-      assertManualCaptureResponse(paymentAfterCapture)
+      // assertManualCaptureResponse(paymentAfterCapture)
     }
   )
 
-  async function makePayment({ browserTab, baseUrl, clientKey }) {
-    const makePaymentFormPage = new KlarnaMakePaymentFormPage(
-      browserTab,
-      baseUrl
-    )
-    await makePaymentFormPage.goToThisPage()
-    const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest(
-      clientKey
-    )
+  async function createSession(clientKey) {
+    let createSessionRequest = await getCreateSessionRequest(clientKey, 'EUR')
+    createSessionRequest = buildKlarnaCreateSessionRequest(createSessionRequest)
     let payment = null
     const startTime = new Date().getTime()
     try {
-      payment = await createPayment(
+      payment = await createPaymentSession(
         ctpClient,
         adyenMerchantAccount,
         ctpProjectKey,
-        makePaymentRequest
+        createSessionRequest,
+        'EUR'
       )
     } catch (err) {
-      logger.error('klarna::makePaymentRequest::errors', JSON.stringify(err))
+      console.log(err)
     } finally {
       const endTime = new Date().getTime()
-      logger.debug(
-        'klarna::makePayment::elapsedMilliseconds:',
-        endTime - startTime
-      )
+      logger.debug('credit-card::createSession:', endTime - startTime)
     }
+
     return payment
   }
 
-  async function handleRedirect({ browserTab, baseUrl, payment }) {
-    const { makePaymentResponse: makePaymentResponseString } =
-      payment.custom.fields
-    const makePaymentResponse = await JSON.parse(makePaymentResponseString)
-
-    // Redirect to Klarna page
-    const redirectPaymentFormPage = new RedirectPaymentFormPage(
+  async function initPaymentSession({
+    browserTab,
+    baseUrl,
+    clientKey,
+    paymentAfterCreateSession,
+  }) {
+    const initPaymentSessionFormPage = new KlarnaInitSessionFormPage(
       browserTab,
       baseUrl
     )
-    await redirectPaymentFormPage.goToThisPage()
-    await redirectPaymentFormPage.redirectToAdyenPaymentPage(
-      makePaymentResponse
-    )
+    await initPaymentSessionFormPage.goToThisPage()
+
+    return await initPaymentSessionFormPage.initPaymentSession({
+      clientKey,
+      paymentAfterCreateSession,
+    })
+  }
+
+  async function handleRedirect({ browserTab, baseUrl, clientKey }) {
     await browserTab.waitForSelector('#buy-button:not([disabled])')
+    const klarnaPage = new KlarnaAuthenticationPage(browserTab)
 
-    const klarnaPage = new KlarnaPage(browserTab)
-    await klarnaPage.finishKlarnaPayment()
-    await browserTab.waitForSelector('#redirect-response')
+    const { sessionId, redirectResult } =
+      await klarnaPage.doPaymentAuthentication()
 
-    // Submit payment details
-    const returnPageUrl = new URL(browserTab.url())
-    const searchParamsJson = Object.fromEntries(returnPageUrl.searchParams)
-    let result = null
-    const startTime = new Date().getTime()
     try {
-      result = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          {
-            action: 'setCustomField',
-            name: 'submitAdditionalPaymentDetailsRequest',
-            value: JSON.stringify({
-              details: searchParamsJson,
-            }),
-          },
-        ]
+      const redirectPaymentFormPage = new RedirectPaymentFormPage(
+        browserTab,
+        baseUrl
       )
+      await redirectPaymentFormPage.goToThisPage()
+      const submittedRedirectResult =
+        await redirectPaymentFormPage.redirectToAdyenPaymentPage(
+          clientKey,
+          sessionId,
+          redirectResult
+        )
+
+      return submittedRedirectResult
     } catch (err) {
-      logger.error(
-        'klarna::submitAdditionalPaymentDetailsRequest::errors',
-        JSON.stringify(err)
-      )
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug(
-        'klarna::handleRedirect::elapsedMilliseconds:',
-        endTime - startTime
-      )
+      console.log(err)
     }
-    return result.body
+    r
   }
 
   async function capturePayment({ payment }) {
@@ -249,5 +246,40 @@ describe.skip('::klarnaPayment::', () => {
     expect(chargePendingTransaction.interactionId).to.equal(
       manualCaptureResponse.pspReference
     )
+  }
+
+  function buildKlarnaCreateSessionRequest(createSessionRequest) {
+    const createSessionRequestJson = JSON.parse(createSessionRequest)
+    createSessionRequestJson.countryCode = 'DE'
+    createSessionRequestJson.shopperReference = 'YOUR TEST REFERENCE'
+    createSessionRequestJson.telephoneNumber = '+4917614287462'
+    createSessionRequestJson.billingAddress = {
+      city: 'München',
+      country: 'DE',
+      houseNumberOrName: '44',
+      postalCode: '80797',
+      street: 'Adams-Lehmann-Straße',
+    }
+    createSessionRequestJson.lineItems = [
+      {
+        quantity: '1',
+        amountExcludingTax: '331',
+        taxPercentage: '2100',
+        description: 'Shoes',
+        id: 'Item #1',
+        taxAmount: '69',
+        amountIncludingTax: '400',
+      },
+      {
+        quantity: '2',
+        amountExcludingTax: '248',
+        taxPercentage: '2100',
+        description: 'Socks',
+        id: 'Item #2',
+        taxAmount: '52',
+        amountIncludingTax: '300',
+      },
+    ]
+    return JSON.stringify(createSessionRequestJson)
   }
 })
