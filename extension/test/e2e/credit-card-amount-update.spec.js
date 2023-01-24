@@ -1,3 +1,4 @@
+import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
 import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
@@ -12,7 +13,6 @@ import {
   serveFile,
   getCreateSessionRequest,
 } from './e2e-test-utils.js'
-import { expect } from 'chai'
 
 const logger = httpUtils.getLogger()
 
@@ -32,8 +32,7 @@ describe('::creditCardPayment v5::', () => {
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
-  // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
-  const creditCard = { name: 'Mastercard', creditCardNumber: '' }
+  // See more: https://docs.adyen.com/development-resources/test-cards/test-card-number
 
   beforeEach(async () => {
     setRoute()
@@ -47,80 +46,77 @@ describe('::creditCardPayment v5::', () => {
   })
 
   // eslint-disable-next-line no-template-curly-in-string
-  it(
-    `when credit card issuer is and credit card number is , ` +
-      'then it should successfully finish the payment',
-    async () => {
-      let paymentAfterCreateSession
-      let initPaymentSessionResult
+  it(`when payment session for credit card is created, initialized and authorized, the amount can be updated by 
+     looking up corresponding payment with pspReference`, async () => {
+    let paymentAfterCreateSession
+    let initPaymentSessionResult
 
-      const creditCardNumber = '5101 1800 0000 0007'
-      const creditCardDate = '03/30'
-      const creditCardCvc = '737'
+    const creditCardNumber = '5101 1800 0000 0007'
+    const creditCardDate = '03/30'
+    const creditCardCvc = '737'
 
-      try {
-        const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-        const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
-        const browserTab = await browser.newPage()
+    try {
+      const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+      const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
+      const browserTab = await browser.newPage()
 
-        // Step #1 - Create a payment session
-        // https://docs.adyen.com/online-payments/web-components#create-payment-session
-        paymentAfterCreateSession = await createSession(clientKey)
-        logger.debug(
-          'credit-card::paymentAfterCreateSession:',
-          JSON.stringify(paymentAfterCreateSession)
-        )
+      // Step #1 - Create a payment session
+      // https://docs.adyen.com/online-payments/web-components#create-payment-session
+      paymentAfterCreateSession = await createSession(clientKey)
+      logger.debug(
+        'credit-card::paymentAfterCreateSession:',
+        JSON.stringify(paymentAfterCreateSession)
+      )
 
-        // Step #2 - Setup Component
-        // https://docs.adyen.com/online-payments/web-components#set-up
+      // Step #2 - Setup Component
+      // https://docs.adyen.com/online-payments/web-components#set-up
 
-        initPaymentSessionResult = await initPaymentSession({
-          browserTab,
-          baseUrl,
-          clientKey,
-          paymentAfterCreateSession,
-          creditCardNumber,
-          creditCardDate,
-          creditCardCvc,
-        })
-        await waitUntil(
-          async () =>
-            await fetchNotificationInterfaceInteraction(
-              paymentAfterCreateSession.id
-            )
-        )
-        const notificationInteraction =
+      initPaymentSessionResult = await initPaymentSession({
+        browserTab,
+        baseUrl,
+        clientKey,
+        paymentAfterCreateSession,
+        creditCardNumber,
+        creditCardDate,
+        creditCardCvc,
+      })
+      await waitUntil(
+        async () =>
           await fetchNotificationInterfaceInteraction(
             paymentAfterCreateSession.id
           )
-
-        // Step #3 - Update Amount
-        const { statusCode, updatedPayment } = await updateAmount(
-          notificationInteraction,
-          paymentAfterCreateSession
-        )
-        expect(statusCode).to.equal(200)
-
-        const amountUpdatesResponse = JSON.parse(
-          updatedPayment.custom.fields.amountUpdatesResponse
-        )
-        expect(amountUpdatesResponse.status).to.equal('received')
-        const amountUpdatesInterfaceInteractions =
-          updatedPayment.interfaceInteractions.filter(
-            (ii) => ii.fields.type === 'amountUpdates'
-          )
-        expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
-      } catch (err) {
-        console.log(err)
-        logger.error('credit-card::errors:', JSON.stringify(err))
-      }
-
-      assertCreatePaymentSession(
-        paymentAfterCreateSession,
-        initPaymentSessionResult
       )
+      const notificationInteraction =
+        await fetchNotificationInterfaceInteraction(
+          paymentAfterCreateSession.id
+        )
+
+      // Step #3 - Update Amount
+      const { statusCode, updatedPayment } = await updateAmount(
+        notificationInteraction,
+        paymentAfterCreateSession
+      )
+      expect(statusCode).to.equal(200)
+
+      const amountUpdatesResponse = JSON.parse(
+        updatedPayment.custom.fields.amountUpdatesResponse
+      )
+      expect(amountUpdatesResponse.status).to.equal('received')
+      const amountUpdatesInterfaceInteractions =
+        updatedPayment.interfaceInteractions.filter(
+          (ii) => ii.fields.type === 'amountUpdates'
+        )
+      expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
+    } catch (err) {
+      console.log(err)
+      logger.error('credit-card::errors:', JSON.stringify(err))
     }
-  )
+
+    assertCreatePaymentSession(
+      paymentAfterCreateSession,
+      initPaymentSessionResult
+    )
+  })
 
   async function updateAmount(
     notificationInteraction,
