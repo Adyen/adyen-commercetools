@@ -1,7 +1,7 @@
-import config from '../../src/config/config.js'
-
 import fetch from 'node-fetch'
 import { serializeError } from 'serialize-error'
+import config from '../../src/config/config.js'
+
 function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj, headers) {
   // Note: ensure the merchantAccount is set with request, otherwise set
   // it with the value from adyenMerchantAccount payment custom field

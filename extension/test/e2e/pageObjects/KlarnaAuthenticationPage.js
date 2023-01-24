@@ -32,6 +32,7 @@ export default class KlarnaAuthenticationPage {
     await this.page.waitForTimeout(2_000)
     await this.page.click('#buy-button')
   }
+
   async processOtpAndPay() {
     const klarnaIframe = this.page
       .frames()

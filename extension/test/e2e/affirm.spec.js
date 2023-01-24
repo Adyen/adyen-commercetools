@@ -69,7 +69,6 @@ describe.skip('::affirmPayment::', () => {
     async () => {
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
-      let paymentAfterHandleRedirect
       let paymentAfterCreateSession
       let redirectPaymentResult
       try {
@@ -84,7 +83,7 @@ describe.skip('::affirmPayment::', () => {
 
         // Step #2 - Setup Component
         // https://docs.adyen.com/online-payments/web-components#set-up
-        const result = await initPaymentSession({
+        await initPaymentSession({
           browserTab,
           baseUrl,
           clientKey,
@@ -157,21 +156,17 @@ describe.skip('::affirmPayment::', () => {
     const { sessionId, redirectResult } =
       await affirmPage.doPaymentAuthentication()
 
-    try {
-      const redirectPaymentFormPage = new RedirectPaymentFormPage(
-        browserTab,
-        baseUrl
+    const redirectPaymentFormPage = new RedirectPaymentFormPage(
+      browserTab,
+      baseUrl
+    )
+    await redirectPaymentFormPage.goToThisPage()
+    const submittedRedirectResult =
+      await redirectPaymentFormPage.redirectToAdyenPaymentPage(
+        clientKey,
+        sessionId,
+        redirectResult
       )
-      await redirectPaymentFormPage.goToThisPage()
-      const submittedRedirectResult =
-        await redirectPaymentFormPage.redirectToAdyenPaymentPage(
-          clientKey,
-          sessionId,
-          redirectResult
-        )
-      return submittedRedirectResult
-    } catch (err) {
-      console.log(err)
-    }
+    return submittedRedirectResult
   }
 })

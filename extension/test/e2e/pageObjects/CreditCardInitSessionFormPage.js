@@ -17,6 +17,7 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
     )
     await this.confirmCreditCardWebComopnent()
   }
+
   async pasteValuesInCreditCardWebComponent(
     creditCardNumber,
     creditCardDate,
@@ -49,6 +50,7 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
 
     await this.page.evaluate((cb) => cb.click(), checkoutButton)
   }
+
   async getPaymentAuthResult() {
     const authResultEle = await this.page.$('#adyen-payment-auth-result')
     await this.page.waitForTimeout(2_000)
