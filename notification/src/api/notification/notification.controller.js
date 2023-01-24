@@ -21,7 +21,6 @@ async function handleNotification(request, response) {
     for (const notification of notifications) {
       logger.debug('Received notification', JSON.stringify(notification))
       const parts = url.parse(request.url)
-      console.log(`notification : ${request.url}`)
       const ctpProjectConfig = getCtpProjectConfig(notification, parts.path)
       const adyenConfig = getAdyenConfig(notification)
 

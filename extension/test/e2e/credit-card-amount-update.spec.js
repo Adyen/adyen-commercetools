@@ -169,7 +169,6 @@ describe('::creditCardPayment v5::', () => {
         ctpProjectKey,
         createSessionRequest
       )
-      console.log(payment)
     } catch (err) {
       logger.error('credit-card::createSession::errors', JSON.stringify(err))
     } finally {

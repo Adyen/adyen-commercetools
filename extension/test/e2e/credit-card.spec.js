@@ -89,19 +89,6 @@ describe('::creditCardPayment v5::', () => {
               creditCardDate,
               creditCardCvc,
             })
-            console.log('paymentAfterCreateSession.id')
-            console.log(paymentAfterCreateSession.id)
-            await waitUntil(
-              async () =>
-                await fetchNotificationInterfaceInteraction(
-                  paymentAfterCreateSession.id
-                )
-            )
-            const notificationInteraction =
-              await fetchNotificationInterfaceInteraction(
-                paymentAfterCreateSession.id
-              )
-            console.log(notificationInteraction)
           } catch (err) {
             logger.error('credit-card::errors:', JSON.stringify(err))
           }
