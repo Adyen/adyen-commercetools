@@ -216,6 +216,7 @@ function getRequestParams(url) {
 }
 
 export {
+  assertPayment,
   pasteValue,
   executeInAdyenIframe,
   assertCreatePaymentSession,

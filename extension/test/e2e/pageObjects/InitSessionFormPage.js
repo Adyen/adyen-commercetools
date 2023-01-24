@@ -11,9 +11,7 @@ export default class InitSessionFormPage {
   async initPaymentSession(clientKey, payment) {
     const createSessionResponseStr =
       payment?.custom?.fields?.createSessionResponse
-    let createSessionResponse
-
-    createSessionResponse = JSON.parse(createSessionResponseStr)
+    const createSessionResponse = JSON.parse(createSessionResponseStr)
 
     await this.page.waitForSelector('#adyen-client-key')
 

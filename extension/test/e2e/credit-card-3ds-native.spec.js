@@ -160,28 +160,19 @@ describe.skip('::creditCardPayment3dsNative::', () => {
     })
   }
 
-  async function performChallengeFlow({ browserTab, baseUrl, clientKey }) {
-    let result = null
-    const startTime = new Date().getTime()
+  async function performChallengeFlow({ browserTab, baseUrl }) {
     await browserTab.waitForTimeout(5_000)
-    try {
-      const creditCardAuthenticationPage =
-        new CreditCardNativeAuthenticationPage(browserTab)
 
-      await creditCardAuthenticationPage.doPaymentAuthentication()
+    const creditCardAuthenticationPage = new CreditCardNativeAuthenticationPage(
+      browserTab
+    )
 
-      const initSessionFormPage = new CreditCardInitSessionFormPage(
-        browserTab,
-        baseUrl
-      )
-      return await initSessionFormPage.getPaymentAuthResult()
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug(
-        'credit-card-3ds-native::handleRedirect:',
-        endTime - startTime
-      )
-    }
-    return result
+    await creditCardAuthenticationPage.doPaymentAuthentication()
+
+    const initSessionFormPage = new CreditCardInitSessionFormPage(
+      browserTab,
+      baseUrl
+    )
+    return await initSessionFormPage.getPaymentAuthResult()
   }
 })
