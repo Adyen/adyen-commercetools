@@ -26,10 +26,14 @@ describe('notification module', () => {
     'should update the pending authorization transaction state to success state ' +
       'when receives a successful AUTHORIZATION notification',
     async () => {
-      const paymentKey = `notificationPayment-${new Date().getTime()}`
+      const merchantReference = `notificationPayment-${new Date().getTime()}`
+      // pspReference cannot be static otherwise wrong payment created in the past would be obtained
+      const pspReference = `pspReference-${new Date().getTime()}`
+
       const { body: paymentBefore } = await ensurePayment(
         ctpClient,
-        paymentKey,
+        merchantReference,
+        pspReference,
         commercetoolsProjectKey,
         adyenMerchantAccount
       )
@@ -41,7 +45,8 @@ describe('notification module', () => {
       const notificationPayload = createNotificationPayload(
         commercetoolsProjectKey,
         adyenMerchantAccount,
-        paymentKey
+        merchantReference,
+        pspReference
       )
 
       // Simulating a notification from Adyen
@@ -58,8 +63,9 @@ describe('notification module', () => {
 
       const { body: paymentAfter } = await ctpClient.fetchByKey(
         ctpClient.builder.payments,
-        paymentKey
+        pspReference // pspReference is the key of authorized payment
       )
+
       expect(paymentAfter.transactions).to.have.lengthOf(1)
       expect(paymentAfter.paymentMethodInfo.method).to.equal('visa')
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -76,10 +82,14 @@ describe('notification module', () => {
   )
 
   it('should add a charge transaction when receives a successful manual CAPTURE notification', async () => {
-    const paymentKey = `notificationPayment-${new Date().getTime()}`
+    const merchantReference = `notificationPayment-${new Date().getTime()}`
+    // pspReference cannot be static otherwise payment created in the past would be wrongly obtained
+    const pspReference = `pspReference-${new Date().getTime()}`
+    const chargeInteractionId = _generateRandomNumber()
     const { body: paymentBefore } = await ensurePayment(
       ctpClient,
-      paymentKey,
+      merchantReference,
+      pspReference,
       commercetoolsProjectKey,
       adyenMerchantAccount
     )
@@ -88,12 +98,16 @@ describe('notification module', () => {
     expect(paymentBefore.transactions[0].state).to.equal('Pending')
     expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
 
-    // update payment transaction
+    // update payment transaction and set pspReference as key for authorized payment
     const actions = [
       {
         action: 'changeTransactionState',
         state: 'Success',
         transactionId: paymentBefore.transactions[0].id,
+      },
+      {
+        action: 'setKey',
+        key: pspReference,
       },
     ]
 
@@ -111,9 +125,11 @@ describe('notification module', () => {
     const notificationPayload = createNotificationPayload(
       commercetoolsProjectKey,
       adyenMerchantAccount,
-      paymentKey,
+      merchantReference,
+      chargeInteractionId,
       'CAPTURE',
-      _generateRandomNumber()
+      'true',
+      pspReference
     )
 
     // Simulating a notification from Adyen
@@ -130,7 +146,7 @@ describe('notification module', () => {
 
     const { body: paymentAfter } = await ctpClient.fetchByKey(
       ctpClient.builder.payments,
-      paymentKey
+      pspReference // pspReference is the key of authorized payment
     )
     expect(paymentAfter.transactions).to.have.lengthOf(2)
     expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -152,10 +168,13 @@ describe('notification module', () => {
     'should not update transaction when the notification event ' +
       'is not mapped to any CTP payment state',
     async () => {
-      const paymentKey = `notificationPayment-${new Date().getTime()}`
+      const merchantReference = `notificationPayment-${new Date().getTime()}`
+      // pspReference cannot be static otherwise payment created in the past would be wrongly obtained
+      const pspReference = `pspReference-${new Date().getTime()}`
       const { body: paymentBefore } = await ensurePayment(
         ctpClient,
-        paymentKey,
+        merchantReference,
+        pspReference,
         commercetoolsProjectKey,
         adyenMerchantAccount
       )
@@ -167,7 +186,8 @@ describe('notification module', () => {
       const notificationPayload = createNotificationPayload(
         commercetoolsProjectKey,
         adyenMerchantAccount,
-        paymentKey,
+        merchantReference,
+        pspReference,
         'UNKNOWN_EVENT_CODE'
       )
 
@@ -185,7 +205,7 @@ describe('notification module', () => {
 
       const { body: paymentAfter } = await ctpClient.fetchByKey(
         ctpClient.builder.payments,
-        paymentKey
+        merchantReference // merchantReference is the key of unauthorized payment
       )
       expect(paymentAfter.transactions).to.have.lengthOf(1)
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -202,10 +222,13 @@ describe('notification module', () => {
   )
 
   it('should response with success when payment does not exist on the platform', async () => {
-    const paymentKey = `notificationPayment-${new Date().getTime()}`
+    const merchantReference = `notificationPayment-${new Date().getTime()}`
+    // pspReference cannot be static otherwise payment created in the past would be wrongly obtained
+    const pspReference = `pspReference-${new Date().getTime()}`
     const { body: paymentBefore } = await ensurePayment(
       ctpClient,
-      paymentKey,
+      merchantReference,
+      pspReference,
       commercetoolsProjectKey,
       adyenMerchantAccount
     )
@@ -217,7 +240,8 @@ describe('notification module', () => {
     const notificationPayload = createNotificationPayload(
       commercetoolsProjectKey,
       adyenMerchantAccount,
-      paymentKey,
+      merchantReference,
+      pspReference,
       'NOT_EXISTING_PAYMENT'
     )
 
@@ -235,7 +259,7 @@ describe('notification module', () => {
 
     const { body: paymentAfter } = await ctpClient.fetchByKey(
       ctpClient.builder.payments,
-      paymentKey
+      merchantReference // merchantReference is the key of unauthorized payment
     )
     expect(paymentAfter.transactions).to.have.lengthOf(1)
     expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -247,10 +271,14 @@ describe('notification module', () => {
     'should update the pending Refund transaction state to success state ' +
       'when receives a successful REFUND notification with refund action',
     async () => {
-      const paymentKey = `notificationPayment-${new Date().getTime()}`
+      const merchantReference = `notificationPayment-${new Date().getTime()}`
+      // pspReference cannot be static otherwise payment created in the past would be wrongly obtained
+      const pspReference = `pspReference-${new Date().getTime()}`
+
       const { body: paymentBefore } = await ensurePayment(
         ctpClient,
-        paymentKey,
+        merchantReference,
+        pspReference,
         commercetoolsProjectKey,
         adyenMerchantAccount
       )
@@ -278,6 +306,11 @@ describe('notification module', () => {
             interactionId: refundInteractionId,
           },
         },
+        // Change the payment key to pspReference for authorized payment
+        {
+          action: 'setKey',
+          key: pspReference,
+        },
       ]
 
       const { body: updatedPayment } = await ctpClient.update(
@@ -296,9 +329,11 @@ describe('notification module', () => {
       const notificationPayload = createNotificationPayload(
         commercetoolsProjectKey,
         adyenMerchantAccount,
-        paymentKey,
+        merchantReference,
+        refundInteractionId,
         'REFUND',
-        refundInteractionId
+        'true',
+        pspReference
       )
 
       // Simulating a notification from Adyen
@@ -315,7 +350,7 @@ describe('notification module', () => {
 
       const { body: paymentAfter } = await ctpClient.fetchByKey(
         ctpClient.builder.payments,
-        paymentKey
+        pspReference // pspReference is the key of authorized payment
       )
       expect(paymentAfter.transactions).to.have.lengthOf(2)
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -338,10 +373,13 @@ describe('notification module', () => {
     'should update multiple pending Refund transaction states to corresponding states ' +
       'when receives multiple REFUND notifications',
     async () => {
-      const paymentKey = `notificationPayment-${new Date().getTime()}`
+      const merchantReference = `notificationPayment-${new Date().getTime()}`
+      // pspReference cannot be static otherwise payment created in the past would be wrongly obtained
+      const pspReference = `pspReference-${new Date().getTime()}`
       const { body: paymentBefore } = await ensurePayment(
         ctpClient,
-        paymentKey,
+        merchantReference,
+        pspReference,
         commercetoolsProjectKey,
         adyenMerchantAccount
       )
@@ -385,6 +423,11 @@ describe('notification module', () => {
             interactionId: refundInteractionId3,
           },
         },
+        // Change the payment key to pspReference for authorized payment
+        {
+          action: 'setKey',
+          key: pspReference,
+        },
       ]
       await ctpClient.update(
         ctpClient.builder.payments,
@@ -396,26 +439,31 @@ describe('notification module', () => {
       const notificationPayload1 = createNotificationPayload(
         commercetoolsProjectKey,
         adyenMerchantAccount,
-        paymentKey,
+        merchantReference,
+        refundInteractionId1,
         'REFUND',
-        refundInteractionId1
+        'true',
+        pspReference
       )
 
       const notificationPayload2 = createNotificationPayload(
         commercetoolsProjectKey,
         adyenMerchantAccount,
-        paymentKey,
+        merchantReference,
+        refundInteractionId2,
         'REFUND',
-        refundInteractionId2
+        'true',
+        pspReference
       )
 
       const notificationPayload3 = createNotificationPayload(
         commercetoolsProjectKey,
         adyenMerchantAccount,
-        paymentKey,
-        'REFUND',
+        merchantReference,
         refundInteractionId3,
-        'false'
+        'REFUND',
+        'false',
+        pspReference
       )
 
       // Simulating notifications from Adyen
@@ -449,7 +497,7 @@ describe('notification module', () => {
 
       const { body: paymentAfter } = await ctpClient.fetchByKey(
         ctpClient.builder.payments,
-        paymentKey
+        pspReference // pspReference is the key of authorized payment
       )
       expect(paymentAfter.transactions).to.have.lengthOf(4)
       expect(paymentAfter.transactions[1].type).to.equal('Refund')
@@ -465,10 +513,13 @@ describe('notification module', () => {
     'should update the pending CancelAuthorization transaction state to success state ' +
       'when receives a successful CANCEL notification with cancel action',
     async () => {
-      const paymentKey = `notificationPayment-${new Date().getTime()}`
+      const merchantReference = `notificationPayment-${new Date().getTime()}`
+      // pspReference cannot be static otherwise payment created in the past would be wrongly obtained
+      const pspReference = `pspReference-${new Date().getTime()}`
       const { body: paymentBefore } = await ensurePayment(
         ctpClient,
-        paymentKey,
+        merchantReference,
+        pspReference,
         commercetoolsProjectKey,
         adyenMerchantAccount
       )
@@ -491,6 +542,17 @@ describe('notification module', () => {
             interactionId: cancellationInteractionId,
           },
         },
+        {
+          action: 'changeTransactionState',
+          state: 'Success',
+          transactionId: paymentBefore.transactions[0].id,
+        },
+
+        // Change the payment key to pspReference for authorized payment
+        {
+          action: 'setKey',
+          key: pspReference,
+        },
       ]
 
       const { body: updatedPayment } = await ctpClient.update(
@@ -502,7 +564,7 @@ describe('notification module', () => {
 
       expect(updatedPayment.transactions).to.have.lengthOf(2)
       expect(updatedPayment.transactions[0].type).to.equal('Authorization')
-      expect(updatedPayment.transactions[0].state).to.equal('Pending')
+      expect(updatedPayment.transactions[0].state).to.equal('Success')
       expect(updatedPayment.transactions[1].type).to.equal(
         'CancelAuthorization'
       )
@@ -511,9 +573,11 @@ describe('notification module', () => {
       const notificationPayload = createNotificationPayload(
         commercetoolsProjectKey,
         adyenMerchantAccount,
-        paymentKey,
+        merchantReference,
+        cancellationInteractionId,
         'CANCEL_OR_REFUND',
-        cancellationInteractionId
+        'true',
+        pspReference
       )
 
       // Simulating a notification from Adyen
@@ -530,11 +594,11 @@ describe('notification module', () => {
 
       const { body: paymentAfter } = await ctpClient.fetchByKey(
         ctpClient.builder.payments,
-        paymentKey
+        pspReference // pspReference is the key of authorized payment
       )
       expect(paymentAfter.transactions).to.have.lengthOf(2)
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
-      expect(paymentAfter.transactions[0].state).to.equal('Pending')
+      expect(paymentAfter.transactions[0].state).to.equal('Success')
       expect(paymentAfter.transactions[1].type).to.equal('CancelAuthorization')
       expect(paymentAfter.transactions[1].state).to.equal('Success')
 
@@ -550,10 +614,13 @@ describe('notification module', () => {
   )
 
   it('should not update payment when the notification is unauthorised', async () => {
-    const paymentKey = `notificationPayment-${new Date().getTime()}`
+    const merchantReference = `notificationPayment-${new Date().getTime()}`
+    // pspReference cannot be static otherwise payment created in the past would be wrongly obtained
+    const pspReference = `pspReference-${new Date().getTime()}`
     const { body: paymentBefore } = await ensurePayment(
       ctpClient,
-      paymentKey,
+      merchantReference,
+      pspReference,
       commercetoolsProjectKey,
       adyenMerchantAccount
     )
@@ -572,7 +639,8 @@ describe('notification module', () => {
     const notificationPayload = createNotificationPayload(
       commercetoolsProjectKey,
       adyenMerchantAccount,
-      paymentKey
+      merchantReference,
+      pspReference
     )
 
     // Simulating a modification by a middle man during transmission
@@ -592,7 +660,7 @@ describe('notification module', () => {
 
     const { body: paymentAfter } = await ctpClient.fetchByKey(
       ctpClient.builder.payments,
-      paymentKey
+      merchantReference // merchantReference is the key of unauthorized payment
     )
     expect(paymentAfter.transactions).to.have.lengthOf(1)
     expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -603,10 +671,13 @@ describe('notification module', () => {
   })
 
   it('should use URL path as a fallback when metadata.ctProjectKey is missing', async () => {
-    const paymentKey = `notificationPayment-${new Date().getTime()}`
+    const merchantReference = `notificationPayment-${new Date().getTime()}`
+    // pspReference cannot be static otherwise payment created in the past would be wrongly obtained
+    const pspReference = `pspReference-${new Date().getTime()}`
     const { body: paymentBefore } = await ensurePayment(
       ctpClient,
-      paymentKey,
+      merchantReference,
+      pspReference,
       commercetoolsProjectKey,
       adyenMerchantAccount
     )
@@ -618,7 +689,8 @@ describe('notification module', () => {
     const notificationPayload = createNotificationPayload(
       null,
       adyenMerchantAccount,
-      paymentKey
+      merchantReference,
+      pspReference
     )
 
     // Simulating a notification from Adyen
@@ -639,7 +711,7 @@ describe('notification module', () => {
 
     const { body: paymentAfter } = await ctpClient.fetchByKey(
       ctpClient.builder.payments,
-      paymentKey
+      pspReference // pspReference is the key of authorized payment
     )
     expect(paymentAfter.transactions).to.have.lengthOf(1)
     expect(paymentAfter.transactions[0].type).to.equal('Authorization')

@@ -6,7 +6,7 @@ export default class AffirmPage {
   async finishAffirmPayment() {
     await this.inputPhoneNumberAndClickSubmitButton()
     await this.inputPIN()
-    await this.clickTermCardAndProceed()
+    await this.choosePlan()
     await this.clickAutoPayToggleAndProceed()
   }
 
@@ -22,12 +22,19 @@ export default class AffirmPage {
     await this.page.waitForSelector('[data-test=term-card]')
   }
 
-  async clickTermCardAndProceed() {
-    await this.page.click('[data-test="term-card"]')
-    await this.page.waitForSelector('#autopay-toggle')
+  async choosePlan() {
+    await this.page.waitForTimeout(1_000)
+
+    const paymentRadioButton = await this.page.$('[data-testid="radio_button"]')
+    await this.page.evaluate((cb) => cb.click(), paymentRadioButton)
+    await this.page.waitForSelector('[data-testid="submit-button"]')
+
+    const submitButton = await this.page.$('[data-testid="submit-button"]')
+    await this.page.evaluate((cb) => cb.click(), submitButton)
   }
 
   async clickAutoPayToggleAndProceed() {
+    await this.page.waitForSelector('#autopay-toggle')
     const autoPayToggle = await this.page.$('#autopay-toggle')
     await this.page.evaluate((cb) => cb.click(), autoPayToggle)
     await this.page.waitForTimeout(1_000) // Wait for the page refreshes after toggling the autopay

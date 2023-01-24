@@ -194,8 +194,8 @@ describe('notification controller', () => {
       }
       const ctpClient = ctpClientMock.get(ctpConfig)
       const modifiedPaymentMock = cloneDeep(paymentMock)
-      sandbox.stub(ctpClient, 'fetchByKey').callsFake(() => ({
-        body: modifiedPaymentMock,
+      sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+        body: { results: [modifiedPaymentMock] },
       }))
       sandbox.stub(ctpClient, 'fetchById').callsFake(() => ({
         body: modifiedPaymentMock,
