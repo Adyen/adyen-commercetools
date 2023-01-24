@@ -45,6 +45,10 @@ function setUpClient(config) {
       return this
     },
 
+    fetchByKeys() {
+      return this
+    },
+
     fetchBatches() {
       return this
     },

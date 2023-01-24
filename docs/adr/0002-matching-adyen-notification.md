@@ -4,7 +4,7 @@ Date: 2020-12-18
 
 ## Status
 
-[Accepted](https://github.com/commercetools/commercetools-adyen-integration/pull/395)
+[Deprecated](https://github.com/commercetools/commercetools-adyen-integration/pull/395)
 
 ## Context
 
@@ -25,3 +25,5 @@ by `interactionId` where `interactionId=${pspReference}`.
 - It is easier to fetch a key rather than using a custom field, also a key is an indexed field, so with a key, it's more performant.
 - The payment key is unique for all payments.
 - It's not possible to set key with my-payments endpoint. This prevents by default changing/removing the key accidentally. It is more secure than custom fields as the custom field might be changed with my-payment endpoint. Check for more details: https://docs.commercetools.com/api/projects/me-payments
+
+Please refer to the [0011-matching-adyen-notification](./0011-matching-adyen-notification.md) for the latest change regarding matching Notification with payment.
