@@ -15,6 +15,7 @@ export default class PaypalPopupPage {
     await this.page.click('#btnLogin')
 
     await this.page.waitForSelector('#payment-submit-btn')
+    await this.page.waitForTimeout(1000) // Need to suspend 1 second to avoid page closed before loading data.
     await this.page.click('#payment-submit-btn')
   }
 }
