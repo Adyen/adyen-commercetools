@@ -48,7 +48,6 @@ async function getCreateSessionRequest(clientKey, currency = 'EUR') {
     },
     reference: new Date().getTime(),
     returnUrl: 'https://ctp-adyen-integration-tests.loca.lt/return-url',
-    metadata: {},
   })
 }
 

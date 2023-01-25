@@ -63,6 +63,10 @@ describe('::create-session-request::', () => {
       const createSessionRequestExtended = _.cloneDeep(
         createSessionRequestDraft
       )
+
+      createSessionRequestExtended.metadata = {
+        ctProjectKey: commercetoolsProjectKey,
+      }
       createSessionRequestExtended.applicationInfo = {
         merchantApplication: {
           name: packageJson.name,
