@@ -287,6 +287,8 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
 
     const createWebhookResponseJson = await createWebhookResponse.json()
     const webhookId = createWebhookResponseJson.id
+    console.log('webhookId')
+    console.log(webhookId)
     return webhookId
   } catch (err) {
     throw Error(
