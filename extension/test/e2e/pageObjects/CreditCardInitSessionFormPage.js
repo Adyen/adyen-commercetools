@@ -23,7 +23,7 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
     creditCardDate,
     creditCardCvc
   ) {
-    await this.page.waitForTimeout(5_000) // wait for web component rendering
+    await this.page.waitForTimeout(2_000) // wait for web component rendering
 
     await executeInAdyenIframe(
       this.page,
@@ -45,6 +45,7 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
   }
 
   async confirmCreditCardWebComopnent() {
+    await this.page.waitForTimeout(2_000)
     await this.page.waitForSelector('.adyen-checkout__button--pay')
     const checkoutButton = await this.page.$('.adyen-checkout__button--pay')
 
