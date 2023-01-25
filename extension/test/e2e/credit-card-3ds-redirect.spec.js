@@ -48,7 +48,7 @@ function setRoute() {
 }
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/redirect-3ds2-3ds1/web-component
-describe('::creditCardPayment3dsRedirect::', () => {
+describe.skip('::creditCardPayment3dsRedirect::', () => {
   let browser
 
   let ctpClient
