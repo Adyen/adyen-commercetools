@@ -150,7 +150,7 @@ async function updatePaymentWithRetry(ctpClient, actions, payment) {
   return { statusCode, updatedPayment }
 }
 
-async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
+async function fzensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
   overrideEnableHmacSignatureConfig(false)
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
   for (const adyenMerchantId of adyenMerchantAccounts) {
@@ -289,6 +289,8 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
 
     const createWebhookResponseJson = await createWebhookResponse.json()
     const webhookId = createWebhookResponseJson.id
+    console.log('webhookId')
+    console.log(webhookId)
     return webhookId
   } catch (err) {
     throw Error(
