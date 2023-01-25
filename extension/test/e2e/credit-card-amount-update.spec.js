@@ -86,7 +86,7 @@ describe('::creditCardPayment v5::', () => {
             paymentAfterCreateSession.id
           )
       )
-      console.log('payment ID'
+      console.log('payment ID')
       console.log(paymentAfterCreateSession.id)
       const notificationInteraction =
         await fetchNotificationInterfaceInteraction(
