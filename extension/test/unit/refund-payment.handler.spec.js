@@ -58,8 +58,6 @@ describe('refund-payment::execute', () => {
   })
 
   it('when refund payment request contains reference, then it should send this reference to Adyen', async () => {
-    scope.post('/sessions').reply(200, createSessionSuccessResponse)
-
     const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
     ctpPaymentClone.transactions.push(refundPaymentTransaction)
@@ -84,8 +82,6 @@ describe('refund-payment::execute', () => {
       'then it should get the idempotency key from transaction id',
     async () => {
       overrideGenerateIdempotencyKeyConfig(true)
-
-      scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
