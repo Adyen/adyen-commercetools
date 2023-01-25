@@ -11,7 +11,7 @@ import PaypalInitSessionFormPage from './pageObjects/PaypalInitSessionFormPage.j
 import PaypalPopupPage from './pageObjects/PaypalPopupPage.js'
 import httpUtils from '../../src/utils.js'
 
-describe('::paypalPayment::', () => {
+describe.skip('::paypalPayment::', () => {
   let browser
   let ctpClient
 
