@@ -2,6 +2,8 @@ import { expect } from 'chai'
 import fs from 'fs'
 import { randomUUID } from 'crypto'
 import os from 'os'
+import { fileURLToPath } from 'url'
+import path from 'path'
 
 const homedir = os.homedir()
 
@@ -97,8 +99,10 @@ describe('::config::', () => {
     })
   })
 
-  it('when whole config is missing, it should throw error', async () => {
+  it('when both config and external config file are missing, it should throw error', async () => {
     delete process.env.ADYEN_INTEGRATION_CONFIG
+
+    deleteExtensionrcFile()
     try {
       await reloadModule('../../../src/config/config.js')
       expect.fail('This test should throw an error, but it did not')
@@ -728,6 +732,7 @@ describe('::config::', () => {
     'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
       'then it should load configuration correctly',
     async () => {
+      deleteExtensionrcFile()
       const filePath = `${homedir}/.extensionrc`
       try {
         delete process.env.ADYEN_INTEGRATION_CONFIG
@@ -786,4 +791,19 @@ describe('::config::', () => {
       }
     }
   )
+
+  function deleteExtensionrcFile() {
+    const currentFilePath = fileURLToPath(import.meta.url)
+    const currentDirPath = path.dirname(currentFilePath)
+    const projectRoot = path.resolve(currentDirPath, '../../../')
+    const pathToFile = path.resolve(projectRoot, '.extensionrc')
+
+    // Remove .extensionrc file if already exists
+    fs.stat(pathToFile, function (err, stats) {
+      //ignore error
+      if (!err) {
+        fs.unlinkSync(pathToFile)
+      }
+    })
+  }
 })
