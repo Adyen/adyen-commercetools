@@ -86,15 +86,12 @@ describe('::creditCardPayment v5::', () => {
             paymentAfterCreateSession.id
           )
       )
-      console.log('payment ID')
-      console.log(paymentAfterCreateSession.id)
+
       const notificationInteraction =
         await fetchNotificationInterfaceInteraction(
           paymentAfterCreateSession.id
         )
-      expect(notificationInteraction).to.not.undefined
-      console.log('notificationInteraction')
-      console.log(notificationInteraction)
+
       // Step #3 - Update Amount
       const { statusCode, updatedPayment } = await updateAmount(
         notificationInteraction,
