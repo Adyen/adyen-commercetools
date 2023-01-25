@@ -91,6 +91,8 @@ describe('::creditCardPayment v5::', () => {
           paymentAfterCreateSession.id
         )
 
+      console.log('notificationInteraction')
+      console.log(notificationInteraction)
       // Step #3 - Update Amount
       const { statusCode, updatedPayment } = await updateAmount(
         notificationInteraction,
