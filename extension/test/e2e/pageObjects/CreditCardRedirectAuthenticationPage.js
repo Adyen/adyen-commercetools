@@ -14,7 +14,7 @@ export default class CreditCardRedirectAuthenticationPage {
       this.page.waitForSelector('#redirect-response'),
     ])
 
-    await this.page.waitForTimeout(2_000)
+    await this.page.waitForTimeout(5_000)
     const sessionIdEle = await this.page.$('#sessionId')
     const redirectResultEle = await this.page.$('#redirectResult')
     const sessionId = await this.page.evaluate(
