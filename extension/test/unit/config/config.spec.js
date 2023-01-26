@@ -8,6 +8,9 @@ import path from 'path'
 const homedir = os.homedir()
 
 describe('::config::', () => {
+  const extensionConfigFileName = '.eslintrc'
+  const tempFileName = '.extensionrctemp'
+
   it('when config is provided, it should load correctly', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
       commercetools: {
@@ -101,13 +104,14 @@ describe('::config::', () => {
 
   it('when both config and external config file are missing, it should throw error', async () => {
     delete process.env.ADYEN_INTEGRATION_CONFIG
-
-    deleteExtensionrcFile()
+    renameExtensionrcFile(extensionConfigFileName, tempFileName)
     try {
       await reloadModule('../../../src/config/config.js')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain('configuration is not provided')
+    } finally {
+      renameExtensionrcFile(tempFileName, extensionConfigFileName)
     }
   })
 
@@ -732,7 +736,7 @@ describe('::config::', () => {
     'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
       'then it should load configuration correctly',
     async () => {
-      deleteExtensionrcFile()
+      renameExtensionrcFile(extensionConfigFileName, tempFileName)
       const filePath = `${homedir}/.extensionrc`
       try {
         delete process.env.ADYEN_INTEGRATION_CONFIG
@@ -788,21 +792,23 @@ describe('::config::', () => {
         })
       } finally {
         fs.unlinkSync(filePath)
+        renameExtensionrcFile(tempFileName, extensionConfigFileName)
       }
     }
   )
 
-  function deleteExtensionrcFile() {
+  function renameExtensionrcFile(fileName, fileNameToRename) {
     const currentFilePath = fileURLToPath(import.meta.url)
     const currentDirPath = path.dirname(currentFilePath)
     const projectRoot = path.resolve(currentDirPath, '../../../')
-    const pathToFile = path.resolve(projectRoot, '.extensionrc')
+    const pathToFile = path.resolve(projectRoot, fileName)
+    const tempPathToFileRename = path.resolve(projectRoot, fileNameToRename)
 
-    // Remove .extensionrc file if already exists
+    // Rename file if it exists
     fs.stat(pathToFile, function (err, stats) {
       //ignore error
       if (!err) {
-        fs.unlinkSync(pathToFile)
+        fs.renameSync(pathToFile, tempPathToFileRename)
       }
     })
   }

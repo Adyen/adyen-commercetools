@@ -159,7 +159,10 @@ describe('::config::', () => {
     'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
       'then it should load configuration correctly',
     async () => {
-      deleteNotificationrcFile()
+      const notificationConfigFileName = '.notificationrc'
+      const tempFileName = '.notificationrctemp'
+
+      renameNotificationrcFile(notificationConfigFileName, tempFileName)
       const filePath = `${homedir}/.notificationrc`
       try {
         delete process.env.ADYEN_INTEGRATION_CONFIG
@@ -202,21 +205,23 @@ describe('::config::', () => {
         })
       } finally {
         fs.unlinkSync(filePath)
+        renameNotificationrcFile(tempFileName, notificationConfigFileName)
       }
     }
   )
 
-  function deleteNotificationrcFile() {
+  function renameNotificationrcFile(fileName, fileNameToRename) {
     const currentFilePath = fileURLToPath(import.meta.url)
     const currentDirPath = path.dirname(currentFilePath)
     const projectRoot = path.resolve(currentDirPath, '../../')
-    const pathToFile = path.resolve(projectRoot, '.notificationrc')
+    const pathToFile = path.resolve(projectRoot, fileName)
+    const tempPathToFileRename = path.resolve(projectRoot, fileNameToRename)
 
-    // Remove .notificationrc file if already exists
+    // Rename file if it exists
     fs.stat(pathToFile, function (err, stats) {
       //ignore error
       if (!err) {
-        fs.unlinkSync(pathToFile)
+        fs.renameSync(pathToFile, tempPathToFileRename)
       }
     })
   }
