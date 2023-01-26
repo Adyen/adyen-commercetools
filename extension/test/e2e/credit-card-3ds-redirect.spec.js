@@ -104,7 +104,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
 
             // Step #1 - Create a payment session
             // https://docs.adyen.com/online-payments/web-components#create-payment-session
-            paymentAfterCreateSession = await createSession(clientKey)
+            paymentAfterCreateSession = await createSession(baseUrl, clientKey)
             logger.debug(
               'credit-card::paymentAfterCreateSession:',
               JSON.stringify(paymentAfterCreateSession)
@@ -149,8 +149,8 @@ describe('::creditCardPayment3dsRedirect::', () => {
     }
   )
 
-  async function createSession(clientKey) {
-    const createSessionRequest = await getCreateSessionRequest(clientKey)
+  async function createSession(baseUrl, clientKey) {
+    const createSessionRequest = await getCreateSessionRequest(baseUrl, clientKey)
     let payment = null
     const startTime = new Date().getTime()
     try {

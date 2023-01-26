@@ -40,14 +40,14 @@ async function initPuppeteerBrowser() {
   })
 }
 
-async function getCreateSessionRequest(clientKey, currency = 'EUR') {
+async function getCreateSessionRequest(baseUrl, clientKey, currency = 'EUR') {
   return JSON.stringify({
     amount: {
       currency,
       value: 1000,
     },
     reference: new Date().getTime(),
-    returnUrl: 'https://ctp-adyen-integration-tests.loca.lt/return-url',
+    returnUrl: `${baseUrl}/return-url`,
   })
 }
 
