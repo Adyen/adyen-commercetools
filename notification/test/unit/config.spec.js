@@ -218,8 +218,8 @@ describe('::config::', () => {
     const tempPathToFileRename = path.resolve(projectRoot, fileNameToRename)
 
     // Rename file if it exists
-    fs.stat(pathToFile, function (err, stats) {
-      //ignore error
+    fs.stat(pathToFile, (err) => {
+      // ignore error
       if (!err) {
         fs.renameSync(pathToFile, tempPathToFileRename)
       }
