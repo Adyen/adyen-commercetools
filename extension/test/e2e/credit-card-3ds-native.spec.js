@@ -78,7 +78,17 @@ describe('::creditCardPayment3dsNative::', () => {
         const browserTab = await browser.newPage()
         // Step #1 - Create a payment session
         // https://docs.adyen.com/online-payments/web-components#create-payment-session
-        paymentAfterCreateSession = await createSession(clientKey)
+        const createSessionRequest = await getCreateSessionRequest(
+          baseUrl,
+          clientKey
+        )
+
+        paymentAfterCreateSession = await createPaymentSession(
+          ctpClient,
+          adyenMerchantAccount,
+          ctpProjectKey,
+          createSessionRequest
+        )
         logger.debug(
           'credit-card::paymentAfterCreateSession:',
           JSON.stringify(paymentAfterCreateSession)
@@ -113,28 +123,6 @@ describe('::creditCardPayment3dsNative::', () => {
       assertCreatePaymentSession(paymentAfterCreateSession, initPaymentResult)
     }
   )
-
-  async function createSession(clientKey) {
-    const createSessionRequest = await getCreateSessionRequest(clientKey)
-    let payment = null
-    const startTime = new Date().getTime()
-    try {
-      payment = await createPaymentSession(
-        ctpClient,
-        adyenMerchantAccount,
-        ctpProjectKey,
-        createSessionRequest
-      )
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug(
-        'credit-card-3ds-native::createSession:',
-        endTime - startTime
-      )
-    }
-
-    return payment
-  }
 
   async function initPaymentSession({
     browserTab,

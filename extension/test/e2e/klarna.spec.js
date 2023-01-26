@@ -4,12 +4,12 @@ import { routes } from '../../src/routes.js'
 import httpUtils from '../../src/utils.js'
 
 import {
-  assertCreatePaymentSession,
-  getCreateSessionRequest,
   createPaymentSession,
+  getCreateSessionRequest,
   initPuppeteerBrowser,
   serveFile,
   getRequestParams,
+  assertCreatePaymentSession,
 } from './e2e-test-utils.js'
 import KlarnaInitSessionFormPage from './pageObjects/KlarnaInitSessionFormPage.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
@@ -75,7 +75,18 @@ describe('::klarnaPayment::', () => {
         const browserTab = await browser.newPage()
         // Step #1 - Create a payment session
         // https://docs.adyen.com/online-payments/web-components#create-payment-session
-        const paymentAfterCreateSession = await createSession(clientKey)
+        let createSessionRequest = await getCreateSessionRequest(
+          baseUrl,
+          clientKey
+        )
+        createSessionRequest =
+          buildKlarnaCreateSessionRequest(createSessionRequest)
+        const paymentAfterCreateSession = await createPaymentSession(
+          ctpClient,
+          adyenMerchantAccount,
+          ctpProjectKey,
+          createSessionRequest
+        )
         logger.debug(
           'klarna::paymentAfterCreateSession:',
           JSON.stringify(paymentAfterCreateSession)
@@ -118,19 +129,6 @@ describe('::klarnaPayment::', () => {
       // assertManualCaptureResponse(paymentAfterCapture)
     }
   )
-
-  async function createSession(clientKey) {
-    let createSessionRequest = await getCreateSessionRequest(clientKey, 'EUR')
-    createSessionRequest = buildKlarnaCreateSessionRequest(createSessionRequest)
-
-    return await createPaymentSession(
-      ctpClient,
-      adyenMerchantAccount,
-      ctpProjectKey,
-      createSessionRequest,
-      'EUR'
-    )
-  }
 
   async function initPaymentSession({
     browserTab,

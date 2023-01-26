@@ -18,7 +18,6 @@ const logger = httpUtils.getLogger()
 
 function setRoute() {
   routes['/init-session-form'] = async (request, response) => {
-    console.log('/init-session-form')
     serveFile(
       './test/e2e/fixtures/credit-card-init-session-form.html',
       request,
@@ -34,7 +33,6 @@ function setRoute() {
   }
   routes['/return-url'] = async (request, response) => {
     const params = getRequestParams(request.url)
-
     return httpUtils.sendResponse({
       response,
       headers: {
@@ -104,7 +102,17 @@ describe('::creditCardPayment3dsRedirect::', () => {
 
             // Step #1 - Create a payment session
             // https://docs.adyen.com/online-payments/web-components#create-payment-session
-            paymentAfterCreateSession = await createSession(baseUrl, clientKey)
+            const createSessionRequest = await getCreateSessionRequest(
+              baseUrl,
+              clientKey
+            )
+
+            paymentAfterCreateSession = await createPaymentSession(
+              ctpClient,
+              adyenMerchantAccount,
+              ctpProjectKey,
+              createSessionRequest
+            )
             logger.debug(
               'credit-card::paymentAfterCreateSession:',
               JSON.stringify(paymentAfterCreateSession)
@@ -148,30 +156,6 @@ describe('::creditCardPayment3dsRedirect::', () => {
       )
     }
   )
-
-  async function createSession(baseUrl, clientKey) {
-    const createSessionRequest = await getCreateSessionRequest(
-      baseUrl,
-      clientKey
-    )
-    let payment = null
-    const startTime = new Date().getTime()
-    try {
-      payment = await createPaymentSession(
-        ctpClient,
-        adyenMerchantAccount,
-        ctpProjectKey,
-        createSessionRequest
-      )
-    } catch (err) {
-      console.log(err)
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug('credit-card::createSession:', endTime - startTime)
-    }
-
-    return payment
-  }
 
   async function initPaymentSession({
     browserTab,
