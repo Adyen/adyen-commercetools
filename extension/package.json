@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "c8 npm run test-e2e && npm run check-coverage",
+    "test": "c8 npm run e2e && npm run check-coverage",
     "test-run": "npm run unit && npm run integration && npm run e2e",
     "check-coverage": "c8 check-coverage --lines 89",
     "unit": "mocha --file ./test/unit/mock-default-confg.js \"test/unit/**/*.spec.js\"",
