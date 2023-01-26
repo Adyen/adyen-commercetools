@@ -33,12 +33,7 @@ function setRoute() {
     )
   }
   routes['/return-url'] = async (request, response) => {
-    console.log('/return-url')
-    console.log('url')
-    console.log(request.url)
     const params = getRequestParams(request.url)
-    console.log('params')
-    console.log(params)
 
     return httpUtils.sendResponse({
       response,
