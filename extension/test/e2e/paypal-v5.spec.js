@@ -11,7 +11,7 @@ import PaypalInitSessionFormPage from './pageObjects/PaypalInitSessionFormPage.j
 import PaypalPopupPage from './pageObjects/PaypalPopupPage.js'
 import httpUtils from '../../src/utils.js'
 
-describe.skip('::paypalPayment::', () => {
+describe('::paypalPayment::', () => {
   let browser
   let ctpClient
 
@@ -37,7 +37,7 @@ describe.skip('::paypalPayment::', () => {
     await browser.close()
   })
 
-  it.skip(
+  it(
     'when payment method is paypal and process is done correctly, ' +
       'then it should successfully finish the payment',
     async () => {
