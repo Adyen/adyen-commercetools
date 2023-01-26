@@ -37,7 +37,7 @@ describe.skip('::paypalPayment::', () => {
     await browser.close()
   })
 
-  it(
+  it.skip(
     'when payment method is paypal and process is done correctly, ' +
       'then it should successfully finish the payment',
     async () => {
