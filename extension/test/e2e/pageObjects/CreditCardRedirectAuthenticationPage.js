@@ -9,7 +9,7 @@ export default class CreditCardRedirectAuthenticationPage {
     await this.page.type('#username', 'user')
     await this.page.type('#password', 'password')
 
-    this.page.click('.paySubmit'),
+    this.page.click('.paySubmit')
 
     await this.page.waitForTimeout(5_000) // wait for redirect response
     const sessionIdEle = await this.page.$('#sessionId')
