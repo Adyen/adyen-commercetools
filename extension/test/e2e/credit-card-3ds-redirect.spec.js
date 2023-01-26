@@ -18,6 +18,7 @@ const logger = httpUtils.getLogger()
 
 function setRoute() {
   routes['/init-session-form'] = async (request, response) => {
+    console.log('/init-session-form')
     serveFile(
       './test/e2e/fixtures/credit-card-init-session-form.html',
       request,
@@ -32,7 +33,13 @@ function setRoute() {
     )
   }
   routes['/return-url'] = async (request, response) => {
+    console.log('/return-url')
+    console.log('url')
+    console.log(request.url)
     const params = getRequestParams(request.url)
+    console.log('params')
+    console.log(params)
+
     return httpUtils.sendResponse({
       response,
       headers: {
