@@ -13,6 +13,8 @@ export default class CreditCardRedirectAuthenticationPage {
     await this.page.click('.paySubmit')
     console.log('after clicking auth submit button')
     await this.page.waitForTimeout(10_000) // wait for redirect response
+    console.log('URL')
+    console.log(this.page.url())
     const body = await this.page.$('body')
     const bodyHTML = await (await body.getProperty('innerHTML')).jsonValue()
 
