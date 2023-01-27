@@ -2,10 +2,15 @@ import { expect } from 'chai'
 import fs from 'fs'
 import { randomUUID } from 'crypto'
 import os from 'os'
+import { fileURLToPath } from 'url'
+import path from 'path'
 
 const homedir = os.homedir()
 
 describe('::config::', () => {
+  const extensionConfigFileName = '.eslintrc'
+  const tempFileName = '.extensionrctemp'
+
   it('when config is provided, it should load correctly', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
       commercetools: {
@@ -97,13 +102,16 @@ describe('::config::', () => {
     })
   })
 
-  it('when whole config is missing, it should throw error', async () => {
+  it('when both config and external config file are missing, it should throw error', async () => {
     delete process.env.ADYEN_INTEGRATION_CONFIG
+    renameExtensionrcFile(extensionConfigFileName, tempFileName)
     try {
       await reloadModule('../../../src/config/config.js')
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain('configuration is not provided')
+    } finally {
+      renameExtensionrcFile(tempFileName, extensionConfigFileName)
     }
   })
 
@@ -728,6 +736,7 @@ describe('::config::', () => {
     'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
       'then it should load configuration correctly',
     async () => {
+      renameExtensionrcFile(extensionConfigFileName, tempFileName)
       const filePath = `${homedir}/.extensionrc`
       try {
         delete process.env.ADYEN_INTEGRATION_CONFIG
@@ -783,7 +792,24 @@ describe('::config::', () => {
         })
       } finally {
         fs.unlinkSync(filePath)
+        renameExtensionrcFile(tempFileName, extensionConfigFileName)
       }
     }
   )
+
+  function renameExtensionrcFile(fileName, fileNameToRename) {
+    const currentFilePath = fileURLToPath(import.meta.url)
+    const currentDirPath = path.dirname(currentFilePath)
+    const projectRoot = path.resolve(currentDirPath, '../../../')
+    const pathToFile = path.resolve(projectRoot, fileName)
+    const tempPathToFileRename = path.resolve(projectRoot, fileNameToRename)
+
+    // Rename file if it exists
+    fs.stat(pathToFile, (err) => {
+      // ignore error
+      if (!err) {
+        fs.renameSync(pathToFile, tempPathToFileRename)
+      }
+    })
+  }
 })

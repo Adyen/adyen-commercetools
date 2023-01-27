@@ -2,6 +2,8 @@ import { expect } from 'chai'
 import fs from 'fs'
 import os from 'os'
 import { randomUUID } from 'crypto'
+import { fileURLToPath } from 'url'
+import path from 'path'
 
 const homedir = os.homedir()
 
@@ -157,6 +159,10 @@ describe('::config::', () => {
     'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
       'then it should load configuration correctly',
     async () => {
+      const notificationConfigFileName = '.notificationrc'
+      const tempFileName = '.notificationrctemp'
+
+      renameNotificationrcFile(notificationConfigFileName, tempFileName)
       const filePath = `${homedir}/.notificationrc`
       try {
         delete process.env.ADYEN_INTEGRATION_CONFIG
@@ -199,7 +205,24 @@ describe('::config::', () => {
         })
       } finally {
         fs.unlinkSync(filePath)
+        renameNotificationrcFile(tempFileName, notificationConfigFileName)
       }
     }
   )
+
+  function renameNotificationrcFile(fileName, fileNameToRename) {
+    const currentFilePath = fileURLToPath(import.meta.url)
+    const currentDirPath = path.dirname(currentFilePath)
+    const projectRoot = path.resolve(currentDirPath, '../../')
+    const pathToFile = path.resolve(projectRoot, fileName)
+    const tempPathToFileRename = path.resolve(projectRoot, fileNameToRename)
+
+    // Rename file if it exists
+    fs.stat(pathToFile, (err) => {
+      // ignore error
+      if (!err) {
+        fs.renameSync(pathToFile, tempPathToFileRename)
+      }
+    })
+  }
 })
