@@ -4,6 +4,8 @@ export default class PaypalPopupPage {
   }
 
   async handlePaypalPopUp() {
+    await this.page.waitForTimeout(2_000)
+
     await this.page.waitForSelector('#email')
     await this.page.type('#email', 'sb-urfdg23058190@personal.example.com')
     await this.page.click('#btnNext')

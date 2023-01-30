@@ -61,7 +61,7 @@ describe('::paypalPayment::', () => {
         paymentAfterCreateSession,
         paypalMerchantId,
       })
-      await browserTab.waitForTimeout(3_000)
+
       const pages = await browser.pages()
       const popup = pages[pages.length - 1]
 

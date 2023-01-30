@@ -48,8 +48,8 @@ export default class PaypalInitSessionFormPage extends InitSessionFormPage {
     } catch (err) {
       console.log(err)
     }
-    console.log('clickOnPaypalButton done')
-    await this.page.waitForTimeout(311_000)
+
+    await this.page.waitForTimeout(1_000)
   }
 
   async getPaymentAuthResult() {
