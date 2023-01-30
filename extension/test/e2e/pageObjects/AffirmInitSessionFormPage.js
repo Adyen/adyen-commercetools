@@ -10,51 +10,51 @@ export default class AffirmInitSessionFormPage extends InitSessionFormPage {
   async pasteValuesInAffirmWebComponent() {
     await this.page.waitForSelector('.adyen-checkout__button--pay') // wait for rendering of web component
 
-    const createSessionInputFormElement = await this.page.$(
+    const adyenCheckoutInputFormElement = await this.page.$(
       '#adyen-payment-form-input'
     )
-    const createSessionInputForm = await (
-      await createSessionInputFormElement.getProperty('innerHTML')
+    const adyenCheckoutInputForm = await (
+      await adyenCheckoutInputFormElement.getProperty('innerHTML')
     ).jsonValue()
-    const createSessionInputFormJSON = JSON.parse(
-      createSessionInputForm.toString()
+    const adyenCheckoutInputFormJSON = JSON.parse(
+      adyenCheckoutInputForm.toString()
     )
 
     await this.page.type(
       '.adyen-checkout__input--firstName',
-      createSessionInputFormJSON?.shopperName?.firstName
+      adyenCheckoutInputFormJSON?.shopperName?.firstName
     )
     await this.page.type(
       '.adyen-checkout__input--lastName',
-      createSessionInputFormJSON?.shopperName?.lastName
+      adyenCheckoutInputFormJSON?.shopperName?.lastName
     )
     await this.page.type(
       '.adyen-checkout__input--shopperEmail',
-      createSessionInputFormJSON?.shopperEmail
+      adyenCheckoutInputFormJSON?.shopperEmail
     )
     await this.page.type(
       '.adyen-checkout__input--telephoneNumber',
-      createSessionInputFormJSON?.telephoneNumber
+      adyenCheckoutInputFormJSON?.telephoneNumber
     )
 
     await this.page.type(
       '.adyen-checkout__input--street',
-      createSessionInputFormJSON?.billingAddress?.street
+      adyenCheckoutInputFormJSON?.billingAddress?.street
     )
     await this.page.type(
       '.adyen-checkout__input--houseNumberOrName',
-      createSessionInputFormJSON?.billingAddress?.houseNumberOrName
+      adyenCheckoutInputFormJSON?.billingAddress?.houseNumberOrName
     )
     await this.page.type(
       '.adyen-checkout__input--city',
-      createSessionInputFormJSON?.billingAddress?.city
+      adyenCheckoutInputFormJSON?.billingAddress?.city
     )
     await this.page.type(
       '.adyen-checkout__input--postalCode',
-      createSessionInputFormJSON?.billingAddress?.postalCode
+      adyenCheckoutInputFormJSON?.billingAddress?.postalCode
     )
     await this.fillDeliveryAddressStateDDL(
-      createSessionInputFormJSON?.billingAddress?.stateCode
+      adyenCheckoutInputFormJSON?.billingAddress?.stateCode
     )
   }
 
