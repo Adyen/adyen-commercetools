@@ -2,6 +2,7 @@ import config from '../../src/config/config.js'
 import { routes } from '../../src/routes.js'
 import {
   initPuppeteerBrowser,
+  assertCreatePaymentSession,
   serveFile,
   createPaymentSession,
   getCreateSessionRequest,
@@ -14,7 +15,7 @@ import httpUtils from '../../src/utils.js'
 describe('::paypalPayment::', () => {
   let browser
   let ctpClient
-
+  let initPaymentSessionFormPage
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
   const logger = httpUtils.getLogger()
@@ -66,10 +67,13 @@ describe('::paypalPayment::', () => {
       const popup = pages[pages.length - 1]
 
       await handlePaypalPopUp(popup)
-      //
-      // const updatedPayment = await handleRedirect(browserTab)
-      //
-      // assertPayment(updatedPayment)
+      const initPaymentSessionResult =
+        await initPaymentSessionFormPage.getPaymentAuthResult()
+
+      assertCreatePaymentSession(
+        paymentAfterCreateSession,
+        initPaymentSessionResult
+      )
     }
   )
 
@@ -101,7 +105,7 @@ describe('::paypalPayment::', () => {
     paymentAfterCreateSession,
     paypalMerchantId,
   }) {
-    const initPaymentSessionFormPage = new PaypalInitSessionFormPage(
+    initPaymentSessionFormPage = new PaypalInitSessionFormPage(
       browserTab,
       baseUrl
     )
@@ -112,31 +116,10 @@ describe('::paypalPayment::', () => {
       paymentAfterCreateSession,
       paypalMerchantId,
     })
-
-    // return await initPaymentSessionFormPage.getPaymentAuthResult()
   }
 
   async function handlePaypalPopUp(browserTab) {
     const paypalPopupPage = new PaypalPopupPage(browserTab)
     await paypalPopupPage.handlePaypalPopUp()
   }
-
-  // async function handleRedirect() {
-  //   const submitAdditionalPaymentDetailsRequest =
-  //     await paypalMakePaymentFormPage.getAdditionalPaymentDetails()
-  //
-  //   const { body: updatedPayment } = await ctpClient.update(
-  //     ctpClient.builder.payments,
-  //     payment.id,
-  //     payment.version,
-  //     [
-  //       {
-  //         action: 'setCustomField',
-  //         name: 'submitAdditionalPaymentDetailsRequest',
-  //         value: submitAdditionalPaymentDetailsRequest,
-  //       },
-  //     ]
-  //   )
-  //   return updatedPayment
-  // }
 })

@@ -63,7 +63,6 @@
         },
         paymentMethodsConfiguration: { paypal: { intent: 'authorize' } },
         onPaymentCompleted: (result, component) => {
-          console.log(result)
           document.getElementById('adyen-payment-auth-result').innerHTML =
             JSON.stringify(result)
         },
