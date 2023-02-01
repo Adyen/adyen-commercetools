@@ -29,7 +29,7 @@ async function startIT() {
   if (process.env.CI) {
     // this part used only on github actions (CI)
     await setupExtensionResources(process.env.CI_EXTENSION_BASE_URL)
-    // await ensureAdyenWebhookForAllAdyenAccounts(process.env.CI_NOTIFICATION_URL)
+    await ensureAdyenWebhookForAllAdyenAccounts(process.env.CI_NOTIFICATION_URL)
     // e2e requires this for static forms
     overrideApiExtensionBaseUrlConfig(`http://localhost:${extensionPort}`)
   } else {
