@@ -67,7 +67,6 @@ describe('payment-handler-lineItems::execute', () => {
       })
 
       const response = await handlePayment(ctpPaymentClone)
-      console.log(response)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request
@@ -183,7 +182,6 @@ describe('payment-handler-lineItems::execute', () => {
       const createSessionRequestJson = JSON.parse(
         createSessionRequestInteraction.body
       )
-      console.log(createSessionRequestJson)
       expect(createSessionRequestJson.lineItems).to.have.lengthOf(3)
     }
   )

@@ -115,7 +115,6 @@ describe('::creditCardPayment3dsRedirect::', () => {
             )
             logger.debug(
               'credit-card-3ds-redirect::paymentAfterCreateSession:',
-
               JSON.stringify(paymentAfterCreateSession)
             )
 
@@ -143,7 +142,6 @@ describe('::creditCardPayment3dsRedirect::', () => {
               JSON.stringify(redirectPaymentResult)
             )
           } catch (err) {
-            console.log(err)
             logger.error(
               'credit-card-3ds-redirect::errors',
               JSON.stringify(err)
