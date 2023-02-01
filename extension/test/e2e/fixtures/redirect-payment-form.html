@@ -5,8 +5,8 @@
     <title>Submit additional payment details</title>
     <link
       rel="stylesheet"
-      href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/4.3.0/adyen.css"
-      integrity="sha384-5CDvDZiVPuf+3ZID0lh0aaUHAeky3/ACF1YAKzPbn3GEmzWgO53gP6stiYHWIdpB"
+      href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.0.0/adyen.css"
+      integrity="sha384-0IvbHDeulbhdg1tMDeFeGlmjiYoVT6YsbfAMKFU2lFd6YKUVk0Hgivcmva3j6mkK"
       crossorigin="anonymous"
     />
   </head>
@@ -14,60 +14,81 @@
     <div>
       <input
         type="text"
-        id="adyen-make-payment-response-action-field"
-        placeholder="Adyen action field"
+        id="adyen-redirect-session-id"
+        placeholder="Adyen session ID"
+      /><br />
+      <input
+        type="text"
+        id="adyen-redirect-result"
+        placeholder="Adyen redirect result"
       /><br />
       <input
         type="text"
         id="adyen-client-key"
         placeholder="Adyen client key"
       /><br />
+      <div id="redirect-response"></div>
+      <input type="text" id="adyen-payment-auth-result" />
       <button type="button" id="redirect-payment-button">
         Redirect payment
       </button>
       <br />
-      <br />
-      <input
-        type="text"
-        id="adyen-additional-payment-details"
-        placeholder="Additional payment details will be here"
-      /><br />
     </div>
     <div id="component-container"></div>
 
     <script
-      src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/4.3.0/adyen.js"
-      integrity="sha384-cNkiBPQRGouJfbstYuSccx2XkGe3RB28iYrjge6rLIDtex7fk5+3/E9f4EZ34fxE"
+      src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.0.0/adyen.js"
+      integrity="sha384-kcKKvS6qZbXycrUw31OJ2/2Hz8A8FTsV9anjvpyQc/IWR1SmkFUw7w7F/t5S3qtA"
       crossorigin="anonymous"
     ></script>
     <script type="application/javascript">
       const configuration = {
         locale: 'en_US',
         environment: 'test',
-        clientKey: 'test_WT5XD2TUYFH2TBJDE5UKLYDHF4U4W7XP',
-        onAdditionalDetails: handleOnAdditionalDetails,
+        clientKey: '', // init when button is clicked
+        session: {
+          id: '', // init when button is clicked
+        },
+        onPaymentCompleted: (result, component) => {
+          document.getElementById('adyen-payment-auth-result').value =
+            JSON.stringify(result)
+          console.log(result)
+        },
+        onError: (error, component) => {
+          console.error(error.name, error.message, error.stack, component)
+        },
       }
 
+      // Click the button to do two operations :
+      // 1. Instantiate AdyenCheckout object
+      // 2. Create FormAction
       const actionFieldElemenet = document.getElementById(
         'redirect-payment-button'
       )
-      actionFieldElemenet.addEventListener('click', () => {
+      const sessionIdElement = document.getElementById(
+        'adyen-redirect-session-id'
+      )
+      const redirectResultElement = document.getElementById(
+        'adyen-redirect-result'
+      )
+      actionFieldElemenet.addEventListener('click', async () => {
+        console.log('redirect-payment-button')
         const clientKeyElement = document.getElementById('adyen-client-key')
         configuration.clientKey = clientKeyElement.value
-        const actionFieldElemenet = document.getElementById(
-          'adyen-make-payment-response-action-field'
-        )
-        const action = JSON.parse(actionFieldElemenet.value)
-        const checkout = new AdyenCheckout(configuration)
-        checkout.createFromAction(action).mount('#component-container')
+        configuration.session.id = sessionIdElement.value
+        console.log(JSON.stringify(configuration))
+        try {
+          const checkout = await AdyenCheckout(configuration)
+          // Submit the redirectResult value you extracted from the returnUrl.
+          const details = {
+            details: { redirectResult: redirectResultElement.value },
+          }
+          console.log(details)
+          checkout.submitDetails(details)
+        } catch (err) {
+          console.log(err)
+        }
       })
-
-      function handleOnAdditionalDetails(state) {
-        const additionalPaymentDetailsInput = document.getElementById(
-          'adyen-additional-payment-details'
-        )
-        additionalPaymentDetailsInput.value = JSON.stringify(state.data)
-      }
     </script>
   </body>
 </html>

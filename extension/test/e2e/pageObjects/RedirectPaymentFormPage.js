@@ -1,7 +1,4 @@
 import { pasteValue } from '../e2e-test-utils.js'
-import httpUtils from '../../../src/utils.js'
-
-const logger = httpUtils.getLogger()
 
 export default class RedirectPaymentFormPage {
   constructor(page, baseUrl) {
@@ -13,18 +10,17 @@ export default class RedirectPaymentFormPage {
     await this.page.goto(`${this.baseUrl}/redirect-payment-form`)
   }
 
-  async redirectToAdyenPaymentPage(paymentDetailsResponse, clientKey) {
-    logger.debug(
-      'redirectToAdyenPaymentPage::paymentDetailsResponse::',
-      paymentDetailsResponse
-    )
-    await pasteValue(
-      this.page,
-      '#adyen-make-payment-response-action-field',
-      JSON.stringify(paymentDetailsResponse.action)
-    )
+  async redirectToAdyenPaymentPage(adyenClientKey, sessionId, redirectResult) {
+    await this.page.waitForSelector('#adyen-client-key')
+    await pasteValue(this.page, '#adyen-client-key', adyenClientKey)
+    await pasteValue(this.page, '#adyen-redirect-session-id', sessionId)
+    await pasteValue(this.page, '#adyen-redirect-result', redirectResult)
 
-    await pasteValue(this.page, '#adyen-client-key', clientKey)
-    return this.page.click('#redirect-payment-button')
+    await this.page.click('#redirect-payment-button')
+    await this.page.waitForTimeout(3_000)
+    const redirectResultCodeEle = await this.page.$(
+      '#adyen-payment-auth-result'
+    )
+    return await this.page.evaluate((el) => el.value, redirectResultCodeEle)
   }
 }

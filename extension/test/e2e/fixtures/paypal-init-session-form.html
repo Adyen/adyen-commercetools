@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Make Payment</title>
+    <link
+      rel="stylesheet"
+      href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.0.0/adyen.css"
+      integrity="sha384-0IvbHDeulbhdg1tMDeFeGlmjiYoVT6YsbfAMKFU2lFd6YKUVk0Hgivcmva3j6mkK"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div>
+      <input
+        type="text"
+        id="adyen-client-key"
+        placeholder="Adyen client key"
+      /><br />
+      <input
+        type="text"
+        id="paypal-merchant-id"
+        placeholder="Paypal merchant ID"
+      /><br />
+      <input
+        type="text"
+        id="adyen-session-id"
+        placeholder="Adyen session ID"
+      /><br />
+      <textarea
+        id="adyen-session-data"
+        placeholder="Adyen session data"
+      ></textarea
+      ><br />
+      <textarea
+        id="adyen-payment-auth-result"
+        placeholder="Init session result"
+      ></textarea>
+    </div>
+    <div id="paypal-container"></div>
+    <script
+      src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.0.0/adyen.js"
+      integrity="sha384-kcKKvS6qZbXycrUw31OJ2/2Hz8A8FTsV9anjvpyQc/IWR1SmkFUw7w7F/t5S3qtA"
+      crossorigin="anonymous"
+    ></script>
+    <script type="application/javascript">
+      // https://docs.adyen.com/payment-methods/paypal/web-component
+      const configuration = {
+        environment: 'test', // When you're ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
+        clientKey: '', // Your client key. To find out how to generate one, see https://docs.adyen.com/development-resources/client-side-authentication.
+        showPayButton: true,
+        amount: {
+          currency: 'EUR',
+          value: 1000,
+        },
+        analytics: {
+          enabled: false, // Set to false to not send analytics data to Adyen.
+        },
+        session: {
+          id: '',
+          sessionData: '',
+        },
+        paymentMethodsConfiguration: { paypal: { intent: 'authorize' } },
+        onPaymentCompleted: (result, component) => {
+          console.log(result)
+          document.getElementById('adyen-payment-auth-result').innerHTML =
+            JSON.stringify(result)
+        },
+        onError: (error, component) => {
+          console.error(error.name, error.message, error.stack, component)
+          document.getElementById('adyen-payment-auth-result').innerHTML =
+            JSON.stringify(error)
+        },
+      }
+      const executeAdyenCheckout = async () => {
+        configuration.clientKey = clientKeyElement.value
+        configuration.session.id = sessionIdElement.value
+        configuration.session.sessionData = sessionDataElement.value
+        const paypalConfiguration = {
+          configuration: {
+            merchantId: merchantIdElement.value,
+            intent: 'authorize',
+          },
+        }
+        console.log(JSON.stringify(configuration))
+        const checkout = await AdyenCheckout(configuration)
+        checkout
+          .create('paypal', paypalConfiguration)
+          .mount('#paypal-container')
+      }
+
+      const clientKeyElement = document.getElementById('adyen-client-key')
+      const merchantIdElement = document.getElementById('paypal-merchant-id')
+      const sessionIdElement = document.getElementById('adyen-session-id')
+      const sessionDataElement = document.getElementById('adyen-session-data')
+      sessionDataElement.addEventListener('blur', () => executeAdyenCheckout())
+    </script>
+  </body>
+</html>
