@@ -28,7 +28,7 @@ jobs:
       - run: npm run check
       - name: prepare notifications folder
         run: |
-          echo $ADYEN_INTEGRATION_CONFIG >> .notificationrc
+          echo $ADYEN_INTEGRATION_CONFIG_WEBHOOK_TEST >> .notificationrc
           mkdir -p sources && cp index.googleFunction.js index.js
           cp -R {index.js,.notificationrc,src,resources,package.json} sources
           rm .notificationrc
@@ -48,7 +48,7 @@ jobs:
             --runtime nodejs16 \
             --trigger-http \
             --allow-unauthenticated
-     
+
 
   extension_build:
     name: Extension Module
@@ -73,7 +73,7 @@ jobs:
       - run: npm run check
       - name: prepare extensions folder
         run: |
-          echo $ADYEN_INTEGRATION_CONFIG >> .extensionrc
+          echo $ADYEN_INTEGRATION_CONFIG_WEBHOOK_TEST >> .extensionrc
           mkdir -p sources && cp index.googleFunction.js index.js
           cp -R {index.js,.extensionrc,src,resources,package.json} sources
           rm .extensionrc
