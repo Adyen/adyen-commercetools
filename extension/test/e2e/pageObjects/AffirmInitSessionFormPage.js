@@ -40,7 +40,6 @@ export default class AffirmInitSessionFormPage extends InitSessionFormPage {
 
     await this.page.type(
       '.adyen-checkout__input--street',
-
       adyenCheckoutInputFormJSON?.billingAddress?.street
     )
     await this.page.type(

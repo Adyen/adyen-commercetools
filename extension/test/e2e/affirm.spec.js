@@ -89,7 +89,6 @@ describe('::affirmPayment::', () => {
         )
         logger.debug(
           'affirm::paymentAfterCreateSession:',
-
           JSON.stringify(paymentAfterCreateSession)
         )
 

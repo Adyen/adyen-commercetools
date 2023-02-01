@@ -116,7 +116,6 @@ describe('::creditCardPayment3dsNative::', () => {
         })
         logger.debug(
           'credit-card-3ds-native::initPaymentResult:',
-
           JSON.stringify(initPaymentResult)
         )
       } catch (err) {
