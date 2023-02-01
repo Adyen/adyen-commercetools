@@ -91,7 +91,6 @@ describe('::creditCardPayment3dsNative::', () => {
         )
         logger.debug(
           'credit-card-3ds-native::paymentAfterCreateSession:',
-
           JSON.stringify(paymentAfterCreateSession)
         )
 

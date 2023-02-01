@@ -22,7 +22,6 @@ export default class AffirmInitSessionFormPage extends InitSessionFormPage {
 
     await this.page.type(
       '.adyen-checkout__input--firstName',
-
       adyenCheckoutInputFormJSON?.shopperName?.firstName
     )
     await this.page.type(
