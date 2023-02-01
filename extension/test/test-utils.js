@@ -158,6 +158,7 @@ async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
       webhookUrl,
       adyenMerchantId
     )
+    console.log(`webhookId : ${webhookId}`)
     merchantIdToWebhookIdMap.set(adyenMerchantId, webhookId)
   }
 }
