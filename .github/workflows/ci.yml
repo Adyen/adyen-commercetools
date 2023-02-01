@@ -12,7 +12,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
+      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG_WEBHOOK_TEST }}
       CI_NOTIFICATION_URL: ${{ secrets.CI_NOTIFICATION_URL }}
     defaults:
       run:
@@ -28,7 +28,7 @@ jobs:
       - run: npm run check
       - name: prepare notifications folder
         run: |
-          echo $ADYEN_INTEGRATION_CONFIG_WEBHOOK_TEST >> .notificationrc
+          echo $ADYEN_INTEGRATION_CONFIG >> .notificationrc
           mkdir -p sources && cp index.googleFunction.js index.js
           cp -R {index.js,.notificationrc,src,resources,package.json} sources
           rm .notificationrc
@@ -56,7 +56,7 @@ jobs:
     needs: notification_build
     runs-on: ubuntu-latest
     env:
-      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
+      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG_WEBHOOK_TEST }}
       CI_EXTENSION_BASE_URL: ${{ secrets.CI_EXTENSION_BASE_URL }}
       CI_NOTIFICATION_URL: ${{ secrets.CI_NOTIFICATION_URL }}
     defaults:
@@ -73,7 +73,7 @@ jobs:
       - run: npm run check
       - name: prepare extensions folder
         run: |
-          echo $ADYEN_INTEGRATION_CONFIG_WEBHOOK_TEST >> .extensionrc
+          echo $ADYEN_INTEGRATION_CONFIG >> .extensionrc
           mkdir -p sources && cp index.googleFunction.js index.js
           cp -R {index.js,.extensionrc,src,resources,package.json} sources
           rm .extensionrc
