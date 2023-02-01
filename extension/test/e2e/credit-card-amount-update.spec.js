@@ -32,8 +32,6 @@ describe('::creditCardPayment v5::', () => {
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
 
-  console.log(`ctpProjectKey : ${ctpProjectKey}`)
-  console.log(`adyenMerchantAccount : ${adyenMerchantAccount}`)
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-number
 
   beforeEach(async () => {
