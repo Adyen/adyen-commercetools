@@ -114,7 +114,8 @@ describe('::creditCardPayment3dsRedirect::', () => {
               createSessionRequest
             )
             logger.debug(
-              'credit-card::paymentAfterCreateSession:',
+              'credit-card-3ds-redirect::paymentAfterCreateSession:',
+
               JSON.stringify(paymentAfterCreateSession)
             )
 

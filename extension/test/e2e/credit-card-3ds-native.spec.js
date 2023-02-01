@@ -90,7 +90,8 @@ describe('::creditCardPayment3dsNative::', () => {
           createSessionRequest
         )
         logger.debug(
-          'credit-card::paymentAfterCreateSession:',
+          'credit-card-3ds-native::paymentAfterCreateSession:',
+
           JSON.stringify(paymentAfterCreateSession)
         )
 
@@ -114,7 +115,8 @@ describe('::creditCardPayment3dsNative::', () => {
           clientKey,
         })
         logger.debug(
-          'credit-card-3ds-redirect::initPaymentResult:',
+          'credit-card-3ds-native::initPaymentResult:',
+
           JSON.stringify(initPaymentResult)
         )
       } catch (err) {

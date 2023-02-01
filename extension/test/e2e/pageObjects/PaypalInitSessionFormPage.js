@@ -22,7 +22,6 @@ export default class PaypalInitSessionFormPage extends InitSessionFormPage {
   }
 
   async getPaymentAuthResult() {
-    console.log('getPaymentAuthResult')
     await this.page.waitForTimeout(5_000) // wait for the main page refreshing
     await this.page.waitForSelector('#adyen-payment-auth-result') // make sure result has been redenered in main page
     const authResultEle = await this.page.$('#adyen-payment-auth-result')
@@ -30,6 +29,7 @@ export default class PaypalInitSessionFormPage extends InitSessionFormPage {
     const authResultJson = await (
       await authResultEle.getProperty('innerHTML')
     ).jsonValue()
+
     return authResultJson
   }
 }

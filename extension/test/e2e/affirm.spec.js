@@ -88,7 +88,8 @@ describe('::affirmPayment::', () => {
           'USD'
         )
         logger.debug(
-          'credit-card::paymentAfterCreateSession:',
+          'affirm::paymentAfterCreateSession:',
+
           JSON.stringify(paymentAfterCreateSession)
         )
 
