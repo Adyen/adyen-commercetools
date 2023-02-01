@@ -48,7 +48,7 @@ jobs:
             --runtime nodejs16 \
             --trigger-http \
             --allow-unauthenticated
-
+      - run: npm run test
 
   extension_build:
     name: Extension Module
