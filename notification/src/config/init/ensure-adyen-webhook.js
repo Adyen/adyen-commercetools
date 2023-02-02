@@ -36,7 +36,7 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
       (webhook) =>
         webhook.url === webhookConfig.url && webhook.type === webhookConfig.type
     )
-
+    console.log(`existingWebhook : ${existingWebhook}`)
     if (existingWebhook) {
       logger.info(
         `Webhook already existed with ID ${existingWebhook.id}. ` +
@@ -103,10 +103,12 @@ async function ensureAdyenHmac(adyenApiKey, merchantId, webhookId) {
 }
 
 async function ensureAdyenWebhooksForAllProjects() {
+  console.log('ensureAdyenWebhooksForAllProjects')
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
   const jsonConfig = loadConfig()
   for (const adyenMerchantId of adyenMerchantAccounts) {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
+    console.log(`adyenConfig.notificationBaseUrl : ${adyenConfig.notificationBaseUrl}`)
     if (adyenConfig.notificationBaseUrl) {
       const webhookId = await ensureAdyenWebhook(
         adyenConfig.apiKey,
