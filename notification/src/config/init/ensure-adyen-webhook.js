@@ -36,7 +36,7 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
       (webhook) =>
         webhook.url === webhookConfig.url && webhook.type === webhookConfig.type
     )
-    console.log(`existingWebhook : ${existingWebhook}`)
+
     if (existingWebhook) {
       logger.info(
         `Webhook already existed with ID ${existingWebhook.id}. ` +
@@ -103,33 +103,32 @@ async function ensureAdyenHmac(adyenApiKey, merchantId, webhookId) {
 }
 
 async function ensureAdyenWebhooksForAllProjects() {
-  console.log('ensureAdyenWebhooksForAllProjects')
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
   const jsonConfig = loadConfig()
+  const result = new Map()
   for (const adyenMerchantId of adyenMerchantAccounts) {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
-    console.log(
-      `adyenConfig.notificationBaseUrl : ${adyenConfig.notificationBaseUrl}`
-    )
+
+    let webhookId
+    let hmacKey
     if (adyenConfig.notificationBaseUrl) {
-      const webhookId = await ensureAdyenWebhook(
+      webhookId = await ensureAdyenWebhook(
         adyenConfig.apiKey,
         adyenConfig.notificationBaseUrl,
         adyenMerchantId
       )
       if (adyenConfig.enableHmacSignature && !adyenConfig.secretHmacKey) {
-        const hmacKey = await ensureAdyenHmac(
+        hmacKey = await ensureAdyenHmac(
           adyenConfig.apiKey,
           adyenMerchantId,
           webhookId
         )
         jsonConfig.adyen[adyenMerchantId].secretHmacKey = hmacKey
       }
+      result.set(adyenMerchantId, { webhookId, hmacKey })
     }
   }
-
-  mainLogger.info('Set the following environmental variable')
-  console.log(`ADYEN_INTEGRATION_CONFIG='${JSON.stringify(jsonConfig)}'`)
+  return result
 }
 
 export { ensureAdyenWebhooksForAllProjects }
