@@ -104,9 +104,6 @@ async function ensureAdyenHmac(adyenApiKey, merchantId, webhookId) {
 
 async function ensureAdyenWebhooksForAllProjects() {
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
-  console.log(adyenMerchantAccounts)
-  console.log(config.getAdyenConfig('CommercetoolsGmbHDE775'))
-  console.log(config.getAdyenConfig('CommercetoolsTest'))
   const jsonConfig = loadConfig()
   const result = new Map()
   for (const adyenMerchantId of adyenMerchantAccounts) {

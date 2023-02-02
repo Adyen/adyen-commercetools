@@ -7,15 +7,15 @@ import config from '../../src/config/config.js'
 import { overrideAdyenConfig, restoreAdyenConfig } from '../test-utils.js'
 
 describe('verify ensure-adyen-webhook', () => {
-  beforeEach(() => {
-    overrideAdyenConfig({
-      enableHmacSignature: false, // default
-      notificationBaseUrl: 'https://test-notification.url',
-    })
-  })
-  afterEach(() => {
-    restoreAdyenConfig()
-  })
+  // beforeEach(() => {
+  //   overrideAdyenConfig({
+  //     enableHmacSignature: false, // default
+  //     notificationBaseUrl: 'https://test-notification.url',
+  //   })
+  // })
+  // afterEach(() => {
+  //   restoreAdyenConfig()
+  // })
 
   it('provided that webhook is existing in Adyen merchant account, no new webhook is created', async () => {
     const adyenMerchantAccount0 = config.getAllAdyenMerchantAccounts()[0]
