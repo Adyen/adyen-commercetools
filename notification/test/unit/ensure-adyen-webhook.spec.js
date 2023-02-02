@@ -4,7 +4,7 @@ import nock from 'nock'
 import { ensureAdyenWebhooksForAllProjects } from '../../src/config/init/ensure-adyen-webhook.js'
 import config from '../../src/config/config.js'
 
-import { overrideAdyenConfig, restoreAdyenConfig } from '../test-utils.js'
+// import { overrideAdyenConfig, restoreAdyenConfig } from '../test-utils.js'
 
 describe('verify ensure-adyen-webhook', () => {
   // beforeEach(() => {
