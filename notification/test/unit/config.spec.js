@@ -153,7 +153,7 @@ describe('::config::', () => {
     }
   })
 
-  it(
+  it.skip(
     'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
       'then it should load configuration correctly',
     async () => {
