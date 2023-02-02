@@ -108,7 +108,9 @@ async function ensureAdyenWebhooksForAllProjects() {
   const jsonConfig = loadConfig()
   for (const adyenMerchantId of adyenMerchantAccounts) {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
-    console.log(`adyenConfig.notificationBaseUrl : ${adyenConfig.notificationBaseUrl}`)
+    console.log(
+      `adyenConfig.notificationBaseUrl : ${adyenConfig.notificationBaseUrl}`
+    )
     if (adyenConfig.notificationBaseUrl) {
       const webhookId = await ensureAdyenWebhook(
         adyenConfig.apiKey,
