@@ -1,8 +1,6 @@
 import rc from 'rc'
 
 function loadConfig() {
-  console.log('debug')
-  console.log(process.env.ADYEN_INTEGRATION_CONFIG)
   if (process.env.ADYEN_INTEGRATION_CONFIG) {
     return loadFromAdyenIntegrationEnvVar()
   }

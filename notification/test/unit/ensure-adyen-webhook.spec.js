@@ -1,8 +1,9 @@
-import { expect } from 'chai'
 import nock from 'nock'
 import sinon from 'sinon'
 import { ensureAdyenWebhooksForAllProjects } from '../../src/config/init/ensure-adyen-webhook.js'
+
 import config from '../../src/config/config.js'
+import { getLogger } from '../../src/utils/logger.js'
 
 describe('verify ensure-adyen-webhook', () => {
   afterEach(() => {
@@ -40,10 +41,16 @@ describe('verify ensure-adyen-webhook', () => {
       .get('/webhooks')
       .reply(200, fetchWebhookResponse)
 
-    const resultMap = await ensureAdyenWebhooksForAllProjects()
-    expect(resultMap.length).to.not.equal(0)
-    const result = resultMap.get(adyenMerchantAccount0)
-    const { webhookId } = result
-    expect(webhookId).to.equal('webhook-1')
+    const logSpy = sinon.spy()
+    const logger = getLogger()
+    logger.info = logSpy
+    sinon.stub(getLogger(), 'child').returns(logger)
+
+    await ensureAdyenWebhooksForAllProjects()
+    const message =
+      'Webhook already existed with ID webhook-1. ' +
+      'Skipping webhook creation and ensuring the webhook is active'
+    sinon.assert.calledOnce(logSpy)
+    sinon.assert.calledWith(logSpy, message)
   })
 })
