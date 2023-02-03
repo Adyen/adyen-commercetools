@@ -51,6 +51,9 @@ describe('::creditCardPayment::amount-update::', () => {
     let paymentAfterCreateSession
     let initPaymentSessionResult
 
+    let updatedAmountStatusCode
+    let amountUpdatesResponse
+    let amountUpdatesInterfaceInteractions
     const creditCardNumber = '5101 1800 0000 0007'
     const creditCardDate = '03/30'
     const creditCardCvc = '737'
@@ -64,7 +67,7 @@ describe('::creditCardPayment::amount-update::', () => {
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
       paymentAfterCreateSession = await createSession(clientKey)
       logger.debug(
-        'credit-card::paymentAfterCreateSession:',
+        'credit-card-amount-update::paymentAfterCreateSession:',
         JSON.stringify(paymentAfterCreateSession)
       )
 
@@ -97,25 +100,25 @@ describe('::creditCardPayment::amount-update::', () => {
         notificationInteraction,
         paymentAfterCreateSession
       )
-      expect(statusCode).to.equal(200)
-
-      const amountUpdatesResponse = JSON.parse(
+      amountUpdatesResponse = JSON.parse(
         updatedPayment.custom.fields.amountUpdatesResponse
       )
-      expect(amountUpdatesResponse.status).to.equal('received')
-      const amountUpdatesInterfaceInteractions =
+      amountUpdatesInterfaceInteractions =
         updatedPayment.interfaceInteractions.filter(
           (ii) => ii.fields.type === 'amountUpdates'
         )
-      expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
+      updatedAmountStatusCode = statusCode
     } catch (err) {
-      logger.error('credit-card::errors:', JSON.stringify(err))
+      logger.error('credit-card-amount-update::errors:', JSON.stringify(err))
     }
 
     assertCreatePaymentSession(
       paymentAfterCreateSession,
       initPaymentSessionResult
     )
+    expect(updatedAmountStatusCode).to.equal(200)
+    expect(amountUpdatesResponse.status).to.equal('received')
+    expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
   })
 
   async function updateAmount(
