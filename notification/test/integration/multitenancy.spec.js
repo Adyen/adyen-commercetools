@@ -19,6 +19,12 @@ describe('::multitenancy::', () => {
   let notificationURL
 
   before(async () => {
+    console.log('config-1')
+    console.log(commercetoolsProjectKey1)
+    console.log(JSON.stringify(config.getCtpConfig(commercetoolsProjectKey1)))
+    console.log('config-2')
+    console.log(commercetoolsProjectKey2)
+    console.log(JSON.stringify(config.getCtpConfig(commercetoolsProjectKey2)))
     ctpClient1 = await ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey1)
     )

@@ -156,6 +156,9 @@ async function ensurePayment(
   if (pspReference) {
     paymentDraft.transactions[0].interactionId = pspReference
   }
+  console.log('ensure payment')
+  console.log(commercetoolsProjectKey)
+  console.log(adyenMerchantAccount)
   return ctpClient.create(ctpClient.builder.payments, paymentDraft)
 }
 
