@@ -105,30 +105,26 @@ async function ensureAdyenHmac(adyenApiKey, merchantId, webhookId) {
 async function ensureAdyenWebhooksForAllProjects() {
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
   const jsonConfig = loadConfig()
-  const result = new Map()
+
   for (const adyenMerchantId of adyenMerchantAccounts) {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
 
-    let webhookId
-    let hmacKey
     if (adyenConfig.notificationBaseUrl) {
-      webhookId = await ensureAdyenWebhook(
+      const webhookId = await ensureAdyenWebhook(
         adyenConfig.apiKey,
         adyenConfig.notificationBaseUrl,
         adyenMerchantId
       )
       if (adyenConfig.enableHmacSignature && !adyenConfig.secretHmacKey) {
-        hmacKey = await ensureAdyenHmac(
+        const hmacKey = await ensureAdyenHmac(
           adyenConfig.apiKey,
           adyenMerchantId,
           webhookId
         )
         jsonConfig.adyen[adyenMerchantId].secretHmacKey = hmacKey
       }
-      result.set(adyenMerchantId, { webhookId, hmacKey })
     }
   }
-  return result
 }
 
 export { ensureAdyenWebhooksForAllProjects }
