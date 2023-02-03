@@ -7,6 +7,8 @@ import utils from '../../src/utils.js'
 
 import constants from '../../src/config/constants.js'
 
+const { CTP_INTERACTION_TYPE_CANCEL_PAYMENT } = constants
+
 const { execute } = cancelPaymentHandler
 
 describe('cancel-payment::execute', () => {
@@ -15,7 +17,6 @@ describe('cancel-payment::execute', () => {
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const cancelPaymentTransaction = {
     id: 'cancelTransactionId',
-    key: 'payment-key',
     type: 'CancelAuthorization',
     amount: {
       type: 'centPrecision',
@@ -23,16 +24,6 @@ describe('cancel-payment::execute', () => {
       centAmount: 500,
       fractionDigits: 2,
     },
-    custom: {
-      type: {
-        typeId: 'type',
-        id: '9f7d21aa-264e-43ea-a540-acb9c28aa6be',
-      },
-      fields: {
-        reference: '123456789',
-      },
-    },
-    interactionId: '883658923110097B',
     state: 'Initial',
   }
 
@@ -58,23 +49,51 @@ describe('cancel-payment::execute', () => {
     nock.cleanAll()
   })
 
-  it('when refund payment request contains reference, then it should send this reference to Adyen', async () => {
-    scope.post('/cancel').reply(200, cancelPaymentResponse)
-    const ctpPaymentClone = _.cloneDeep(ctpPayment)
-    ctpPaymentClone.key = '123456789'
-    ctpPaymentClone.transactions.push(cancelPaymentTransaction)
-    ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+  it(
+    'given a payment ' +
+      'when "/cancel" request to Adyen is received successfully ' +
+      'then it should return actions "addInterfaceInteraction", ' +
+      '"changeTransactionState" and "changeTransactionInteractionId"',
+    async () => {
+      scope.post('/cancel').reply(200, cancelPaymentResponse)
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.key = 'originalReference-ABCDEFG'
+      ctpPaymentClone.transactions.push(cancelPaymentTransaction)
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
-    const response = await execute(ctpPaymentClone)
+      const { actions } = await execute(ctpPaymentClone)
 
-    const adyenRequest = response.actions.find(
-      (action) => action.action === 'addInterfaceInteraction'
-    ).fields.request
-    const adyenRequestJson = JSON.parse(adyenRequest)
-    const requestBody = JSON.parse(adyenRequestJson.body)
+      expect(actions).to.have.lengthOf(3)
 
-    expect(requestBody.reference).to.equal(
-      cancelPaymentTransaction.custom.fields.reference
-    )
-  })
+      const addInterfaceInteraction = actions.find(
+        (a) => a.action === 'addInterfaceInteraction'
+      )
+      expect(addInterfaceInteraction.fields.type).to.equal(
+        CTP_INTERACTION_TYPE_CANCEL_PAYMENT
+      )
+      expect(addInterfaceInteraction.fields.request).to.be.a('string')
+      expect(addInterfaceInteraction.fields.response).to.equal(
+        JSON.stringify(cancelPaymentResponse)
+      )
+      expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
+
+      const changeTransactionState = actions.find(
+        (a) => a.action === 'changeTransactionState'
+      )
+      expect(changeTransactionState).to.be.deep.equal({
+        transactionId: 'cancelTransactionId',
+        action: 'changeTransactionState',
+        state: 'Pending',
+      })
+
+      const changeTransactionInteractionId = actions.find(
+        (a) => a.action === 'changeTransactionInteractionId'
+      )
+      expect(changeTransactionInteractionId).to.be.deep.equal({
+        transactionId: 'cancelTransactionId',
+        action: 'changeTransactionInteractionId',
+        interactionId: '8825408195409505',
+      })
+    }
+  )
 })
