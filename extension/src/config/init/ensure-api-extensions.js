@@ -22,6 +22,8 @@ async function ensureApiExtensions(
         ctpAdyenIntegrationBaseUrl,
       })
     )
+    console.log('extenionDraft')
+    console.log(extenionDraft)
     if (ctpAuthHeaderValue) {
       extensionDraft.destination.authentication = JSON.parse(
         `{` +
@@ -64,6 +66,8 @@ async function ensureApiExtensions(
 }
 
 function buildUpdateActions(existingExtension, extensionDraft) {
+  console.log(`existingExtension.destination : ${existingExtension.destination}`)
+  console.log(`extensionDraft.destination : ${extensionDraft.destination}`)
   const actions = []
   if (!_.isEqual(existingExtension.destination, extensionDraft.destination))
     actions.push({
