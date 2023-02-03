@@ -162,7 +162,9 @@ async function ensurePayment(
   let result
   try {
     console.log('paymentDraft')
-    console.log(paymentDraft)
+    console.log(ctpClient.builder.payments.url)
+    console.log(ctpClient.builder.payments.endpoint)
+    console.log(JSON.stringify(paymentDraft))
     result = ctpClient.create(ctpClient.builder.payments, paymentDraft)
   } catch (err) {
     console.log('ensure payment failed')
