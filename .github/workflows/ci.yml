@@ -33,7 +33,7 @@ jobs:
           echo $CI_EXTENSION_BASE_URL >> .baseurl
           echo $CI_NOTIFICATION_URL >> .notificationUrl
           mkdir -p sources && cp index.googleFunction.js index.js
-          cp -R {index.js,.extensionrc,src,resources,package.json, .baseurl, .notificationUrl} sources
+          cp -R {index.js,.extensionrc,src,resources,package.json,.baseurl,.notificationUrl} sources
           rm .extensionrc
           rm .baseurl
           rm .notificationUrl
