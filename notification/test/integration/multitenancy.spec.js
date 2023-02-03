@@ -63,7 +63,8 @@ describe('::multitenancy::', () => {
       merchantReference2,
       pspReference2
     )
-
+    console.log(`notificationPayload1`)
+    console.log(JSON.stringify(notificationPayload1))
     const [response1, response2] = await Promise.all([
       fetch(notificationURL, {
         method: 'post',
