@@ -29,7 +29,7 @@ describe('notification module', () => {
       const merchantReference = `notificationPayment-${new Date().getTime()}`
       // pspReference cannot be static otherwise wrong payment created in the past would be obtained
       const pspReference = `pspReference-${new Date().getTime()}`
-        const { body: paymentBefore } = await ensurePayment(
+      const { body: paymentBefore } = await ensurePayment(
         ctpClient,
         merchantReference,
         pspReference,
