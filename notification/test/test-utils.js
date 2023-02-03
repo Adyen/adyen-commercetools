@@ -161,6 +161,8 @@ async function ensurePayment(
   console.log(adyenMerchantAccount)
   let result
   try {
+    console.log('paymentDraft')
+    console.log(paymentDraft)
     result = ctpClient.create(ctpClient.builder.payments, paymentDraft)
   } catch (err) {
     console.log('ensure payment failed')
