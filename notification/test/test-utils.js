@@ -156,6 +156,8 @@ async function ensurePayment(
   if (pspReference) {
     paymentDraft.transactions[0].interactionId = pspReference
   }
+  console.log('payment draft ')
+  console.log(JSON.stringify(paymentDraft))
   return ctpClient.create(ctpClient.builder.payments, paymentDraft)
 }
 
