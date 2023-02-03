@@ -24,7 +24,7 @@ function setRoute() {
   }
 }
 // Flow description: https://docs.adyen.com/checkout/components-web
-describe('::creditCardPayment v5::', () => {
+describe('::creditCardPayment::', () => {
   let browser
   let ctpClient
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]

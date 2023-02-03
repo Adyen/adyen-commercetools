@@ -11,7 +11,7 @@ jobs:
     concurrency: notification_build
     runs-on: ubuntu-latest
     env:
-      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG_WEBHOOK_TEST }}
+      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
       CI_NOTIFICATION_URL: ${{ secrets.CI_NOTIFICATION_URL }}
     defaults:
       run:
@@ -55,7 +55,7 @@ jobs:
     needs: notification_build
     runs-on: ubuntu-latest
     env:
-      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG_WEBHOOK_TEST }}
+      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
       CI_EXTENSION_BASE_URL: ${{ secrets.CI_EXTENSION_BASE_URL }}
       CI_NOTIFICATION_URL: ${{ secrets.CI_NOTIFICATION_URL }}
     defaults:
