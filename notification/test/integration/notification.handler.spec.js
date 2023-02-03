@@ -30,6 +30,7 @@ describe('notification module', () => {
       // pspReference cannot be static otherwise wrong payment created in the past would be obtained
       const pspReference = `pspReference-${new Date().getTime()}`
 
+      console.log('before')
       const { body: paymentBefore } = await ensurePayment(
         ctpClient,
         merchantReference,
@@ -37,6 +38,8 @@ describe('notification module', () => {
         commercetoolsProjectKey,
         adyenMerchantAccount
       )
+      console.log('body')
+      console.log(paymentBefore)
       expect(paymentBefore.transactions).to.have.lengthOf(1)
       expect(paymentBefore.transactions[0].type).to.equal('Authorization')
       expect(paymentBefore.transactions[0].state).to.equal('Pending')
