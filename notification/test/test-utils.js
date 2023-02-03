@@ -145,7 +145,7 @@ async function ensurePayment(
   adyenMerchantAccount
 ) {
   const payment = await utils.readAndParseJsonFile(
-      'test/resources/payment-draft.json'
+    'test/resources/payment-draft.json'
   )
   const paymentDraft = _.cloneDeep(payment)
   paymentDraft.key = paymentKey
@@ -159,15 +159,14 @@ async function ensurePayment(
   console.log('ensure payment')
   console.log(commercetoolsProjectKey)
   console.log(adyenMerchantAccount)
+  let result
   try {
-
-    const result = ctpClient.create(ctpClient.builder.payments, paymentDraft)
-    return result
+    result = ctpClient.create(ctpClient.builder.payments, paymentDraft)
   } catch (err) {
     console.log('ensure payment failed')
     console.log(err)
   }
-
+  return result
 }
 
 export {
