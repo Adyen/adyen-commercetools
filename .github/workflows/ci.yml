@@ -11,7 +11,7 @@ jobs:
   extension_build:
     name: Extension Module
     concurrency: extension_build
-    needs: notification_build
+    
     runs-on: ubuntu-latest
     env:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
