@@ -5,13 +5,16 @@ export default class CreditCardRedirectAuthenticationPage {
 
   async doPaymentAuthentication() {
     await this.page.waitForTimeout(2_000)
-    await this.page.waitForSelector('#username')
+
+    await this.page.waitForSelector('.paySubmit')
     await this.page.type('#username', 'user')
     await this.page.type('#password', 'password')
 
-    await this.page.click('.paySubmit')
+    await Promise.all([
+      this.page.click('.paySubmit'),
+      this.page.waitForSelector('#redirect-response'),
+    ])
 
-    await this.page.waitForTimeout(5_000) // wait for redirect
     const sessionIdEle = await this.page.$('#sessionId')
     const redirectResultEle = await this.page.$('#redirectResult')
     const sessionId = await this.page.evaluate(

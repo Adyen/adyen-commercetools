@@ -70,7 +70,18 @@ describe('::creditCardPayment v5::', () => {
             // Step #1 - Create a payment session
 
             // https://docs.adyen.com/online-payments/web-components#create-payment-session
-            paymentAfterCreateSession = await createSession(clientKey)
+
+            const createSessionRequest = await getCreateSessionRequest(
+              baseUrl,
+              clientKey
+            )
+
+            paymentAfterCreateSession = await createPaymentSession(
+              ctpClient,
+              adyenMerchantAccount,
+              ctpProjectKey,
+              createSessionRequest
+            )
             logger.debug(
               'credit-card::paymentAfterCreateSession:',
               JSON.stringify(paymentAfterCreateSession)
@@ -78,7 +89,6 @@ describe('::creditCardPayment v5::', () => {
 
             // Step #2 - Setup Component
             // https://docs.adyen.com/online-payments/web-components#set-up
-
             initPaymentSessionResult = await initPaymentSession({
               browserTab,
               baseUrl,
@@ -100,27 +110,6 @@ describe('::creditCardPayment v5::', () => {
       )
     }
   )
-
-  async function createSession(clientKey) {
-    const createSessionRequest = await getCreateSessionRequest(clientKey)
-    let payment = null
-    const startTime = new Date().getTime()
-    try {
-      payment = await createPaymentSession(
-        ctpClient,
-        adyenMerchantAccount,
-        ctpProjectKey,
-        createSessionRequest
-      )
-    } catch (err) {
-      logger.error('credit-card::createSession::errors', JSON.stringify(err))
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug('credit-card::createSession:', endTime - startTime)
-    }
-
-    return payment
-  }
 
   async function initPaymentSession({
     browserTab,

@@ -4,8 +4,8 @@ import { routes } from '../../src/routes.js'
 import httpUtils from '../../src/utils.js'
 import {
   assertCreatePaymentSession,
-  createPaymentSession,
   getCreateSessionRequest,
+  createPaymentSession,
   initPuppeteerBrowser,
   serveFile,
   getRequestParams,
@@ -17,8 +17,7 @@ import AffirmInitSessionFormPage from './pageObjects/AffirmInitSessionFormPage.j
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/affirm/web-component#page-introduction
-describe.skip('::affirmPayment::', () => {
-  // TODO : Migrate e2e test for web component 5
+describe('::affirmPayment::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
@@ -75,9 +74,21 @@ describe.skip('::affirmPayment::', () => {
         const browserTab = await browser.newPage()
         // Step #1 - Create a payment session
         // https://docs.adyen.com/online-payments/web-components#create-payment-session
-        paymentAfterCreateSession = await createSession(clientKey)
+
+        const createSessionRequest = await getCreateSessionRequest(
+          baseUrl,
+          clientKey,
+          'USD'
+        )
+        paymentAfterCreateSession = await createPaymentSession(
+          ctpClient,
+          adyenMerchantAccount,
+          ctpProjectKey,
+          createSessionRequest,
+          'USD'
+        )
         logger.debug(
-          'credit-card::paymentAfterCreateSession:',
+          'affirm::paymentAfterCreateSession:',
           JSON.stringify(paymentAfterCreateSession)
         )
 
@@ -108,28 +119,6 @@ describe.skip('::affirmPayment::', () => {
       )
     }
   )
-
-  async function createSession(clientKey) {
-    const createSessionRequest = await getCreateSessionRequest(clientKey, 'USD')
-    let payment = null
-    const startTime = new Date().getTime()
-    try {
-      payment = await createPaymentSession(
-        ctpClient,
-        adyenMerchantAccount,
-        ctpProjectKey,
-        createSessionRequest,
-        'USD'
-      )
-    } catch (err) {
-      console.log(err)
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug('credit-card::createSession:', endTime - startTime)
-    }
-
-    return payment
-  }
 
   async function initPaymentSession({
     browserTab,

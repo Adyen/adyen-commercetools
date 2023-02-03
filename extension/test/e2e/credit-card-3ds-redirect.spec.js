@@ -48,7 +48,7 @@ function setRoute() {
 }
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/redirect-3ds2-3ds1/web-component
-describe.skip('::creditCardPayment3dsRedirect::', () => {
+describe('::creditCardPayment3dsRedirect::', () => {
   let browser
 
   let ctpClient
@@ -102,9 +102,20 @@ describe.skip('::creditCardPayment3dsRedirect::', () => {
 
             // Step #1 - Create a payment session
             // https://docs.adyen.com/online-payments/web-components#create-payment-session
-            paymentAfterCreateSession = await createSession(clientKey)
+            const createSessionRequest = await getCreateSessionRequest(
+              baseUrl,
+              clientKey
+            )
+
+            paymentAfterCreateSession = await createPaymentSession(
+              ctpClient,
+              adyenMerchantAccount,
+              ctpProjectKey,
+              createSessionRequest
+            )
             logger.debug(
-              'credit-card::paymentAfterCreateSession:',
+              'credit-card-3ds-redirect::paymentAfterCreateSession:',
+
               JSON.stringify(paymentAfterCreateSession)
             )
 
@@ -146,27 +157,6 @@ describe.skip('::creditCardPayment3dsRedirect::', () => {
       )
     }
   )
-
-  async function createSession(clientKey) {
-    const createSessionRequest = await getCreateSessionRequest(clientKey)
-    let payment = null
-    const startTime = new Date().getTime()
-    try {
-      payment = await createPaymentSession(
-        ctpClient,
-        adyenMerchantAccount,
-        ctpProjectKey,
-        createSessionRequest
-      )
-    } catch (err) {
-      console.log(err)
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug('credit-card::createSession:', endTime - startTime)
-    }
-
-    return payment
-  }
 
   async function initPaymentSession({
     browserTab,

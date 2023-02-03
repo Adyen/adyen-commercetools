@@ -413,7 +413,6 @@ async function getPaymentByMerchantReference(
 ) {
   try {
     const keys = [merchantReference, pspReference]
-    console.log(keys)
     const result = await ctpClient.fetchByKeys(ctpClient.builder.payments, keys)
     return result.body.results[0]
   } catch (err) {
