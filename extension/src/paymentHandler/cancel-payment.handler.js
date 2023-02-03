@@ -11,7 +11,6 @@ import constants from '../config/constants.js'
 const { CTP_INTERACTION_TYPE_CANCEL_PAYMENT } = constants
 
 async function execute(paymentObject) {
-  console.log(paymentObject)
   const authorizationTransaction =
     getAuthorizationTransactionSuccess(paymentObject)
 
@@ -24,7 +23,6 @@ async function execute(paymentObject) {
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
-  console.log(cancelRequestObj)
   const { request, response } = await cancelPayment(
     adyenMerchantAccount,
     commercetoolsProjectKey,

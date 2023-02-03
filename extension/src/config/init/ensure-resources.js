@@ -19,7 +19,6 @@ function ensureResources(
   apiExtensionBaseUrl,
   authHeaderValue
 ) {
-  console.log('ensureResources')
   return Promise.all([
     ensureCustomTypes(ctpClient, ctpProjectKey),
     ensureApiExtensions(

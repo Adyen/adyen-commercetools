@@ -52,7 +52,6 @@
         onPaymentCompleted: (result, component) => {
           document.getElementById('adyen-payment-auth-result').value =
             JSON.stringify(result)
-          console.log(result)
         },
         onError: (error, component) => {
           console.error(error.name, error.message, error.stack, component)

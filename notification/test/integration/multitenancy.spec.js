@@ -19,12 +19,6 @@ describe('::multitenancy::', () => {
   let notificationURL
 
   before(async () => {
-    console.log('config-1')
-    console.log(commercetoolsProjectKey1)
-    console.log(JSON.stringify(config.getCtpConfig(commercetoolsProjectKey1)))
-    console.log('config-2')
-    console.log(commercetoolsProjectKey2)
-    console.log(JSON.stringify(config.getCtpConfig(commercetoolsProjectKey2)))
     ctpClient1 = await ctpClientBuilder.get(
       config.getCtpConfig(commercetoolsProjectKey1)
     )
@@ -69,8 +63,6 @@ describe('::multitenancy::', () => {
       merchantReference2,
       pspReference2
     )
-    console.log(`notificationPayload1`)
-    console.log(JSON.stringify(notificationPayload1))
     const [response1, response2] = await Promise.all([
       fetch(notificationURL, {
         method: 'post',
