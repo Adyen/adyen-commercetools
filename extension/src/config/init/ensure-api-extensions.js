@@ -22,8 +22,8 @@ async function ensureApiExtensions(
         ctpAdyenIntegrationBaseUrl,
       })
     )
-    console.log('extenionDraft')
-    console.log(extenionDraft)
+    console.log('extensionDraft')
+    console.log(extensionDraft)
     if (ctpAuthHeaderValue) {
       extensionDraft.destination.authentication = JSON.parse(
         `{` +
