@@ -110,7 +110,6 @@ async function ensureAdyenWebhooksForAllProjects() {
   }
 
   mainLogger.info('Set the following environmental variable')
-  console.log(`ADYEN_INTEGRATION_CONFIG='${JSON.stringify(jsonConfig)}'`)
 }
 
 export { ensureAdyenWebhooksForAllProjects }

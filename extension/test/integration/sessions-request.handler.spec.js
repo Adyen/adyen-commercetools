@@ -148,7 +148,6 @@ describe('::create-session-request::', () => {
           },
         ]
       )
-      console.log(updatedPayment)
       expect(statusCode).to.equal(200)
       expect(updatedPayment.key).to.equal(createSessionRequestDraft.reference)
 
