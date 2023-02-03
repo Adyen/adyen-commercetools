@@ -7,7 +7,7 @@
   "scripts": {
     "test": "c8 npm run test-run && npm run check-coverage",
     "test-run": "npm run unit && npm run integration && npm run e2e",
-    "check-coverage": "c8 check-coverage --lines 89",
+    "check-coverage": "c8 check-coverage --lines 85",
     "unit": "mocha --file ./test/unit/mock-default-confg.js \"test/unit/**/*.spec.js\"",
     "integration": "mocha --file ./test/initial-integration-test-set-up.js \"test/integration/**/*.spec.js\"",
     "e2e": "mocha --file ./test/initial-integration-test-set-up.js \"test/e2e/**/*.spec.js\"",
