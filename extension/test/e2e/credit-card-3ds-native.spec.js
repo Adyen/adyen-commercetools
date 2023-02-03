@@ -78,7 +78,6 @@ describe('::creditCardPayment3dsNative::', () => {
         const browserTab = await browser.newPage()
         // Step #1 - Create a payment session
         // https://docs.adyen.com/online-payments/web-components#create-payment-session
-
         const createSessionRequest = await getCreateSessionRequest(
           baseUrl,
           clientKey

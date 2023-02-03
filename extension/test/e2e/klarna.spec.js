@@ -71,10 +71,10 @@ describe('::klarnaPayment::', () => {
       try {
         const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
         const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
+
         const browserTab = await browser.newPage()
         // Step #1 - Create a payment session
         // https://docs.adyen.com/online-payments/web-components#create-payment-session
-
         let createSessionRequest = await getCreateSessionRequest(
           baseUrl,
           clientKey
@@ -87,7 +87,6 @@ describe('::klarnaPayment::', () => {
           ctpProjectKey,
           createSessionRequest
         )
-
         logger.debug(
           'klarna::paymentAfterCreateSession:',
           JSON.stringify(paymentAfterCreateSession)

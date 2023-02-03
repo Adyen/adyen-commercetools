@@ -7,9 +7,9 @@ import httpUtils from '../../src/utils.js'
 import {
   assertCreatePaymentSession,
   createPaymentSession,
+  getCreateSessionRequest,
   initPuppeteerBrowser,
   serveFile,
-  getCreateSessionRequest,
 } from './e2e-test-utils.js'
 
 const logger = httpUtils.getLogger()
@@ -70,7 +70,6 @@ describe('::creditCardPayment::', () => {
             // Step #1 - Create a payment session
 
             // https://docs.adyen.com/online-payments/web-components#create-payment-session
-
             const createSessionRequest = await getCreateSessionRequest(
               baseUrl,
               clientKey
@@ -89,6 +88,7 @@ describe('::creditCardPayment::', () => {
 
             // Step #2 - Setup Component
             // https://docs.adyen.com/online-payments/web-components#set-up
+
             initPaymentSessionResult = await initPaymentSession({
               browserTab,
               baseUrl,
