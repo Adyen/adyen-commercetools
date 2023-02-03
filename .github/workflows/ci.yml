@@ -6,10 +6,12 @@ name: CI
 on: [push]
 
 jobs:
+
+
   extension_build:
     name: Extension Module
     concurrency: extension_build
-
+    needs: notification_build
     runs-on: ubuntu-latest
     env:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
@@ -30,13 +32,9 @@ jobs:
       - name: prepare extensions folder
         run: |
           echo $ADYEN_INTEGRATION_CONFIG >> .extensionrc
-          echo $CI_EXTENSION_BASE_URL >> .baseurl
-          echo $CI_NOTIFICATION_URL >> .notificationUrl
           mkdir -p sources && cp index.googleFunction.js index.js
-          cp -R {index.js,.extensionrc,src,resources,package.json,.baseurl,.notificationUrl} sources
+          cp -R {index.js,.extensionrc,src,resources,package.json} sources
           rm .extensionrc
-          rm .baseurl
-          rm .notificationUrl
         shell: bash
       - name: gcloud auth
         uses: google-github-actions/auth@v1
@@ -53,3 +51,4 @@ jobs:
             --runtime nodejs16 \
             --trigger-http \
             --allow-unauthenticated
+      - run: npm run test
