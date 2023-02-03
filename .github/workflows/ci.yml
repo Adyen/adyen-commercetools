@@ -11,10 +11,10 @@ jobs:
   extension_build:
     name: Extension Module
     concurrency: extension_build
-    
+
     runs-on: ubuntu-latest
     env:
-      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
+      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG_WEBHOOK_TEST }}
       CI_EXTENSION_BASE_URL: ${{ secrets.CI_EXTENSION_BASE_URL }}
       CI_NOTIFICATION_URL: ${{ secrets.CI_NOTIFICATION_URL }}
     defaults:
