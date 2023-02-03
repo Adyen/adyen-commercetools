@@ -11,8 +11,10 @@ import constants from '../config/constants.js'
 const { CTP_INTERACTION_TYPE_CANCEL_PAYMENT } = constants
 
 async function execute(paymentObject) {
+  console.log(paymentObject)
   const authorizationTransaction =
     getAuthorizationTransactionSuccess(paymentObject)
+
   // "originalReference: The original pspReference of the payment that you want to cancel.
   // This reference is returned in the response to your payment request, and in the AUTHORISATION notification."
   const cancelRequestObj = {
@@ -22,7 +24,7 @@ async function execute(paymentObject) {
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
-
+  console.log(cancelRequestObj)
   const { request, response } = await cancelPayment(
     adyenMerchantAccount,
     commercetoolsProjectKey,
