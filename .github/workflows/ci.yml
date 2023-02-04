@@ -128,4 +128,4 @@ jobs:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: gcloud sdk
         uses: google-github-actions/setup-gcloud@v1.0.1
-      - run: npm run integration
+      - run: npm run test

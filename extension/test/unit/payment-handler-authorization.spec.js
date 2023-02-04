@@ -160,7 +160,7 @@ describe('payment-handler-authorization::execute', () => {
     }
   )
 
-  it.skip(
+  it(
     'when endpoint authorization is disabled and unauthorized request is sent' +
       'then it should call /sessions on Adyen',
     async () => {

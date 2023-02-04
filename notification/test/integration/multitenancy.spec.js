@@ -63,6 +63,7 @@ describe('::multitenancy::', () => {
       merchantReference2,
       pspReference2
     )
+
     const [response1, response2] = await Promise.all([
       fetch(notificationURL, {
         method: 'post',
