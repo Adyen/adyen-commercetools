@@ -262,6 +262,12 @@ function compareTransactionStates(currentState, newState) {
 function getAddInterfaceInteractionUpdateAction(notification) {
   const moduleConfig = config.getModuleConfig()
   const notificationToUse = _.cloneDeep(notification)
+
+  // Put the recurringDetailReference out of additionalData to avoid removal
+  const recurringDetailReference = notificationToUse.NotificationRequestItem.additionalData.recurring.recurringDetailReference
+  console.log(recurringDetailReference)
+  notificationToUse.NotificationRequestItem.recurringDetailReference = recurringDetailReference
+
   if (moduleConfig.removeSensitiveData) {
     // strip away sensitive data
     delete notificationToUse.NotificationRequestItem.additionalData
