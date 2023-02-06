@@ -264,11 +264,17 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   const notificationToUse = _.cloneDeep(notification)
 
   // Put the recurringDetailReference out of additionalData to avoid removal
-  const { recurringDetailReference } =
-    notificationToUse.NotificationRequestItem.additionalData.recurring
-  console.log(recurringDetailReference)
-  notificationToUse.NotificationRequestItem.recurringDetailReference =
-    recurringDetailReference
+  if (
+    notificationToUse.NotificationRequestItem?.additionalData
+      ?.recurringDetailReference
+  ) {
+    const { recurringDetailReference } =
+      notificationToUse.NotificationRequestItem.additionalData
+        .recurringDetailReference
+    console.log(recurringDetailReference)
+    notificationToUse.NotificationRequestItem.recurringDetailReference =
+      recurringDetailReference
+  }
 
   if (moduleConfig.removeSensitiveData) {
     // strip away sensitive data
