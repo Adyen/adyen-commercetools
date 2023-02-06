@@ -93,7 +93,10 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
         )
 
       // Step #3 - Disable stored payment
-      const recurringDetailReference = notificationInteraction.pspReference
+      console.log('notificationInteraction')
+      console.log(notificationInteraction)
+      const recurringDetailReference =
+        notificationInteraction.recurringDetailReference
 
       await createDisablePaymentRequestPayment(
         'shopperReference',
@@ -125,35 +128,21 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
   })
 
   async function createSession(clientKey) {
-    console.log('createSession')
     let createSessionRequest = await getCreateSessionRequest(clientKey)
     const createSessionRequestJson = JSON.parse(createSessionRequest)
     createSessionRequestJson.storePaymentMethod = true
     createSessionRequestJson.shopperReference = 'shopperReference'
     createSessionRequestJson.shopperInteraction = 'Ecommerce'
-    createSessionRequestJson.recurringProcessingModel = 'CardOnFile'
-    console.log(createSessionRequestJson)
+
     createSessionRequest = JSON.stringify(createSessionRequestJson)
     let payment = null
-    const startTime = new Date().getTime()
-    try {
-      payment = await createPaymentSession(
-        ctpClient,
-        adyenMerchantAccount,
-        commercetoolsProjectKey,
-        createSessionRequest
-      )
-      console.log('paymentAfterCreateSession')
-      console.log(payment)
-    } catch (err) {
-      logger.error(
-        'credit-card::disable-stored-payment::errors',
-        JSON.stringify(err)
-      )
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug('credit-card::disable-stored-payment:', endTime - startTime)
-    }
+
+    payment = await createPaymentSession(
+      ctpClient,
+      adyenMerchantAccount,
+      commercetoolsProjectKey,
+      createSessionRequest
+    )
 
     return payment
   }
