@@ -125,7 +125,9 @@ function createSessionRequest(
   commercetoolsProjectKey,
   requestObject
 ) {
+  console.log('createSession')
   extendRequestObjWithMetadata(requestObject, commercetoolsProjectKey)
+  console.log(requestObject)
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/sessions`,
