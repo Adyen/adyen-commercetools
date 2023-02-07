@@ -110,7 +110,7 @@ function updateAmount(
   amountUpdatesRequestObj
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
-  // extendRequestObjWithMetadata(amountUpdatesRequestObj, commercetoolsProjectKey)
+  extendRequestObjWithMetadata(amountUpdatesRequestObj, commercetoolsProjectKey)
   const paymentPspReference = amountUpdatesRequestObj.paymentPspReference
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/payments/${paymentPspReference}/amountUpdates`,
