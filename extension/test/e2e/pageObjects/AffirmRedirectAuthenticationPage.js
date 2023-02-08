@@ -19,11 +19,10 @@ export default class AffirmRedirectAuthenticationPage {
 
   async inputPIN() {
     await this.page.type('[aria-label="PIN"]', '1234')
-    await this.page.waitForSelector('[data-test=term-card]')
   }
 
   async choosePlan() {
-    await this.page.waitForTimeout(1_000)
+    await this.page.waitForTimeout(2_000)
 
     const paymentRadioButton = await this.page.$('[data-testid="radio_button"]')
     await this.page.evaluate((cb) => cb.click(), paymentRadioButton)
