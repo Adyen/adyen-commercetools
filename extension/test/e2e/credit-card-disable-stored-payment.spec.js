@@ -136,7 +136,8 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
 
     createSessionRequest = JSON.stringify(createSessionRequestJson)
     let payment = null
-
+    console.log('createSessionRequest')
+    console.log(createSessionRequest)
     payment = await createPaymentSession(
       ctpClient,
       adyenMerchantAccount,
@@ -212,7 +213,10 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
         },
       },
     }
-
+    console.log('disabledStoredPaymentRequest')
+    console.log(JSON.stringify(
+        disableStoredPaymentRequestDraft
+    ))
     const { body: payment } = await ctpClient.create(
       ctpClient.builder.payments,
       paymentDraft
