@@ -79,8 +79,7 @@ describe('::affirmPayment::', () => {
           clientKey,
           'USD'
         )
-        createSessionRequest =
-          buildAffirmCreateSessionRequest(createSessionRequest)
+        createSessionRequest.addCommercetoolsLineItems = true
         paymentAfterCreateSession = await createPaymentSession(
           ctpClient,
           adyenMerchantAccount,
