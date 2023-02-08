@@ -1,3 +1,4 @@
+import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
 import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
@@ -48,7 +49,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
   it(`when payment session for credit card is created, initialized and authorized, the amount can be updated by 
      looking up corresponding payment with pspReference`, async () => {
     let paymentAfterCreateSession
-    // let initPaymentSessionResult
+    let disabledPayment
 
     const creditCardNumber = '5101 1800 0000 0007'
     const creditCardDate = '03/30'
@@ -79,7 +80,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
         creditCardDate,
         creditCardCvc,
       })
-      console.log('waitUntil')
+
       await waitUntil(
         async () =>
           await fetchNotificationInterfaceInteraction(
@@ -93,38 +94,23 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
         )
 
       // Step #3 - Disable stored payment
-      console.log('notificationInteraction')
-      console.log(notificationInteraction)
       const recurringDetailReference =
         notificationInteraction.recurringDetailReference
 
-      await createDisablePaymentRequestPayment({
+      disabledPayment = await createDisablePaymentRequestPayment({
         shopperReference: 'shopperReference',
         recurringDetailReference,
       })
-      // const { statusCode, updatedPayment } = await updateAmount(
-      //   notificationInteraction,
-      //   paymentAfterCreateSession
-      // )
-      // amountUpdatesResponse = JSON.parse(
-      //   updatedPayment.custom.fields.amountUpdatesResponse
-      // )
-      // amountUpdatesInterfaceInteractions =
-      //   updatedPayment.interfaceInteractions.filter(
-      //     (ii) => ii.fields.type === 'amountUpdates'
-      //   )
-      // updatedAmountStatusCode = statusCode
     } catch (err) {
-      logger.error('credit-card-amount-update::errors:', JSON.stringify(err))
+      logger.error(
+        'credit-card-disable-stored-payment::errors:',
+        JSON.stringify(err)
+      )
     }
 
-    // assertCreatePaymentSession(
-    //   paymentAfterCreateSession,
-    //   initPaymentSessionResult
-    // )
-    // expect(updatedAmountStatusCode).to.equal(200)
-    // expect(amountUpdatesResponse.status).to.equal('received')
-    // expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
+    expect(
+      disabledPayment?.custom?.fields?.disableStoredPaymentResponse
+    ).to.be.equal('{"response":"[detail-successfully-disabled]"}')
   })
 
   async function createSession(clientKey) {
@@ -136,8 +122,6 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
 
     createSessionRequest = JSON.stringify(createSessionRequestJson)
     let payment = null
-    console.log('createSessionRequest')
-    console.log(createSessionRequest)
     payment = await createPaymentSession(
       ctpClient,
       adyenMerchantAccount,
@@ -213,14 +197,12 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
         },
       },
     }
-    console.log('disabledStoredPaymentRequest')
-    console.log(disableStoredPaymentRequestDraft)
+
     const { body: payment } = await ctpClient.create(
       ctpClient.builder.payments,
       paymentDraft
     )
-    console.log('disbled-payment')
-    console.log(payment)
+
     return payment
   }
 })
