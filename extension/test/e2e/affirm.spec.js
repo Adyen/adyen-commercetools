@@ -162,15 +162,16 @@ describe('::affirmPayment::', () => {
 
   function buildAffirmCreateSessionRequest(createSessionRequest) {
     const createSessionRequestJson = JSON.parse(createSessionRequest)
-    createSessionRequestJson.countryCode = 'DE'
+    createSessionRequestJson.countryCode = 'US'
     createSessionRequestJson.shopperReference = 'YOUR TEST REFERENCE'
-    createSessionRequestJson.telephoneNumber = '+4917614287462'
+    createSessionRequestJson.telephoneNumber = '+31612345678'
     createSessionRequestJson.billingAddress = {
-      city: 'München',
-      country: 'DE',
-      houseNumberOrName: '44',
-      postalCode: '80797',
-      street: 'Adams-Lehmann-Straße',
+      city: 'San Francisco',
+      country: 'US',
+      houseNumberOrName: '274',
+      postalCode: '94107',
+      stateOrProvince: 'CA',
+      street: 'Brannan St.',
     }
     createSessionRequestJson.lineItems = [
       {
