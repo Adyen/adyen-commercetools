@@ -73,6 +73,8 @@ function _getPaymentHandlers(paymentObject) {
     const createSessionRequestObj = JSON.parse(
       paymentObject.custom.fields.createSessionRequest
     )
+    console.log('requireLineItems?')
+    console.log(_requiresLineItems(createSessionRequestObj))
     if (_requiresLineItems(createSessionRequestObj))
       handlers.push(lineItemSessionRequestHandler)
     else handlers.push(sessionRequestHandler)

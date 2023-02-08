@@ -79,9 +79,8 @@ describe('::affirmPayment::', () => {
           clientKey,
           'USD'
         )
-        const createSessionRequestJson = JSON.parse(createSessionRequest)
-        createSessionRequestJson.addCommercetoolsLineItems = true
-        createSessionRequest = JSON.stringify(createSessionRequestJson)
+        createSessionRequest =
+          buildAffirmCreateSessionRequest(createSessionRequest)
         paymentAfterCreateSession = await createPaymentSession(
           ctpClient,
           adyenMerchantAccount,
@@ -161,38 +160,38 @@ describe('::affirmPayment::', () => {
     return submittedRedirectResult
   }
 
-  // function buildAffirmCreateSessionRequest(createSessionRequest) {
-  //   const createSessionRequestJson = JSON.parse(createSessionRequest)
-  //   createSessionRequestJson.countryCode = 'DE'
-  //   createSessionRequestJson.shopperReference = 'YOUR TEST REFERENCE'
-  //   createSessionRequestJson.telephoneNumber = '+4917614287462'
-  //   createSessionRequestJson.billingAddress = {
-  //     city: 'München',
-  //     country: 'DE',
-  //     houseNumberOrName: '44',
-  //     postalCode: '80797',
-  //     street: 'Adams-Lehmann-Straße',
-  //   }
-  //   createSessionRequestJson.lineItems = [
-  //     {
-  //       quantity: '1',
-  //       amountExcludingTax: '331',
-  //       taxPercentage: '2100',
-  //       description: 'Shoes',
-  //       id: 'Item #1',
-  //       taxAmount: '69',
-  //       amountIncludingTax: '400',
-  //     },
-  //     {
-  //       quantity: '2',
-  //       amountExcludingTax: '248',
-  //       taxPercentage: '2100',
-  //       description: 'Socks',
-  //       id: 'Item #2',
-  //       taxAmount: '52',
-  //       amountIncludingTax: '300',
-  //     },
-  //   ]
-  //   return JSON.stringify(createSessionRequestJson)
-  // }
+  function buildAffirmCreateSessionRequest(createSessionRequest) {
+    const createSessionRequestJson = JSON.parse(createSessionRequest)
+    createSessionRequestJson.countryCode = 'DE'
+    createSessionRequestJson.shopperReference = 'YOUR TEST REFERENCE'
+    createSessionRequestJson.telephoneNumber = '+4917614287462'
+    createSessionRequestJson.billingAddress = {
+      city: 'München',
+      country: 'DE',
+      houseNumberOrName: '44',
+      postalCode: '80797',
+      street: 'Adams-Lehmann-Straße',
+    }
+    createSessionRequestJson.lineItems = [
+      {
+        quantity: '1',
+        amountExcludingTax: '331',
+        taxPercentage: '2100',
+        description: 'Shoes',
+        id: 'Item #1',
+        taxAmount: '69',
+        amountIncludingTax: '400',
+      },
+      {
+        quantity: '2',
+        amountExcludingTax: '248',
+        taxPercentage: '2100',
+        description: 'Socks',
+        id: 'Item #2',
+        taxAmount: '52',
+        amountIncludingTax: '300',
+      },
+    ]
+    return JSON.stringify(createSessionRequestJson)
+  }
 })

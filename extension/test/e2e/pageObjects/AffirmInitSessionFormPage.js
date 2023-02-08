@@ -8,43 +8,50 @@ export default class AffirmInitSessionFormPage extends InitSessionFormPage {
   }
 
   async pasteValuesInAffirmWebComponent() {
+    console.log('affirm-web-component-1')
     await this.page.waitForSelector('.adyen-checkout__button--pay') // wait for rendering of web component
-
+    console.log('affirm-web-component-2')
     const adyenCheckoutInputFormElement = await this.page.$(
       '#adyen-payment-form-input'
     )
+    console.log('affirm-web-component-3')
     const adyenCheckoutInputForm = await (
       await adyenCheckoutInputFormElement.getProperty('innerHTML')
     ).jsonValue()
     const adyenCheckoutInputFormJSON = JSON.parse(
       adyenCheckoutInputForm.toString()
     )
-
+    console.log('affirm-web-component-4')
     await this.page.type(
       '.adyen-checkout__input--firstName',
       adyenCheckoutInputFormJSON?.shopperName?.firstName
     )
+    console.log('affirm-web-component-5')
     await this.page.type(
       '.adyen-checkout__input--lastName',
       adyenCheckoutInputFormJSON?.shopperName?.lastName
     )
+    console.log('affirm-web-component-6')
     await this.page.type(
       '.adyen-checkout__input--shopperEmail',
       adyenCheckoutInputFormJSON?.shopperEmail
     )
+    console.log('affirm-web-component-7')
     await this.page.type(
       '.adyen-checkout__input--telephoneNumber',
       adyenCheckoutInputFormJSON?.telephoneNumber
     )
-
+    console.log('affirm-web-component-8')
     await this.page.type(
       '.adyen-checkout__input--street',
       adyenCheckoutInputFormJSON?.billingAddress?.street
     )
+    console.log('affirm-web-component-9')
     await this.page.type(
       '.adyen-checkout__input--houseNumberOrName',
       adyenCheckoutInputFormJSON?.billingAddress?.houseNumberOrName
     )
+    console.log('affirm-web-component-10')
     await this.page.type(
       '.adyen-checkout__input--city',
       adyenCheckoutInputFormJSON?.billingAddress?.city
