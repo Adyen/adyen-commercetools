@@ -110,7 +110,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
 
     expect(
       disabledPayment?.custom?.fields?.disableStoredPaymentResponse
-    ).to.be.equal('{"response":"[detail-successfully-disabled]"}')
+    ).to.be.equal('{"response":"[all-details-successfully-disabled]"}')
   })
 
   async function createSession(clientKey) {
