@@ -42,6 +42,9 @@ export default class AffirmRedirectAuthenticationPage {
       '[data-testid="disclosure-checkbox-indicator"]'
     )
     await this.page.evaluate((cb) => cb.click(), confirmCheckbox)
-    await this.page.click('[data-testid="submit-button"]')
+    await Promise.all([
+      this.page.click('[data-testid="submit-button"]'),
+      this.page.waitForSelector('#redirect-response'),
+    ])
   }
 }
