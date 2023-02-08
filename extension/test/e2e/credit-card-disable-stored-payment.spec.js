@@ -98,10 +98,10 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
       const recurringDetailReference =
         notificationInteraction.recurringDetailReference
 
-      await createDisablePaymentRequestPayment(
-        'shopperReference',
-        recurringDetailReference
-      )
+      await createDisablePaymentRequestPayment({
+        shopperReference: 'shopperReference',
+        recurringDetailReference,
+      })
       // const { statusCode, updatedPayment } = await updateAmount(
       //   notificationInteraction,
       //   paymentAfterCreateSession
