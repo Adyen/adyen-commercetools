@@ -214,7 +214,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
       },
     }
     console.log('disabledStoredPaymentRequest')
-    console.log(JSON.stringify(disableStoredPaymentRequestDraft))
+    console.log(disableStoredPaymentRequestDraft)
     const { body: payment } = await ctpClient.create(
       ctpClient.builder.payments,
       paymentDraft
