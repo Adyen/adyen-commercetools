@@ -9,8 +9,6 @@ async function execute(paymentObject) {
   const createSessionRequestObj = JSON.parse(
     paymentObject.custom.fields.createSessionRequest
   )
-  console.log('createSessionRequestObj')
-  console.log(createSessionRequestObj)
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
