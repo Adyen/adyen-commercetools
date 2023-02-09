@@ -8,6 +8,7 @@ export default class AffirmRedirectAuthenticationPage {
     await this.inputPIN()
     await this.choosePlan()
     await this.clickAutoPayToggleAndProceed()
+    return await this.redirectToResultPage()
   }
 
   async inputPhoneNumberAndClickSubmitButton() {
@@ -19,13 +20,15 @@ export default class AffirmRedirectAuthenticationPage {
 
   async inputPIN() {
     await this.page.type('[aria-label="PIN"]', '1234')
+    await this.page.waitForTimeout(5_000) // wait for overlay loading
   }
 
   async choosePlan() {
-    await this.page.waitForTimeout(2_000)
+    await this.page.waitForSelector('[data-testid=term-card]')
 
-    const paymentRadioButton = await this.page.$('[data-testid="radio_button"]')
-    await this.page.evaluate((cb) => cb.click(), paymentRadioButton)
+    const paymentRadioButtonEle = await this.page.$('[data-testid=term-card]')
+    await this.page.evaluate((cb) => cb.click(), paymentRadioButtonEle)
+
     await this.page.waitForSelector('[data-testid="submit-button"]')
 
     const submitButton = await this.page.$('[data-testid="submit-button"]')
@@ -45,5 +48,19 @@ export default class AffirmRedirectAuthenticationPage {
       this.page.click('[data-testid="submit-button"]'),
       this.page.waitForSelector('#redirect-response'),
     ])
+  }
+
+  async redirectToResultPage() {
+    const sessionIdEle = await this.page.$('#sessionId')
+    const redirectResultEle = await this.page.$('#redirectResult')
+    const sessionId = await this.page.evaluate(
+      (el) => el.textContent,
+      sessionIdEle
+    )
+    const redirectResult = await this.page.evaluate(
+      (el) => el.textContent,
+      redirectResultEle
+    )
+    return { sessionId, redirectResult }
   }
 }
