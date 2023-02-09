@@ -71,7 +71,6 @@ Init session result will come here</textarea
         },
 
         onPaymentCompleted: (result, component) => {
-          console.log(result)
           document.getElementById('adyen-payment-auth-result').innerHTML =
             JSON.stringify(result)
         },
@@ -80,36 +79,6 @@ Init session result will come here</textarea
           document.getElementById('adyen-payment-auth-result').innerHTML =
             JSON.stringify(error)
         },
-      }
-
-      function handleOnChange(state, component) {
-        console.log('handleOnChange')
-        console.log(state)
-        console.log(component)
-      }
-
-      function handleOnAdditionalDetails(state, component) {
-        console.log('handleOnAdditionalDetails')
-        console.log(state)
-        console.log(component)
-      }
-
-      function handleOnSubmit(state, component) {
-        const makePaymentRequest = state.data
-        makePaymentRequest.reference = new Date().getTime()
-        makePaymentRequest.amount = {
-          currency: 'EUR',
-          value: 1000,
-        }
-        makePaymentRequest.channel = 'Web'
-        makePaymentRequest.origin = window.location.origin
-        makePaymentRequest.returnUrl = window.location.origin + '/return-url'
-        makePaymentRequest.additionalData = {
-          allow3DS2: true,
-        }
-
-        document.getElementById('adyen-make-payment-request').innerHTML =
-          JSON.stringify(makePaymentRequest)
       }
 
       const executeAdyenCheckout = async () => {

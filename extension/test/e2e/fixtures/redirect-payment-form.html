@@ -52,7 +52,6 @@
         onPaymentCompleted: (result, component) => {
           document.getElementById('adyen-payment-auth-result').value =
             JSON.stringify(result)
-          console.log(result)
         },
         onError: (error, component) => {
           console.error(error.name, error.message, error.stack, component)
@@ -72,22 +71,16 @@
         'adyen-redirect-result'
       )
       actionFieldElemenet.addEventListener('click', async () => {
-        console.log('redirect-payment-button')
         const clientKeyElement = document.getElementById('adyen-client-key')
         configuration.clientKey = clientKeyElement.value
         configuration.session.id = sessionIdElement.value
-        console.log(JSON.stringify(configuration))
-        try {
-          const checkout = await AdyenCheckout(configuration)
-          // Submit the redirectResult value you extracted from the returnUrl.
-          const details = {
-            details: { redirectResult: redirectResultElement.value },
-          }
-          console.log(details)
-          checkout.submitDetails(details)
-        } catch (err) {
-          console.log(err)
+
+        const checkout = await AdyenCheckout(configuration)
+        // Submit the redirectResult value you extracted from the returnUrl.
+        const details = {
+          details: { redirectResult: redirectResultElement.value },
         }
+        checkout.submitDetails(details)
       })
     </script>
   </body>

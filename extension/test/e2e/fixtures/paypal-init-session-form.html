@@ -81,7 +81,6 @@
             intent: 'authorize',
           },
         }
-        console.log(JSON.stringify(configuration))
         const checkout = await AdyenCheckout(configuration)
         checkout
           .create('paypal', paypalConfiguration)

@@ -47,7 +47,6 @@
           document.getElementById('adyen-session-id').value
         configuration.session.sessionData =
           document.getElementById('adyen-session-data').value
-        console.log(configuration)
         const checkout = await AdyenCheckout(configuration)
         checkout.create('klarna_paynow').mount('#klarna_paynow-container')
       }

@@ -10,14 +10,12 @@ export default class PaypalInitSessionFormPage extends InitSessionFormPage {
     await this.page.waitForSelector('#paypal-merchant-id')
     await this.page.type('#paypal-merchant-id', paypalMerchantId)
     await super.initPaymentSession(clientKey, paymentAfterCreateSession)
-
     await this.page.waitForTimeout(2_000)
     await this.clickOnPaypalButton()
   }
 
   async clickOnPaypalButton() {
     await executeInAdyenIframe(this.page, '.paypal-button', (el) => el.click())
-
     await this.page.waitForTimeout(1_000)
   }
 

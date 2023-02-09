@@ -39,8 +39,23 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
 
     if (existingWebhook) {
       logger.info(
-        `Webhook already existed with ID ${existingWebhook.id}. Skipping webhook creation...`
+        `Webhook already existed with ID ${existingWebhook.id}. ` +
+          'Skipping webhook creation and ensuring the webhook is active'
       )
+      if (!existingWebhook.active)
+        await fetch(
+          `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${existingWebhook.id}`,
+          {
+            body: JSON.stringify({
+              active: true,
+            }),
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Api-Key': adyenApiKey,
+            },
+          }
+        )
       return existingWebhook.id
     }
 
@@ -90,8 +105,10 @@ async function ensureAdyenHmac(adyenApiKey, merchantId, webhookId) {
 async function ensureAdyenWebhooksForAllProjects() {
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
   const jsonConfig = loadConfig()
+
   for (const adyenMerchantId of adyenMerchantAccounts) {
     const adyenConfig = config.getAdyenConfig(adyenMerchantId)
+
     if (adyenConfig.notificationBaseUrl) {
       const webhookId = await ensureAdyenWebhook(
         adyenConfig.apiKey,
@@ -108,8 +125,6 @@ async function ensureAdyenWebhooksForAllProjects() {
       }
     }
   }
-
-  mainLogger.info('Set the following environmental variable')
 }
 
 export { ensureAdyenWebhooksForAllProjects }
