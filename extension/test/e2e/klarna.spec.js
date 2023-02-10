@@ -133,8 +133,6 @@ describe('::klarnaPayment::', () => {
             )
         )
 
-
-
         console.log(notificationInteraction)
         // #3 - Capture the payment
         paymentAfterCapture = await capturePayment({
