@@ -103,7 +103,6 @@ describe('::create-session-request::', () => {
         createSessionRequestInteraction.body
       )
 
-      delete createSessionRequestExtended.applicationInfo
       expect(createSessionRequestBody).to.be.deep.equal({
         merchantAccount: adyenMerchantAccount,
         ...createSessionRequestExtended,
