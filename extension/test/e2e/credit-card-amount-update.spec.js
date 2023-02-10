@@ -90,6 +90,7 @@ describe('::creditCardPayment::amount-update::', () => {
       const notificationInteraction = await waitUntil(
         async () =>
           await fetchNotificationInterfaceInteraction(
+            ctpClient,
             paymentAfterCreateSession.id
           )
       )
