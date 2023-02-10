@@ -125,7 +125,7 @@ describe('::klarnaPayment::', () => {
           redirectPaymentResult
         )
 
-        await waitUntil(
+        const notificationInteraction = await waitUntil(
           async () =>
             await fetchNotificationInterfaceInteraction(
               ctpClient,
@@ -133,11 +133,8 @@ describe('::klarnaPayment::', () => {
             )
         )
 
-        const notificationInteraction =
-          await fetchNotificationInterfaceInteraction(
-            ctpClient,
-            paymentAfterCreateSession.id
-          )
+
+
         console.log(notificationInteraction)
         // #3 - Capture the payment
         paymentAfterCapture = await capturePayment({
