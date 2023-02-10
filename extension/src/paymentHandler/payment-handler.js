@@ -1,5 +1,6 @@
 import { withPayment } from '../validator/validator-builder.js'
 
+import getPaymentMethodsHandler from './get-payment-methods.handler.js'
 import manualCaptureHandler from './manual-capture.handler.js'
 import cancelHandler from './cancel-payment.handler.js'
 import refundHandler from './refund-payment.handler.js'
@@ -66,6 +67,11 @@ function _getPaymentHandlers(paymentObject) {
 
   const handlers = []
 
+  if (
+    paymentObject.custom.fields.getPaymentMethodsRequest &&
+    !paymentObject.custom.fields.getPaymentMethodsResponse
+  )
+    handlers.push(getPaymentMethodsHandler)
   if (
     paymentObject.custom.fields.createSessionRequest &&
     !paymentObject.custom.fields.createSessionResponse

@@ -13,6 +13,8 @@ export default {
     'submitAdditionalPaymentDetailsResponse',
   CTP_INTERACTION_TYPE_MANUAL_CAPTURE: 'manualCapture',
   CTP_INTERACTION_TYPE_REFUND: 'refund',
+  CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS: 'getPaymentMethods',
+  CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE: 'getPaymentMethodsResponse',
 
   PAYMENT_METHOD_TYPE_KLARNA_METHODS: [
     'klarna',

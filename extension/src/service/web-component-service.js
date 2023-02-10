@@ -4,6 +4,16 @@ import config from '../config/config.js'
 import utils from '../utils.js'
 import constants from '../config/constants.js'
 
+async function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+  return callAdyen(
+    `${adyenCredentials.apiBaseUrl}/paymentMethods`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    await extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj)
+  )
+}
+
 async function makePayment(
   merchantAccount,
   commercetoolsProjectKey,
@@ -269,6 +279,7 @@ function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj, headers) {
 }
 
 export {
+  getPaymentMethods,
   makePayment,
   submitAdditionalPaymentDetails,
   manualCapture,
