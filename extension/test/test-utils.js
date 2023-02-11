@@ -295,13 +295,19 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
   }
 }
 
-async function fetchNotificationInterfaceInteraction(ctpClient, paymentId) {
+async function fetchNotificationInterfaceInteraction(
+  ctpClient,
+  paymentId,
+  status = 'authorisation'
+) {
   const { body } = await ctpClient.fetchById(
     ctpClient.builder.payments,
     paymentId
   )
   return body.interfaceInteractions.find(
-    (interaction) => interaction.fields.type === 'notification'
+    (interaction) =>
+      interaction.fields.type === 'notification' &&
+      interaction.fields.status === status
   )
 }
 

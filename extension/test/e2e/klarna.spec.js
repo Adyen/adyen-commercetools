@@ -132,12 +132,23 @@ describe('::klarnaPayment::', () => {
               paymentAfterCreateSession.id
             )
         )
-
+        console.log(' === notificationInteraction === ')
         console.log(notificationInteraction)
         // #3 - Capture the payment
         paymentAfterCapture = await capturePayment({
           payment: paymentAfterCreateSession,
         })
+
+        const paymentCaptureNotificationInteraction = await waitUntil(
+          async () =>
+            await fetchNotificationInterfaceInteraction(
+              ctpClient,
+              paymentAfterCapture.id,
+              'charge'
+            )
+        )
+        console.log(' === paymentCaptureNotificationInteraction === ')
+        console.log(paymentCaptureNotificationInteraction)
         logger.debug(
           'klarna::paymentAfterCapture:',
           JSON.stringify(paymentAfterCapture)
