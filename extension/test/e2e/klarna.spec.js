@@ -133,10 +133,12 @@ describe('::klarnaPayment::', () => {
             )
         )
 
-        // #3 - Capture the payment
-        paymentAfterCapture = await capturePayment({
-          payment: paymentAfterCreateSession,
-        })
+        if (notificationInteraction) {
+          // #3 - Capture the payment
+          paymentAfterCapture = await capturePayment({
+            payment: paymentAfterCreateSession,
+          })
+        }
 
         logger.debug(
           'klarna::paymentAfterCapture:',
