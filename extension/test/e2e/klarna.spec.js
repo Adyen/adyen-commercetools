@@ -144,7 +144,7 @@ describe('::klarnaPayment::', () => {
             await fetchNotificationInterfaceInteraction(
               ctpClient,
               paymentAfterCapture.id,
-              'charge'
+              'capture'
             )
         )
         console.log(' === paymentCaptureNotificationInteraction === ')
