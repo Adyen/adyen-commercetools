@@ -78,6 +78,12 @@ describe('::klarnaPayment::', () => {
       'then it should successfully finish the payment',
     async () => {
       let paymentAfterCapture
+
+      let captureEventCode
+      let capturePspReference
+      let captureOriginalPspReference
+      let captureSuccess
+
       try {
         const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
         const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
@@ -140,6 +146,26 @@ describe('::klarnaPayment::', () => {
           })
         }
 
+        const captureNotificationInteraction = await waitUntil(
+          async () =>
+            await fetchNotificationInterfaceInteraction(
+              ctpClient,
+              paymentAfterCreateSession.id,
+              'capture'
+            )
+        )
+        const captureNotification =
+          captureNotificationInteraction.fields.notification
+        if (captureNotification) {
+          const captureNoticationRequestItem =
+            JSON.parse(captureNotification).NotificationRequestItem
+          captureEventCode = captureNoticationRequestItem.eventCode
+          capturePspReference = captureNoticationRequestItem.pspReference
+          captureOriginalPspReference =
+            captureNoticationRequestItem.originalReference
+          captureSuccess = captureNoticationRequestItem.success
+        }
+
         logger.debug(
           'klarna::paymentAfterCapture:',
           JSON.stringify(paymentAfterCapture)
@@ -148,6 +174,10 @@ describe('::klarnaPayment::', () => {
         logger.error('klarna::errors', err)
       }
       assertManualCaptureResponse(paymentAfterCapture)
+      expect(captureEventCode).to.be.equal('CAPTURE')
+      expect(capturePspReference).to.not.equal(paymentAfterCapture.key)
+      expect(captureOriginalPspReference).to.be.equal(paymentAfterCapture.key)
+      expect(captureSuccess).to.be.equal('true')
     }
   )
 
