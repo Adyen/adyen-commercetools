@@ -1,8 +1,18 @@
+import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.js'
 import { routes } from '../../src/routes.js'
 import httpUtils from '../../src/utils.js'
-
+import constants from '../../src/config/constants.js'
+import {
+  waitUntil,
+  fetchNotificationInterfaceInteraction,
+} from '../test-utils.js'
+import {
+  createAddTransactionAction,
+  getLatestInterfaceInteraction,
+  getChargeTransactionPending,
+} from '../../src/paymentHandler/payment-utils.js'
 import {
   createPaymentSession,
   getCreateSessionRequest,
@@ -67,7 +77,13 @@ describe('::klarnaPayment::', () => {
     'when payment method is klarna and process is done correctly, ' +
       'then it should successfully finish the payment',
     async () => {
-      // let paymentAfterCapture
+      let paymentAfterCapture
+
+      let captureEventCode
+      let capturePspReference
+      let captureOriginalPspReference
+      let captureSuccess
+
       try {
         const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
         const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
@@ -115,18 +131,53 @@ describe('::klarnaPayment::', () => {
           redirectPaymentResult
         )
 
-        // Capture the payment
-        // paymentAfterCapture = await capturePayment({
-        //   payment: paymentAfterHandleRedirect,
-        // })
-        // logger.debug(
-        //   'klarna::paymentAfterCapture:',
-        //   JSON.stringify(paymentAfterCapture)
-        // )
+        const notificationInteraction = await waitUntil(
+          async () =>
+            await fetchNotificationInterfaceInteraction(
+              ctpClient,
+              paymentAfterCreateSession.id
+            )
+        )
+
+        if (notificationInteraction) {
+          // #3 - Capture the payment
+          paymentAfterCapture = await capturePayment({
+            payment: paymentAfterCreateSession,
+          })
+        }
+
+        const captureNotificationInteraction = await waitUntil(
+          async () =>
+            await fetchNotificationInterfaceInteraction(
+              ctpClient,
+              paymentAfterCreateSession.id,
+              'capture'
+            )
+        )
+        const captureNotification =
+          captureNotificationInteraction.fields.notification
+        if (captureNotification) {
+          const captureNoticationRequestItem =
+            JSON.parse(captureNotification).NotificationRequestItem
+          captureEventCode = captureNoticationRequestItem.eventCode
+          capturePspReference = captureNoticationRequestItem.pspReference
+          captureOriginalPspReference =
+            captureNoticationRequestItem.originalReference
+          captureSuccess = captureNoticationRequestItem.success
+        }
+
+        logger.debug(
+          'klarna::paymentAfterCapture:',
+          JSON.stringify(paymentAfterCapture)
+        )
       } catch (err) {
         logger.error('klarna::errors', err)
       }
-      // assertManualCaptureResponse(paymentAfterCapture)
+      assertManualCaptureResponse(paymentAfterCapture)
+      expect(captureEventCode).to.be.equal('CAPTURE')
+      expect(capturePspReference).to.not.equal(paymentAfterCapture.key)
+      expect(captureOriginalPspReference).to.be.equal(paymentAfterCapture.key)
+      expect(captureSuccess).to.be.equal('true')
     }
   )
 
@@ -170,59 +221,51 @@ describe('::klarnaPayment::', () => {
     return submittedRedirectResult
   }
 
-  // async function capturePayment({ payment }) {
-  //   const transaction = payment.transactions[0]
-  //   let result = null
-  //   const startTime = new Date().getTime()
-  //   try {
-  //     result = await ctpClient.update(
-  //       ctpClient.builder.payments,
-  //       payment.id,
-  //       payment.version,
-  //       [
-  //         createAddTransactionAction({
-  //           type: 'Charge',
-  //           state: 'Initial',
-  //           currency: transaction.amount.currencyCode,
-  //           amount: transaction.amount.centAmount,
-  //         }),
-  //       ]
-  //     )
-  //   } catch (err) {
-  //     logger.error('klarna::capturePaymentRequest::errors', JSON.stringify(err))
-  //   } finally {
-  //     const endTime = new Date().getTime()
-  //     logger.debug(
-  //       'klarna::capturePayment::elapsedMilliseconds:',
-  //       endTime - startTime
-  //     )
-  //   }
-  //   return result.body
-  // }
-  //
-  // function assertManualCaptureResponse(paymentAfterCapture) {
-  //   const interfaceInteraction = getLatestInterfaceInteraction(
-  //     paymentAfterCapture.interfaceInteractions,
-  //     CTP_INTERACTION_TYPE_MANUAL_CAPTURE
-  //   )
-  //   const manualCaptureResponse = JSON.parse(
-  //     interfaceInteraction.fields.response
-  //   )
-  //   expect(manualCaptureResponse.response).to.equal(
-  //     '[capture-received]',
-  //     `response is not [capture-received]: ${manualCaptureResponse}`
-  //   )
-  //   expect(manualCaptureResponse.pspReference).to.match(
-  //     /[A-Z0-9]+/,
-  //     `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`
-  //   )
-  //
-  //   const chargePendingTransaction =
-  //     getChargeTransactionPending(paymentAfterCapture)
-  //   expect(chargePendingTransaction.interactionId).to.equal(
-  //     manualCaptureResponse.pspReference
-  //   )
-  // }
+  async function capturePayment({ payment }) {
+    const { body: paymentAfterReceivingNotification } =
+      await ctpClient.fetchById(ctpClient.builder.payments, payment.id)
+    const transaction = paymentAfterReceivingNotification.transactions[0]
+
+    const result = await ctpClient.update(
+      ctpClient.builder.payments,
+      payment.id,
+      paymentAfterReceivingNotification.version,
+      [
+        createAddTransactionAction({
+          type: 'Charge',
+          state: 'Initial',
+          currency: transaction.amount.currencyCode,
+          amount: transaction.amount.centAmount,
+        }),
+      ]
+    )
+
+    return result.body
+  }
+
+  function assertManualCaptureResponse(paymentAfterCapture) {
+    const interfaceInteraction = getLatestInterfaceInteraction(
+      paymentAfterCapture.interfaceInteractions,
+      constants.CTP_INTERACTION_TYPE_MANUAL_CAPTURE
+    )
+    const manualCaptureResponse = JSON.parse(
+      interfaceInteraction.fields.response
+    )
+    expect(manualCaptureResponse.response).to.equal(
+      '[capture-received]',
+      `response is not [capture-received]: ${manualCaptureResponse}`
+    )
+    expect(manualCaptureResponse.pspReference).to.match(
+      /[A-Z0-9]+/,
+      `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`
+    )
+
+    const chargePendingTransaction =
+      getChargeTransactionPending(paymentAfterCapture)
+    expect(chargePendingTransaction.interactionId).to.equal(
+      manualCaptureResponse.pspReference
+    )
+  }
 
   function buildKlarnaCreateSessionRequest(createSessionRequest) {
     const createSessionRequestJson = JSON.parse(createSessionRequest)
