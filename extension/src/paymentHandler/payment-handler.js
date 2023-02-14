@@ -68,8 +68,8 @@ function _getPaymentHandlers(paymentObject) {
   const handlers = []
 
   if (
-      paymentObject.custom.fields.getPaymentMethodsRequest &&
-      !paymentObject.custom.fields.getPaymentMethodsResponse
+    paymentObject.custom.fields.getPaymentMethodsRequest &&
+    !paymentObject.custom.fields.getPaymentMethodsResponse
   )
     handlers.push(getPaymentMethodsHandler)
 
