@@ -28,6 +28,28 @@
       "required": false
     },
     {
+      "name": "getPaymentMethodsRequest",
+      "label": {
+        "en": "getPaymentMethodsRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "getPaymentMethodsResponse",
+      "label": {
+        "en": "getPaymentMethodsResponse"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
       "name": "makePaymentRequest",
       "label": {
         "en": "makePaymentRequest"
