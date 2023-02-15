@@ -86,19 +86,13 @@ describe('::creditCardPayment::amount-update::', () => {
         creditCardDate,
         creditCardCvc,
       })
-      await waitUntil(
+      const notificationInteraction = await waitUntil(
         async () =>
           await fetchNotificationInterfaceInteraction(
             ctpClient,
             paymentAfterCreateSession.id
           )
       )
-
-      const notificationInteraction =
-        await fetchNotificationInterfaceInteraction(
-          ctpClient,
-          paymentAfterCreateSession.id
-        )
 
       // Step #3 - Update Amount
       const { statusCode, updatedPayment } = await updateAmount(

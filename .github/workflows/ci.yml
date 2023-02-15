@@ -6,8 +6,8 @@ name: CI
 on: [push]
 
 jobs:
-  notification_build_for_extension_e2e_test:
-    name: Notification Module for Extension e2e test
+  notification_build:
+    name: Notification Module Build and Deployment
     concurrency: notification_build
     runs-on: ubuntu-latest
     env:
@@ -53,7 +53,7 @@ jobs:
   extension_build:
     name: Extension Module
     concurrency: extension_build
-    needs: notification_build_for_extension_e2e_test
+    needs: notification_build
     runs-on: ubuntu-latest
     env:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
@@ -95,9 +95,9 @@ jobs:
             --allow-unauthenticated
       - run: npm run test
 
-  notification_build:
-    name: Notification Module
-    concurrency: notification_build
+  notification_test:
+    name: Test for Notification Module
+    concurrency: notification_test
     needs: extension_build
     runs-on: ubuntu-latest
     env:
@@ -114,18 +114,4 @@ jobs:
           node-version: '16.x'
       - run: npm ci
       - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
-      - run: npm run check
-      - name: prepare notifications folder
-        run: |
-          echo $ADYEN_INTEGRATION_CONFIG >> .notificationrc
-          mkdir -p sources && cp index.googleFunction.js index.js
-          cp -R {index.js,.notificationrc,src,resources,package.json} sources
-          rm .notificationrc
-        shell: bash
-      - name: gcloud auth
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-      - name: gcloud sdk
-        uses: google-github-actions/setup-gcloud@v1.0.1
       - run: npm run test
