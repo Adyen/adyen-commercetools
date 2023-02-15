@@ -39,13 +39,13 @@ For the existing endpoint `/paymentMethods`, it is kept unchanged and optional i
 Integration supports all [Adyen Web Component](https://docs.adyen.com/checkout/components-web) based payment methods. For a full list of payment methods please refer to [supported payment methods](https://docs.adyen.com/checkout/supported-payment-methods).
 If you encounter any problems during your integration, feel free to create a github issue.
 
-### Can I pass additional fields to payment requests?
+### Can I pass additional fields to payment session request?
 
-Yes, you could include additional fields to payment such as [add risk management fields](https://docs.adyen.com/risk-management/configure-standard-risk-rules/required-risk-field-reference) or [allow recurring payments](https://docs.adyen.com/payment-methods/cards/web-component#create-a-token) based on the payment method that you use, for more details please check the note in [important section](../extension/docs/WebComponentsIntegrationGuide.md#step-5-make-a-payment) on our integration docs.
+Yes, you could include additional fields to payment session request such as [add risk management fields](https://docs.adyen.com/risk-management/configure-standard-risk-rules/required-risk-field-reference) or [allow recurring payments](https://docs.adyen.com/payment-methods/cards/web-component#create-a-token) based on the payment method that you use, for more details please check the note in [important section](../extension/docs/WebComponentsIntegrationGuide.md#step-5-make-a-payment) on our integration docs.
 
 ### Do we need to pass additional fields to payment requests for 3D secure 2 payment method?
 
-According to the Adyen documentation, it is not required after web component version 5. Since we are now using /session` endpoint which do not require additional configuration for 3D secure.
+According to the Adyen documentation, it is not required after web component version 5. Since we are now using /session` endpoint which does not require additional configuration for 3D secure.
 [adyen documentation](https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-component)
 
 ### Can I remove a subscription I created?
