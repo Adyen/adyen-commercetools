@@ -48,9 +48,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
     await browser.close()
   })
 
-  // eslint-disable-next-line no-template-curly-in-string
-  it(`when payment session for credit card is created, initialized and authorized, the amount can be updated by 
-     looking up corresponding payment with pspReference`, async () => {
+  it(`should disable stored one-off payment when correct request is sent`, async () => {
     let paymentAfterCreateSession
     let disabledPayment
 
@@ -65,7 +63,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
 
       // Step #1 - Create a payment session
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
-      paymentAfterCreateSession = await createSession(clientKey)
+      paymentAfterCreateSession = await creatSession(clientKey, 'CardOnFile')
       logger.debug(
         'credit-card-disable-stored-payment::paymentAfterCreateSession:',
         JSON.stringify(paymentAfterCreateSession)
@@ -87,13 +85,19 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
       const notificationInteraction = await waitUntil(
         async () =>
           await fetchNotificationInterfaceInteraction(
+            ctpClient,
             paymentAfterCreateSession.id
           )
       )
 
       // Step #3 - Disable stored payment
+
+      const notificationRequestItem = JSON.parse(
+        notificationInteraction.fields.notification
+      ).NotificationRequestItem
+
       const recurringDetailReference =
-        notificationInteraction.recurringDetailReference
+        notificationRequestItem.recurringDetailReference
 
       disabledPayment = await createDisablePaymentRequestPayment({
         shopperReference: 'shopperReference',
@@ -108,16 +112,151 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
 
     expect(
       disabledPayment?.custom?.fields?.disableStoredPaymentResponse
-    ).to.be.equal('{"response":"[all-details-successfully-disabled]"}')
+    ).to.be.equal('{"response":"[detail-successfully-disabled]"}')
   })
 
-  async function createSession(clientKey) {
+  it(`should disable stored subscription payment when correct request is sent`, async () => {
+    let paymentAfterCreateSession
+    let disabledPayment
+
+    const creditCardNumber = '5101 1800 0000 0007'
+    const creditCardDate = '03/30'
+    const creditCardCvc = '737'
+
+    try {
+      const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+      const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
+      const browserTab = await browser.newPage()
+
+      // Step #1 - Create a payment session
+      // https://docs.adyen.com/online-payments/web-components#create-payment-session
+      paymentAfterCreateSession = await creatSession(clientKey, 'Subscription')
+      logger.debug(
+        'credit-card-disable-stored-payment::paymentAfterCreateSession:',
+        JSON.stringify(paymentAfterCreateSession)
+      )
+
+      // Step #2 - Setup Component
+      // https://docs.adyen.com/online-payments/web-components#set-up
+
+      await initPaymentSession({
+        browserTab,
+        baseUrl,
+        clientKey,
+        paymentAfterCreateSession,
+        creditCardNumber,
+        creditCardDate,
+        creditCardCvc,
+      })
+
+      const notificationInteraction = await waitUntil(
+        async () =>
+          await fetchNotificationInterfaceInteraction(
+            ctpClient,
+            paymentAfterCreateSession.id
+          )
+      )
+
+      // Step #3 - Disable stored payment
+      const notificationRequestItem = JSON.parse(
+        notificationInteraction.fields.notification
+      ).NotificationRequestItem
+
+      const recurringDetailReference =
+        notificationRequestItem.recurringDetailReference
+
+      disabledPayment = await createDisablePaymentRequestPayment({
+        shopperReference: 'shopperReference',
+        recurringDetailReference,
+      })
+    } catch (err) {
+      logger.error(
+        'credit-card-disable-stored-payment::errors:',
+        JSON.stringify(err)
+      )
+    }
+
+    expect(
+      disabledPayment?.custom?.fields?.disableStoredPaymentResponse
+    ).to.be.equal('{"response":"[detail-successfully-disabled]"}')
+  })
+
+  it(`should disable automatic top-up payment when correct request is sent`, async () => {
+    let paymentAfterCreateSession
+    let disabledPayment
+
+    const creditCardNumber = '5101 1800 0000 0007'
+    const creditCardDate = '03/30'
+    const creditCardCvc = '737'
+
+    try {
+      const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+      const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
+      const browserTab = await browser.newPage()
+
+      // Step #1 - Create a payment session
+      // https://docs.adyen.com/online-payments/web-components#create-payment-session
+      paymentAfterCreateSession = await creatSession(
+        clientKey,
+        'UnscheduledCardOnFile'
+      )
+      logger.debug(
+        'credit-card-disable-stored-payment::paymentAfterCreateSession:',
+        JSON.stringify(paymentAfterCreateSession)
+      )
+
+      // Step #2 - Setup Component
+      // https://docs.adyen.com/online-payments/web-components#set-up
+
+      await initPaymentSession({
+        browserTab,
+        baseUrl,
+        clientKey,
+        paymentAfterCreateSession,
+        creditCardNumber,
+        creditCardDate,
+        creditCardCvc,
+      })
+
+      const notificationInteraction = await waitUntil(
+        async () =>
+          await fetchNotificationInterfaceInteraction(
+            ctpClient,
+            paymentAfterCreateSession.id
+          )
+      )
+
+      // Step #3 - Disable stored payment
+      const notificationRequestItem = JSON.parse(
+        notificationInteraction.fields.notification
+      ).NotificationRequestItem
+
+      const recurringDetailReference =
+        notificationRequestItem.recurringDetailReference
+
+      disabledPayment = await createDisablePaymentRequestPayment({
+        shopperReference: 'shopperReference',
+        recurringDetailReference,
+      })
+    } catch (err) {
+      logger.error(
+        'credit-card-disable-stored-payment::errors:',
+        JSON.stringify(err)
+      )
+    }
+
+    expect(
+      disabledPayment?.custom?.fields?.disableStoredPaymentResponse
+    ).to.be.equal('{"response":"[detail-successfully-disabled]"}')
+  })
+
+  async function creatSession(clientKey, recurringProcessingModel) {
     let createSessionRequest = await getCreateSessionRequest(clientKey)
     const createSessionRequestJson = JSON.parse(createSessionRequest)
     createSessionRequestJson.storePaymentMethod = true
     createSessionRequestJson.shopperReference = 'shopperReference'
     createSessionRequestJson.shopperInteraction = 'Ecommerce'
-
+    createSessionRequestJson.recurringProcessingModel = recurringProcessingModel
     createSessionRequest = JSON.stringify(createSessionRequestJson)
     let payment = null
     payment = await createPaymentSession(
