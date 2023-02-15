@@ -50,50 +50,6 @@
       "required": false
     },
     {
-      "name": "makePaymentRequest",
-      "label": {
-        "en": "makePaymentRequest"
-      },
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "MultiLine",
-      "required": false
-    },
-    {
-      "name": "makePaymentResponse",
-      "label": {
-        "en": "makePaymentResponse"
-      },
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "MultiLine",
-      "required": false
-    },
-    {
-      "name": "submitAdditionalPaymentDetailsRequest",
-      "label": {
-        "en": "submitAdditionalPaymentDetailsRequest"
-      },
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "MultiLine",
-      "required": false
-    },
-    {
-      "name": "submitAdditionalPaymentDetailsResponse",
-      "label": {
-        "en": "submitAdditionalPaymentDetailsResponse"
-      },
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "MultiLine",
-      "required": false
-    },
-    {
       "name": "languageCode",
       "label": {
         "en": "Language code is used to determine the default locale for line item names in the matching cart."
