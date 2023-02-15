@@ -4,7 +4,11 @@ import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
 import CreditCardInitSessionFormPage from './pageObjects/CreditCardInitSessionFormPage.js'
 import httpUtils from '../../src/utils.js'
-import { waitUntil } from '../test-utils.js'
+
+import {
+  waitUntil,
+  fetchNotificationInterfaceInteraction,
+} from '../test-utils.js'
 
 import {
   assertCreatePaymentSession,
@@ -83,17 +87,15 @@ describe('::creditCardPayment::amount-update::', () => {
         creditCardDate,
         creditCardCvc,
       })
-      await waitUntil(
+
+      const notificationInteraction = await waitUntil(
         async () =>
           await fetchNotificationInterfaceInteraction(
+            ctpClient,
+
             paymentAfterCreateSession.id
           )
       )
-
-      const notificationInteraction =
-        await fetchNotificationInterfaceInteraction(
-          paymentAfterCreateSession.id
-        )
 
       // Step #3 - Update Amount
       const { statusCode, updatedPayment } = await updateAmount(
@@ -200,15 +202,5 @@ describe('::creditCardPayment::amount-update::', () => {
       creditCardCvc,
     })
     return await initSessionFormPage.getPaymentAuthResult()
-  }
-
-  async function fetchNotificationInterfaceInteraction(paymentId) {
-    const { body } = await ctpClient.fetchById(
-      ctpClient.builder.payments,
-      paymentId
-    )
-    return body.interfaceInteractions.find(
-      (interaction) => interaction.fields.type === 'notification'
-    )
   }
 })

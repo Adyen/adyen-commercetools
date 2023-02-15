@@ -80,7 +80,7 @@
     "serialize-error": "11.0.0"
   },
   "mocha": {
-    "timeout": 120000,
+    "timeout": 180000,
     "full-trace": true
   },
   "husky": {

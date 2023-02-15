@@ -208,12 +208,12 @@ async function waitUntil(
 ) {
   let counter = 0
   while (true) {
-    const shouldContinue = await waitCondition()
-    if (shouldContinue || counter >= maxRetry) break
-    else {
-      await sleep(Math.min(2 * counter * 1000, maxWaitingTimePerRetryInMs))
-      counter++
-    }
+    const waitConditionResult = await waitCondition()
+    if (waitConditionResult) return waitConditionResult
+    if (counter >= maxRetry) return undefined
+
+    await sleep(Math.min(2 * counter * 1000, maxWaitingTimePerRetryInMs))
+    counter++
   }
 }
 
@@ -295,10 +295,27 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
   }
 }
 
+async function fetchNotificationInterfaceInteraction(
+  ctpClient,
+  paymentId,
+  status = 'authorisation'
+) {
+  const { body } = await ctpClient.fetchById(
+    ctpClient.builder.payments,
+    paymentId
+  )
+  return body.interfaceInteractions.find(
+    (interaction) =>
+      interaction.fields.type === 'notification' &&
+      interaction.fields.status === status
+  )
+}
+
 export {
   startIT,
   stopIT,
   updatePaymentWithRetry,
   overrideGenerateIdempotencyKeyConfig,
   waitUntil,
+  fetchNotificationInterfaceInteraction,
 }

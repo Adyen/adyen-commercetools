@@ -13,6 +13,7 @@ export default class AffirmInitSessionFormPage extends InitSessionFormPage {
     const adyenCheckoutInputFormElement = await this.page.$(
       '#adyen-payment-form-input'
     )
+
     const adyenCheckoutInputForm = await (
       await adyenCheckoutInputFormElement.getProperty('innerHTML')
     ).jsonValue()
@@ -24,14 +25,17 @@ export default class AffirmInitSessionFormPage extends InitSessionFormPage {
       '.adyen-checkout__input--firstName',
       adyenCheckoutInputFormJSON?.shopperName?.firstName
     )
+
     await this.page.type(
       '.adyen-checkout__input--lastName',
       adyenCheckoutInputFormJSON?.shopperName?.lastName
     )
+
     await this.page.type(
       '.adyen-checkout__input--shopperEmail',
       adyenCheckoutInputFormJSON?.shopperEmail
     )
+
     await this.page.type(
       '.adyen-checkout__input--telephoneNumber',
       adyenCheckoutInputFormJSON?.telephoneNumber
@@ -41,10 +45,12 @@ export default class AffirmInitSessionFormPage extends InitSessionFormPage {
       '.adyen-checkout__input--street',
       adyenCheckoutInputFormJSON?.billingAddress?.street
     )
+
     await this.page.type(
       '.adyen-checkout__input--houseNumberOrName',
       adyenCheckoutInputFormJSON?.billingAddress?.houseNumberOrName
     )
+
     await this.page.type(
       '.adyen-checkout__input--city',
       adyenCheckoutInputFormJSON?.billingAddress?.city
