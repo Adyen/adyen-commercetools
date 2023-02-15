@@ -78,6 +78,7 @@ describe('::klarnaPayment::', () => {
       'then it should successfully finish the payment',
     async () => {
       let paymentAfterCapture
+
       let captureEventCode
       let capturePspReference
       let captureOriginalPspReference

@@ -72,6 +72,7 @@ function _getPaymentHandlers(paymentObject) {
     !paymentObject.custom.fields.getPaymentMethodsResponse
   )
     handlers.push(getPaymentMethodsHandler)
+
   if (
     paymentObject.custom.fields.createSessionRequest &&
     !paymentObject.custom.fields.createSessionResponse

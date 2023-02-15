@@ -84,6 +84,7 @@ jobs:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: gcloud sdk
         uses: google-github-actions/setup-gcloud@v1.0.1
+
       - name: gcloud functions deploy
         run: |
           gcloud functions deploy extension-ci \
