@@ -28,9 +28,9 @@
       "required": false
     },
     {
-      "name": "makePaymentRequest",
+      "name": "getPaymentMethodsRequest",
       "label": {
-        "en": "makePaymentRequest"
+        "en": "getPaymentMethodsRequest"
       },
       "type": {
         "name": "String"
@@ -39,31 +39,9 @@
       "required": false
     },
     {
-      "name": "makePaymentResponse",
+      "name": "getPaymentMethodsResponse",
       "label": {
-        "en": "makePaymentResponse"
-      },
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "MultiLine",
-      "required": false
-    },
-    {
-      "name": "submitAdditionalPaymentDetailsRequest",
-      "label": {
-        "en": "submitAdditionalPaymentDetailsRequest"
-      },
-      "type": {
-        "name": "String"
-      },
-      "inputHint": "MultiLine",
-      "required": false
-    },
-    {
-      "name": "submitAdditionalPaymentDetailsResponse",
-      "label": {
-        "en": "submitAdditionalPaymentDetailsResponse"
+        "en": "getPaymentMethodsResponse"
       },
       "type": {
         "name": "String"
