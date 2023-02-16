@@ -285,10 +285,8 @@ function getAddInterfaceInteractionUpdateAction(notification) {
       'recurringProcessingModel'
     ]
   ) {
-    const recurringProcessingModel =
-      notificationToUse.NotificationRequestItem.additionalData[
-        'recurringProcessingModel'
-      ]
+    const { recurringProcessingModel } =
+      notificationToUse.NotificationRequestItem.additionalData
 
     notificationToUse.NotificationRequestItem.recurringProcessingModel =
       recurringProcessingModel
