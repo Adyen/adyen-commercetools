@@ -24,15 +24,15 @@ Sometimes you may want to change the amount or extend the period of the authoris
 
 ### Prerequisites
 
-1. In order to update the amount, do not have immediate capture. You can disable Immediate capture in the Adyen Customer area or add a parameter `captureDelayHours` to `makePaymentRequest`. For details see the [Adyen documentation](https://docs.adyen.com/online-payments/capture#manual-capture).
+1. In order to update the amount, do not have immediate capture. You can disable Immediate capture in the Adyen Customer area or add a parameter `captureDelayHours` to `createSessionRequest`. For details see the [Adyen documentation](https://docs.adyen.com/online-payments/capture#manual-capture).
 
 2. It is required to [set up notifications URL with CTP project key](/notification/docs/IntegrationGuide.md#fallback-in-case-metadata-is-not-available). The reason is notifications for amount updates do not contain `metadata` and thus the corresponding project key must be obtained from the URL path.
 
 ### Steps
 
-#### 1. Make payment with an additional parameter
+#### 1. Create payment session with an additional parameter
 
-In order to enable amount adjustment, make a payment and additionally specify
+In order to enable amount adjustment, create a payment session and additionally specify
 
 ```
 additionalData.authorisationType: PreAuth
@@ -40,7 +40,7 @@ additionalData.authorisationType: PreAuth
 
 <details>
 <summary>
-An example of payment [setCustomField](https://docs.commercetools.com/http-api-projects-payments#update-payment) action for makePaymentRequest with additionalData field.
+An example of payment [setCustomField](https://docs.commercetools.com/http-api-projects-payments#update-payment) action for createSessionRequest with additionalData field.
 </summary>
 
 ```json
@@ -49,8 +49,8 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
   "actions": [
     {
       "action": "setCustomField",
-      "name": "makePaymentRequest",
-      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"}, \"additionalData\":{\"allow3DS2\":true}, \"channel\":\"Web\", \"origin\":\"https://your-company.com\", \"additionalData\":{\"authorisationType\":\"PreAuth\"}, \"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
+      "name": "createSessionRequest",
+      "value": "{ \"amount\": { \"currency\": \"EUR\", \"value\": 1000 }, \"reference\": \"YOUR_REFERENCE\", \"channel\": \"Web\", \"returnUrl\": \"https://your-company.com/...\", \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\", \"additionalData\": { \"authorisationType\": \"PreAuth\" } }"
     }
   ]
 }
@@ -60,7 +60,7 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
 
 #### 2. Authorize the payment
 
-To update the amount, it is necessary to get to `Authorised Response` and obtain the `pspReference`. For some payment methods it is necessary to do multiple steps after Make payment. For the sake of readability these steps won't be described here.
+To update the amount, it is necessary to get to `Authorised Response` from notification and obtain the `pspReference`. The `Authorised Response` can be obtained from interactionInterface field of payment in Commercetools platform.
 
 <details>
 <summary>Example of the Authorized response</summary>
@@ -81,8 +81,8 @@ To update the amount, it is necessary to get to `Authorised Response` and obtain
 
 #### 3. Amount updates request
 
-To update the amount from the make payment request, [set `amountUpdatesRequest` custom field](https://docs.commercetools.com/http-api-projects-payments#update-payment). This field should contain the fields as described in the Adyen documentation. Be aware that `amount` is the sum of the current amount + additional amount.
-Additionally, it must contain `paymentPspReference` field. `paymentPspReference` field contains `pspReference` from the pre-authorisation response (e.g. from `makePaymentResponse` or `submitAdditionalPaymentDetailsResponse`). How such response could look like see [the previous point](#2-authorize-the-payment).
+To update the amount from the create session request, [set `amountUpdatesRequest` custom field](https://docs.commercetools.com/http-api-projects-payments#update-payment). This field should contain the fields as described in the Adyen documentation. Be aware that `amount` is the sum of the current amount + additional amount.
+Additionally, it must contain `paymentPspReference` field. `paymentPspReference` field contains `pspReference` from the pre-authorisation response (e.g. from `interactionInterface` field of created payment`). How such response could look like see [the previous point](#2-authorize-the-payment).
 
 <details>
 <summary>An example of payment setCustomField action for amountUpdatesRequest.</summary>
