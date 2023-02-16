@@ -279,6 +279,36 @@ function getAddInterfaceInteractionUpdateAction(notification) {
       recurringDetailReference
   }
 
+  if (
+    notificationToUse.NotificationRequestItem?.additionalData &&
+    notificationToUse.NotificationRequestItem?.additionalData[
+      'recurringProcessingModel'
+    ]
+  ) {
+    const recurringProcessingModel =
+      notificationToUse.NotificationRequestItem.additionalData[
+        'recurringProcessingModel'
+      ]
+
+    notificationToUse.NotificationRequestItem.recurringProcessingModel =
+      recurringProcessingModel
+  }
+
+  if (
+    notificationToUse.NotificationRequestItem?.additionalData &&
+    notificationToUse.NotificationRequestItem?.additionalData[
+      'recurring.shopperReference'
+    ]
+  ) {
+    const recurringShopperReference =
+      notificationToUse.NotificationRequestItem.additionalData[
+        'recurring.shopperReference'
+      ]
+
+    notificationToUse.NotificationRequestItem.recurringShopperReference =
+      recurringShopperReference
+  }
+
   if (moduleConfig.removeSensitiveData) {
     // strip away sensitive data
     delete notificationToUse.NotificationRequestItem.additionalData
