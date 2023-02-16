@@ -31,7 +31,7 @@ To save payment details for one-off payments, [add following fields to your `cre
 - `shopperInteraction: Ecommerce`
 - `recurringProcessingModel: CardOnFile`
 - `storePaymentMethod: true`
-- `removeSensitiveData: false` - set this if your adyen-integration is deployed with `removeSensitiveData: true` configuration. The reason is by default stored payment details are returned in `additionalData` and this field is being removed when `removeSensitiveData: true`.
+- `removeSensitiveData: false` - set this if your adyen-integration is deployed with `removeSensitiveData: true` configuration. The reason is by default stored payment details are returned asynchronously in `additionalData` in notification and this field is being removed when `removeSensitiveData: true`.
 
 <details>
 <summary>Click to expand an example `createSessionRequest`</summary>
@@ -98,7 +98,7 @@ To save payment details for subscription payments, [add following fields to your
 - `shopperInteraction: Ecommerce`
 - `recurringProcessingModel: Subscription`
 - `storePaymentMethod: true`
-- `removeSensitiveData: false` - set this if your adyen-integration is deployed with `removeSensitiveData: true` configuration. The reason is by default stored payment details are returned in `additionalData` and this field is being removed when `removeSensitiveData: true`.
+- `removeSensitiveData: false` - set this if your adyen-integration is deployed with `removeSensitiveData: true` configuration. The reason is by default stored payment details are returned asynchronously in `additionalData` in notification and this field is being removed when `removeSensitiveData: true`.
 
 <details>
 <summary>Click to expand an example `createSessionRequest`</summary>
@@ -165,7 +165,7 @@ To save payment details for automatic top-ups payments, [add following fields to
 - `shopperInteraction: Ecommerce`
 - `recurringProcessingModel: UnscheduledCardOnFile`
 - `storePaymentMethod: true`
-- `removeSensitiveData: false` - set this if your adyen-integration is deployed with `removeSensitiveData: true` configuration. The reason is by default stored payment details are returned in `additionalData` and this field is being removed when `removeSensitiveData: true`.
+- `removeSensitiveData: false` - set this if your adyen-integration is deployed with `removeSensitiveData: true` configuration. The reason is by default stored payment details are returned asynchronously in `additionalData` in notification and this field is being removed when `removeSensitiveData: true`.
 
 <details>
 <summary>Click to expand an example `createSessionRequest`</summary>
