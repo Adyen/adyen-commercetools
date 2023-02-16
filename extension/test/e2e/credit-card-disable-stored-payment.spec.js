@@ -257,6 +257,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
     createSessionRequestJson.shopperReference = 'shopperReference'
     createSessionRequestJson.shopperInteraction = 'Ecommerce'
     createSessionRequestJson.recurringProcessingModel = recurringProcessingModel
+    createSessionRequestJson.removeSensitiveData = false
     createSessionRequest = JSON.stringify(createSessionRequestJson)
     let payment = null
     payment = await createPaymentSession(
