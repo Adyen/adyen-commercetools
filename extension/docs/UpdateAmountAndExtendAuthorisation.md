@@ -40,7 +40,7 @@ additionalData.authorisationType: PreAuth
 
 <details>
 <summary>
-An example of payment [setCustomField](https://docs.commercetools.com/http-api-projects-payments#update-payment) action for createSessionRequest with additionalData field.
+An example of payment [setCustomField](https://docs.commercetools.com/http-api-projects-payments#update-payment) action for `createSessionRequest` with additionalData field.
 </summary>
 
 ```json
@@ -60,20 +60,73 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
 
 #### 2. Authorize the payment
 
-To update the amount, it is necessary to get to `Authorised Response` from notification and obtain the `pspReference`. The `Authorised Response` can be obtained from interactionInterface field of payment in Commercetools platform.
+To update the amount, it is necessary to get `NotificationRequestItem` and obtain the `pspReference`. The `NotificationRequestItem` can be obtained from `interfaceInteractions` field of payment in Commercetools platform.
 
 <details>
-<summary>Example of the Authorized response</summary>
+<summary>Example of the NotificationRequestItem </summary>
+
+```json
+
+[
+  {
+    "NotificationRequestItem": {
+      "amount": {
+        "currency": "EUR",
+        "value": 1000
+      },
+      "eventCode": "AUTHORISATION",
+      "eventDate": "2023-02-16T16:38:30+01:00",
+      "merchantAccountCode": "CommercetoolsGmbHDE775",
+      "merchantReference": "1676561900272",
+      "operations": [
+        "CANCEL",
+        "CAPTURE",
+        "REFUND"
+      ],
+      "paymentMethod": "mc",
+      "pspReference": "DC89W6C4VMK2WN82",
+      "success": "true"
+    }
+  }
+]
+
+```
+</details> 
+
+<details>
+<summary>The commercetools payment representation example with NotificationRequestItem </summary>
 
 ```json
 {
-  "pspReference": "853592567856061C",
-  "resultCode": "Authorised",
-  "amount": {
-    "currency": "EUR",
-    "value": 1000
+
+  "key": "YOUR_PAYMENT_KEY",
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 1000,
+    "fractionDigits": 2
   },
-  "merchantReference": "YOUR_REFERENCE"
+  
+  ...
+  
+  "interfaceInteractions": [
+    ... 
+  
+      {
+        "type": {
+          "typeId": "type",
+          "id": "ab5d881c-b2c0-44c9-a8de-767f668a6f75"
+        },
+        "fields": {
+          "createdAt": "2023-02-16T15:38:30.586Z",
+          "status": "authorisation",
+          "type": "notification",
+          "notification": "{\"NotificationRequestItem\":{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"eventCode\":\"AUTHORISATION\",\"eventDate\":\"2023-02-16T16:38:30+01:00\",\"merchantAccountCode\":\"CommercetoolsGmbHDE775\",\"merchantReference\":\"1676561900272\",\"operations\":[\"CANCEL\",\"CAPTURE\",\"REFUND\"],\"paymentMethod\":\"mc\",\"pspReference\":\"DC89W6C4VMK2WN82\",\"success\":\"true\"}}"
+        }
+      },
+  
+     ...
+  ] 
 }
 ```
 
