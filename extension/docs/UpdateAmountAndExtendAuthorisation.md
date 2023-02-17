@@ -5,7 +5,7 @@
   - [Amount update](#amount-update)
     - [Prerequisites](#prerequisites)
     - [Steps](#steps)
-      - [1. Make payment with an additional parameter](#1-make-payment-with-an-additional-parameter)
+      - [1. Create payment session with an additional parameter](#1-create-payment-session-with-an-additional-parameter)
       - [2. Authorize the payment](#2-authorize-the-payment)
       - [3. Amount updates request](#3-amount-updates-request)
       - [4. Process notification](#4-process-notification)

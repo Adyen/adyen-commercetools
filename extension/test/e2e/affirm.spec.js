@@ -31,7 +31,7 @@ describe('::affirmPayment::', () => {
         response
       )
     }
-    routes['/redirect-payment-forms'] = async (request, response) => {
+    routes['/redirect-payment-form'] = async (request, response) => {
       serveFile(
         './test/e2e/fixtures/redirect-payment-form.html',
         request,

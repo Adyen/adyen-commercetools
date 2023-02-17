@@ -7,6 +7,7 @@
     - [Steps](#steps)
   - [Custom refund reference](#custom-refund-reference)
   - [Retry refund requests](#retry-refund-requests)
+    - [Generating idempotency key by adyen-integration](#generating-idempotency-key-by-adyen-integration)
   - [Additional information](#additional-information)
   - [Further resources](#further-resources)
 

@@ -13,19 +13,14 @@
     - [Validate payment transaction](#validate-payment-transaction)
   - [Step 2: Creating a commercetools payment](#step-2-creating-a-commercetools-payment)
   - [Step 3: Get available payment methods (Optional)](#step-3-get-available-payment-methods-optional)
-  - [Step 4: Add Components to your payments form](#step-4-add-components-to-your-payments-form)
-  - [Step 5: Make a payment](#step-5-make-a-payment)
+  - [Step 4: Create a payment session](#step-4-create-a-payment-session)
     - [Response](#response)
-      - [Authorised Response](#authorised-response)
-      - [Action Response](#action-response)
+      - [Handle Redirect](#handle-redirect)
     - [Adding cart and product informations (lineItems) to the request](#adding-cart-and-product-informations-lineitems-to-the-request)
-  - [Step 6: Submit additional payment details](#step-6-submit-additional-payment-details)
-    - [Response](#response-1)
-      - [Authorised Response](#authorised-response-1)
-      - [Action Response](#action-response-1)
+  - [Step 5: Set up Web Component](#step-5-set-up-web-component)
+  - [Step 6: Get payment result](#step-6-get-payment-result)
   - [Error handling](#error-handling)
     - [Extension module errors](#extension-module-errors)
-    - [Adyen payment refusals](#adyen-payment-refusals)
     - [Shopper successfully paid but `redirectUrl` was not reached](#shopper-successfully-paid-but-redirecturl-was-not-reached)
     - [Shopper tries to pay a different amount than the actual order amount](#shopper-tries-to-pay-a-different-amount-than-the-actual-order-amount)
   - [Test and go live](#test-and-go-live)
@@ -520,7 +515,7 @@ If you haven't created the payment forms already in your frontend, follow the of
 ## Step 6: Get payment result
 
 After payment is initialized on front-end, you can get the result from Adyen asynchronously. The notification module would receive the result with eventCode `AUTHORISATION` and
-update it to commercetools payment `interfaceInteraction` custom fields
+update it to commercetools payment `interfaceInteraction` custom fields. Also, `pspReference` can be obtained from the notification result in notification module, which is set as commercetools payment key.
 
 For details, please follow [Get payment outcome](https://docs.adyen.com/online-payments/web-components#get-payment-outcome)
 
@@ -534,18 +529,6 @@ If you receive a `non-HTTP 200 response`, use the commercetools payment `interfa
 
 Interface interactions can represent a `request` sent to Adyen, a `response`, or a `notification` received from Adyen.
 Some interactions may result in a transaction. If so, the interactionId in the payment transaction will be set to match the `pspReference` of the Adyen API.
-
-### Adyen payment refusals
-
-If you receive an `HTTP 200 response` with an `Error` or `Refused` resultCode from Adyen, a transaction with a `Failure` state will be added to the commercetools payment object. Payment objects with failed transactions can not be reused for further retries. In order to retry the payment process, a new commercetools payment resource needs to be created and payment steps like `makePaymentRequest` etc. re-applied.
-Use the commercetools payment [interfaceInteractions](https://docs.commercetools.com/api/projects/payments#payment) field to troubleshoot the response.
-
-Check the following table to see the mapping of Adyen [result codes](https://docs.adyen.com/development-resources/response-handling#error-codes-types) to commercetools [transaction state](https://docs.commercetools.com/http-api-projects-payments#transactionstate)
-|Adyen result code| The commercetools transaction (transaction state)
-| --- | --- |
-| Authorised| Authorization (Success)|
-| Refused| Authorization (Failure)|
-| Error| Authorization (Failure)|
 
 ### Shopper successfully paid but `redirectUrl` was not reached
 
