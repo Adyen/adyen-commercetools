@@ -250,33 +250,32 @@ Pass the `getPaymentMethodsResponse` custom field value to your front end. You m
 ```
 </details>
 
-## Step 4: Add Components to your payments form
+## Step 4: Create a payment session
 
-Next, use the Adyen Web Components to render the payment method, and collect the required payment details from the shopper.
+To create payment session via our integration, you need to set the `createSessionRequest` custom field to existing commercetools payment.
 
-If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Components integration guide](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-2-add-components).
+The request payload of for payment session creation only requires basic information from users, such as amount with currency, return URL, reference, merchant account.
+ 
+> For details, consult the [Adyen documentation](https://docs.adyen.com/online-payments/web-components#create-payment-session)
 
-## Step 5: Make a payment
+> If you don't have a payment object, check [creating a new commercetools payment](#step-2-creating-a-commercetools-payment) and set `createSessionRequest` custom field together with other required fields.
 
-When a shopper selects a payment method, enters payment details into the web component form, and then submits payment with a `Pay` button, the Adyen web component will trigger an `onSubmit` component event with a generated "make payment" JSON data that the merchant server needs to pass to the commercetools payment for further processing.
+After payment session is created successfully, you can obtain session ID and session data from the response. The response can be retrieved in the `createSessionResponse` custom field from the existing commercetools payment. The session ID and session data are required to set up web component in the next step. 
 
-> For details, consult the [Adyen documentation](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-3-make-a-payment)
-
-To make payment via our integration, you need to set the `makePaymentRequest` custom field to existing commercetools payment with generated component data from the Adyen web component.
-
-> If you don't have a payment object, check [creating a new commercetools payment](#step-2-creating-a-commercetools-payment) and set `makePaymentRequest` custom field together with other required fields.
 
 **Preconditions**
 
-- `makePaymentRequest` must contain a unique payment `reference` value. The reference value cannot be duplicated in any commercetools payment and it's a required field by Adyen. The extension module uses the `reference` value to set the payment key, later it acts as a unique link between commercetools payment and Adyen payment(`merchantReference`). `Reference` may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
-- `payment.amountPlanned` can not be changed if there is a `makePayment` interface interaction present in the commercetools payment object. The `amount` value in `makePaymentRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment. In case `amountPlanned` needs to be changed and an existing commercetools payment resource with interface interaction of type `makePayment` exists, please create a new commercetools payment instead of modifying the existing one.
+- `createSessionRequest` must contain a unique payment `reference` value. The reference value cannot be duplicated in any commercetools payment and it's a required field by Adyen. The extension module uses the `reference` value to set the payment key in initial stage, later notification module uses it to look up corresponding payment after receiving notification for successful payment session creation. `Reference` may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
+- `payment.amountPlanned` can not be changed if there is a `createSession` interface interaction present in the commercetools payment object. The `amount` value in `createSessionRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment. In case `amountPlanned` needs to be changed and an existing commercetools payment resource with interface interaction of type `makePayment` exists, please create a new commercetools payment instead of modifying the existing one.
+
+
 
 **Important**
 
-In this integration document our Adyen payment request examples are trimmed to minimum. Depending on your requirements you might want to include other Adyen parameters such as [add risk management fields](https://docs.adyen.com/risk-management/configure-standard-risk-rules/required-risk-field-reference), [activate 3D Secure 2](https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-component#make-a-payment) or [allow recurring payments](https://docs.adyen.com/payment-methods/cards/web-component#create-a-token).
+In this integration document our Adyen payment request examples are trimmed to minimum. Depending on your requirements you might want to include other Adyen parameters such as [add risk management fields](https://docs.adyen.com/risk-management/configure-standard-risk-rules/required-risk-field-reference) or [allow recurring payments](https://docs.adyen.com/payment-methods/cards/web-component#create-a-token).
 Please find all the possible parameters in the `Web Components` section of the desired payment method listed in the navigation [here](https://docs.adyen.com/payment-methods).
 
-Here's an example of the `makePaymentRequest` custom field value for 3D Secure 2 credit card payment along with the generated Adyen Web Components data:
+Here's an example of the `createSessionRequest` custom field value for 3D Secure 2 credit card payment :
 
 ```json
 {
@@ -285,24 +284,13 @@ Here's an example of the `makePaymentRequest` custom field value for 3D Secure 2
     "value": 1000
   },
   "reference": "YOUR_REFERENCE",
-  "paymentMethod": {
-    "type": "scheme",
-    "encryptedCardNumber": "test_4111111111111111",
-    "encryptedExpiryMonth": "test_03",
-    "encryptedExpiryYear": "test_2030",
-    "encryptedSecurityCode": "test_737"
-  },
-  "additionalData": {
-    "allow3DS2": true
-  },
   "channel": "Web",
-  "origin": "https://your-company.com",
   "returnUrl": "https://your-company.com/...",
   "merchantAccount": "YOUR_MERCHANT_ACCOUNT"
 }
 ```
 
-An example of payment [setCustomField](https://docs.commercetools.com/http-api-projects-payments#update-payment) action with the generated component data above.
+An example of payment [setCustomField](https://docs.commercetools.com/http-api-projects-payments#update-payment) action with the prepared data above.
 
 ```json
 {
@@ -310,15 +298,15 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
   "actions": [
     {
       "action": "setCustomField",
-      "name": "makePaymentRequest",
-      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"}, \"additionalData\":{\"allow3DS2\":true}, \"channel\":\"Web\", \"origin\":\"https://your-company.com\", \"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
+      "name": "createSessionRequest",
+      "value": "{ \"amount\": { \"currency\": \"EUR\", \"value\": 1000 }, \"reference\": \"YOUR_REFERENCE\", \"channel\": \"Web\", \"returnUrl\": \"https://your-company.com/...\", \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\" }"
     }
   ]
 }
 ```
 
 <details>
-  <summary>The commercetools payment representation example with makePaymentRequest request. Click to expand.</summary>
+  <summary>The commercetools payment representation example with createSessionRequest request. Click to expand.</summary>
     
 ```json
 {
@@ -337,7 +325,7 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
     "fields": {
       "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
       "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"}, \"additionalData\":{\"allow3DS2\":true}, \"channel\":\"Web\", \"origin\":\"https://your-company.com\", \"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
+      "createSessionRequest": "{ \"amount\": { \"currency\": \"EUR\", \"value\": 1000 }, \"reference\": \"YOUR_REFERENCE\", \"channel\": \"Web\", \"returnUrl\": \"https://your-company.com/...\", \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\" }"
     }
   }
 }
@@ -348,30 +336,35 @@ An example of payment [setCustomField](https://docs.commercetools.com/http-api-p
 
 ### Response
 
-The payment response contains information for the next steps of the payment process. On a successful payment response, commercetools payment `key` is set with the `reference` of the `makePaymentRequest`, and the response from Adyen is set to `makePaymentResponse` custom field.
+The payment response contains information for the next steps of the payment process. On a successful payment response, commercetools payment `key` is set with the `reference` of the `createSessionRequest`, and the response from Adyen is set to `createSessionResponse` custom field.
 
-Next steps depend on whether the `makePaymentResponse` custom field contains an action object.
+Next steps depend on whether the `createSessionResponse` custom field contains an action object.
 
 > Refer our [error handling](#error-handling) section, in case you encounter errors in your integration.
 
-#### Authorised Response
-
-For some payment methods (e.g. Visa, Mastercard, and SEPA Direct Debits) you'll get a final state in the `resultCode` (e.g. Authorised or Refused).
+Here's an example of the `createSessionResponse` custom field value 
 
 ```json
 {
-  "pspReference": "853592567856061C",
-  "resultCode": "Authorised",
   "amount": {
     "currency": "EUR",
     "value": 1000
   },
-  "merchantReference": "YOUR_REFERENCE"
+  "channel": "Web",
+  "expiresAt": "2023-02-17T11:35:33+01:00",
+  "id": "CSF86BB73115FBC5D0",
+  "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
+  "reference": "YOUR_REFERENCE",
+  "returnUrl": "https://your-company.com/...",
+  "mode": "embedded",
+  "sessionData": "Ab02b4c0!BQABAgAJTWczsOnM2OfQiSIe2OBwocp8oaXCbcRDBq9+7BlIocB9Yge4G0T9NygFsfawRu1Q8sX1QdU7yRNFi22JjLA1Ir8GnXKpntQrSP1jNjeOfGzQ1Gd9unwbANzieM7TIwvWBcZ3oEG4KULV7vtrwKJ49BMPJCxm324yx5wGUX0zsObFimbg879oYtPQ37iGDDxzuBt6Ykd5qT9KWv9V2X/MBY/YzWAgPfa0Ge7yQYbw4yckAwrWlj/ZRidGTCX3QxfjCI33CA3iBuQQ1tlgTHAyG7BWa+H03x6L6ePG/bqr4zdOf2zwk3MCwDX85sc/S4fipGmgTIADj+eCbuFr0MmVX2eogi/eBdF2koXpcfRsfL/SvvQS4D1HcOnz6ol3S2tOQN2y7Iw/tTfVM+5piarSskzx4Nbt0WHdrBD7K02GKCUhW/FI50isQoKAkL4kTfPG5GIWCWfY2TfE0lj+VgKofwn3CFI5Rw7BwRDp0kFeeI3N45nvVUFbN9X4jJz/FiR67X1pa9SCy2Qbzs5IdUg+kD20TjAtenqaMFF9A5/KNwa/1aBaA540+Xzon8R6s7LiCtmp6JDUg6UuDsfLpkHR1J5zKZziWglaHNzKpu1i38+70LAc2dDT2WON662r+mw5hUx1T2x9bfVL429YwlGfda0ciz/SuEp54EINg9FSvQznSoHzLQp56Fqd1j0ASnsia2V5IjoiQUYwQUFBMTAzQ0E1MzdFQUVEODdDMjRERDUzOTA5QjgwQTc4QTkyM0UzODIzRDY4REFDQzk0QjlGRjgzMDVEQyJ9mzQ0ZhdH9ofifR2Ut1dGxRPkc0VEf9CTWSOZ12vL0O6DQpQH7KSEJ/JQCOzenhuuldhRNCfhK33hvYaLhHoFNvDI5/66uRjMiG9bZeQSlb7wI0UoByPGoUbWYXihIGrMCVstX/6evF3EYGlGhKvE7HSR7LFOzbyFxYc/N3vq4IYTvOQztUm+IPT9bUjY3nxFx4Khd/0FZ7JpyI7lvEXMGhY+L7gjsLvzy98sqLC40w1GI7zpR4O2UTNGy6ZPJ5ECEPzVr74dz9LaWmzpCPulWNSqVbHxD3mYnWqKmueQH2ozXaFRo/HQIk/BKvYREKz1iR1ES2Kq6BSVAMx+gyHiPPeMKH0RnuVNcqe/SMXveWpanx+RCoaidcmxyrFZH8n2SfC5FVCt5YMol8zFPbeu+c1js/4/KOm273qdbBsw+EelGh1lKbwZa24rLUhDUm9WxDPR1ukAIOvxW+xQ40BmYikW2ewlrUMTwwgarA=="
 }
 ```
 
+`id` and `sessionData` value is mandatory to set up web component
+
 <details>
- <summary> A commercetools payment with makePaymentResponse field with the response above. Click to expand. </summary>
+ <summary> A commercetools payment with createSessionResponse field with the response above. Click to expand. </summary>
 
 ```json
 {
@@ -389,81 +382,23 @@ For some payment methods (e.g. Visa, Mastercard, and SEPA Direct Debits) you'll 
     "fields": {
       "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
       "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"}, \"additionalData\":{\"allow3DS2\":true}, \"channel\":\"Web\", \"origin\":\"https://your-company.com\", \"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
-      "makePaymentResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_REFERENCE\"}"
+      "createSessionRequest": "{ \"amount\": { \"currency\": \"EUR\", \"value\": 1000 }, \"reference\": \"YOUR_REFERENCE\", \"channel\": \"Web\", \"returnUrl\": \"https://your-company.com/...\", \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\" }",
+      "createSessionResponse": "{ \"amount\": { \"currency\": \"EUR\", \"value\": 1000 }, \"channel\": \"Web\", \"expiresAt\": \"2023-02-17T11:35:33+01:00\", \"id\": \"CSF86BB73115FBC5D0\", \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\", \"reference\": \"YOUR_REFERENCE\", \"returnUrl\": \"https://your-company.com/...\", \"mode\": \"embedded\", \"sessionData\": \"Ab02b4c0!BQABAgAJTWczsOnM2OfQiSIe2OBwocp8oaXCbcRDBq9+7BlIocB9Yge4G0T9NygFsfawRu1Q8sX1QdU7yRNFi22JjLA1Ir8GnXKpntQrSP1jNjeOfGzQ1Gd9unwbANzieM7TIwvWBcZ3oEG4KULV7vtrwKJ49BMPJCxm324yx5wGUX0zsObFimbg879oYtPQ37iGDDxzuBt6Ykd5qT9KWv9V2X/MBY/YzWAgPfa0Ge7yQYbw4yckAwrWlj/ZRidGTCX3QxfjCI33CA3iBuQQ1tlgTHAyG7BWa+H03x6L6ePG/bqr4zdOf2zwk3MCwDX85sc/S4fipGmgTIADj+eCbuFr0MmVX2eogi/eBdF2koXpcfRsfL/SvvQS4D1HcOnz6ol3S2tOQN2y7Iw/tTfVM+5piarSskzx4Nbt0WHdrBD7K02GKCUhW/FI50isQoKAkL4kTfPG5GIWCWfY2TfE0lj+VgKofwn3CFI5Rw7BwRDp0kFeeI3N45nvVUFbN9X4jJz/FiR67X1pa9SCy2Qbzs5IdUg+kD20TjAtenqaMFF9A5/KNwa/1aBaA540+Xzon8R6s7LiCtmp6JDUg6UuDsfLpkHR1J5zKZziWglaHNzKpu1i38+70LAc2dDT2WON662r+mw5hUx1T2x9bfVL429YwlGfda0ciz/SuEp54EINg9FSvQznSoHzLQp56Fqd1j0ASnsia2V5IjoiQUYwQUFBMTAzQ0E1MzdFQUVEODdDMjRERDUzOTA5QjgwQTc4QTkyM0UzODIzRDY4REFDQzk0QjlGRjgzMDVEQyJ9mzQ0ZhdH9ofifR2Ut1dGxRPkc0VEf9CTWSOZ12vL0O6DQpQH7KSEJ/JQCOzenhuuldhRNCfhK33hvYaLhHoFNvDI5/66uRjMiG9bZeQSlb7wI0UoByPGoUbWYXihIGrMCVstX/6evF3EYGlGhKvE7HSR7LFOzbyFxYc/N3vq4IYTvOQztUm+IPT9bUjY3nxFx4Khd/0FZ7JpyI7lvEXMGhY+L7gjsLvzy98sqLC40w1GI7zpR4O2UTNGy6ZPJ5ECEPzVr74dz9LaWmzpCPulWNSqVbHxD3mYnWqKmueQH2ozXaFRo/HQIk/BKvYREKz1iR1ES2Kq6BSVAMx+gyHiPPeMKH0RnuVNcqe/SMXveWpanx+RCoaidcmxyrFZH8n2SfC5FVCt5YMol8zFPbeu+c1js/4/KOm273qdbBsw+EelGh1lKbwZa24rLUhDUm9WxDPR1ukAIOvxW+xQ40BmYikW2ewlrUMTwwgarA==\" }"
     }
-  },
-  "transactions": [
-    {
-      "id": "eab650fd-8616-471b-b884-eef641b4f169",
-      "type": "Authorization",
-      "amount": {
-        "type": "centPrecision",
-        "currencyCode": "EUR",
-        "centAmount": 1000,
-        "fractionDigits": 2
-      },
-      "interactionId": "853592567856061C",
-      "state": "Success"
-    }
-  ]
+  }
 }
 ```
 
 </details>
 
-Notice that on an `Authorised` (successful) result, the integration will automatically add a transaction to the commercetools payment. The transaction will be of type `Authorization`, its' `amount` will match the `amountPlanned` and `interactionId` will be matching the unique Adyen's `pspReference` from `makePaymentResponse`.
+Notice that the payment is not yet authorised at this moment. You need to set up web component and initiate the payment on front-end afterwards. The authorisation result then is sent from Adyen to notification module asynchronously. 
 
-> See [Adyen documentation](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-6-present-payment-result) for more information how to present the results.
+#### Handle Redirect
 
-#### Action Response
+Some payment methods require additional action from the shopper in a redirect page, such as: to scan a QR code, to authenticate a payment with 3D Secure, or to log in to their bank's website to complete the payment.
+In this case you have to handle it on the return URL front-end page.
 
-Some payment methods require additional action from the shopper such as: to scan a QR code, to authenticate a payment with 3D Secure, or to log in to their bank's website to complete the payment.
-In this case you'll receive an `action` object (e.g. redirect, threeDS2, qrCode etc).
-
-Here an example response from Adyen where the user has to be redirected to a payment provider page:
-
-```json
-{
-  "resultCode": "RedirectShopper",
-  "action": {
-    "paymentData": "Ab02b4c0!...",
-    "paymentMethodType": "scheme",
-    "url": "https://test.adyen.com/hpp/3d/validate.shtml",
-    "data": {
-      "MD": "aTZmV09...",
-      "PaReq": "eNpVUtt...",
-      "TermUrl": "https://your-company.com/..."
-    },
-    "method": "POST",
-    "type": "redirect"
-  },
-  "details": [
-    {
-      "key": "MD",
-      "type": "text"
-    },
-    {
-      "key": "PaRes",
-      "type": "text"
-    }
-  ],
-  "paymentData": "Ab02b4c0!...",
-  "redirect": {
-    "data": {
-      "PaReq": "eNpVUtt...",
-      "TermUrl": "https://your-company.com/...",
-      "MD": "aTZmV09..."
-    },
-    "method": "POST",
-    "url": "https://test.adyen.com/hpp/3d/validate.shtml"
-  }
-}
-```
-
-Pass the action object to your front end. The Adyen web component uses this to handle the required action.
-
-> See [Adyen documentation](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-4-additional-front-end) for more information how to perform additional front end actions.
+> See [Adyen documentation](https://docs.adyen.com/online-payments/web-components#handle-redirect-result) for more information how to perform additional front end actions.
 
 ### Adding cart and product informations (lineItems) to the request
 
@@ -472,18 +407,16 @@ For some payment methods, it is necessary to provide [line item details](https:/
 Extension module can generate the line item automatically, but you need to do following steps:
 
 - The commercetools payment [referenced in the commercetools cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
-- Either `addCommercetoolsLineItems` property set to`true` within the `makePaymentRequest` or `addCommercetoolsLineItems` flag set to `true` within your extension [configuration](./HowToRun.md#other-configurations).
-  > In case you would like to override the generation of the lineItems please provide within the `makePaymentRequest` own `lineItems` data.
+- Either `addCommercetoolsLineItems` property set to`true` within the `createSessionRequest` or `addCommercetoolsLineItems` flag set to `true` within your extension [configuration](./HowToRun.md#other-configurations).
+  > In case you would like to override the generation of the lineItems please provide within the `createSessionRequest` own `lineItems` data.
 
-Here's an example of the `makePaymentRequest` **WITHOUT** `lineItems` and `addCommercetoolsLineItems` property set to true.
+Here's an example of the `createSessionRequest` **WITHOUT** `lineItems` and `addCommercetoolsLineItems` property set to true.
 
 ```json
+
 {
   "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
   "reference": "YOUR_REFERENCE",
-  "paymentMethod": {
-    "type": "YOUR_PAYMENT_METHOD"
-  },
   "amount": {
     "currency": "EUR",
     "value": "1000"
@@ -517,15 +450,15 @@ Here's an example of the `makePaymentRequest` **WITHOUT** `lineItems` and `addCo
   "actions": [
     {
       "action": "setCustomField",
-      "name": "makePaymentRequest",
-      "value": "{\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\",\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"klarna\"},\"amount\":{\"currency\":\"SEK\",\"value\":\"1000\"},\"shopperLocale\":\"en_US\",\"countryCode\":\"SE\",\"shopperEmail\":\"youremail@email.com\",\"shopperName\":{\"firstName\":\"Testperson-se\",\"gender\":\"UNKNOWN\",\"lastName\":\"Approved\"},\"shopperReference\":\"YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j\",\"billingAddress\":{\"city\":\"Ankeborg\",\"country\":\"SE\",\"houseNumberOrName\":\"1\",\"postalCode\":\"12345\",\"street\":\"Stargatan\"},\"returnUrl\":\"https://www.your-company.com/...\"}"
+      "name": "createSessionRequest",
+      "value": "{ \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\", \"reference\": \"YOUR_REFERENCE\", \"amount\": { \"currency\": \"EUR\", \"value\": \"1000\" }, \"shopperLocale\": \"en_US\", \"countryCode\": \"SE\", \"shopperEmail\": \"youremail@email.com\", \"shopperName\": { \"firstName\": \"Testperson-se\", \"gender\": \"UNKNOWN\", \"lastName\": \"Approved\" }, \"shopperReference\": \"YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j\", \"billingAddress\": { \"city\": \"Ankeborg\", \"country\": \"SE\", \"houseNumberOrName\": \"1\", \"postalCode\": \"12345\", \"street\": \"Stargatan\" }, \"returnUrl\": \"https://www.your-company.com/...\" }"
     }
   ]
 }
 ```
 
 <details>
-<summary>Extension module will add line items to your makePaymentRequest. Click to expand.</summary>
+<summary>Extension module will add line items to your createSessionRequest. Click to expand.</summary>
 
 ```json
 {
@@ -580,141 +513,13 @@ Here's an example of the `makePaymentRequest` **WITHOUT** `lineItems` and `addCo
 
 </details>
 
-By default, the extension module will populate `lineItems` for you but in case you want to define your own values include `lineItems` in your `makePaymentRequest`.
+By default, the extension module will populate `lineItems` for you but in case you want to define your own values include `lineItems` in your `createSessionRequest`.
 
-## Step 6: Submit additional payment details
+## Step 5: Set up Web Component
 
-Before executing this step, verify if payment has already any transactions. Based on its state decide if you skip the submit additional details step and show order confirmation page or restart the payment process since transaction state was Failure.
+Next, use the Adyen Web Components to render the payment method, and collect the required payment details from the shopper.
 
-If the shopper performed an additional action (e.g. redirect, threeDS2) in the [Step-5](#step-5-make-a-payment), you need to make `submitAdditionalPaymentDetailsRequest` in order to complete the payment.
-
-Pass the generated component data to your merchant server, the data is available either in `state.data` from the `onAdditionalDetails` event or, for redirects, the parameters you received when the shopper redirected back to your website.
-
-```json
-{
-  "version": "PAYMENT_VERSION",
-  "actions": [
-    {
-      "action": "setCustomField",
-      "name": "submitAdditionalPaymentDetailsRequest",
-      "value": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}"
-    }
-  ]
-}
-```
-
-> Refer Adyen's [/payments/details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/payments/details) request to check all possible request payload parameters.
-
-### Response
-
-After update, you will receive `submitAdditionalPaymentDetailsResponse` in the returned commercetools payment.
-
-Depending on the payment result, you receive a response containing:
-
-- resultCode: Provides information about the result of the request.
-- pspReference: Our unique identifier for the transaction.
-- action: If you receive this object, you need to perform [Step-5](#step-5-make-a-payment) again.
-
-> Refer our [error handling](#error-handling) section, in case you encounter errors in your integration.
-
-#### Authorised Response
-
-If the response does not contain an action object, you can present the payment result to your shopper.
-
-> See [Adyen documentation](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0#step-6-present-payment-result) for more information how to present the results.
-
-<details>
-<summary>A commercetools example payment with submitAdditionalPaymentDetailsResponse field. Click to expand.</summary>
-
-```json
-{
-  "amountPlanned": {
-    "type": "centPrecision",
-    "currencyCode": "EUR",
-    "centAmount": 1000,
-    "fractionDigits": 2
-  },
-  "custom": {
-    "type": {
-      "typeId": "type",
-      "key": "ctp-adyen-integration-web-components-payment-type"
-    },
-    "fields": {
-      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
-      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
-      "makePaymentResponse": "{\"resultCode\":\"RedirectShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\",\"data\":{\"MD\":\"aTZmV09...\",\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\"},\"method\":\"POST\",\"type\":\"redirect\"},\"details\":[{\"key\":\"MD\",\"type\":\"text\"},{\"key\":\"PaRes\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\",\"redirect\":{\"data\":{\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\",\"MD\":\"aTZmV09...\"},\"method\":\"POST\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\"}}",
-      "submitPaymentDetailsRequest": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}",
-      "submitAdditionalPaymentDetailsResponse": "{\"pspReference\":\"853592567856061C\",\"resultCode\":\"Authorised\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"merchantReference\":\"YOUR_REFERENCE\"}"
-    }
-  },
-  "transactions": [
-    {
-      "id": "eab650fd-8616-471b-b884-eef641b4f169",
-      "type": "Authorization",
-      "amount": {
-        "type": "centPrecision",
-        "currencyCode": "EUR",
-        "centAmount": 1000,
-        "fractionDigits": 2
-      },
-      "interactionId": "853592567856061C",
-      "state": "Success"
-    }
-  ]
-}
-```
-
-</details>
-
-Notice that a transaction added to the commercetools payment. The transaction is of type `Authorization` and has `amount` taken from `amountPlanned`. `interactionId` is matching the `submitAdditionalPaymentDetailsResponse`.
-
-#### Action Response
-
-If you received an action object you need to repeat [Step-6](#step-6-submit-additional-payment-details) again.
-
-<details>
-<summary>Here an example commercetools payment with submitAdditionalPaymentDetailsResponse field with the action object. Click to expand. </summary>
-
-```json
-{
-  "custom": {
-    "type": {
-      "typeId": "type",
-      "key": "ctp-adyen-integration-web-components-payment-type"
-    },
-    "fields": {
-      "adyenMerchantAccount": "YOUR_MERCHANT_ACCOUNT",
-      "commercetoolsProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/...\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}",
-      "makePaymentResponse": "{\"resultCode\":\"RedirectShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\",\"data\":{\"MD\":\"aTZmV09...\",\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\"},\"method\":\"POST\",\"type\":\"redirect\"},\"details\":[{\"key\":\"MD\",\"type\":\"text\"},{\"key\":\"PaRes\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\",\"redirect\":{\"data\":{\"PaReq\":\"eNpVUtt...\",\"TermUrl\":\"https://your-company.com/...\",\"MD\":\"aTZmV09...\"},\"method\":\"POST\",\"url\":\"https://test.adyen.com/hpp/3d/validate.shtml\"}}",
-      "submitPaymentDetailsRequest": "{\"details\":{\"redirectResult\":\"Ab02b4c0!...\"}}",
-      "submitAdditionalPaymentDetailsResponse": "{\"resultCode\":\"ChallengeShopper\",\"action\":{\"paymentData\":\"Ab02b4c0!...\",\"paymentMethodType\":\"scheme\",\"token\":\"eyJhY3...\",\"type\":\"threeDS2Challenge\"},\"authentication\":{\"threeds2.challengeToken\":\"eyJhY3...\"},\"details\":[{\"key\":\"threeds2.challengeResult\",\"type\":\"text\"}],\"paymentData\":\"Ab02b4c0!...\"}"
-    }
-  }
-}
-```
-
-</details>
-
-In order to do so remove the existing `submitAdditionalPaymentDetailsResponse` custom field. This can be done in a single payment update request as follows:
-
-```json
-{
-  "version": "PAYMENT_VERSION",
-  "actions": [
-    {
-      "action": "setCustomField",
-      "name": "submitAdditionalPaymentDetailsRequest",
-      "value": "{\"details\":{\"threeds2.challengeResult\":\"eyJ0cmFuc1...\"}}"
-    },
-    {
-      "action": "setCustomField",
-      "name": "submitAdditionalPaymentDetailsResponse"
-    }
-  ]
-}
-```
+If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Component integration guide](https://docs.adyen.com/online-payments/web-components#set-up).
 
 ## Error handling
 
