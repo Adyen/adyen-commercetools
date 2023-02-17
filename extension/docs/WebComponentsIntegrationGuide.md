@@ -255,20 +255,17 @@ Pass the `getPaymentMethodsResponse` custom field value to your front end. You m
 To create payment session via our integration, you need to set the `createSessionRequest` custom field to existing commercetools payment.
 
 The request payload of for payment session creation only requires basic information from users, such as amount with currency, return URL, reference, merchant account.
- 
+
 > For details, consult the [Adyen documentation](https://docs.adyen.com/online-payments/web-components#create-payment-session)
 
 > If you don't have a payment object, check [creating a new commercetools payment](#step-2-creating-a-commercetools-payment) and set `createSessionRequest` custom field together with other required fields.
 
-After payment session is created successfully, you can obtain session ID and session data from the response. The response can be retrieved in the `createSessionResponse` custom field from the existing commercetools payment. The session ID and session data are required to set up web component in the next step. 
-
+After payment session is created successfully, you can obtain session ID and session data from the response. The response can be retrieved in the `createSessionResponse` custom field from the existing commercetools payment. The session ID and session data are required to set up web component in the next step.
 
 **Preconditions**
 
 - `createSessionRequest` must contain a unique payment `reference` value. The reference value cannot be duplicated in any commercetools payment and it's a required field by Adyen. The extension module uses the `reference` value to set the payment key in initial stage, later notification module uses it to look up corresponding payment after receiving notification for successful payment session creation. `Reference` may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
 - `payment.amountPlanned` can not be changed if there is a `createSession` interface interaction present in the commercetools payment object. The `amount` value in `createSessionRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment. In case `amountPlanned` needs to be changed and an existing commercetools payment resource with interface interaction of type `makePayment` exists, please create a new commercetools payment instead of modifying the existing one.
-
-
 
 **Important**
 
@@ -342,7 +339,7 @@ Next steps depend on whether the `createSessionResponse` custom field contains a
 
 > Refer our [error handling](#error-handling) section, in case you encounter errors in your integration.
 
-Here's an example of the `createSessionResponse` custom field value 
+Here's an example of the `createSessionResponse` custom field value
 
 ```json
 {
@@ -391,7 +388,7 @@ Here's an example of the `createSessionResponse` custom field value
 
 </details>
 
-Notice that the payment is not yet authorised at this moment. You need to set up web component and initiate the payment on front-end afterwards. The authorisation result then is sent from Adyen to notification module asynchronously. 
+Notice that the payment is not yet authorised at this moment. You need to set up web component and initiate the payment on front-end afterwards. The authorisation result then is sent from Adyen to notification module asynchronously.
 
 #### Handle Redirect
 
@@ -413,7 +410,6 @@ Extension module can generate the line item automatically, but you need to do fo
 Here's an example of the `createSessionRequest` **WITHOUT** `lineItems` and `addCommercetoolsLineItems` property set to true.
 
 ```json
-
 {
   "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
   "reference": "YOUR_REFERENCE",
@@ -520,6 +516,13 @@ By default, the extension module will populate `lineItems` for you but in case y
 Next, use the Adyen Web Components to render the payment method, and collect the required payment details from the shopper.
 
 If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Component integration guide](https://docs.adyen.com/online-payments/web-components#set-up).
+
+## Step 6: Get payment result
+
+After payment is initialized on front-end, you can get the result from Adyen asynchronously. The notification module would receive the result with eventCode `AUTHORISATION` and
+update it to commercetools payment `interfaceInteraction` custom fields
+
+For details, please follow [Get payment outcome](https://docs.adyen.com/online-payments/web-components#get-payment-outcome)
 
 ## Error handling
 

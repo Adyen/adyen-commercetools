@@ -66,7 +66,6 @@ To update the amount, it is necessary to get `NotificationRequestItem` and obtai
 <summary>Example of the NotificationRequestItem </summary>
 
 ```json
-
 [
   {
     "NotificationRequestItem": {
@@ -78,20 +77,16 @@ To update the amount, it is necessary to get `NotificationRequestItem` and obtai
       "eventDate": "2023-02-16T16:38:30+01:00",
       "merchantAccountCode": "CommercetoolsGmbHDE775",
       "merchantReference": "1676561900272",
-      "operations": [
-        "CANCEL",
-        "CAPTURE",
-        "REFUND"
-      ],
+      "operations": ["CANCEL", "CAPTURE", "REFUND"],
       "paymentMethod": "mc",
       "pspReference": "DC89W6C4VMK2WN82",
       "success": "true"
     }
   }
 ]
-
 ```
-</details> 
+
+</details>
 
 <details>
 <summary>The commercetools payment representation example with NotificationRequestItem </summary>
@@ -106,12 +101,12 @@ To update the amount, it is necessary to get `NotificationRequestItem` and obtai
     "centAmount": 1000,
     "fractionDigits": 2
   },
-  
+
   ...
-  
+
   "interfaceInteractions": [
-    ... 
-  
+    ...
+
       {
         "type": {
           "typeId": "type",
@@ -124,9 +119,9 @@ To update the amount, it is necessary to get `NotificationRequestItem` and obtai
           "notification": "{\"NotificationRequestItem\":{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"eventCode\":\"AUTHORISATION\",\"eventDate\":\"2023-02-16T16:38:30+01:00\",\"merchantAccountCode\":\"CommercetoolsGmbHDE775\",\"merchantReference\":\"1676561900272\",\"operations\":[\"CANCEL\",\"CAPTURE\",\"REFUND\"],\"paymentMethod\":\"mc\",\"pspReference\":\"DC89W6C4VMK2WN82\",\"success\":\"true\"}}"
         }
       },
-  
+
      ...
-  ] 
+  ]
 }
 ```
 
