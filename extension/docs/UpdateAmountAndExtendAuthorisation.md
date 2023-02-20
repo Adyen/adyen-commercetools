@@ -272,7 +272,7 @@ To do `amountUpdatesRequest` multiple times, you need to remove the custom field
 
    </details>
 
-   > Verify if you have automatic capture disabled. You can also set `captureDelayHours` parameter in the `makePaymentRequest`. For more info see https://docs.adyen.com/online-payments/capture#automatic-capture
+   > Verify if you have automatic capture disabled. You can also set `captureDelayHours` parameter in the `createSessionRequest`. For more info see https://docs.adyen.com/online-payments/capture#automatic-capture
 
 1. Notification module returns an error `"Notification can not be processed as \"metadata.ctProjectKey\" was not found on the notification nor the path is containing the commercetools project key.",`
    > Check if the notification received from Adyen contains a field called `metadata.ctProjectKey`. This field is currently unavailable for `AUTHORISATION_ADJUSTMENT` notifications. Please [set up notifications URL with CTP project key](/notification/docs/IntegrationGuide.md#fallback-in-case-metadata-is-not-available).
