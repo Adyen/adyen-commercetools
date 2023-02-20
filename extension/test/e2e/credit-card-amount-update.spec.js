@@ -4,6 +4,7 @@ import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
 import CreditCardInitSessionFormPage from './pageObjects/CreditCardInitSessionFormPage.js'
 import httpUtils from '../../src/utils.js'
+
 import {
   waitUntil,
   fetchNotificationInterfaceInteraction,
