@@ -273,4 +273,4 @@ For example, if the cart's total amount is 10.00 EUR, and the calculated totalOf
 }
 ```
 
-To crate payment session via our integration, you need to set the `createSessionRequest` custom field to existing commercetools payment, those steps are described already on the web components integration guide on[Step 4. Create a payment session](#step-4-create-a-payment-session).
+To crate payment session via our integration, you need to set the `createSessionRequest` custom field to existing commercetools payment, those steps are described already on the web components integration guide on [Step 4. Create a payment session](./WebComponentsIntegrationGuide.md#step-4-create-a-payment-session). As stated there, the create session request payload only requires basic information like amount, currency, return URL, etc. To create a payment session with offset costs included, the merchant server needs to extend the payload with the required amount splits.
