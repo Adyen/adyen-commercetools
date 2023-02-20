@@ -43,7 +43,7 @@ Terms used in this guide:
 
 The following diagram shows checkout integration flow based on [Adyen Web Components](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0).
 
-![Flow](https://user-images.githubusercontent.com/803826/98081637-c467a380-1e77-11eb-93ed-003f7e68b59a.png)
+![Flow](./adyen-checkout-flow-diagram.png)
 
 ## How it works
 
@@ -52,9 +52,9 @@ On this page we describe the checkout integration steps between the extension mo
 - [Step 1](#step-1-commercetools-checkout-validations) : Execute required checkout validations.
 - [Step 2](#step-2-creating-a-commercetools-payment) : Create the commercetools payment object.
 - [Step 3 - Optional](#step-3-get-available-payment-methods-optional) : Set `getPaymentMethodsRequest` custom field to commercetools payment to get the list of payment methods available for the checkout.
-- [Step 4](#step-4-add-components-to-your-payments-form) : Add Adyen Web Component to your checkout payments form.
-- [Step 5](#step-5-make-a-payment) : Submit a payment request by setting `makePaymentRequest` payment custom field with the payment data returned by the Adyen web component.
-- [Step 6](#step-6-submit-additional-payment-details) : Set `submitAdditionalPaymentDetailsRequest ` custom field to commercetools payment to submit additional payment details.
+- [Step 4](#step-4-create-a-payment-session) : Submit a session request by setting `createSessionRequest` payment custom field with the basic payment data such as amount, currency and return URL.
+- [Step 5](#step-5-set-up-web-component) : Add Adyen Web Component to your checkout payments form.
+- [Step 6](#step-6-get-payment-result) : Get the result from asynchronous payment notification.
 
 ## Before you begin
 
@@ -394,7 +394,7 @@ In this case you have to handle it on the return URL front-end page.
 
 ### Adding cart and product informations (lineItems) to the request
 
-For some payment methods, it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) within the `makePaymentRequest`.
+For some payment methods, it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) within the `createSessionRequest`.
 
 Extension module can generate the line item automatically, but you need to do following steps:
 
@@ -505,6 +505,8 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems` and `add
 </details>
 
 By default, the extension module will populate `lineItems` for you but in case you want to define your own values include `lineItems` in your `createSessionRequest`.
+
+Remind that if line items are not provided in `createSessionRequest`, the returned session ID and session data would not support any payment methods which require line items, such as affirm, klarna, etc.
 
 ## Step 5: Set up Web Component
 
