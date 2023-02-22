@@ -6,6 +6,7 @@ name: CI
 on: [push]
 
 jobs:
+
   notification_build:
     name: Notification Module Build and Deployment
     concurrency: notification_build

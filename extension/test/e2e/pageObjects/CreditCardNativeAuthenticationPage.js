@@ -1,5 +1,3 @@
-import { executeInAdyenIframe } from '../e2e-test-utils.js'
-
 export default class CreditCardNativeAuthenticationPage {
   constructor(page, baseUrl) {
     this.page = page
@@ -7,14 +5,24 @@ export default class CreditCardNativeAuthenticationPage {
   }
 
   async doPaymentAuthentication() {
-    await executeInAdyenIframe(this.page, '[name=answer]', (el) =>
-      el.type('password')
-    )
+    let frameWithPasswordInput
+    // Get the nested iFrame for 3DS authentication
+    for (const frame of this.page.mainFrame().childFrames()) {
+      for (const subFrame of frame.childFrames()) {
+        frameWithPasswordInput = subFrame
+      }
+    }
 
-    await executeInAdyenIframe(this.page, 'button[type=submit]', (el, frame) =>
-      frame.$eval('#buttonSubmit', async (button) => {
-        await button.click()
-      })
+    const passwordInputEle = await frameWithPasswordInput.$('[name=answer]')
+
+    if (passwordInputEle) {
+      await passwordInputEle.type('password')
+    }
+    const submitButtonEle = await frameWithPasswordInput.$(
+      'button[type=submit]'
     )
+    if (submitButtonEle) {
+      await submitButtonEle.click()
+    }
   }
 }

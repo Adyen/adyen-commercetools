@@ -262,6 +262,51 @@ function compareTransactionStates(currentState, newState) {
 function getAddInterfaceInteractionUpdateAction(notification) {
   const moduleConfig = config.getModuleConfig()
   const notificationToUse = _.cloneDeep(notification)
+
+  // Put the recurringDetailReference out of additionalData to avoid removal
+  if (
+    notificationToUse.NotificationRequestItem?.additionalData &&
+    notificationToUse.NotificationRequestItem?.additionalData[
+      'recurring.recurringDetailReference'
+    ]
+  ) {
+    const recurringDetailReference =
+      notificationToUse.NotificationRequestItem.additionalData[
+        'recurring.recurringDetailReference'
+      ]
+
+    notificationToUse.NotificationRequestItem.recurringDetailReference =
+      recurringDetailReference
+  }
+
+  if (
+    notificationToUse.NotificationRequestItem?.additionalData &&
+    notificationToUse.NotificationRequestItem?.additionalData[
+      'recurringProcessingModel'
+    ]
+  ) {
+    const { recurringProcessingModel } =
+      notificationToUse.NotificationRequestItem.additionalData
+
+    notificationToUse.NotificationRequestItem.recurringProcessingModel =
+      recurringProcessingModel
+  }
+
+  if (
+    notificationToUse.NotificationRequestItem?.additionalData &&
+    notificationToUse.NotificationRequestItem?.additionalData[
+      'recurring.shopperReference'
+    ]
+  ) {
+    const recurringShopperReference =
+      notificationToUse.NotificationRequestItem.additionalData[
+        'recurring.shopperReference'
+      ]
+
+    notificationToUse.NotificationRequestItem.recurringShopperReference =
+      recurringShopperReference
+  }
+
   if (moduleConfig.removeSensitiveData) {
     // strip away sensitive data
     delete notificationToUse.NotificationRequestItem.additionalData
