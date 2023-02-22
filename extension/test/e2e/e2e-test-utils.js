@@ -48,6 +48,9 @@ async function getCreateSessionRequest(baseUrl, clientKey, currency = 'EUR') {
     },
     reference: new Date().getTime(),
     returnUrl: `${baseUrl}/return-url`,
+    additionalData: {
+      authorisationType: 'PreAuth',
+    },
   })
 }
 
