@@ -86,7 +86,8 @@ describe('::creditCardPayment::amount-update::', () => {
       const notificationInteraction = await waitUntil(
         async () =>
           await fetchNotificationInterfaceInteraction(
-            paymentAfterCreateSession.id
+            paymentAfterCreateSession.id,
+            'authorisation'
           )
       )
 
@@ -107,6 +108,16 @@ describe('::creditCardPayment::amount-update::', () => {
       logger.error('credit-card-amount-update::errors:', JSON.stringify(err))
     }
 
+    const notificationInteractionForAmountUpdates = await waitUntil(
+      async () =>
+        await fetchNotificationInterfaceInteraction(
+          paymentAfterCreateSession.id,
+          'authorisation_adjustment'
+        )
+    )
+
+    logger.debug(JSON.stringify(notificationInteractionForAmountUpdates))
+
     assertCreatePaymentSession(
       paymentAfterCreateSession,
       initPaymentSessionResult
@@ -114,6 +125,15 @@ describe('::creditCardPayment::amount-update::', () => {
     expect(updatedAmountStatusCode).to.equal(200)
     expect(amountUpdatesResponse.status).to.equal('received')
     expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
+
+    // assert notification response from amount updates
+    const notificationStr =
+      notificationInteractionForAmountUpdates.fields.notification
+    const notificationJson = JSON.parse(notificationStr)
+    expect(notificationJson.NotificationRequestItem.eventCode).to.equal(
+      'AUTHORISATION_ADJUSTMENT'
+    )
+    expect(notificationJson.NotificationRequestItem.success).to.equal('true')
   })
 
   async function updateAmount(
@@ -197,13 +217,18 @@ describe('::creditCardPayment::amount-update::', () => {
     return await initSessionFormPage.getPaymentAuthResult()
   }
 
-  async function fetchNotificationInterfaceInteraction(paymentId) {
+  async function fetchNotificationInterfaceInteraction(
+    paymentId,
+    interactionType
+  ) {
     const { body } = await ctpClient.fetchById(
       ctpClient.builder.payments,
       paymentId
     )
     return body.interfaceInteractions.find(
-      (interaction) => interaction.fields.type === 'notification'
+      (interaction) =>
+        interaction.fields.type === 'notification' &&
+        interaction.fields.status === interactionType
     )
   }
 })
