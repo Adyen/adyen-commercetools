@@ -4,7 +4,6 @@ import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
 import CreditCardInitSessionFormPage from './pageObjects/CreditCardInitSessionFormPage.js'
 import httpUtils from '../../src/utils.js'
-
 import {
   waitUntil,
   fetchNotificationInterfaceInteraction,
@@ -113,6 +112,17 @@ describe('::creditCardPayment::amount-update::', () => {
       logger.error('credit-card-amount-update::errors:', JSON.stringify(err))
     }
 
+    const notificationInteractionForAmountUpdates = await waitUntil(
+      async () =>
+        await fetchNotificationInterfaceInteraction(
+          ctpClient,
+          paymentAfterCreateSession.id,
+          'authorisation_adjustment'
+        )
+    )
+
+    logger.debug(JSON.stringify(notificationInteractionForAmountUpdates))
+
     assertCreatePaymentSession(
       paymentAfterCreateSession,
       initPaymentSessionResult
@@ -120,6 +130,15 @@ describe('::creditCardPayment::amount-update::', () => {
     expect(updatedAmountStatusCode).to.equal(200)
     expect(amountUpdatesResponse.status).to.equal('received')
     expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
+
+    // assert notification response from amount updates
+    const notificationStr =
+      notificationInteractionForAmountUpdates.fields.notification
+    const notificationJson = JSON.parse(notificationStr)
+    expect(notificationJson.NotificationRequestItem.eventCode).to.equal(
+      'AUTHORISATION_ADJUSTMENT'
+    )
+    expect(notificationJson.NotificationRequestItem.success).to.equal('true')
   })
 
   async function updateAmount(
