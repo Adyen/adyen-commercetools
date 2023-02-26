@@ -53,7 +53,7 @@ describe('::creditCardPayment::cancel-payment::', () => {
       'authorized("authorization success transaction") ' +
       'and when a "CancelAuthorization initial transaction" is added ' +
       'then Adyen should respond with [cancel-received] for each transaction ' +
-      'and payment should have "CancelAuthorization pending transaction`, async () => {
+      'and payment should have "CancelAuthorization success transaction" and notification`, async () => {
     let paymentAfterCreateSession
     let initPaymentSessionResult
 
