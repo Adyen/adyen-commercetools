@@ -80,7 +80,8 @@ describe('::klarnaPayment::', () => {
       'authorized("authorization success transaction") ' +
       'and when a "Manual Capture initial transaction" and then a "Refund initial transaction" are added ' +
       'then Adyen should respond with [capture-received] and [refund-received] for each transaction respectively' +
-      'and payment should have "Charge success transaction", "Refund success transaction" and notifications`, async () => {
+      'and payment should have "Charge success transaction", "Refund success transaction" and' + 
+      'notifications`, async () => {
     let paymentAfterCapture
     let paymentAfterReceivingRefundNotification
 
