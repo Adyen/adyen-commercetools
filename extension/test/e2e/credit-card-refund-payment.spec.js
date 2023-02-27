@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import ctpClientBuilder from '../../src/ctp.js'
 import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
@@ -17,7 +18,6 @@ import {
   getCreateSessionRequest,
 } from './e2e-test-utils.js'
 import { createAddTransactionAction } from '../../src/paymentHandler/payment-utils.js'
-import crypto from 'crypto'
 
 const logger = httpUtils.getLogger()
 
