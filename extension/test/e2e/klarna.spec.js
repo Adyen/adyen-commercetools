@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.js'
 import { routes } from '../../src/routes.js'
@@ -33,6 +34,8 @@ describe('::klarnaPayment::', () => {
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
+  const idempotencyKey1 = crypto.randomBytes(20).toString('hex')
+  const idempotencyKey2 = crypto.randomBytes(20).toString('hex')
 
   beforeEach(async () => {
     routes['/init-session-form'] = async (request, response) => {
@@ -78,11 +81,17 @@ describe('::klarnaPayment::', () => {
       'then it should successfully finish the payment',
     async () => {
       let paymentAfterCapture
+      let paymentAfterReceivingRefundNotification
 
       let captureEventCode
       let capturePspReference
       let captureOriginalPspReference
       let captureSuccess
+
+      let refundEventCode
+      let refundPspReference
+      let refundOriginalPspReference
+      let refundSuccess
 
       try {
         const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
@@ -139,8 +148,8 @@ describe('::klarnaPayment::', () => {
             )
         )
 
+        // #3 - Capture the payment
         if (notificationInteraction) {
-          // #3 - Capture the payment
           paymentAfterCapture = await capturePayment({
             payment: paymentAfterCreateSession,
           })
@@ -165,19 +174,78 @@ describe('::klarnaPayment::', () => {
             captureNoticationRequestItem.originalReference
           captureSuccess = captureNoticationRequestItem.success
         }
+        assertManualCaptureResponse(paymentAfterCapture)
 
         logger.debug(
           'klarna::paymentAfterCapture:',
           JSON.stringify(paymentAfterCapture)
         )
+
+        // #4 - Refund the payment
+        const { body: paymentAfterReceivingCaptureNotification } =
+          await ctpClient.fetchById(
+            ctpClient.builder.payments,
+            paymentAfterCapture.id
+          )
+
+        const { statusCode, paymentAfterRefund } =
+          await refundPaymentTransactions(
+            paymentAfterReceivingCaptureNotification
+          )
+
+        const refundPaymentStatusCode = statusCode
+        expect(refundPaymentStatusCode).to.be.equal(200)
+        const notificationInteractionForRefundPayment = await waitUntil(
+          async () =>
+            await fetchNotificationInterfaceInteraction(
+              ctpClient,
+              paymentAfterCreateSession.id,
+              `refund`
+            )
+        )
+
+        paymentAfterReceivingRefundNotification = await ctpClient.fetchById(
+          ctpClient.builder.payments,
+          paymentAfterCreateSession.id
+        )
+
+        paymentAfterReceivingRefundNotification =
+          paymentAfterReceivingRefundNotification?.body
+        assertRefundResponse(paymentAfterReceivingRefundNotification)
+
+        // assert notification response from refund payment
+        const refundNotificationStr =
+          notificationInteractionForRefundPayment.fields.notification
+        const refundNotification = JSON.parse(refundNotificationStr)
+
+        refundEventCode = refundNotification.NotificationRequestItem.eventCode
+        refundPspReference =
+          refundNotification.NotificationRequestItem.pspReference
+        refundOriginalPspReference =
+          refundNotification.NotificationRequestItem.originalReference
+        refundSuccess = refundNotification.NotificationRequestItem.success
+
+        logger.debug(
+          'klarna::paymentAfterRefund:',
+          JSON.stringify(paymentAfterRefund)
+        )
       } catch (err) {
         logger.error('klarna::errors', err)
       }
-      assertManualCaptureResponse(paymentAfterCapture)
+
       expect(captureEventCode).to.be.equal('CAPTURE')
       expect(capturePspReference).to.not.equal(paymentAfterCapture.key)
       expect(captureOriginalPspReference).to.be.equal(paymentAfterCapture.key)
       expect(captureSuccess).to.be.equal('true')
+
+      expect(refundEventCode).to.equal('REFUND')
+      expect(refundSuccess).to.equal('true')
+      expect(refundPspReference).to.not.equal(
+        paymentAfterReceivingRefundNotification.key
+      )
+      expect(refundOriginalPspReference).to.be.equal(
+        paymentAfterReceivingRefundNotification.key
+      )
     }
   )
 
@@ -267,6 +335,20 @@ describe('::klarnaPayment::', () => {
     )
   }
 
+  function assertRefundResponse(paymentAfterRefund) {
+    const refundTransactions = [
+      paymentAfterRefund.transactions[2],
+      paymentAfterRefund.transactions[3],
+      paymentAfterRefund.transactions[4],
+    ]
+    expect(paymentAfterRefund.transactions).to.have.lengthOf(5)
+
+    for (const refundTransaction of refundTransactions) {
+      expect(refundTransaction.type).to.equal('Refund')
+      expect(refundTransaction.state).to.equal('Success')
+    }
+  }
+
   function buildKlarnaCreateSessionRequest(createSessionRequest) {
     const createSessionRequestJson = JSON.parse(createSessionRequest)
     createSessionRequestJson.countryCode = 'DE'
@@ -300,5 +382,53 @@ describe('::klarnaPayment::', () => {
       },
     ]
     return JSON.stringify(createSessionRequestJson)
+  }
+  async function refundPaymentTransactions(
+    paymentAfterReceivingCaptureNotification
+  ) {
+    const { statusCode, body: refundPayment } = await ctpClient.update(
+      ctpClient.builder.payments,
+      paymentAfterReceivingCaptureNotification.id,
+      paymentAfterReceivingCaptureNotification.version,
+      [
+        createAddTransactionAction({
+          type: 'Refund',
+          state: 'Initial',
+          currency: 'EUR',
+          amount: 500,
+          custom: {
+            type: {
+              typeId: 'type',
+              key: 'ctp-adyen-integration-transaction-payment-type',
+            },
+            fields: {
+              idempotencyKey: idempotencyKey1,
+            },
+          },
+        }),
+        createAddTransactionAction({
+          type: 'Refund',
+          state: 'Initial',
+          currency: 'EUR',
+          amount: 300,
+          custom: {
+            type: {
+              typeId: 'type',
+              key: 'ctp-adyen-integration-transaction-payment-type',
+            },
+            fields: {
+              idempotencyKey: idempotencyKey2,
+            },
+          },
+        }),
+        createAddTransactionAction({
+          type: 'Refund',
+          state: 'Initial',
+          currency: 'EUR',
+          amount: 100,
+        }),
+      ]
+    )
+    return { statusCode, refundPayment }
   }
 })
