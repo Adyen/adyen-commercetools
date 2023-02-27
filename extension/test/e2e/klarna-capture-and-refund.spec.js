@@ -76,178 +76,178 @@ describe('::klarnaPayment::', () => {
     await browser.close()
   })
 
-  it(
-    'when payment method is klarna and process is done correctly, ' +
-      'then it should successfully finish the payment',
-    async () => {
-      let paymentAfterCapture
-      let paymentAfterReceivingRefundNotification
+  it(`when payment session for klarna payment is created, initialized and ' + 
+      'authorized("authorization success transaction") ' +
+      'and when a "Manual Capture initial transaction" and then a "Refund initial transaction" are added ' +
+      'then Adyen should respond with [capture-received] and [refund-received] for each transaction respectively' +
+      'and payment should have "Charge success transaction", "Refund success transaction" and notifications`, async () => {
+    let paymentAfterCapture
+    let paymentAfterReceivingRefundNotification
 
-      let captureEventCode
-      let capturePspReference
-      let captureOriginalPspReference
-      let captureSuccess
+    let captureEventCode
+    let capturePspReference
+    let captureOriginalPspReference
+    let captureSuccess
 
-      let refundEventCode
-      let refundPspReference
-      let refundOriginalPspReference
-      let refundSuccess
+    let refundEventCode
+    let refundPspReference
+    let refundOriginalPspReference
+    let refundSuccess
 
-      try {
-        const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
-        const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
+    try {
+      const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
+      const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
 
-        const browserTab = await browser.newPage()
-        // Step #1 - Create a payment session
-        // https://docs.adyen.com/online-payments/web-components#create-payment-session
-        let createSessionRequest = await getCreateSessionRequest(
-          baseUrl,
-          clientKey
-        )
-        createSessionRequest =
-          buildKlarnaCreateSessionRequest(createSessionRequest)
-        const paymentAfterCreateSession = await createPaymentSession(
-          ctpClient,
-          adyenMerchantAccount,
-          ctpProjectKey,
-          createSessionRequest
-        )
-        logger.debug(
-          'klarna::paymentAfterCreateSession:',
-          JSON.stringify(paymentAfterCreateSession)
-        )
+      const browserTab = await browser.newPage()
+      // Step #1 - Create a payment session
+      // https://docs.adyen.com/online-payments/web-components#create-payment-session
+      let createSessionRequest = await getCreateSessionRequest(
+        baseUrl,
+        clientKey
+      )
+      createSessionRequest =
+        buildKlarnaCreateSessionRequest(createSessionRequest)
+      const paymentAfterCreateSession = await createPaymentSession(
+        ctpClient,
+        adyenMerchantAccount,
+        ctpProjectKey,
+        createSessionRequest
+      )
+      logger.debug(
+        'klarna::paymentAfterCreateSession:',
+        JSON.stringify(paymentAfterCreateSession)
+      )
 
-        // Step #2 - Setup Component
-        // https://docs.adyen.com/online-payments/web-components#set-up
-        await initPaymentSession({
-          browserTab,
-          baseUrl,
-          clientKey,
-          paymentAfterCreateSession,
-        })
+      // Step #2 - Setup Component
+      // https://docs.adyen.com/online-payments/web-components#set-up
+      await initPaymentSession({
+        browserTab,
+        baseUrl,
+        clientKey,
+        paymentAfterCreateSession,
+      })
 
-        const redirectPaymentResult = await handleRedirect({
-          browserTab,
-          baseUrl,
-          clientKey,
-        })
-        logger.debug(
-          'klarna::redirectPaymentResult:',
-          JSON.stringify(redirectPaymentResult)
-        )
-        assertCreatePaymentSession(
-          paymentAfterCreateSession,
-          redirectPaymentResult
-        )
+      const redirectPaymentResult = await handleRedirect({
+        browserTab,
+        baseUrl,
+        clientKey,
+      })
+      logger.debug(
+        'klarna::redirectPaymentResult:',
+        JSON.stringify(redirectPaymentResult)
+      )
+      assertCreatePaymentSession(
+        paymentAfterCreateSession,
+        redirectPaymentResult
+      )
 
-        const notificationInteraction = await waitUntil(
-          async () =>
-            await fetchNotificationInterfaceInteraction(
-              ctpClient,
-              paymentAfterCreateSession.id
-            )
-        )
-
-        // #3 - Capture the payment
-        if (notificationInteraction) {
-          paymentAfterCapture = await capturePayment({
-            payment: paymentAfterCreateSession,
-          })
-        }
-
-        const captureNotificationInteraction = await waitUntil(
-          async () =>
-            await fetchNotificationInterfaceInteraction(
-              ctpClient,
-              paymentAfterCreateSession.id,
-              'capture'
-            )
-        )
-        const captureNotification =
-          captureNotificationInteraction.fields.notification
-        if (captureNotification) {
-          const captureNoticationRequestItem =
-            JSON.parse(captureNotification).NotificationRequestItem
-          captureEventCode = captureNoticationRequestItem.eventCode
-          capturePspReference = captureNoticationRequestItem.pspReference
-          captureOriginalPspReference =
-            captureNoticationRequestItem.originalReference
-          captureSuccess = captureNoticationRequestItem.success
-        }
-        assertManualCaptureResponse(paymentAfterCapture)
-
-        logger.debug(
-          'klarna::paymentAfterCapture:',
-          JSON.stringify(paymentAfterCapture)
-        )
-
-        // #4 - Refund the payment
-        const { body: paymentAfterReceivingCaptureNotification } =
-          await ctpClient.fetchById(
-            ctpClient.builder.payments,
-            paymentAfterCapture.id
+      const notificationInteraction = await waitUntil(
+        async () =>
+          await fetchNotificationInterfaceInteraction(
+            ctpClient,
+            paymentAfterCreateSession.id
           )
+      )
 
-        const { statusCode, paymentAfterRefund } =
-          await refundPaymentTransactions(
-            paymentAfterReceivingCaptureNotification
-          )
-
-        const refundPaymentStatusCode = statusCode
-        expect(refundPaymentStatusCode).to.be.equal(200)
-        const notificationInteractionForRefundPayment = await waitUntil(
-          async () =>
-            await fetchNotificationInterfaceInteraction(
-              ctpClient,
-              paymentAfterCreateSession.id,
-              `refund`
-            )
-        )
-
-        paymentAfterReceivingRefundNotification = await ctpClient.fetchById(
-          ctpClient.builder.payments,
-          paymentAfterCreateSession.id
-        )
-
-        paymentAfterReceivingRefundNotification =
-          paymentAfterReceivingRefundNotification?.body
-        assertRefundResponse(paymentAfterReceivingRefundNotification)
-
-        // assert notification response from refund payment
-        const refundNotificationStr =
-          notificationInteractionForRefundPayment.fields.notification
-        const refundNotification = JSON.parse(refundNotificationStr)
-
-        refundEventCode = refundNotification.NotificationRequestItem.eventCode
-        refundPspReference =
-          refundNotification.NotificationRequestItem.pspReference
-        refundOriginalPspReference =
-          refundNotification.NotificationRequestItem.originalReference
-        refundSuccess = refundNotification.NotificationRequestItem.success
-
-        logger.debug(
-          'klarna::paymentAfterRefund:',
-          JSON.stringify(paymentAfterRefund)
-        )
-      } catch (err) {
-        logger.error('klarna::errors', err)
+      // #3 - Capture the payment
+      if (notificationInteraction) {
+        paymentAfterCapture = await capturePayment({
+          payment: paymentAfterCreateSession,
+        })
       }
 
-      expect(captureEventCode).to.be.equal('CAPTURE')
-      expect(capturePspReference).to.not.equal(paymentAfterCapture.key)
-      expect(captureOriginalPspReference).to.be.equal(paymentAfterCapture.key)
-      expect(captureSuccess).to.be.equal('true')
+      const captureNotificationInteraction = await waitUntil(
+        async () =>
+          await fetchNotificationInterfaceInteraction(
+            ctpClient,
+            paymentAfterCreateSession.id,
+            'capture'
+          )
+      )
+      const captureNotification =
+        captureNotificationInteraction.fields.notification
+      if (captureNotification) {
+        const captureNoticationRequestItem =
+          JSON.parse(captureNotification).NotificationRequestItem
+        captureEventCode = captureNoticationRequestItem.eventCode
+        capturePspReference = captureNoticationRequestItem.pspReference
+        captureOriginalPspReference =
+          captureNoticationRequestItem.originalReference
+        captureSuccess = captureNoticationRequestItem.success
+      }
+      assertManualCaptureResponse(paymentAfterCapture)
 
-      expect(refundEventCode).to.equal('REFUND')
-      expect(refundSuccess).to.equal('true')
-      expect(refundPspReference).to.not.equal(
-        paymentAfterReceivingRefundNotification.key
+      logger.debug(
+        'klarna::paymentAfterCapture:',
+        JSON.stringify(paymentAfterCapture)
       )
-      expect(refundOriginalPspReference).to.be.equal(
-        paymentAfterReceivingRefundNotification.key
+
+      // #4 - Refund the payment
+      const { body: paymentAfterReceivingCaptureNotification } =
+        await ctpClient.fetchById(
+          ctpClient.builder.payments,
+          paymentAfterCapture.id
+        )
+
+      const { statusCode, paymentAfterRefund } =
+        await refundPaymentTransactions(
+          paymentAfterReceivingCaptureNotification
+        )
+
+      const refundPaymentStatusCode = statusCode
+      expect(refundPaymentStatusCode).to.be.equal(200)
+      const notificationInteractionForRefundPayment = await waitUntil(
+        async () =>
+          await fetchNotificationInterfaceInteraction(
+            ctpClient,
+            paymentAfterCreateSession.id,
+            `refund`
+          )
       )
+
+      paymentAfterReceivingRefundNotification = await ctpClient.fetchById(
+        ctpClient.builder.payments,
+        paymentAfterCreateSession.id
+      )
+
+      paymentAfterReceivingRefundNotification =
+        paymentAfterReceivingRefundNotification?.body
+      assertRefundResponse(paymentAfterReceivingRefundNotification)
+
+      // assert notification response from refund payment
+      const refundNotificationStr =
+        notificationInteractionForRefundPayment.fields.notification
+      const refundNotification = JSON.parse(refundNotificationStr)
+
+      refundEventCode = refundNotification.NotificationRequestItem.eventCode
+      refundPspReference =
+        refundNotification.NotificationRequestItem.pspReference
+      refundOriginalPspReference =
+        refundNotification.NotificationRequestItem.originalReference
+      refundSuccess = refundNotification.NotificationRequestItem.success
+
+      logger.debug(
+        'klarna::paymentAfterRefund:',
+        JSON.stringify(paymentAfterRefund)
+      )
+    } catch (err) {
+      logger.error('klarna::errors', err)
     }
-  )
+
+    expect(captureEventCode).to.be.equal('CAPTURE')
+    expect(capturePspReference).to.not.equal(paymentAfterCapture.key)
+    expect(captureOriginalPspReference).to.be.equal(paymentAfterCapture.key)
+    expect(captureSuccess).to.be.equal('true')
+
+    expect(refundEventCode).to.equal('REFUND')
+    expect(refundSuccess).to.equal('true')
+    expect(refundPspReference).to.not.equal(
+      paymentAfterReceivingRefundNotification.key
+    )
+    expect(refundOriginalPspReference).to.be.equal(
+      paymentAfterReceivingRefundNotification.key
+    )
+  })
 
   async function initPaymentSession({
     browserTab,
