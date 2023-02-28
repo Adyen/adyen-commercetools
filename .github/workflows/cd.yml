@@ -28,7 +28,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push extension module
         id: docker_build_extension
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: ./extension
           file: ./extension/Dockerfile
@@ -36,7 +36,7 @@ jobs:
           tags: commercetools/commercetools-adyen-integration-extension:${{ steps.vars.outputs.tag }}
       - name: Build and push notification module
         id: docker_build_notification
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: ./notification
           file: ./notification/Dockerfile
