@@ -162,6 +162,7 @@ describe('::config::', () => {
     'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
       'then it should load configuration correctly',
     async () => {
+      const originalAdyenConfig = process.env.ADYEN_INTEGRATION_CONFIG
       const notificationConfigFileName = '.notificationrc'
       const tempFileName = '.notificationrctemp'
 
@@ -209,6 +210,7 @@ describe('::config::', () => {
       } finally {
         fs.unlinkSync(filePath)
         renameNotificationrcFile(tempFileName, notificationConfigFileName)
+        process.env.ADYEN_INTEGRATION_CONFIG = originalAdyenConfig
       }
     }
   )
