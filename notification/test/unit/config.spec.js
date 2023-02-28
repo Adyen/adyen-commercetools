@@ -144,6 +144,7 @@ describe('::config::', () => {
   )
 
   it('when ADYEN_INTEGRATION_CONFIG is not valid JSON, it should throw error', async () => {
+    const originalAdyenConfig = process.env.ADYEN_INTEGRATION_CONFIG
     process.env.ADYEN_INTEGRATION_CONFIG = '{"a"}'
     try {
       await reloadModule('../../src/config/config.js')
@@ -152,6 +153,8 @@ describe('::config::', () => {
       expect(e.message).to.contain(
         'configuration is not provided in the JSON format'
       )
+    } finally {
+      process.env.ADYEN_INTEGRATION_CONFIG = originalAdyenConfig
     }
   })
 
@@ -159,6 +162,7 @@ describe('::config::', () => {
     'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
       'then it should load configuration correctly',
     async () => {
+      const originalAdyenConfig = process.env.ADYEN_INTEGRATION_CONFIG
       const notificationConfigFileName = '.notificationrc'
       const tempFileName = '.notificationrctemp'
 
@@ -206,6 +210,7 @@ describe('::config::', () => {
       } finally {
         fs.unlinkSync(filePath)
         renameNotificationrcFile(tempFileName, notificationConfigFileName)
+        process.env.ADYEN_INTEGRATION_CONFIG = originalAdyenConfig
       }
     }
   )

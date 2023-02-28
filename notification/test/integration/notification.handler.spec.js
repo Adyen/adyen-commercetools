@@ -29,7 +29,6 @@ describe('notification module', () => {
       const merchantReference = `notificationPayment-${new Date().getTime()}`
       // pspReference cannot be static otherwise wrong payment created in the past would be obtained
       const pspReference = `pspReference-${new Date().getTime()}`
-
       const { body: paymentBefore } = await ensurePayment(
         ctpClient,
         merchantReference,
@@ -633,7 +632,7 @@ describe('notification module', () => {
     overrideAdyenConfig({
       enableHmacSignature: true,
       secretHmacKey:
-        '44782DEF547AAA06C910C43932B1EB0C71FC68D9D0C057550C48EC2ACF6BA056',
+        '8DEBC5AEA59D98DD5CC0F0CE7B7D5676B293C341DC93B4C94DF5DB9E123314A5',
     })
 
     const notificationPayload = createNotificationPayload(

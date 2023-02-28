@@ -36,19 +36,10 @@ function withPayment(paymentObject) {
     },
     validateRequestFields() {
       if (!paymentObject.custom) return this
-      if (!isValidJSON(paymentObject.custom.fields.getPaymentMethodsRequest))
-        errors.getPaymentMethodsRequest =
-          errorMessages.GET_PAYMENT_METHODS_REQUEST_INVALID_JSON
-      if (!isValidJSON(paymentObject.custom.fields.makePaymentRequest))
-        errors.makePaymentRequest =
-          errorMessages.MAKE_PAYMENT_REQUEST_INVALID_JSON
-      if (
-        !isValidJSON(
-          paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
-        )
-      )
-        errors.submitAdditionalPaymentDetailsRequest =
-          errorMessages.SUBMIT_ADDITIONAL_PAYMENT_DETAILS_REQUEST_INVALID_JSON
+      if (!isValidJSON(paymentObject.custom.fields.createSessionRequest))
+        errors.createSessionRequest =
+          errorMessages.CREATE_SESSION_REQUEST_INVALID_JSON
+
       if (!isValidJSON(paymentObject.custom.fields.getCarbonOffsetCostsRequest))
         errors.getCarbonOffsetCostsRequest =
           errorMessages.GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON
@@ -58,47 +49,47 @@ function withPayment(paymentObject) {
       return this
     },
     validateReference() {
-      if (!paymentObject.custom || errors.makePaymentRequest) return this
+      if (!paymentObject.custom || errors.createSessionRequest) return this
       if (
-        paymentObject.custom.fields.makePaymentRequest &&
-        !paymentObject.custom.fields.makePaymentResponse
+        paymentObject.custom.fields.createSessionRequest &&
+        !paymentObject.custom.fields.createSessionResponse
       ) {
-        const makePaymentRequestObj = JSON.parse(
-          paymentObject.custom.fields.makePaymentRequest
+        const createSessionRequestObj = JSON.parse(
+          paymentObject.custom.fields.createSessionRequest
         )
-        if (!makePaymentRequestObj.reference)
+        if (!createSessionRequestObj.reference)
           errors.missingReference =
-            errorMessages.MAKE_PAYMENT_REQUEST_MISSING_REFERENCE
+            errorMessages.CREATE_SESSION_REQUEST_MISSING_REFERENCE
       }
       return this
     },
     validateAmountPlanned() {
       let amount
-      const makePaymentRequestInterfaceInteraction =
+      const createSessionRequestInterfaceInteraction =
         getLatestInterfaceInteraction(
           paymentObject.interfaceInteractions,
-          c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+          c.CTP_INTERACTION_TYPE_CREATE_SESSION
         )
-      if (makePaymentRequestInterfaceInteraction)
+      if (createSessionRequestInterfaceInteraction)
         amount = JSON.parse(
-          makePaymentRequestInterfaceInteraction.fields.request
+          createSessionRequestInterfaceInteraction.fields.request
         ).amount
       else {
-        const makePaymentRequestString =
+        const createSessionRequestString =
           paymentObject.custom &&
           paymentObject.custom.fields &&
-          paymentObject.custom.fields.makePaymentRequest
-        if (makePaymentRequestString)
-          amount = JSON.parse(makePaymentRequestString).amount
+          paymentObject.custom.fields.createSessionRequest
+        if (createSessionRequestString)
+          amount = JSON.parse(createSessionRequestString).amount
       }
       if (amount) {
-        const amountInMakePaymentRequest = Number(amount.value)
+        const amountInCreateSessionRequest = Number(amount.value)
         const amountPlannedValue = paymentObject.amountPlanned.centAmount
-        const currencyInMakePaymentRequest = amount.currency
+        const currencyInCreateSessionRequest = amount.currency
         const currencyInAmountPlanned = paymentObject.amountPlanned.currencyCode
         if (
-          amountInMakePaymentRequest !== amountPlannedValue ||
-          currencyInMakePaymentRequest !== currencyInAmountPlanned
+          amountInCreateSessionRequest !== amountPlannedValue ||
+          currencyInCreateSessionRequest !== currencyInAmountPlanned
         )
           errors.amountPlanned = errorMessages.AMOUNT_PLANNED_NOT_SAME
       }

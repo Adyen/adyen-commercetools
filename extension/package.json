@@ -1,6 +1,6 @@
 {
   "name": "commercetools-adyen-integration-extension",
-  "version": "10.1.1",
+  "version": "11.0.0",
   "description": "Integration between commercetools and Adyen payment service provider",
   "license": "MIT",
   "type": "module",
@@ -80,7 +80,7 @@
     "serialize-error": "11.0.0"
   },
   "mocha": {
-    "timeout": 120000,
+    "timeout": 300000,
     "full-trace": true
   },
   "husky": {

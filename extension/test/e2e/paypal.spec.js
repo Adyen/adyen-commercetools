@@ -1,46 +1,34 @@
 import config from '../../src/config/config.js'
 import { routes } from '../../src/routes.js'
 import {
-  assertPayment,
-  createPayment,
   initPuppeteerBrowser,
+  assertCreatePaymentSession,
   serveFile,
+  createPaymentSession,
+  getCreateSessionRequest,
 } from './e2e-test-utils.js'
 import ctpClientBuilder from '../../src/ctp.js'
-import MakePaymentFormPage from './pageObjects/PaypalMakePaymentFormPage.js'
+import PaypalInitSessionFormPage from './pageObjects/PaypalInitSessionFormPage.js'
 import PaypalPopupPage from './pageObjects/PaypalPopupPage.js'
 import httpUtils from '../../src/utils.js'
 
 describe('::paypalPayment::', () => {
   let browser
   let ctpClient
-  let payment
-  let paypalMakePaymentFormPage
+  let initPaymentSessionFormPage
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
+  const logger = httpUtils.getLogger()
 
   beforeEach(async () => {
-    routes['/make-payment-form'] = async (request, response) => {
+    routes['/init-session-form'] = async (request, response) => {
       serveFile(
-        './test/e2e/fixtures/paypal-make-payment-form.html',
+        './test/e2e/fixtures/paypal-init-session-form.html',
         request,
         response
       )
     }
-    routes['/make-payment'] = async (request, response) => {
-      const body = await httpUtils.collectRequestData(request)
-      payment = await createPayment(
-        ctpClient,
-        adyenMerchantAccount,
-        ctpProjectKey,
-        body
-      )
-      const makePaymentResponse = payment.custom.fields.makePaymentResponse
-      return httpUtils.sendResponse({
-        response,
-        data: makePaymentResponse,
-      })
-    }
+
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
     ctpClient = await ctpClientBuilder.get(ctpConfig)
     browser = await initPuppeteerBrowser()
@@ -54,16 +42,24 @@ describe('::paypalPayment::', () => {
     'when payment method is paypal and process is done correctly, ' +
       'then it should successfully finish the payment',
     async () => {
+      // let initPaymentSessionResult
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
       const browserTab = await browser.newPage()
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
       const paypalMerchantId =
         config.getAdyenConfig(adyenMerchantAccount).paypalMerchantId
 
-      await makePayment({
+      const paymentAfterCreateSession = await createSession(clientKey)
+      logger.debug(
+        'credit-card::paymentAfterCreateSession:',
+        JSON.stringify(paymentAfterCreateSession)
+      )
+
+      await initPaymentSession({
         browserTab,
         baseUrl,
         clientKey,
+        paymentAfterCreateSession,
         paypalMerchantId,
       })
 
@@ -71,50 +67,59 @@ describe('::paypalPayment::', () => {
       const popup = pages[pages.length - 1]
 
       await handlePaypalPopUp(popup)
+      const initPaymentSessionResult =
+        await initPaymentSessionFormPage.getPaymentAuthResult()
 
-      const updatedPayment = await handleRedirect(browserTab)
-
-      assertPayment(updatedPayment)
+      assertCreatePaymentSession(
+        paymentAfterCreateSession,
+        initPaymentSessionResult
+      )
     }
   )
 
-  async function makePayment({
+  async function createSession(clientKey) {
+    const createSessionRequest = await getCreateSessionRequest(clientKey)
+    let payment
+    const startTime = new Date().getTime()
+    try {
+      payment = await createPaymentSession(
+        ctpClient,
+        adyenMerchantAccount,
+        ctpProjectKey,
+        createSessionRequest
+      )
+    } catch (err) {
+      logger.error('paypal::createSession::errors', JSON.stringify(err))
+    } finally {
+      const endTime = new Date().getTime()
+      logger.debug('paypal::createSession:', endTime - startTime)
+    }
+
+    return payment
+  }
+
+  async function initPaymentSession({
     browserTab,
     baseUrl,
     clientKey,
+    paymentAfterCreateSession,
     paypalMerchantId,
   }) {
-    paypalMakePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
-    await paypalMakePaymentFormPage.goToThisPage()
-    await paypalMakePaymentFormPage.generateAdyenMakePaymentForm(
-      clientKey,
-      paypalMerchantId
+    initPaymentSessionFormPage = new PaypalInitSessionFormPage(
+      browserTab,
+      baseUrl
     )
-    await browserTab.waitForTimeout(2_000)
-    await paypalMakePaymentFormPage.clickOnPaypalButton()
+    await initPaymentSessionFormPage.goToThisPage()
+
+    await initPaymentSessionFormPage.initPaymentSession({
+      clientKey,
+      paymentAfterCreateSession,
+      paypalMerchantId,
+    })
   }
 
   async function handlePaypalPopUp(browserTab) {
     const paypalPopupPage = new PaypalPopupPage(browserTab)
     await paypalPopupPage.handlePaypalPopUp()
-  }
-
-  async function handleRedirect() {
-    const submitAdditionalPaymentDetailsRequest =
-      await paypalMakePaymentFormPage.getAdditionalPaymentDetails()
-
-    const { body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      payment.id,
-      payment.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'submitAdditionalPaymentDetailsRequest',
-          value: submitAdditionalPaymentDetailsRequest,
-        },
-      ]
-    )
-    return updatedPayment
   }
 })

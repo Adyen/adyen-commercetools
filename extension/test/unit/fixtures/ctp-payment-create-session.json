@@ -1,0 +1,58 @@
+{
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 795,
+    "fractionDigits": 2
+  },
+  "paymentMethodInfo": {
+    "paymentInterface": "ctp-adyen-integration"
+  },
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "ctp-adyen-integration-web-components-payment-type"
+    },
+    "fields": {}
+  },
+  "transactions": [
+    {
+      "id": "6b1d4c68-8e31-4528-9af8-dc09ad653d91",
+      "type": "Authorization",
+      "amount": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 495,
+        "fractionDigits": 2
+      },
+      "interactionId": "8835513921644842",
+      "state": "Success"
+    }
+  ],
+  "interfaceInteractions": [
+    {
+      "type": {
+        "typeId": "type",
+        "key": "ctp-adyen-integration-interaction-payment-type"
+      },
+      "fields": {
+        "request": "{\"method\":\"POST\",\"body\":\"{\\\"amount\\\":{\\\"currency\\\":\\\"EUR\\\",\\\"value\\\":1000},\\\"reference\\\":1676893129639,\\\"returnUrl\\\":\\\"test_WT5XD2TUYFH2TBJDE5UKLYDHF4U4W7XP/return-url\\\",\\\"metadata\\\":{\\\"ctProjectKey\\\":\\\"adyen-qa\\\"},\\\"applicationInfo\\\":{\\\"merchantApplication\\\":{\\\"name\\\":\\\"commercetools-adyen-integration-extension\\\",\\\"version\\\":\\\"10.1.1\\\"},\\\"externalPlatform\\\":{\\\"name\\\":\\\"commercetools\\\",\\\"integrator\\\":\\\"commercetools Professional Services\\\"}},\\\"merchantAccount\\\":\\\"CommercetoolsGmbHDE775\\\"}\",\"headers\":{\"Content-Type\":\"application/json\",\"X-Api-Key\":\"***\"}}",
+        "createdAt": "2019-02-28T22:16:04.246Z",
+        "response": "response=",
+        "type": "createSession"
+      }
+    },
+    {
+      "type": {
+        "typeId": "type",
+        "key": "ctp-adyen-integration-interaction-payment-type"
+      },
+      "fields": {
+        "request": "request",
+        "createdAt": "2019-02-28T22:16:19.086Z",
+        "response": "response",
+        "type": "completePayment"
+      }
+    }
+  ]
+}

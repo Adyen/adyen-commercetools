@@ -16,7 +16,7 @@
       "key": "ctp-adyen-integration-web-components-payment-type"
     },
     "fields": {
-      "makePaymentRequest": "{\"amount\":{\"currency\":\"EUR\",\"value\":595},\"reference\":\"testReference\",\"paymentMethod\":{\"type\":\"scheme\",\"encryptedCardNumber\":\"test_4111111111111111\",\"encryptedExpiryMonth\":\"test_03\",\"encryptedExpiryYear\":\"test_2030\",\"encryptedSecurityCode\":\"test_737\"},\"returnUrl\":\"https://your-company.com/\"}"
+      "createSessionRequest": "{ \"amount\": { \"currency\": \"EUR\", \"value\": 1000 }, \"reference\": \"YOUR_REFERENCE\", \"channel\": \"Web\", \"returnUrl\": \"https://your-company.com/...\", \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\" }"
     }
   },
   "paymentStatus": {},

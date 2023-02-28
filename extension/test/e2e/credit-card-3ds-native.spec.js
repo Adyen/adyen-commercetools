@@ -3,14 +3,15 @@ import { routes } from '../../src/routes.js'
 import config from '../../src/config/config.js'
 import httpUtils from '../../src/utils.js'
 import {
-  assertPayment,
-  createPayment,
   initPuppeteerBrowser,
   serveFile,
+  createPaymentSession,
+  getCreateSessionRequest,
+  getRequestParams,
+  assertCreatePaymentSession,
 } from './e2e-test-utils.js'
-import MakePaymentFormPage from './pageObjects/CreditCardMakePaymentFormPage.js'
-import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
-import CreditCardNativePage from './pageObjects/CreditCard3dsNativePage.js'
+import CreditCardNativeAuthenticationPage from './pageObjects/CreditCardNativeAuthenticationPage.js'
+import CreditCardInitSessionFormPage from './pageObjects/CreditCardInitSessionFormPage.js'
 
 const logger = httpUtils.getLogger()
 
@@ -22,9 +23,9 @@ describe('::creditCardPayment3dsNative::', () => {
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
 
   beforeEach(async () => {
-    routes['/make-payment-form'] = async (request, response) => {
+    routes['/init-session-form'] = async (request, response) => {
       serveFile(
-        './test/e2e/fixtures/3ds-v2-make-payment-form.html',
+        './test/e2e/fixtures/3ds-v2-init-session-form.html',
         request,
         response
       )
@@ -37,7 +38,7 @@ describe('::creditCardPayment3dsNative::', () => {
       )
     }
     routes['/return-url'] = async (request, response) => {
-      const body = await httpUtils.collectRequestData(request)
+      const params = getRequestParams(request.url)
       return httpUtils.sendResponse({
         response,
         headers: {
@@ -45,7 +46,9 @@ describe('::creditCardPayment3dsNative::', () => {
         },
         data:
           '<!DOCTYPE html><html><head></head>' +
-          `<body><div id=redirect-response>${body[0].toString()}</div></body></html>`,
+          '<body><div id=redirect-response>' +
+          `<div id=sessionId>${params.sessionId}</div><div id=redirectResult>${params.redirectResult}</div>` +
+          '</div></body></html>',
       })
     }
 
@@ -69,129 +72,94 @@ describe('::creditCardPayment3dsNative::', () => {
 
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
-      let paymentAfterAuthentication
+      let initPaymentResult
+      let paymentAfterCreateSession
       try {
         const browserTab = await browser.newPage()
-        const paymentAfterMakePayment = await makePayment({
+        // Step #1 - Create a payment session
+        // https://docs.adyen.com/online-payments/web-components#create-payment-session
+        const createSessionRequest = await getCreateSessionRequest(
+          baseUrl,
+          clientKey
+        )
+
+        paymentAfterCreateSession = await createPaymentSession(
+          ctpClient,
+          adyenMerchantAccount,
+          ctpProjectKey,
+          createSessionRequest
+        )
+        logger.debug(
+          'credit-card-3ds-native::paymentAfterCreateSession:',
+          JSON.stringify(paymentAfterCreateSession)
+        )
+
+        // Step #2 - Setup Component
+        // https://docs.adyen.com/online-payments/web-components#set-up
+        await initPaymentSession({
           browserTab,
           baseUrl,
+          clientKey,
+          paymentAfterCreateSession,
           creditCardNumber,
           creditCardDate,
           creditCardCvc,
-          clientKey,
         })
-        logger.debug(
-          'credit-card-3ds-native::paymentAfterMakePayment:',
-          JSON.stringify(paymentAfterMakePayment)
-        )
-        paymentAfterAuthentication = await performChallengeFlow({
-          payment: paymentAfterMakePayment,
+
+        // Step #3 - Handle Redirect
+        // https://docs.adyen.com/online-payments/web-components#handle-redirect-result
+        initPaymentResult = await performChallengeFlow({
           browserTab,
           baseUrl,
           clientKey,
         })
         logger.debug(
-          'credit-card-3ds-native::paymentAfterAuthentication:',
-          JSON.stringify(paymentAfterAuthentication)
+          'credit-card-3ds-native::initPaymentResult:',
+          JSON.stringify(initPaymentResult)
         )
       } catch (err) {
         logger.error('credit-card-3ds-native::errors', JSON.stringify(err))
       }
-      assertPayment(paymentAfterAuthentication)
+      assertCreatePaymentSession(paymentAfterCreateSession, initPaymentResult)
     }
   )
 
-  async function makePayment({
+  async function initPaymentSession({
     browserTab,
     baseUrl,
+    clientKey,
+    paymentAfterCreateSession,
     creditCardNumber,
     creditCardDate,
     creditCardCvc,
-    clientKey,
   }) {
-    const makePaymentFormPage = new MakePaymentFormPage(browserTab, baseUrl)
-    await makePaymentFormPage.goToThisPage()
-    const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest({
-      creditCardNumber,
-      creditCardDate,
-      creditCardCvc,
-      clientKey,
-    })
-    let payment = null
-    const startTime = new Date().getTime()
-    try {
-      payment = await createPayment(
-        ctpClient,
-        adyenMerchantAccount,
-        ctpProjectKey,
-        makePaymentRequest
-      )
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug('credit-card-3ds-native::makePayment:', endTime - startTime)
-    }
-    return payment
-  }
-
-  async function performChallengeFlow({
-    payment,
-    browserTab,
-    baseUrl,
-    clientKey,
-  }) {
-    // Submit additional details 1
-    const { makePaymentResponse: makePaymentResponseString } =
-      payment.custom.fields
-    const makePaymentResponse = await JSON.parse(makePaymentResponseString)
-    const redirectPaymentFormPage = new RedirectPaymentFormPage(
+    const initSessionFormPage = new CreditCardInitSessionFormPage(
       browserTab,
       baseUrl
     )
-    await redirectPaymentFormPage.goToThisPage()
-    await redirectPaymentFormPage.redirectToAdyenPaymentPage(
-      makePaymentResponse,
-      clientKey
-    )
+    await initSessionFormPage.goToThisPage()
+    return await initSessionFormPage.initPaymentSession({
+      clientKey,
+      paymentAfterCreateSession,
+      creditCardNumber,
+      creditCardDate,
+      creditCardCvc,
+    })
+  }
 
+  async function performChallengeFlow({ browserTab, baseUrl }) {
     await browserTab.waitForTimeout(5_000)
 
-    // Submit additional details
-    const creditCardNativePage = new CreditCardNativePage(browserTab, baseUrl)
-    const additionalPaymentDetailsString =
-      await creditCardNativePage.finish3dsNativePayment()
-
-    logger.debug(
-      'additionalPaymentDetailsString',
-      additionalPaymentDetailsString
+    const creditCardAuthenticationPage = new CreditCardNativeAuthenticationPage(
+      browserTab
     )
-    let result = null
-    const startTime = new Date().getTime()
-    try {
-      result = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          {
-            action: 'setCustomField',
-            name: 'submitAdditionalPaymentDetailsRequest',
-            value: additionalPaymentDetailsString,
-          },
-        ]
-      )
-    } catch (err) {
-      logger.error(
-        'credit-card-3ds-native::performChallengeFlow::errors:',
-        JSON.stringify(err)
-      )
-      throw err
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug(
-        'credit-card-3ds-native::performChallengeFlow:',
-        endTime - startTime
-      )
-    }
-    return result.body
+
+    await creditCardAuthenticationPage.doPaymentAuthentication()
+
+    const initSessionFormPage = new CreditCardInitSessionFormPage(
+      browserTab,
+      baseUrl
+    )
+    return await initSessionFormPage.getPaymentAuthResult()
   }
 })

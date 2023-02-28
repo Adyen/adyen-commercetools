@@ -5,6 +5,7 @@
   - [Make an API call to capture a payment:](#make-an-api-call-to-capture-a-payment)
   - [Partial capture](#partial-capture)
   - [Retry capture requests](#retry-capture-requests)
+    - [Generating idempotency key by adyen-integration](#generating-idempotency-key-by-adyen-integration)
   - [Custom manual capture reference](#custom-manual-capture-reference)
   - [More info on capture](#more-info-on-capture)
 

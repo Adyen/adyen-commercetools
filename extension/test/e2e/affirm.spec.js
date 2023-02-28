@@ -3,14 +3,16 @@ import config from '../../src/config/config.js'
 import { routes } from '../../src/routes.js'
 import httpUtils from '../../src/utils.js'
 import {
-  assertPayment,
-  createPayment,
+  assertCreatePaymentSession,
+  getCreateSessionRequest,
+  createPaymentSession,
   initPuppeteerBrowser,
   serveFile,
+  getRequestParams,
 } from './e2e-test-utils.js'
-import AffirmMakePaymentFormPage from './pageObjects/AffirmMakePaymentFormPage.js'
 import RedirectPaymentFormPage from './pageObjects/RedirectPaymentFormPage.js'
-import AffirmPage from './pageObjects/AffirmPage.js'
+import AffirmRedirectAuthenticationPage from './pageObjects/AffirmRedirectAuthenticationPage.js'
+import AffirmInitSessionFormPage from './pageObjects/AffirmInitSessionFormPage.js'
 
 const logger = httpUtils.getLogger()
 
@@ -22,9 +24,9 @@ describe('::affirmPayment::', () => {
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
 
   beforeEach(async () => {
-    routes['/make-payment-form'] = async (request, response) => {
+    routes['/init-session-form'] = async (request, response) => {
       serveFile(
-        './test/e2e/fixtures/affirm-make-payment-form.html',
+        './test/e2e/fixtures/affirm-init-session-form.html',
         request,
         response
       )
@@ -36,18 +38,20 @@ describe('::affirmPayment::', () => {
         response
       )
     }
-    routes['/return-url'] = async (request, response) =>
-      httpUtils.sendResponse({
+    routes['/return-url'] = async (request, response) => {
+      const params = getRequestParams(request.url)
+      return httpUtils.sendResponse({
         response,
         headers: {
           'Content-Type': 'text/html',
         },
         data:
           '<!DOCTYPE html><html><head></head>' +
-          '<body id=redirect-response>' +
-          'This is a return page to show users after they finish the payment' +
-          '</body></html>',
+          '<body><div id=redirect-response>' +
+          `<div id=sessionId>${params.sessionId}</div><div id=redirectResult>${params.redirectResult}</div>` +
+          '</div></body></html>',
       })
+    }
 
     const ctpConfig = config.getCtpConfig(ctpProjectKey)
     ctpClient = await ctpClientBuilder.get(ctpConfig)
@@ -64,118 +68,131 @@ describe('::affirmPayment::', () => {
     async () => {
       const baseUrl = config.getModuleConfig().apiExtensionBaseUrl
       const clientKey = config.getAdyenConfig(adyenMerchantAccount).clientKey
-      let paymentAfterHandleRedirect
+      let paymentAfterCreateSession
+      let redirectPaymentResult
       try {
         const browserTab = await browser.newPage()
-        const paymentAfterMakePayment = await makePayment({
+        // Step #1 - Create a payment session
+        // https://docs.adyen.com/online-payments/web-components#create-payment-session
+        let createSessionRequest = await getCreateSessionRequest(
+          baseUrl,
+          clientKey,
+          'USD'
+        )
+        createSessionRequest =
+          buildAffirmCreateSessionRequest(createSessionRequest)
+        paymentAfterCreateSession = await createPaymentSession(
+          ctpClient,
+          adyenMerchantAccount,
+          ctpProjectKey,
+          createSessionRequest,
+          'USD'
+        )
+        logger.debug(
+          'affirm::paymentAfterCreateSession:',
+          JSON.stringify(paymentAfterCreateSession)
+        )
+
+        // Step #2 - Setup Component
+        // https://docs.adyen.com/online-payments/web-components#set-up
+        await initPaymentSession({
+          browserTab,
+          baseUrl,
+          clientKey,
+          paymentAfterCreateSession,
+        })
+
+        redirectPaymentResult = await handleRedirect({
           browserTab,
           baseUrl,
           clientKey,
         })
         logger.debug(
-          'affirm::paymentAfterMakePayment:',
-          JSON.stringify(paymentAfterMakePayment)
-        )
-        paymentAfterHandleRedirect = await handleRedirect({
-          browserTab,
-          baseUrl,
-          payment: paymentAfterMakePayment,
-        })
-        logger.debug(
-          'affirm::paymentAfterHandleRedirect:',
-          JSON.stringify(paymentAfterHandleRedirect)
+          'affirm::redirectPaymentResult:',
+          JSON.stringify(redirectPaymentResult)
         )
       } catch (err) {
         logger.error('affirm::errors', err)
       }
-      assertPayment(paymentAfterHandleRedirect)
+      assertCreatePaymentSession(
+        paymentAfterCreateSession,
+        redirectPaymentResult
+      )
     }
   )
 
-  async function makePayment({ browserTab, baseUrl, clientKey }) {
-    const makePaymentFormPage = new AffirmMakePaymentFormPage(
+  async function initPaymentSession({
+    browserTab,
+    baseUrl,
+    clientKey,
+    paymentAfterCreateSession,
+  }) {
+    const initPaymentSessionFormPage = new AffirmInitSessionFormPage(
       browserTab,
       baseUrl
     )
-    await makePaymentFormPage.goToThisPage()
-    const makePaymentRequest = await makePaymentFormPage.getMakePaymentRequest(
-      clientKey
-    )
-    let payment = null
-    const startTime = new Date().getTime()
-    try {
-      payment = await createPayment(
-        ctpClient,
-        adyenMerchantAccount,
-        ctpProjectKey,
-        makePaymentRequest,
-        'USD'
-      )
-    } catch (err) {
-      logger.error('affirm::makePaymentRequest::errors', JSON.stringify(err))
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug(
-        'affirm::makePayment::elapsedMilliseconds:',
-        endTime - startTime
-      )
-    }
-    return payment
+    await initPaymentSessionFormPage.goToThisPage()
+
+    return await initPaymentSessionFormPage.initPaymentSession({
+      clientKey,
+      paymentAfterCreateSession,
+    })
   }
 
-  async function handleRedirect({ browserTab, baseUrl, payment }) {
-    const { makePaymentResponse: makePaymentResponseString } =
-      payment.custom.fields
-    const makePaymentResponse = await JSON.parse(makePaymentResponseString)
-
+  async function handleRedirect({ browserTab, baseUrl, clientKey }) {
     // Redirect to Affirm page
+    const affirmPage = new AffirmRedirectAuthenticationPage(browserTab)
+
+    const { sessionId, redirectResult } =
+      await affirmPage.doPaymentAuthentication()
+
     const redirectPaymentFormPage = new RedirectPaymentFormPage(
       browserTab,
       baseUrl
     )
     await redirectPaymentFormPage.goToThisPage()
-    await redirectPaymentFormPage.redirectToAdyenPaymentPage(
-      makePaymentResponse
-    )
-
-    const affirmPage = new AffirmPage(browserTab)
-
-    await affirmPage.finishAffirmPayment()
-    await browserTab.waitForSelector('#redirect-response')
-
-    // Submit payment details
-    const returnPageUrl = new URL(browserTab.url())
-    const searchParamsJson = Object.fromEntries(returnPageUrl.searchParams)
-    let updatedPayment = null
-    const startTime = new Date().getTime()
-    try {
-      updatedPayment = await ctpClient.update(
-        ctpClient.builder.payments,
-        payment.id,
-        payment.version,
-        [
-          {
-            action: 'setCustomField',
-            name: 'submitAdditionalPaymentDetailsRequest',
-            value: JSON.stringify({
-              details: searchParamsJson,
-            }),
-          },
-        ]
+    const submittedRedirectResult =
+      await redirectPaymentFormPage.redirectToAdyenPaymentPage(
+        clientKey,
+        sessionId,
+        redirectResult
       )
-    } catch (err) {
-      logger.error(
-        'affirm::submitAdditionalPaymentDetailsRequest::errors',
-        JSON.stringify(err)
-      )
-    } finally {
-      const endTime = new Date().getTime()
-      logger.debug(
-        'affirm::submitAdditionalPaymentDetailsRequest::elapsedMilliseconds:',
-        endTime - startTime
-      )
+    return submittedRedirectResult
+  }
+
+  function buildAffirmCreateSessionRequest(createSessionRequest) {
+    const createSessionRequestJson = JSON.parse(createSessionRequest)
+    createSessionRequestJson.countryCode = 'US'
+    createSessionRequestJson.shopperReference = 'YOUR TEST REFERENCE'
+    createSessionRequestJson.telephoneNumber = '+31612345678'
+    createSessionRequestJson.billingAddress = {
+      city: 'San Francisco',
+      country: 'US',
+      houseNumberOrName: '274',
+      postalCode: '94107',
+      stateOrProvince: 'CA',
+      street: 'Brannan St.',
     }
-
-    return updatedPayment.body
+    createSessionRequestJson.lineItems = [
+      {
+        quantity: '1',
+        amountExcludingTax: '331',
+        taxPercentage: '2100',
+        description: 'Shoes',
+        id: 'Item #1',
+        taxAmount: '69',
+        amountIncludingTax: '400',
+      },
+      {
+        quantity: '2',
+        amountExcludingTax: '248',
+        taxPercentage: '2100',
+        description: 'Socks',
+        id: 'Item #2',
+        taxAmount: '52',
+        amountIncludingTax: '300',
+      },
+    ]
+    return JSON.stringify(createSessionRequestJson)
   }
 })

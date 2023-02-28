@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Create Session for Affirm Payment</title>
+
+    <link
+      rel="stylesheet"
+      href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.31.2/adyen.css"
+      integrity="sha384-u0ZzEn9TjQx9ID0fkB21aOi32DxL9+b2ngTVz2x3q5wTi8sMfW3l49Dpe+TmBhb2"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div>
+      <input
+        type="text"
+        id="adyen-client-key"
+        placeholder="Adyen client key"
+      /><br />
+      <input
+        type="text"
+        id="adyen-session-id"
+        placeholder="Adyen session ID"
+      /><br />
+      <textarea
+        id="adyen-session-data"
+        placeholder="Adyen session data"
+      ></textarea
+      ><br />
+
+      <textarea id="adyen-payment-form-input"> </textarea>
+      <br />
+      <input type="text" class="firstname secondname" />
+    </div>
+    <br />
+    <div id="affirm-container"></div>
+
+    <script
+      src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.31.2/adyen.js"
+      integrity="sha384-TGSekrRO14NlnixlI9TqN5QMPFNoLTJGzTijnllWjU0wP1GZwa/LdwZmgcb+WHft"
+      crossorigin="anonymous"
+    ></script>
+    <script type="application/javascript">
+      const configuration = {
+        environment: 'test', // When you"re ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
+        clientKey: '', // Your client key. To find out how to generate one, see https://docs.adyen.com/development-resources/client-side-authentication.
+        session: {
+          id: '',
+          sessionData: '',
+        },
+
+        onPaymentCompleted: (result, component) => {
+          console.info(result, component)
+          document.getElementById('adyen-payment-auth-result').innerHTML =
+            JSON.stringify(result)
+        },
+        onError: (error, component) => {
+          console.error(error.name, error.message, error.stack, component)
+          document.getElementById('adyen-payment-auth-result').innerHTML =
+            JSON.stringify(error)
+        },
+        showPayButton: true,
+        countryCode: 'US', // the country code from the
+      }
+      async function renderAffirmWebComponent() {
+        const clientKeyElement = document.getElementById('adyen-client-key')
+        configuration.clientKey = clientKeyElement.value
+        configuration.session.id =
+          document.getElementById('adyen-session-id').value
+        configuration.session.sessionData =
+          document.getElementById('adyen-session-data').value
+        const checkout = await AdyenCheckout(configuration)
+        checkout.create('affirm').mount('#affirm-container')
+      }
+      function buildCreateSessionFormInput() {
+        const createSessionFormInput = {}
+
+        createSessionFormInput.shopperEmail = 'test@test.com'
+        createSessionFormInput.telephoneNumber = '+31612345678'
+
+        createSessionFormInput.shopperName = {
+          firstName: 'firstName',
+          lastName: 'lastName',
+        }
+
+        createSessionFormInput.billingAddress = {
+          city: 'San Francisco',
+          country: 'US',
+          houseNumberOrName: '274',
+          postalCode: '94107',
+          street: 'Brannan St.',
+          stateCode: 'CA',
+        }
+        document.getElementById('adyen-payment-form-input').innerText =
+          JSON.stringify(createSessionFormInput)
+      }
+
+      const sessionDataElement = document.getElementById('adyen-session-data')
+      sessionDataElement.addEventListener('blur', () => {
+        renderAffirmWebComponent()
+      })
+
+      buildCreateSessionFormInput()
+    </script>
+  </body>
+</html>

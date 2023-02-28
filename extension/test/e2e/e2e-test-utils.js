@@ -40,52 +40,44 @@ async function initPuppeteerBrowser() {
   })
 }
 
-function assertPayment(
-  payment,
-  finalAdyenPaymentInteractionName = 'submitAdditionalPaymentDetails'
-) {
-  const {
-    [`${finalAdyenPaymentInteractionName}Response`]:
-      finalAdyenPaymentResponseString,
-  } = payment.custom.fields
-  const finalAdyenPaymentResponse = JSON.parse(finalAdyenPaymentResponseString)
-  expect(finalAdyenPaymentResponse.resultCode).to.equal(
-    'Authorised',
-    `resultCode is not Authorised: ${finalAdyenPaymentResponseString}`
-  )
-  expect(finalAdyenPaymentResponse.pspReference).to.match(
-    /[A-Z0-9]+/,
-    `pspReference does not match '/[A-Z0-9]+/': ${finalAdyenPaymentResponseString}`
-  )
-
-  const finalAdyenPaymentInteraction = getLatestInterfaceInteraction(
-    payment.interfaceInteractions,
-    finalAdyenPaymentInteractionName
-  )
-  expect(finalAdyenPaymentInteraction.fields.response).to.equal(
-    finalAdyenPaymentResponseString
-  )
-
-  expect(payment.transactions).to.have.lengthOf(1)
-  const transaction = payment.transactions[0]
-  expect(transaction.state).to.equal('Success')
-  expect(transaction.type).to.equal('Authorization')
-  expect(transaction.interactionId).to.equal(
-    finalAdyenPaymentResponse.pspReference
-  )
-  expect(transaction.amount.centAmount).to.equal(
-    payment.amountPlanned.centAmount
-  )
-  expect(transaction.amount.currencyCode).to.equal(
-    payment.amountPlanned.currencyCode
-  )
+async function getCreateSessionRequest(baseUrl, clientKey, currency = 'EUR') {
+  return JSON.stringify({
+    amount: {
+      currency,
+      value: 1000,
+    },
+    reference: new Date().getTime(),
+    returnUrl: `${baseUrl}/return-url`,
+    additionalData: {
+      authorisationType: 'PreAuth',
+    },
+  })
 }
 
-async function createPayment(
+function assertCreatePaymentSession(
+  paymentAfterCreateSession,
+  initPaymentSessionResult
+) {
+  const { createSessionResponse } = paymentAfterCreateSession.custom.fields
+  const initPaymentSessionResultJson = JSON.parse(initPaymentSessionResult)
+
+  const finalAdyenPaymentInteraction = getLatestInterfaceInteraction(
+    paymentAfterCreateSession.interfaceInteractions,
+    c.CTP_INTERACTION_TYPE_CREATE_SESSION
+  )
+
+  expect(finalAdyenPaymentInteraction.fields.response).to.equal(
+    createSessionResponse
+  )
+  expect(initPaymentSessionResultJson.resultCode).to.equal('Authorised')
+  expect(initPaymentSessionResultJson.sessionData).to.not.equal('undefined')
+}
+
+async function createPaymentSession(
   ctpClient,
   adyenMerchantAccount,
   commercetoolsProjectKey,
-  makePaymentRequest,
+  createSessionRequest,
   currency = 'EUR'
 ) {
   const paymentDraft = {
@@ -104,7 +96,7 @@ async function createPayment(
       fields: {
         adyenMerchantAccount,
         commercetoolsProjectKey,
-        makePaymentRequest,
+        createSessionRequest,
       },
     },
   }
@@ -134,11 +126,28 @@ function serveFile(pathName, req, res) {
   })
 }
 
+function getRequestParams(url) {
+  const queries = url.split('?')
+  const result = {}
+  if (queries.length >= 2) {
+    queries[1].split('&').forEach((item) => {
+      try {
+        result[item.split('=')[0]] = item.split('=')[1]
+      } catch (e) {
+        result[item.split('=')[0]] = ''
+      }
+    })
+  }
+  return result
+}
+
 export {
   pasteValue,
   executeInAdyenIframe,
-  assertPayment,
-  createPayment,
+  assertCreatePaymentSession,
+  getCreateSessionRequest,
+  createPaymentSession,
   initPuppeteerBrowser,
   serveFile,
+  getRequestParams,
 }
