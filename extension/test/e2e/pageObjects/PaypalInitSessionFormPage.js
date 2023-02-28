@@ -10,7 +10,7 @@ export default class PaypalInitSessionFormPage extends InitSessionFormPage {
     await this.page.waitForSelector('#paypal-merchant-id')
     await this.page.type('#paypal-merchant-id', paypalMerchantId)
     await super.initPaymentSession(clientKey, paymentAfterCreateSession)
-    await this.page.waitForTimeout(2_000)
+    await this.page.waitForTimeout(4_000)
     await this.clickOnPaypalButton()
   }
 
