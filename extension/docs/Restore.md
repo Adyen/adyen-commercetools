@@ -242,7 +242,7 @@ The response includes the delivery, product and total offset costs:
 
 </details>
 
-## Making a payment with offset costs
+## Create a payment session with offset costs
 
 To integrate offset costs as part of the payment, you'll need to send the [splits](https://docs.adyen.com/api-explorer/#/CheckoutService/latest/post/payments__reqParam_splits) array.
 
@@ -273,4 +273,4 @@ For example, if the cart's total amount is 10.00 EUR, and the calculated totalOf
 }
 ```
 
-To make payment via our integration, you need to set the `makePaymentRequest` custom field to existing commercetools payment, those steps are described already on the web components integration guide on [Step 5: Make a payment](./WebComponentsIntegrationGuide.md/#step-5-make-a-payment). As stated there, the original payment request payload is genarated by Adyen web components, so to make a payment with offset costs included, the merchant server needs to extend the payload with the required amount splits.
+To crate payment session via our integration, you need to set the `createSessionRequest` custom field to existing commercetools payment, those steps are described already on the web components integration guide on [Step 4. Create a payment session](./WebComponentsIntegrationGuide.md#step-4-create-a-payment-session). As stated there, the create session request payload only requires basic information like amount, currency, return URL, etc. To create a payment session with offset costs included, the merchant server needs to extend the payload with the required amount splits.
