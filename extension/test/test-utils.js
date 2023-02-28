@@ -150,14 +150,18 @@ async function updatePaymentWithRetry(ctpClient, actions, payment) {
 async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
   overrideEnableHmacSignatureConfig(false)
   const adyenMerchantAccounts = config.getAllAdyenMerchantAccounts()
-  for (const adyenMerchantId of adyenMerchantAccounts) {
-    const adyenConfig = config.getAdyenConfig(adyenMerchantId)
-    const webhookId = await ensureAdyenWebhook(
-      adyenConfig.apiKey,
-      webhookUrl,
-      adyenMerchantId
-    )
-    merchantIdToWebhookIdMap.set(adyenMerchantId, webhookId)
+  const ctpProjectKeys = config.getAllCtpProjectKeys()
+  for (const ctpProjectKey of ctpProjectKeys) {
+    const webhookUrlWithProjectKey = `${webhookUrl}/${ctpProjectKey}`
+    for (const adyenMerchantId of adyenMerchantAccounts) {
+      const adyenConfig = config.getAdyenConfig(adyenMerchantId)
+      const webhookId = await ensureAdyenWebhook(
+        adyenConfig.apiKey,
+        webhookUrlWithProjectKey,
+        adyenMerchantId
+      )
+      merchantIdToWebhookIdMap.set(adyenMerchantId, webhookId)
+    }
   }
 }
 

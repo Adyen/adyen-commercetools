@@ -16,6 +16,7 @@ import {
   serveFile,
   getCreateSessionRequest,
 } from './e2e-test-utils.js'
+import { createAddTransactionAction } from '../../src/paymentHandler/payment-utils.js'
 
 const logger = httpUtils.getLogger()
 
@@ -29,7 +30,7 @@ function setRoute() {
   }
 }
 // Flow description: https://docs.adyen.com/checkout/components-web
-describe('::creditCardPayment::amount-update::', () => {
+describe('::creditCardPayment::cancel-payment::', () => {
   let browser
   let ctpClient
   const ctpProjectKey = config.getAllCtpProjectKeys()[0]
@@ -48,15 +49,15 @@ describe('::creditCardPayment::amount-update::', () => {
     await browser.close()
   })
 
-  // eslint-disable-next-line no-template-curly-in-string
-  it(`when payment session for credit card is created, initialized and authorized, the amount can be updated by 
-     looking up corresponding payment with pspReference`, async () => {
+  it(`when payment session for credit card is created, initialized and ' + 
+      'authorized("authorization success transaction") ' +
+      'and when a "CancelAuthorization initial transaction" is added ' +
+      'then Adyen should respond with [cancel-received] for each transaction ' +
+      'and payment should have "CancelAuthorization success transaction" and notification`, async () => {
     let paymentAfterCreateSession
     let initPaymentSessionResult
 
-    let updatedAmountStatusCode
-    let amountUpdatesResponse
-    let amountUpdatesInterfaceInteractions
+    let cancelledPaymentStatusCode
     const creditCardNumber = '5101 1800 0000 0007'
     const creditCardDate = '03/30'
     const creditCardCvc = '737'
@@ -70,7 +71,7 @@ describe('::creditCardPayment::amount-update::', () => {
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
       paymentAfterCreateSession = await createSession(clientKey)
       logger.debug(
-        'credit-card-amount-update::paymentAfterCreateSession:',
+        'credit-card-cancel-payment::paymentAfterCreateSession:',
         JSON.stringify(paymentAfterCreateSession)
       )
 
@@ -87,7 +88,7 @@ describe('::creditCardPayment::amount-update::', () => {
         creditCardCvc,
       })
 
-      const notificationInteraction = await waitUntil(
+      await waitUntil(
         async () =>
           await fetchNotificationInterfaceInteraction(
             ctpClient,
@@ -95,88 +96,72 @@ describe('::creditCardPayment::amount-update::', () => {
           )
       )
 
-      // Step #3 - Update Amount
-      const { statusCode, updatedPayment } = await updateAmount(
-        notificationInteraction,
-        paymentAfterCreateSession
-      )
-      amountUpdatesResponse = JSON.parse(
-        updatedPayment.custom.fields.amountUpdatesResponse
-      )
-      amountUpdatesInterfaceInteractions =
-        updatedPayment.interfaceInteractions.filter(
-          (ii) => ii.fields.type === 'amountUpdates'
+      // Step #3 - Cancel payment
+
+      const { body: paymentAfterReceivingNotification } =
+        await ctpClient.fetchById(
+          ctpClient.builder.payments,
+          paymentAfterCreateSession.id
         )
-      updatedAmountStatusCode = statusCode
+
+      const { statusCode, body: cancelledPayment } = await ctpClient.update(
+        ctpClient.builder.payments,
+        paymentAfterReceivingNotification.id,
+        paymentAfterReceivingNotification.version,
+        [
+          createAddTransactionAction({
+            type: 'CancelAuthorization',
+            state: 'Initial',
+            currency: 'EUR',
+            amount: 500,
+          }),
+        ]
+      )
+
+      cancelledPaymentStatusCode = statusCode
+
+      logger.debug(JSON.stringify(cancelledPayment))
     } catch (err) {
-      logger.error('credit-card-amount-update::errors:', JSON.stringify(err))
+      logger.error('credit-card-cancel-payment::errors:', JSON.stringify(err))
     }
 
-    const notificationInteractionForAmountUpdates = await waitUntil(
+    const notificationInteractionForCancelPayment = await waitUntil(
       async () =>
         await fetchNotificationInterfaceInteraction(
           ctpClient,
           paymentAfterCreateSession.id,
-          'authorisation_adjustment'
+          `cancellation`
         )
     )
 
-    logger.debug(JSON.stringify(notificationInteractionForAmountUpdates))
-
-    assertCreatePaymentSession(
-      paymentAfterCreateSession,
-      initPaymentSessionResult
-    )
-    expect(updatedAmountStatusCode).to.equal(200)
-    expect(amountUpdatesResponse.status).to.equal('received')
-    expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
-
-    // assert notification response from amount updates
-    const notificationStr =
-      notificationInteractionForAmountUpdates.fields.notification
-    const notificationJson = JSON.parse(notificationStr)
-    expect(notificationJson.NotificationRequestItem.eventCode).to.equal(
-      'AUTHORISATION_ADJUSTMENT'
-    )
-    expect(notificationJson.NotificationRequestItem.success).to.equal('true')
-  })
-
-  async function updateAmount(
-    notificationInteraction,
-    paymentAfterCreateSession
-  ) {
-    const notificationStr = notificationInteraction.fields.notification
-    const notificationJson = JSON.parse(notificationStr)
-    const paymentPspReference =
-      notificationJson.NotificationRequestItem.pspReference
-    const amountUpdatesRequestDraft = {
-      paymentPspReference,
-      amount: {
-        currency: 'EUR',
-        value: 1010,
-      },
-      reason: 'DelayedCharge',
-      reference: paymentAfterCreateSession.key,
-    }
     const { body: paymentAfterReceivingNotification } =
       await ctpClient.fetchById(
         ctpClient.builder.payments,
         paymentAfterCreateSession.id
       )
-    const { statusCode, body: updatedPayment } = await ctpClient.update(
-      ctpClient.builder.payments,
-      paymentAfterCreateSession.id,
-      paymentAfterReceivingNotification.version,
-      [
-        {
-          action: 'setCustomField',
-          name: 'amountUpdatesRequest',
-          value: JSON.stringify(amountUpdatesRequestDraft),
-        },
-      ]
+
+    assertCreatePaymentSession(
+      paymentAfterCreateSession,
+      initPaymentSessionResult
     )
-    return { statusCode, updatedPayment }
-  }
+
+    expect(cancelledPaymentStatusCode).to.be.equal(200)
+
+    expect(paymentAfterReceivingNotification.transactions).to.have.lengthOf(2)
+    const transaction = paymentAfterReceivingNotification.transactions[1]
+    expect(transaction.type).to.equal('CancelAuthorization')
+    expect(transaction.state).to.equal('Success')
+
+    // assert notification response from cancel payment
+    const notificationStr =
+      notificationInteractionForCancelPayment.fields.notification
+    const notificationJson = JSON.parse(notificationStr)
+    expect(notificationJson.NotificationRequestItem.eventCode).to.equal(
+      'CANCELLATION'
+    )
+    expect(notificationJson.NotificationRequestItem.success).to.equal('true')
+  })
+
   async function createSession(clientKey) {
     const createSessionRequest = await getCreateSessionRequest(clientKey)
     let payment = null
