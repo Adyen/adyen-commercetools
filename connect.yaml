@@ -1,0 +1,21 @@
+deployAs:
+  - name: extension
+    applicationType: service
+    endpoint: /
+    scripts:
+      postDeploy: npm install && npm run setup-resources
+    configuration:
+      securedConfiguration:
+        - key: ADYEN_INTEGRATION_CONFIG
+          description: Escaped JSON object, for more details visit (https://github.com/commercetools/commercetools-adyen-integration/blob/master/extension/docs/HowToRun.md#environment-variable)
+  - name: notification
+    applicationType: service
+    endpoint: /
+    scripts:
+      postDeploy: npm install && npm run setup-resources
+    configuration:
+      securedConfiguration:
+        - key: ADYEN_INTEGRATION_CONFIG
+          description: Escaped JSON object, for more details visit (https://github.com/commercetools/commercetools-adyen-integration/blob/master/notification/docs/HowToRun.md#environment-variable)
+      
+  
