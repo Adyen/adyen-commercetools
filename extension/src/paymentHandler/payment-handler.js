@@ -66,45 +66,58 @@ function _getPaymentHandlers(paymentObject) {
   if (!paymentObject.custom) return []
 
   const handlers = []
+  const customFields = paymentObject.custom.fields
 
   if (
-    paymentObject.custom.fields.getPaymentMethodsRequest &&
-    !paymentObject.custom.fields.getPaymentMethodsResponse
-  )
+    customFields.getPaymentMethodsRequest &&
+    !customFields.getPaymentMethodsResponse
+  ) {
     handlers.push(getPaymentMethodsHandler)
+  }
 
   if (
-    paymentObject.custom.fields.createSessionRequest &&
-    !paymentObject.custom.fields.createSessionResponse
+    customFields.createSessionRequest &&
+    !customFields.createSessionResponse
   ) {
     const createSessionRequestObj = JSON.parse(
-      paymentObject.custom.fields.createSessionRequest
+      customFields.createSessionRequest
     )
-    if (_requiresLineItems(createSessionRequestObj))
+
+    if (_requiresLineItems(createSessionRequestObj)) {
       handlers.push(lineItemSessionRequestHandler)
-    else handlers.push(sessionRequestHandler)
+    } else {
+      handlers.push(sessionRequestHandler)
+    }
   }
-  if (
-    paymentObject.custom.fields.getCarbonOffsetCostsRequest &&
-    !paymentObject.custom.fields.getCarbonOffsetCostsResponse
-  )
-    handlers.push(getCarbonOffsetCostsHandler)
 
   if (
-    paymentObject.custom.fields.amountUpdatesRequest &&
-    !paymentObject.custom.fields.amountUpdatesResponse
-  )
+    customFields.getCarbonOffsetCostsRequest &&
+    !customFields.getCarbonOffsetCostsResponse
+  ) {
+    handlers.push(getCarbonOffsetCostsHandler)
+  }
+
+  if (
+    customFields.amountUpdatesRequest &&
+    !customFields.amountUpdatesResponse
+  ) {
     handlers.push(amountUpdatesHandler)
+  }
+
   if (
     getAuthorizationTransactionSuccess(paymentObject) &&
     getChargeTransactionInitial(paymentObject)
-  )
+  ) {
     handlers.push(manualCaptureHandler)
+  }
+
   if (
-    paymentObject.custom.fields.disableStoredPaymentRequest &&
-    !paymentObject.custom.fields.disableStoredPaymentResponse
-  )
+    customFields.disableStoredPaymentRequest &&
+    !customFields.disableStoredPaymentResponse
+  ) {
     handlers.push(disableStoredPaymentHandler)
+  }
+
   return handlers
 }
 
