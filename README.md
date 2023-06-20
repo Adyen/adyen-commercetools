@@ -33,7 +33,7 @@ Complete integration requires running both of the modules.
 
 ![Payment flow](./docs/images/payment-flow.svg)
 1. Front end uses [Adyen Web Components](https://docs.adyen.com/checkout/supported-payment-methods) to present required payment methods. The list of available payment methods can be also obtained through the integration with the help of [get available payment methods request](./extension/docs/WebComponentsIntegrationGuide.md#step-3-get-available-payment-methods-optional). On user interaction, frontend web-component generates JSON payloads for [create payment sessions](https://docs.adyen.com/online-payments/web-components#create-payment-session) which has to be provided to commercetools payment as described [here](./extension/docs/WebComponentsIntegrationGuide.md#web-components-integration-guide).  
-2. With help of the [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) provided data is sent to the Extension Module.
+2. With help of the [commercetools HTTP API Extensions](https://docs.commercetools.com/api/projects/api-extensions) provided data is sent to the Extension Module.
 3. The Extension Module processes provided web component payload passed by the front end, exchanges it with Adyen API, and provides **synchronous** response back to the front end / commercetools caller. Based on result, the front end either creates an order or continues with further payment steps as described in the [integration guide](./extension/docs/WebComponentsIntegrationGuide.md#web-components-integration-guide). Note that order/cart creations/modifications should be part of the front end business logic. `commercetools-adyen-integration` will neither change the cart nor the order.
 
 In addition with help of Adyen notifications any payment status changes are **asynchronously** exchanged between Adyen and commercetools.
@@ -44,7 +44,7 @@ Please follow the detailed guides below in order to integrate your front end wit
 [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension)
 
 The extension module is a publicly exposed service that acts as a middleware between the commercetools platform and Adyen. 
-Once [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is configured to call Adyen extension module, for every payment create or update request an Adyen extension will be remotely called by the commercetools platform.
+Once [commercetools HTTP API Extensions](https://docs.commercetools.com/api/projects/api-extensions) is configured to call Adyen extension module, for every payment create or update request an Adyen extension will be remotely called by the commercetools platform.
 
 - Follow [Integration Guide](./extension/docs/WebComponentsIntegrationGuide.md) for information how to integrate your shop with this module.
 - Follow [How to run](extension/docs/HowToRun.md) the extension module.

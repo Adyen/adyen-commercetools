@@ -38,10 +38,10 @@ Terms used in this guide:
 - **Shopper** - a person that's using the shop.
 - **Browser** - frontend part of the checkout UI (webshop).
 - **Merchant server** - backend part of the checkout.
-- **Extension module** - [extension module](https://github.com/commercetools/commercetools-adyen-integration#extension-module) configured as [commercetools HTTP API Extensions](https://docs.commercetools.com/http-api-projects-api-extensions) is handling checkout steps by intercepting payment modifications and communicating with Adyen API.
+- **Extension module** - [extension module](https://github.com/commercetools/commercetools-adyen-integration#extension-module) configured as [commercetools HTTP API Extensions](https://docs.commercetools.com/api/projects/api-extensions) is handling checkout steps by intercepting payment modifications and communicating with Adyen API.
 - **Notification module** - [notification module](https://github.com/commercetools/commercetools-adyen-integration#notification-module) processes asynchronous notifications from Adyen and stores payment state changes in commercetools payment object.
 
-The following diagram shows checkout integration flow based on [Adyen Web Components](https://docs.adyen.com/online-payments/web-components/integrated-before-5-0-0).
+The following diagram shows checkout integration flow based on [Adyen Web Components](https://docs.adyen.com/online-payments/build-your-integration?platform=Web&integration=Components&version=5.43.0#how-it-works).
 
 ![Flow](./adyen-checkout-flow-diagram.png)
 
@@ -75,14 +75,14 @@ Otherwise, the shopper might continue with further payment steps.
 
 ### Validate cart state
 
-Check if [current cart has been ordered already](https://docs.commercetools.com/http-api-projects-carts#cartstate) (`Cart.cartState = Ordered`).
+Check if [current cart has been ordered already](https://docs.commercetools.com/api/projects/carts#cartstate) (`Cart.cartState = Ordered`).
 In this case, load order by ordered cart ID and show order confirmation page.
 This might happen if the cart has been already ordered in a different tab (edge case)
 or by an optional asynchronous process like [commercetools-payment-to-order-processor job](https://github.com/commercetools/commercetools-payment-to-order-processor).
 
 ### Recalculate cart
 
-[Execute cart recalculate](https://docs.commercetools.com/http-api-projects-carts#recalculate) to ensure:
+[Execute cart recalculate](https://docs.commercetools.com/api/projects/carts#recalculate) to ensure:
 
 - Cart totals are always up-to-date
 - Time-limited discounts are eventually removed from the cart (discounts are validated on re-calculate and order creation only).
@@ -142,7 +142,7 @@ Here's an example of how you would create a commercetools payment draft from scr
 }
 ```
 
-Create a [payment](https://docs.commercetools.com/http-api-projects-payments#create-a-payment) with commercetools API.
+Create a [payment](https://docs.commercetools.com/api/projects/payments#create-payment) with commercetools API.
 
 After successful payment creation always [add](https://docs.commercetools.com/api/projects/carts#add-payment) it to the appropriate cart.
 
@@ -260,7 +260,7 @@ After payment session is created successfully, you can obtain session ID and ses
 **Preconditions**
 
 - `createSessionRequest` must contain a unique payment `reference` value. The reference value cannot be duplicated in any commercetools payment and it's a required field by Adyen. The extension module uses the `reference` value to set the payment key in initial stage, later notification module uses it to look up corresponding payment after receiving notification for successful payment session creation. `Reference` may only contain alphanumeric characters, underscores and hyphens and must have a minimum length of 2 characters and a maximum length of 80 characters.
-- `payment.amountPlanned` can not be changed if there is a `createSession` interface interaction present in the commercetools payment object. The `amount` value in `createSessionRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/http-api-projects-me-payments#my-payments) are used) for already initiated payment. In case `amountPlanned` needs to be changed and an existing commercetools payment resource with interface interaction of type `createSession` exists, please create a new commercetools payment instead of modifying the existing one.
+- `payment.amountPlanned` can not be changed if there is a `createSession` interface interaction present in the commercetools payment object. The `amount` value in `createSessionRequest` custom field must have the same value as `payment.amountPlanned`. This ensures eventual payment amount manipulations (i.e.: when [my-payments](https://docs.commercetools.com/api/projects/me-payments#my-payments) are used) for already initiated payment. In case `amountPlanned` needs to be changed and an existing commercetools payment resource with interface interaction of type `createSession` exists, please create a new commercetools payment instead of modifying the existing one.
 
 **Important**
 
@@ -282,7 +282,7 @@ Here's an example of the `createSessionRequest` custom field value for 3D Secure
 }
 ```
 
-An example of payment [setCustomField](https://docs.commercetools.com/http-api-projects-payments#update-payment) action with the prepared data above.
+An example of payment [setCustomField](https://docs.commercetools.com/api/projects/payments#update-payment) action with the prepared data above.
 
 ```json
 {
@@ -398,7 +398,7 @@ For some payment methods, it is necessary to provide [line item details](https:/
 
 Extension module can generate the line item automatically, but you need to do following steps:
 
-- The commercetools payment [referenced in the commercetools cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
+- The commercetools payment [referenced in the commercetools cart](https://docs.commercetools.com/api/projects/carts#add-payment).
 - Either `addCommercetoolsLineItems` property set to`true` within the `createSessionRequest` or `addCommercetoolsLineItems` flag set to `true` within your extension [configuration](./HowToRun.md#other-configurations).
   > In case you would like to override the generation of the lineItems please provide within the `createSessionRequest` own `lineItems` data.
 
@@ -433,7 +433,7 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems` and `add
 }
 ```
 
-[Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with the request above.
+[Update commercetools payment](https://docs.commercetools.com/api/projects/payments#update-payment) with the request above.
 
 ```json
 {

@@ -19,7 +19,7 @@ By default, payments are captured immediately (or with [delay](https://docs.adye
 
 ### Make an API call to capture a payment:
 
-To capture a payment manually, [add a transaction](https://docs.commercetools.com/http-api-projects-payments#add-transaction) with type `Charge` and state `Initial` to the commercetools payment.
+To capture a payment manually, [add a transaction](https://docs.commercetools.com/api/projects/payments#add-transaction) with type `Charge` and state `Initial` to the commercetools payment.
 
 ```json
 {
