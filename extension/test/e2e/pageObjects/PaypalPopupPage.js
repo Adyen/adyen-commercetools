@@ -12,13 +12,15 @@ export default class PaypalPopupPage {
 
     await this.page.waitForTimeout(4_000)
 
-    // await this.page.click('#acceptAllButton')
     await this.page.type('#password', '!nh-NNS1')
     await this.page.waitForSelector('#btnLogin')
-    await this.page.click('#btnLogin')
+    const loginButton = await this.page.$('#btnLogin')
+    await this.page.evaluate((cb) => cb.click(), loginButton)
+
 
     await this.page.waitForSelector('#payment-submit-btn')
-    await this.page.waitForTimeout(1000) // Need to suspend 1 second to avoid page closed before loading data.
-    await this.page.click('#payment-submit-btn')
+    const submitButton = await this.page.$('#payment-submit-btn')
+    await this.page.evaluate((cb) => cb.click(), submitButton)
+
   }
 }
