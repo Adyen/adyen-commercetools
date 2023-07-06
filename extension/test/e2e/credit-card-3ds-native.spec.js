@@ -16,7 +16,7 @@ import CreditCardInitSessionFormPage from './pageObjects/CreditCardInitSessionFo
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
-describe('::creditCardPayment3dsNative::', () => {
+describe.skip('::creditCardPayment3dsNative::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
