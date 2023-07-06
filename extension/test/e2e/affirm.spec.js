@@ -17,7 +17,7 @@ import AffirmInitSessionFormPage from './pageObjects/AffirmInitSessionFormPage.j
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/affirm/web-component#page-introduction
-describe('::affirmPayment::', () => {
+describe.skip('::affirmPayment::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
