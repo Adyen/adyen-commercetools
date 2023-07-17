@@ -26,7 +26,7 @@ From this transaction, the `interactionId` field is being used as `originalRefer
 
 #### Steps
 
-To make a cancellation, [add a transaction](https://docs.commercetools.com/http-api-projects-payments#add-transaction)
+To make a cancellation, [add a transaction](https://docs.commercetools.com/api/projects/payments#add-transaction)
 with type `CancelAuthorization` and state `Initial` to the commercetools payment.
 
 ```json

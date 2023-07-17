@@ -28,7 +28,7 @@ From `Authorized` transaction, the `interactionId` field is being used as `origi
 
 #### Steps
 
-To make a (partial) refund, [add **at least one** transaction](https://docs.commercetools.com/http-api-projects-payments#add-transaction) with type `Refund` and state `Initial` to the commercetools payment.
+To make a (partial) refund, [add **at least one** transaction](https://docs.commercetools.com/api/projects/payments#add-transaction) with type `Refund` and state `Initial` to the commercetools payment.
 It is possible to add multiple `Refund` transactions and all of them will be processed in parallel.
 
 ```json

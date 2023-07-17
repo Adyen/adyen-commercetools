@@ -8,7 +8,7 @@ const logger = httpUtils.getLogger()
 async function processRequest(request, response) {
   if (request.method !== 'POST') {
     // API extensions always calls this endpoint with POST, so if we got GET, we don't process further
-    // https://docs.commercetools.com/http-api-projects-api-extensions#input
+    // https://docs.commercetools.com/api/projects/api-extensions#input
     logger.debug(
       `Received non-POST request: ${request.method}. The request will not be processed...`
     )

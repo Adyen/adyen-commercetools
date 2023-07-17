@@ -95,8 +95,8 @@ As one notification module instance can receive notifications from multiple Adye
 
 Each notification contains an `eventCode` that specifies which type of event triggered the notification.
 Notification module maps this `eventCode` and `success` pair to
-commercetools [transactionType](https://docs.commercetools.com/http-api-projects-payments#transactiontype)
-and [transactionState](https://docs.commercetools.com/http-api-projects-payments#transactionstate).
+commercetools [transactionType](https://docs.commercetools.com/api/projects/payments#transactiontype)
+and [transactionState](https://docs.commercetools.com/api/projects/payments#transactionstate).
 
 > All mappings can be found in the [adyen-events.json](./../resources/adyen-events.json) file.
 
@@ -108,7 +108,7 @@ If there is no transaction on the payment found,
 the notification module will create a new transaction with the received `transactionType` and
 `transactionState`. Otherwise, it will update the existing transaction with a new `transactionState`.
 
-Received notification will be stored on the [interfaceInteraction](https://docs.commercetools.com/http-api-projects-payments#add-interfaceinteraction) of the payment.
+Received notification will be stored on the [interfaceInteraction](https://docs.commercetools.com/api/projects/payments#add-interfaceinteraction) of the payment.
 If the mapping for the received notification is not found then payment will be updated only with a new `interfaceInteraction`.
 If payment is not found then the notification will be skipped from processing.
 

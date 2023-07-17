@@ -40,7 +40,7 @@ additionalData.authorisationType: PreAuth
 
 <details>
 <summary>
-An example of payment [setCustomField](https://docs.commercetools.com/http-api-projects-payments#update-payment) action for `createSessionRequest` with additionalData field.
+An example of payment [setCustomField](https://docs.commercetools.com/api/projects/payments#update-payment) action for `createSessionRequest` with additionalData field.
 </summary>
 
 ```json
@@ -129,7 +129,7 @@ To update the amount, it is necessary to get `NotificationRequestItem` and obtai
 
 #### 3. Amount updates request
 
-To update the amount from the create session request, [set `amountUpdatesRequest` custom field](https://docs.commercetools.com/http-api-projects-payments#update-payment). This field should contain the fields as described in the Adyen documentation. Be aware that `amount` is the sum of the current amount + additional amount.
+To update the amount from the create session request, [set `amountUpdatesRequest` custom field](https://docs.commercetools.com/api/projects/payments#update-payment). This field should contain the fields as described in the Adyen documentation. Be aware that `amount` is the sum of the current amount + additional amount.
 Additionally, it must contain `paymentPspReference` field. `paymentPspReference` field contains `pspReference` from the pre-authorisation response (e.g. from `interactionInterface` field of created payment`). How such response could look like see [the previous point](#2-authorize-the-payment).
 
 <details>
