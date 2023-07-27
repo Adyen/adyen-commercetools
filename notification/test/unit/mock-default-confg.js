@@ -17,14 +17,14 @@ process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({
     adyenMerchantAccount1: {
       apiKey: 'apiKey',
       clientKey: 'clientKey',
-      enableHmacSignature : 'false',
-      notificationBaseUrl : 'https://test-notification'
+      enableHmacSignature: 'false',
+      notificationBaseUrl: 'https://test-notification',
     },
     adyenMerchantAccount2: {
       apiKey: 'apiKey2',
       clientKey: 'clientKey2',
-      enableHmacSignature : 'false',
-    }
+      enableHmacSignature: 'false',
+    },
   },
   logLevel: 'DEBUG',
 })
