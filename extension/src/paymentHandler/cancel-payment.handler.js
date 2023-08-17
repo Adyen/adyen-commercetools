@@ -36,10 +36,10 @@ async function execute(paymentObject) {
   })
 
   const actions = [addInterfaceInteractionAction]
-  if (!response.errorCode && response.pspReference) console.log('here')
-  actions.push(
-    ..._createTransactionActions(paymentObject, response.pspReference)
-  )
+  if (!response.errorCode && response.pspReference)
+    actions.push(
+      ..._createTransactionActions(paymentObject, response.pspReference)
+    )
 
   return { actions }
 }
