@@ -57,12 +57,13 @@ function refund(
   merchantAccount,
   commercetoolsProjectKey,
   idempotencyKey,
+  pspReference,
   refundRequestObj
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(refundRequestObj, commercetoolsProjectKey)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.REFUND}/refund`,
+    `${adyenCredentials.apiBaseUrl}/payments/${pspReference}/refunds`,
     merchantAccount,
     adyenCredentials.apiKey,
     refundRequestObj,

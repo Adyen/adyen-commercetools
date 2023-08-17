@@ -24,11 +24,10 @@ async function execute(paymentObject) {
   await Promise.all(
     refundInitTransactions.map(async (refundTransaction) => {
       const refundRequestObjects = {
-        modificationAmount: {
+        amount: {
           value: refundTransaction.amount.centAmount,
           currency: refundTransaction.amount.currencyCode,
         },
-        originalReference: interactionId,
         reference:
           refundTransaction.custom?.fields?.reference || paymentObject.key,
       }
@@ -38,6 +37,7 @@ async function execute(paymentObject) {
         adyenMerchantAccount,
         commercetoolsProjectKey,
         idempotencyKey,
+        interactionId,
         refundRequestObjects
       )
       const addInterfaceInteractionAction = createAddInterfaceInteractionAction(
