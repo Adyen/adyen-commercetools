@@ -113,16 +113,19 @@ async function createSessionRequest(
   )
 }
 
-function disableStoredPayment(merchantAccount, disableStoredPaymentRequestObj) {
+function disableStoredPayment(
+  merchantAccount,
+  storedPaymentMethodId,
+  disableStoredPaymentRequestObj
+) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
-  const url =
-    `${adyenCredentials.legacyApiBaseUrl}/Recurring/` +
-    `${constants.ADYEN_LEGACY_API_VERSION.DISABLED_STORED_PAYMENT}/disable`
+  const url = `${adyenCredentials.apiBaseUrl}/storedPaymentMethods/${storedPaymentMethodId}`
   return callAdyen(
     url,
     merchantAccount,
     adyenCredentials.apiKey,
-    disableStoredPaymentRequestObj
+    disableStoredPaymentRequestObj,
+    'DELETE'
   )
 }
 
@@ -161,7 +164,8 @@ async function callAdyen(
   adyenMerchantAccount,
   adyenApiKey,
   requestArg,
-  headers
+  headers,
+  methodOverride
 ) {
   let returnedRequest
   let returnedResponse
@@ -171,7 +175,8 @@ async function callAdyen(
       adyenMerchantAccount,
       adyenApiKey,
       requestArg,
-      headers
+      headers,
+      methodOverride
     )
     returnedRequest = request
     returnedResponse = response
@@ -188,7 +193,8 @@ async function fetchAsync(
   adyenMerchantAccount,
   adyenApiKey,
   requestObj,
-  headers
+  headers,
+  methodOverride
 ) {
   const moduleConfig = config.getModuleConfig()
   const removeSensitiveData =
@@ -201,7 +207,8 @@ async function fetchAsync(
     adyenMerchantAccount,
     adyenApiKey,
     requestObj,
-    headers
+    headers,
+    methodOverride
   )
 
   try {
@@ -213,7 +220,7 @@ async function fetchAsync(
     if (response)
       // Handle non-JSON format response
       throw new Error(
-        `Unable to receive non-JSON format resposne from Adyen API : ${responseBodyInText}`
+        `Unable to receive non-JSON format response from Adyen API : ${responseBodyInText}`
       )
     // Error in fetching URL
     else throw err
@@ -227,20 +234,36 @@ async function fetchAsync(
   return { response: responseBody, request }
 }
 
-function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj, headers) {
+function buildRequest(
+  adyenMerchantAccount,
+  adyenApiKey,
+  requestObj,
+  headers,
+  methodOverride
+) {
   // Note: ensure the merchantAccount is set with request, otherwise set
   // it with the value from adyenMerchantAccount payment custom field
   if (!requestObj.merchantAccount)
     requestObj.merchantAccount = adyenMerchantAccount
 
+  const requestHeaders = {
+    'Content-Type': 'application/json',
+    'X-Api-Key': adyenApiKey,
+    ...headers,
+  }
+
+  if (methodOverride === 'DELETE') {
+    return {
+      method: methodOverride,
+      headers: requestHeaders,
+      body: new URLSearchParams(requestObj),
+    }
+  }
+
   return {
-    method: 'POST',
+    method: methodOverride || 'POST',
     body: JSON.stringify(requestObj),
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Api-Key': adyenApiKey,
-      ...headers,
-    },
+    headers: requestHeaders,
   }
 }
 

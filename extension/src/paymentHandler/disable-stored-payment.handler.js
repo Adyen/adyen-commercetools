@@ -6,13 +6,14 @@ import {
 import c from '../config/constants.js'
 
 async function execute(paymentObject) {
-  const disableStoredPaymentRequestObj = JSON.parse(
+  const { recurringDetailReference, shopperReference } = JSON.parse(
     paymentObject.custom.fields.disableStoredPaymentRequest
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const { request, response } = await disableStoredPayment(
     adyenMerchantAccount,
-    disableStoredPaymentRequestObj
+    recurringDetailReference,
+    { shopperReference }
   )
 
   return {
