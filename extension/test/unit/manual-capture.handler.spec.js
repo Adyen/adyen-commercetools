@@ -8,6 +8,7 @@ import { overrideGenerateIdempotencyKeyConfig } from '../test-utils.js'
 
 const { cloneDeep } = lodash
 const { CTP_INTERACTION_TYPE_MANUAL_CAPTURE } = constants
+const PSP_AUTH_REFERENCE = '8313547924770610'
 
 describe('manual-capture.handler::execute::', () => {
   /* eslint-disable*/
@@ -17,7 +18,7 @@ describe('manual-capture.handler::execute::', () => {
       {
         id: 'transaction1',
         type: 'Authorization',
-        interactionId: '8313547924770610',
+        interactionId: PSP_AUTH_REFERENCE,
         state: 'Success',
       },
     ],
@@ -62,8 +63,10 @@ describe('manual-capture.handler::execute::', () => {
   }
 
   const manualCaptureResponse = {
+    status: 'received',
+    reference: '123456789',
     pspReference: '8825408195409505',
-    response: '[capture-received]',
+    paymentPspReference: PSP_AUTH_REFERENCE,
   }
 
   let scope
@@ -71,7 +74,7 @@ describe('manual-capture.handler::execute::', () => {
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-    scope = nock(`${adyenConfig.legacyApiBaseUrl}/Payment/v64`)
+    scope = nock(`${adyenConfig.apiBaseUrl}`)
   })
 
   it(
@@ -80,7 +83,9 @@ describe('manual-capture.handler::execute::', () => {
       'then it should return actions "addInterfaceInteraction", ' +
       '"changeTransactionState" and "changeTransactionInteractionId"',
     async () => {
-      scope.post('/capture').reply(200, manualCaptureResponse)
+      scope
+        .post(`/payments/${PSP_AUTH_REFERENCE}/captures`)
+        .reply(201, manualCaptureResponse)
 
       const paymentObject = cloneDeep(authorisedPayment)
       paymentObject.transactions.push(chargeInitialTransaction)
@@ -133,10 +138,11 @@ describe('manual-capture.handler::execute::', () => {
         message: 'Original pspReference required for this operation',
         errorType: 'validation',
       }
-      scope.post('/capture').reply(422, validationError)
+      scope.post('/payments/undefined/captures').reply(422, validationError)
 
       const paymentObject = cloneDeep(authorisedPayment)
       paymentObject.transactions.push(chargeInitialTransaction)
+      delete paymentObject.transactions[0].interactionId
       paymentObject.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const { actions } = await manualCaptureHandler.execute(paymentObject)
@@ -163,7 +169,9 @@ describe('manual-capture.handler::execute::', () => {
     'when manual capture payment request contains reference, then it should send this reference to ' +
       'Adyen',
     async () => {
-      scope.post('/capture').reply(200, manualCaptureResponse)
+      scope
+        .post(`/payments/${PSP_AUTH_REFERENCE}/captures`)
+        .reply(201, manualCaptureResponse)
 
       const paymentObject = cloneDeep(authorisedPayment)
       paymentObject.transactions.push(chargeInitialTransaction)
@@ -190,7 +198,9 @@ describe('manual-capture.handler::execute::', () => {
     async () => {
       overrideGenerateIdempotencyKeyConfig(true)
 
-      scope.post('/capture').reply(200, manualCaptureResponse)
+      scope
+        .post(`/payments/${PSP_AUTH_REFERENCE}/captures`)
+        .reply(201, manualCaptureResponse)
 
       const paymentObject = cloneDeep(authorisedPayment)
       paymentObject.transactions.push(chargeInitialTransaction)

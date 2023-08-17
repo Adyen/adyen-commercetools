@@ -16,11 +16,10 @@ async function execute(paymentObject) {
   const authorizationSuccessTransaction =
     getAuthorizationTransactionSuccess(paymentObject)
   const manualCaptureRequestObj = {
-    modificationAmount: {
+    amount: {
       value: chargeInitialTransaction.amount.centAmount,
       currency: chargeInitialTransaction.amount.currencyCode,
     },
-    originalReference: authorizationSuccessTransaction.interactionId,
     reference: chargeInitialTransaction.custom?.fields?.reference,
   }
   const idempotencyKey = getIdempotencyKey(chargeInitialTransaction)
@@ -31,6 +30,7 @@ async function execute(paymentObject) {
     adyenMerchantAccount,
     commercetoolsProjectKey,
     idempotencyKey,
+    authorizationSuccessTransaction.interactionId,
     manualCaptureRequestObj
   )
 
