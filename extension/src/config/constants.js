@@ -37,10 +37,4 @@ export default {
   CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE: 'createSessionResponse',
   CTP_INTERACTION_TYPE_DISABLE_STORED_PAYMENT: 'disableStoredPayment',
   CTP_DISABLE_STORED_PAYMENT_RESPONSE: 'disableStoredPaymentResponse',
-  ADYEN_LEGACY_API_VERSION: {
-    MANUAL_CAPTURE: 'v64',
-    CANCEL: 'v64',
-    REFUND: 'v64',
-    DISABLED_STORED_PAYMENT: 'v68',
-  },
 }
