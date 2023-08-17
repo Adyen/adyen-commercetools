@@ -16,7 +16,7 @@ async function execute(paymentObject) {
   // "originalReference: The original pspReference of the payment that you want to cancel.
   // This reference is returned in the response to your payment request, and in the AUTHORISATION notification."
   const cancelRequestObj = {
-    originalReference: authorizationTransaction.interactionId,
+    paymentReference: authorizationTransaction.interactionId,
     reference: paymentObject.key,
   }
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
@@ -36,10 +36,10 @@ async function execute(paymentObject) {
   })
 
   const actions = [addInterfaceInteractionAction]
-  if (!response.errorCode && response.pspReference)
-    actions.push(
-      ..._createTransactionActions(paymentObject, response.pspReference)
-    )
+  if (!response.errorCode && response.pspReference) console.log('here')
+  actions.push(
+    ..._createTransactionActions(paymentObject, response.pspReference)
+  )
 
   return { actions }
 }

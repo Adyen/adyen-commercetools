@@ -29,7 +29,7 @@ describe('cancel-payment::execute', () => {
 
   const cancelPaymentResponse = {
     pspReference: '8825408195409505',
-    response: '[cancel-received]',
+    status: 'received',
   }
 
   before(async () => {
@@ -40,9 +40,7 @@ describe('cancel-payment::execute', () => {
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-    scope = nock(
-      `${adyenConfig.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.CANCEL}`
-    )
+    scope = nock(`${adyenConfig.apiBaseUrl}`)
   })
 
   afterEach(() => {
@@ -55,7 +53,7 @@ describe('cancel-payment::execute', () => {
       'then it should return actions "addInterfaceInteraction", ' +
       '"changeTransactionState" and "changeTransactionInteractionId"',
     async () => {
-      scope.post('/cancel').reply(200, cancelPaymentResponse)
+      scope.post('/cancels').reply(201, cancelPaymentResponse)
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.key = 'originalReference-ABCDEFG'
       ctpPaymentClone.transactions.push(cancelPaymentTransaction)
