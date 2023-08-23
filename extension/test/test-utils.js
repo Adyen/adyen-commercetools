@@ -207,7 +207,7 @@ async function deleteWebhooks() {
 
 async function waitUntil(
   waitCondition,
-  maxRetry = 10,
+  maxRetry = 15,
   maxWaitingTimePerRetryInMs = 32000
 ) {
   let counter = 0
