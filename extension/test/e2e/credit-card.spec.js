@@ -33,7 +33,7 @@ describe('::creditCardPayment::', () => {
   // See more: https://docs.adyen.com/development-resources/test-cards/test-card-numbers
   const creditCards = [
     { name: 'Mastercard', creditCardNumber: '5101 1800 0000 0007' },
-    { name: 'VISA', creditCardNumber: '4166 6766 6766 6746' },
+    { name: 'VISA', creditCardNumber: '4646 4646 4646 4644' },
   ]
 
   beforeEach(async () => {

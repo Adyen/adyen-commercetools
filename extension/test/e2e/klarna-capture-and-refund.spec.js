@@ -269,7 +269,7 @@ describe('::klarnaPayment::', () => {
   }
 
   async function handleRedirect({ browserTab, baseUrl, clientKey }) {
-    await browserTab.waitForSelector('#buy-button:not([disabled])')
+    // await browserTab.waitForSelector('#buy-button:not([disabled])')
     const klarnaPage = new KlarnaAuthenticationPage(browserTab)
 
     const { sessionId, redirectResult } =
