@@ -89,7 +89,7 @@ describe('::manualCapture::', () => {
     const adyenRequest1 = JSON.parse(interfaceInteraction1.fields.request)
     expect(adyenRequest1.headers['Idempotency-Key']).to.equal(transaction1.id)
     const adyenResponse1 = JSON.parse(interfaceInteraction1.fields.response)
-    expect(adyenResponse1.response).to.equal('[capture-received]')
+    expect(adyenResponse1.status).to.equal('received')
     expect(transaction1.interactionId).to.equal(adyenResponse1.pspReference)
   }
 
@@ -139,7 +139,7 @@ describe('::manualCapture::', () => {
       const adyenRequest = JSON.parse(interfaceInteraction.fields.request)
       expect(adyenRequest.headers['Idempotency-Key']).to.equal(idempotencyKey)
       const adyenResponse = JSON.parse(interfaceInteraction.fields.response)
-      expect(adyenResponse.response).to.equal('[capture-received]')
+      expect(adyenResponse.status).to.equal('received')
       expect(transaction.interactionId).to.equal(adyenResponse.pspReference)
 
       await testGenerateIdempotencyKey(chargedPayment)

@@ -40,9 +40,7 @@ describe('cancel-payment::execute', () => {
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-    scope = nock(
-      `${adyenConfig.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.CANCEL}`
-    )
+    scope = nock(`${adyenConfig.apiBaseUrl}/payments/8835513921644842/`)
   })
 
   afterEach(() => {
@@ -55,7 +53,7 @@ describe('cancel-payment::execute', () => {
       'then it should return actions "addInterfaceInteraction", ' +
       '"changeTransactionState" and "changeTransactionInteractionId"',
     async () => {
-      scope.post('/cancel').reply(200, cancelPaymentResponse)
+      scope.post('/cancels').reply(200, cancelPaymentResponse)
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.key = 'originalReference-ABCDEFG'
       ctpPaymentClone.transactions.push(cancelPaymentTransaction)

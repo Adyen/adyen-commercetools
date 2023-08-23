@@ -85,6 +85,10 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
 }
 
 async function ensureAdyenHmac(adyenApiKey, merchantId, webhookId) {
+  const logger = mainLogger.child({
+    adyen_merchant_id: merchantId,
+  })
+
   const generateHmacResponse = await fetch(
     `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${webhookId}/generateHmac`,
     {
@@ -98,6 +102,8 @@ async function ensureAdyenHmac(adyenApiKey, merchantId, webhookId) {
 
   const generateHmacResponseJson = await generateHmacResponse.json()
   const { hmacKey } = generateHmacResponseJson
+
+  logger.info(`New HMAC was generated: ${hmacKey}`)
 
   return hmacKey
 }

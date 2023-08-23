@@ -5,8 +5,6 @@ import config from '../../src/config/config.js'
 import refundPaymentHandler from '../../src/paymentHandler/refund-payment.handler.js'
 import utils from '../../src/utils.js'
 
-import constants from '../../src/config/constants.js'
-
 import { overrideGenerateIdempotencyKeyConfig } from '../test-utils.js'
 
 const { execute } = refundPaymentHandler
@@ -46,9 +44,7 @@ describe('refund-payment::execute', () => {
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-    scope = nock(
-      `${adyenConfig.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.REFUND}`
-    )
+    scope = nock(`${adyenConfig.apiBaseUrl}/payments/8835513921644842/`)
   })
 
   afterEach(() => {
@@ -102,7 +98,7 @@ describe('refund-payment::execute', () => {
     'when refund payment response contains non-JSON format, ' +
       'then it should return the response in plain text inside interfaceInteraction',
     async () => {
-      scope.post('/refund').reply(200, 'non-json-response')
+      scope.post('/refunds').reply(200, 'non-json-response')
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
 

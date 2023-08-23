@@ -27,12 +27,14 @@ function manualCapture(
   manualCaptureRequestObj
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
-  extendRequestObjWithMetadata(manualCaptureRequestObj, commercetoolsProjectKey)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.MANUAL_CAPTURE}/capture`,
+    `${adyenCredentials.apiBaseUrl}/payments/${manualCaptureRequestObj.originalReference}/captures`,
     merchantAccount,
     adyenCredentials.apiKey,
-    manualCaptureRequestObj,
+    {
+      amount: manualCaptureRequestObj.modificationAmount,
+      reference: manualCaptureRequestObj?.reference,
+    },
     idempotencyKey && { 'Idempotency-Key': idempotencyKey }
   )
 }
@@ -43,12 +45,13 @@ function cancelPayment(
   cancelPaymentRequestObj
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
-  extendRequestObjWithMetadata(cancelPaymentRequestObj)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.CANCEL}/cancel`,
+    `${adyenCredentials.apiBaseUrl}/payments/${cancelPaymentRequestObj.originalReference}/cancels`,
     merchantAccount,
     adyenCredentials.apiKey,
-    cancelPaymentRequestObj
+    {
+      reference: cancelPaymentRequestObj?.reference,
+    }
   )
 }
 
@@ -59,12 +62,14 @@ function refund(
   refundRequestObj
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
-  extendRequestObjWithMetadata(refundRequestObj, commercetoolsProjectKey)
   return callAdyen(
-    `${adyenCredentials.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.REFUND}/refund`,
+    `${adyenCredentials.apiBaseUrl}/payments/${refundRequestObj.originalReference}/refunds`,
     merchantAccount,
     adyenCredentials.apiKey,
-    refundRequestObj,
+    {
+      amount: refundRequestObj.modificationAmount,
+      reference: refundRequestObj?.reference,
+    },
     idempotencyKey && { 'Idempotency-Key': idempotencyKey }
   )
 }

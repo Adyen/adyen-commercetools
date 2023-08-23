@@ -71,7 +71,7 @@ describe('manual-capture.handler::execute::', () => {
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-    scope = nock(`${adyenConfig.legacyApiBaseUrl}/Payment/v64`)
+    scope = nock(`${adyenConfig.apiBaseUrl}/payments/8313547924770610/`)
   })
 
   it(
@@ -80,7 +80,7 @@ describe('manual-capture.handler::execute::', () => {
       'then it should return actions "addInterfaceInteraction", ' +
       '"changeTransactionState" and "changeTransactionInteractionId"',
     async () => {
-      scope.post('/capture').reply(200, manualCaptureResponse)
+      scope.post('/captures').reply(200, manualCaptureResponse)
 
       const paymentObject = cloneDeep(authorisedPayment)
       paymentObject.transactions.push(chargeInitialTransaction)
@@ -133,7 +133,7 @@ describe('manual-capture.handler::execute::', () => {
         message: 'Original pspReference required for this operation',
         errorType: 'validation',
       }
-      scope.post('/capture').reply(422, validationError)
+      scope.post('/captures').reply(422, validationError)
 
       const paymentObject = cloneDeep(authorisedPayment)
       paymentObject.transactions.push(chargeInitialTransaction)
@@ -163,7 +163,7 @@ describe('manual-capture.handler::execute::', () => {
     'when manual capture payment request contains reference, then it should send this reference to ' +
       'Adyen',
     async () => {
-      scope.post('/capture').reply(200, manualCaptureResponse)
+      scope.post('/captures').reply(200, manualCaptureResponse)
 
       const paymentObject = cloneDeep(authorisedPayment)
       paymentObject.transactions.push(chargeInitialTransaction)
@@ -190,7 +190,7 @@ describe('manual-capture.handler::execute::', () => {
     async () => {
       overrideGenerateIdempotencyKeyConfig(true)
 
-      scope.post('/capture').reply(200, manualCaptureResponse)
+      scope.post('/captures').reply(200, manualCaptureResponse)
 
       const paymentObject = cloneDeep(authorisedPayment)
       paymentObject.transactions.push(chargeInitialTransaction)
