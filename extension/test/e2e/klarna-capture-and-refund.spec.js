@@ -320,9 +320,9 @@ describe('::klarnaPayment::', () => {
     const manualCaptureResponse = JSON.parse(
       interfaceInteraction.fields.response
     )
-    expect(manualCaptureResponse.response).to.equal(
-      '[capture-received]',
-      `response is not [capture-received]: ${manualCaptureResponse}`
+    expect(manualCaptureResponse.status).to.equal(
+      'received',
+      `response status is not "received": ${manualCaptureResponse}`
     )
     expect(manualCaptureResponse.pspReference).to.match(
       /[A-Z0-9]+/,
