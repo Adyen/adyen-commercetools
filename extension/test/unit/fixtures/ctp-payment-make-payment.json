@@ -1,0 +1,58 @@
+{
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 795,
+    "fractionDigits": 2
+  },
+  "paymentMethodInfo": {
+    "paymentInterface": "ctp-adyen-integration"
+  },
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "ctp-adyen-integration-web-components-payment-type"
+    },
+    "fields": {}
+  },
+  "transactions": [
+    {
+      "id": "6b1d4c68-8e31-4528-9af8-dc09ad653d91",
+      "type": "Authorization",
+      "amount": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 495,
+        "fractionDigits": 2
+      },
+      "interactionId": "8835513921644842",
+      "state": "Success"
+    }
+  ],
+  "interfaceInteractions": [
+    {
+      "type": {
+        "typeId": "type",
+        "key": "ctp-adyen-integration-interaction-payment-type"
+      },
+      "fields": {
+        "request": "{\n  \"riskData\": {\n    \"clientData\": \"eyJ2ZXJzaW9uIjoiMS4wLjAiLCJkZXZpY2VGaW5nZXJwcmludCI6ImRmLXRpbWVkT3V0In0=\"\n  },\n  \"paymentMethod\": {\n    \"type\": \"scheme\",\n    \"encryptedCardNumber\": \"adyenjs_0_1_25$6JqHXl7+6iLItETn95i1GvE2t4QYomj5HW3llssV/cvgpiMohtAWyafHGCxC27sBj4dwunNQzcwrMwNP30G1QvGu4cbID5Wy3D2IOa2OvG+9W4OqxifZXTo2Txr7Xo4DT7y5vgCyH3r4kgQOzfc0TgHyYjCDdXsPGMYJ3QUs180eDMeYuQ82YR/dDjFuO3ea5QQJxF5j2gVzgcTmU3U8HYIhtExboPnb55FB3cOFqDfrGHPb2s8Tue2dOeEWO6RAbZiUGtf93o4p0PoILC8WRP9l6VrtTiSzqoJhng+i2a59sK6HSlIXuynk1i7uI0RZ1ZJDfnvZo5GjSUTHnNkN6A==$dHvwPh/el9VNWkBXkCL8bUdUvoXSGw1sJ0aoJro/wq0YOE7TXmOr8fbQa2E4RjaFjgB4lHxsx7EiMeWer3EEa9u/EXNTm2IHsdN3AVN3L2e8VZupSq8z0Vb73P6jeVOhAh30eXEZLWL/F5KOL37+8451eaf2L8L7Ct2uIoz/HNbpYSdAvoMHP+hed2v5Bjktr6mOs7eYtDiI2U3BIHsMBUqefThHyu1c9052CiiRuPJeigYFQs1FzQWKzAPBLCl1pAs6um2L7twCPf3gF9f3j6Ik5k+138lbAo75eqq0f/njYp1TDijdjEFSv/o66krTCO/VomUJ+xo6MnMEbuyrR+SI2FwCpna9r8Dc8mbjl00uxb6ykJP3Qee+sV6wRS7jaks17NDH8nVYZZIdDena7vPaJCa0lNH422uCVsgzR8MEaMtyQqzhLLm4UPjxz0R2ASM8ytoWM9fb941x/JTNuTk/m9zeBqGXYam95owFnUCXiVLGfQ7lX6PeTQ45KbNTctQh0lXJUFJeo7H7ksb2muNt6+baQaIXl+7DhZX86LSkF/EJb053fgolby+UqQxiLcMbWuQkYpSJ0VOCKkueVi0HoQYZtRcXNQA5/pjIknUHhXi3JxxkYMQfihvx1M/4fVhNOkn8RHO17tXgI0YCAmq2A/OKWcblVjGe3kkqMYG4dvpSnnaHIOCudc6H7jQ8XML1xtiVKR0rtRM+yMXIYe1YWedY7qPGGLo/tI0pxGsJhTbZ2g==\",\n    \"encryptedExpiryMonth\": \"adyenjs_0_1_25$zEhFejVFdXvYW0pzs5VvAGOecupNu9qJ4BEoKjikJ71ce7nLmGkSYPabhOMECLtrAKa2UaU8+gdFDTggTA4jk7TXpkaAN+ESYZg6PaSnXjq1wJszQGGJEplRExgqATM/pZ6srzHoBb8GbzzdFFcMebXqTO9cqQbjNSaY6jHUvCZouqQWy8MLadAcMcWcLD8OuJ7rnamd7GCo+bsCRI080FF60cNMxI3eNesK+IV376WwWc4aHb16jFbf6RkSWi4u+wain/fG8pwM0+PBsQ4eU1jPGBFuBUpfdhDqj1cbw4nwbvSrI5BEqIp5wKVd8CHE0gsEE/sOL1xrIJSohku74g==$ff7q2k7FcGq4OB2oCQUj3buakz417VvYXVmNjM/vkNRRvYWtfi+KE29L1xskvOAcw7QIabftML7mtQSzEdGsm3v0IVYhKfdrefjrnFq6osRgBizSNoQbp+xUIzzhSUJAKN22LjPCJhxr/XB143EtQU9V6sxUigxV6rPejqs7LHKTGK/EOgLT6TaxWYtPlU0b8aPI2M15Vy11X+/oZDk7fXKqezAixscyxxYko5qrLHpijgPKZmTgPPSOYWmCKSmab2msz0PAM/SR/nVhP5ehqXbn/nNWEBlfRXjvZXSt7KzM/gOImomlnilnBdzGIdNeFVL2bt0qvPqNhf1AcESh80mMA6gpR1xQowQ6kMHGK24LjIZPsx6IQQZmoWtyJ5FcEjYVklmWI4GJBZJX/U2bs48/iEvBXcWX8E6lu6JjvG5/WkBYa1SOAMwZnuPWIbwJQAmo2vzlxloNRG4B9xpOZEE=\",\n    \"encryptedExpiryYear\": \"adyenjs_0_1_25$Rvlqat8+CfPGYSs2q0wH36xxmVizEofbjrVpMhgqCGwfvOJWbQJSkpK41OhoK1C/cECg3bPFw6eEQkUeBxznKyU+lk5VQ8l0MaeyJpYxVe4bRw0NpbrjnZjlp1CQWg+MD/mW8b7wCKLNQ2xupiYscA05lGchHvPOc+rriYUTX7WHt3jZI5Gx6LW8rkDY8nCE3VzcY0VpRryOHZA0q5ftGc4/3KB3TZHuVFHLUNebAKi8gfy+HtChRAL4Y/ZGjn39z3oX6vHALg4GKIX7krd9Xq9ksTtHCaWE/yIZdQkdUXfR31aR88h3XPP2iCN0sC5uGdyrYNHIcz6pRSHZwlvwiw==$19q6x0aWFsYVYl8DPUjn/D43t9xux42pddujnp5nqauyZwEj98co3k5kvM7LwWAVflNACS7e2N9DCUOgAwqgimOQ4lrSn5OJ7b+BCCoHA/UlzZfFzs57rSvy2vbdUpsG79k0LPFxilmN0uhRfjrjPb9do630cPZIiLGboZup5bc1VMWv3jHFiEWLU0Nk1NLv58SmzmDyLHPEqx3iviA5MOo2IBpCvzMcy8CYLTfL8NTCoaPW4+fNOPD7zRzd/IApqEeALEA3XrBIYweHoyEgHTdUt98bMzvDEyxaBIGo9j8+s5Zqro1qRRhPeidt2AcEpgo19ITEX/oTmu2fE8cF7vo/U9J85bxppwhJWbTaQ826jPz2k2NonSu1spbHxqnV+Mzu23LDXfXZAbU9Uqgp8l5id99fQUIuB2TEkH2VL2VDlGgWMjbyRGXXpf2q0a6W1V5zNs8THjGH3Y7pvnBNCwNs\",\n    \"encryptedSecurityCode\": \"adyenjs_0_1_25$YQyNBPAVY3gCS42K1pGqu3oSOfk61EOkrjNB2CEANMQK/VPlJKBW0jv325fyyrJ4EJw2D7Pk6RuAi5VZ+r4pyNtn1nJ+UdZd7w6gNxs0g1hdaYE5nst+DcV85SZxNzvwVByiyaAG/IIVRr1WPMIkn3g6RosDRuS8p9PRNKRqd4W0S6+Pf2GYq6X8k4K9+YiO4dvKTldHnhX6PRQE0KrQm75CDnStSyVrUooD7IjX2FNx4YCnHx5uthzH0CDbDQiwqQfqBkC8OpgSi2QoWP9n/Lcsyc+s6HOS9kDeHsaD/zMq6wxWfwlGIdB9Kw2axYxXr1C1sjZ3Adu+JbRCjtDIZg==$Pxw7HKD3Qa98EnQTVvjpKZyLMW4aiL+uA/p/fy9vmZml5cKKs0qUrD0dKOSOz8DYpnmV2J1qZ/8NyG3rd0cE63bkpvpZX79klLDmYodexhAQTWL0M7efoNDYyIxxmEg0LQvdeVDsrboQDM0bNCpDcdIJ2QDoj9QJ14QM91fntgJPxFHcshhIG6BESXrWeI9bNM/uhqyuMag2qzR60AFpaabHWT92v3VqEZbh21KRXe/6VDnRlWCF6659VIW1cVZUp2QemofK9YKSkHMe117t3Xy5mwgmKj7onPhDlANL+tV2LJgubvJAqwi5VY/QJ5sa6jVLGkUEjztFwNmXwhQDYTHFT8hUyDxh24wC+9O8PxeFXAFmJ/0J0Q42jeu/wVUjV3FMT2qhzd3uhLy+8VefJardgvv7irgeMjoux5qsbTtGCkZKF+xnEDf5/n41+DAB5kt6tsJa03KIHA==\"\n  },\n  \"browserInfo\": {\n    \"acceptHeader\": \"*/*\",\n    \"colorDepth\": 24,\n    \"language\": \"en-US\",\n    \"javaEnabled\": false,\n    \"screenHeight\": 1050,\n    \"screenWidth\": 1680,\n    \"userAgent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36\",\n    \"timeZoneOffset\": -120\n  },\n  \"reference\": 98,\n  \"amount\": {\n    \"currency\": \"EUR\",\n    \"value\": 795\n  }\n}",
+        "createdAt": "2019-02-28T22:16:04.246Z",
+        "response": "response=",
+        "type": "makePayment"
+      }
+    },
+    {
+      "type": {
+        "typeId": "type",
+        "key": "ctp-adyen-integration-interaction-payment-type"
+      },
+      "fields": {
+        "request": "request",
+        "createdAt": "2019-02-28T22:16:19.086Z",
+        "response": "response",
+        "type": "completePayment"
+      }
+    }
+  ]
+}

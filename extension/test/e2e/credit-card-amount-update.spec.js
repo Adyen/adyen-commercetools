@@ -96,10 +96,25 @@ describe('::creditCardPayment::amount-update::', () => {
       )
 
       // Step #3 - Update Amount
-      const { statusCode, updatedPayment } = await updateAmount(
-        notificationInteraction,
-        paymentAfterCreateSession
+      const { statusCode, updatedPayment } = await waitUntil(
+        async () => {
+          try {
+            return await updateAmount(
+              notificationInteraction,
+              paymentAfterCreateSession
+            )
+          } catch (err) {
+            logger.error(
+              'credit-card-amount-update::errors:',
+              JSON.stringify(err)
+            )
+            return Promise.resolve()
+          }
+        },
+        10,
+        1_000
       )
+
       amountUpdatesResponse = JSON.parse(
         updatedPayment.custom.fields.amountUpdatesResponse
       )

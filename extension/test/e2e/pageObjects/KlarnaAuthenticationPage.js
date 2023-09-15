@@ -53,15 +53,13 @@ export default class KlarnaAuthenticationPage {
     await klarnaIframe.click('#directdebit\\.0-ui button[role="option"]')
     await klarnaIframe.click('[data-testid="pick-plan"]')
 
-    const finalSubmitButton = await klarnaIframe.$(
-      '[data-testid="summary"] [data-testid="confirm-and-pay"]'
-    )
-    if (finalSubmitButton) {
-      // Sleep before final click because klarna uses some internal state to disable button directly with its style.
-      // We just need to wait for effect to finish.
-      await this.page.waitForTimeout(1_000)
-      await finalSubmitButton.click()
-    } else {
+    // Sleep before final searching for iban field because klarna uses some effects for rendering.
+    // We just need to wait for effect to finish.
+    await this.page.waitForTimeout(1_000)
+
+    const ibanField = await klarnaIframe.$('#iban')
+
+    if (ibanField) {
       await klarnaIframe.waitForSelector('[data-testid="confirm-and-pay"]', {
         visible: true,
       })
@@ -84,14 +82,20 @@ export default class KlarnaAuthenticationPage {
       const confirmButton = dialogButtons[dialogButtons.length - 1]
       await confirmButton.click()
 
-      // Sleep before final click because klarna uses some internal state to disable button directly with its style.
-      // We just need to wait for effect to finish.
-      await this.page.waitForTimeout(1_000)
       await klarnaIframe.waitForSelector(
         '[data-testid="summary"] [data-testid="confirm-and-pay"]',
         { visible: true }
       )
       await klarnaIframe.click('[data-testid="confirm-and-pay"]')
+    } else {
+      const finalSubmitButton = await klarnaIframe.$(
+        '[data-testid="summary"] [data-testid="confirm-and-pay"]'
+      )
+
+      // Sleep before final click because klarna uses some internal state to disable button directly with its style.
+      // We just need to wait for effect to finish.
+      await this.page.waitForTimeout(1_000)
+      await finalSubmitButton.click()
     }
 
     await this.page.waitForSelector('#redirect-response')

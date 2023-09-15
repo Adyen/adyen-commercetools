@@ -184,16 +184,29 @@ describe('::klarnaPayment::', () => {
       )
 
       // #4 - Refund the payment
-      const { body: paymentAfterReceivingCaptureNotification } =
-        await ctpClient.fetchById(
-          ctpClient.builder.payments,
-          paymentAfterCapture.id
-        )
+      const { statusCode, paymentAfterRefund } = await waitUntil(
+        async () => {
+          try {
+            const { body: paymentAfterReceivingCaptureNotification } =
+              await ctpClient.fetchById(
+                ctpClient.builder.payments,
+                paymentAfterCapture.id
+              )
 
-      const { statusCode, paymentAfterRefund } =
-        await refundPaymentTransactions(
-          paymentAfterReceivingCaptureNotification
-        )
+            return await refundPaymentTransactions(
+              paymentAfterReceivingCaptureNotification
+            )
+          } catch (err) {
+            logger.error(
+              'credit-card-cancel-payment::errors:',
+              JSON.stringify(err)
+            )
+            return Promise.resolve()
+          }
+        },
+        10,
+        1_000
+      )
 
       const refundPaymentStatusCode = statusCode
       expect(refundPaymentStatusCode).to.be.equal(200)
@@ -203,7 +216,8 @@ describe('::klarnaPayment::', () => {
             ctpClient,
             paymentAfterCreateSession.id,
             `refund`
-          )
+          ),
+        30
       )
 
       paymentAfterReceivingRefundNotification = await ctpClient.fetchById(

@@ -54,7 +54,7 @@ async function processNotification(
     originalReference || pspReference,
     ctpClient
   )
-  if (payment !== null)
+  if (payment)
     await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
   else
     logger.error(

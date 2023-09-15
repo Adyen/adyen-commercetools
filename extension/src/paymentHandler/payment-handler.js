@@ -1,5 +1,7 @@
 import { withPayment } from '../validator/validator-builder.js'
-
+import makePaymentHandler from './make-payment.handler.js'
+import makeLineitemsPaymentHandler from './make-lineitems-payment.handler.js'
+import submitPaymentDetailsHandler from './submit-payment-details.handler.js'
 import manualCaptureHandler from './manual-capture.handler.js'
 import cancelHandler from './cancel-payment.handler.js'
 import refundHandler from './refund-payment.handler.js'
@@ -74,6 +76,20 @@ function _getPaymentHandlers(paymentObject) {
   ) {
     handlers.push(getPaymentMethodsHandler)
   }
+
+  if (customFields.makePaymentRequest && !customFields.makePaymentResponse) {
+    const makePaymentRequestObj = JSON.parse(customFields.makePaymentRequest)
+    if (_requiresLineItems(makePaymentRequestObj))
+      handlers.push(makeLineitemsPaymentHandler)
+    else handlers.push(makePaymentHandler)
+  }
+
+  if (
+    customFields.makePaymentResponse &&
+    customFields.submitAdditionalPaymentDetailsRequest &&
+    !customFields.submitAdditionalPaymentDetailsResponse
+  )
+    handlers.push(submitPaymentDetailsHandler)
 
   if (
     customFields.createSessionRequest &&
@@ -153,10 +169,9 @@ function _validatePaymentRequest(paymentObject, authToken) {
   return null
 }
 
-function _requiresLineItems(createSessionRequestObj) {
-  const addCommercetoolsLineItemsFlag = _getAddCommercetoolsLineItemsFlag(
-    createSessionRequestObj
-  )
+function _requiresLineItems(requestObj) {
+  const addCommercetoolsLineItemsFlag =
+    _getAddCommercetoolsLineItemsFlag(requestObj)
   if (
     addCommercetoolsLineItemsFlag === true ||
     addCommercetoolsLineItemsFlag === false
@@ -171,19 +186,18 @@ function _requiresLineItems(createSessionRequestObj) {
   return false
 }
 
-function _getAddCommercetoolsLineItemsFlag(createSessionRequestObj) {
+function _getAddCommercetoolsLineItemsFlag(requestObj) {
   // The function is tend to be used to check values on the field: true, false, undefined,
   // or the value set but not to true/false
   // in case of the undefined or other than true/false, the function returns undefined:
   // it means the other fallbacks have to be checked to decide adding line items
   let addCommercetoolsLineItems
-  if ('addCommercetoolsLineItems' in createSessionRequestObj) {
+  if ('addCommercetoolsLineItems' in requestObj) {
     if (
-      createSessionRequestObj.addCommercetoolsLineItems === true ||
-      createSessionRequestObj.addCommercetoolsLineItems === false
+      requestObj.addCommercetoolsLineItems === true ||
+      requestObj.addCommercetoolsLineItems === false
     ) {
-      addCommercetoolsLineItems =
-        createSessionRequestObj.addCommercetoolsLineItems
+      addCommercetoolsLineItems = requestObj.addCommercetoolsLineItems
     }
   }
   return addCommercetoolsLineItems

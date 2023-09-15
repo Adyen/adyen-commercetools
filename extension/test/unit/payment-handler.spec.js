@@ -64,7 +64,7 @@ describe('payment-handler::execute', () => {
 
         expect(response.errors).to.have.lengthOf.above(0)
         expect(response.errors[0].message).to.equal(
-          errorMessage.AMOUNT_PLANNED_NOT_SAME
+          errorMessage.CREATE_SESSION_AMOUNT_PLANNED_NOT_SAME
         )
       }
     )
@@ -119,7 +119,7 @@ describe('payment-handler::execute', () => {
       const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.errors[0].message).to.equal(
-        errorMessage.AMOUNT_PLANNED_NOT_SAME
+        errorMessage.CREATE_SESSION_AMOUNT_PLANNED_NOT_SAME
       )
     })
   })

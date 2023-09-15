@@ -14,6 +14,41 @@ async function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
   )
 }
 
+async function makePayment(
+  merchantAccount,
+  commercetoolsProjectKey,
+  makePaymentRequestObj
+) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+  extendRequestObjWithMetadata(makePaymentRequestObj, commercetoolsProjectKey)
+  await extendRequestObjWithApplicationInfo(makePaymentRequestObj)
+  removeAddCommercetoolsLineItemsField(makePaymentRequestObj)
+  return callAdyen(
+    `${adyenCredentials.apiBaseUrl}/payments`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    makePaymentRequestObj
+  )
+}
+
+function submitAdditionalPaymentDetails(
+  merchantAccount,
+  commercetoolsProjectKey,
+  submitAdditionalPaymentDetailsRequestObj
+) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+  extendRequestObjWithMetadata(
+    submitAdditionalPaymentDetailsRequestObj,
+    commercetoolsProjectKey
+  )
+  return callAdyen(
+    `${adyenCredentials.apiBaseUrl}/payments/details`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    submitAdditionalPaymentDetailsRequestObj
+  )
+}
+
 function removeAddCommercetoolsLineItemsField(createSessionRequestObj) {
   // Otherwise adyen might return a 400 response with the following message:
   // Structure of PaymentRequest contains the following unknown fields: [addCommercetoolsLineItems]
@@ -249,6 +284,8 @@ function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj, headers) {
 
 export {
   getPaymentMethods,
+  makePayment,
+  submitAdditionalPaymentDetails,
   manualCapture,
   refund,
   cancelPayment,

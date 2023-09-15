@@ -48,7 +48,8 @@ function setRoute() {
 }
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/redirect-3ds2-3ds1/web-component
-describe('::creditCardPayment3dsRedirect::', () => {
+// Skipped because Adyen test cards do not return redirect response anymore
+describe.skip('::creditCardPayment3dsRedirect::', () => {
   let browser
 
   let ctpClient

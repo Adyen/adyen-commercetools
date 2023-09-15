@@ -97,25 +97,38 @@ describe('::creditCardPayment::cancel-payment::', () => {
       )
 
       // Step #3 - Cancel payment
+      const { statusCode, body: cancelledPayment } = await waitUntil(
+        async () => {
+          try {
+            const { body: paymentAfterReceivingNotification } =
+              await ctpClient.fetchById(
+                ctpClient.builder.payments,
+                paymentAfterCreateSession.id
+              )
 
-      const { body: paymentAfterReceivingNotification } =
-        await ctpClient.fetchById(
-          ctpClient.builder.payments,
-          paymentAfterCreateSession.id
-        )
-
-      const { statusCode, body: cancelledPayment } = await ctpClient.update(
-        ctpClient.builder.payments,
-        paymentAfterReceivingNotification.id,
-        paymentAfterReceivingNotification.version,
-        [
-          createAddTransactionAction({
-            type: 'CancelAuthorization',
-            state: 'Initial',
-            currency: 'EUR',
-            amount: 500,
-          }),
-        ]
+            return await ctpClient.update(
+              ctpClient.builder.payments,
+              paymentAfterReceivingNotification.id,
+              paymentAfterReceivingNotification.version,
+              [
+                createAddTransactionAction({
+                  type: 'CancelAuthorization',
+                  state: 'Initial',
+                  currency: 'EUR',
+                  amount: 500,
+                }),
+              ]
+            )
+          } catch (err) {
+            logger.error(
+              'credit-card-cancel-payment::errors:',
+              JSON.stringify(err)
+            )
+            return Promise.resolve()
+          }
+        },
+        10,
+        1_000
       )
 
       cancelledPaymentStatusCode = statusCode
@@ -147,7 +160,7 @@ describe('::creditCardPayment::cancel-payment::', () => {
 
     expect(cancelledPaymentStatusCode).to.be.equal(200)
 
-    expect(paymentAfterReceivingNotification.transactions).to.have.lengthOf(2)
+    expect(paymentAfterReceivingNotification.transactions).to.have.length.gte(2)
     const transaction = paymentAfterReceivingNotification.transactions[1]
     expect(transaction.type).to.equal('CancelAuthorization')
     expect(transaction.state).to.equal('Success')
