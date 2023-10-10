@@ -18,11 +18,11 @@ export default class CreditCardRedirectAuthenticationPage {
     const redirectResultEle = await this.page.$('#redirectResult')
     const sessionId = await this.page.evaluate(
       (el) => el.textContent,
-      sessionIdEle
+      sessionIdEle,
     )
     const redirectResult = await this.page.evaluate(
       (el) => el.textContent,
-      redirectResultEle
+      redirectResultEle,
     )
     return { sessionId, redirectResult }
   }

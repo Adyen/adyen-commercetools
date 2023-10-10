@@ -8,18 +8,18 @@ export default class CreditCard3dsNativePage {
 
   async finish3dsNativePayment() {
     await executeInAdyenIframe(this.page, '[name=answer]', (el) =>
-      el.type('password')
+      el.type('password'),
     )
     await executeInAdyenIframe(this.page, 'button[type=submit]', (el, frame) =>
       frame.$eval('#buttonSubmit', async (button) => {
         await button.click()
-      })
+      }),
     )
 
     await this.page.waitForTimeout(1_000)
 
     const additionalPaymentDetailsInput2 = await this.page.$(
-      '#adyen-additional-payment-details'
+      '#adyen-additional-payment-details',
     )
     return this.page.evaluate((el) => el.value, additionalPaymentDetailsInput2)
   }

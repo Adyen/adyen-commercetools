@@ -34,7 +34,7 @@ describe('cancel-payment::execute', () => {
 
   before(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-payment.json'
+      'test/unit/fixtures/ctp-payment.json',
     )
   })
 
@@ -64,19 +64,19 @@ describe('cancel-payment::execute', () => {
       expect(actions).to.have.lengthOf(3)
 
       const addInterfaceInteraction = actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       expect(addInterfaceInteraction.fields.type).to.equal(
-        CTP_INTERACTION_TYPE_CANCEL_PAYMENT
+        CTP_INTERACTION_TYPE_CANCEL_PAYMENT,
       )
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
       expect(addInterfaceInteraction.fields.response).to.equal(
-        JSON.stringify(cancelPaymentResponse)
+        JSON.stringify(cancelPaymentResponse),
       )
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const changeTransactionState = actions.find(
-        (a) => a.action === 'changeTransactionState'
+        (a) => a.action === 'changeTransactionState',
       )
       expect(changeTransactionState).to.be.deep.equal({
         transactionId: 'cancelTransactionId',
@@ -85,13 +85,13 @@ describe('cancel-payment::execute', () => {
       })
 
       const changeTransactionInteractionId = actions.find(
-        (a) => a.action === 'changeTransactionInteractionId'
+        (a) => a.action === 'changeTransactionInteractionId',
       )
       expect(changeTransactionInteractionId).to.be.deep.equal({
         transactionId: 'cancelTransactionId',
         action: 'changeTransactionInteractionId',
         interactionId: '8825408195409505',
       })
-    }
+    },
   )
 })

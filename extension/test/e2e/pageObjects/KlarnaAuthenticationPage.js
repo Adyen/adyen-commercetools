@@ -14,11 +14,11 @@ export default class KlarnaAuthenticationPage {
     const redirectResultEle = await this.page.$('#redirectResult')
     const sessionId = await this.page.evaluate(
       (el) => el.textContent,
-      sessionIdEle
+      sessionIdEle,
     )
     const redirectResult = await this.page.evaluate(
       (el) => el.textContent,
-      redirectResultEle
+      redirectResultEle,
     )
     return { sessionId, redirectResult }
   }
@@ -41,7 +41,7 @@ export default class KlarnaAuthenticationPage {
     // Use focus and keyboard instead of click method (see https://github.com/puppeteer/puppeteer/issues/4754)
     await klarnaIframe.waitForSelector(
       '#newCollectPhone [data-testid="kaf-button"]',
-      { visible: true }
+      { visible: true },
     )
     await klarnaIframe.focus('#newCollectPhone [data-testid="kaf-button"]')
     await this.page.keyboard.press('Enter')
@@ -77,19 +77,19 @@ export default class KlarnaAuthenticationPage {
       })
       const dialogButtons = await klarnaIframe.$$(
         '#directdebit\\.0-mandate-review button',
-        { visible: true }
+        { visible: true },
       )
       const confirmButton = dialogButtons[dialogButtons.length - 1]
       await confirmButton.click()
 
       await klarnaIframe.waitForSelector(
         '[data-testid="summary"] [data-testid="confirm-and-pay"]',
-        { visible: true }
+        { visible: true },
       )
       await klarnaIframe.click('[data-testid="confirm-and-pay"]')
     } else {
       const finalSubmitButton = await klarnaIframe.$(
-        '[data-testid="summary"] [data-testid="confirm-and-pay"]'
+        '[data-testid="summary"] [data-testid="confirm-and-pay"]',
       )
 
       // Sleep before final click because klarna uses some internal state to disable button directly with its style.

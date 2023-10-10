@@ -46,7 +46,7 @@ describe('::getPaymentMethods::', () => {
           },
           fields: {
             getPaymentMethodsRequest: JSON.stringify(
-              getPaymentMethodsRequestDraft
+              getPaymentMethodsRequestDraft,
             ),
             commercetoolsProjectKey,
             adyenMerchantAccount,
@@ -56,11 +56,11 @@ describe('::getPaymentMethods::', () => {
 
       const { statusCode, body: payment } = await ctpClient.create(
         ctpClient.builder.payments,
-        paymentDraft
+        paymentDraft,
       )
 
       const getPaymentMethodsRequestExtended = _.cloneDeep(
-        getPaymentMethodsRequestDraft
+        getPaymentMethodsRequestDraft,
       )
       getPaymentMethodsRequestExtended.applicationInfo = {
         merchantApplication: {
@@ -77,23 +77,24 @@ describe('::getPaymentMethods::', () => {
       const { getPaymentMethodsRequest, getPaymentMethodsResponse } =
         payment.custom.fields
       expect(getPaymentMethodsRequest).to.be.deep.equal(
-        JSON.stringify(getPaymentMethodsRequestDraft)
+        JSON.stringify(getPaymentMethodsRequestDraft),
       )
 
       const interfaceInteraction = payment.interfaceInteractions.find(
         (interaction) =>
-          interaction.fields.type === c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS
+          interaction.fields.type ===
+          c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS,
       )
       expect(interfaceInteraction).to.not.undefined
       expect(getPaymentMethodsResponse).to.be.deep.equal(
-        interfaceInteraction.fields.response
+        interfaceInteraction.fields.response,
       )
 
       const getPaymentMethodsRequestInteraction = JSON.parse(
-        interfaceInteraction.fields.request
+        interfaceInteraction.fields.request,
       )
       const getPaymentMethodsRequestBody = JSON.parse(
-        getPaymentMethodsRequestInteraction.body
+        getPaymentMethodsRequestInteraction.body,
       )
       expect(getPaymentMethodsRequestBody).to.be.deep.equal({
         merchantAccount: adyenMerchantAccount,
@@ -101,13 +102,13 @@ describe('::getPaymentMethods::', () => {
       })
 
       const interfaceInteractionResponse = JSON.parse(
-        interfaceInteraction.fields.response
+        interfaceInteraction.fields.response,
       )
       expect(interfaceInteractionResponse.paymentMethods).to.be.an.instanceof(
-        Array
+        Array,
       )
       expect(interfaceInteractionResponse.additionalData).to.not.exist
-    }
+    },
   )
 
   it(
@@ -139,7 +140,7 @@ describe('::getPaymentMethods::', () => {
           },
           fields: {
             getPaymentMethodsRequest: JSON.stringify(
-              getPaymentMethodsRequestDraft
+              getPaymentMethodsRequestDraft,
             ),
             adyenMerchantAccount,
             commercetoolsProjectKey,
@@ -149,11 +150,11 @@ describe('::getPaymentMethods::', () => {
 
       const { statusCode, body: payment } = await ctpClient.create(
         ctpClient.builder.payments,
-        paymentDraft
+        paymentDraft,
       )
 
       const getPaymentMethodsRequestExtended = _.cloneDeep(
-        getPaymentMethodsRequestDraft
+        getPaymentMethodsRequestDraft,
       )
       getPaymentMethodsRequestExtended.applicationInfo = {
         merchantApplication: {
@@ -170,23 +171,24 @@ describe('::getPaymentMethods::', () => {
       const { getPaymentMethodsRequest, getPaymentMethodsResponse } =
         payment.custom.fields
       expect(getPaymentMethodsRequest).to.be.deep.equal(
-        JSON.stringify(getPaymentMethodsRequestDraft)
+        JSON.stringify(getPaymentMethodsRequestDraft),
       )
 
       const paymentMethodsInteraction = payment.interfaceInteractions.find(
         (interaction) =>
-          interaction.fields.type === c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS
+          interaction.fields.type ===
+          c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS,
       )
       expect(paymentMethodsInteraction).to.not.undefined
       expect(getPaymentMethodsResponse).to.be.deep.equal(
-        paymentMethodsInteraction.fields.response
+        paymentMethodsInteraction.fields.response,
       )
 
       const getPaymentMethodsRequestInteraction = JSON.parse(
-        paymentMethodsInteraction.fields.request
+        paymentMethodsInteraction.fields.request,
       )
       const getPaymentMethodsRequestBody = JSON.parse(
-        getPaymentMethodsRequestInteraction.body
+        getPaymentMethodsRequestInteraction.body,
       )
       expect(getPaymentMethodsRequestBody).to.be.deep.equal({
         merchantAccount: adyenMerchantAccount,
@@ -194,12 +196,12 @@ describe('::getPaymentMethods::', () => {
       })
 
       const paymentMethodsInteractionResponse = JSON.parse(
-        paymentMethodsInteraction.fields.response
+        paymentMethodsInteraction.fields.response,
       )
       expect(
-        paymentMethodsInteractionResponse.paymentMethods
+        paymentMethodsInteractionResponse.paymentMethods,
       ).to.be.an.instanceof(Array)
       expect(paymentMethodsInteractionResponse.additionalData).to.not.exist
-    }
+    },
   )
 })

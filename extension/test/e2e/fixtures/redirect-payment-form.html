@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -62,13 +62,13 @@
       // 1. Instantiate AdyenCheckout object
       // 2. Create FormAction
       const actionFieldElemenet = document.getElementById(
-        'redirect-payment-button'
+        'redirect-payment-button',
       )
       const sessionIdElement = document.getElementById(
-        'adyen-redirect-session-id'
+        'adyen-redirect-session-id',
       )
       const redirectResultElement = document.getElementById(
-        'adyen-redirect-result'
+        'adyen-redirect-result',
       )
       actionFieldElemenet.addEventListener('click', async () => {
         const clientKeyElement = document.getElementById('adyen-client-key')

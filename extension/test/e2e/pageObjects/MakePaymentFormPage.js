@@ -22,7 +22,7 @@ export default class MakePaymentFormPage {
     await this.page.click('.adyen-checkout__button--pay')
 
     const makePaymentRequestTextArea = await this.page.$(
-      '#adyen-make-payment-request'
+      '#adyen-make-payment-request',
     )
     return (
       await makePaymentRequestTextArea.getProperty('innerHTML')

@@ -15,7 +15,7 @@ describe('::ensure-resources::', () => {
 
   it('should ensure types', async () => {
     const apiExtensionTemplate = await utils.readAndParseJsonFile(
-      'resources/api-extension.json'
+      'resources/api-extension.json',
     )
     const {
       body: {
@@ -23,7 +23,7 @@ describe('::ensure-resources::', () => {
       },
     } = await ctpClient.fetchByKey(
       ctpClient.builder.extensions,
-      apiExtensionTemplate.key
+      apiExtensionTemplate.key,
     )
 
     // create resources
@@ -70,7 +70,7 @@ describe('::ensure-resources::', () => {
               required: false,
             },
           },
-        ]
+        ],
       ),
       ctpClient.update(
         ctpClient.builder.types,
@@ -95,33 +95,33 @@ describe('::ensure-resources::', () => {
               required: false,
             },
           },
-        ]
+        ],
       ),
     ])
   }
 
   async function fetchTypes() {
     const interfaceInteractionType = await utils.readAndParseJsonFile(
-      'resources/payment-interface-interaction-type.json'
+      'resources/payment-interface-interaction-type.json',
     )
     const paymentCustomType = await utils.readAndParseJsonFile(
-      'resources/web-components-payment-type.json'
+      'resources/web-components-payment-type.json',
     )
     const {
       body: { results },
     } = await ctpClient.fetch(
       ctpClient.builder.types.where(
-        `key in ("${paymentCustomType.key}", "${interfaceInteractionType.key}")`
-      )
+        `key in ("${paymentCustomType.key}", "${interfaceInteractionType.key}")`,
+      ),
     )
 
     expect(results).to.have.lengthOf(2)
 
     const existingPaymentType = results.filter(
-      (type) => type.key === paymentCustomType.key
+      (type) => type.key === paymentCustomType.key,
     )[0]
     const existingInterfaceType = results.filter(
-      (type) => type.key === interfaceInteractionType.key
+      (type) => type.key === interfaceInteractionType.key,
     )[0]
 
     return { existingPaymentType, existingInterfaceType }
@@ -131,17 +131,17 @@ describe('::ensure-resources::', () => {
     const { existingPaymentType, existingInterfaceType } = await fetchTypes()
 
     expect(
-      existingPaymentType.fieldDefinitions.map((def) => def.name)
+      existingPaymentType.fieldDefinitions.map((def) => def.name),
     ).to.include.members(['commercetoolsProjectKey', 'adyenMerchantAccount'])
     expect(
-      existingPaymentType.fieldDefinitions.map((def) => def.name)
+      existingPaymentType.fieldDefinitions.map((def) => def.name),
     ).to.not.have.members(['customFieldOfUser'])
 
     expect(
-      existingInterfaceType.fieldDefinitions.map((def) => def.name)
+      existingInterfaceType.fieldDefinitions.map((def) => def.name),
     ).to.include.members(['type'])
     expect(
-      existingInterfaceType.fieldDefinitions.map((def) => def.name)
+      existingInterfaceType.fieldDefinitions.map((def) => def.name),
     ).to.not.have.members(['customFieldOfUser'])
   }
 })

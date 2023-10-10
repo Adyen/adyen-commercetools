@@ -41,7 +41,7 @@ export default class AffirmRedirectAuthenticationPage {
     await this.page.evaluate((cb) => cb.click(), autoPayToggle)
     await this.page.waitForTimeout(1_000) // Wait for the page refreshes after toggling the autopay
     const confirmCheckbox = await this.page.$(
-      '[data-testid="disclosure-checkbox-indicator"]'
+      '[data-testid="disclosure-checkbox-indicator"]',
     )
     await this.page.evaluate((cb) => cb.click(), confirmCheckbox)
     await Promise.all([
@@ -55,11 +55,11 @@ export default class AffirmRedirectAuthenticationPage {
     const redirectResultEle = await this.page.$('#redirectResult')
     const sessionId = await this.page.evaluate(
       (el) => el.textContent,
-      sessionIdEle
+      sessionIdEle,
     )
     const redirectResult = await this.page.evaluate(
       (el) => el.textContent,
-      redirectResultEle
+      redirectResultEle,
     )
     return { sessionId, redirectResult }
   }

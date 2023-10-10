@@ -48,13 +48,13 @@
       }
 
       const actionFieldElemenet = document.getElementById(
-        'redirect-payment-button'
+        'redirect-payment-button',
       )
       actionFieldElemenet.addEventListener('click', async () => {
         const clientKeyElement = document.getElementById('adyen-client-key')
         configuration.clientKey = clientKeyElement.value
         const actionFieldElemenet = document.getElementById(
-          'adyen-make-payment-response-action-field'
+          'adyen-make-payment-response-action-field',
         )
         const action = JSON.parse(actionFieldElemenet.value)
         const checkout = await AdyenCheckout(configuration)
@@ -63,7 +63,7 @@
 
       function handleOnAdditionalDetails(state) {
         const additionalPaymentDetailsInput = document.getElementById(
-          'adyen-additional-payment-details'
+          'adyen-additional-payment-details',
         )
         additionalPaymentDetailsInput.value = JSON.stringify(state.data)
       }

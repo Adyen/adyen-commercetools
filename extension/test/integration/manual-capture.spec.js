@@ -55,7 +55,7 @@ describe('::manualCapture::', () => {
 
     const result = await ctpClient.create(
       ctpClient.builder.payments,
-      paymentDraft
+      paymentDraft,
     )
     payment = result.body
   })
@@ -78,13 +78,13 @@ describe('::manualCapture::', () => {
             },
           },
         }),
-      ]
+      ],
     )
 
     const transaction1 = chargedPayment1.transactions[2]
     const interfaceInteraction1 = chargedPayment1.interfaceInteractions.filter(
       (interaction) =>
-        interaction.fields.type === CTP_INTERACTION_TYPE_MANUAL_CAPTURE
+        interaction.fields.type === CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
     )[1]
     const adyenRequest1 = JSON.parse(interfaceInteraction1.fields.request)
     expect(adyenRequest1.headers['Idempotency-Key']).to.equal(transaction1.id)
@@ -121,7 +121,7 @@ describe('::manualCapture::', () => {
               },
             },
           }),
-        ]
+        ],
       )
 
       expect(statusCode).to.be.equal(200)
@@ -133,7 +133,7 @@ describe('::manualCapture::', () => {
 
       const interfaceInteraction = chargedPayment.interfaceInteractions.find(
         (interaction) =>
-          interaction.fields.type === CTP_INTERACTION_TYPE_MANUAL_CAPTURE
+          interaction.fields.type === CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
       )
 
       const adyenRequest = JSON.parse(interfaceInteraction.fields.request)
@@ -143,6 +143,6 @@ describe('::manualCapture::', () => {
       expect(transaction.interactionId).to.equal(adyenResponse.pspReference)
 
       await testGenerateIdempotencyKey(chargedPayment)
-    }
+    },
   )
 })

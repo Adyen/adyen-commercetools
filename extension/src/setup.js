@@ -19,18 +19,18 @@ async function setupExtensionResources(apiExtensionBaseUrl) {
         ctpClient,
         ctpConfig.projectKey,
         apiExtensionBaseUrl || moduleConfig.apiExtensionBaseUrl,
-        generateBasicAuthorizationHeaderValue(ctpConfig.projectKey)
+        generateBasicAuthorizationHeaderValue(ctpConfig.projectKey),
       )
-    })
+    }),
   )
 
   logger.info(
     `Configured commercetools project keys are: ${JSON.stringify(
-      ctpProjectKeys
+      ctpProjectKeys,
     )}. ` +
       `Configured adyen merchant accounts are: ${JSON.stringify(
-        adyenMerchantAccounts
-      )}`
+        adyenMerchantAccounts,
+      )}`,
   )
 }
 

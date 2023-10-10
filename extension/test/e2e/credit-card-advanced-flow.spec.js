@@ -26,14 +26,14 @@ describe('::creditCardAdvancedFlow::', () => {
       serveFile(
         './test/e2e/fixtures/3ds-v2-make-payment-form.html',
         request,
-        response
+        response,
       )
     }
     routes['/redirect-payment-form'] = async (request, response) => {
       serveFile(
         './test/e2e/fixtures/redirect-payment-form-advanced-flow.html',
         request,
-        response
+        response,
       )
     }
     routes['/return-url'] = async (request, response) => {
@@ -82,7 +82,7 @@ describe('::creditCardAdvancedFlow::', () => {
         })
         logger.debug(
           'creditCardAdvancedFlow::paymentAfterMakePayment:',
-          JSON.stringify(paymentAfterMakePayment)
+          JSON.stringify(paymentAfterMakePayment),
         )
         paymentAfterAuthentication = await performChallengeFlow({
           payment: paymentAfterMakePayment,
@@ -92,13 +92,13 @@ describe('::creditCardAdvancedFlow::', () => {
         })
         logger.debug(
           'creditCardAdvancedFlow::paymentAfterAuthentication:',
-          JSON.stringify(paymentAfterAuthentication)
+          JSON.stringify(paymentAfterAuthentication),
         )
       } catch (err) {
         logger.error('creditCardAdvancedFlow::errors', JSON.stringify(err))
       }
       assertPayment(paymentAfterAuthentication)
-    }
+    },
   )
 
   async function makePayment({
@@ -124,7 +124,7 @@ describe('::creditCardAdvancedFlow::', () => {
         ctpClient,
         adyenMerchantAccount,
         ctpProjectKey,
-        makePaymentRequest
+        makePaymentRequest,
       )
     } finally {
       const endTime = new Date().getTime()
@@ -145,12 +145,12 @@ describe('::creditCardAdvancedFlow::', () => {
     const makePaymentResponse = await JSON.parse(makePaymentResponseString)
     const redirectPaymentFormPage = new RedirectPaymentFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await redirectPaymentFormPage.goToThisPage()
     await redirectPaymentFormPage.redirectToAdyenPaymentPage(
       makePaymentResponse,
-      clientKey
+      clientKey,
     )
 
     await browserTab.waitForTimeout(5_000)
@@ -162,7 +162,7 @@ describe('::creditCardAdvancedFlow::', () => {
 
     logger.debug(
       'additionalPaymentDetailsString',
-      additionalPaymentDetailsString
+      additionalPaymentDetailsString,
     )
     let result = null
     const startTime = new Date().getTime()
@@ -177,19 +177,19 @@ describe('::creditCardAdvancedFlow::', () => {
             name: 'submitAdditionalPaymentDetailsRequest',
             value: additionalPaymentDetailsString,
           },
-        ]
+        ],
       )
     } catch (err) {
       logger.error(
         'creditCardAdvancedFlow::performChallengeFlow::errors:',
-        JSON.stringify(err)
+        JSON.stringify(err),
       )
       throw err
     } finally {
       const endTime = new Date().getTime()
       logger.debug(
         'creditCardAdvancedFlow::performChallengeFlow:',
-        endTime - startTime
+        endTime - startTime,
       )
     }
     return result.body

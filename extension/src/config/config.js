@@ -6,7 +6,7 @@ function getModuleConfig() {
   return {
     removeSensitiveData: _getValueOfBooleanFlag(
       config.removeSensitiveData,
-      true
+      true,
     ),
     port: config.port,
     logLevel: config.logLevel,
@@ -19,11 +19,11 @@ function getModuleConfig() {
       : undefined,
     addCommercetoolsLineItems: _getValueOfBooleanFlag(
       config.addCommercetoolsLineItems,
-      false
+      false,
     ),
     generateIdempotencyKey: _getValueOfBooleanFlag(
       config.generateIdempotencyKey,
-      false
+      false,
     ),
   }
 }
@@ -67,7 +67,7 @@ function getCtpConfig(ctpProjectKey) {
   const ctpConfig = config.commercetools[ctpProjectKey]
   if (!ctpConfig)
     throw new Error(
-      `Configuration is not provided. Please update the configuration. ctpProjectKey: [${ctpProjectKey}]`
+      `Configuration is not provided. Please update the configuration. ctpProjectKey: [${ctpProjectKey}]`,
     )
   const result = {
     clientId: ctpConfig.clientId,
@@ -93,8 +93,8 @@ function getAdyenConfig(adyenMerchantAccount) {
   if (!adyenConfig)
     throw new Error(
       `Configuration for adyenMerchantAccount is not provided. Please update the configuration: ${JSON.stringify(
-        adyenMerchantAccount
-      )}`
+        adyenMerchantAccount,
+      )}`,
     )
   return {
     apiKey: adyenConfig.apiKey,
@@ -132,26 +132,26 @@ function loadAndValidateConfig() {
   const numberOfAdyenConfigs = Object.keys(config.adyen).length
   if (numberOfCtpConfigs === 0)
     throw new Error(
-      'Please add at least one commercetools project to the config'
+      'Please add at least one commercetools project to the config',
     )
   if (numberOfAdyenConfigs === 0)
     throw new Error(
-      'Please add at least one Adyen merchant account to the config'
+      'Please add at least one Adyen merchant account to the config',
     )
 
   for (const [ctpProjectKey, ctpConfig] of Object.entries(
-    config.commercetools
+    config.commercetools,
   )) {
     if (!ctpConfig.clientId || !ctpConfig.clientSecret)
       throw new Error(
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
-          'Please verify that all projects have projectKey, clientId and clientSecret'
+          'Please verify that all projects have projectKey, clientId and clientSecret',
       )
     const errorMessage = _validateAuthenticationConfig(ctpConfig)
     if (errorMessage) {
       throw new Error(
         `Authentication is not properly configured. Please update the configuration. error : [${errorMessage}] 
-        ctpProjectKey: [${ctpProjectKey}]`
+        ctpProjectKey: [${ctpProjectKey}]`,
       )
     }
   }

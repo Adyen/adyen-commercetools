@@ -6,34 +6,34 @@ const mainLogger = utils.getLogger()
 
 async function ensurePaymentCustomType(ctpClient, ctpProjectKey) {
   const paymentCustomType = await utils.readAndParseJsonFile(
-    'resources/web-components-payment-type.json'
+    'resources/web-components-payment-type.json',
   )
   return syncCustomType(
     ctpClient,
     createChildLogger(ctpProjectKey),
-    paymentCustomType
+    paymentCustomType,
   )
 }
 
 async function ensureInterfaceInteractionCustomType(ctpClient, ctpProjectKey) {
   const interfaceInteractionType = await utils.readAndParseJsonFile(
-    'resources/payment-interface-interaction-type.json'
+    'resources/payment-interface-interaction-type.json',
   )
   return syncCustomType(
     ctpClient,
     createChildLogger(ctpProjectKey),
-    interfaceInteractionType
+    interfaceInteractionType,
   )
 }
 
 async function ensureTransactionCustomType(ctpClient, ctpProjectKey) {
   const interfaceInteractionType = await utils.readAndParseJsonFile(
-    'resources/payment-transaction-type.json'
+    'resources/payment-transaction-type.json',
   )
   return syncCustomType(
     ctpClient,
     createChildLogger(ctpProjectKey),
-    interfaceInteractionType
+    interfaceInteractionType,
   )
 }
 
@@ -59,7 +59,7 @@ async function syncCustomType(ctpClient, logger, typeDraft) {
           ctpClient.builder.types,
           existingType.id,
           existingType.version,
-          updateActions
+          updateActions,
         )
         logger.info(`Successfully updated the type (key=${typeDraft.key})`)
       }
@@ -67,7 +67,7 @@ async function syncCustomType(ctpClient, logger, typeDraft) {
   } catch (err) {
     throw Error(
       `Failed to sync payment type (key=${typeDraft.key}). ` +
-        `Error: ${JSON.stringify(serializeError(err))}`
+        `Error: ${JSON.stringify(serializeError(err))}`,
     )
   }
 }

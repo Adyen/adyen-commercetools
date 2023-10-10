@@ -20,7 +20,7 @@ describe('Authentication unit test', () => {
     const sandbox = sinon.createSandbox()
     sandbox.stub(config, 'getCtpConfig').returns(ctpDummyConfig)
     const result = generateBasicAuthorizationHeaderValue(
-      ctpDummyConfig.projectKey
+      ctpDummyConfig.projectKey,
     )
     expect(result).to.equal('Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==')
     sandbox.restore()
@@ -31,7 +31,7 @@ describe('Authentication unit test', () => {
     const sandbox = sinon.createSandbox()
     sandbox.stub(config, 'getCtpConfig').returns(ctpDummyConfig)
     const result = generateBasicAuthorizationHeaderValue(
-      ctpDummyConfig.projectKey
+      ctpDummyConfig.projectKey,
     )
     expect(result).to.not.exist
     sandbox.restore()

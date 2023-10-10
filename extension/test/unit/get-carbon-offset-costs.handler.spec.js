@@ -32,7 +32,7 @@ describe('get-carbon-offset-costs::execute::', () => {
       fields: {
         commercetoolsProjectKey: 'commercetoolsProjectKey',
         getCarbonOffsetCostsRequest: JSON.stringify(
-          getCarbonOffsetCostsRequest
+          getCarbonOffsetCostsRequest,
         ),
         adyenMerchantAccount,
       },
@@ -66,16 +66,16 @@ describe('get-carbon-offset-costs::execute::', () => {
     expect(result.actions[1].action).to.equal('setCustomField')
     const request = JSON.parse(result.actions[0].fields.request)
     expect(JSON.parse(request.body)).to.be.deep.includes(
-      getCarbonOffsetCostsRequest
+      getCarbonOffsetCostsRequest,
     )
     expect(result.actions[0].fields.response).to.be.deep.equal(
-      getCarbonOffsetCostsResponse
+      getCarbonOffsetCostsResponse,
     )
     expect(result.actions[0].fields.response).to.be.deep.equal(
-      result.actions[1].value
+      result.actions[1].value,
     )
     expect(result.actions[0].fields.type).to.equal(
-      c.CTP_INTERACTION_TYPE_GET_CARBON_OFFSET_COSTS
+      c.CTP_INTERACTION_TYPE_GET_CARBON_OFFSET_COSTS,
     )
     expect(result.actions[1].name).to.equal(c.CTP_CARBON_OFFSET_COSTS_RESPONSE)
   })
@@ -101,17 +101,17 @@ describe('get-carbon-offset-costs::execute::', () => {
       expect(result.actions[1].action).to.equal('setCustomField')
       const request = JSON.parse(result.actions[0].fields.request)
       expect(JSON.parse(request.body)).to.be.deep.includes(
-        getCarbonOffsetCostsRequest
+        getCarbonOffsetCostsRequest,
       )
       expect(result.actions[0].fields.response).to.equal(
-        getCarbonOffsetCostsFailedResponse
+        getCarbonOffsetCostsFailedResponse,
       )
       expect(result.actions[0].fields.type).to.equal(
-        c.CTP_INTERACTION_TYPE_GET_CARBON_OFFSET_COSTS
+        c.CTP_INTERACTION_TYPE_GET_CARBON_OFFSET_COSTS,
       )
       expect(result.actions[1].name).to.equal(
-        c.CTP_CARBON_OFFSET_COSTS_RESPONSE
+        c.CTP_CARBON_OFFSET_COSTS_RESPONSE,
       )
-    }
+    },
   )
 })

@@ -27,13 +27,13 @@ describe('verify hmac signatures', () => {
       const notification = createNotificationPayload(
         'YOUR_PROJECT_KEY',
         'YOUR_ADYEN_ACCOUNT',
-        `payment_${new Date().getTime()}`
+        `payment_${new Date().getTime()}`,
       )
       const errorMessage = validateHmacSignature(
-        notification.notificationItems[0]
+        notification.notificationItems[0],
       )
       expect(errorMessage).to.equal(null)
-    }
+    },
   )
 
   it(
@@ -44,16 +44,16 @@ describe('verify hmac signatures', () => {
       const modifiedNotification = createNotificationPayload(
         'YOUR_PROJECT_KEY',
         'YOUR_ADYEN_ACCOUNT',
-        `payment_${new Date().getTime()}`
+        `payment_${new Date().getTime()}`,
       ).notificationItems[0]
       modifiedNotification.NotificationRequestItem.amount.value = 0
 
       const errorMessage = validateHmacSignature(modifiedNotification)
       expect(errorMessage).to.equal(
         'Notification does not have a valid HMAC signature, ' +
-          'please confirm that the notification was sent by Adyen, and was not modified during transmission.'
+          'please confirm that the notification was sent by Adyen, and was not modified during transmission.',
       )
-    }
+    },
   )
 
   it(
@@ -64,16 +64,16 @@ describe('verify hmac signatures', () => {
       const modifiedNotification = createNotificationPayload(
         'YOUR_PROJECT_KEY',
         'YOUR_ADYEN_ACCOUNT',
-        `payment_${new Date().getTime()}`
+        `payment_${new Date().getTime()}`,
       ).notificationItems[0]
       modifiedNotification.NotificationRequestItem.additionalData = null
 
       const errorMessage = validateHmacSignature(modifiedNotification)
       expect(errorMessage).to.equal(
         'Notification does not contain the required field ' +
-          '"NotificationRequestItem.additionalData". Please check if HMAC is configured correctly or contact Adyen.'
+          '"NotificationRequestItem.additionalData". Please check if HMAC is configured correctly or contact Adyen.',
       )
-    }
+    },
   )
 
   it(
@@ -84,7 +84,7 @@ describe('verify hmac signatures', () => {
       const modifiedNotification = createNotificationPayload(
         'YOUR_PROJECT_KEY',
         'YOUR_ADYEN_ACCOUNT',
-        `payment_${new Date().getTime()}`
+        `payment_${new Date().getTime()}`,
       ).notificationItems[0]
       modifiedNotification.NotificationRequestItem.additionalData.hmacSignature =
         null
@@ -93,8 +93,8 @@ describe('verify hmac signatures', () => {
       expect(errorMessage).to.equal(
         'Notification does not contain the required field ' +
           '"NotificationRequestItem.additionalData.hmacSignature". ' +
-          'Please check if HMAC is configured correctly or contact Adyen.'
+          'Please check if HMAC is configured correctly or contact Adyen.',
       )
-    }
+    },
   )
 })

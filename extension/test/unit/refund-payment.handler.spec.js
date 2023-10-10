@@ -38,7 +38,7 @@ describe('refund-payment::execute', () => {
 
   before(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-payment.json'
+      'test/unit/fixtures/ctp-payment.json',
     )
   })
 
@@ -60,13 +60,13 @@ describe('refund-payment::execute', () => {
     const response = await execute(ctpPaymentClone)
 
     const adyenRequest = response.actions.find(
-      (action) => action.action === 'addInterfaceInteraction'
+      (action) => action.action === 'addInterfaceInteraction',
     ).fields.request
     const adyenRequestJson = JSON.parse(adyenRequest)
     const requestBody = JSON.parse(adyenRequestJson.body)
 
     expect(requestBody.reference).to.equal(
-      refundPaymentTransaction.custom.fields.reference
+      refundPaymentTransaction.custom.fields.reference,
     )
   })
 
@@ -85,13 +85,13 @@ describe('refund-payment::execute', () => {
       const { actions } = await execute(ctpPaymentClone)
 
       const addInterfaceInteraction = actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       const requestJson = JSON.parse(addInterfaceInteraction.fields.request)
       expect(requestJson.headers['Idempotency-Key']).to.equal(
-        refundPaymentTransaction.id
+        refundPaymentTransaction.id,
       )
-    }
+    },
   )
 
   it(
@@ -108,19 +108,19 @@ describe('refund-payment::execute', () => {
       const response = await execute(ctpPaymentClone)
 
       const adyenRequest = response.actions.find(
-        (action) => action.action === 'addInterfaceInteraction'
+        (action) => action.action === 'addInterfaceInteraction',
       ).fields.request
       const adyenResponse = response.actions.find(
-        (action) => action.action === 'addInterfaceInteraction'
+        (action) => action.action === 'addInterfaceInteraction',
       ).fields.response
 
       const adyenRequestJson = JSON.parse(adyenRequest)
       const requestBody = JSON.parse(adyenRequestJson.body)
 
       expect(requestBody.reference).to.equal(
-        refundPaymentTransaction.custom.fields.reference
+        refundPaymentTransaction.custom.fields.reference,
       )
       expect(adyenResponse).to.contains('non-json-response')
-    }
+    },
   )
 })

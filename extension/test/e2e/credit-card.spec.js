@@ -19,7 +19,7 @@ function setRoute() {
     serveFile(
       './test/e2e/fixtures/credit-card-init-session-form.html',
       request,
-      response
+      response,
     )
   }
 }
@@ -72,18 +72,18 @@ describe('::creditCardPayment::', () => {
             // https://docs.adyen.com/online-payments/web-components#create-payment-session
             const createSessionRequest = await getCreateSessionRequest(
               baseUrl,
-              clientKey
+              clientKey,
             )
 
             paymentAfterCreateSession = await createPaymentSession(
               ctpClient,
               adyenMerchantAccount,
               ctpProjectKey,
-              createSessionRequest
+              createSessionRequest,
             )
             logger.debug(
               'credit-card::paymentAfterCreateSession:',
-              JSON.stringify(paymentAfterCreateSession)
+              JSON.stringify(paymentAfterCreateSession),
             )
 
             // Step #2 - Setup Component
@@ -104,11 +104,11 @@ describe('::creditCardPayment::', () => {
 
           assertCreatePaymentSession(
             paymentAfterCreateSession,
-            initPaymentSessionResult
+            initPaymentSessionResult,
           )
-        }
+        },
       )
-    }
+    },
   )
 
   async function initPaymentSession({
@@ -122,7 +122,7 @@ describe('::creditCardPayment::', () => {
   }) {
     const initSessionFormPage = new CreditCardInitSessionFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await initSessionFormPage.goToThisPage()
     await initSessionFormPage.initPaymentSession({

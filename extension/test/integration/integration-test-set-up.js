@@ -61,10 +61,10 @@ async function _ensureCtpResources({
 
 async function _ensureZones(ctpClient) {
   const ctpZone = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-zone.json'
+    'test/integration/fixtures/ctp-zone.json',
   )
   const { body } = await ctpClient.fetch(
-    ctpClient.builder.zones.where(`key="${ctpZone.key}"`)
+    ctpClient.builder.zones.where(`key="${ctpZone.key}"`),
   )
   if (body.results.length === 0)
     return ctpClient.create(ctpClient.builder.zones, ctpZone)
@@ -73,10 +73,10 @@ async function _ensureZones(ctpClient) {
 
 async function _ensureTaxCategories(ctpClient) {
   const ctpTaxCategory = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-tax-category.json'
+    'test/integration/fixtures/ctp-tax-category.json',
   )
   const { body } = await ctpClient.fetch(
-    ctpClient.builder.taxCategories.where(`key="${ctpTaxCategory.key}"`)
+    ctpClient.builder.taxCategories.where(`key="${ctpTaxCategory.key}"`),
   )
   if (body.results.length === 0)
     return ctpClient.create(ctpClient.builder.taxCategories, ctpTaxCategory)
@@ -85,10 +85,10 @@ async function _ensureTaxCategories(ctpClient) {
 
 async function _ensureShippingMethods(ctpClient, taxCategoryId, zoneId) {
   const ctpShippingMethod = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-shipping-method.json'
+    'test/integration/fixtures/ctp-shipping-method.json',
   )
   const { body } = await ctpClient.fetch(
-    ctpClient.builder.shippingMethods.where(`key="${ctpShippingMethod.key}"`)
+    ctpClient.builder.shippingMethods.where(`key="${ctpShippingMethod.key}"`),
   )
   if (body.results.length === 0) {
     const ctpShippingMethodClone = _.cloneDeep(ctpShippingMethod)
@@ -96,7 +96,7 @@ async function _ensureShippingMethods(ctpClient, taxCategoryId, zoneId) {
     ctpShippingMethodClone.zoneRates[0].zone.id = zoneId
     return ctpClient.create(
       ctpClient.builder.shippingMethods,
-      ctpShippingMethodClone
+      ctpShippingMethodClone,
     )
   }
   return { body: body.results[0] }
@@ -104,10 +104,10 @@ async function _ensureShippingMethods(ctpClient, taxCategoryId, zoneId) {
 
 async function _ensureProductTypes(ctpClient) {
   const ctpProductType = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-product-type.json'
+    'test/integration/fixtures/ctp-product-type.json',
   )
   const { body } = await ctpClient.fetch(
-    ctpClient.builder.productTypes.where(`key="${ctpProductType.key}"`)
+    ctpClient.builder.productTypes.where(`key="${ctpProductType.key}"`),
   )
   if (body.results.length === 0)
     return ctpClient.create(ctpClient.builder.productTypes, ctpProductType)
@@ -116,10 +116,10 @@ async function _ensureProductTypes(ctpClient) {
 
 async function _ensureCartDiscount(ctpClient) {
   const ctpCartDiscount = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-cart-discount.json'
+    'test/integration/fixtures/ctp-cart-discount.json',
   )
   const { body } = await ctpClient.fetch(
-    ctpClient.builder.cartDiscounts.where(`key="${ctpCartDiscount.key}"`)
+    ctpClient.builder.cartDiscounts.where(`key="${ctpCartDiscount.key}"`),
   )
   if (body.results.length === 0)
     return ctpClient.create(ctpClient.builder.cartDiscounts, ctpCartDiscount)
@@ -128,51 +128,51 @@ async function _ensureCartDiscount(ctpClient) {
 
 async function _ensureCartDiscountMultiBuy(ctpClient) {
   const ctpCartDiscountMultiBuy = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-cart-discount-multi-buy.json'
+    'test/integration/fixtures/ctp-cart-discount-multi-buy.json',
   )
   const { body } = await ctpClient.fetch(
     ctpClient.builder.cartDiscounts.where(
-      `key="${ctpCartDiscountMultiBuy.key}"`
-    )
+      `key="${ctpCartDiscountMultiBuy.key}"`,
+    ),
   )
   if (body.results.length === 0)
     return ctpClient.create(
       ctpClient.builder.cartDiscounts,
-      ctpCartDiscountMultiBuy
+      ctpCartDiscountMultiBuy,
     )
   return { body: body.results[0] }
 }
 
 async function _ensureCartDiscountShipping(ctpClient) {
   const ctpCartDiscountShipping = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-cart-discount-shipping.json'
+    'test/integration/fixtures/ctp-cart-discount-shipping.json',
   )
   const { body } = await ctpClient.fetch(
     ctpClient.builder.cartDiscounts.where(
-      `key="${ctpCartDiscountShipping.key}"`
-    )
+      `key="${ctpCartDiscountShipping.key}"`,
+    ),
   )
   if (body.results.length === 0)
     return ctpClient.create(
       ctpClient.builder.cartDiscounts,
-      ctpCartDiscountShipping
+      ctpCartDiscountShipping,
     )
   return { body: body.results[0] }
 }
 
 async function _ensureDiscountCode(ctpClient, cartDiscountId) {
   const ctpDiscountCode = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-discount-code.json'
+    'test/integration/fixtures/ctp-discount-code.json',
   )
   const { body } = await ctpClient.fetch(
-    ctpClient.builder.discountCodes.where(`code="${ctpDiscountCode.code}"`)
+    ctpClient.builder.discountCodes.where(`code="${ctpDiscountCode.code}"`),
   )
   if (body.results.length === 0) {
     const ctpDiscountCodeClone = _.cloneDeep(ctpDiscountCode)
     ctpDiscountCodeClone.cartDiscounts[0].id = cartDiscountId
     return ctpClient.create(
       ctpClient.builder.discountCodes,
-      ctpDiscountCodeClone
+      ctpDiscountCodeClone,
     )
   }
   return { body: body.results[0] }
@@ -180,19 +180,19 @@ async function _ensureDiscountCode(ctpClient, cartDiscountId) {
 
 async function _ensureDiscountCodeMultiBuy(ctpClient, cartDiscountId) {
   const ctpDiscountCodeMultiBuy = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-discount-code-multi-buy.json'
+    'test/integration/fixtures/ctp-discount-code-multi-buy.json',
   )
   const { body } = await ctpClient.fetch(
     ctpClient.builder.discountCodes.where(
-      `code="${ctpDiscountCodeMultiBuy.code}"`
-    )
+      `code="${ctpDiscountCodeMultiBuy.code}"`,
+    ),
   )
   if (body.results.length === 0) {
     const ctpDiscountCodeMultiBuyClone = _.cloneDeep(ctpDiscountCodeMultiBuy)
     ctpDiscountCodeMultiBuyClone.cartDiscounts[0].id = cartDiscountId
     return ctpClient.create(
       ctpClient.builder.discountCodes,
-      ctpDiscountCodeMultiBuyClone
+      ctpDiscountCodeMultiBuyClone,
     )
   }
   return { body: body.results[0] }
@@ -200,19 +200,19 @@ async function _ensureDiscountCodeMultiBuy(ctpClient, cartDiscountId) {
 
 async function _ensureDiscountCodeShipping(ctpClient, cartDiscountId) {
   const ctpDiscountCodeShipping = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-discount-code-shipping.json'
+    'test/integration/fixtures/ctp-discount-code-shipping.json',
   )
   const { body } = await ctpClient.fetch(
     ctpClient.builder.discountCodes.where(
-      `code="${ctpDiscountCodeShipping.code}"`
-    )
+      `code="${ctpDiscountCodeShipping.code}"`,
+    ),
   )
   if (body.results.length === 0) {
     const ctpDiscountCodeShippingClone = _.cloneDeep(ctpDiscountCodeShipping)
     ctpDiscountCodeShippingClone.cartDiscounts[0].id = cartDiscountId
     return ctpClient.create(
       ctpClient.builder.discountCodes,
-      ctpDiscountCodeShippingClone
+      ctpDiscountCodeShippingClone,
     )
   }
   return { body: body.results[0] }
@@ -220,15 +220,15 @@ async function _ensureDiscountCodeShipping(ctpClient, cartDiscountId) {
 
 async function _ensureProducts(ctpClient, productTypeId, taxCategoryId) {
   const ctpProductUsd = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/usd/ctp-product.json'
+    'test/integration/fixtures/usd/ctp-product.json',
   )
   const ctpProduct = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-product.json'
+    'test/integration/fixtures/ctp-product.json',
   )
   const productKey = currency === 'USD' ? ctpProductUsd.key : ctpProduct.key
 
   const { body } = await ctpClient.fetch(
-    ctpClient.builder.products.where(`key="${productKey}"`)
+    ctpClient.builder.products.where(`key="${productKey}"`),
   )
   if (body.results.length === 0) {
     let ctpProductClone
@@ -238,7 +238,7 @@ async function _ensureProducts(ctpClient, productTypeId, taxCategoryId) {
     ctpProductClone.taxCategory.id = taxCategoryId
     const { body: product } = await ctpClient.create(
       ctpClient.builder.products,
-      ctpProductClone
+      ctpProductClone,
     )
     return _publish(ctpClient, product)
   }
@@ -261,10 +261,10 @@ async function _ensurePayment({
   commercetoolsProjectKey,
 }) {
   const ctpPayment = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-payment.json'
+    'test/integration/fixtures/ctp-payment.json',
   )
   const ctpPaymentUsd = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/usd/ctp-payment.json'
+    'test/integration/fixtures/usd/ctp-payment.json',
   )
   if (currency === 'USD') {
     ctpPaymentUsd.custom.fields.adyenMerchantAccount = adyenMerchantAccount
@@ -282,13 +282,13 @@ async function _createCart(
   productId,
   paymentId,
   shippingMethodId,
-  discountCodes
+  discountCodes,
 ) {
   const ctpCartUsd = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/usd/ctp-cart.json'
+    'test/integration/fixtures/usd/ctp-cart.json',
   )
   const ctpCart = await utils.readAndParseJsonFile(
-    'test/integration/fixtures/ctp-cart.json'
+    'test/integration/fixtures/ctp-cart.json',
   )
   let ctpCartClone
   if (currency === 'USD') ctpCartClone = _.cloneDeep(ctpCartUsd)
@@ -297,7 +297,7 @@ async function _createCart(
   ctpCartClone.shippingMethod.id = shippingMethodId
   const { body: cartResponse } = await ctpClient.create(
     ctpClient.builder.carts,
-    ctpCartClone
+    ctpCartClone,
   )
   return ctpClient.update(
     ctpClient.builder.carts,
@@ -317,7 +317,7 @@ async function _createCart(
         },
         taxCategory: { typeId: 'tax-category', key: 'standard' },
       },
-    ]
+    ],
   )
 }
 

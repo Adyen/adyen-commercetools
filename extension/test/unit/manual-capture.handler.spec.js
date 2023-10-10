@@ -91,19 +91,19 @@ describe('manual-capture.handler::execute::', () => {
       expect(actions).to.have.lengthOf(3)
 
       const addInterfaceInteraction = actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       expect(addInterfaceInteraction.fields.type).to.equal(
-        CTP_INTERACTION_TYPE_MANUAL_CAPTURE
+        CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
       )
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
       expect(addInterfaceInteraction.fields.response).to.equal(
-        JSON.stringify(manualCaptureResponse)
+        JSON.stringify(manualCaptureResponse),
       )
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const changeTransactionState = actions.find(
-        (a) => a.action === 'changeTransactionState'
+        (a) => a.action === 'changeTransactionState',
       )
       expect(changeTransactionState).to.be.deep.equal({
         transactionId: 'chargeInitialTransactionId',
@@ -112,14 +112,14 @@ describe('manual-capture.handler::execute::', () => {
       })
 
       const changeTransactionInteractionId = actions.find(
-        (a) => a.action === 'changeTransactionInteractionId'
+        (a) => a.action === 'changeTransactionInteractionId',
       )
       expect(changeTransactionInteractionId).to.be.deep.equal({
         transactionId: 'chargeInitialTransactionId',
         action: 'changeTransactionInteractionId',
         interactionId: '8825408195409505',
       })
-    }
+    },
   )
 
   it(
@@ -143,20 +143,20 @@ describe('manual-capture.handler::execute::', () => {
       expect(actions).to.have.lengthOf(1)
 
       const addInterfaceInteraction = actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       expect(addInterfaceInteraction.fields.type).to.equal(
-        CTP_INTERACTION_TYPE_MANUAL_CAPTURE
+        CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
       )
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
       expect(addInterfaceInteraction.fields.response).to.equal(
-        JSON.stringify(validationError)
+        JSON.stringify(validationError),
       )
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const addTransaction = actions.find((a) => a.action === 'addTransaction')
       expect(addTransaction).to.equal(undefined)
-    }
+    },
   )
 
   it(
@@ -172,15 +172,15 @@ describe('manual-capture.handler::execute::', () => {
       const { actions } = await manualCaptureHandler.execute(paymentObject)
 
       const adyenRequest = actions.find(
-        (action) => action.action === 'addInterfaceInteraction'
+        (action) => action.action === 'addInterfaceInteraction',
       ).fields.request
       const adyenRequestJson = JSON.parse(adyenRequest)
       const requestBody = JSON.parse(adyenRequestJson.body)
 
       expect(requestBody.reference).to.equal(
-        chargeInitialTransaction.custom.fields.reference
+        chargeInitialTransaction.custom.fields.reference,
       )
-    }
+    },
   )
 
   it(
@@ -199,12 +199,12 @@ describe('manual-capture.handler::execute::', () => {
       const { actions } = await manualCaptureHandler.execute(paymentObject)
 
       const addInterfaceInteraction = actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       const requestJson = JSON.parse(addInterfaceInteraction.fields.request)
       expect(requestJson.headers['Idempotency-Key']).to.equal(
-        chargeInitialTransaction.id
+        chargeInitialTransaction.id,
       )
-    }
+    },
   )
 })

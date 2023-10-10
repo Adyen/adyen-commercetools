@@ -97,14 +97,14 @@ async function setUpClient(config) {
       return ctpClient.execute(
         this.buildRequestOptions(
           uri.byId(id).withVersion(version).build(),
-          'DELETE'
-        )
+          'DELETE',
+        ),
       )
     },
 
     create(uri, body) {
       return ctpClient.execute(
-        this.buildRequestOptions(uri.build(), 'POST', body)
+        this.buildRequestOptions(uri.build(), 'POST', body),
       )
     },
 
@@ -114,7 +114,7 @@ async function setUpClient(config) {
         actions,
       }
       return ctpClient.execute(
-        this.buildRequestOptions(uri.byId(id).build(), 'POST', body)
+        this.buildRequestOptions(uri.byId(id).build(), 'POST', body),
       )
     },
 
@@ -134,7 +134,7 @@ async function setUpClient(config) {
       return this.process(
         this.buildRequestOptions(uri.build()),
         (data) => Promise.resolve(callback(data.body.results)),
-        opts
+        opts,
       )
     },
 

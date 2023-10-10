@@ -48,7 +48,7 @@ function withPayment(paymentObject) {
           errorMessages.MAKE_PAYMENT_REQUEST_INVALID_JSON
       if (
         !isValidJSON(
-          paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
+          paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest,
         )
       )
         errors.submitAdditionalPaymentDetailsRequest =
@@ -75,7 +75,7 @@ function withPayment(paymentObject) {
         !paymentObject.custom.fields.createSessionResponse
       ) {
         const createSessionRequestObj = JSON.parse(
-          paymentObject.custom.fields.createSessionRequest
+          paymentObject.custom.fields.createSessionRequest,
         )
         if (!createSessionRequestObj.reference)
           errors.missingReference =
@@ -87,7 +87,7 @@ function withPayment(paymentObject) {
         !paymentObject.custom.fields.makePaymentResponse
       ) {
         const makePaymentRequestObj = JSON.parse(
-          paymentObject.custom.fields.makePaymentRequest
+          paymentObject.custom.fields.makePaymentRequest,
         )
         if (!makePaymentRequestObj.reference)
           errors.missingReference =
@@ -102,17 +102,17 @@ function withPayment(paymentObject) {
       const createSessionRequestInterfaceInteraction =
         getLatestInterfaceInteraction(
           paymentObject.interfaceInteractions,
-          c.CTP_INTERACTION_TYPE_CREATE_SESSION
+          c.CTP_INTERACTION_TYPE_CREATE_SESSION,
         )
       const makePaymentRequestInterfaceInteraction =
         getLatestInterfaceInteraction(
           paymentObject.interfaceInteractions,
-          c.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+          c.CTP_INTERACTION_TYPE_MAKE_PAYMENT,
         )
 
       if (createSessionRequestInterfaceInteraction)
         createSessionAmount = JSON.parse(
-          createSessionRequestInterfaceInteraction.fields.request
+          createSessionRequestInterfaceInteraction.fields.request,
         ).amount
       else {
         const createSessionRequestString =
@@ -125,7 +125,7 @@ function withPayment(paymentObject) {
 
       if (makePaymentRequestInterfaceInteraction)
         makePaymentAmount = JSON.parse(
-          makePaymentRequestInterfaceInteraction.fields.request
+          makePaymentRequestInterfaceInteraction.fields.request,
         ).amount
       else {
         const makePaymentRequestString =
@@ -171,7 +171,7 @@ function withPayment(paymentObject) {
         !paymentObject.custom.fields.amountUpdatesResponse
       ) {
         const amountUpdatesRequestObj = JSON.parse(
-          paymentObject.custom.fields.amountUpdatesRequest
+          paymentObject.custom.fields.amountUpdatesRequest,
         )
         if (!amountUpdatesRequestObj.paymentPspReference)
           errors.missingPspReference =

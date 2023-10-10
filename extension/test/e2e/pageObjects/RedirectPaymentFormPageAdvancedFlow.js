@@ -16,12 +16,12 @@ export default class RedirectPaymentFormPageAdvancedFlow {
   async redirectToAdyenPaymentPage(paymentDetailsResponse, clientKey) {
     logger.debug(
       'redirectToAdyenPaymentPage::paymentDetailsResponse::',
-      paymentDetailsResponse
+      paymentDetailsResponse,
     )
     await pasteValue(
       this.page,
       '#adyen-make-payment-response-action-field',
-      JSON.stringify(paymentDetailsResponse.action)
+      JSON.stringify(paymentDetailsResponse.action),
     )
 
     await pasteValue(this.page, '#adyen-client-key', clientKey)

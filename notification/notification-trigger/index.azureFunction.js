@@ -39,7 +39,7 @@ export const azureNotificationTrigger = async function (context, req) {
       await notificationHandler.processNotification(
         notification,
         adyenConfig.enableHmacSignature,
-        ctpProjectConfig
+        ctpProjectConfig,
       )
     }
   } catch (err) {
@@ -49,7 +49,7 @@ export const azureNotificationTrigger = async function (context, req) {
         notification: utils.getNotificationForTracking(notificationItems),
         cause,
       },
-      'Unexpected exception occurred.'
+      'Unexpected exception occurred.',
     )
 
     if (isRecoverableError(err)) {

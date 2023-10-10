@@ -18,13 +18,13 @@ describe('create-lineitems-session-request::execute', () => {
 
   before(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-payment.json'
+      'test/unit/fixtures/ctp-payment.json',
     )
     ctpCart = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-cart.json'
+      'test/unit/fixtures/ctp-cart.json',
     )
     ctpCartWithCustomShippingMethod = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-cart-custom-shipping-method.json'
+      'test/unit/fixtures/ctp-cart-custom-shipping-method.json',
     )
   })
 
@@ -56,40 +56,39 @@ describe('create-lineitems-session-request::execute', () => {
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
 
-      const response = await createLineItemsSessionPaymentHandler.execute(
-        ctpPaymentClone
-      )
+      const response =
+        await createLineItemsSessionPaymentHandler.execute(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const createSessionRequestJson = JSON.parse(
-        createSessionRequestInteraction.body
+        createSessionRequestInteraction.body,
       )
       const ctpLineItem = ctpCart.lineItems[0]
       const adyenLineItem = createSessionRequestJson.lineItems.find(
-        (item) => item.id === 'test-product-sku-1'
+        (item) => item.id === 'test-product-sku-1',
       )
       expect(ctpLineItem.price.value.centAmount).to.equal(
-        adyenLineItem.amountIncludingTax
+        adyenLineItem.amountIncludingTax,
       )
       expect(ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT).to.equal(
-        adyenLineItem.taxPercentage
+        adyenLineItem.taxPercentage,
       )
 
       const ctpShippingInfo = ctpCart.shippingInfo
       const adyenShippingInfo = createSessionRequestJson.lineItems.find(
-        (item) => item.id === ctpShippingInfo.shippingMethodName
+        (item) => item.id === ctpShippingInfo.shippingMethodName,
       )
       expect(ctpShippingInfo.price.centAmount).to.equal(
-        adyenShippingInfo.amountIncludingTax
+        adyenShippingInfo.amountIncludingTax,
       )
       expect(
-        ctpShippingInfo.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT
+        ctpShippingInfo.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT,
       ).to.equal(adyenShippingInfo.taxPercentage)
-    }
+    },
   )
 
   it(
@@ -110,21 +109,20 @@ describe('create-lineitems-session-request::execute', () => {
         JSON.stringify(createSessionRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
-      const response = await createLineItemsSessionPaymentHandler.execute(
-        ctpPaymentClone
-      )
+      const response =
+        await createLineItemsSessionPaymentHandler.execute(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const createSessionRequestJson = JSON.parse(
-        createSessionRequestInteraction.body
+        createSessionRequestInteraction.body,
       )
       expect(createSessionRequestJson.lineItems).to.deep.equal(
-        createSessionRequest.lineItems
+        createSessionRequest.lineItems,
       )
-    }
+    },
   )
 
   it(
@@ -147,25 +145,24 @@ describe('create-lineitems-session-request::execute', () => {
           },
         },
       }
-      const response = await createLineItemsSessionPaymentHandler.execute(
-        ctpPaymentToTest
-      )
+      const response =
+        await createLineItemsSessionPaymentHandler.execute(ctpPaymentToTest)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       expect(lineItems).to.have.lengthOf(3)
       expect(lineItems[0].description).to.equal(
-        Object.values(ctpCart.lineItems[0].name)[0]
+        Object.values(ctpCart.lineItems[0].name)[0],
       )
       expect(lineItems[1].description).to.equal(
-        ctpCart.customLineItems[0].name[DEFAULT_PAYMENT_LANGUAGE]
+        ctpCart.customLineItems[0].name[DEFAULT_PAYMENT_LANGUAGE],
       )
       expect(lineItems[2].description).to.equal(
-        ctpCart.shippingInfo.shippingMethod.obj.description
+        ctpCart.shippingInfo.shippingMethod.obj.description,
       )
-    }
+    },
   )
 
   it(
@@ -191,18 +188,17 @@ describe('create-lineitems-session-request::execute', () => {
         },
       }
 
-      const response = await createLineItemsSessionPaymentHandler.execute(
-        ctpPaymentToTest
-      )
+      const response =
+        await createLineItemsSessionPaymentHandler.execute(ctpPaymentToTest)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       expect(lineItems[2].description).to.equal(
-        ctpCart.shippingInfo.shippingMethodName
+        ctpCart.shippingInfo.shippingMethodName,
       )
-    }
+    },
   )
 
   it(
@@ -222,32 +218,31 @@ describe('create-lineitems-session-request::execute', () => {
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.createSessionRequest = JSON.stringify(
-        klarnacreateSessionRequest
+        klarnacreateSessionRequest,
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
 
-      const response = await createLineItemsSessionPaymentHandler.execute(
-        ctpPaymentClone
-      )
+      const response =
+        await createLineItemsSessionPaymentHandler.execute(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       const shippingMethodItem = lineItems[lineItems.length - 1]
       expect(shippingMethodItem.id).to.equal(
-        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
+        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName,
       )
       expect(shippingMethodItem.description).to.equal(
-        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
+        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName,
       )
       expect(shippingMethodItem.taxPercentage).to.equal(
-        ctpCartWithCustomShippingMethod.shippingInfo.taxRate.amount * 10000
+        ctpCartWithCustomShippingMethod.shippingInfo.taxRate.amount * 10000,
       )
-    }
+    },
   )
 
   it(
@@ -267,32 +262,31 @@ describe('create-lineitems-session-request::execute', () => {
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.createSessionRequest = JSON.stringify(
-        affirmcreateSessionRequest
+        affirmcreateSessionRequest,
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey =
         commercetoolsProjectKey
 
-      const response = await createLineItemsSessionPaymentHandler.execute(
-        ctpPaymentClone
-      )
+      const response =
+        await createLineItemsSessionPaymentHandler.execute(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       const shippingMethodItem = lineItems[lineItems.length - 1]
       expect(shippingMethodItem.id).to.equal(
-        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
+        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName,
       )
       expect(shippingMethodItem.description).to.equal(
-        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName
+        ctpCartWithCustomShippingMethod.shippingInfo.shippingMethodName,
       )
       expect(shippingMethodItem.taxPercentage).to.equal(
-        ctpCartWithCustomShippingMethod.shippingInfo.taxRate.amount * 10000
+        ctpCartWithCustomShippingMethod.shippingInfo.taxRate.amount * 10000,
       )
-    }
+    },
   )
 
   it('when payment has languageCode, it should take precedence', async () => {
@@ -317,12 +311,11 @@ describe('create-lineitems-session-request::execute', () => {
         },
       },
     }
-    const response = await createLineItemsSessionPaymentHandler.execute(
-      ctpPaymentToTest
-    )
+    const response =
+      await createLineItemsSessionPaymentHandler.execute(ctpPaymentToTest)
     const createSessionRequestInteraction = JSON.parse(
       response.actions.find((a) => a.action === 'addInterfaceInteraction')
-        .fields.request
+        .fields.request,
     )
     const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
     expect(lineItems[0].description).to.equal('test-de')
@@ -355,16 +348,15 @@ describe('create-lineitems-session-request::execute', () => {
           },
         },
       }
-      const response = await createLineItemsSessionPaymentHandler.execute(
-        ctpPaymentToTest
-      )
+      const response =
+        await createLineItemsSessionPaymentHandler.execute(ctpPaymentToTest)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       expect(lineItems[0].description).to.equal('test-fr')
-    }
+    },
   )
 
   it(
@@ -393,16 +385,15 @@ describe('create-lineitems-session-request::execute', () => {
           },
         },
       }
-      const response = await createLineItemsSessionPaymentHandler.execute(
-        ctpPaymentToTest
-      )
+      const response =
+        await createLineItemsSessionPaymentHandler.execute(ctpPaymentToTest)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const { lineItems } = JSON.parse(createSessionRequestInteraction.body)
       expect(lineItems[0].description).to.equal('test-de')
-    }
+    },
   )
 
   function _mockCtpCartsEndpoint(mockCart = ctpCart) {

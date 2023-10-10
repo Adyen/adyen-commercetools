@@ -24,7 +24,7 @@ function setRoute() {
     serveFile(
       './test/e2e/fixtures/credit-card-init-session-form.html',
       request,
-      response
+      response,
     )
   }
 }
@@ -66,7 +66,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
       paymentAfterCreateSession = await creatSession(clientKey, 'CardOnFile')
       logger.debug(
         'credit-card-disable-stored-payment::paymentAfterCreateSession:',
-        JSON.stringify(paymentAfterCreateSession)
+        JSON.stringify(paymentAfterCreateSession),
       )
 
       // Step #2 - Setup Component
@@ -86,14 +86,14 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
         async () =>
           await fetchNotificationInterfaceInteraction(
             ctpClient,
-            paymentAfterCreateSession.id
-          )
+            paymentAfterCreateSession.id,
+          ),
       )
 
       // Step #3 - Disable stored payment
 
       const notificationRequestItem = JSON.parse(
-        notificationInteraction.fields.notification
+        notificationInteraction.fields.notification,
       ).NotificationRequestItem
 
       const recurringDetailReference =
@@ -106,12 +106,12 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
     } catch (err) {
       logger.error(
         'credit-card-disable-stored-payment::errors:',
-        JSON.stringify(err)
+        JSON.stringify(err),
       )
     }
 
     expect(
-      disabledPayment?.custom?.fields?.disableStoredPaymentResponse
+      disabledPayment?.custom?.fields?.disableStoredPaymentResponse,
     ).to.be.equal('{"response":"[detail-successfully-disabled]"}')
   })
 
@@ -133,7 +133,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
       paymentAfterCreateSession = await creatSession(clientKey, 'Subscription')
       logger.debug(
         'credit-card-disable-stored-payment::paymentAfterCreateSession:',
-        JSON.stringify(paymentAfterCreateSession)
+        JSON.stringify(paymentAfterCreateSession),
       )
 
       // Step #2 - Setup Component
@@ -153,13 +153,13 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
         async () =>
           await fetchNotificationInterfaceInteraction(
             ctpClient,
-            paymentAfterCreateSession.id
-          )
+            paymentAfterCreateSession.id,
+          ),
       )
 
       // Step #3 - Disable stored payment
       const notificationRequestItem = JSON.parse(
-        notificationInteraction.fields.notification
+        notificationInteraction.fields.notification,
       ).NotificationRequestItem
 
       const recurringDetailReference =
@@ -172,12 +172,12 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
     } catch (err) {
       logger.error(
         'credit-card-disable-stored-payment::errors:',
-        JSON.stringify(err)
+        JSON.stringify(err),
       )
     }
 
     expect(
-      disabledPayment?.custom?.fields?.disableStoredPaymentResponse
+      disabledPayment?.custom?.fields?.disableStoredPaymentResponse,
     ).to.be.equal('{"response":"[detail-successfully-disabled]"}')
   })
 
@@ -198,11 +198,11 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
       paymentAfterCreateSession = await creatSession(
         clientKey,
-        'UnscheduledCardOnFile'
+        'UnscheduledCardOnFile',
       )
       logger.debug(
         'credit-card-disable-stored-payment::paymentAfterCreateSession:',
-        JSON.stringify(paymentAfterCreateSession)
+        JSON.stringify(paymentAfterCreateSession),
       )
 
       // Step #2 - Setup Component
@@ -222,13 +222,13 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
         async () =>
           await fetchNotificationInterfaceInteraction(
             ctpClient,
-            paymentAfterCreateSession.id
-          )
+            paymentAfterCreateSession.id,
+          ),
       )
 
       // Step #3 - Disable stored payment
       const notificationRequestItem = JSON.parse(
-        notificationInteraction.fields.notification
+        notificationInteraction.fields.notification,
       ).NotificationRequestItem
 
       const recurringDetailReference =
@@ -241,12 +241,12 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
     } catch (err) {
       logger.error(
         'credit-card-disable-stored-payment::errors:',
-        JSON.stringify(err)
+        JSON.stringify(err),
       )
     }
 
     expect(
-      disabledPayment?.custom?.fields?.disableStoredPaymentResponse
+      disabledPayment?.custom?.fields?.disableStoredPaymentResponse,
     ).to.be.equal('{"response":"[detail-successfully-disabled]"}')
   })
 
@@ -263,7 +263,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
       ctpClient,
       adyenMerchantAccount,
       commercetoolsProjectKey,
-      createSessionRequest
+      createSessionRequest,
     )
 
     return payment
@@ -280,7 +280,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
   }) {
     const initSessionFormPage = new CreditCardInitSessionFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await initSessionFormPage.goToThisPage()
     await initSessionFormPage.initPaymentSession({
@@ -317,7 +317,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
         },
         fields: {
           disableStoredPaymentRequest: JSON.stringify(
-            disableStoredPaymentRequestDraft
+            disableStoredPaymentRequestDraft,
           ),
           adyenMerchantAccount,
           commercetoolsProjectKey,
@@ -327,7 +327,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
 
     const { body: payment } = await ctpClient.create(
       ctpClient.builder.payments,
-      paymentDraft
+      paymentDraft,
     )
 
     return payment

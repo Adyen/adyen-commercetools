@@ -7,7 +7,7 @@ import { createSessionRequest } from '../service/web-component-service.js'
 
 async function execute(paymentObject) {
   const createSessionRequestObj = JSON.parse(
-    paymentObject.custom.fields.createSessionRequest
+    paymentObject.custom.fields.createSessionRequest,
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
@@ -15,7 +15,7 @@ async function execute(paymentObject) {
   const { request, response } = await createSessionRequest(
     adyenMerchantAccount,
     commercetoolsProjectKey,
-    createSessionRequestObj
+    createSessionRequestObj,
   )
 
   const actions = [
@@ -26,7 +26,7 @@ async function execute(paymentObject) {
     }),
     createSetCustomFieldAction(
       c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE,
-      response
+      response,
     ),
   ]
 

@@ -12,7 +12,7 @@ async function fetchMatchingCart(paymentObject, ctpProjectKey) {
   const { body } = await ctpClient.fetch(
     ctpClient.builder.carts
       .where(`paymentInfo(payments(id="${paymentObject.id}"))`)
-      .expand('shippingInfo.shippingMethod')
+      .expand('shippingInfo.shippingMethod'),
   )
   return body.results[0]
 }
@@ -53,7 +53,7 @@ function _createAdyenLineItemFromLineItem(ctpLineItem, locales) {
     description: _localizeOrFallback(
       ctpLineItem.name,
       locales,
-      KLARNA_DEFAULT_LINE_ITEM_NAME
+      KLARNA_DEFAULT_LINE_ITEM_NAME,
     ),
     amountIncludingTax: ctpLineItem.price.value.centAmount,
     taxPercentage: ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT,
@@ -67,7 +67,7 @@ function _createAdyenLineItemFromCustomLineItem(ctpLineItem, locales) {
     description: _localizeOrFallback(
       ctpLineItem.name,
       locales,
-      KLARNA_DEFAULT_LINE_ITEM_NAME
+      KLARNA_DEFAULT_LINE_ITEM_NAME,
     ),
     amountIncludingTax: ctpLineItem.money.centAmount,
     taxPercentage: ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT,
@@ -92,7 +92,7 @@ function _getShippingMethodDescription(shippingInfo, locales) {
     return _localizeOrFallback(
       shippingMethod.localizedDescription,
       locales,
-      shippingMethod.description
+      shippingMethod.description,
     )
   }
   return shippingInfo.shippingMethodName

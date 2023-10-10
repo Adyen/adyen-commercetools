@@ -13,14 +13,14 @@ const { CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = c
 async function execute(paymentObject) {
   const actions = []
   const submitAdditionalDetailsRequestObj = JSON.parse(
-    paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest
+    paymentObject.custom.fields.submitAdditionalPaymentDetailsRequest,
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
   if (!submitAdditionalDetailsRequestObj.paymentData) {
     const makePaymentResponseObj = JSON.parse(
-      paymentObject.custom.fields.makePaymentResponse
+      paymentObject.custom.fields.makePaymentResponse,
     )
     submitAdditionalDetailsRequestObj.paymentData =
       makePaymentResponseObj.paymentData
@@ -29,7 +29,7 @@ async function execute(paymentObject) {
     const { request, response } = await submitAdditionalPaymentDetails(
       adyenMerchantAccount,
       commercetoolsProjectKey,
-      submitAdditionalDetailsRequestObj
+      submitAdditionalDetailsRequestObj,
     )
     actions.push(
       createAddInterfaceInteractionAction({
@@ -39,8 +39,8 @@ async function execute(paymentObject) {
       }),
       createSetCustomFieldAction(
         c.CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE,
-        response
-      )
+        response,
+      ),
     )
 
     if (
@@ -49,7 +49,7 @@ async function execute(paymentObject) {
       const addTransactionAction = createAddTransactionActionByResponse(
         paymentObject.amountPlanned.centAmount,
         paymentObject.amountPlanned.currencyCode,
-        response
+        response,
       )
 
       if (addTransactionAction) actions.push(addTransactionAction)
@@ -57,7 +57,7 @@ async function execute(paymentObject) {
     const updatePaymentAction = getPaymentKeyUpdateAction(
       paymentObject.key,
       request,
-      response
+      response,
     )
     if (updatePaymentAction) actions.push(updatePaymentAction)
   }
@@ -68,12 +68,12 @@ async function execute(paymentObject) {
 
 function _isNewRequest(
   submitAdditionalPaymentDetailsRequestObj,
-  paymentObject
+  paymentObject,
 ) {
   const interfaceInteraction = paymentObject.interfaceInteractions.find(
     (interaction) =>
       interaction.fields.type ===
-      CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS
+      CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS,
   )
   if (!interfaceInteraction)
     // request is new if there are no requests yet
@@ -82,7 +82,7 @@ function _isNewRequest(
   if (oldSubmitDetailsRequest) {
     const oldSubmitDetailsRequestObj = JSON.parse(oldSubmitDetailsRequest)
     const newSubmitDetailsRequestObj = _.cloneDeep(
-      submitAdditionalPaymentDetailsRequestObj
+      submitAdditionalPaymentDetailsRequestObj,
     )
     delete newSubmitDetailsRequestObj.merchantAccount
     if (!_.isEqual(oldSubmitDetailsRequestObj, newSubmitDetailsRequestObj))
@@ -95,7 +95,7 @@ function _isNewRequest(
 
 function _hasTransactionWithPspReference(pspReference, paymentObject) {
   return paymentObject.transactions.some(
-    (transaction) => transaction.interactionId === pspReference
+    (transaction) => transaction.interactionId === pspReference,
   )
 }
 

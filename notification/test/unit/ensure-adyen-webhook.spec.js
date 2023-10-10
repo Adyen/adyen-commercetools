@@ -36,7 +36,7 @@ describe('verify ensure-adyen-webhook', () => {
     }
 
     nock(
-      `https://management-test.adyen.com/v1/merchants/${adyenMerchantAccount0}`
+      `https://management-test.adyen.com/v1/merchants/${adyenMerchantAccount0}`,
     )
       .get('/webhooks')
       .reply(200, fetchWebhookResponse)

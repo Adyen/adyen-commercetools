@@ -12,7 +12,7 @@ const mainLogger = getLogger()
 async function processNotification(
   notification,
   enableHmacSignature,
-  ctpProjectConfig
+  ctpProjectConfig,
 ) {
   const logger = mainLogger.child({
     commercetools_project_key: ctpProjectConfig.projectKey,
@@ -23,7 +23,7 @@ async function processNotification(
     if (errorMessage) {
       logger.error(
         { notification: utils.getNotificationForTracking(notification) },
-        `HMAC validation failed. Reason: "${errorMessage}"`
+        `HMAC validation failed. Reason: "${errorMessage}"`,
       )
       return
     }
@@ -32,19 +32,19 @@ async function processNotification(
   const merchantReference = _.get(
     notification,
     'NotificationRequestItem.merchantReference',
-    null
+    null,
   )
 
   const pspReference = _.get(
     notification,
     'NotificationRequestItem.pspReference',
-    null
+    null,
   )
 
   const originalReference = _.get(
     notification,
     'NotificationRequestItem.originalReference',
-    null
+    null,
   )
 
   const ctpClient = await ctp.get(ctpProjectConfig)
@@ -52,13 +52,13 @@ async function processNotification(
   const payment = await getPaymentByMerchantReference(
     merchantReference,
     originalReference || pspReference,
-    ctpClient
+    ctpClient,
   )
   if (payment)
     await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
   else
     logger.error(
-      `Payment with merchantReference: ${merchantReference} was not found`
+      `Payment with merchantReference: ${merchantReference} was not found`,
     )
 }
 
@@ -66,7 +66,7 @@ async function updatePaymentWithRepeater(
   payment,
   notification,
   ctpClient,
-  logger
+  logger,
 ) {
   const maxRetry = 20
   let currentPayment = payment
@@ -78,7 +78,7 @@ async function updatePaymentWithRepeater(
     updateActions = await calculateUpdateActionsForPayment(
       currentPayment,
       notification,
-      logger
+      logger,
     )
     if (updateActions.length === 0) {
       break
@@ -86,7 +86,7 @@ async function updatePaymentWithRepeater(
     logger.debug(
       `Update payment with key ${
         currentPayment.key
-      } with update actions [${JSON.stringify(updateActions)}]`
+      } with update actions [${JSON.stringify(updateActions)}]`,
     )
     try {
       /* eslint-disable-next-line no-await-in-loop */
@@ -94,10 +94,10 @@ async function updatePaymentWithRepeater(
         ctpClient.builder.payments,
         currentPayment.id,
         currentVersion,
-        updateActions
+        updateActions,
       )
       logger.debug(
-        `Payment with key ${currentPayment.key} was successfully updated`
+        `Payment with key ${currentPayment.key} was successfully updated`,
       )
       break
     } catch (err) {
@@ -126,14 +126,14 @@ async function updatePaymentWithRepeater(
           `${retryMessage} Won't retry again` +
             ` because of a reached limit ${maxRetry}` +
             ` max retries. Failed actions: ${JSON.stringify(
-              updateActionsToLog
-            )}`
+              updateActionsToLog,
+            )}`,
         )
       }
       /* eslint-disable-next-line no-await-in-loop */
       const response = await ctpClient.fetchById(
         ctpClient.builder.payments,
-        currentPayment.id
+        currentPayment.id,
       )
       currentPayment = response.body // eslint-disable-line prefer-destructuring
       currentVersion = currentPayment.version
@@ -148,7 +148,7 @@ function _obfuscateNotificationInfoFromActionFields(updateActions) {
     .filter((value) => value?.fields?.notification)
     .forEach((value) => {
       value.fields.notification = utils.getNotificationForTracking(
-        JSON.parse(value.fields.notification)
+        JSON.parse(value.fields.notification),
       )
     })
   return copyOfUpdateActions
@@ -162,7 +162,7 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
   const isNotificationInInterfaceInteraction =
     payment.interfaceInteractions.some(
       (interaction) =>
-        interaction.fields.notification === stringifiedNotification
+        interaction.fields.notification === stringifiedNotification,
     )
   if (isNotificationInInterfaceInteraction === false)
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
@@ -176,7 +176,7 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
     const { eventDate } = notificationRequestItem
     const oldTransaction = _.find(
       payment.transactions,
-      (transaction) => transaction.interactionId === pspReference
+      (transaction) => transaction.interactionId === pspReference,
     )
     if (_.isEmpty(oldTransaction))
       updateActions.push(
@@ -187,7 +187,7 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
           amount: notificationRequestItem.amount.value,
           currency: notificationRequestItem.amount.currency,
           interactionId: pspReference,
-        })
+        }),
       )
     else if (
       compareTransactionStates(oldTransaction.state, transactionState) > 0
@@ -195,15 +195,15 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
       updateActions.push(
         getChangeTransactionStateUpdateAction(
           oldTransaction.id,
-          transactionState
-        )
+          transactionState,
+        ),
       )
       updateActions.push(
         getChangeTransactionTimestampUpdateAction(
           oldTransaction.id,
           notificationRequestItem.eventDate,
-          logger
-        )
+          logger,
+        ),
       )
     }
     const paymentKey = payment.key
@@ -224,7 +224,7 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
     paymentMethodFromPayment !== paymentMethodFromNotification
   ) {
     updateActions.push(
-      getSetMethodInfoMethodAction(paymentMethodFromNotification)
+      getSetMethodInfoMethodAction(paymentMethodFromNotification),
     )
     const action = getSetMethodInfoNameAction(paymentMethodFromNotification)
     if (action) updateActions.push(action)
@@ -334,7 +334,7 @@ function getAddInterfaceInteractionUpdateAction(notification) {
 
 function getChangeTransactionStateUpdateAction(
   transactionId,
-  newTransactionState
+  newTransactionState,
 ) {
   return {
     action: 'changeTransactionState',
@@ -353,7 +353,7 @@ function convertDateToUTCFormat(transactionEventDate, logger) {
     // if transactionEventDate is incorrect in format
     logger.error(
       err,
-      `Fail to convert notification event date "${transactionEventDate}" to UTC format`
+      `Fail to convert notification event date "${transactionEventDate}" to UTC format`,
     )
     return new Date().toISOString()
   }
@@ -362,7 +362,7 @@ function convertDateToUTCFormat(transactionEventDate, logger) {
 function getChangeTransactionTimestampUpdateAction(
   transactionId,
   transactionEventDate,
-  logger
+  logger,
 ) {
   return {
     action: 'changeTransactionTimestamp',
@@ -373,7 +373,7 @@ function getChangeTransactionTimestampUpdateAction(
 
 async function getTransactionTypeAndStateOrNull(notificationRequestItem) {
   const adyenEvents = await utils.readAndParseJsonFile(
-    'resources/adyen-events.json'
+    'resources/adyen-events.json',
   )
   const adyenEventCode = notificationRequestItem.eventCode
   const adyenEventSuccess = notificationRequestItem.success
@@ -381,7 +381,7 @@ async function getTransactionTypeAndStateOrNull(notificationRequestItem) {
   // eslint-disable-next-line max-len
   const adyenEvent = _.find(
     adyenEvents,
-    (e) => e.eventCode === adyenEventCode && e.success === adyenEventSuccess
+    (e) => e.eventCode === adyenEventCode && e.success === adyenEventSuccess,
   )
   if (adyenEvent && adyenEventCode === 'CANCEL_OR_REFUND') {
     /* we need to get correct action from the additional data, for example:
@@ -454,7 +454,7 @@ function getSetMethodInfoNameAction(paymentMethod) {
 async function getPaymentByMerchantReference(
   merchantReference,
   pspReference,
-  ctpClient
+  ctpClient,
 ) {
   try {
     const keys = [merchantReference, pspReference]

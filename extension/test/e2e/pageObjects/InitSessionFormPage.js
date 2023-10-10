@@ -29,7 +29,7 @@ export default class InitSessionFormPage {
 
     await this.page.type(
       '#adyen-session-data',
-      createSessionResponse.sessionData
+      createSessionResponse.sessionData,
     )
     await this.page.$eval('#adyen-session-data', (e) => e.blur())
   }

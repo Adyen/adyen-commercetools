@@ -25,7 +25,7 @@ function setRoute() {
     serveFile(
       './test/e2e/fixtures/credit-card-init-session-form.html',
       request,
-      response
+      response,
     )
   }
 }
@@ -72,7 +72,7 @@ describe('::creditCardPayment::cancel-payment::', () => {
       paymentAfterCreateSession = await createSession(clientKey)
       logger.debug(
         'credit-card-cancel-payment::paymentAfterCreateSession:',
-        JSON.stringify(paymentAfterCreateSession)
+        JSON.stringify(paymentAfterCreateSession),
       )
 
       // Step #2 - Setup Component
@@ -92,8 +92,8 @@ describe('::creditCardPayment::cancel-payment::', () => {
         async () =>
           await fetchNotificationInterfaceInteraction(
             ctpClient,
-            paymentAfterCreateSession.id
-          )
+            paymentAfterCreateSession.id,
+          ),
       )
 
       // Step #3 - Cancel payment
@@ -103,7 +103,7 @@ describe('::creditCardPayment::cancel-payment::', () => {
             const { body: paymentAfterReceivingNotification } =
               await ctpClient.fetchById(
                 ctpClient.builder.payments,
-                paymentAfterCreateSession.id
+                paymentAfterCreateSession.id,
               )
 
             return await ctpClient.update(
@@ -117,18 +117,18 @@ describe('::creditCardPayment::cancel-payment::', () => {
                   currency: 'EUR',
                   amount: 500,
                 }),
-              ]
+              ],
             )
           } catch (err) {
             logger.error(
               'credit-card-cancel-payment::errors:',
-              JSON.stringify(err)
+              JSON.stringify(err),
             )
             return Promise.resolve()
           }
         },
         10,
-        1_000
+        1_000,
       )
 
       cancelledPaymentStatusCode = statusCode
@@ -143,19 +143,19 @@ describe('::creditCardPayment::cancel-payment::', () => {
         await fetchNotificationInterfaceInteraction(
           ctpClient,
           paymentAfterCreateSession.id,
-          `cancellation`
-        )
+          `cancellation`,
+        ),
     )
 
     const { body: paymentAfterReceivingNotification } =
       await ctpClient.fetchById(
         ctpClient.builder.payments,
-        paymentAfterCreateSession.id
+        paymentAfterCreateSession.id,
       )
 
     assertCreatePaymentSession(
       paymentAfterCreateSession,
-      initPaymentSessionResult
+      initPaymentSessionResult,
     )
 
     expect(cancelledPaymentStatusCode).to.be.equal(200)
@@ -170,7 +170,7 @@ describe('::creditCardPayment::cancel-payment::', () => {
       notificationInteractionForCancelPayment.fields.notification
     const notificationJson = JSON.parse(notificationStr)
     expect(notificationJson.NotificationRequestItem.eventCode).to.equal(
-      'CANCELLATION'
+      'CANCELLATION',
     )
     expect(notificationJson.NotificationRequestItem.success).to.equal('true')
   })
@@ -184,7 +184,7 @@ describe('::creditCardPayment::cancel-payment::', () => {
         ctpClient,
         adyenMerchantAccount,
         ctpProjectKey,
-        createSessionRequest
+        createSessionRequest,
       )
     } catch (err) {
       logger.error('credit-card::createSession::errors', JSON.stringify(err))
@@ -207,7 +207,7 @@ describe('::creditCardPayment::cancel-payment::', () => {
   }) {
     const initSessionFormPage = new CreditCardInitSessionFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await initSessionFormPage.goToThisPage()
     await initSessionFormPage.initPaymentSession({

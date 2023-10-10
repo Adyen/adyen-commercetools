@@ -17,10 +17,10 @@ describe('::Multitenancy::', () => {
 
   before(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-payment.json'
+      'test/unit/fixtures/ctp-payment.json',
     )
     ctpCart = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-cart.json'
+      'test/unit/fixtures/ctp-cart.json',
     )
   })
 
@@ -46,17 +46,16 @@ describe('::Multitenancy::', () => {
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
-      const response = await lineItemsSessionRequestHandler.execute(
-        ctpPaymentClone
-      )
+      const response =
+        await lineItemsSessionRequestHandler.execute(ctpPaymentClone)
       const adyenRequest = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const adyenRequestBody = JSON.parse(adyenRequest.body)
       expect(adyenRequestBody.merchantAccount).to.equal(adyenMerchantAccount)
       expect(ctpApiScope.isDone()).to.be.true
-    }
+    },
   )
 
   function _mockCtpCartsEndpoint(mockCart = ctpCart) {

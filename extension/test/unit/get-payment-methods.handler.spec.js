@@ -37,7 +37,7 @@ describe('get-payment-methods::execute::', () => {
   }
 
   const adyenCredentials = config.getAdyenConfig(
-    paymentObject.custom.fields.adyenMerchantAccount
+    paymentObject.custom.fields.adyenMerchantAccount,
   )
 
   afterEach(() => {
@@ -69,19 +69,19 @@ describe('get-payment-methods::execute::', () => {
     expect(result.actions[1].action).to.equal('setCustomField')
     const request = JSON.parse(result.actions[0].fields.request)
     expect(JSON.parse(request.body)).to.be.deep.includes(
-      getPaymentMethodsRequest
+      getPaymentMethodsRequest,
     )
     expect(result.actions[0].fields.response).to.be.deep.equal(
-      JSON.stringify(adyenGetPaymentResponse)
+      JSON.stringify(adyenGetPaymentResponse),
     )
     expect(result.actions[0].fields.response).to.be.deep.equal(
-      result.actions[1].value
+      result.actions[1].value,
     )
     expect(result.actions[0].fields.type).to.equal(
-      c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS
+      c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS,
     )
     expect(result.actions[1].name).to.equal(
-      c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE
+      c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE,
     )
   })
 
@@ -103,15 +103,15 @@ describe('get-payment-methods::execute::', () => {
       expect(result.actions[1].action).to.equal('setCustomField')
       const request = JSON.parse(result.actions[0].fields.request)
       expect(JSON.parse(request.body)).to.be.deep.includes(
-        getPaymentMethodsRequest
+        getPaymentMethodsRequest,
       )
       expect(result.actions[0].fields.response).to.be.includes(errorMsg)
       expect(result.actions[0].fields.type).to.equal(
-        c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS
+        c.CTP_INTERACTION_TYPE_GET_PAYMENT_METHODS,
       )
       expect(result.actions[1].name).to.equal(
-        c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE
+        c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE,
       )
-    }
+    },
   )
 })

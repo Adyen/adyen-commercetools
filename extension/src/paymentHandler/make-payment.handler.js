@@ -11,7 +11,7 @@ import { makePayment } from '../service/web-component-service.js'
 
 async function execute(paymentObject) {
   const makePaymentRequestObj = JSON.parse(
-    paymentObject.custom.fields.makePaymentRequest
+    paymentObject.custom.fields.makePaymentRequest,
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
@@ -19,7 +19,7 @@ async function execute(paymentObject) {
   const { request, response } = await makePayment(
     adyenMerchantAccount,
     commercetoolsProjectKey,
-    makePaymentRequestObj
+    makePaymentRequestObj,
   )
   const actions = [
     createAddInterfaceInteractionAction({
@@ -29,7 +29,7 @@ async function execute(paymentObject) {
     }),
     createSetCustomFieldAction(
       c.CTP_CUSTOM_FIELD_MAKE_PAYMENT_RESPONSE,
-      response
+      response,
     ),
   ]
 
@@ -44,14 +44,14 @@ async function execute(paymentObject) {
   const updatePaymentAction = getPaymentKeyUpdateAction(
     paymentObject.key,
     request,
-    response
+    response,
   )
   if (updatePaymentAction) actions.push(updatePaymentAction)
 
   const addTransactionAction = createAddTransactionActionByResponse(
     paymentObject.amountPlanned.centAmount,
     paymentObject.amountPlanned.currencyCode,
-    response
+    response,
   )
 
   if (addTransactionAction) actions.push(addTransactionAction)

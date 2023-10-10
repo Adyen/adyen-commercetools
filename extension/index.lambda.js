@@ -21,7 +21,7 @@ let handler = async (event) => {
     const authToken = getAuthorizationRequestHeader(event)
     const paymentResult = await paymentHandler.handlePayment(
       paymentObj,
-      authToken
+      authToken,
     )
     return {
       responseType: paymentResult.actions

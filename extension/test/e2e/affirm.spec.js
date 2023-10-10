@@ -28,14 +28,14 @@ describe.skip('::affirmPayment::', () => {
       serveFile(
         './test/e2e/fixtures/affirm-init-session-form.html',
         request,
-        response
+        response,
       )
     }
     routes['/redirect-payment-form'] = async (request, response) => {
       serveFile(
         './test/e2e/fixtures/redirect-payment-form.html',
         request,
-        response
+        response,
       )
     }
     routes['/return-url'] = async (request, response) => {
@@ -77,7 +77,7 @@ describe.skip('::affirmPayment::', () => {
         let createSessionRequest = await getCreateSessionRequest(
           baseUrl,
           clientKey,
-          'USD'
+          'USD',
         )
         createSessionRequest =
           buildAffirmCreateSessionRequest(createSessionRequest)
@@ -86,11 +86,11 @@ describe.skip('::affirmPayment::', () => {
           adyenMerchantAccount,
           ctpProjectKey,
           createSessionRequest,
-          'USD'
+          'USD',
         )
         logger.debug(
           'affirm::paymentAfterCreateSession:',
-          JSON.stringify(paymentAfterCreateSession)
+          JSON.stringify(paymentAfterCreateSession),
         )
 
         // Step #2 - Setup Component
@@ -109,16 +109,16 @@ describe.skip('::affirmPayment::', () => {
         })
         logger.debug(
           'affirm::redirectPaymentResult:',
-          JSON.stringify(redirectPaymentResult)
+          JSON.stringify(redirectPaymentResult),
         )
       } catch (err) {
         logger.error('affirm::errors', err)
       }
       assertCreatePaymentSession(
         paymentAfterCreateSession,
-        redirectPaymentResult
+        redirectPaymentResult,
       )
-    }
+    },
   )
 
   async function initPaymentSession({
@@ -129,7 +129,7 @@ describe.skip('::affirmPayment::', () => {
   }) {
     const initPaymentSessionFormPage = new AffirmInitSessionFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await initPaymentSessionFormPage.goToThisPage()
 
@@ -148,14 +148,14 @@ describe.skip('::affirmPayment::', () => {
 
     const redirectPaymentFormPage = new RedirectPaymentFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await redirectPaymentFormPage.goToThisPage()
     const submittedRedirectResult =
       await redirectPaymentFormPage.redirectToAdyenPaymentPage(
         clientKey,
         sessionId,
-        redirectResult
+        redirectResult,
       )
     return submittedRedirectResult
   }

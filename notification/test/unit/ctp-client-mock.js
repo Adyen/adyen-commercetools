@@ -86,7 +86,7 @@ function compareTransactionStates(currentState, newState) {
   )
     throw Error(
       'Wrong transaction state passed. ' +
-        `currentState: ${currentState}, newState: ${newState}`
+        `currentState: ${currentState}, newState: ${newState}`,
     )
   if (transactionStateFlow[currentState] < transactionStateFlow[newState])
     return 1

@@ -3,22 +3,22 @@ import lineItemsUtils from './line-items-utils.js'
 
 async function execute(paymentObject) {
   const makePaymentRequestObj = JSON.parse(
-    paymentObject.custom.fields.makePaymentRequest
+    paymentObject.custom.fields.makePaymentRequest,
   )
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
   if (!makePaymentRequestObj.lineItems) {
     const ctpCart = await lineItemsUtils.fetchMatchingCart(
       paymentObject,
-      commercetoolsProjectKey
+      commercetoolsProjectKey,
     )
     if (ctpCart) {
       makePaymentRequestObj.lineItems = lineItemsUtils.createLineItems(
         paymentObject,
-        ctpCart
+        ctpCart,
       )
       paymentObject.custom.fields.makePaymentRequest = JSON.stringify(
-        makePaymentRequestObj
+        makePaymentRequestObj,
       )
     }
   }

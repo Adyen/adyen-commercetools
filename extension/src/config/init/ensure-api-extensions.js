@@ -8,10 +8,10 @@ async function ensureApiExtensions(
   ctpClient,
   ctpProjectKey,
   ctpAdyenIntegrationBaseUrl,
-  ctpAuthHeaderValue
+  ctpAuthHeaderValue,
 ) {
   const apiExtensionTemplate = await utils.readAndParseJsonFile(
-    'resources/api-extension.json'
+    'resources/api-extension.json',
   )
   try {
     const logger = mainLogger.child({
@@ -20,25 +20,25 @@ async function ensureApiExtensions(
     const extensionDraft = JSON.parse(
       _.template(JSON.stringify(apiExtensionTemplate))({
         ctpAdyenIntegrationBaseUrl,
-      })
+      }),
     )
     if (ctpAuthHeaderValue) {
       extensionDraft.destination.authentication = JSON.parse(
         `{` +
           `      "type": "AuthorizationHeader",` +
           `      "headerValue": "${ctpAuthHeaderValue}"` +
-          `    }`
+          `    }`,
       )
     }
     const existingExtension = await fetchExtensionByKey(
       ctpClient,
-      apiExtensionTemplate.key
+      apiExtensionTemplate.key,
     )
     if (existingExtension === null) {
       await ctpClient.create(ctpClient.builder.extensions, extensionDraft)
       logger.info(
         'Successfully created an API extension for payment resource type ' +
-          `(key=${apiExtensionTemplate.key})`
+          `(key=${apiExtensionTemplate.key})`,
       )
     } else {
       const actions = buildUpdateActions(existingExtension, extensionDraft)
@@ -47,18 +47,18 @@ async function ensureApiExtensions(
           ctpClient.builder.extensions,
           existingExtension.id,
           existingExtension.version,
-          actions
+          actions,
         )
         logger.info(
           'Successfully updated the API extension for payment resource type ' +
-            `(key=${apiExtensionTemplate.key})`
+            `(key=${apiExtensionTemplate.key})`,
         )
       }
     }
   } catch (err) {
     throw Error(
       `Failed to sync API extension (key=${apiExtensionTemplate.key}). ` +
-        `Error: ${JSON.stringify(serializeError(err))}`
+        `Error: ${JSON.stringify(serializeError(err))}`,
     )
   }
 }
@@ -84,7 +84,7 @@ async function fetchExtensionByKey(ctpClient, key) {
   try {
     const { body } = await ctpClient.fetchByKey(
       ctpClient.builder.extensions,
-      key
+      key,
     )
     return body
   } catch (err) {

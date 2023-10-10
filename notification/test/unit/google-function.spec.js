@@ -86,7 +86,7 @@ describe('Google Function handler', () => {
       const result = await notificationTrigger(mockRequest, mockResponse)
       expect(result.responseStatus).to.equal(500)
       expect(result.responseBody).to.equal(
-        'Object 62f05181-4789-47ce-84f8-d27c895ee23c has a different version than expected. Expected: 1 - Actual: 2.'
+        'Object 62f05181-4789-47ce-84f8-d27c895ee23c has a different version than expected. Expected: 1 - Actual: 2.',
       )
 
       const notificationItem = mockRequest.body.notificationItems.pop()
@@ -95,7 +95,7 @@ describe('Google Function handler', () => {
           notification: utils.getNotificationForTracking(notificationItem),
           err: errorWrapper,
         },
-        'Unexpected exception occurred.'
+        'Unexpected exception occurred.',
       )
     } finally {
       getLogger().child = originalChildFn
@@ -124,7 +124,7 @@ describe('Google Function handler', () => {
           notification: utils.getNotificationForTracking(notificationItem),
           err: error,
         },
-        'Unexpected exception occurred.'
+        'Unexpected exception occurred.',
       )
     } finally {
       getLogger().child = originalChildFn

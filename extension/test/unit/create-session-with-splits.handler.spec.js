@@ -83,7 +83,7 @@ describe('create-session-with-splits::execute', () => {
       expect(response.actions).to.have.lengthOf(3)
 
       const addInterfaceInteraction = response.actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       expect(addInterfaceInteraction.fields.type).to.equal('createSession')
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
@@ -93,33 +93,33 @@ describe('create-session-with-splits::execute', () => {
       const request = JSON.parse(addInterfaceInteraction.fields.request)
       const requestBody = JSON.parse(request.body)
       expect(requestBody.reference).to.deep.equal(
-        createSessiontWithSplitsRequest.reference
+        createSessiontWithSplitsRequest.reference,
       )
       expect(requestBody.riskData).to.deep.equal(
-        createSessiontWithSplitsRequest.riskData
+        createSessiontWithSplitsRequest.riskData,
       )
 
       expect(requestBody.browserInfo).to.deep.equal(
-        createSessiontWithSplitsRequest.browserInfo
+        createSessiontWithSplitsRequest.browserInfo,
       )
       expect(requestBody.amount).to.deep.equal(
-        createSessiontWithSplitsRequest.amount
+        createSessiontWithSplitsRequest.amount,
       )
       expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
-        (a) => a.action === 'setCustomField'
+        (a) => a.action === 'setCustomField',
       )
       expect(setCustomFieldAction.name).to.equal('createSessionResponse')
       expect(setCustomFieldAction.value).to.be.a('string')
       expect(setCustomFieldAction.value).to.equal(
-        addInterfaceInteraction.fields.response
+        addInterfaceInteraction.fields.response,
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
       expect(setKeyAction.key).to.equal(
-        createSessiontWithSplitsRequest.reference
+        createSessiontWithSplitsRequest.reference,
       )
-    }
+    },
   )
 })

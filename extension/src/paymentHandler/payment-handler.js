@@ -35,7 +35,7 @@ async function handlePayment(paymentObject, authToken) {
 
   const validatePaymentErrors = _validatePaymentRequest(
     paymentObject,
-    authToken
+    authToken,
   )
   if (validatePaymentErrors)
     return {
@@ -44,7 +44,7 @@ async function handlePayment(paymentObject, authToken) {
 
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(
-    handlers.map((handler) => handler.execute(paymentObject))
+    handlers.map((handler) => handler.execute(paymentObject)),
   )
   const handlerResponse = {
     actions: handlerResponses.flatMap((result) => result.actions),
@@ -96,7 +96,7 @@ function _getPaymentHandlers(paymentObject) {
     !customFields.createSessionResponse
   ) {
     const createSessionRequestHandler = _getCreateSessionRequestHandler(
-      customFields.createSessionRequest
+      customFields.createSessionRequest,
     )
     handlers.push(createSessionRequestHandler)
   }

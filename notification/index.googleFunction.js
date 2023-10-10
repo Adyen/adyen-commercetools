@@ -21,7 +21,7 @@ export const notificationTrigger = async (request, response) => {
       await handler.processNotification(
         notification,
         adyenConfig.enableHmacSignature,
-        ctpProjectConfig
+        ctpProjectConfig,
       )
     }
   } catch (err) {
@@ -31,7 +31,7 @@ export const notificationTrigger = async (request, response) => {
         notification: utils.getNotificationForTracking(notificationItems),
         cause,
       },
-      'Unexpected exception occurred.'
+      'Unexpected exception occurred.',
     )
     if (isRecoverableError(err)) {
       return response.status(500).send(cause.message)

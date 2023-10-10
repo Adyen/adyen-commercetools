@@ -10,14 +10,14 @@ async function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
     `${adyenCredentials.apiBaseUrl}/paymentMethods`,
     merchantAccount,
     adyenCredentials.apiKey,
-    await extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj)
+    await extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj),
   )
 }
 
 async function makePayment(
   merchantAccount,
   commercetoolsProjectKey,
-  makePaymentRequestObj
+  makePaymentRequestObj,
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(makePaymentRequestObj, commercetoolsProjectKey)
@@ -27,25 +27,25 @@ async function makePayment(
     `${adyenCredentials.apiBaseUrl}/payments`,
     merchantAccount,
     adyenCredentials.apiKey,
-    makePaymentRequestObj
+    makePaymentRequestObj,
   )
 }
 
 function submitAdditionalPaymentDetails(
   merchantAccount,
   commercetoolsProjectKey,
-  submitAdditionalPaymentDetailsRequestObj
+  submitAdditionalPaymentDetailsRequestObj,
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(
     submitAdditionalPaymentDetailsRequestObj,
-    commercetoolsProjectKey
+    commercetoolsProjectKey,
   )
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/payments/details`,
     merchantAccount,
     adyenCredentials.apiKey,
-    submitAdditionalPaymentDetailsRequestObj
+    submitAdditionalPaymentDetailsRequestObj,
   )
 }
 
@@ -59,7 +59,7 @@ function manualCapture(
   merchantAccount,
   commercetoolsProjectKey,
   idempotencyKey,
-  manualCaptureRequestObj
+  manualCaptureRequestObj,
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   return callAdyen(
@@ -70,14 +70,14 @@ function manualCapture(
       amount: manualCaptureRequestObj.modificationAmount,
       reference: manualCaptureRequestObj?.reference,
     },
-    idempotencyKey && { 'Idempotency-Key': idempotencyKey }
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey },
   )
 }
 
 function cancelPayment(
   merchantAccount,
   commercetoolsProjectKey,
-  cancelPaymentRequestObj
+  cancelPaymentRequestObj,
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   return callAdyen(
@@ -86,7 +86,7 @@ function cancelPayment(
     adyenCredentials.apiKey,
     {
       reference: cancelPaymentRequestObj?.reference,
-    }
+    },
   )
 }
 
@@ -94,7 +94,7 @@ function refund(
   merchantAccount,
   commercetoolsProjectKey,
   idempotencyKey,
-  refundRequestObj
+  refundRequestObj,
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   return callAdyen(
@@ -105,7 +105,7 @@ function refund(
       amount: refundRequestObj.modificationAmount,
       reference: refundRequestObj?.reference,
     },
-    idempotencyKey && { 'Idempotency-Key': idempotencyKey }
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey },
   )
 }
 
@@ -115,14 +115,14 @@ function getCarbonOffsetCosts(merchantAccount, getCarbonOffsetCostsRequestObj) {
     `${adyenCredentials.apiBaseUrl}/carbonOffsetCosts`,
     merchantAccount,
     adyenCredentials.apiKey,
-    getCarbonOffsetCostsRequestObj
+    getCarbonOffsetCostsRequestObj,
   )
 }
 
 function updateAmount(
   merchantAccount,
   commercetoolsProjectKey,
-  amountUpdatesRequestObj
+  amountUpdatesRequestObj,
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   const paymentPspReference = amountUpdatesRequestObj.paymentPspReference
@@ -130,14 +130,14 @@ function updateAmount(
     `${adyenCredentials.apiBaseUrl}/payments/${paymentPspReference}/amountUpdates`,
     merchantAccount,
     adyenCredentials.apiKey,
-    amountUpdatesRequestObj
+    amountUpdatesRequestObj,
   )
 }
 
 async function createSessionRequest(
   merchantAccount,
   commercetoolsProjectKey,
-  requestObject
+  requestObject,
 ) {
   extendRequestObjWithMetadata(requestObject, commercetoolsProjectKey)
   await extendRequestObjWithApplicationInfo(requestObject)
@@ -147,7 +147,7 @@ async function createSessionRequest(
     `${adyenCredentials.apiBaseUrl}/sessions`,
     merchantAccount,
     adyenCredentials.apiKey,
-    requestObject
+    requestObject,
   )
 }
 
@@ -160,7 +160,7 @@ function disableStoredPayment(merchantAccount, disableStoredPaymentRequestObj) {
     url,
     merchantAccount,
     adyenCredentials.apiKey,
-    disableStoredPaymentRequestObj
+    disableStoredPaymentRequestObj,
   )
 }
 
@@ -199,7 +199,7 @@ async function callAdyen(
   adyenMerchantAccount,
   adyenApiKey,
   requestArg,
-  headers
+  headers,
 ) {
   let returnedRequest
   let returnedResponse
@@ -209,7 +209,7 @@ async function callAdyen(
       adyenMerchantAccount,
       adyenApiKey,
       requestArg,
-      headers
+      headers,
     )
     returnedRequest = request
     returnedResponse = response
@@ -226,7 +226,7 @@ async function fetchAsync(
   adyenMerchantAccount,
   adyenApiKey,
   requestObj,
-  headers
+  headers,
 ) {
   const moduleConfig = config.getModuleConfig()
   const removeSensitiveData =
@@ -239,7 +239,7 @@ async function fetchAsync(
     adyenMerchantAccount,
     adyenApiKey,
     requestObj,
-    headers
+    headers,
   )
 
   try {
@@ -251,7 +251,7 @@ async function fetchAsync(
     if (response)
       // Handle non-JSON format response
       throw new Error(
-        `Unable to receive non-JSON format resposne from Adyen API : ${responseBodyInText}`
+        `Unable to receive non-JSON format resposne from Adyen API : ${responseBodyInText}`,
       )
     // Error in fetching URL
     else throw err

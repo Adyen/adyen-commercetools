@@ -55,7 +55,7 @@ describe('make-payment::execute', () => {
 
   before(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-payment-make-payment.json'
+      'test/unit/fixtures/ctp-payment-make-payment.json',
     )
   })
 
@@ -84,17 +84,17 @@ describe('make-payment::execute', () => {
       expect(response.actions).to.have.lengthOf(6)
 
       const setMethodInfoMethod = response.actions.find(
-        (a) => a.action === 'setMethodInfoMethod'
+        (a) => a.action === 'setMethodInfoMethod',
       )
       expect(setMethodInfoMethod.method).to.equal('scheme')
 
       const setMethodInfoName = response.actions.find(
-        (a) => a.action === 'setMethodInfoName'
+        (a) => a.action === 'setMethodInfoName',
       )
       expect(setMethodInfoName.name).to.eql({ en: 'Credit Card' })
 
       const addInterfaceInteraction = response.actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       expect(addInterfaceInteraction.fields.type).to.equal('makePayment')
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
@@ -106,38 +106,38 @@ describe('make-payment::execute', () => {
       expect(requestBody.reference).to.deep.equal(makePaymentRequest.reference)
       expect(requestBody.riskData).to.deep.equal(makePaymentRequest.riskData)
       expect(requestBody.paymentMethod).to.deep.equal(
-        makePaymentRequest.paymentMethod
+        makePaymentRequest.paymentMethod,
       )
       expect(requestBody.browserInfo).to.deep.equal(
-        makePaymentRequest.browserInfo
+        makePaymentRequest.browserInfo,
       )
       expect(requestBody.amount).to.deep.equal(makePaymentRequest.amount)
       expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
-        (a) => a.action === 'setCustomField'
+        (a) => a.action === 'setCustomField',
       )
       expect(setCustomFieldAction.name).to.equal('makePaymentResponse')
       expect(setCustomFieldAction.value).to.be.a('string')
       expect(setCustomFieldAction.value).to.equal(
-        addInterfaceInteraction.fields.response
+        addInterfaceInteraction.fields.response,
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
       expect(setKeyAction.key).to.equal(
-        JSON.parse(paymentSuccessResponse).pspReference
+        JSON.parse(paymentSuccessResponse).pspReference,
       )
 
       const addTransaction = response.actions.find(
-        (a) => a.action === 'addTransaction'
+        (a) => a.action === 'addTransaction',
       )
       expect(addTransaction.transaction).to.be.a('object')
       expect(addTransaction.transaction.type).to.equal('Authorization')
       expect(addTransaction.transaction.state).to.equal('Success')
       expect(addTransaction.transaction.interactionId).to.equal(
-        JSON.parse(paymentSuccessResponse).pspReference
+        JSON.parse(paymentSuccessResponse).pspReference,
       )
-    }
+    },
   )
 
   it(
@@ -156,7 +156,7 @@ describe('make-payment::execute', () => {
       expect(response.actions).to.have.lengthOf(5)
 
       const addInterfaceInteraction = response.actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       expect(addInterfaceInteraction.fields.type).to.equal('makePayment')
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
@@ -168,26 +168,26 @@ describe('make-payment::execute', () => {
       expect(requestBody.reference).to.deep.equal(makePaymentRequest.reference)
       expect(requestBody.riskData).to.deep.equal(makePaymentRequest.riskData)
       expect(requestBody.paymentMethod).to.deep.equal(
-        makePaymentRequest.paymentMethod
+        makePaymentRequest.paymentMethod,
       )
       expect(requestBody.browserInfo).to.deep.equal(
-        makePaymentRequest.browserInfo
+        makePaymentRequest.browserInfo,
       )
       expect(requestBody.amount).to.deep.equal(makePaymentRequest.amount)
       expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
-        (a) => a.action === 'setCustomField'
+        (a) => a.action === 'setCustomField',
       )
       expect(setCustomFieldAction.name).to.equal('makePaymentResponse')
       expect(setCustomFieldAction.value).to.be.a('string')
       expect(setCustomFieldAction.value).to.equal(
-        addInterfaceInteraction.fields.response
+        addInterfaceInteraction.fields.response,
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
       expect(setKeyAction.key).to.equal(makePaymentRequest.reference) // no pspReference until submitting additional details in redirect flow
-    }
+    },
   )
 
   it(
@@ -206,7 +206,7 @@ describe('make-payment::execute', () => {
       expect(response.actions).to.have.lengthOf(5)
 
       const addInterfaceInteraction = response.actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       expect(addInterfaceInteraction.fields.type).to.equal('makePayment')
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
@@ -218,26 +218,26 @@ describe('make-payment::execute', () => {
       expect(requestBody.reference).to.deep.equal(makePaymentRequest.reference)
       expect(requestBody.riskData).to.deep.equal(makePaymentRequest.riskData)
       expect(requestBody.paymentMethod).to.deep.equal(
-        makePaymentRequest.paymentMethod
+        makePaymentRequest.paymentMethod,
       )
       expect(requestBody.browserInfo).to.deep.equal(
-        makePaymentRequest.browserInfo
+        makePaymentRequest.browserInfo,
       )
       expect(requestBody.amount).to.deep.equal(makePaymentRequest.amount)
       expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
-        (a) => a.action === 'setCustomField'
+        (a) => a.action === 'setCustomField',
       )
       expect(setCustomFieldAction.name).to.equal('makePaymentResponse')
       expect(setCustomFieldAction.value).to.be.a('string')
       expect(setCustomFieldAction.value).to.equal(
-        addInterfaceInteraction.fields.response
+        addInterfaceInteraction.fields.response,
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
       expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
-    }
+    },
   )
 
   it(
@@ -257,7 +257,7 @@ describe('make-payment::execute', () => {
       expect(response.actions).to.have.lengthOf(6)
 
       const addInterfaceInteraction = response.actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       expect(addInterfaceInteraction.fields.type).to.equal('makePayment')
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
@@ -269,38 +269,38 @@ describe('make-payment::execute', () => {
       expect(requestBody.reference).to.deep.equal(makePaymentRequest.reference)
       expect(requestBody.riskData).to.deep.equal(makePaymentRequest.riskData)
       expect(requestBody.paymentMethod).to.deep.equal(
-        makePaymentRequest.paymentMethod
+        makePaymentRequest.paymentMethod,
       )
       expect(requestBody.browserInfo).to.deep.equal(
-        makePaymentRequest.browserInfo
+        makePaymentRequest.browserInfo,
       )
       expect(requestBody.amount).to.deep.equal(makePaymentRequest.amount)
       expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
-        (a) => a.action === 'setCustomField'
+        (a) => a.action === 'setCustomField',
       )
       expect(setCustomFieldAction.name).to.equal('makePaymentResponse')
       expect(setCustomFieldAction.value).to.be.a('string')
       expect(setCustomFieldAction.value).to.equal(
-        addInterfaceInteraction.fields.response
+        addInterfaceInteraction.fields.response,
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
       expect(setKeyAction.key).to.equal(
-        JSON.parse(paymentRefusedResponse).pspReference
+        JSON.parse(paymentRefusedResponse).pspReference,
       )
 
       const addTransaction = response.actions.find(
-        (a) => a.action === 'addTransaction'
+        (a) => a.action === 'addTransaction',
       )
       expect(addTransaction.transaction).to.be.a('object')
       expect(addTransaction.transaction.type).to.equal('Authorization')
       expect(addTransaction.transaction.state).to.equal('Failure')
       expect(addTransaction.transaction.interactionId).to.equal(
-        JSON.parse(paymentRefusedResponse).pspReference
+        JSON.parse(paymentRefusedResponse).pspReference,
       )
-    }
+    },
   )
 
   it(
@@ -320,7 +320,7 @@ describe('make-payment::execute', () => {
       expect(response.actions).to.have.lengthOf(6)
 
       const addInterfaceInteraction = response.actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       expect(addInterfaceInteraction.fields.type).to.equal('makePayment')
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
@@ -332,38 +332,38 @@ describe('make-payment::execute', () => {
       expect(requestBody.reference).to.deep.equal(makePaymentRequest.reference)
       expect(requestBody.riskData).to.deep.equal(makePaymentRequest.riskData)
       expect(requestBody.paymentMethod).to.deep.equal(
-        makePaymentRequest.paymentMethod
+        makePaymentRequest.paymentMethod,
       )
       expect(requestBody.browserInfo).to.deep.equal(
-        makePaymentRequest.browserInfo
+        makePaymentRequest.browserInfo,
       )
       expect(requestBody.amount).to.deep.equal(makePaymentRequest.amount)
       expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
-        (a) => a.action === 'setCustomField'
+        (a) => a.action === 'setCustomField',
       )
       expect(setCustomFieldAction.name).to.equal('makePaymentResponse')
       expect(setCustomFieldAction.value).to.be.a('string')
       expect(setCustomFieldAction.value).to.equal(
-        addInterfaceInteraction.fields.response
+        addInterfaceInteraction.fields.response,
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
       expect(setKeyAction.key).to.equal(
-        JSON.parse(paymentErrorResponse).pspReference
+        JSON.parse(paymentErrorResponse).pspReference,
       )
 
       const addTransaction = response.actions.find(
-        (a) => a.action === 'addTransaction'
+        (a) => a.action === 'addTransaction',
       )
       expect(addTransaction.transaction).to.be.a('object')
       expect(addTransaction.transaction.type).to.equal('Authorization')
       expect(addTransaction.transaction.state).to.equal('Failure')
       expect(addTransaction.transaction.interactionId).to.equal(
-        JSON.parse(paymentErrorResponse).pspReference
+        JSON.parse(paymentErrorResponse).pspReference,
       )
-    }
+    },
   )
 
   it(
@@ -376,22 +376,22 @@ describe('make-payment::execute', () => {
       const makePaymentRequestClone = _.cloneDeep(makePaymentRequest)
       makePaymentRequestClone.paymentMethod.type = 'new payment method'
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        makePaymentRequestClone
+        makePaymentRequestClone,
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
 
       const setMethodInfoMethod = response.actions.find(
-        (a) => a.action === 'setMethodInfoMethod'
+        (a) => a.action === 'setMethodInfoMethod',
       )
       expect(setMethodInfoMethod.method).to.equal('new payment method')
 
       const setMethodInfoName = response.actions.find(
-        (a) => a.action === 'setMethodInfoName'
+        (a) => a.action === 'setMethodInfoName',
       )
       expect(setMethodInfoName).to.be.undefined
-    }
+    },
   )
 
   it(
@@ -404,16 +404,16 @@ describe('make-payment::execute', () => {
       const makePaymentRequestClone = _.cloneDeep(makePaymentRequest)
       delete makePaymentRequestClone.paymentMethod.type
       ctpPaymentClone.custom.fields.makePaymentRequest = JSON.stringify(
-        makePaymentRequestClone
+        makePaymentRequestClone,
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
 
       const response = await execute(ctpPaymentClone)
 
       const setMethodInfoMethod = response.actions.find(
-        (a) => a.action === 'setMethodInfoMethod'
+        (a) => a.action === 'setMethodInfoMethod',
       )
       expect(setMethodInfoMethod).to.be.undefined
-    }
+    },
   )
 })

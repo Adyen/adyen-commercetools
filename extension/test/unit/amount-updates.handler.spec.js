@@ -95,7 +95,7 @@ describe('amount-updates.handler::execute::', () => {
       const paymentObject = cloneDeep(authorisedPayment)
 
       paymentObject.custom.fields.amountUpdatesRequest = JSON.stringify(
-        amountUpdatesRequestDraft
+        amountUpdatesRequestDraft,
       )
 
       const { actions } = await amountUpdatesHandler.execute(paymentObject)
@@ -103,15 +103,15 @@ describe('amount-updates.handler::execute::', () => {
       expect(actions).to.have.lengthOf(2)
 
       const addInterfaceInteraction = actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       expect(addInterfaceInteraction.fields.type).to.equal(
-        constants.CTP_INTERACTION_TYPE_AMOUNT_UPDATES
+        constants.CTP_INTERACTION_TYPE_AMOUNT_UPDATES,
       )
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
 
       expect(addInterfaceInteraction.fields.response).to.equal(
-        JSON.stringify(amountUpdatesResponse)
+        JSON.stringify(amountUpdatesResponse),
       )
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
@@ -121,6 +121,6 @@ describe('amount-updates.handler::execute::', () => {
         action: 'setCustomField',
         value: JSON.stringify(amountUpdatesResponse),
       })
-    }
+    },
   )
 })

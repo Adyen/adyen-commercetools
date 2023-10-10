@@ -26,10 +26,10 @@ describe('notification module', () => {
 
   before(async () => {
     paymentMock = await utils.readAndParseJsonFile(
-      'test/resources/payment-credit-card.json'
+      'test/resources/payment-credit-card.json',
     )
     notification = await utils.readAndParseJsonFile(
-      'test/resources/notification.json'
+      'test/resources/notification.json',
     )
     notificationsMock = notification.notificationItems
     overrideAdyenConfig({
@@ -101,7 +101,7 @@ describe('notification module', () => {
     await notificationHandler.processNotification(
       notifications[0],
       false,
-      config
+      config,
     )
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
@@ -150,7 +150,7 @@ describe('notification module', () => {
     expect(actualTransactionTimestamp).to.not.equal(undefined)
     expectedUpdateActions[2].timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
-      expectedUpdateActions
+      expectedUpdateActions,
     )
   })
 
@@ -204,7 +204,7 @@ describe('notification module', () => {
     await notificationHandler.processNotification(
       notifications[0],
       false,
-      config
+      config,
     )
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
@@ -235,7 +235,7 @@ describe('notification module', () => {
     const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
     delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
-      expectedUpdateActions
+      expectedUpdateActions,
     )
   })
 
@@ -306,7 +306,7 @@ describe('notification module', () => {
     await notificationHandler.processNotification(
       notifications[0],
       false,
-      config
+      config,
     )
     // assert
     expect(ctpClientUpdateSpy.callCount).to.equal(1)
@@ -314,7 +314,7 @@ describe('notification module', () => {
     const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
 
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
-      expectedUpdateActions
+      expectedUpdateActions,
     )
   })
 
@@ -367,7 +367,7 @@ describe('notification module', () => {
     await notificationHandler.processNotification(
       notifications[0],
       false,
-      config
+      config,
     )
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
@@ -414,7 +414,7 @@ describe('notification module', () => {
     expect(actualTransactionTimestamp).to.not.equal(undefined)
     expectedUpdateActions[1].transaction.timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
-      expectedUpdateActions
+      expectedUpdateActions,
     )
   })
 
@@ -467,7 +467,7 @@ describe('notification module', () => {
     await notificationHandler.processNotification(
       notifications[0],
       false,
-      config
+      config,
     )
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
@@ -514,7 +514,7 @@ describe('notification module', () => {
     expect(actualTransactionTimestamp).to.not.equal(undefined)
     expectedUpdateActions[1].transaction.timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
-      expectedUpdateActions
+      expectedUpdateActions,
     )
   })
 
@@ -567,7 +567,7 @@ describe('notification module', () => {
     await notificationHandler.processNotification(
       notifications[0],
       false,
-      config
+      config,
     )
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
@@ -615,7 +615,7 @@ describe('notification module', () => {
     expect(actualTransactionTimestamp).to.not.equal(undefined)
     expectedUpdateActions[1].transaction.timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
-      expectedUpdateActions
+      expectedUpdateActions,
     )
   })
 
@@ -677,7 +677,7 @@ describe('notification module', () => {
     await notificationHandler.processNotification(
       notifications[0],
       false,
-      config
+      config,
     )
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
@@ -753,7 +753,7 @@ describe('notification module', () => {
       await notificationHandler.processNotification(
         notificationsMock[0],
         false,
-        config
+        config,
       )
     } catch (e) {
       // we check retry logic here and it should throw after certain amount
@@ -821,16 +821,16 @@ describe('notification module', () => {
       await notificationHandler.processNotification(
         notifications[0],
         false,
-        config
+        config,
       )
 
       expect(ctpClientUpdateSpy.args[0][3][0].fields.notification).to.include(
-        'additionalData'
+        'additionalData',
       )
       expect(ctpClientUpdateSpy.args[0][3][0].fields.notification).to.include(
-        'reason'
+        'reason',
       )
-    }
+    },
   )
 
   it(
@@ -889,16 +889,16 @@ describe('notification module', () => {
       await notificationHandler.processNotification(
         notifications[0],
         false,
-        config
+        config,
       )
 
       expect(
-        ctpClientUpdateSpy.args[0][3][0].fields.notification
+        ctpClientUpdateSpy.args[0][3][0].fields.notification,
       ).to.not.include('additionalData')
       expect(
-        ctpClientUpdateSpy.args[0][3][0].fields.notification
+        ctpClientUpdateSpy.args[0][3][0].fields.notification,
       ).to.not.include('reason')
-    }
+    },
   )
 
   it(`given that unexpected error occurs when get payment By merchant reference
@@ -950,14 +950,14 @@ describe('notification module', () => {
       await notificationHandler.processNotification(
         notifications[0],
         false,
-        config
+        config,
       )
     } catch (e) {
       error = e
     }
     expect(error instanceof VError).to.equal(true)
     expect(error.message).to.contains(
-      'Failed to fetch a payment with merchantReference'
+      'Failed to fetch a payment with merchantReference',
     )
   })
 })

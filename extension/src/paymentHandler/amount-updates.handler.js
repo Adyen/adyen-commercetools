@@ -7,7 +7,7 @@ import c from '../config/constants.js'
 
 async function execute(paymentObject) {
   const amountUpdatesRequestObj = JSON.parse(
-    paymentObject.custom.fields.amountUpdatesRequest
+    paymentObject.custom.fields.amountUpdatesRequest,
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
@@ -15,7 +15,7 @@ async function execute(paymentObject) {
   const { request, response } = await updateAmount(
     adyenMerchantAccount,
     commercetoolsProjectKey,
-    amountUpdatesRequestObj
+    amountUpdatesRequestObj,
   )
   return {
     actions: [
@@ -26,7 +26,7 @@ async function execute(paymentObject) {
       }),
       createSetCustomFieldAction(
         c.CTP_CUSTOM_FIELD_AMOUNT_UPDATES_RESPONSE,
-        response
+        response,
       ),
     ],
   }

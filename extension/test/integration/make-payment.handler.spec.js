@@ -37,7 +37,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
           adyenMerchantAccount: adyenMerchantAccount2 || adyenMerchantAccount1,
         }),
       ])
-    }
+    },
   )
 
   it(
@@ -82,7 +82,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
             name: 'makePaymentRequest',
             value: JSON.stringify(makePaymentRequestDraft),
           },
-        ]
+        ],
       )
 
       const makePaymentResponse =
@@ -98,12 +98,12 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
       const interfaceInteraction = updatedPayment.interfaceInteractions.find(
         (interaction) =>
           interaction.fields.type ===
-          constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+          constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT,
       )
       const makePaymentRequest = JSON.parse(interfaceInteraction.fields.request)
       const makePaymentRequestBody = JSON.parse(makePaymentRequest.body)
       expect(makePaymentRequestBody.lineItems).to.have.lengthOf(3)
-    }
+    },
   )
 
   async function makePayment({ reference, adyenMerchantAccount, metadata }) {
@@ -146,7 +146,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
 
     const { statusCode, body: payment } = await ctpClient.create(
       ctpClient.builder.payments,
-      paymentDraft
+      paymentDraft,
     )
 
     expect(statusCode).to.equal(201)
@@ -158,7 +158,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
 
     const interfaceInteraction = payment.interfaceInteractions.find(
       (interaction) =>
-        interaction.fields.type === constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT
+        interaction.fields.type === constants.CTP_INTERACTION_TYPE_MAKE_PAYMENT,
     )
     const makePaymentRequest = JSON.parse(interfaceInteraction.fields.request)
     const makePaymentRequestBody = JSON.parse(makePaymentRequest.body)
@@ -174,11 +174,11 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     }
 
     expect(makePaymentRequestBody.merchantAccount).to.be.equal(
-      adyenMerchantAccount
+      adyenMerchantAccount,
     )
 
     expect(makePaymentResponse).to.be.deep.equal(
-      interfaceInteraction.fields.response
+      interfaceInteraction.fields.response,
     )
     expect(JSON.parse(makePaymentResponse).resultCode).to.be.equal('Authorised')
 
@@ -188,7 +188,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
     expect(transaction.type).to.be.equal('Authorization')
     expect(transaction.amount.currencyCode).to.be.equal('EUR')
     expect(transaction.amount.centAmount).to.be.equal(
-      paymentDraft.amountPlanned.centAmount
+      paymentDraft.amountPlanned.centAmount,
     )
     expect(transaction.interactionId).to.be.a('string')
   }

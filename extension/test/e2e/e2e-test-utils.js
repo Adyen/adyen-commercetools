@@ -13,7 +13,7 @@ async function pasteValue(page, selector, value) {
       // eslint-disable-next-line no-undef
       document.querySelector(data.selector).value = data.value
     },
-    { selector, value }
+    { selector, value },
   )
 }
 
@@ -56,18 +56,18 @@ async function getCreateSessionRequest(baseUrl, clientKey, currency = 'EUR') {
 
 function assertCreatePaymentSession(
   paymentAfterCreateSession,
-  initPaymentSessionResult
+  initPaymentSessionResult,
 ) {
   const { createSessionResponse } = paymentAfterCreateSession.custom.fields
   const initPaymentSessionResultJson = JSON.parse(initPaymentSessionResult)
 
   const finalAdyenPaymentInteraction = getLatestInterfaceInteraction(
     paymentAfterCreateSession.interfaceInteractions,
-    c.CTP_INTERACTION_TYPE_CREATE_SESSION
+    c.CTP_INTERACTION_TYPE_CREATE_SESSION,
   )
 
   expect(finalAdyenPaymentInteraction.fields.response).to.equal(
-    createSessionResponse
+    createSessionResponse,
   )
   expect(initPaymentSessionResultJson.resultCode).to.equal('Authorised')
   expect(initPaymentSessionResultJson.sessionData).to.not.equal('undefined')
@@ -78,7 +78,7 @@ async function createPaymentSession(
   adyenMerchantAccount,
   commercetoolsProjectKey,
   createSessionRequest,
-  currency = 'EUR'
+  currency = 'EUR',
 ) {
   const paymentDraft = {
     amountPlanned: {
@@ -103,14 +103,14 @@ async function createPaymentSession(
 
   const { body: payment } = await ctpClient.create(
     ctpClient.builder.payments,
-    paymentDraft
+    paymentDraft,
   )
   return payment
 }
 
 function assertPayment(
   payment,
-  finalAdyenPaymentInteractionName = 'submitAdditionalPaymentDetails'
+  finalAdyenPaymentInteractionName = 'submitAdditionalPaymentDetails',
 ) {
   const {
     [`${finalAdyenPaymentInteractionName}Response`]:
@@ -119,19 +119,19 @@ function assertPayment(
   const finalAdyenPaymentResponse = JSON.parse(finalAdyenPaymentResponseString)
   expect(finalAdyenPaymentResponse.resultCode).to.equal(
     'Authorised',
-    `resultCode is not Authorised: ${finalAdyenPaymentResponseString}`
+    `resultCode is not Authorised: ${finalAdyenPaymentResponseString}`,
   )
   expect(finalAdyenPaymentResponse.pspReference).to.match(
     /[A-Z0-9]+/,
-    `pspReference does not match '/[A-Z0-9]+/': ${finalAdyenPaymentResponseString}`
+    `pspReference does not match '/[A-Z0-9]+/': ${finalAdyenPaymentResponseString}`,
   )
 
   const finalAdyenPaymentInteraction = getLatestInterfaceInteraction(
     payment.interfaceInteractions,
-    finalAdyenPaymentInteractionName
+    finalAdyenPaymentInteractionName,
   )
   expect(finalAdyenPaymentInteraction.fields.response).to.equal(
-    finalAdyenPaymentResponseString
+    finalAdyenPaymentResponseString,
   )
 
   expect(payment.transactions).to.have.lengthOf(1)
@@ -139,13 +139,13 @@ function assertPayment(
   expect(transaction.state).to.equal('Success')
   expect(transaction.type).to.equal('Authorization')
   expect(transaction.interactionId).to.equal(
-    finalAdyenPaymentResponse.pspReference
+    finalAdyenPaymentResponse.pspReference,
   )
   expect(transaction.amount.centAmount).to.equal(
-    payment.amountPlanned.centAmount
+    payment.amountPlanned.centAmount,
   )
   expect(transaction.amount.currencyCode).to.equal(
-    payment.amountPlanned.currencyCode
+    payment.amountPlanned.currencyCode,
   )
 }
 
@@ -154,7 +154,7 @@ async function createPayment(
   adyenMerchantAccount,
   commercetoolsProjectKey,
   makePaymentRequest,
-  currency = 'EUR'
+  currency = 'EUR',
 ) {
   const paymentDraft = {
     amountPlanned: {
@@ -179,7 +179,7 @@ async function createPayment(
 
   const { body: payment } = await ctpClient.create(
     ctpClient.builder.payments,
-    paymentDraft
+    paymentDraft,
   )
   return payment
 }

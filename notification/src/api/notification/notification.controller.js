@@ -11,7 +11,7 @@ const logger = getLogger()
 async function handleNotification(request, response) {
   if (request.method !== 'POST') {
     logger.debug(
-      `Received non-POST request: ${request.method}. The request will not be processed...`
+      `Received non-POST request: ${request.method}. The request will not be processed...`,
     )
     return utils.sendResponse(response)
   }
@@ -27,7 +27,7 @@ async function handleNotification(request, response) {
       await notificationHandler.processNotification(
         notification,
         adyenConfig.enableHmacSignature,
-        ctpProjectConfig
+        ctpProjectConfig,
       )
     }
     return sendAcceptedResponse(response)
@@ -39,7 +39,7 @@ async function handleNotification(request, response) {
         notification: utils.getNotificationForTracking(notification),
         cause,
       },
-      'Unexpected exception occurred.'
+      'Unexpected exception occurred.',
     )
     if (isRecoverableError(err)) {
       return utils.sendResponse(response, 500)
@@ -57,7 +57,7 @@ function sendAcceptedResponse(response) {
     response,
     200,
     { 'Content-Type': 'application/json' },
-    JSON.stringify({ notificationResponse: '[accepted]' })
+    JSON.stringify({ notificationResponse: '[accepted]' }),
   )
 }
 
