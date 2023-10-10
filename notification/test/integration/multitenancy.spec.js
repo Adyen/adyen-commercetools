@@ -9,17 +9,19 @@ import {
 } from '../test-utils.js'
 
 describe('::multitenancy::', () => {
-  let [commercetoolsProjectKey1, commercetoolsProjectKey2] =
+  const [commercetoolsProjectKey1, maybeCommercetoolsProjectKey2] =
     config.getAllCtpProjectKeys()
-  let [adyenMerchantAccount1, adyenMerchantAccount2] =
+  const [adyenMerchantAccount1, maybeAdyenMerchantAccount2] =
     config.getAllAdyenMerchantAccounts()
 
   let ctpClient1
   let ctpClient2
   let notificationURL
 
-  commercetoolsProjectKey2 = commercetoolsProjectKey2 || commercetoolsProjectKey1;
-  adyenMerchantAccount2 = adyenMerchantAccount2 || adyenMerchantAccount1;
+  const commercetoolsProjectKey2 =
+    maybeCommercetoolsProjectKey2 || commercetoolsProjectKey1
+  const adyenMerchantAccount2 =
+    maybeAdyenMerchantAccount2 || adyenMerchantAccount1
 
   before(async () => {
     ctpClient1 = await ctpClientBuilder.get(
