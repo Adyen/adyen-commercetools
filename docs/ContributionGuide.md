@@ -12,7 +12,7 @@
 ## Prerequisites
 
 Minimum requirements are:
- - **Node.js** version 16.
+ - **Node.js** version 18.
  - **Npm** version 6.
  
 You can install all dependencies using `npm` with following command:

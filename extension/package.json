@@ -38,7 +38,7 @@
     "email": "ps-dev@commercetools.com"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "contributors": [],
   "bugs": {
