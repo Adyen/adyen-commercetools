@@ -29,10 +29,8 @@ Find information on most frequently asked questions during integrating on **comm
 
 In v5.0.0 (released in October 2021) Adyen introduced a simplified way of integrating Web Components, using a single API endpoint `/sessions`. It is considered as a simplification of existing functionalities.
 The migration of this integration has been completed in February 2023. For new merchants, now you can use Adyen web components v5.0.0 with this integration to complete the checkout process.
-Since the newly-introduced endpoint `/sessions` aims at replacing the endpoints `/payments` and `/payments/details`. Our integration no longer supports the requests to these two existing endpoints.
-Therefore, for the existing merchants, breaking change is required in case they are planning to upgrade the Ayden web components from version < v5.0.0   
-
-For the existing endpoint `/paymentMethods`, it is kept unchanged and optional in Adyen web components >= v5.0.0 as users still need it to list out the supported payment methods of their merchant account.
+Since the newly-introduced endpoint `/sessions` aims at replacing the endpoints `/payments` and `/payments/details`. Our integration supports the requests to these two existing endpoints for advanced user flows.
+This means that the complete checkout experience is still available and existing merchants will not have to change anything to their existing workflow.
 
 ### Does the integration support payment method X ?
 
