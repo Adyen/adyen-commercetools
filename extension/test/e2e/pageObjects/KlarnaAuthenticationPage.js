@@ -49,6 +49,9 @@ export default class KlarnaAuthenticationPage {
     await klarnaIframe.waitForSelector('#otp_field')
     await klarnaIframe.type('#otp_field', '123456')
 
+    // Sleep before final searching for iban field because klarna uses some effects for rendering.
+    // We just need to wait for effect to finish.
+    await this.page.waitForTimeout(1_000)
     await klarnaIframe.waitForSelector('[data-testid="pick-plan"]')
     await klarnaIframe.click('#directdebit\\.0-ui button[role="option"]')
     await klarnaIframe.click('[data-testid="pick-plan"]')
