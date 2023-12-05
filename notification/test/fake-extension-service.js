@@ -13,7 +13,7 @@ async function initTunnel() {
     try {
       tunnel = await localtunnel({
         port,
-        subdomain: tunnelDomain
+        subdomain: tunnelDomain,
       })
       break
     } catch (e) {
