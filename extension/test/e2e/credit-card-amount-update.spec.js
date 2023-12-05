@@ -143,7 +143,10 @@ describe('::creditCardPayment::amount-update::', () => {
       initPaymentSessionResult,
     )
     expect(updatedAmountStatusCode).to.equal(200)
-    expect(amountUpdatesResponse.status).to.equal('received')
+    expect(amountUpdatesResponse.status).to.equal(
+      'received',
+      amountUpdatesResponse.body,
+    )
     expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
 
     // assert notification response from amount updates
@@ -170,7 +173,7 @@ describe('::creditCardPayment::amount-update::', () => {
         currency: 'EUR',
         value: 1010,
       },
-      reason: 'DelayedCharge',
+      reason: 'delayedCharge',
       reference: paymentAfterCreateSession.key,
     }
     const { body: paymentAfterReceivingNotification } =

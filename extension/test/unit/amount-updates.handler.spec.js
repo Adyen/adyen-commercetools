@@ -63,7 +63,7 @@ describe('amount-updates.handler::execute::', () => {
   const amountUpdatesRequestDraft = {
     paymentPspReference,
     amount: { currency: 'EUR', value: 1010 },
-    reason: 'DelayedCharge',
+    reason: 'delayedCharge',
     reference: '1675440070897',
   }
 

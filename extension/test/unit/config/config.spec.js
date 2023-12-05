@@ -59,7 +59,6 @@ describe('::config::', () => {
       apiBaseUrl: 'apiBaseUrl',
       apiKey: 'apiKey',
       clientKey: 'clientKey',
-      legacyApiBaseUrl: 'legacyApiBaseUrl',
       paypalMerchantId: '',
     })
   })
@@ -94,10 +93,9 @@ describe('::config::', () => {
       projectKey: 'ctpProjectKey1',
     })
     expect(config.default.getAdyenConfig('adyenMerchantAccount1')).to.eql({
-      apiBaseUrl: 'https://checkout-test.adyen.com/v68',
+      apiBaseUrl: 'https://checkout-test.adyen.com/v71',
       apiKey: 'apiKey',
       clientKey: 'clientKey',
-      legacyApiBaseUrl: 'https://pal-test.adyen.com/pal/servlet',
       paypalMerchantId: '',
     })
   })
@@ -787,7 +785,6 @@ describe('::config::', () => {
           apiBaseUrl: 'apiBaseUrl',
           apiKey: 'apiKey',
           clientKey: 'clientKey',
-          legacyApiBaseUrl: 'legacyApiBaseUrl',
           paypalMerchantId: '',
         })
       } finally {

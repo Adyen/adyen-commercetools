@@ -2,7 +2,6 @@ import fetch from 'node-fetch'
 import { serializeError } from 'serialize-error'
 import config from '../config/config.js'
 import utils from '../utils.js'
-import constants from '../config/constants.js'
 
 async function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
@@ -151,17 +150,31 @@ async function createSessionRequest(
   )
 }
 
-function disableStoredPayment(merchantAccount, disableStoredPaymentRequestObj) {
+async function disableStoredPayment(
+  merchantAccount,
+  disableStoredPaymentRequestObj,
+) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
-  const url =
-    `${adyenCredentials.legacyApiBaseUrl}/Recurring/` +
-    `${constants.ADYEN_LEGACY_API_VERSION.DISABLED_STORED_PAYMENT}/disable`
-  return callAdyen(
+
+  const recurringReference =
+    disableStoredPaymentRequestObj.recurringDetailReference
+  const url = `${adyenCredentials.apiBaseUrl}/storedPaymentMethods/${recurringReference}`
+  delete disableStoredPaymentRequestObj.recurringDetailReference
+
+  const result = await callAdyen(
     url,
     merchantAccount,
     adyenCredentials.apiKey,
     disableStoredPaymentRequestObj,
+    [],
+    'DELETE',
   )
+
+  if (!result.response) {
+    result.response = { response: '[detail-successfully-disabled]' }
+  }
+
+  return result
 }
 
 async function extendRequestObjWithApplicationInfo(requestObj) {
@@ -200,6 +213,7 @@ async function callAdyen(
   adyenApiKey,
   requestArg,
   headers,
+  methodOverride,
 ) {
   let returnedRequest
   let returnedResponse
@@ -210,6 +224,7 @@ async function callAdyen(
       adyenApiKey,
       requestArg,
       headers,
+      methodOverride,
     )
     returnedRequest = request
     returnedResponse = response
@@ -227,6 +242,7 @@ async function fetchAsync(
   adyenApiKey,
   requestObj,
   headers,
+  methodOverride,
 ) {
   const moduleConfig = config.getModuleConfig()
   const removeSensitiveData =
@@ -240,13 +256,19 @@ async function fetchAsync(
     adyenApiKey,
     requestObj,
     headers,
+    methodOverride,
   )
+
+  if (methodOverride === 'DELETE') {
+    url += `?${request.body}`
+    delete request.body
+  }
 
   try {
     response = await fetch(url, request)
     responseBodyInText = await response.text()
 
-    responseBody = JSON.parse(responseBodyInText)
+    responseBody = responseBodyInText ? JSON.parse(responseBodyInText) : ''
   } catch (err) {
     if (response)
       // Handle non-JSON format response
@@ -265,20 +287,36 @@ async function fetchAsync(
   return { response: responseBody, request }
 }
 
-function buildRequest(adyenMerchantAccount, adyenApiKey, requestObj, headers) {
+function buildRequest(
+  adyenMerchantAccount,
+  adyenApiKey,
+  requestObj,
+  headers,
+  methodOverride,
+) {
   // Note: ensure the merchantAccount is set with request, otherwise set
   // it with the value from adyenMerchantAccount payment custom field
   if (!requestObj.merchantAccount)
     requestObj.merchantAccount = adyenMerchantAccount
 
+  const requestHeaders = {
+    'Content-Type': 'application/json',
+    'X-Api-Key': adyenApiKey,
+    ...headers,
+  }
+
+  if (methodOverride === 'DELETE') {
+    return {
+      method: methodOverride,
+      headers: requestHeaders,
+      body: new URLSearchParams(requestObj),
+    }
+  }
+
   return {
-    method: 'POST',
+    method: methodOverride || 'POST',
     body: JSON.stringify(requestObj),
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Api-Key': adyenApiKey,
-      ...headers,
-    },
+    headers: requestHeaders,
   }
 }
 

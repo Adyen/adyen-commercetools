@@ -33,7 +33,7 @@ async function initPuppeteerBrowser() {
     ignoreHTTPSErrors: true,
     args: [
       '--disable-web-security',
-      '--disable-features=IsolateOrigins,site-per-process',
+      '--disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure,IsolateOrigins,site-per-process',
       // user-agent is overriden to bypass the "reminder" page of localtunnel module
       '--user-agent=curl/7.64.1',
     ],

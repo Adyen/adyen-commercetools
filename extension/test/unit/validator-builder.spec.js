@@ -224,7 +224,7 @@ describe('Validator builder', () => {
         currency: 'EUR',
         value: 1010,
       },
-      reason: 'DelayedCharge',
+      reason: 'delayedCharge',
       reference: 'test',
       merchantAccount: 'test',
     }

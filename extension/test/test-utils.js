@@ -93,7 +93,7 @@ function overrideEnableHmacSignatureConfig(enableHmacSignature) {
 async function setupLocalTunnel() {
   const extensionTunnelDomain = 'ctp-adyen-integration-tests'
   extensionTunnel = await initTunnel(extensionTunnelDomain, extensionPort)
-  const apiExtensionBaseUrl = extensionTunnel.url
+  const apiExtensionBaseUrl = extensionTunnel.url.replace('http:', 'https:')
   overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
 }
 

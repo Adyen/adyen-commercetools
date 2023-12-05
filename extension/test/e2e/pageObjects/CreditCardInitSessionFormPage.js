@@ -23,7 +23,16 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
     creditCardDate,
     creditCardCvc,
   ) {
-    await this.page.waitForTimeout(2_000) // wait for web component rendering
+    const elementHandle = await this.page.waitForSelector(
+      '[data-cse="encryptedCardNumber"] iframe',
+    )
+    const encryptedCardNumberFrame = await elementHandle.contentFrame()
+
+    // For some reason following selector won't work unless we wait
+    await encryptedCardNumberFrame.waitForTimeout(10_000)
+    await encryptedCardNumberFrame.waitForSelector(
+      '[data-fieldtype=encryptedCardNumber]',
+    )
 
     await executeInAdyenIframe(
       this.page,
