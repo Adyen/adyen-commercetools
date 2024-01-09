@@ -525,6 +525,10 @@ For details, please follow [Get payment outcome](https://docs.adyen.com/online-p
 
 In case you encounter errors in your integration, refer to the following:
 
+### API logs in CommerceTools backend
+<to be inserted>
+
+
 ### Extension module errors
 
 If you receive a `non-HTTP 200 response`, use the commercetools payment `interface interactions` to troubleshoot the response.
