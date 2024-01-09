@@ -527,8 +527,8 @@ In case you encounter errors in your integration, refer to the following:
 
 ### API logs in CommerceTools backend
 
-Log into the [CommerceTools Merchant Center](https://mc.europe-west1.gcp.commercetools.com/) and navigate to the following section: **CT Merchant Center -> Orders -> Select Order -> Payments Tab -> View PSP transaction log**
-From here on you can collapse the different sections to see the API request and responses sent to Adyen and possible received webhooks for the specific order.
+Log into the [CommerceTools Merchant Center](https://mc.europe-west1.gcp.commercetools.com/) and navigate to the following section: **CT Merchant Center -> Orders -> Select Order -> Payments Tab -> View PSP transaction log**.
+From here on you can collapse the different sections to see the API requests and responses sent to Adyen and possible received webhooks for the specific order.
 
 ### Extension module errors
 
