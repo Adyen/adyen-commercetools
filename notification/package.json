@@ -63,7 +63,7 @@
     "verror": "1.10.1"
   },
   "devDependencies": {
-    "chai": "4.4.0",
+    "chai": "4.4.1",
     "chai-as-promised": "7.1.1",
     "eslint": "8.56.0",
     "eslint-config-airbnb-base": "15.0.0",
@@ -76,7 +76,7 @@
     "mocha": "10.2.0",
     "nock": "13.4.0",
     "p-map": "7.0.1",
-    "prettier": "3.1.1",
+    "prettier": "3.2.1",
     "sinon": "17.0.1",
     "c8": "8.0.1"
   },
