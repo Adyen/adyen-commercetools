@@ -66,10 +66,11 @@ function getAllAdyenMerchantAccounts() {
 
 function getAdyenPaymentMethodsToNames() {
   return {
-    scheme: 'Credit Card',
-    pp: 'PayPal',
-    klarna: 'Klarna',
-    gpay: 'Google Pay',
+    scheme: { en: 'Credit Card' },
+    pp: { en: 'PayPal' },
+    klarna: { en: 'Klarna' },
+    affirm: { en: 'Affirm' },
+    gpay: { en: 'Google Pay' },
     ...(config.adyenPaymentMethodsToNames || {}),
   }
 }
