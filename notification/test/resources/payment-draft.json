@@ -13,6 +13,10 @@
     "type": {
       "typeId": "type",
       "key": "ctp-adyen-integration-web-components-payment-type"
+    },
+    "fields": {
+      "createSessionRequest": "{ \"amount\": { \"currency\": \"EUR\", \"value\": 795 }, \"reference\": \"YOUR_REFERENCE\", \"channel\": \"Web\", \"returnUrl\": \"https://your-company.com/...\", \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\" }",
+      "createSessionResponse": "{ \"amount\": { \"currency\": \"EUR\", \"value\": 795 }, \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\" }"
     }
   },
   "transactions": [
