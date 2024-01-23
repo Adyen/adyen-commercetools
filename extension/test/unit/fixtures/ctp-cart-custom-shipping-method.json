@@ -209,6 +209,12 @@
           "currencyCode": "EUR",
           "centAmount": 1710,
           "fractionDigits": 2
+        },
+        "totalTax": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 273,
+          "fractionDigits": 2
         }
       },
       "lineItemMode": "Standard"
@@ -232,6 +238,12 @@
       "type": "centPrecision",
       "currencyCode": "EUR",
       "centAmount": 9690,
+      "fractionDigits": 2
+    },
+    "totalTax": {
+      "type": "centPrecision",
+      "currencyCode": "EUR",
+      "centAmount": 1548,
       "fractionDigits": 2
     },
     "taxPortions": [
@@ -311,6 +323,12 @@
         "currencyCode": "EUR",
         "centAmount": 3780,
         "fractionDigits": 2
+      },
+      "totalTax": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 604,
+        "fractionDigits": 2
       }
     },
     "shippingMethodState": "MatchesCart"
@@ -369,6 +387,12 @@
           "type": "centPrecision",
           "currencyCode": "EUR",
           "centAmount": 4200,
+          "fractionDigits": 2
+        },
+        "totalTax": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 671,
           "fractionDigits": 2
         }
       }
