@@ -57,11 +57,11 @@ describe('::create-session-request::', () => {
 
       const { statusCode, body: payment } = await ctpClient.create(
         ctpClient.builder.payments,
-        paymentDraft
+        paymentDraft,
       )
 
       const createSessionRequestExtended = _.cloneDeep(
-        createSessionRequestDraft
+        createSessionRequestDraft,
       )
 
       createSessionRequestExtended.metadata = {
@@ -83,24 +83,24 @@ describe('::create-session-request::', () => {
       const { createSessionRequest, createSessionResponse } =
         payment.custom.fields
       expect(createSessionRequest).to.be.deep.equal(
-        JSON.stringify(createSessionRequestDraft)
+        JSON.stringify(createSessionRequestDraft),
       )
 
       const interfaceInteraction = payment.interfaceInteractions.find(
         (interaction) =>
           interaction.fields.type ===
-          constants.CTP_INTERACTION_TYPE_CREATE_SESSION
+          constants.CTP_INTERACTION_TYPE_CREATE_SESSION,
       )
       expect(interfaceInteraction).to.not.undefined
       expect(createSessionResponse).to.be.deep.equal(
-        interfaceInteraction.fields.response
+        interfaceInteraction.fields.response,
       )
 
       const createSessionRequestInteraction = JSON.parse(
-        interfaceInteraction.fields.request
+        interfaceInteraction.fields.request,
       )
       const createSessionRequestBody = JSON.parse(
-        createSessionRequestInteraction.body
+        createSessionRequestInteraction.body,
       )
 
       expect(createSessionRequestBody).to.be.deep.equal({
@@ -109,11 +109,11 @@ describe('::create-session-request::', () => {
       })
 
       const interfaceInteractionResponse = JSON.parse(
-        interfaceInteraction.fields.response
+        interfaceInteraction.fields.response,
       )
       expect(interfaceInteractionResponse.additionalData).to.not.exist
       expect(interfaceInteractionResponse.sessionData).to.not.undefined
-    }
+    },
   )
 
   it(
@@ -149,7 +149,7 @@ describe('::create-session-request::', () => {
             name: 'createSessionRequest',
             value: JSON.stringify(createSessionRequestDraft),
           },
-        ]
+        ],
       )
       expect(statusCode).to.equal(200)
       expect(updatedPayment.key).to.equal(createSessionRequestDraft.reference)
@@ -157,13 +157,13 @@ describe('::create-session-request::', () => {
       const interfaceInteraction = updatedPayment.interfaceInteractions.find(
         (interaction) =>
           interaction.fields.type ===
-          constants.CTP_INTERACTION_TYPE_CREATE_SESSION
+          constants.CTP_INTERACTION_TYPE_CREATE_SESSION,
       )
       const createSessionRequest = JSON.parse(
-        interfaceInteraction.fields.request
+        interfaceInteraction.fields.request,
       )
       const createSessionRequestBody = JSON.parse(createSessionRequest.body)
       expect(createSessionRequestBody.lineItems).to.have.lengthOf(3)
-    }
+    },
   )
 })

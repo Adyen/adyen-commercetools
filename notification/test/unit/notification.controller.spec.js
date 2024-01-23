@@ -84,13 +84,13 @@ describe('notification controller', () => {
       expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
       expect(logSpy.calledOnce).to.be.true
       expect(responseEndSpy.firstCall.firstArg).to.equal(
-        JSON.stringify({ notificationResponse: '[accepted]' })
+        JSON.stringify({ notificationResponse: '[accepted]' }),
       )
       expect(cause.message).to.equal(
         'Notification can not be processed as "metadata.ctProjectKey" was not found on the notification ' +
-          'nor the path is containing the commercetools project key.'
+          'nor the path is containing the commercetools project key.',
       )
-    }
+    },
   )
 
   it('when adyenMerchantAccount is not configured, it should log error and return "accepted" status', async () => {
@@ -130,11 +130,11 @@ describe('notification controller', () => {
     expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
     expect(logSpy.calledOnce).to.be.true
     expect(responseEndSpy.firstCall.firstArg).to.equal(
-      JSON.stringify({ notificationResponse: '[accepted]' })
+      JSON.stringify({ notificationResponse: '[accepted]' }),
     )
     expect(cause.message).to.equal(
       // eslint-disable-next-line max-len
-      'Configuration for adyenMerchantAccount is not provided. Please update the configuration: "nonExistingMerchantAccount"'
+      'Configuration for adyenMerchantAccount is not provided. Please update the configuration: "nonExistingMerchantAccount"',
     )
   })
 
@@ -168,11 +168,11 @@ describe('notification controller', () => {
     expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
     expect(logSpy.calledOnce).to.be.true
     expect(responseEndSpy.firstCall.firstArg).to.equal(
-      JSON.stringify({ notificationResponse: '[accepted]' })
+      JSON.stringify({ notificationResponse: '[accepted]' }),
     )
 
     expect(cause.message).to.equal(
-      'Configuration is not provided. Please update the configuration. ctpProjectKey: ["nonExistingCtpProjectKey"]'
+      'Configuration is not provided. Please update the configuration. ctpProjectKey: ["nonExistingCtpProjectKey"]',
     )
   })
 
@@ -182,7 +182,7 @@ describe('notification controller', () => {
     async () => {
       // prepare:
       const paymentMock = await utils.readAndParseJsonFile(
-        'test/resources/payment-credit-card.json'
+        'test/resources/payment-credit-card.json',
       )
       const requestMock = {
         method: 'POST',
@@ -234,10 +234,10 @@ describe('notification controller', () => {
 
       expect(logSpy.calledOnce).to.be.true
       expect(cause.body.message).to.equal(
-        'Object 62f05181-4789-47ce-84f8-d27c895ee23c has a different version than expected. Expected: 1 - Actual: 2.'
+        'Object 62f05181-4789-47ce-84f8-d27c895ee23c has a different version than expected. Expected: 1 - Actual: 2.',
       )
       expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(500)
       expect(responseEndSpy.firstCall.firstArg).to.equal(undefined)
-    }
+    },
   )
 })

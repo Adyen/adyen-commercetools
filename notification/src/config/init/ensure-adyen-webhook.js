@@ -28,19 +28,20 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
           'Content-Type': 'application/json',
           'X-Api-Key': adyenApiKey,
         },
-      }
+      },
     )
     const getWebhookResponseJson = await getWebhookResponse.json()
 
     const existingWebhook = getWebhookResponseJson.data?.find(
       (webhook) =>
-        webhook.url === webhookConfig.url && webhook.type === webhookConfig.type
+        webhook.url === webhookConfig.url &&
+        webhook.type === webhookConfig.type,
     )
 
     if (existingWebhook) {
       logger.info(
         `Webhook already existed with ID ${existingWebhook.id}. ` +
-          'Skipping webhook creation and ensuring the webhook is active'
+          'Skipping webhook creation and ensuring the webhook is active',
       )
       if (!existingWebhook.active)
         await fetch(
@@ -54,7 +55,7 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
               'Content-Type': 'application/json',
               'X-Api-Key': adyenApiKey,
             },
-          }
+          },
         )
       return existingWebhook.id
     }
@@ -68,7 +69,7 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
           'Content-Type': 'application/json',
           'X-Api-Key': adyenApiKey,
         },
-      }
+      },
     )
 
     const createWebhookResponseJson = await createWebhookResponse.json()
@@ -79,12 +80,16 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
   } catch (err) {
     throw Error(
       `Failed to ensure adyen webhook for project ${merchantId}.` +
-        `Error: ${JSON.stringify(serializeError(err))}`
+        `Error: ${JSON.stringify(serializeError(err))}`,
     )
   }
 }
 
 async function ensureAdyenHmac(adyenApiKey, merchantId, webhookId) {
+  const logger = mainLogger.child({
+    adyen_merchant_id: merchantId,
+  })
+
   const generateHmacResponse = await fetch(
     `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${webhookId}/generateHmac`,
     {
@@ -93,11 +98,13 @@ async function ensureAdyenHmac(adyenApiKey, merchantId, webhookId) {
         'Content-Type': 'application/json',
         'X-Api-Key': adyenApiKey,
       },
-    }
+    },
   )
 
   const generateHmacResponseJson = await generateHmacResponse.json()
   const { hmacKey } = generateHmacResponseJson
+
+  logger.info(`New HMAC was generated: ${hmacKey}`)
 
   return hmacKey
 }
@@ -113,13 +120,13 @@ async function ensureAdyenWebhooksForAllProjects() {
       const webhookId = await ensureAdyenWebhook(
         adyenConfig.apiKey,
         adyenConfig.notificationBaseUrl,
-        adyenMerchantId
+        adyenMerchantId,
       )
       if (adyenConfig.enableHmacSignature && !adyenConfig.secretHmacKey) {
         const hmacKey = await ensureAdyenHmac(
           adyenConfig.apiKey,
           adyenMerchantId,
-          webhookId
+          webhookId,
         )
         jsonConfig.adyen[adyenMerchantId].secretHmacKey = hmacKey
       }

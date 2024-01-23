@@ -38,28 +38,28 @@ async function execute(paymentObject) {
         adyenMerchantAccount,
         commercetoolsProjectKey,
         idempotencyKey,
-        refundRequestObjects
+        refundRequestObjects,
       )
       const addInterfaceInteractionAction = createAddInterfaceInteractionAction(
         {
           request,
           response,
           type: CTP_INTERACTION_TYPE_REFUND,
-        }
+        },
       )
       actions.push(addInterfaceInteractionAction)
       if (!response.errorCode && response.pspReference) {
         actions.push(
-          createChangeTransactionStateAction(refundTransaction.id, 'Pending')
+          createChangeTransactionStateAction(refundTransaction.id, 'Pending'),
         )
         actions.push(
           createChangeTransactionInteractionId(
             refundTransaction.id,
-            response.pspReference
-          )
+            response.pspReference,
+          ),
         )
       }
-    })
+    }),
   )
 
   return {

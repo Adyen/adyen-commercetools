@@ -13,7 +13,7 @@ function loadFromAdyenIntegrationEnvVar() {
     return JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
   } catch (e) {
     throw new Error(
-      'Adyen integration configuration is not provided in the JSON format'
+      'Adyen integration configuration is not provided in the JSON format',
     )
   }
 }

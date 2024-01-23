@@ -4,7 +4,7 @@ import errorMessages from '../../src/validator/error-messages.js'
 
 const {
   CREATE_SESSION_REQUEST_INVALID_JSON,
-  AMOUNT_PLANNED_NOT_SAME,
+  CREATE_SESSION_AMOUNT_PLANNED_NOT_SAME,
   CREATE_SESSION_REQUEST_MISSING_REFERENCE,
   MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT,
   MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY,
@@ -28,7 +28,7 @@ describe('Validator builder', () => {
       .getErrors()
     expect(errorObject[0].message).to.equal(CREATE_SESSION_REQUEST_INVALID_JSON)
     expect(errorObject[1].message).to.equal(
-      GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON
+      GET_CARBON_OFFSET_COSTS_REQUEST_INVALID_JSON,
     )
   })
 
@@ -59,8 +59,10 @@ describe('Validator builder', () => {
       const errorObject = withPayment(payment)
         .validateAmountPlanned()
         .getErrors()
-      expect(errorObject[0].message).to.equal(AMOUNT_PLANNED_NOT_SAME)
-    }
+      expect(errorObject[0].message).to.equal(
+        CREATE_SESSION_AMOUNT_PLANNED_NOT_SAME,
+      )
+    },
   )
 
   it(
@@ -127,8 +129,10 @@ describe('Validator builder', () => {
       const errorObject = withPayment(payment)
         .validateAmountPlanned()
         .getErrors()
-      expect(errorObject[0].message).to.equal(AMOUNT_PLANNED_NOT_SAME)
-    }
+      expect(errorObject[0].message).to.equal(
+        CREATE_SESSION_AMOUNT_PLANNED_NOT_SAME,
+      )
+    },
   )
 
   it('on missing reference in createSessionRequest should return error object', () => {
@@ -155,7 +159,7 @@ describe('Validator builder', () => {
       .getErrors()
 
     expect(errorObject[0].message).to.equal(
-      CREATE_SESSION_REQUEST_MISSING_REFERENCE
+      CREATE_SESSION_REQUEST_MISSING_REFERENCE,
     )
   })
 
@@ -172,7 +176,7 @@ describe('Validator builder', () => {
       .getErrors()
 
     expect(errorObject[0].message).to.equal(
-      MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
+      MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY,
     )
   })
 
@@ -189,7 +193,7 @@ describe('Validator builder', () => {
       .getErrors()
 
     expect(errorObject[0].message).to.equal(
-      MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
+      MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT,
     )
   })
 
@@ -207,10 +211,10 @@ describe('Validator builder', () => {
       .getErrors()
 
     expect(errorObject[0].message).to.equal(
-      MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
+      MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY,
     )
     expect(errorObject[1].message).to.equal(
-      MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
+      MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT,
     )
   })
 
@@ -220,7 +224,7 @@ describe('Validator builder', () => {
         currency: 'EUR',
         value: 1010,
       },
-      reason: 'DelayedCharge',
+      reason: 'delayedCharge',
       reference: 'test',
       merchantAccount: 'test',
     }
@@ -238,7 +242,7 @@ describe('Validator builder', () => {
       .getErrors()
 
     expect(errorObject[0].message).to.equal(
-      AMOUNT_UPDATES_REQUEST_MISSING_PSP_REFERENCE
+      AMOUNT_UPDATES_REQUEST_MISSING_PSP_REFERENCE,
     )
   })
 })

@@ -15,7 +15,7 @@ describe('payment-handler::execute', () => {
 
   before(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-payment.json'
+      'test/unit/fixtures/ctp-payment.json',
     )
   })
 
@@ -33,12 +33,12 @@ describe('payment-handler::execute', () => {
 
       expect(response.errors).to.have.lengthOf(2)
       expect(response.errors[0].message).to.equal(
-        errorMessage.MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY
+        errorMessage.MISSING_REQUIRED_FIELDS_CTP_PROJECT_KEY,
       )
       expect(response.errors[1].message).to.equal(
-        errorMessage.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT
+        errorMessage.MISSING_REQUIRED_FIELDS_ADYEN_MERCHANT_ACCOUNT,
       )
-    }
+    },
   )
 
   describe('amountPlanned', () => {
@@ -64,9 +64,9 @@ describe('payment-handler::execute', () => {
 
         expect(response.errors).to.have.lengthOf.above(0)
         expect(response.errors[0].message).to.equal(
-          errorMessage.AMOUNT_PLANNED_NOT_SAME
+          errorMessage.CREATE_SESSION_AMOUNT_PLANNED_NOT_SAME,
         )
-      }
+      },
     )
 
     it(
@@ -84,7 +84,7 @@ describe('payment-handler::execute', () => {
         const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
         expect(response.actions).to.deep.equal([])
-      }
+      },
     )
 
     it('is different than create session interface interaction, then it should return errors', async () => {
@@ -119,7 +119,7 @@ describe('payment-handler::execute', () => {
       const response = await paymentHandler.handlePayment(ctpPaymentClone)
 
       expect(response.errors[0].message).to.equal(
-        errorMessage.AMOUNT_PLANNED_NOT_SAME
+        errorMessage.CREATE_SESSION_AMOUNT_PLANNED_NOT_SAME,
       )
     })
   })

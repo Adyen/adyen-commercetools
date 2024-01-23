@@ -7,12 +7,12 @@ import c from '../config/constants.js'
 
 async function execute(paymentObject) {
   const disableStoredPaymentRequestObj = JSON.parse(
-    paymentObject.custom.fields.disableStoredPaymentRequest
+    paymentObject.custom.fields.disableStoredPaymentRequest,
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const { request, response } = await disableStoredPayment(
     adyenMerchantAccount,
-    disableStoredPaymentRequestObj
+    disableStoredPaymentRequestObj,
   )
 
   return {
@@ -24,7 +24,7 @@ async function execute(paymentObject) {
       }),
       createSetCustomFieldAction(
         c.CTP_DISABLE_STORED_PAYMENT_RESPONSE,
-        response
+        response,
       ),
     ],
   }

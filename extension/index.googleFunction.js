@@ -20,7 +20,7 @@ export const extensionTrigger = async (request, response) => {
     const authToken = getAuthorizationRequestHeader(request)
     const paymentResult = await paymentHandler.handlePayment(
       paymentObj,
-      authToken
+      authToken,
     )
     if (paymentResult.actions) {
       return response.status(200).send({

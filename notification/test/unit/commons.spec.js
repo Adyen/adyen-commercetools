@@ -40,9 +40,8 @@ describe('notification module common utility', () => {
         },
       },
     ]
-    const actualNotificationResult = await utils.getNotificationForTracking(
-      notifications
-    )
+    const actualNotificationResult =
+      await utils.getNotificationForTracking(notifications)
     const expectedNotificationResult = [
       {
         eventCode: 'AUTHORISATION',
@@ -81,9 +80,8 @@ describe('notification module common utility', () => {
       },
     }
 
-    const actualNotificationResult = await utils.getNotificationForTracking(
-      notifications
-    )
+    const actualNotificationResult =
+      await utils.getNotificationForTracking(notifications)
     const expectedNotificationResult = {
       eventCode: 'AUTHORISATION',
       eventDate: '2019-01-30T18:16:22+01:00',

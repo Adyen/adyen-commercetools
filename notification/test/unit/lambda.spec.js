@@ -89,7 +89,7 @@ describe('Lambda handler', () => {
           notification: utils.getNotificationForTracking(notificationItem),
           err: errorWrapper,
         },
-        'Unexpected error when processing event'
+        'Unexpected error when processing event',
       )
     } finally {
       logger.child = originalChildFn
@@ -117,7 +117,7 @@ describe('Lambda handler', () => {
           notification: utils.getNotificationForTracking(notificationItem),
           err: error,
         },
-        'Unexpected error when processing event'
+        'Unexpected error when processing event',
       )
     } finally {
       logger.child = originalChildFn
@@ -143,8 +143,8 @@ describe('Lambda handler', () => {
             .instanceOf(Error)
             .and(sinon.match.has('message', error.message)),
         }),
-        `Unexpected error when processing event`
-      )
+        `Unexpected error when processing event`,
+      ),
     )
   })
 })

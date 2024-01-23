@@ -7,12 +7,12 @@ import { getPaymentMethods } from '../service/web-component-service.js'
 
 async function execute(paymentObject) {
   const getPaymentMethodsRequestObj = JSON.parse(
-    paymentObject.custom.fields.getPaymentMethodsRequest
+    paymentObject.custom.fields.getPaymentMethodsRequest,
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const { request, response } = await getPaymentMethods(
     adyenMerchantAccount,
-    getPaymentMethodsRequestObj
+    getPaymentMethodsRequestObj,
   )
   return {
     actions: [
@@ -23,7 +23,7 @@ async function execute(paymentObject) {
       }),
       createSetCustomFieldAction(
         c.CTP_CUSTOM_FIELD_GET_PAYMENT_METHODS_RESPONSE,
-        response
+        response,
       ),
     ],
   }

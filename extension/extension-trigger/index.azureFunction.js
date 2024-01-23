@@ -42,7 +42,7 @@ export const azureExtensionTrigger = async function (context, req) {
   try {
     const paymentResult = await paymentHandler.handlePayment(
       paymentObj,
-      authToken
+      authToken,
     )
 
     if (paymentResult.actions)

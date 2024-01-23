@@ -25,13 +25,13 @@ describe('Ensure resources', () => {
 
   before(async () => {
     webComponentsPaymentType = await utils.readAndParseJsonFile(
-      'resources/web-components-payment-type.json'
+      'resources/web-components-payment-type.json',
     )
     apiExtension = await utils.readAndParseJsonFile(
-      'resources/api-extension.json'
+      'resources/api-extension.json',
     )
     interfaceInteractionType = await utils.readAndParseJsonFile(
-      'resources/payment-interface-interaction-type.json'
+      'resources/payment-interface-interaction-type.json',
     )
   })
 
@@ -51,12 +51,12 @@ describe('Ensure resources', () => {
 
     const callArgs = _.flattenDeep(createStub.args)
     const createdPaymentType = callArgs.find(
-      (arg) => arg.key === webComponentsPaymentType.key
+      (arg) => arg.key === webComponentsPaymentType.key,
     )
     expect(createdPaymentType).to.deep.equal(webComponentsPaymentType)
 
     const createdApiExtension = callArgs.find(
-      (arg) => arg.key === apiExtension.key
+      (arg) => arg.key === apiExtension.key,
     )
     // set the url variable in the template to the correctly evaluated value
     const apiExtensionCloned = _.cloneDeep(apiExtension)
@@ -64,10 +64,10 @@ describe('Ensure resources', () => {
     expect(createdApiExtension).to.deep.equal(apiExtensionCloned)
 
     const createdInterfaceInteractionType = callArgs.find(
-      (arg) => arg.key === interfaceInteractionType.key
+      (arg) => arg.key === interfaceInteractionType.key,
     )
     expect(createdInterfaceInteractionType).to.deep.equal(
-      interfaceInteractionType
+      interfaceInteractionType,
     )
   })
 

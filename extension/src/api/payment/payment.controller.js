@@ -10,7 +10,7 @@ async function processRequest(request, response) {
     // API extensions always calls this endpoint with POST, so if we got GET, we don't process further
     // https://docs.commercetools.com/api/projects/api-extensions#input
     logger.debug(
-      `Received non-POST request: ${request.method}. The request will not be processed...`
+      `Received non-POST request: ${request.method}. The request will not be processed...`,
     )
     return httpUtils.sendResponse({
       response,
@@ -33,7 +33,7 @@ async function processRequest(request, response) {
     logger.debug('Received payment object', JSON.stringify(paymentObject))
     const paymentResult = await paymentHandler.handlePayment(
       paymentObject,
-      authToken
+      authToken,
     )
     const result = {
       response,

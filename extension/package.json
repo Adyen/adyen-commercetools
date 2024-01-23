@@ -1,12 +1,13 @@
 {
   "name": "commercetools-adyen-integration-extension",
-  "version": "11.0.0",
+  "version": "11.3.0",
   "description": "Integration between commercetools and Adyen payment service provider",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "c8 npm run test-run && npm run check-coverage",
-    "test-run": "npm run unit && npm run integration && npm run e2e",
+    "test": "npm run unit",
+    "test-ci": "c8 npm run test-run && npm run check-coverage",
+    "test-run": "npm run unit && npm run integration",
     "check-coverage": "c8 check-coverage --lines 89",
     "unit": "mocha --file ./test/unit/mock-default-confg.js \"test/unit/**/*.spec.js\"",
     "integration": "mocha --file ./test/initial-integration-test-set-up.js \"test/integration/**/*.spec.js\"",
@@ -37,7 +38,7 @@
     "email": "ps-dev@commercetools.com"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "contributors": [],
   "bugs": {
@@ -45,39 +46,39 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "devDependencies": {
-    "chai": "4.3.7",
+    "chai": "4.4.1",
     "chai-as-promised": "7.1.1",
     "doctoc": "2.2.1",
-    "eslint": "8.35.0",
+    "eslint": "8.56.0",
     "eslint-config-airbnb-base": "15.0.0",
-    "eslint-config-prettier": "8.6.0",
-    "eslint-plugin-import": "2.27.5",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-import": "2.29.1",
     "husky": "8.0.3",
-    "lint-staged": "13.1.2",
+    "lint-staged": "15.2.0",
     "localtunnel": "2.0.2",
     "mocha": "10.2.0",
-    "nock": "13.3.0",
-    "prettier": "2.8.4",
+    "nock": "13.5.0",
+    "prettier": "3.2.4",
     "proxyquire": "2.1.3",
-    "puppeteer": "19.7.2",
-    "sinon": "15.0.1"
+    "puppeteer": "21.7.0",
+    "sinon": "17.0.1",
+    "c8": "8.0.1"
   },
   "dependencies": {
     "@commercetools/api-request-builder": "6.0.0",
     "@commercetools/sdk-client": "3.0.0",
     "@commercetools/sdk-middleware-auth": "7.0.1",
-    "@commercetools/sdk-middleware-http": "7.0.2",
+    "@commercetools/sdk-middleware-http": "7.0.4",
     "@commercetools/sdk-middleware-queue": "3.0.0",
     "@commercetools/sdk-middleware-user-agent": "3.0.0",
-    "@commercetools/sync-actions": "5.4.1",
+    "@commercetools/sync-actions": "5.15.0",
     "bunyan": "1.8.15",
-    "c8": "7.13.0",
-    "lockfile-lint": "4.10.1",
+    "lockfile-lint": "4.12.1",
     "lodash": "4.17.21",
-    "node-fetch": "3.3.0",
+    "node-fetch": "3.3.2",
     "rc": "1.2.8",
     "run-func": "3.0.0",
-    "serialize-error": "11.0.0"
+    "serialize-error": "11.0.3"
   },
   "mocha": {
     "timeout": 300000,

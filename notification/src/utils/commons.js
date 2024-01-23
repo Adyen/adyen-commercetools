@@ -40,7 +40,7 @@ function getNotificationForTracking(notification) {
     const notificationListForTracking = []
     notification.forEach((notificationElement) => {
       notificationListForTracking.push(
-        convertNotificationForTracking(notificationElement)
+        convertNotificationForTracking(notificationElement),
       )
     })
     return notificationListForTracking

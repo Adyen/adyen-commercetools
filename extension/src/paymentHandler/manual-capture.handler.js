@@ -31,7 +31,7 @@ async function execute(paymentObject) {
     adyenMerchantAccount,
     commercetoolsProjectKey,
     idempotencyKey,
-    manualCaptureRequestObj
+    manualCaptureRequestObj,
   )
 
   const actions = [
@@ -43,13 +43,16 @@ async function execute(paymentObject) {
   ]
   if (!response.errorCode && response.pspReference) {
     actions.push(
-      createChangeTransactionStateAction(chargeInitialTransaction.id, 'Pending')
+      createChangeTransactionStateAction(
+        chargeInitialTransaction.id,
+        'Pending',
+      ),
     )
     actions.push(
       createChangeTransactionInteractionId(
         chargeInitialTransaction.id,
-        response.pspReference
-      )
+        response.pspReference,
+      ),
     )
   }
 

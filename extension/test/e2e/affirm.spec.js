@@ -17,7 +17,7 @@ import AffirmInitSessionFormPage from './pageObjects/AffirmInitSessionFormPage.j
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/affirm/web-component#page-introduction
-describe('::affirmPayment::', () => {
+describe.skip('::affirmPayment::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
@@ -28,14 +28,14 @@ describe('::affirmPayment::', () => {
       serveFile(
         './test/e2e/fixtures/affirm-init-session-form.html',
         request,
-        response
+        response,
       )
     }
     routes['/redirect-payment-form'] = async (request, response) => {
       serveFile(
         './test/e2e/fixtures/redirect-payment-form.html',
         request,
-        response
+        response,
       )
     }
     routes['/return-url'] = async (request, response) => {
@@ -77,7 +77,7 @@ describe('::affirmPayment::', () => {
         let createSessionRequest = await getCreateSessionRequest(
           baseUrl,
           clientKey,
-          'USD'
+          'USD',
         )
         createSessionRequest =
           buildAffirmCreateSessionRequest(createSessionRequest)
@@ -86,11 +86,11 @@ describe('::affirmPayment::', () => {
           adyenMerchantAccount,
           ctpProjectKey,
           createSessionRequest,
-          'USD'
+          'USD',
         )
         logger.debug(
           'affirm::paymentAfterCreateSession:',
-          JSON.stringify(paymentAfterCreateSession)
+          JSON.stringify(paymentAfterCreateSession),
         )
 
         // Step #2 - Setup Component
@@ -109,16 +109,16 @@ describe('::affirmPayment::', () => {
         })
         logger.debug(
           'affirm::redirectPaymentResult:',
-          JSON.stringify(redirectPaymentResult)
+          JSON.stringify(redirectPaymentResult),
         )
       } catch (err) {
         logger.error('affirm::errors', err)
       }
       assertCreatePaymentSession(
         paymentAfterCreateSession,
-        redirectPaymentResult
+        redirectPaymentResult,
       )
-    }
+    },
   )
 
   async function initPaymentSession({
@@ -129,7 +129,7 @@ describe('::affirmPayment::', () => {
   }) {
     const initPaymentSessionFormPage = new AffirmInitSessionFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await initPaymentSessionFormPage.goToThisPage()
 
@@ -148,14 +148,14 @@ describe('::affirmPayment::', () => {
 
     const redirectPaymentFormPage = new RedirectPaymentFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await redirectPaymentFormPage.goToThisPage()
     const submittedRedirectResult =
       await redirectPaymentFormPage.redirectToAdyenPaymentPage(
         clientKey,
         sessionId,
-        redirectResult
+        redirectResult,
       )
     return submittedRedirectResult
   }

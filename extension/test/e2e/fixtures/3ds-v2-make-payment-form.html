@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Make Payment</title>
+    <link
+      rel="stylesheet"
+      href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.53.2/adyen.css"
+      integrity="sha384-9EdBqZRrjozkt+Be5ycjHBTi+4DYrafpC1KyPnNyTBfjBIZ5+oMp8BbgvPLGgsE0"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div>
+      Use following credit card to test
+      <p>Card number: 5454 5454 5454 5454</p>
+      <p>Expiry date: 03/30</p>
+      <p>CVC: 737</p>
+      <a
+        target="_adyenCards"
+        href="https://docs.adyen.com/development-resources/test-cards/test-card-numbers#test-3d-secure-2-authentication"
+      >
+        More cards
+      </a>
+    </div>
+    <div>
+      <input
+        type="text"
+        id="adyen-client-key"
+        placeholder="Adyen client key"
+      /><br />
+      <textarea id="adyen-make-payment-request">
+Make payment request will come here</textarea
+      >
+    </div>
+    <br />
+    <div id="component-container"></div>
+
+    <script
+      src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.53.2/adyen.js"
+      integrity="sha384-ng3HLoZIlQ3BLgyGyGNiwWSx6LEPIlmxVuGRw72skZFt9mL8OweRjp7vcPzSqxTj"
+      crossorigin="anonymous"
+    ></script>
+    <script type="application/javascript">
+      const configuration = {
+        locale: 'en_US', // The shopper's locale. For a list of supported locales, see https://docs.adyen.com/checkout/components-web/localization-components.
+        environment: 'test', // When you're ready to accept live payments, change the value to one of our live environments https://docs.adyen.com/checkout/components-web#testing-your-integration.
+        clientKey: '', // Your client key. To find out how to generate one, see https://docs.adyen.com/development-resources/client-side-authentication.
+        paymentMethodsResponse: {
+          paymentMethods: [
+            {
+              brands: [
+                'visa',
+                'mc',
+                'amex',
+                'maestro',
+                'uatp',
+                'cup',
+                'diners',
+                'discover',
+                'hipercard',
+                'jcb',
+              ],
+              details: [
+                {
+                  key: 'encryptedCardNumber',
+                  type: 'cardToken',
+                },
+                {
+                  key: 'encryptedSecurityCode',
+                  type: 'cardToken',
+                },
+                {
+                  key: 'encryptedExpiryMonth',
+                  type: 'cardToken',
+                },
+                {
+                  key: 'encryptedExpiryYear',
+                  type: 'cardToken',
+                },
+                {
+                  key: 'holderName',
+                  optional: true,
+                  type: 'text',
+                },
+              ],
+              name: 'Kreditkarte',
+              type: 'scheme',
+            },
+          ],
+        }, // The payment methods response returned in step 1.
+        onChange: handleOnChange, // Your function for handling onChange event
+        onAdditionalDetails: handleOnAdditionalDetails, // Your function for handling onAdditionalDetails event
+        showPayButton: true,
+        onSubmit: handleOnSubmit,
+      }
+
+      function handleOnChange(state, component) {
+        console.log('handleOnChange')
+        console.log(state)
+        console.log(component)
+      }
+
+      function handleOnAdditionalDetails(state, component) {
+        console.log('handleOnAdditionalDetails')
+        console.log(state)
+        console.log(component)
+      }
+
+      function handleOnSubmit(state, component) {
+        const makePaymentRequest = state.data
+        makePaymentRequest.reference = new Date().getTime()
+        makePaymentRequest.amount = {
+          currency: 'EUR',
+          value: 1000,
+        }
+        makePaymentRequest.channel = 'Web'
+        makePaymentRequest.origin = window.location.origin
+        makePaymentRequest.returnUrl = window.location.origin + '/return-url'
+        makePaymentRequest.additionalData = {
+          allow3DS2: true,
+        }
+
+        document.getElementById('adyen-make-payment-request').innerHTML =
+          JSON.stringify(makePaymentRequest)
+      }
+
+      const clientKeyElement = document.getElementById('adyen-client-key')
+      clientKeyElement.addEventListener('blur', async () => {
+        configuration.clientKey = clientKeyElement.value
+        const checkout = await AdyenCheckout(configuration)
+        checkout.create('card').mount('#component-container')
+      })
+    </script>
+  </body>
+</html>

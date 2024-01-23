@@ -31,7 +31,7 @@ function restoreAdyenConfig() {
 
 async function buildMockErrorFromConcurrentModificationException() {
   const concurrentModificationError = await utils.readAndParseJsonFile(
-    'test/resources/concurrent-modification-exception.json'
+    'test/resources/concurrent-modification-exception.json',
   )
   const error = new Error(concurrentModificationError.message)
   error.body = concurrentModificationError.body
@@ -91,7 +91,7 @@ function createNotificationPayload(
   pspReference,
   eventCode = 'AUTHORISATION',
   success = 'true',
-  originalReference
+  originalReference,
 ) {
   const notification = {
     live: 'false',
@@ -130,7 +130,7 @@ function createNotificationPayload(
     notificationRequestItem.additionalData.hmacSignature =
       validator.calculateHmac(
         notificationRequestItem,
-        adyenConfig.secretHmacKey
+        adyenConfig.secretHmacKey,
       )
   }
 
@@ -142,10 +142,10 @@ async function ensurePayment(
   paymentKey,
   pspReference,
   commercetoolsProjectKey,
-  adyenMerchantAccount
+  adyenMerchantAccount,
 ) {
   const payment = await utils.readAndParseJsonFile(
-    'test/resources/payment-draft.json'
+    'test/resources/payment-draft.json',
   )
   const paymentDraft = _.cloneDeep(payment)
   paymentDraft.key = paymentKey

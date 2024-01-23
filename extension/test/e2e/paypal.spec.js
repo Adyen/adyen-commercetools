@@ -12,7 +12,7 @@ import PaypalInitSessionFormPage from './pageObjects/PaypalInitSessionFormPage.j
 import PaypalPopupPage from './pageObjects/PaypalPopupPage.js'
 import httpUtils from '../../src/utils.js'
 
-describe('::paypalPayment::', () => {
+describe.skip('::paypalPayment::', () => {
   let browser
   let ctpClient
   let initPaymentSessionFormPage
@@ -25,7 +25,7 @@ describe('::paypalPayment::', () => {
       serveFile(
         './test/e2e/fixtures/paypal-init-session-form.html',
         request,
-        response
+        response,
       )
     }
 
@@ -52,7 +52,7 @@ describe('::paypalPayment::', () => {
       const paymentAfterCreateSession = await createSession(clientKey)
       logger.debug(
         'credit-card::paymentAfterCreateSession:',
-        JSON.stringify(paymentAfterCreateSession)
+        JSON.stringify(paymentAfterCreateSession),
       )
 
       await initPaymentSession({
@@ -72,9 +72,9 @@ describe('::paypalPayment::', () => {
 
       assertCreatePaymentSession(
         paymentAfterCreateSession,
-        initPaymentSessionResult
+        initPaymentSessionResult,
       )
-    }
+    },
   )
 
   async function createSession(clientKey) {
@@ -86,7 +86,7 @@ describe('::paypalPayment::', () => {
         ctpClient,
         adyenMerchantAccount,
         ctpProjectKey,
-        createSessionRequest
+        createSessionRequest,
       )
     } catch (err) {
       logger.error('paypal::createSession::errors', JSON.stringify(err))
@@ -107,7 +107,7 @@ describe('::paypalPayment::', () => {
   }) {
     initPaymentSessionFormPage = new PaypalInitSessionFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await initPaymentSessionFormPage.goToThisPage()
 

@@ -42,14 +42,14 @@ describe('::klarnaPayment::', () => {
       serveFile(
         './test/e2e/fixtures/klarna-init-session-form.html',
         request,
-        response
+        response,
       )
     }
     routes['/redirect-payment-form'] = async (request, response) => {
       serveFile(
         './test/e2e/fixtures/redirect-payment-form.html',
         request,
-        response
+        response,
       )
     }
     routes['/return-url'] = async (request, response) => {
@@ -104,7 +104,7 @@ describe('::klarnaPayment::', () => {
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
       let createSessionRequest = await getCreateSessionRequest(
         baseUrl,
-        clientKey
+        clientKey,
       )
       createSessionRequest =
         buildKlarnaCreateSessionRequest(createSessionRequest)
@@ -112,11 +112,11 @@ describe('::klarnaPayment::', () => {
         ctpClient,
         adyenMerchantAccount,
         ctpProjectKey,
-        createSessionRequest
+        createSessionRequest,
       )
       logger.debug(
         'klarna::paymentAfterCreateSession:',
-        JSON.stringify(paymentAfterCreateSession)
+        JSON.stringify(paymentAfterCreateSession),
       )
 
       // Step #2 - Setup Component
@@ -135,19 +135,19 @@ describe('::klarnaPayment::', () => {
       })
       logger.debug(
         'klarna::redirectPaymentResult:',
-        JSON.stringify(redirectPaymentResult)
+        JSON.stringify(redirectPaymentResult),
       )
       assertCreatePaymentSession(
         paymentAfterCreateSession,
-        redirectPaymentResult
+        redirectPaymentResult,
       )
 
       const notificationInteraction = await waitUntil(
         async () =>
           await fetchNotificationInterfaceInteraction(
             ctpClient,
-            paymentAfterCreateSession.id
-          )
+            paymentAfterCreateSession.id,
+          ),
       )
 
       // #3 - Capture the payment
@@ -162,8 +162,8 @@ describe('::klarnaPayment::', () => {
           await fetchNotificationInterfaceInteraction(
             ctpClient,
             paymentAfterCreateSession.id,
-            'capture'
-          )
+            'capture',
+          ),
       )
       const captureNotification =
         captureNotificationInteraction.fields.notification
@@ -180,20 +180,33 @@ describe('::klarnaPayment::', () => {
 
       logger.debug(
         'klarna::paymentAfterCapture:',
-        JSON.stringify(paymentAfterCapture)
+        JSON.stringify(paymentAfterCapture),
       )
 
       // #4 - Refund the payment
-      const { body: paymentAfterReceivingCaptureNotification } =
-        await ctpClient.fetchById(
-          ctpClient.builder.payments,
-          paymentAfterCapture.id
-        )
+      const { statusCode, paymentAfterRefund } = await waitUntil(
+        async () => {
+          try {
+            const { body: paymentAfterReceivingCaptureNotification } =
+              await ctpClient.fetchById(
+                ctpClient.builder.payments,
+                paymentAfterCapture.id,
+              )
 
-      const { statusCode, paymentAfterRefund } =
-        await refundPaymentTransactions(
-          paymentAfterReceivingCaptureNotification
-        )
+            return await refundPaymentTransactions(
+              paymentAfterReceivingCaptureNotification,
+            )
+          } catch (err) {
+            logger.error(
+              'credit-card-cancel-payment::errors:',
+              JSON.stringify(err),
+            )
+            return Promise.resolve()
+          }
+        },
+        10,
+        1_000,
+      )
 
       const refundPaymentStatusCode = statusCode
       expect(refundPaymentStatusCode).to.be.equal(200)
@@ -202,13 +215,14 @@ describe('::klarnaPayment::', () => {
           await fetchNotificationInterfaceInteraction(
             ctpClient,
             paymentAfterCreateSession.id,
-            `refund`
-          )
+            `refund`,
+          ),
+        30,
       )
 
       paymentAfterReceivingRefundNotification = await ctpClient.fetchById(
         ctpClient.builder.payments,
-        paymentAfterCreateSession.id
+        paymentAfterCreateSession.id,
       )
 
       paymentAfterReceivingRefundNotification =
@@ -229,7 +243,7 @@ describe('::klarnaPayment::', () => {
 
       logger.debug(
         'klarna::paymentAfterRefund:',
-        JSON.stringify(paymentAfterRefund)
+        JSON.stringify(paymentAfterRefund),
       )
     } catch (err) {
       logger.error('klarna::errors', err)
@@ -243,10 +257,10 @@ describe('::klarnaPayment::', () => {
     expect(refundEventCode).to.equal('REFUND')
     expect(refundSuccess).to.equal('true')
     expect(refundPspReference).to.not.equal(
-      paymentAfterReceivingRefundNotification.key
+      paymentAfterReceivingRefundNotification.key,
     )
     expect(refundOriginalPspReference).to.be.equal(
-      paymentAfterReceivingRefundNotification.key
+      paymentAfterReceivingRefundNotification.key,
     )
   })
 
@@ -258,7 +272,7 @@ describe('::klarnaPayment::', () => {
   }) {
     const initPaymentSessionFormPage = new KlarnaInitSessionFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await initPaymentSessionFormPage.goToThisPage()
 
@@ -269,7 +283,7 @@ describe('::klarnaPayment::', () => {
   }
 
   async function handleRedirect({ browserTab, baseUrl, clientKey }) {
-    await browserTab.waitForSelector('#buy-button:not([disabled])')
+    // await browserTab.waitForSelector('#buy-button:not([disabled])')
     const klarnaPage = new KlarnaAuthenticationPage(browserTab)
 
     const { sessionId, redirectResult } =
@@ -277,14 +291,14 @@ describe('::klarnaPayment::', () => {
 
     const redirectPaymentFormPage = new RedirectPaymentFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await redirectPaymentFormPage.goToThisPage()
     const submittedRedirectResult =
       await redirectPaymentFormPage.redirectToAdyenPaymentPage(
         clientKey,
         sessionId,
-        redirectResult
+        redirectResult,
       )
 
     return submittedRedirectResult
@@ -306,7 +320,7 @@ describe('::klarnaPayment::', () => {
           currency: transaction.amount.currencyCode,
           amount: transaction.amount.centAmount,
         }),
-      ]
+      ],
     )
 
     return result.body
@@ -315,24 +329,24 @@ describe('::klarnaPayment::', () => {
   function assertManualCaptureResponse(paymentAfterCapture) {
     const interfaceInteraction = getLatestInterfaceInteraction(
       paymentAfterCapture.interfaceInteractions,
-      constants.CTP_INTERACTION_TYPE_MANUAL_CAPTURE
+      constants.CTP_INTERACTION_TYPE_MANUAL_CAPTURE,
     )
     const manualCaptureResponse = JSON.parse(
-      interfaceInteraction.fields.response
+      interfaceInteraction.fields.response,
     )
-    expect(manualCaptureResponse.response).to.equal(
-      '[capture-received]',
-      `response is not [capture-received]: ${manualCaptureResponse}`
+    expect(manualCaptureResponse.status).to.equal(
+      'received',
+      `response status is not "received": ${manualCaptureResponse}`,
     )
     expect(manualCaptureResponse.pspReference).to.match(
       /[A-Z0-9]+/,
-      `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`
+      `pspReference does not match '/[A-Z0-9]+/': ${manualCaptureResponse}`,
     )
 
     const chargePendingTransaction =
       getChargeTransactionPending(paymentAfterCapture)
     expect(chargePendingTransaction.interactionId).to.equal(
-      manualCaptureResponse.pspReference
+      manualCaptureResponse.pspReference,
     )
   }
 
@@ -385,7 +399,7 @@ describe('::klarnaPayment::', () => {
     return JSON.stringify(createSessionRequestJson)
   }
   async function refundPaymentTransactions(
-    paymentAfterReceivingCaptureNotification
+    paymentAfterReceivingCaptureNotification,
   ) {
     const { statusCode, body: refundPayment } = await ctpClient.update(
       ctpClient.builder.payments,
@@ -428,7 +442,7 @@ describe('::klarnaPayment::', () => {
           currency: 'EUR',
           amount: 100,
         }),
-      ]
+      ],
     )
     return { statusCode, refundPayment }
   }

@@ -16,7 +16,7 @@ function setupServer() {
       } catch (e) {
         logger.error(
           e,
-          `Unexpected error when processing URL ${JSON.stringify(parts)}`
+          `Unexpected error when processing URL ${JSON.stringify(parts)}`,
         )
         utils.sendResponse({ response, statusCode: 500 })
       }

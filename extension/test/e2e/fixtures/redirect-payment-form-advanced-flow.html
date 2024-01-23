@@ -1,0 +1,72 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Submit additional payment details</title>
+    <link
+      rel="stylesheet"
+      href="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.53.2/adyen.css"
+      integrity="sha384-9EdBqZRrjozkt+Be5ycjHBTi+4DYrafpC1KyPnNyTBfjBIZ5+oMp8BbgvPLGgsE0"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div>
+      <input
+        type="text"
+        id="adyen-make-payment-response-action-field"
+        placeholder="Adyen action field"
+      /><br />
+      <input
+        type="text"
+        id="adyen-client-key"
+        placeholder="Adyen client key"
+      /><br />
+      <button type="button" id="redirect-payment-button">
+        Redirect payment
+      </button>
+      <br />
+      <br />
+      <input
+        type="text"
+        id="adyen-additional-payment-details"
+        placeholder="Additional payment details will be here"
+      /><br />
+    </div>
+    <div id="component-container"></div>
+
+    <script
+      src="https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.53.2/adyen.js"
+      integrity="sha384-ng3HLoZIlQ3BLgyGyGNiwWSx6LEPIlmxVuGRw72skZFt9mL8OweRjp7vcPzSqxTj"
+      crossorigin="anonymous"
+    ></script>
+    <script type="application/javascript">
+      const configuration = {
+        locale: 'en_US',
+        environment: 'test',
+        clientKey: '',
+        onAdditionalDetails: handleOnAdditionalDetails,
+      }
+
+      const actionFieldElemenet = document.getElementById(
+        'redirect-payment-button',
+      )
+      actionFieldElemenet.addEventListener('click', async () => {
+        const clientKeyElement = document.getElementById('adyen-client-key')
+        configuration.clientKey = clientKeyElement.value
+        const actionFieldElemenet = document.getElementById(
+          'adyen-make-payment-response-action-field',
+        )
+        const action = JSON.parse(actionFieldElemenet.value)
+        const checkout = await AdyenCheckout(configuration)
+        checkout.createFromAction(action).mount('#component-container')
+      })
+
+      function handleOnAdditionalDetails(state) {
+        const additionalPaymentDetailsInput = document.getElementById(
+          'adyen-additional-payment-details',
+        )
+        additionalPaymentDetailsInput.value = JSON.stringify(state.data)
+      }
+    </script>
+  </body>
+</html>

@@ -17,7 +17,7 @@ export const handler = async (event) => {
         notification: undefined,
         err: error,
       },
-      'Unexpected error when processing event'
+      'Unexpected error when processing event',
     )
     throw error
   }
@@ -29,7 +29,7 @@ export const handler = async (event) => {
       await notificationHandler.processNotification(
         notification,
         adyenConfig.enableHmacSignature,
-        ctpProjectConfig
+        ctpProjectConfig,
       )
     }
   } catch (err) {
@@ -39,7 +39,7 @@ export const handler = async (event) => {
         notification: utils.getNotificationForTracking(notificationItems),
         cause,
       },
-      'Unexpected exception occurred.'
+      'Unexpected exception occurred.',
     )
     if (isRecoverableError(err)) {
       throw err

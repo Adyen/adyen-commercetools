@@ -12,7 +12,7 @@
 ## Prerequisites
 
 Minimum requirements are:
- - **Node.js** version 16.
+ - **Node.js** version 18.
  - **Npm** version 6.
  
 You can install all dependencies using `npm` with following command:
@@ -23,13 +23,14 @@ npm install
 
 ## Development
 While developing project you can use some predefined commands for running tests, running linter or generating coverage. 
- 
-- Execute `npm run test` to run all tests and print the code coverage report.
+
+- Execute `npm run test-ci` to run all tests and print the code coverage report.
 - Execute `npm run unit` to run Unit tests.
 - Execute `npm run integration` to run Integration tests. (environment variable for [extension](../extension/docs/HowToRun.md#environment-variable) and [notification](../notification/docs/HowToRun.md#environment-variable) needs to be set)
 - Extension module only: Execute `npm run e2e` to run E2e tests. (environment variable for [extension](../extension/docs/HowToRun.md#environment-variable) needs to be set)
 - Execute `npm run lint` to show lint errors in the code.
 - Execute `npm run format` to format the code before committing.
+- Execute `npm run test` to pre-run the build before the deployment in [Commercetools Connect](https://docs.commercetools.com/connect)
 
 ### Debugging
 

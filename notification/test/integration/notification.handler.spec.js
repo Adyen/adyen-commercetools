@@ -17,7 +17,7 @@ describe('notification module', () => {
   let ctpClient
   before(async () => {
     ctpClient = await ctpClientBuilder.get(
-      config.getCtpConfig(commercetoolsProjectKey)
+      config.getCtpConfig(commercetoolsProjectKey),
     )
     notificationURL = getNotificationURL()
   })
@@ -34,7 +34,7 @@ describe('notification module', () => {
         merchantReference,
         pspReference,
         commercetoolsProjectKey,
-        adyenMerchantAccount
+        adyenMerchantAccount,
       )
       expect(paymentBefore.transactions).to.have.lengthOf(1)
       expect(paymentBefore.transactions[0].type).to.equal('Authorization')
@@ -45,7 +45,7 @@ describe('notification module', () => {
         commercetoolsProjectKey,
         adyenMerchantAccount,
         merchantReference,
-        pspReference
+        pspReference,
       )
 
       // Simulating a notification from Adyen
@@ -62,7 +62,7 @@ describe('notification module', () => {
 
       const { body: paymentAfter } = await ctpClient.fetchByKey(
         ctpClient.builder.payments,
-        pspReference // pspReference is the key of authorized payment
+        pspReference, // pspReference is the key of authorized payment
       )
 
       expect(paymentAfter.transactions).to.have.lengthOf(1)
@@ -75,9 +75,9 @@ describe('notification module', () => {
           .additionalData
       }
       expect(
-        paymentAfter.interfaceInteractions[0].fields.notification
+        paymentAfter.interfaceInteractions[0].fields.notification,
       ).to.equal(JSON.stringify(notificationPayload.notificationItems[0]))
-    }
+    },
   )
 
   it('should add a charge transaction when receives a successful manual CAPTURE notification', async () => {
@@ -90,7 +90,7 @@ describe('notification module', () => {
       merchantReference,
       pspReference,
       commercetoolsProjectKey,
-      adyenMerchantAccount
+      adyenMerchantAccount,
     )
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
@@ -114,7 +114,7 @@ describe('notification module', () => {
       ctpClient.builder.payments,
       paymentBefore.id,
       paymentBefore.version,
-      actions
+      actions,
     )
 
     expect(updatedPayment.transactions).to.have.lengthOf(1)
@@ -128,7 +128,7 @@ describe('notification module', () => {
       chargeInteractionId,
       'CAPTURE',
       'true',
-      pspReference
+      pspReference,
     )
 
     // Simulating a notification from Adyen
@@ -145,7 +145,7 @@ describe('notification module', () => {
 
     const { body: paymentAfter } = await ctpClient.fetchByKey(
       ctpClient.builder.payments,
-      pspReference // pspReference is the key of authorized payment
+      pspReference, // pspReference is the key of authorized payment
     )
     expect(paymentAfter.transactions).to.have.lengthOf(2)
     expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -159,7 +159,7 @@ describe('notification module', () => {
         .additionalData
     }
     expect(paymentAfter.interfaceInteractions[0].fields.notification).to.equal(
-      JSON.stringify(notificationPayload.notificationItems[0])
+      JSON.stringify(notificationPayload.notificationItems[0]),
     )
   })
 
@@ -175,7 +175,7 @@ describe('notification module', () => {
         merchantReference,
         pspReference,
         commercetoolsProjectKey,
-        adyenMerchantAccount
+        adyenMerchantAccount,
       )
       expect(paymentBefore.transactions).to.have.lengthOf(1)
       expect(paymentBefore.transactions[0].type).to.equal('Authorization')
@@ -187,7 +187,7 @@ describe('notification module', () => {
         adyenMerchantAccount,
         merchantReference,
         pspReference,
-        'UNKNOWN_EVENT_CODE'
+        'UNKNOWN_EVENT_CODE',
       )
 
       // Simulating a notification from Adyen
@@ -204,7 +204,7 @@ describe('notification module', () => {
 
       const { body: paymentAfter } = await ctpClient.fetchByKey(
         ctpClient.builder.payments,
-        merchantReference // merchantReference is the key of unauthorized payment
+        merchantReference, // merchantReference is the key of unauthorized payment
       )
       expect(paymentAfter.transactions).to.have.lengthOf(1)
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -215,9 +215,9 @@ describe('notification module', () => {
           .additionalData
       }
       expect(
-        paymentAfter.interfaceInteractions[0].fields.notification
+        paymentAfter.interfaceInteractions[0].fields.notification,
       ).to.equal(JSON.stringify(notificationPayload.notificationItems[0]))
-    }
+    },
   )
 
   it('should response with success when payment does not exist on the platform', async () => {
@@ -229,7 +229,7 @@ describe('notification module', () => {
       merchantReference,
       pspReference,
       commercetoolsProjectKey,
-      adyenMerchantAccount
+      adyenMerchantAccount,
     )
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
@@ -241,7 +241,7 @@ describe('notification module', () => {
       adyenMerchantAccount,
       merchantReference,
       pspReference,
-      'NOT_EXISTING_PAYMENT'
+      'NOT_EXISTING_PAYMENT',
     )
 
     // Simulating a notification from Adyen
@@ -258,7 +258,7 @@ describe('notification module', () => {
 
     const { body: paymentAfter } = await ctpClient.fetchByKey(
       ctpClient.builder.payments,
-      merchantReference // merchantReference is the key of unauthorized payment
+      merchantReference, // merchantReference is the key of unauthorized payment
     )
     expect(paymentAfter.transactions).to.have.lengthOf(1)
     expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -279,7 +279,7 @@ describe('notification module', () => {
         merchantReference,
         pspReference,
         commercetoolsProjectKey,
-        adyenMerchantAccount
+        adyenMerchantAccount,
       )
       expect(paymentBefore.transactions).to.have.lengthOf(1)
       expect(paymentBefore.transactions[0].type).to.equal('Authorization')
@@ -316,7 +316,7 @@ describe('notification module', () => {
         ctpClient.builder.payments,
         paymentBefore.id,
         paymentBefore.version,
-        actions
+        actions,
       )
 
       expect(updatedPayment.transactions).to.have.lengthOf(2)
@@ -332,7 +332,7 @@ describe('notification module', () => {
         refundInteractionId,
         'REFUND',
         'true',
-        pspReference
+        pspReference,
       )
 
       // Simulating a notification from Adyen
@@ -349,7 +349,7 @@ describe('notification module', () => {
 
       const { body: paymentAfter } = await ctpClient.fetchByKey(
         ctpClient.builder.payments,
-        pspReference // pspReference is the key of authorized payment
+        pspReference, // pspReference is the key of authorized payment
       )
       expect(paymentAfter.transactions).to.have.lengthOf(2)
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -363,9 +363,9 @@ describe('notification module', () => {
           .additionalData
       }
       expect(
-        paymentAfter.interfaceInteractions[0].fields.notification
+        paymentAfter.interfaceInteractions[0].fields.notification,
       ).to.equal(JSON.stringify(notificationPayload.notificationItems[0]))
-    }
+    },
   )
 
   it(
@@ -380,7 +380,7 @@ describe('notification module', () => {
         merchantReference,
         pspReference,
         commercetoolsProjectKey,
-        adyenMerchantAccount
+        adyenMerchantAccount,
       )
       const refundInteractionId1 = _generateRandomNumber()
       const refundInteractionId2 = _generateRandomNumber()
@@ -432,7 +432,7 @@ describe('notification module', () => {
         ctpClient.builder.payments,
         paymentBefore.id,
         paymentBefore.version,
-        actions
+        actions,
       )
 
       const notificationPayload1 = createNotificationPayload(
@@ -442,7 +442,7 @@ describe('notification module', () => {
         refundInteractionId1,
         'REFUND',
         'true',
-        pspReference
+        pspReference,
       )
 
       const notificationPayload2 = createNotificationPayload(
@@ -452,7 +452,7 @@ describe('notification module', () => {
         refundInteractionId2,
         'REFUND',
         'true',
-        pspReference
+        pspReference,
       )
 
       const notificationPayload3 = createNotificationPayload(
@@ -462,7 +462,7 @@ describe('notification module', () => {
         refundInteractionId3,
         'REFUND',
         'false',
-        pspReference
+        pspReference,
       )
 
       // Simulating notifications from Adyen
@@ -496,7 +496,7 @@ describe('notification module', () => {
 
       const { body: paymentAfter } = await ctpClient.fetchByKey(
         ctpClient.builder.payments,
-        pspReference // pspReference is the key of authorized payment
+        pspReference, // pspReference is the key of authorized payment
       )
       expect(paymentAfter.transactions).to.have.lengthOf(4)
       expect(paymentAfter.transactions[1].type).to.equal('Refund')
@@ -505,7 +505,7 @@ describe('notification module', () => {
       expect(paymentAfter.transactions[2].state).to.equal('Success')
       expect(paymentAfter.transactions[3].type).to.equal('Refund')
       expect(paymentAfter.transactions[3].state).to.equal('Failure')
-    }
+    },
   )
 
   it(
@@ -520,7 +520,7 @@ describe('notification module', () => {
         merchantReference,
         pspReference,
         commercetoolsProjectKey,
-        adyenMerchantAccount
+        adyenMerchantAccount,
       )
       expect(paymentBefore.transactions).to.have.lengthOf(1)
       expect(paymentBefore.transactions[0].type).to.equal('Authorization')
@@ -558,14 +558,14 @@ describe('notification module', () => {
         ctpClient.builder.payments,
         paymentBefore.id,
         paymentBefore.version,
-        actions
+        actions,
       )
 
       expect(updatedPayment.transactions).to.have.lengthOf(2)
       expect(updatedPayment.transactions[0].type).to.equal('Authorization')
       expect(updatedPayment.transactions[0].state).to.equal('Success')
       expect(updatedPayment.transactions[1].type).to.equal(
-        'CancelAuthorization'
+        'CancelAuthorization',
       )
       expect(updatedPayment.transactions[1].state).to.equal('Pending')
 
@@ -576,7 +576,7 @@ describe('notification module', () => {
         cancellationInteractionId,
         'CANCEL_OR_REFUND',
         'true',
-        pspReference
+        pspReference,
       )
 
       // Simulating a notification from Adyen
@@ -593,7 +593,7 @@ describe('notification module', () => {
 
       const { body: paymentAfter } = await ctpClient.fetchByKey(
         ctpClient.builder.payments,
-        pspReference // pspReference is the key of authorized payment
+        pspReference, // pspReference is the key of authorized payment
       )
       expect(paymentAfter.transactions).to.have.lengthOf(2)
       expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -607,9 +607,9 @@ describe('notification module', () => {
           .additionalData
       }
       expect(
-        paymentAfter.interfaceInteractions[0].fields.notification
+        paymentAfter.interfaceInteractions[0].fields.notification,
       ).to.equal(JSON.stringify(notificationPayload.notificationItems[0]))
-    }
+    },
   )
 
   it('should not update payment when the notification is unauthorised', async () => {
@@ -621,7 +621,7 @@ describe('notification module', () => {
       merchantReference,
       pspReference,
       commercetoolsProjectKey,
-      adyenMerchantAccount
+      adyenMerchantAccount,
     )
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
@@ -639,7 +639,7 @@ describe('notification module', () => {
       commercetoolsProjectKey,
       adyenMerchantAccount,
       merchantReference,
-      pspReference
+      pspReference,
     )
 
     // Simulating a modification by a middle man during transmission
@@ -659,7 +659,7 @@ describe('notification module', () => {
 
     const { body: paymentAfter } = await ctpClient.fetchByKey(
       ctpClient.builder.payments,
-      merchantReference // merchantReference is the key of unauthorized payment
+      merchantReference, // merchantReference is the key of unauthorized payment
     )
     expect(paymentAfter.transactions).to.have.lengthOf(1)
     expect(paymentAfter.transactions[0].type).to.equal('Authorization')
@@ -678,7 +678,7 @@ describe('notification module', () => {
       merchantReference,
       pspReference,
       commercetoolsProjectKey,
-      adyenMerchantAccount
+      adyenMerchantAccount,
     )
     expect(paymentBefore.transactions).to.have.lengthOf(1)
     expect(paymentBefore.transactions[0].type).to.equal('Authorization')
@@ -689,7 +689,7 @@ describe('notification module', () => {
       null,
       adyenMerchantAccount,
       merchantReference,
-      pspReference
+      pspReference,
     )
 
     // Simulating a notification from Adyen
@@ -699,7 +699,7 @@ describe('notification module', () => {
         method: 'post',
         body: JSON.stringify(notificationPayload),
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     )
 
     const { status } = response
@@ -710,7 +710,7 @@ describe('notification module', () => {
 
     const { body: paymentAfter } = await ctpClient.fetchByKey(
       ctpClient.builder.payments,
-      pspReference // pspReference is the key of authorized payment
+      pspReference, // pspReference is the key of authorized payment
     )
     expect(paymentAfter.transactions).to.have.lengthOf(1)
     expect(paymentAfter.transactions[0].type).to.equal('Authorization')

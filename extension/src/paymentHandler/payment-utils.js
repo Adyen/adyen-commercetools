@@ -8,7 +8,7 @@ function getAuthorizationTransactionSuccess(paymentObject) {
   return getTransactionWithTypesAndStates(
     paymentObject,
     ['Authorization'],
-    ['Success']
+    ['Success'],
   )
 }
 
@@ -16,7 +16,7 @@ function getCancelAuthorizationTransactionInit(paymentObject) {
   return getTransactionWithTypesAndStates(
     paymentObject,
     ['CancelAuthorization'],
-    ['Initial']
+    ['Initial'],
   )
 }
 
@@ -24,19 +24,19 @@ function listRefundTransactionsInit(paymentObject) {
   return listTransactionsWithTypesAndStates(
     paymentObject,
     ['Refund'],
-    ['Initial']
+    ['Initial'],
   )
 }
 
 function getTransactionWithTypesAndStates(paymentObject, types, states) {
   return paymentObject.transactions.find(
-    (t) => types.includes(t.type) && states.includes(t.state)
+    (t) => types.includes(t.type) && states.includes(t.state),
   )
 }
 
 function listTransactionsWithTypesAndStates(paymentObject, types, states) {
   return paymentObject.transactions.filter(
-    (t) => types.includes(t.type) && states.includes(t.state)
+    (t) => types.includes(t.type) && states.includes(t.state),
   )
 }
 
@@ -147,7 +147,7 @@ function getChargeTransactionInitial(paymentObject) {
   return getTransactionWithTypesAndStates(
     paymentObject,
     ['Charge'],
-    ['Initial']
+    ['Initial'],
   )
 }
 
@@ -155,7 +155,7 @@ function getChargeTransactionPending(paymentObject) {
   return getTransactionWithTypesAndStates(
     paymentObject,
     ['Charge'],
-    ['Pending']
+    ['Pending'],
   )
 }
 
@@ -163,7 +163,7 @@ function getChargeTransactionSuccess(paymentObject) {
   return getTransactionWithTypesAndStates(
     paymentObject,
     ['Charge'],
-    ['Success']
+    ['Success'],
   )
 }
 

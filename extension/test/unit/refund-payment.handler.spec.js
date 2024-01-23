@@ -5,8 +5,6 @@ import config from '../../src/config/config.js'
 import refundPaymentHandler from '../../src/paymentHandler/refund-payment.handler.js'
 import utils from '../../src/utils.js'
 
-import constants from '../../src/config/constants.js'
-
 import { overrideGenerateIdempotencyKeyConfig } from '../test-utils.js'
 
 const { execute } = refundPaymentHandler
@@ -40,15 +38,13 @@ describe('refund-payment::execute', () => {
 
   before(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-payment.json'
+      'test/unit/fixtures/ctp-payment.json',
     )
   })
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-    scope = nock(
-      `${adyenConfig.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.REFUND}`
-    )
+    scope = nock(`${adyenConfig.apiBaseUrl}/payments/8835513921644842/`)
   })
 
   afterEach(() => {
@@ -64,13 +60,13 @@ describe('refund-payment::execute', () => {
     const response = await execute(ctpPaymentClone)
 
     const adyenRequest = response.actions.find(
-      (action) => action.action === 'addInterfaceInteraction'
+      (action) => action.action === 'addInterfaceInteraction',
     ).fields.request
     const adyenRequestJson = JSON.parse(adyenRequest)
     const requestBody = JSON.parse(adyenRequestJson.body)
 
     expect(requestBody.reference).to.equal(
-      refundPaymentTransaction.custom.fields.reference
+      refundPaymentTransaction.custom.fields.reference,
     )
   })
 
@@ -89,20 +85,20 @@ describe('refund-payment::execute', () => {
       const { actions } = await execute(ctpPaymentClone)
 
       const addInterfaceInteraction = actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       const requestJson = JSON.parse(addInterfaceInteraction.fields.request)
       expect(requestJson.headers['Idempotency-Key']).to.equal(
-        refundPaymentTransaction.id
+        refundPaymentTransaction.id,
       )
-    }
+    },
   )
 
   it(
     'when refund payment response contains non-JSON format, ' +
       'then it should return the response in plain text inside interfaceInteraction',
     async () => {
-      scope.post('/refund').reply(200, 'non-json-response')
+      scope.post('/refunds').reply(200, 'non-json-response')
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
@@ -112,19 +108,19 @@ describe('refund-payment::execute', () => {
       const response = await execute(ctpPaymentClone)
 
       const adyenRequest = response.actions.find(
-        (action) => action.action === 'addInterfaceInteraction'
+        (action) => action.action === 'addInterfaceInteraction',
       ).fields.request
       const adyenResponse = response.actions.find(
-        (action) => action.action === 'addInterfaceInteraction'
+        (action) => action.action === 'addInterfaceInteraction',
       ).fields.response
 
       const adyenRequestJson = JSON.parse(adyenRequest)
       const requestBody = JSON.parse(adyenRequestJson.body)
 
       expect(requestBody.reference).to.equal(
-        refundPaymentTransaction.custom.fields.reference
+        refundPaymentTransaction.custom.fields.reference,
       )
       expect(adyenResponse).to.contains('non-json-response')
-    }
+    },
   )
 })

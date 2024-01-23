@@ -1,13 +1,14 @@
 {
   "name": "commercetools-adyen-integration-notification",
-  "version": "11.0.0",
+  "version": "11.3.0",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "type": "module",
   "scripts": {
     "check-coverage": "c8 check-coverage --lines 83",
     "test-run": "npm run unit && npm run integration",
-    "test": "c8 npm run test-run && npm run check-coverage",
-    "unit": "mocha --check-leaks --no-clean --timeout 30000 --full-trace --recursive \"./test/unit/**/*.spec.js\"",
+    "test-ci": "c8 npm run test-run && npm run check-coverage",
+    "test": "npm run unit",
+    "unit": "mocha --check-leaks --no-clean --timeout 30000 --full-trace --recursive --file ./test/unit/mock-default-confg.js \"./test/unit/**/*.spec.js\"",
     "integration": "mocha --file ./test/initial-integration-test-set-up.js --check-leaks --no-clean --timeout 30000 --full-trace --recursive \"./test/integration/**/*.spec.js\"",
     "start": "node ./src/init.js",
     "lint": "eslint --quiet ./src ./test",
@@ -36,8 +37,7 @@
     "email": "ps-dev@commercetools.com"
   },
   "engines": {
-    "node": ">=16",
-    "npm": ">=6"
+    "node": ">=18"
   },
   "contributors": [],
   "bugs": {
@@ -45,40 +45,40 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "dependencies": {
-    "@adyen/api-library": "13.0.0",
+    "@adyen/api-library": "15.1.0",
     "@commercetools/api-request-builder": "6.0.0",
     "@commercetools/sdk-client": "3.0.0",
     "@commercetools/sdk-middleware-auth": "7.0.1",
-    "@commercetools/sdk-middleware-http": "7.0.2",
+    "@commercetools/sdk-middleware-http": "7.0.4",
     "@commercetools/sdk-middleware-queue": "3.0.0",
     "@commercetools/sdk-middleware-user-agent": "3.0.0",
-    "@commercetools/sync-actions": "5.4.1",
+    "@commercetools/sync-actions": "5.15.0",
     "bunyan": "1.8.15",
-    "c8": "7.13.0",
-    "lockfile-lint": "4.10.1",
+    "lockfile-lint": "4.12.1",
     "lodash": "4.17.21",
-    "node-fetch": "3.3.0",
+    "node-fetch": "3.3.2",
     "rc": "1.2.8",
     "run-func": "3.0.0",
-    "serialize-error": "11.0.0",
+    "serialize-error": "11.0.3",
     "verror": "1.10.1"
   },
   "devDependencies": {
-    "chai": "4.3.7",
+    "chai": "4.4.1",
     "chai-as-promised": "7.1.1",
-    "eslint": "8.35.0",
+    "eslint": "8.56.0",
     "eslint-config-airbnb-base": "15.0.0",
-    "eslint-config-prettier": "8.6.0",
-    "eslint-plugin-import": "2.27.5",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-import": "2.29.1",
     "husky": "8.0.3",
     "ip": "1.1.8",
-    "lint-staged": "13.1.2",
+    "lint-staged": "15.2.0",
     "localtunnel": "2.0.2",
     "mocha": "10.2.0",
-    "nock": "13.3.0",
-    "p-map": "5.5.0",
-    "prettier": "2.8.4",
-    "sinon": "15.0.1"
+    "nock": "13.5.0",
+    "p-map": "7.0.1",
+    "prettier": "3.2.4",
+    "sinon": "17.0.1",
+    "c8": "8.0.1"
   },
   "husky": {
     "hooks": {

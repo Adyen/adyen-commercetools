@@ -1,5 +1,7 @@
 import { withPayment } from '../validator/validator-builder.js'
-
+import makePaymentHandler from './make-payment.handler.js'
+import makeLineitemsPaymentHandler from './make-lineitems-payment.handler.js'
+import submitPaymentDetailsHandler from './submit-payment-details.handler.js'
 import manualCaptureHandler from './manual-capture.handler.js'
 import cancelHandler from './cancel-payment.handler.js'
 import refundHandler from './refund-payment.handler.js'
@@ -33,7 +35,7 @@ async function handlePayment(paymentObject, authToken) {
 
   const validatePaymentErrors = _validatePaymentRequest(
     paymentObject,
-    authToken
+    authToken,
   )
   if (validatePaymentErrors)
     return {
@@ -42,7 +44,7 @@ async function handlePayment(paymentObject, authToken) {
 
   const handlers = _getPaymentHandlers(paymentObject)
   const handlerResponses = await Promise.all(
-    handlers.map((handler) => handler.execute(paymentObject))
+    handlers.map((handler) => handler.execute(paymentObject)),
   )
   const handlerResponse = {
     actions: handlerResponses.flatMap((result) => result.actions),
@@ -66,46 +68,78 @@ function _getPaymentHandlers(paymentObject) {
   if (!paymentObject.custom) return []
 
   const handlers = []
+  const customFields = paymentObject.custom.fields
 
   if (
-    paymentObject.custom.fields.getPaymentMethodsRequest &&
-    !paymentObject.custom.fields.getPaymentMethodsResponse
-  )
-    handlers.push(getPaymentMethodsHandler)
-
-  if (
-    paymentObject.custom.fields.createSessionRequest &&
-    !paymentObject.custom.fields.createSessionResponse
+    customFields.getPaymentMethodsRequest &&
+    !customFields.getPaymentMethodsResponse
   ) {
-    const createSessionRequestObj = JSON.parse(
-      paymentObject.custom.fields.createSessionRequest
-    )
-    if (_requiresLineItems(createSessionRequestObj))
-      handlers.push(lineItemSessionRequestHandler)
-    else handlers.push(sessionRequestHandler)
+    handlers.push(getPaymentMethodsHandler)
   }
-  if (
-    paymentObject.custom.fields.getCarbonOffsetCostsRequest &&
-    !paymentObject.custom.fields.getCarbonOffsetCostsResponse
-  )
-    handlers.push(getCarbonOffsetCostsHandler)
+
+  if (customFields.makePaymentRequest && !customFields.makePaymentResponse) {
+    const makePaymentRequestObj = JSON.parse(customFields.makePaymentRequest)
+    if (_requiresLineItems(makePaymentRequestObj))
+      handlers.push(makeLineitemsPaymentHandler)
+    else handlers.push(makePaymentHandler)
+  }
 
   if (
-    paymentObject.custom.fields.amountUpdatesRequest &&
-    !paymentObject.custom.fields.amountUpdatesResponse
+    customFields.makePaymentResponse &&
+    customFields.submitAdditionalPaymentDetailsRequest &&
+    !customFields.submitAdditionalPaymentDetailsResponse
   )
+    handlers.push(submitPaymentDetailsHandler)
+
+  if (
+    customFields.createSessionRequest &&
+    !customFields.createSessionResponse
+  ) {
+    const createSessionRequestHandler = _getCreateSessionRequestHandler(
+      customFields.createSessionRequest,
+    )
+    handlers.push(createSessionRequestHandler)
+  }
+
+  if (
+    customFields.getCarbonOffsetCostsRequest &&
+    !customFields.getCarbonOffsetCostsResponse
+  ) {
+    handlers.push(getCarbonOffsetCostsHandler)
+  }
+
+  if (
+    customFields.amountUpdatesRequest &&
+    !customFields.amountUpdatesResponse
+  ) {
     handlers.push(amountUpdatesHandler)
+  }
+
   if (
     getAuthorizationTransactionSuccess(paymentObject) &&
     getChargeTransactionInitial(paymentObject)
-  )
+  ) {
     handlers.push(manualCaptureHandler)
+  }
+
   if (
-    paymentObject.custom.fields.disableStoredPaymentRequest &&
-    !paymentObject.custom.fields.disableStoredPaymentResponse
-  )
+    customFields.disableStoredPaymentRequest &&
+    !customFields.disableStoredPaymentResponse
+  ) {
     handlers.push(disableStoredPaymentHandler)
+  }
+
   return handlers
+}
+
+function _getCreateSessionRequestHandler(createSessionRequest) {
+  const createSessionRequestObj = JSON.parse(createSessionRequest)
+
+  if (_requiresLineItems(createSessionRequestObj)) {
+    return lineItemSessionRequestHandler
+  }
+
+  return sessionRequestHandler
 }
 
 function _validatePaymentRequest(paymentObject, authToken) {
@@ -135,10 +169,9 @@ function _validatePaymentRequest(paymentObject, authToken) {
   return null
 }
 
-function _requiresLineItems(createSessionRequestObj) {
-  const addCommercetoolsLineItemsFlag = _getAddCommercetoolsLineItemsFlag(
-    createSessionRequestObj
-  )
+function _requiresLineItems(requestObj) {
+  const addCommercetoolsLineItemsFlag =
+    _getAddCommercetoolsLineItemsFlag(requestObj)
   if (
     addCommercetoolsLineItemsFlag === true ||
     addCommercetoolsLineItemsFlag === false
@@ -153,19 +186,18 @@ function _requiresLineItems(createSessionRequestObj) {
   return false
 }
 
-function _getAddCommercetoolsLineItemsFlag(createSessionRequestObj) {
+function _getAddCommercetoolsLineItemsFlag(requestObj) {
   // The function is tend to be used to check values on the field: true, false, undefined,
   // or the value set but not to true/false
   // in case of the undefined or other than true/false, the function returns undefined:
   // it means the other fallbacks have to be checked to decide adding line items
   let addCommercetoolsLineItems
-  if ('addCommercetoolsLineItems' in createSessionRequestObj) {
+  if ('addCommercetoolsLineItems' in requestObj) {
     if (
-      createSessionRequestObj.addCommercetoolsLineItems === true ||
-      createSessionRequestObj.addCommercetoolsLineItems === false
+      requestObj.addCommercetoolsLineItems === true ||
+      requestObj.addCommercetoolsLineItems === false
     ) {
-      addCommercetoolsLineItems =
-        createSessionRequestObj.addCommercetoolsLineItems
+      addCommercetoolsLineItems = requestObj.addCommercetoolsLineItems
     }
   }
   return addCommercetoolsLineItems

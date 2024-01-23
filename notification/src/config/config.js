@@ -22,8 +22,8 @@ function getCtpConfig(ctpProjectKey) {
   if (!ctpConfig)
     throw new Error(
       `Configuration is not provided. Please update the configuration. ctpProjectKey: [${JSON.stringify(
-        ctpProjectKey
-      )}]`
+        ctpProjectKey,
+      )}]`,
     )
   return {
     clientId: ctpConfig.clientId,
@@ -41,15 +41,16 @@ function getAdyenConfig(adyenMerchantAccount) {
   if (!adyenConfig)
     throw new Error(
       `Configuration for adyenMerchantAccount is not provided. Please update the configuration: ${JSON.stringify(
-        adyenMerchantAccount
-      )}`
+        adyenMerchantAccount,
+      )}`,
     )
 
   let enableHmacSignature = adyenConfig.enableHmacSignature !== 'false'
   if (adyenConfig.enableHmacSignature === false) enableHmacSignature = false
   return {
     secretHmacKey: adyenConfig.secretHmacKey,
-    notificationBaseUrl: adyenConfig.notificationBaseUrl,
+    notificationBaseUrl:
+      process.env.CONNECT_SERVICE_URL ?? adyenConfig.notificationBaseUrl,
     enableHmacSignature,
     apiKey: adyenConfig.apiKey,
   }
@@ -65,10 +66,11 @@ function getAllAdyenMerchantAccounts() {
 
 function getAdyenPaymentMethodsToNames() {
   return {
-    scheme: 'Credit Card',
-    pp: 'PayPal',
-    klarna: 'Klarna',
-    gpay: 'Google Pay',
+    scheme: { en: 'Credit Card' },
+    pp: { en: 'PayPal' },
+    klarna: { en: 'Klarna' },
+    affirm: { en: 'Affirm' },
+    gpay: { en: 'Google Pay' },
     ...(config.adyenPaymentMethodsToNames || {}),
   }
 }
@@ -80,20 +82,20 @@ function loadAndValidateConfig() {
   const numberOfAdyenConfigs = Object.keys(config.adyen).length
   if (numberOfCtpConfigs === 0)
     throw new Error(
-      'Please add at least one commercetools project to the config'
+      'Please add at least one commercetools project to the config',
     )
   if (numberOfAdyenConfigs === 0)
     throw new Error(
-      'Please add at least one Adyen merchant account to the config'
+      'Please add at least one Adyen merchant account to the config',
     )
 
   for (const [ctpProjectKey, ctpConfig] of Object.entries(
-    config.commercetools
+    config.commercetools,
   )) {
     if (!ctpConfig.clientId || !ctpConfig.clientSecret)
       throw new Error(
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
-          'Please verify that all projects have projectKey, clientId and clientSecret'
+          'Please verify that all projects have projectKey, clientId and clientSecret',
       )
   }
 
@@ -105,7 +107,7 @@ function loadAndValidateConfig() {
     return
 
   for (const [adyenMerchantAccount, adyenConfig] of Object.entries(
-    config.adyen
+    config.adyen,
   )) {
     if (
       adyenConfig.enableHmacSignature !== 'false' &&
@@ -114,7 +116,7 @@ function loadAndValidateConfig() {
       throw new Error(
         `[${adyenMerchantAccount}]: The "secretHmacKey" config variable is missing to be able to verify ` +
           `notifications, please generate a secret HMAC key in Adyen Customer Area ` +
-          `or set "enableHmacSignature=false" to disable the verification feature.`
+          `or set "enableHmacSignature=false" to disable the verification feature.`,
       )
   }
 }

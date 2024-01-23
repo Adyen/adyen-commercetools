@@ -18,11 +18,11 @@ jobs:
       run:
         working-directory: notification
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - run: npm ci
       - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
       - run: npm run check
@@ -34,11 +34,11 @@ jobs:
           rm .notificationrc
         shell: bash
       - name: gcloud auth
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: gcloud sdk
-        uses: google-github-actions/setup-gcloud@v1.1.0
+        uses: google-github-actions/setup-gcloud@v2.1.0
       - run: npm run unit
       - name: gcloud functions deploy
         run: |
@@ -46,7 +46,7 @@ jobs:
             --region europe-west3 \
             --source sources \
             --entry-point notificationTrigger \
-            --runtime nodejs16 \
+            --runtime nodejs18 \
             --trigger-http \
             --allow-unauthenticated
   
@@ -64,11 +64,11 @@ jobs:
       run:
         working-directory: extension
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - run: npm ci
       - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
       - run: npm run check
@@ -80,21 +80,21 @@ jobs:
           rm .extensionrc
         shell: bash
       - name: gcloud auth
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: gcloud sdk
-        uses: google-github-actions/setup-gcloud@v1.1.0
+        uses: google-github-actions/setup-gcloud@v2.1.0
       - name: gcloud functions deploy
         run: |
           gcloud functions deploy extension-ci \
             --region europe-west3 \
             --source sources \
             --entry-point extensionTrigger \
-            --runtime nodejs16 \
+            --runtime nodejs18 \
             --trigger-http \
             --allow-unauthenticated
-      - run: npm run test
+      - run: npm run test-ci
 
   notification_test:
     name: Test for Notification Module
@@ -108,11 +108,11 @@ jobs:
       run:
         working-directory: notification
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - run: npm ci
       - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
-      - run: npm run test
+      - run: npm run test-ci

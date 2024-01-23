@@ -21,10 +21,10 @@ describe('payment-handler-lineItems::execute', () => {
 
   before(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-payment.json'
+      'test/unit/fixtures/ctp-payment.json',
     )
     ctpCart = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-cart.json'
+      'test/unit/fixtures/ctp-cart.json',
     )
   })
 
@@ -69,13 +69,13 @@ describe('payment-handler-lineItems::execute', () => {
       const response = await handlePayment(ctpPaymentClone)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const createSessionRequestJson = JSON.parse(
-        createSessionRequestInteraction.body
+        createSessionRequestInteraction.body,
       )
       expect(createSessionRequestJson.lineItems).to.have.lengthOf(3)
-    }
+    },
   )
 
   it(
@@ -106,13 +106,13 @@ describe('payment-handler-lineItems::execute', () => {
 
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const createSessionRequestJson = JSON.parse(
-        createSessionRequestInteraction.body
+        createSessionRequestInteraction.body,
       )
       expect(createSessionRequestJson.lineItems).to.have.lengthOf(3)
-    }
+    },
   )
 
   it(
@@ -142,13 +142,13 @@ describe('payment-handler-lineItems::execute', () => {
       const response = await paymentHandler.handlePayment(ctpPaymentClone)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const createSessionRequestJson = JSON.parse(
-        createSessionRequestInteraction.body
+        createSessionRequestInteraction.body,
       )
       expect(createSessionRequestJson.lineItems).to.undefined
-    }
+    },
   )
 
   it(
@@ -177,13 +177,13 @@ describe('payment-handler-lineItems::execute', () => {
       const response = await handlePayment(ctpPaymentClone)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
-          .fields.request
+          .fields.request,
       )
       const createSessionRequestJson = JSON.parse(
-        createSessionRequestInteraction.body
+        createSessionRequestInteraction.body,
       )
       expect(createSessionRequestJson.lineItems).to.have.lengthOf(3)
-    }
+    },
   )
 
   function _mockCtpCartsEndpoint(mockCart = ctpCart) {

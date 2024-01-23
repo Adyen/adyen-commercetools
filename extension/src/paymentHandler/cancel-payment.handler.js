@@ -26,7 +26,7 @@ async function execute(paymentObject) {
   const { request, response } = await cancelPayment(
     adyenMerchantAccount,
     commercetoolsProjectKey,
-    cancelRequestObj
+    cancelRequestObj,
   )
 
   const addInterfaceInteractionAction = createAddInterfaceInteractionAction({
@@ -38,7 +38,7 @@ async function execute(paymentObject) {
   const actions = [addInterfaceInteractionAction]
   if (!response.errorCode && response.pspReference)
     actions.push(
-      ..._createTransactionActions(paymentObject, response.pspReference)
+      ..._createTransactionActions(paymentObject, response.pspReference),
     )
 
   return { actions }

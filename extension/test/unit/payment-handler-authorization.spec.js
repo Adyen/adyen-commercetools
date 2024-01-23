@@ -54,7 +54,7 @@ describe('payment-handler-authorization::execute', () => {
   }
   before(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-payment.json'
+      'test/unit/fixtures/ctp-payment.json',
     )
   })
 
@@ -83,11 +83,11 @@ describe('payment-handler-authorization::execute', () => {
       sandbox.stub(config, 'getCtpConfig').returns(dummyCtpConfig)
       const response = await handlePayment(
         ctpPaymentClone,
-        'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
+        'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==',
       )
       expect(response.actions).to.have.lengthOf.above(0)
       sandbox.restore()
-    }
+    },
   )
 
   it(
@@ -109,10 +109,10 @@ describe('payment-handler-authorization::execute', () => {
 
       expect(response.errors).to.have.lengthOf(1)
       expect(response.errors[0].message).to.equal(
-        errorMessage.UNAUTHORIZED_REQUEST
+        errorMessage.UNAUTHORIZED_REQUEST,
       )
       sandbox.restore()
-    }
+    },
   )
 
   it(
@@ -134,10 +134,10 @@ describe('payment-handler-authorization::execute', () => {
 
       expect(response.errors).to.have.lengthOf(1)
       expect(response.errors[0].message).to.equal(
-        errorMessage.UNAUTHORIZED_REQUEST
+        errorMessage.UNAUTHORIZED_REQUEST,
       )
       sandbox.restore()
-    }
+    },
   )
 
   it(
@@ -157,7 +157,7 @@ describe('payment-handler-authorization::execute', () => {
 
       await handlePayment(ctpPaymentClone, 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==')
       sandbox.restore()
-    }
+    },
   )
 
   it(
@@ -174,6 +174,6 @@ describe('payment-handler-authorization::execute', () => {
       const response = await handlePayment(ctpPaymentClone, 'Basic xxxyyyzzz')
 
       expect(response.actions).to.have.lengthOf.above(0)
-    }
+    },
   )
 })

@@ -21,14 +21,14 @@ function setRoute() {
     serveFile(
       './test/e2e/fixtures/credit-card-init-session-form.html',
       request,
-      response
+      response,
     )
   }
   routes['/redirect-payment-form'] = async (request, response) => {
     serveFile(
       './test/e2e/fixtures/redirect-payment-form.html',
       request,
-      response
+      response,
     )
   }
   routes['/return-url'] = async (request, response) => {
@@ -48,7 +48,8 @@ function setRoute() {
 }
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/redirect-3ds2-3ds1/web-component
-describe('::creditCardPayment3dsRedirect::', () => {
+// Skipped because Adyen test cards do not return redirect response anymore
+describe.skip('::creditCardPayment3dsRedirect::', () => {
   let browser
 
   let ctpClient
@@ -104,18 +105,18 @@ describe('::creditCardPayment3dsRedirect::', () => {
             // https://docs.adyen.com/online-payments/web-components#create-payment-session
             const createSessionRequest = await getCreateSessionRequest(
               baseUrl,
-              clientKey
+              clientKey,
             )
 
             paymentAfterCreateSession = await createPaymentSession(
               ctpClient,
               adyenMerchantAccount,
               ctpProjectKey,
-              createSessionRequest
+              createSessionRequest,
             )
             logger.debug(
               'credit-card-3ds-redirect::paymentAfterCreateSession:',
-              JSON.stringify(paymentAfterCreateSession)
+              JSON.stringify(paymentAfterCreateSession),
             )
 
             // Step #2 - Setup Component
@@ -139,21 +140,21 @@ describe('::creditCardPayment3dsRedirect::', () => {
             })
             logger.debug(
               'credit-card-3ds-redirect::redirectPaymentResult:',
-              JSON.stringify(redirectPaymentResult)
+              JSON.stringify(redirectPaymentResult),
             )
           } catch (err) {
             logger.error(
               'credit-card-3ds-redirect::errors',
-              JSON.stringify(err)
+              JSON.stringify(err),
             )
           }
           assertCreatePaymentSession(
             paymentAfterCreateSession,
-            redirectPaymentResult
+            redirectPaymentResult,
           )
-        }
+        },
       )
-    }
+    },
   )
 
   async function initPaymentSession({
@@ -167,7 +168,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
   }) {
     const initSessionFormPage = new CreditCardInitSessionFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await initSessionFormPage.goToThisPage()
     return await initSessionFormPage.initPaymentSession({
@@ -187,7 +188,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
 
     const redirectPaymentFormPage = new RedirectPaymentFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
 
     await redirectPaymentFormPage.goToThisPage()
@@ -196,7 +197,7 @@ describe('::creditCardPayment3dsRedirect::', () => {
       await redirectPaymentFormPage.redirectToAdyenPaymentPage(
         clientKey,
         sessionId,
-        redirectResult
+        redirectResult,
       )
 
     return submittedRedirectResult

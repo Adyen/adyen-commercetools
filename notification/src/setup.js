@@ -15,11 +15,11 @@ async function setupNotificationResources() {
 
   logger.info(
     `Configured commercetools project keys are: ${JSON.stringify(
-      ctpProjectKeys
+      ctpProjectKeys,
     )}. ` +
       `Configured adyen merchant accounts are: ${JSON.stringify(
-        adyenMerchantAccounts
-      )}`
+        adyenMerchantAccounts,
+      )}`,
   )
 }
 

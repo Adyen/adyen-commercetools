@@ -59,7 +59,6 @@ describe('::config::', () => {
       apiBaseUrl: 'apiBaseUrl',
       apiKey: 'apiKey',
       clientKey: 'clientKey',
-      legacyApiBaseUrl: 'legacyApiBaseUrl',
       paypalMerchantId: '',
     })
   })
@@ -94,10 +93,9 @@ describe('::config::', () => {
       projectKey: 'ctpProjectKey1',
     })
     expect(config.default.getAdyenConfig('adyenMerchantAccount1')).to.eql({
-      apiBaseUrl: 'https://checkout-test.adyen.com/v68',
+      apiBaseUrl: 'https://checkout-test.adyen.com/v71',
       apiKey: 'apiKey',
       clientKey: 'clientKey',
-      legacyApiBaseUrl: 'https://pal-test.adyen.com/pal/servlet',
       paypalMerchantId: '',
     })
   })
@@ -188,7 +186,7 @@ describe('::config::', () => {
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain(
-        'Authentication is not properly configured. Please update the configuration'
+        'Authentication is not properly configured. Please update the configuration',
       )
     }
   })
@@ -223,7 +221,7 @@ describe('::config::', () => {
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain(
-        'Authentication is not properly configured. Please update the configuration'
+        'Authentication is not properly configured. Please update the configuration',
       )
     }
   })
@@ -259,7 +257,7 @@ describe('::config::', () => {
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain(
-        'Authentication is not properly configured. Please update the configuration'
+        'Authentication is not properly configured. Please update the configuration',
       )
     }
   })
@@ -292,7 +290,7 @@ describe('::config::', () => {
         gpay: { en: 'Google Pay' },
         affirm: { en: 'Affirm' },
       })
-    }
+    },
   )
 
   it(
@@ -327,7 +325,7 @@ describe('::config::', () => {
         affirm: { en: 'Affirm' },
         gpay: { en: 'Google pay' },
       })
-    }
+    },
   )
 
   describe('removeSentitiveData', () => {
@@ -362,9 +360,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(config.default.getModuleConfig().removeSensitiveData).to.eql(
-          false
+          false,
         )
-      }
+      },
     )
 
     it(
@@ -398,9 +396,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(config.default.getModuleConfig().removeSensitiveData).to.eql(
-          true
+          true,
         )
-      }
+      },
     )
 
     it(
@@ -426,9 +424,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(config.default.getModuleConfig().removeSensitiveData).to.eql(
-          false
+          false,
         )
-      }
+      },
     )
 
     it(
@@ -454,9 +452,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(config.default.getModuleConfig().removeSensitiveData).to.eql(
-          true
+          true,
         )
-      }
+      },
     )
   })
 
@@ -492,9 +490,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(
-          config.default.getModuleConfig().addCommercetoolsLineItems
+          config.default.getModuleConfig().addCommercetoolsLineItems,
         ).to.eql(false)
-      }
+      },
     )
 
     it(
@@ -528,9 +526,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(
-          config.default.getModuleConfig().addCommercetoolsLineItems
+          config.default.getModuleConfig().addCommercetoolsLineItems,
         ).to.eql(true)
-      }
+      },
     )
 
     it(
@@ -556,9 +554,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(
-          config.default.getModuleConfig().addCommercetoolsLineItems
+          config.default.getModuleConfig().addCommercetoolsLineItems,
         ).to.eql(false)
-      }
+      },
     )
 
     it(
@@ -584,9 +582,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(
-          config.default.getModuleConfig().addCommercetoolsLineItems
+          config.default.getModuleConfig().addCommercetoolsLineItems,
         ).to.eql(true)
-      }
+      },
     )
   })
 
@@ -622,9 +620,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
-          false
+          false,
         )
-      }
+      },
     )
 
     it(
@@ -658,9 +656,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
-          true
+          true,
         )
-      }
+      },
     )
 
     it(
@@ -686,9 +684,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
-          false
+          false,
         )
-      }
+      },
     )
 
     it(
@@ -714,9 +712,9 @@ describe('::config::', () => {
         })
         const config = await reloadModule('../../../src/config/config.js')
         expect(config.default.getModuleConfig().generateIdempotencyKey).to.eql(
-          true
+          true,
         )
-      }
+      },
     )
   })
 
@@ -727,7 +725,7 @@ describe('::config::', () => {
       expect.fail('This test should throw an error, but it did not')
     } catch (e) {
       expect(e.message).to.contain(
-        'configuration is not provided in the JSON format'
+        'configuration is not provided in the JSON format',
       )
     }
   })
@@ -768,7 +766,7 @@ describe('::config::', () => {
 
         const loadedConfig = await reloadModule('../../../src/config/config.js')
         expect(
-          loadedConfig.default.getCtpConfig('ctpProjectKey1')
+          loadedConfig.default.getCtpConfig('ctpProjectKey1'),
         ).to.deep.equal({
           clientId: 'clientId',
           clientSecret: 'clientSecret',
@@ -782,19 +780,18 @@ describe('::config::', () => {
           },
         })
         expect(
-          loadedConfig.default.getAdyenConfig('adyenMerchantAccount1')
+          loadedConfig.default.getAdyenConfig('adyenMerchantAccount1'),
         ).to.deep.equal({
           apiBaseUrl: 'apiBaseUrl',
           apiKey: 'apiKey',
           clientKey: 'clientKey',
-          legacyApiBaseUrl: 'legacyApiBaseUrl',
           paypalMerchantId: '',
         })
       } finally {
         fs.unlinkSync(filePath)
         renameExtensionrcFile(tempFileName, extensionConfigFileName)
       }
-    }
+    },
   )
 
   function renameExtensionrcFile(fileName, fileNameToRename) {

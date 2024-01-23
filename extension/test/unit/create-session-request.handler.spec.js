@@ -37,7 +37,7 @@ describe('create-session-request::execute::', () => {
   }
 
   const adyenCredentials = config.getAdyenConfig(
-    paymentObject.custom.fields.adyenMerchantAccount
+    paymentObject.custom.fields.adyenMerchantAccount,
   )
 
   afterEach(() => {
@@ -70,16 +70,16 @@ describe('create-session-request::execute::', () => {
     const request = JSON.parse(result.actions[0].fields.request)
     expect(JSON.parse(request.body)).to.be.deep.includes(getSessionRequest)
     expect(result.actions[0].fields.response).to.be.deep.equal(
-      JSON.stringify(adyenGetSessionResponse)
+      JSON.stringify(adyenGetSessionResponse),
     )
     expect(result.actions[0].fields.response).to.be.deep.equal(
-      result.actions[1].value
+      result.actions[1].value,
     )
     expect(result.actions[0].fields.type).to.equal(
-      c.CTP_INTERACTION_TYPE_CREATE_SESSION
+      c.CTP_INTERACTION_TYPE_CREATE_SESSION,
     )
     expect(result.actions[1].name).to.equal(
-      c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE
+      c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE,
     )
   })
 
@@ -103,11 +103,11 @@ describe('create-session-request::execute::', () => {
       expect(JSON.parse(request.body)).to.be.deep.includes(getSessionRequest)
       expect(result.actions[0].fields.response).to.be.includes(errorMsg)
       expect(result.actions[0].fields.type).to.equal(
-        c.CTP_INTERACTION_TYPE_CREATE_SESSION
+        c.CTP_INTERACTION_TYPE_CREATE_SESSION,
       )
       expect(result.actions[1].name).to.equal(
-        c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE
+        c.CTP_INTERACTION_TYPE_CREATE_SESSION_RESPONSE,
       )
-    }
+    },
   )
 })

@@ -34,15 +34,13 @@ describe('cancel-payment::execute', () => {
 
   before(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-payment.json'
+      'test/unit/fixtures/ctp-payment.json',
     )
   })
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
-    scope = nock(
-      `${adyenConfig.legacyApiBaseUrl}/Payment/${constants.ADYEN_LEGACY_API_VERSION.CANCEL}`
-    )
+    scope = nock(`${adyenConfig.apiBaseUrl}/payments/8835513921644842/`)
   })
 
   afterEach(() => {
@@ -55,7 +53,7 @@ describe('cancel-payment::execute', () => {
       'then it should return actions "addInterfaceInteraction", ' +
       '"changeTransactionState" and "changeTransactionInteractionId"',
     async () => {
-      scope.post('/cancel').reply(200, cancelPaymentResponse)
+      scope.post('/cancels').reply(200, cancelPaymentResponse)
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.key = 'originalReference-ABCDEFG'
       ctpPaymentClone.transactions.push(cancelPaymentTransaction)
@@ -66,19 +64,19 @@ describe('cancel-payment::execute', () => {
       expect(actions).to.have.lengthOf(3)
 
       const addInterfaceInteraction = actions.find(
-        (a) => a.action === 'addInterfaceInteraction'
+        (a) => a.action === 'addInterfaceInteraction',
       )
       expect(addInterfaceInteraction.fields.type).to.equal(
-        CTP_INTERACTION_TYPE_CANCEL_PAYMENT
+        CTP_INTERACTION_TYPE_CANCEL_PAYMENT,
       )
       expect(addInterfaceInteraction.fields.request).to.be.a('string')
       expect(addInterfaceInteraction.fields.response).to.equal(
-        JSON.stringify(cancelPaymentResponse)
+        JSON.stringify(cancelPaymentResponse),
       )
       expect(addInterfaceInteraction.fields.createdAt).to.be.a('string')
 
       const changeTransactionState = actions.find(
-        (a) => a.action === 'changeTransactionState'
+        (a) => a.action === 'changeTransactionState',
       )
       expect(changeTransactionState).to.be.deep.equal({
         transactionId: 'cancelTransactionId',
@@ -87,13 +85,13 @@ describe('cancel-payment::execute', () => {
       })
 
       const changeTransactionInteractionId = actions.find(
-        (a) => a.action === 'changeTransactionInteractionId'
+        (a) => a.action === 'changeTransactionInteractionId',
       )
       expect(changeTransactionInteractionId).to.be.deep.equal({
         transactionId: 'cancelTransactionId',
         action: 'changeTransactionInteractionId',
         interactionId: '8825408195409505',
       })
-    }
+    },
   )
 })

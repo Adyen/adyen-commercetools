@@ -41,7 +41,7 @@ Terms used in this guide:
 - **Extension module** - [extension module](https://github.com/commercetools/commercetools-adyen-integration#extension-module) configured as [commercetools HTTP API Extensions](https://docs.commercetools.com/api/projects/api-extensions) is handling checkout steps by intercepting payment modifications and communicating with Adyen API.
 - **Notification module** - [notification module](https://github.com/commercetools/commercetools-adyen-integration#notification-module) processes asynchronous notifications from Adyen and stores payment state changes in commercetools payment object.
 
-The following diagram shows checkout integration flow based on [Adyen Web Components](https://docs.adyen.com/online-payments/build-your-integration?platform=Web&integration=Components&version=5.43.0#how-it-works).
+The following diagram shows checkout integration flow based on [Adyen Web Components](https://docs.adyen.com/online-payments/build-your-integration?platform=Web&integration=Components&version=5.53.2#how-it-works).
 
 ![Flow](./adyen-checkout-flow-diagram.png)
 
@@ -524,6 +524,11 @@ For details, please follow [Get payment outcome](https://docs.adyen.com/online-p
 ## Error handling
 
 In case you encounter errors in your integration, refer to the following:
+
+### API logs in CommerceTools backend
+
+Log into the [CommerceTools Merchant Center](https://mc.europe-west1.gcp.commercetools.com/) and navigate to the following section: **CT Merchant Center -> Orders -> Select Order -> Payments Tab -> View PSP transaction log**.
+From here on you can collapse the different sections to see the API requests and responses sent to Adyen and possible received webhooks for the specific order.
 
 ### Extension module errors
 

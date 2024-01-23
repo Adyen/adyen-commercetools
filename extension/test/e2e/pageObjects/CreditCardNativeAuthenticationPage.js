@@ -19,7 +19,7 @@ export default class CreditCardNativeAuthenticationPage {
       await passwordInputEle.type('password')
     }
     const submitButtonEle = await frameWithPasswordInput.$(
-      'button[type=submit]'
+      'button[type=submit]',
     )
     if (submitButtonEle) {
       await submitButtonEle.click()

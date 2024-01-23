@@ -13,7 +13,7 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
     await this.pasteValuesInCreditCardWebComponent(
       creditCardNumber,
       creditCardDate,
-      creditCardCvc
+      creditCardCvc,
     )
     await this.confirmCreditCardWebComopnent()
   }
@@ -21,26 +21,35 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
   async pasteValuesInCreditCardWebComponent(
     creditCardNumber,
     creditCardDate,
-    creditCardCvc
+    creditCardCvc,
   ) {
-    await this.page.waitForTimeout(2_000) // wait for web component rendering
+    const elementHandle = await this.page.waitForSelector(
+      '[data-cse="encryptedCardNumber"] iframe',
+    )
+    const encryptedCardNumberFrame = await elementHandle.contentFrame()
+
+    // For some reason following selector won't work unless we wait
+    await encryptedCardNumberFrame.waitForTimeout(10_000)
+    await encryptedCardNumberFrame.waitForSelector(
+      '[data-fieldtype=encryptedCardNumber]',
+    )
 
     await executeInAdyenIframe(
       this.page,
       '[data-fieldtype=encryptedCardNumber]',
-      (el) => el.type(creditCardNumber)
+      (el) => el.type(creditCardNumber),
     )
 
     await executeInAdyenIframe(
       this.page,
       'input[data-fieldtype^=encryptedExpiry]',
-      (el) => el.type(creditCardDate)
+      (el) => el.type(creditCardDate),
     )
 
     await executeInAdyenIframe(
       this.page,
       'input[data-fieldtype^=encryptedSecurity]',
-      (el) => el.type(creditCardCvc)
+      (el) => el.type(creditCardCvc),
     )
   }
 

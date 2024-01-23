@@ -93,7 +93,7 @@ function overrideEnableHmacSignatureConfig(enableHmacSignature) {
 async function setupLocalTunnel() {
   const extensionTunnelDomain = 'ctp-adyen-integration-tests'
   extensionTunnel = await initTunnel(extensionTunnelDomain, extensionPort)
-  const apiExtensionBaseUrl = extensionTunnel.url
+  const apiExtensionBaseUrl = extensionTunnel.url.replace('http:', 'https:')
   overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
 }
 
@@ -127,7 +127,7 @@ async function updatePaymentWithRetry(ctpClient, actions, payment) {
         ctpClient.builder.payments,
         payment.id,
         version,
-        actions
+        actions,
       )
       statusCode = response.statusCode
       updatedPayment = response.body
@@ -136,7 +136,7 @@ async function updatePaymentWithRetry(ctpClient, actions, payment) {
       if (e.statusCode === 409) {
         const { body } = await ctpClient.fetchById(
           ctpClient.builder.payments,
-          payment.id
+          payment.id,
         )
         version = body.version
       } else {
@@ -158,7 +158,7 @@ async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
       const webhookId = await ensureAdyenWebhook(
         adyenConfig.apiKey,
         webhookUrlWithProjectKey,
-        adyenMerchantId
+        adyenMerchantId,
       )
       merchantIdToWebhookIdMap.set(adyenMerchantId, webhookId)
     }
@@ -183,7 +183,7 @@ async function setUpWebhooksAndNotificationModule() {
   await ensureAdyenWebhookForAllAdyenAccounts(webhookUrl)
   notificationTunnel = await initTunnel(
     notificationTunnelDomain,
-    notificationPort
+    notificationPort,
   )
 }
 
@@ -200,15 +200,15 @@ async function deleteWebhooks() {
           'Content-Type': 'application/json',
           'X-Api-Key': adyenConfig.apiKey,
         },
-      }
+      },
     )
   }
 }
 
 async function waitUntil(
   waitCondition,
-  maxRetry = 10,
-  maxWaitingTimePerRetryInMs = 32000
+  maxRetry = 15,
+  maxWaitingTimePerRetryInMs = 32000,
 ) {
   let counter = 0
   while (true) {
@@ -249,13 +249,14 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
           'Content-Type': 'application/json',
           'X-Api-Key': adyenApiKey,
         },
-      }
+      },
     )
     const getWebhookResponseJson = await getWebhookResponse.json()
 
     const existingWebhook = getWebhookResponseJson.data?.find(
       (webhook) =>
-        webhook.url === webhookConfig.url && webhook.type === webhookConfig.type
+        webhook.url === webhookConfig.url &&
+        webhook.type === webhookConfig.type,
     )
 
     if (existingWebhook) {
@@ -271,7 +272,7 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
               'Content-Type': 'application/json',
               'X-Api-Key': adyenApiKey,
             },
-          }
+          },
         )
       return existingWebhook.id
     }
@@ -285,7 +286,7 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
           'Content-Type': 'application/json',
           'X-Api-Key': adyenApiKey,
         },
-      }
+      },
     )
 
     const createWebhookResponseJson = await createWebhookResponse.json()
@@ -294,7 +295,7 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
   } catch (err) {
     throw Error(
       `Failed to ensure adyen webhook for project ${merchantId}.` +
-        `Error: ${JSON.stringify(serializeError(err))}`
+        `Error: ${JSON.stringify(serializeError(err))}`,
     )
   }
 }
@@ -302,16 +303,16 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
 async function fetchNotificationInterfaceInteraction(
   ctpClient,
   paymentId,
-  status = 'authorisation'
+  status = 'authorisation',
 ) {
   const { body } = await ctpClient.fetchById(
     ctpClient.builder.payments,
-    paymentId
+    paymentId,
   )
   return body.interfaceInteractions.find(
     (interaction) =>
       interaction.fields.type === 'notification' &&
-      interaction.fields.status === status
+      interaction.fields.status === status,
   )
 }
 

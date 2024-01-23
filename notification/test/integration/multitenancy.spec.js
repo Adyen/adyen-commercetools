@@ -9,21 +9,26 @@ import {
 } from '../test-utils.js'
 
 describe('::multitenancy::', () => {
-  const [commercetoolsProjectKey1, commercetoolsProjectKey2] =
+  const [commercetoolsProjectKey1, maybeCommercetoolsProjectKey2] =
     config.getAllCtpProjectKeys()
-  const [adyenMerchantAccount1, adyenMerchantAccount2] =
+  const [adyenMerchantAccount1, maybeAdyenMerchantAccount2] =
     config.getAllAdyenMerchantAccounts()
 
   let ctpClient1
   let ctpClient2
   let notificationURL
 
+  const commercetoolsProjectKey2 =
+    maybeCommercetoolsProjectKey2 || commercetoolsProjectKey1
+  const adyenMerchantAccount2 =
+    maybeAdyenMerchantAccount2 || adyenMerchantAccount1
+
   before(async () => {
     ctpClient1 = await ctpClientBuilder.get(
-      config.getCtpConfig(commercetoolsProjectKey1)
+      config.getCtpConfig(commercetoolsProjectKey1),
     )
     ctpClient2 = await ctpClientBuilder.get(
-      config.getCtpConfig(commercetoolsProjectKey2)
+      config.getCtpConfig(commercetoolsProjectKey2),
     )
     notificationURL = getNotificationURL()
   })
@@ -39,14 +44,14 @@ describe('::multitenancy::', () => {
         merchantReference1,
         pspReference1,
         commercetoolsProjectKey1,
-        adyenMerchantAccount1
+        adyenMerchantAccount1,
       ),
       ensurePayment(
         ctpClient2,
         merchantReference2,
         pspReference2,
         commercetoolsProjectKey2,
-        adyenMerchantAccount2
+        adyenMerchantAccount2,
       ),
     ])
 
@@ -54,14 +59,14 @@ describe('::multitenancy::', () => {
       commercetoolsProjectKey1,
       adyenMerchantAccount1,
       merchantReference1,
-      pspReference1
+      pspReference1,
     )
 
     const notificationPayload2 = createNotificationPayload(
       commercetoolsProjectKey2,
       adyenMerchantAccount2,
       merchantReference2,
-      pspReference2
+      pspReference2,
     )
 
     const [response1, response2] = await Promise.all([
@@ -84,12 +89,12 @@ describe('::multitenancy::', () => {
 
     const { body: paymentAfter1 } = await ctpClient1.fetchByKey(
       ctpClient1.builder.payments,
-      pspReference1 // pspReference is the key of authorized payment
+      pspReference1, // pspReference is the key of authorized payment
     )
 
     const { body: paymentAfter2 } = await ctpClient2.fetchByKey(
       ctpClient2.builder.payments,
-      pspReference2 // pspReference is the key of authorized payment
+      pspReference2, // pspReference is the key of authorized payment
     )
 
     expect(paymentAfter1.transactions).to.have.lengthOf(1)
@@ -101,7 +106,7 @@ describe('::multitenancy::', () => {
         .additionalData
     }
     expect(paymentAfter1.interfaceInteractions[0].fields.notification).to.equal(
-      JSON.stringify(notificationPayload1.notificationItems[0])
+      JSON.stringify(notificationPayload1.notificationItems[0]),
     )
 
     expect(paymentAfter2.transactions).to.have.lengthOf(1)
@@ -113,7 +118,7 @@ describe('::multitenancy::', () => {
         .additionalData
     }
     expect(paymentAfter2.interfaceInteractions[0].fields.notification).to.equal(
-      JSON.stringify(notificationPayload2.notificationItems[0])
+      JSON.stringify(notificationPayload2.notificationItems[0]),
     )
   })
 })

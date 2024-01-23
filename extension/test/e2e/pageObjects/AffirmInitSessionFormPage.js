@@ -11,66 +11,66 @@ export default class AffirmInitSessionFormPage extends InitSessionFormPage {
     await this.page.waitForSelector('.adyen-checkout__button--pay') // wait for rendering of web component
 
     const adyenCheckoutInputFormElement = await this.page.$(
-      '#adyen-payment-form-input'
+      '#adyen-payment-form-input',
     )
 
     const adyenCheckoutInputForm = await (
       await adyenCheckoutInputFormElement.getProperty('innerHTML')
     ).jsonValue()
     const adyenCheckoutInputFormJSON = JSON.parse(
-      adyenCheckoutInputForm.toString()
+      adyenCheckoutInputForm.toString(),
     )
 
     await this.page.type(
       '.adyen-checkout__input--firstName',
-      adyenCheckoutInputFormJSON?.shopperName?.firstName
+      adyenCheckoutInputFormJSON?.shopperName?.firstName,
     )
 
     await this.page.type(
       '.adyen-checkout__input--lastName',
-      adyenCheckoutInputFormJSON?.shopperName?.lastName
+      adyenCheckoutInputFormJSON?.shopperName?.lastName,
     )
 
     await this.page.type(
       '.adyen-checkout__input--shopperEmail',
-      adyenCheckoutInputFormJSON?.shopperEmail
+      adyenCheckoutInputFormJSON?.shopperEmail,
     )
 
     await this.page.type(
       '.adyen-checkout__input--telephoneNumber',
-      adyenCheckoutInputFormJSON?.telephoneNumber
+      adyenCheckoutInputFormJSON?.telephoneNumber,
     )
 
     await this.page.type(
       '.adyen-checkout__input--street',
-      adyenCheckoutInputFormJSON?.billingAddress?.street
+      adyenCheckoutInputFormJSON?.billingAddress?.street,
     )
 
     await this.page.type(
       '.adyen-checkout__input--houseNumberOrName',
-      adyenCheckoutInputFormJSON?.billingAddress?.houseNumberOrName
+      adyenCheckoutInputFormJSON?.billingAddress?.houseNumberOrName,
     )
 
     await this.page.type(
       '.adyen-checkout__input--city',
-      adyenCheckoutInputFormJSON?.billingAddress?.city
+      adyenCheckoutInputFormJSON?.billingAddress?.city,
     )
     await this.page.type(
       '.adyen-checkout__input--postalCode',
-      adyenCheckoutInputFormJSON?.billingAddress?.postalCode
+      adyenCheckoutInputFormJSON?.billingAddress?.postalCode,
     )
     await this.fillDeliveryAddressStateDDL(
-      adyenCheckoutInputFormJSON?.billingAddress?.stateCode
+      adyenCheckoutInputFormJSON?.billingAddress?.stateCode,
     )
   }
 
   async fillDeliveryAddressStateDDL(stateCodeInput) {
     const deliveryAddressStateElemList = await this.page.$$(
-      '.adyen-checkout__dropdown__list'
+      '.adyen-checkout__dropdown__list',
     )
     const deliveryAddressStateElem = deliveryAddressStateElemList[1]
     const deliveryAddressStateOptions = await deliveryAddressStateElem.$$(
-      '.adyen-checkout__dropdown__element'
+      '.adyen-checkout__dropdown__element',
     )
     deliveryAddressStateOptions.map(async (el) => {
       // const elem = e1

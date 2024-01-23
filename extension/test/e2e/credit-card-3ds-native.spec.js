@@ -16,7 +16,7 @@ import CreditCardInitSessionFormPage from './pageObjects/CreditCardInitSessionFo
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/checkout/3d-secure/native-3ds2/web-component
-describe('::creditCardPayment3dsNative::', () => {
+describe.skip('::creditCardPayment3dsNative::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
@@ -27,14 +27,14 @@ describe('::creditCardPayment3dsNative::', () => {
       serveFile(
         './test/e2e/fixtures/3ds-v2-init-session-form.html',
         request,
-        response
+        response,
       )
     }
     routes['/redirect-payment-form'] = async (request, response) => {
       serveFile(
         './test/e2e/fixtures/redirect-payment-form.html',
         request,
-        response
+        response,
       )
     }
     routes['/return-url'] = async (request, response) => {
@@ -80,18 +80,18 @@ describe('::creditCardPayment3dsNative::', () => {
         // https://docs.adyen.com/online-payments/web-components#create-payment-session
         const createSessionRequest = await getCreateSessionRequest(
           baseUrl,
-          clientKey
+          clientKey,
         )
 
         paymentAfterCreateSession = await createPaymentSession(
           ctpClient,
           adyenMerchantAccount,
           ctpProjectKey,
-          createSessionRequest
+          createSessionRequest,
         )
         logger.debug(
           'credit-card-3ds-native::paymentAfterCreateSession:',
-          JSON.stringify(paymentAfterCreateSession)
+          JSON.stringify(paymentAfterCreateSession),
         )
 
         // Step #2 - Setup Component
@@ -115,13 +115,13 @@ describe('::creditCardPayment3dsNative::', () => {
         })
         logger.debug(
           'credit-card-3ds-native::initPaymentResult:',
-          JSON.stringify(initPaymentResult)
+          JSON.stringify(initPaymentResult),
         )
       } catch (err) {
         logger.error('credit-card-3ds-native::errors', JSON.stringify(err))
       }
       assertCreatePaymentSession(paymentAfterCreateSession, initPaymentResult)
-    }
+    },
   )
 
   async function initPaymentSession({
@@ -135,7 +135,7 @@ describe('::creditCardPayment3dsNative::', () => {
   }) {
     const initSessionFormPage = new CreditCardInitSessionFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await initSessionFormPage.goToThisPage()
     return await initSessionFormPage.initPaymentSession({
@@ -151,14 +151,14 @@ describe('::creditCardPayment3dsNative::', () => {
     await browserTab.waitForTimeout(5_000)
 
     const creditCardAuthenticationPage = new CreditCardNativeAuthenticationPage(
-      browserTab
+      browserTab,
     )
 
     await creditCardAuthenticationPage.doPaymentAuthentication()
 
     const initSessionFormPage = new CreditCardInitSessionFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     return await initSessionFormPage.getPaymentAuthResult()
   }

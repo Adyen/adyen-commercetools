@@ -10,7 +10,7 @@ describe('Payment controller', () => {
 
   beforeEach(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
-      'test/unit/fixtures/ctp-payment.json'
+      'test/unit/fixtures/ctp-payment.json',
     )
   })
 
@@ -84,7 +84,7 @@ describe('Payment controller', () => {
       expect(data.errors[0].code).to.equal('General')
       expect(data.errors[0].message).to.equal(
         '[commercetools-adyen-integration-extension] ' +
-          'Unexpected error (Payment ID: undefined): request.on is not a function.'
+          'Unexpected error (Payment ID: undefined): request.on is not a function.',
       )
     }
 

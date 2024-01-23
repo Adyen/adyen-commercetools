@@ -4,7 +4,7 @@ Date: 2023-02-24
 
 ## Status
 
-[Accepted](https://github.com/commercetools/commercetools-adyen-integration/pull/1050)
+[Deprecated](https://github.com/commercetools/commercetools-adyen-integration/pull/1050)
 
 ## Context
 

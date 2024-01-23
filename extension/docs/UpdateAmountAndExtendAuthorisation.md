@@ -142,7 +142,7 @@ Additionally, it must contain `paymentPspReference` field. `paymentPspReference`
     {
       "action": "setCustomField",
       "name": "amountUpdatesRequest",
-      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reason\":\"DelayedCharge\",\"reference\":\"YOUR_PAYMENT_REFERENCE\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\", \"paymentPspReference\":\"853592567856061C\"}"
+      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"industryUsage\":\"delayedCharge\",\"reference\":\"YOUR_PAYMENT_REFERENCE\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\", \"paymentPspReference\":\"853592567856061C\"}"
     }
   ]
 }
@@ -230,7 +230,7 @@ To do `amountUpdatesRequest` multiple times, you need to remove the custom field
     {
       "action": "setCustomField",
       "name": "amountUpdatesRequest",
-      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reason\":\"DelayedCharge\",\"reference\":\"YOUR_PAYMENT_REFERENCE\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
+      "value": "{\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"industryUsage\":\"delayedCharge\",\"reference\":\"YOUR_PAYMENT_REFERENCE\",\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\"}"
     },
     {
       "action": "setCustomField",

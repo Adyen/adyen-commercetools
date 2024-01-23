@@ -24,7 +24,7 @@ function setRoute() {
     serveFile(
       './test/e2e/fixtures/credit-card-init-session-form.html',
       request,
-      response
+      response,
     )
   }
 }
@@ -71,7 +71,7 @@ describe('::creditCardPayment::amount-update::', () => {
       paymentAfterCreateSession = await createSession(clientKey)
       logger.debug(
         'credit-card-amount-update::paymentAfterCreateSession:',
-        JSON.stringify(paymentAfterCreateSession)
+        JSON.stringify(paymentAfterCreateSession),
       )
 
       // Step #2 - Setup Component
@@ -91,21 +91,36 @@ describe('::creditCardPayment::amount-update::', () => {
         async () =>
           await fetchNotificationInterfaceInteraction(
             ctpClient,
-            paymentAfterCreateSession.id
-          )
+            paymentAfterCreateSession.id,
+          ),
       )
 
       // Step #3 - Update Amount
-      const { statusCode, updatedPayment } = await updateAmount(
-        notificationInteraction,
-        paymentAfterCreateSession
+      const { statusCode, updatedPayment } = await waitUntil(
+        async () => {
+          try {
+            return await updateAmount(
+              notificationInteraction,
+              paymentAfterCreateSession,
+            )
+          } catch (err) {
+            logger.error(
+              'credit-card-amount-update::errors:',
+              JSON.stringify(err),
+            )
+            return Promise.resolve()
+          }
+        },
+        10,
+        1_000,
       )
+
       amountUpdatesResponse = JSON.parse(
-        updatedPayment.custom.fields.amountUpdatesResponse
+        updatedPayment.custom.fields.amountUpdatesResponse,
       )
       amountUpdatesInterfaceInteractions =
         updatedPayment.interfaceInteractions.filter(
-          (ii) => ii.fields.type === 'amountUpdates'
+          (ii) => ii.fields.type === 'amountUpdates',
         )
       updatedAmountStatusCode = statusCode
     } catch (err) {
@@ -117,18 +132,21 @@ describe('::creditCardPayment::amount-update::', () => {
         await fetchNotificationInterfaceInteraction(
           ctpClient,
           paymentAfterCreateSession.id,
-          'authorisation_adjustment'
-        )
+          'authorisation_adjustment',
+        ),
     )
 
     logger.debug(JSON.stringify(notificationInteractionForAmountUpdates))
 
     assertCreatePaymentSession(
       paymentAfterCreateSession,
-      initPaymentSessionResult
+      initPaymentSessionResult,
     )
     expect(updatedAmountStatusCode).to.equal(200)
-    expect(amountUpdatesResponse.status).to.equal('received')
+    expect(amountUpdatesResponse.status).to.equal(
+      'received',
+      amountUpdatesResponse.body,
+    )
     expect(amountUpdatesInterfaceInteractions).to.have.lengthOf(1)
 
     // assert notification response from amount updates
@@ -136,14 +154,14 @@ describe('::creditCardPayment::amount-update::', () => {
       notificationInteractionForAmountUpdates.fields.notification
     const notificationJson = JSON.parse(notificationStr)
     expect(notificationJson.NotificationRequestItem.eventCode).to.equal(
-      'AUTHORISATION_ADJUSTMENT'
+      'AUTHORISATION_ADJUSTMENT',
     )
     expect(notificationJson.NotificationRequestItem.success).to.equal('true')
   })
 
   async function updateAmount(
     notificationInteraction,
-    paymentAfterCreateSession
+    paymentAfterCreateSession,
   ) {
     const notificationStr = notificationInteraction.fields.notification
     const notificationJson = JSON.parse(notificationStr)
@@ -155,13 +173,13 @@ describe('::creditCardPayment::amount-update::', () => {
         currency: 'EUR',
         value: 1010,
       },
-      reason: 'DelayedCharge',
+      reason: 'delayedCharge',
       reference: paymentAfterCreateSession.key,
     }
     const { body: paymentAfterReceivingNotification } =
       await ctpClient.fetchById(
         ctpClient.builder.payments,
-        paymentAfterCreateSession.id
+        paymentAfterCreateSession.id,
       )
     const { statusCode, body: updatedPayment } = await ctpClient.update(
       ctpClient.builder.payments,
@@ -173,7 +191,7 @@ describe('::creditCardPayment::amount-update::', () => {
           name: 'amountUpdatesRequest',
           value: JSON.stringify(amountUpdatesRequestDraft),
         },
-      ]
+      ],
     )
     return { statusCode, updatedPayment }
   }
@@ -186,7 +204,7 @@ describe('::creditCardPayment::amount-update::', () => {
         ctpClient,
         adyenMerchantAccount,
         ctpProjectKey,
-        createSessionRequest
+        createSessionRequest,
       )
     } catch (err) {
       logger.error('credit-card::createSession::errors', JSON.stringify(err))
@@ -209,7 +227,7 @@ describe('::creditCardPayment::amount-update::', () => {
   }) {
     const initSessionFormPage = new CreditCardInitSessionFormPage(
       browserTab,
-      baseUrl
+      baseUrl,
     )
     await initSessionFormPage.goToThisPage()
     await initSessionFormPage.initPaymentSession({
