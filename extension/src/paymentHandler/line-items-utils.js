@@ -47,6 +47,7 @@ function _getLocales(cart, payment) {
 }
 
 function _createAdyenLineItemFromLineItem(ctpLineItem, locales) {
+  const quantity = ctpLineItem.quantity
   return {
     id: ctpLineItem.variant.sku,
     quantity: ctpLineItem.quantity,
@@ -55,12 +56,21 @@ function _createAdyenLineItemFromLineItem(ctpLineItem, locales) {
       locales,
       KLARNA_DEFAULT_LINE_ITEM_NAME,
     ),
-    amountIncludingTax: ctpLineItem.price.value.centAmount,
+    amountExcludingTax: parseFloat(
+      (ctpLineItem.taxedPrice.totalNet.centAmount / quantity).toFixed(0),
+    ),
+    amountIncludingTax: parseFloat(
+      (ctpLineItem.taxedPrice.totalGross.centAmount / quantity).toFixed(0),
+    ),
+    taxAmount: parseFloat(
+      (ctpLineItem.taxedPrice.totalTax.centAmount / quantity).toFixed(0),
+    ),
     taxPercentage: ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT,
   }
 }
 
 function _createAdyenLineItemFromCustomLineItem(ctpLineItem, locales) {
+  const quantity = ctpLineItem.quantity
   return {
     id: ctpLineItem.id,
     quantity: ctpLineItem.quantity,
@@ -69,7 +79,15 @@ function _createAdyenLineItemFromCustomLineItem(ctpLineItem, locales) {
       locales,
       KLARNA_DEFAULT_LINE_ITEM_NAME,
     ),
-    amountIncludingTax: ctpLineItem.money.centAmount,
+    amountExcludingTax: parseFloat(
+      (ctpLineItem.taxedPrice.totalNet.centAmount / quantity).toFixed(0),
+    ),
+    amountIncludingTax: parseFloat(
+      (ctpLineItem.taxedPrice.totalGross.centAmount / quantity).toFixed(0),
+    ),
+    taxAmount: parseFloat(
+      (ctpLineItem.taxedPrice.totalTax.centAmount / quantity).toFixed(0),
+    ),
     taxPercentage: ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT,
   }
 }
@@ -81,7 +99,9 @@ function _createShippingInfoAdyenLineItem(shippingInfo, locales) {
     description:
       _getShippingMethodDescription(shippingInfo, locales) ||
       KLARNA_DEFAULT_SHIPPING_METHOD_DESCRIPTION,
-    amountIncludingTax: shippingInfo.price.centAmount,
+    amountExcludingTax: shippingInfo.taxedPrice.totalNet.centAmount,
+    amountIncludingTax: shippingInfo.taxedPrice.totalGross.centAmount,
+    taxAmount: shippingInfo.taxedPrice.totalTax.centAmount,
     taxPercentage: shippingInfo.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT,
   }
 }
