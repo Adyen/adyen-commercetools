@@ -149,10 +149,8 @@ async function ensurePayment(
   )
   const paymentDraft = _.cloneDeep(payment)
   paymentDraft.key = paymentKey
-  paymentDraft.custom.fields = {
-    commercetoolsProjectKey,
-    adyenMerchantAccount,
-  }
+  paymentDraft.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
+  paymentDraft.custom.fields.adyenMerchantAccount = adyenMerchantAccount
   if (pspReference) {
     paymentDraft.transactions[0].interactionId = pspReference
   }
