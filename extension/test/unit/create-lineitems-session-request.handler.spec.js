@@ -74,6 +74,23 @@ describe('create-lineitems-session-request::execute', () => {
       expect(ctpLineItem.price.value.centAmount).to.equal(
         adyenLineItem.amountIncludingTax,
       )
+      expect(
+        parseFloat(
+          (
+            ctpLineItem.price.value.centAmount /
+            (1 + ctpLineItem.taxRate.amount)
+          ).toFixed(0),
+        ),
+      ).to.equal(adyenLineItem.amountExcludingTax)
+      expect(
+        ctpLineItem.price.value.centAmount -
+          parseFloat(
+            (
+              ctpLineItem.price.value.centAmount /
+              (1 + ctpLineItem.taxRate.amount)
+            ).toFixed(0),
+          ),
+      ).to.equal(adyenLineItem.taxAmount)
       expect(ctpLineItem.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT).to.equal(
         adyenLineItem.taxPercentage,
       )
@@ -85,6 +102,23 @@ describe('create-lineitems-session-request::execute', () => {
       expect(ctpShippingInfo.price.centAmount).to.equal(
         adyenShippingInfo.amountIncludingTax,
       )
+      expect(
+        parseFloat(
+          (
+            ctpShippingInfo.price.centAmount /
+            (1 + ctpShippingInfo.taxRate.amount)
+          ).toFixed(0),
+        ),
+      ).to.equal(adyenShippingInfo.amountExcludingTax)
+      expect(
+        ctpShippingInfo.price.centAmount -
+          parseFloat(
+            (
+              ctpShippingInfo.price.centAmount /
+              (1 + ctpShippingInfo.taxRate.amount)
+            ).toFixed(0),
+          ),
+      ).to.equal(adyenShippingInfo.taxAmount)
       expect(
         ctpShippingInfo.taxRate.amount * ADYEN_PERCENTAGE_MINOR_UNIT,
       ).to.equal(adyenShippingInfo.taxPercentage)
