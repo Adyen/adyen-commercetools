@@ -8,6 +8,7 @@
 
 
 - [Supported features](#supported-features)
+- [Supported payment methods](#supported-payment-methods)
 - [Overview](#overview)
   - [Extension module](#extension-module)
   - [Notification module](#notification-module)
@@ -17,7 +18,9 @@
 
 ## Supported features
 
-- [Adyen Web Component](https://docs.adyen.com/checkout/components-web) based payment methods. For a full list of payment methods please refer to [supported payment methods](https://docs.adyen.com/checkout/supported-payment-methods).
+- [Adyen Web Component](https://docs.adyen.com/checkout/components-web) based payment methods.
+For full list of payment methods that have been tested for CommerceTools integration please refer to
+[supported payment methods section](#supported-payment-methods) of this document.
   - Note: since the integration relies on the usage of Adyen's web components it does not need to process sensitive credit card data and thus is fully PCI DSS **compliant**.
 - Asynchronous notifications handling via [notification module](#notification-module).
 - [Multi-tenancy](./extension/docs/WebComponentsIntegrationGuide.md#multi-tenancy) to serve multiple Adyen merchant accounts/commercetools projects with one application instance.
@@ -26,6 +29,47 @@
 - [Manual capture](./extension/docs/ManualCapture.md) of a payment.
 - [Restore](./extension/docs/Restore.md), which gives your shoppers an opportunity to offset their carbon emissions from the delivery or lifecycle of their purchase at checkout. 
 - [Store payment](./extension/docs/StorePayment.md) and [disable stored payment](./extension/docs/DisableStoredPayments.md) gives your shoppers the ability to store payments for later use and removing these stored payments.
+
+## Supported payment methods
+
+### Credit and debit cards
+
+- [Credit/debit cards](https://docs.adyen.com/payment-methods/cards/)
+
+### Buy Now Pay Later
+
+- [Klarna Pay Later](https://docs.adyen.com/payment-methods/klarna/)
+- [Afterpay](https://docs.adyen.com/payment-methods/afterpaytouch/)
+
+### Cash and ATM payment methods
+
+- [Multibanco](https://docs.adyen.com/payment-methods/multibanco/)
+
+### Online payments
+
+- [iDEAL](https://docs.adyen.com/payment-methods/ideal/)
+- [Sofort (Online bank transfer)](https://docs.adyen.com/payment-methods/sofort/)
+- [BLIK](https://docs.adyen.com/payment-methods/blik/)
+- [MobilePay](https://docs.adyen.com/payment-methods/mobilepay/)
+- [Online banking Poland](https://docs.adyen.com/payment-methods/online-banking-poland/)
+- [Klarna Pay now](https://docs.adyen.com/payment-methods/klarna/)
+
+### Wallets
+
+- [PayPal](https://docs.adyen.com/payment-methods/paypal/)
+- [Apple Pay](https://docs.adyen.com/payment-methods/apple-pay/)
+- [Google Pay](https://docs.adyen.com/payment-methods/google-pay/)
+- [Bancontact](https://docs.adyen.com/payment-methods/bancontact/)
+- [Vipps](https://docs.adyen.com/payment-methods/vipps/)
+- [Swish](https://docs.adyen.com/payment-methods/swish/)
+
+### Prepaid and gift cards
+
+- [Givex](https://docs.adyen.com/payment-methods/gift-cards/)
+
+### Mobile
+
+- [TWINT](https://docs.adyen.com/payment-methods/twint/)
 
 ## Overview
 This repository contains two standalone modules that interact with commercetools and Adyen.
