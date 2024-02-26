@@ -23,7 +23,10 @@ export const handler = async (event) => {
   }
   try {
     for (const notification of notificationItems) {
-      const ctpProjectConfig = getCtpProjectConfig(notification, event.rawPath)
+      const ctpProjectConfig = getCtpProjectConfig(
+        notification,
+        event.rawPath || event.path,
+      )
       const adyenConfig = getAdyenConfig(notification)
 
       await notificationHandler.processNotification(
