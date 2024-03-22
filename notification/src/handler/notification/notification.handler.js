@@ -56,8 +56,8 @@ async function processNotification(
   )
 
   if (
-    !payment.custom.fields.makePaymentResponse &&
-    !payment.custom.fields.createSessionResponse
+    !payment?.custom.fields.makePaymentResponse &&
+    !payment?.custom.fields.createSessionResponse
   ) {
     const error = new Error(`Payment ${merchantReference} is not created yet.`)
     error.statusCode = 503
