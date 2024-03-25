@@ -32,6 +32,9 @@ For full list of payment methods that have been tested for CommerceTools integra
 
 ## Supported payment methods
 
+When adding payment methods in the Adyen Customer Area, please ensure you refer to the Adyen links below, as some payment methods require additional configuration.
+If you need assistance configuring your payment methods please contact Adyen Support via your Customer Area.
+
 ### Credit and debit cards
 
 - [Credit/debit cards](https://docs.adyen.com/payment-methods/cards/)
