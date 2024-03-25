@@ -1,6 +1,5 @@
 import { withPayment } from '../validator/validator-builder.js'
 import makePaymentHandler from './make-payment.handler.js'
-import makeLineitemsPaymentHandler from './make-lineitems-payment.handler.js'
 import submitPaymentDetailsHandler from './submit-payment-details.handler.js'
 import manualCaptureHandler from './manual-capture.handler.js'
 import cancelHandler from './cancel-payment.handler.js'
@@ -10,7 +9,6 @@ import getCarbonOffsetCostsHandler from './get-carbon-offset-costs.handler.js'
 import amountUpdatesHandler from './amount-updates.handler.js'
 import disableStoredPaymentHandler from './disable-stored-payment.handler.js'
 import sessionRequestHandler from './sessions-request.handler.js'
-import lineItemSessionRequestHandler from './sessions-line-items-request.handler.js'
 import {
   getChargeTransactionInitial,
   getAuthorizationTransactionSuccess,
@@ -19,7 +17,6 @@ import {
 } from './payment-utils.js'
 import { isBasicAuthEnabled } from '../validator/authentication.js'
 import errorMessages from '../validator/error-messages.js'
-import config from '../config/config.js'
 
 async function handlePayment(paymentObject, authToken) {
   if (isBasicAuthEnabled() && !authToken) {
@@ -78,10 +75,7 @@ function _getPaymentHandlers(paymentObject) {
   }
 
   if (customFields.makePaymentRequest && !customFields.makePaymentResponse) {
-    const makePaymentRequestObj = JSON.parse(customFields.makePaymentRequest)
-    if (_requiresLineItems(makePaymentRequestObj))
-      handlers.push(makeLineitemsPaymentHandler)
-    else handlers.push(makePaymentHandler)
+    handlers.push(makePaymentHandler)
   }
 
   if (
@@ -95,10 +89,7 @@ function _getPaymentHandlers(paymentObject) {
     customFields.createSessionRequest &&
     !customFields.createSessionResponse
   ) {
-    const createSessionRequestHandler = _getCreateSessionRequestHandler(
-      customFields.createSessionRequest,
-    )
-    handlers.push(createSessionRequestHandler)
+    handlers.push(sessionRequestHandler)
   }
 
   if (
@@ -132,16 +123,6 @@ function _getPaymentHandlers(paymentObject) {
   return handlers
 }
 
-function _getCreateSessionRequestHandler(createSessionRequest) {
-  const createSessionRequestObj = JSON.parse(createSessionRequest)
-
-  if (_requiresLineItems(createSessionRequestObj)) {
-    return lineItemSessionRequestHandler
-  }
-
-  return sessionRequestHandler
-}
-
 function _validatePaymentRequest(paymentObject, authToken) {
   const paymentValidator = withPayment(paymentObject)
   if (!isBasicAuthEnabled()) {
@@ -167,40 +148,6 @@ function _validatePaymentRequest(paymentObject, authToken) {
     if (paymentValidator.hasErrors()) return paymentValidator.getErrors()
   }
   return null
-}
-
-function _requiresLineItems(requestObj) {
-  const addCommercetoolsLineItemsFlag =
-    _getAddCommercetoolsLineItemsFlag(requestObj)
-  if (
-    addCommercetoolsLineItemsFlag === true ||
-    addCommercetoolsLineItemsFlag === false
-  ) {
-    return addCommercetoolsLineItemsFlag
-  }
-
-  const addCommercetoolsLineItemsAppConfigFlag =
-    config.getModuleConfig().addCommercetoolsLineItems
-  if (addCommercetoolsLineItemsAppConfigFlag === true) return true
-
-  return false
-}
-
-function _getAddCommercetoolsLineItemsFlag(requestObj) {
-  // The function is tend to be used to check values on the field: true, false, undefined,
-  // or the value set but not to true/false
-  // in case of the undefined or other than true/false, the function returns undefined:
-  // it means the other fallbacks have to be checked to decide adding line items
-  let addCommercetoolsLineItems
-  if ('addCommercetoolsLineItems' in requestObj) {
-    if (
-      requestObj.addCommercetoolsLineItems === true ||
-      requestObj.addCommercetoolsLineItems === false
-    ) {
-      addCommercetoolsLineItems = requestObj.addCommercetoolsLineItems
-    }
-  }
-  return addCommercetoolsLineItems
 }
 
 function _isCancelPayment(paymentObject) {

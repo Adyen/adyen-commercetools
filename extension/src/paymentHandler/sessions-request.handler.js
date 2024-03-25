@@ -4,14 +4,26 @@ import {
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import { createSessionRequest } from '../service/web-component-service.js'
+import mappingCartDataUtils from "./mapping-cart-data-utils.js";
 
 async function execute(paymentObject) {
-  const createSessionRequestObj = JSON.parse(
+  let createSessionRequestObj = JSON.parse(
     paymentObject.custom.fields.createSessionRequest,
   )
-  const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
+
+  createSessionRequestObj = await mappingCartDataUtils.getDataFromCart(
+    createSessionRequestObj,
+    paymentObject,
+    commercetoolsProjectKey
+  );
+  paymentObject.custom.fields.createSessionRequest = JSON.stringify(
+    createSessionRequestObj,
+  )
+
+  const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
+
   const { request, response } = await createSessionRequest(
     adyenMerchantAccount,
     commercetoolsProjectKey,
