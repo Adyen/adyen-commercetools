@@ -24,7 +24,6 @@ async function fetchMatchingCart(paymentObject, ctpClient) {
     const {body} = await ctpClient.fetch(
         ctpClient.builder.carts
             .where(`paymentInfo(payments(id="${paymentObject.id}"))`)
-            .expand('shippingInfo.shippingMethod'),
     );
 
     return body.results[0];
@@ -41,9 +40,11 @@ async function fetchMatchingCustomer(ctpClient, ctpCart) {
 
 function _mapCartData(requestObj, paymentObject, ctpCart) {
     requestObj = _mapBillingAddress(requestObj, ctpCart);
+
     requestObj.countryCode = requestObj.countryCode ?? ctpCart.country;
     requestObj.shopperEmail = requestObj.shopperEmail ?? ctpCart.customerEmail;
     requestObj.shopperLocale = requestObj.shopperLocale ?? ctpCart.locale;
+
     requestObj.lineItems = requestObj.lineItems ?? lineItemsUtils.createLineItems(
         paymentObject,
         ctpCart,
@@ -57,20 +58,22 @@ function _mapCartData(requestObj, paymentObject, ctpCart) {
 }
 
 function _mapBillingAddress(requestObj, ctpCart) {
-    requestObj.billingAddress = requestObj.billingAddress ?? {};
-    requestObj.billingAddress.street = requestObj.billingAddress.street ?? ctpCart.billingAddress.streetName;
-    requestObj.billingAddress.houseNumberOrName =
-        requestObj.billingAddress.houseNumberOrName ?? ctpCart.billingAddress.streetNumber;
-    requestObj.billingAddress.city = requestObj.billingAddress.city ?? ctpCart.billingAddress.city;
-    requestObj.billingAddress.postalCode = requestObj.billingAddress.postalCode ?? ctpCart.billingAddress.postalCode;
-    requestObj.billingAddress.country = requestObj.billingAddress.country ?? ctpCart.billingAddress.country;
+    const billingAddress = requestObj.billingAddress ?? {};
+    billingAddress.street = billingAddress.street ?? ctpCart.billingAddress.streetName;
+    billingAddress.houseNumberOrName =
+        billingAddress.houseNumberOrName ?? ctpCart.billingAddress.streetNumber;
+    billingAddress.city = billingAddress.city ?? ctpCart.billingAddress.city;
+    billingAddress.postalCode = billingAddress.postalCode ?? ctpCart.billingAddress.postalCode;
+    billingAddress.country = billingAddress.country ?? ctpCart.billingAddress.country;
+
+    requestObj.billingAddress = billingAddress;
 
     return requestObj;
 }
 
 function _mapAdditionalData(requestObj, ctpCart) {
     requestObj.additionalData = requestObj.additionalData ?? {};
-    const enhancedSchemeData = requestObj.additionalData.enhancedSchemeData ?? {};
+    let enhancedSchemeData = requestObj.additionalData.enhancedSchemeData ?? {};
 
     enhancedSchemeData.customerReference = enhancedSchemeData.customerReference ?? ctpCart.customerId;
     enhancedSchemeData.destinationCountryCode =
@@ -87,17 +90,7 @@ function _mapAdditionalData(requestObj, ctpCart) {
     }
 
     if (!enhancedSchemeData.itemDetailLine) {
-        enhancedSchemeData.itemDetailLine = {};
-        const lineItemsFromCart = ctpCart.lineItems;
-        for (let i = 0; i < lineItemsFromCart.length; i++) {
-            const lineItemDetails = {};
-            lineItemDetails.quantity = lineItemsFromCart[i].quantity;
-            lineItemDetails.unitPrice = lineItemsFromCart[i].price.value.centAmount;
-            lineItemDetails.totalAmount = lineItemsFromCart[i].taxRate ?
-                lineItemsFromCart[i].taxedPrice.totalGross.centAmount : lineItemsFromCart[i].price.value.centAmount;
-
-            enhancedSchemeData.itemDetailLine[`itemDetailLine[${i}]`] = lineItemDetails;
-        }
+        enhancedSchemeData = _mapItemDetailLines(enhancedSchemeData, ctpCart);
     }
 
     requestObj.additionalData.enhancedSchemeData = enhancedSchemeData;
@@ -105,13 +98,45 @@ function _mapAdditionalData(requestObj, ctpCart) {
     return requestObj;
 }
 
-function _formatDate(){
+function _formatDate() {
     const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const year = String(today.getFullYear()).slice(-2);
+    const day = today.getDate().toString().padStart(2, '0');
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const year = today.getFullYear().toString().slice(-2);
 
     return day + month + year;
+}
+
+function _mapItemDetailLines(enhancedSchemeData, ctpCart) {
+    enhancedSchemeData.itemDetailLine = {};
+
+    const lineItemsFromCart = ctpCart.lineItems;
+    for (let i = 0; i < lineItemsFromCart.length; i++) {
+        const lineItemDetails = {};
+        lineItemDetails.quantity = lineItemsFromCart[i].quantity;
+        lineItemDetails.totalAmount = lineItemsFromCart[i].totalPrice.centAmount;
+        lineItemDetails.unitPrice = lineItemsFromCart[i].taxRate ?
+            parseFloat(
+                (lineItemsFromCart[i].taxedPrice.totalGross.centAmount / lineItemDetails.quantity).toFixed(0)
+            ) : lineItemsFromCart[i].price.value.centAmount;
+
+        enhancedSchemeData.itemDetailLine[`itemDetailLine[${i}]`] = lineItemDetails;
+    }
+
+    const customLineItemsFromCart = ctpCart.customLineItems;
+    for (let i = 0; i < customLineItemsFromCart.length; i++) {
+        const lineItemDetails = {};
+        lineItemDetails.quantity = customLineItemsFromCart[i].quantity;
+        lineItemDetails.totalAmount = customLineItemsFromCart[i].totalPrice.centAmount;
+        lineItemDetails.unitPrice = customLineItemsFromCart[i].taxRate ?
+            parseFloat(
+                (customLineItemsFromCart[i].taxedPrice.totalGross.centAmount / lineItemDetails.quantity).toFixed(0)
+            ) : customLineItemsFromCart[i].money.centAmount;
+
+        enhancedSchemeData.itemDetailLine[`itemDetailLine[${i}]`] = lineItemDetails;
+    }
+
+    return enhancedSchemeData;
 }
 
 function _mapCustomerData(requestObj, customer) {
@@ -125,16 +150,18 @@ function _mapCustomerData(requestObj, customer) {
 }
 
 function _mapAccountInfoData(requestObj, customer) {
-    requestObj.accountInfo = requestObj.accountInfo ?? {};
-    requestObj.accountInfo.accountCreationDate = requestObj.accountInfo.accountCreationDate ?? customer.createdAt;
-    requestObj.accountInfo.accountChangeDate = requestObj.accountInfo.accountChangeDate ?? customer.lastModifiedAt;
-    requestObj.accountInfo.accountAgeIndicator = _calculateDateDifference(requestObj.accountInfo.accountCreationDate);
-    requestObj.accountInfo.accountChangeIndicator = _calculateDateDifference(requestObj.accountInfo.accountChangeDate);
+    const accountInfo = requestObj.accountInfo ?? {};
+    accountInfo.accountCreationDate = accountInfo.accountCreationDate ?? customer.createdAt;
+    accountInfo.accountChangeDate = accountInfo.accountChangeDate ?? customer.lastModifiedAt;
+    accountInfo.accountAgeIndicator = _calculateDateDifference(accountInfo.accountCreationDate);
+    accountInfo.accountChangeIndicator = _calculateDateDifference(accountInfo.accountChangeDate);
+
+    requestObj.accountInfo = accountInfo;
 
     return requestObj;
 }
 
-function _calculateDateDifference(date){
+function _calculateDateDifference(date) {
     const givenDate = new Date(date);
     const now = new Date();
 
@@ -147,12 +174,12 @@ function _calculateDateDifference(date){
         case (daysDiff < 30) :
             return "lessThan30Days";
         case (daysDiff >= 30 && daysDiff <= 60) :
-            return  "from30To60Days";
+            return "from30To60Days";
         case (daysDiff > 60) :
-            return  "moreThan60Days";
+            return "moreThan60Days";
         default:
-            return  "notApplicable";
+            return "notApplicable";
     }
 }
 
-export default {fetchMatchingCart, getDataFromCart}
+export default { getDataFromCart }
