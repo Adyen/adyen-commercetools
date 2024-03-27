@@ -14,7 +14,7 @@ const { execute } = makePaymentHandler
 
 describe('make-payment::execute', () => {
   let scope
-
+  let ctpCart
   let ctpPayment
 
   /* eslint-disable max-len */
@@ -52,10 +52,14 @@ describe('make-payment::execute', () => {
     },
   }
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0];
 
   before(async () => {
     ctpPayment = await utils.readAndParseJsonFile(
       'test/unit/fixtures/ctp-payment-make-payment.json',
+    )
+    ctpCart = await utils.readAndParseJsonFile(
+      'test/unit/fixtures/ctp-cart.json',
     )
   })
 
@@ -72,12 +76,14 @@ describe('make-payment::execute', () => {
     'when resultCode from Adyen is "Authorized", ' +
       'then it should return actions "addInterfaceInteraction", "setCustomField", "setKey" and "addTransaction"',
     async () => {
+      _mockCtpCartsEndpoint();
       scope.post('/payments').reply(200, paymentSuccessResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest =
         JSON.stringify(makePaymentRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
 
       const response = await execute(ctpPaymentClone)
 
@@ -144,12 +150,14 @@ describe('make-payment::execute', () => {
     'when resultCode from Adyen is "RedirectShopper", ' +
       'then it should return actions "addInterfaceInteraction", "setCustomField" and "setKey"',
     async () => {
+      _mockCtpCartsEndpoint();
       scope.post('/payments').reply(200, paymentRedirectResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest =
         JSON.stringify(makePaymentRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
 
       const response = await execute(ctpPaymentClone)
 
@@ -194,12 +202,14 @@ describe('make-payment::execute', () => {
     'when adyen validation failed, ' +
       'then it should return actions "addInterfaceInteraction", "setCustomField" and "setKey"',
     async () => {
+      _mockCtpCartsEndpoint();
       scope.post('/payments').reply(422, paymentValidationFailedResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest =
         JSON.stringify(makePaymentRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
 
       const response = await execute(ctpPaymentClone)
 
@@ -245,12 +255,14 @@ describe('make-payment::execute', () => {
       'then it should return actions "addInterfaceInteraction", "setCustomField", ' +
       '"setKey" and "addTransaction"',
     async () => {
+      _mockCtpCartsEndpoint();
       scope.post('/payments').reply(422, paymentRefusedResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest =
         JSON.stringify(makePaymentRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
 
       const response = await execute(ctpPaymentClone)
 
@@ -308,12 +320,14 @@ describe('make-payment::execute', () => {
       'then it should return actions "addInterfaceInteraction", "setCustomField", ' +
       '"setKey" and "addTransaction"',
     async () => {
+      _mockCtpCartsEndpoint();
       scope.post('/payments').reply(422, paymentErrorResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
       ctpPaymentClone.custom.fields.makePaymentRequest =
         JSON.stringify(makePaymentRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
 
       const response = await execute(ctpPaymentClone)
 
@@ -370,6 +384,7 @@ describe('make-payment::execute', () => {
     'when payment method is not in the adyenPaymentMethodsToNames map, ' +
       'then it should return setMethodInfoMethodAction with payment method name',
     async () => {
+      _mockCtpCartsEndpoint();
       scope.post('/payments').reply(200, paymentSuccessResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
@@ -379,6 +394,7 @@ describe('make-payment::execute', () => {
         makePaymentRequestClone,
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
 
       const response = await execute(ctpPaymentClone)
 
@@ -398,6 +414,7 @@ describe('make-payment::execute', () => {
     'when payment method is null, ' +
       'then it should not return setMethodInfoMethodAction action',
     async () => {
+      _mockCtpCartsEndpoint();
       scope.post('/payments').reply(200, paymentSuccessResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
@@ -407,6 +424,7 @@ describe('make-payment::execute', () => {
         makePaymentRequestClone,
       )
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey = commercetoolsProjectKey
 
       const response = await execute(ctpPaymentClone)
 
@@ -416,4 +434,20 @@ describe('make-payment::execute', () => {
       expect(setMethodInfoMethod).to.be.undefined
     },
   )
+
+  function _mockCtpCartsEndpoint(mockCart = ctpCart) {
+    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+    const ctpApiScope = nock(`${ctpConfig.apiUrl}`)
+    const ctpAuthScope = nock(`${ctpConfig.authUrl}`)
+    ctpAuthScope.post('/oauth/token').reply(200, {
+        access_token: 'xxx',
+        token_type: 'Bearer',
+        expires_in: 172800,
+        scope: 'manage_project:xxx',
+    })
+    ctpApiScope
+        .get(`/${ctpConfig.projectKey}/carts`)
+        .query(true)
+        .reply(200, { results: [mockCart] })
+ }
 })

@@ -2,11 +2,11 @@ import nock from 'nock'
 import { expect } from 'chai'
 import _ from 'lodash'
 import config from '../../src/config/config.js'
-import createLineItemsSessionPaymentHandler from '../../src/paymentHandler/sessions-line-items-request.handler.js'
+import createSessionRequestPaymentHandler from '../../src/paymentHandler/sessions-request.handler.js'
 import createSessionSuccessResponse from './fixtures/adyen-create-session-success-response.js'
 import utils from '../../src/utils.js'
 
-describe('create-lineitems-session-request::execute', () => {
+describe('create-session-request-with-lineitems::execute', () => {
   let ctpPayment
   let ctpCart
   let ctpCartWithCustomShippingMethod
@@ -39,7 +39,7 @@ describe('create-lineitems-session-request::execute', () => {
   })
 
   it(
-    'when klarna request does not contain lineItems, ' +
+    'when createSessionRequest does not contain lineItems, ' +
       'then it should add lineItems correctly',
     async () => {
       _mockCtpCartsEndpoint()
@@ -57,7 +57,7 @@ describe('create-lineitems-session-request::execute', () => {
         commercetoolsProjectKey
 
       const response =
-        await createLineItemsSessionPaymentHandler.execute(ctpPaymentClone)
+        await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
@@ -126,7 +126,7 @@ describe('create-lineitems-session-request::execute', () => {
   )
 
   it(
-    'when klarna request does contain lineItems, ' +
+    'when createSessionRequest does contain lineItems, ' +
       'then it should not add lineItems',
     async () => {
       _mockCtpCartsEndpoint()
@@ -142,9 +142,11 @@ describe('create-lineitems-session-request::execute', () => {
       ctpPaymentClone.custom.fields.createSessionRequest =
         JSON.stringify(createSessionRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+        ctpPaymentClone.custom.fields.commercetoolsProjectKey =
+            commercetoolsProjectKey
 
       const response =
-        await createLineItemsSessionPaymentHandler.execute(ctpPaymentClone)
+        await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
@@ -180,7 +182,7 @@ describe('create-lineitems-session-request::execute', () => {
         },
       }
       const response =
-        await createLineItemsSessionPaymentHandler.execute(ctpPaymentToTest)
+        await createSessionRequestPaymentHandler.execute(ctpPaymentToTest)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,
@@ -223,7 +225,7 @@ describe('create-lineitems-session-request::execute', () => {
       }
 
       const response =
-        await createLineItemsSessionPaymentHandler.execute(ctpPaymentToTest)
+        await createSessionRequestPaymentHandler.execute(ctpPaymentToTest)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,
@@ -259,7 +261,7 @@ describe('create-lineitems-session-request::execute', () => {
         commercetoolsProjectKey
 
       const response =
-        await createLineItemsSessionPaymentHandler.execute(ctpPaymentClone)
+        await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
@@ -303,7 +305,7 @@ describe('create-lineitems-session-request::execute', () => {
         commercetoolsProjectKey
 
       const response =
-        await createLineItemsSessionPaymentHandler.execute(ctpPaymentClone)
+        await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
@@ -346,7 +348,7 @@ describe('create-lineitems-session-request::execute', () => {
       },
     }
     const response =
-      await createLineItemsSessionPaymentHandler.execute(ctpPaymentToTest)
+      await createSessionRequestPaymentHandler.execute(ctpPaymentToTest)
     const createSessionRequestInteraction = JSON.parse(
       response.actions.find((a) => a.action === 'addInterfaceInteraction')
         .fields.request,
@@ -383,7 +385,7 @@ describe('create-lineitems-session-request::execute', () => {
         },
       }
       const response =
-        await createLineItemsSessionPaymentHandler.execute(ctpPaymentToTest)
+        await createSessionRequestPaymentHandler.execute(ctpPaymentToTest)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,
@@ -420,7 +422,7 @@ describe('create-lineitems-session-request::execute', () => {
         },
       }
       const response =
-        await createLineItemsSessionPaymentHandler.execute(ctpPaymentToTest)
+        await createSessionRequestPaymentHandler.execute(ctpPaymentToTest)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,

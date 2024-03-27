@@ -3,9 +3,12 @@ import nock from 'nock'
 import c from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
 import sessionRequestHandler from '../../src/paymentHandler/sessions-request.handler.js'
+import utils from "../../src/utils.js";
 
 describe('create-session-request::execute::', () => {
-  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0];
+  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0];
+  let ctpCart
   const getSessionRequest = {
     countryCode: 'DE',
     reference: 'UNIQUE_PAYMENT_REFERENCE',
@@ -29,7 +32,7 @@ describe('create-session-request::execute::', () => {
         key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
       },
       fields: {
-        commercetoolsProjectKey: 'commercetoolsProjectKey',
+        commercetoolsProjectKey,
         createSessionRequest: JSON.stringify(getSessionRequest),
         adyenMerchantAccount,
       },
@@ -39,6 +42,12 @@ describe('create-session-request::execute::', () => {
   const adyenCredentials = config.getAdyenConfig(
     paymentObject.custom.fields.adyenMerchantAccount,
   )
+
+  before(async () => {
+    ctpCart = await utils.readAndParseJsonFile(
+        'test/unit/fixtures/ctp-cart.json',
+    )
+  })
 
   afterEach(() => {
     nock.cleanAll()
@@ -57,6 +66,7 @@ describe('create-session-request::execute::', () => {
       sessionData: 'Ab02b4c...',
     }
 
+    _mockCtpCartsEndpoint();
     nock(`${adyenCredentials.apiBaseUrl}`)
       .post('/sessions')
       .query(true)
@@ -89,6 +99,7 @@ describe('create-session-request::execute::', () => {
     async () => {
       const errorMsg = 'Unexpected exception'
 
+      _mockCtpCartsEndpoint();
       nock(`${adyenCredentials.apiBaseUrl}`)
         .post('/sessions')
         .query(true)
@@ -110,4 +121,20 @@ describe('create-session-request::execute::', () => {
       )
     },
   )
+
+  function _mockCtpCartsEndpoint(mockCart = ctpCart) {
+    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+    const ctpApiScope = nock(`${ctpConfig.apiUrl}`)
+    const ctpAuthScope = nock(`${ctpConfig.authUrl}`)
+    ctpAuthScope.post('/oauth/token').reply(200, {
+      access_token: 'xxx',
+      token_type: 'Bearer',
+      expires_in: 172800,
+      scope: 'manage_project:xxx',
+    })
+    ctpApiScope
+        .get(`/${ctpConfig.projectKey}/carts`)
+        .query(true)
+        .reply(200, { results: [mockCart] })
+  }
 })

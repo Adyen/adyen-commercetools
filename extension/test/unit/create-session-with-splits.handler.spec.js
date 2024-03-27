@@ -3,13 +3,16 @@ import { expect } from 'chai'
 import c from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
 import sessionRequestHandler from '../../src/paymentHandler/sessions-request.handler.js'
+import utils from "../../src/utils.js";
 
 const { execute } = sessionRequestHandler
 
 describe('create-session-with-splits::execute', () => {
   let scope
+  let ctpCart
 
-  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0];
+  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0];
   const createSessiontWithSplitsRequest = {
     amount: {
       currency: 'EUR',
@@ -51,12 +54,18 @@ describe('create-session-with-splits::execute', () => {
         key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
       },
       fields: {
-        commercetoolsProjectKey: 'commercetoolsProjectKey',
+        commercetoolsProjectKey,
         createSessionRequest: JSON.stringify(createSessiontWithSplitsRequest),
         adyenMerchantAccount,
       },
     },
   }
+
+  before(async () => {
+    ctpCart = await utils.readAndParseJsonFile(
+    'test/unit/fixtures/ctp-cart.json',
+    )
+  })
 
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
@@ -76,6 +85,7 @@ describe('create-session-with-splits::execute', () => {
         merchantReference: 'payment-with-planet-fees',
       })
 
+      _mockCtpCartsEndpoint();
       scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const response = await execute(paymentObject)
@@ -122,4 +132,20 @@ describe('create-session-with-splits::execute', () => {
       )
     },
   )
+
+    function _mockCtpCartsEndpoint(mockCart = ctpCart) {
+        const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
+        const ctpApiScope = nock(`${ctpConfig.apiUrl}`)
+        const ctpAuthScope = nock(`${ctpConfig.authUrl}`)
+        ctpAuthScope.post('/oauth/token').reply(200, {
+            access_token: 'xxx',
+            token_type: 'Bearer',
+            expires_in: 172800,
+            scope: 'manage_project:xxx',
+        })
+        ctpApiScope
+            .get(`/${ctpConfig.projectKey}/carts`)
+            .query(true)
+            .reply(200, { results: [mockCart] })
+    }
 })

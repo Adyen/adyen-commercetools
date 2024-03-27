@@ -3,7 +3,7 @@ import _ from 'lodash'
 import nock from 'nock'
 import { randomInt } from 'node:crypto'
 import createSessionSuccessResponse from './fixtures/adyen-create-session-success-response.js'
-import lineItemsSessionRequestHandler from '../../src/paymentHandler/sessions-line-items-request.handler.js'
+import createSessionRequestPaymentHandler from '../../src/paymentHandler/sessions-request.handler.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils.js'
 
@@ -47,7 +47,7 @@ describe('::Multitenancy::', () => {
       ctpPaymentClone.custom.fields.commercetoolsProjectKey = ctpProjectKey
 
       const response =
-        await lineItemsSessionRequestHandler.execute(ctpPaymentClone)
+        await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
       const adyenRequest = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,
