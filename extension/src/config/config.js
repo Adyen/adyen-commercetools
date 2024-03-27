@@ -17,10 +17,6 @@ function getModuleConfig() {
     keepAliveTimeout: !Number.isNaN(config.keepAliveTimeout)
       ? parseFloat(config.keepAliveTimeout, 10)
       : undefined,
-    addCommercetoolsLineItems: _getValueOfBooleanFlag(
-      config.addCommercetoolsLineItems,
-      false,
-    ),
     generateIdempotencyKey: _getValueOfBooleanFlag(
       config.generateIdempotencyKey,
       false,

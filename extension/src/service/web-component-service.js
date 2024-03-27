@@ -49,6 +49,8 @@ function submitAdditionalPaymentDetails(
 }
 
 function removeAddCommercetoolsLineItemsField(createSessionRequestObj) {
+  // This flag is considered deprecated
+  // If createSessionRequestObj contains this flag, it should be deleted
   // Otherwise adyen might return a 400 response with the following message:
   // Structure of PaymentRequest contains the following unknown fields: [addCommercetoolsLineItems]
   delete createSessionRequestObj.addCommercetoolsLineItems

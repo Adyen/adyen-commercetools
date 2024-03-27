@@ -394,15 +394,15 @@ In this case you have to handle it on the return URL front-end page.
 
 ### Adding cart and product informations (lineItems) to the request
 
-For some payment methods, it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/#/PaymentSetupAndVerificationService/latest/payments__reqParam_lineItems) within the `createSessionRequest`.
+Extension module sends the `lineItems` field in the Adyen request, taking the data from the `lineItems` field in `createSessionRequest`.
 
-Extension module can generate the line item automatically, but you need to do following steps:
+If the field does not exist in `createSessionRequest`, then module automatically populates `lineItems` from the CommerceTools cart. 
 
-- The commercetools payment [referenced in the commercetools cart](https://docs.commercetools.com/api/projects/carts#add-payment).
-- Either `addCommercetoolsLineItems` property set to`true` within the `createSessionRequest` or `addCommercetoolsLineItems` flag set to `true` within your extension [configuration](./HowToRun.md#other-configurations).
-  > In case you would like to override the generation of the lineItems please provide within the `createSessionRequest` own `lineItems` data.
+Extension module does not rely on the deprecated `addCommercetoolsLineItems` flag from the `createSessionRequest`.
 
-Here's an example of the `createSessionRequest` **WITHOUT** `lineItems` and `addCommercetoolsLineItems` property set to true.
+By default, the extension module will populate `lineItems` for you but in case you want to define your own values include `lineItems` in your `createSessionRequest`.
+
+Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`.
 
 ```json
 {
@@ -428,8 +428,7 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems` and `add
     "postalCode": "12345",
     "street": "Stargatan"
   },
-  "returnUrl": "https://www.your-company.com/...",
-  "addCommercetoolsLineItems": true
+  "returnUrl": "https://www.your-company.com/..."
 }
 ```
 
@@ -503,10 +502,6 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems` and `add
 ```
 
 </details>
-
-By default, the extension module will populate `lineItems` for you but in case you want to define your own values include `lineItems` in your `createSessionRequest`.
-
-Remind that if line items are not provided in `createSessionRequest`, the returned session ID and session data would not support any payment methods which require line items, such as affirm, klarna, etc.
 
 ## Step 5: Set up Web Component
 
