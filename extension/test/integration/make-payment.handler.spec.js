@@ -42,7 +42,6 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
 
   it(
     'given a payment with cart ' +
-      'when makePayment custom field and the addCommercetoolsLineItems set to true ' +
       'then should calculate and lineItems to the makePaymentRequest',
     async () => {
       const payment = await initPaymentWithCart({
@@ -69,7 +68,6 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
           receiptNumber: `externalOrderSystem-receipt123`,
         },
         returnUrl: 'https://your-company.com/',
-        addCommercetoolsLineItems: true,
       }
 
       const { statusCode, body: updatedPayment } = await ctpClient.update(

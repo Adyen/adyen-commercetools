@@ -118,7 +118,6 @@ describe('::create-session-request::', () => {
 
   it(
     'given a payment with cart ' +
-      'when createSession custom field and the addCommercetoolsLineItems set to true ' +
       'then should calculate and lineItems to the createSessionRequest',
     async () => {
       const payment = await initPaymentWithCart({
@@ -136,7 +135,6 @@ describe('::create-session-request::', () => {
 
         returnUrl: 'https://your-company.com/',
         countryCode: 'NL',
-        addCommercetoolsLineItems: true,
       }
 
       const { statusCode, body: updatedPayment } = await ctpClient.update(
