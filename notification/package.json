@@ -74,7 +74,7 @@
     "lint-staged": "15.2.2",
     "localtunnel": "2.0.2",
     "mocha": "10.3.0",
-    "nock": "13.5.3",
+    "nock": "13.5.4",
     "p-map": "7.0.1",
     "prettier": "3.2.5",
     "sinon": "17.0.1",
