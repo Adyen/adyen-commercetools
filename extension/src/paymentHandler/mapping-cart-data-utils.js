@@ -109,32 +109,31 @@ function _formatDate() {
 
 function _mapItemDetailLines(enhancedSchemeData, ctpCart) {
     enhancedSchemeData.itemDetailLine = {};
+    let i = 0;
 
-    const lineItemsFromCart = ctpCart.lineItems;
-    for (let i = 0; i < lineItemsFromCart.length; i++) {
+    ctpCart.lineItems.forEach((item) => {
         const lineItemDetails = {};
-        lineItemDetails.quantity = lineItemsFromCart[i].quantity;
-        lineItemDetails.totalAmount = lineItemsFromCart[i].totalPrice.centAmount;
-        lineItemDetails.unitPrice = lineItemsFromCart[i].taxRate ?
+        lineItemDetails.quantity = item.quantity;
+        lineItemDetails.totalAmount = item.totalPrice.centAmount;
+        lineItemDetails.unitPrice = item.taxRate ?
             parseFloat(
-                (lineItemsFromCart[i].taxedPrice.totalGross.centAmount / lineItemDetails.quantity).toFixed(0)
-            ) : lineItemsFromCart[i].price.value.centAmount;
+                (item.taxedPrice.totalGross.centAmount / lineItemDetails.quantity).toFixed(0)
+            ) : item.price.value.centAmount;
 
-        enhancedSchemeData.itemDetailLine[`itemDetailLine[${i}]`] = lineItemDetails;
-    }
+        enhancedSchemeData.itemDetailLine[`itemDetailLine[${i++}]`] = lineItemDetails;
+    })
 
-    const customLineItemsFromCart = ctpCart.customLineItems;
-    for (let i = 0; i < customLineItemsFromCart.length; i++) {
+    ctpCart.customLineItems.forEach((item) => {
         const lineItemDetails = {};
-        lineItemDetails.quantity = customLineItemsFromCart[i].quantity;
-        lineItemDetails.totalAmount = customLineItemsFromCart[i].totalPrice.centAmount;
-        lineItemDetails.unitPrice = customLineItemsFromCart[i].taxRate ?
+        lineItemDetails.quantity = item.quantity;
+        lineItemDetails.totalAmount = item.totalPrice.centAmount;
+        lineItemDetails.unitPrice = item.taxRate ?
             parseFloat(
-                (customLineItemsFromCart[i].taxedPrice.totalGross.centAmount / lineItemDetails.quantity).toFixed(0)
-            ) : customLineItemsFromCart[i].money.centAmount;
+                (item.taxedPrice.totalGross.centAmount / lineItemDetails.quantity).toFixed(0)
+            ) : item.money.centAmount;
 
-        enhancedSchemeData.itemDetailLine[`itemDetailLine[${i}]`] = lineItemDetails;
-    }
+        enhancedSchemeData.itemDetailLine[`itemDetailLine[${i++}]`] = lineItemDetails;
+    })
 
     return enhancedSchemeData;
 }
