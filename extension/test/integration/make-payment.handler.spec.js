@@ -3,6 +3,7 @@ import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.js'
 import constants from '../../src/config/constants.js'
 import { initPaymentWithCart } from './integration-test-set-up.js'
+import utils from "../../src/utils.js";
 
 describe('::make-payment with multiple adyen accounts use case::', () => {
   const [commercetoolsProjectKey] = config.getAllCtpProjectKeys()
@@ -42,7 +43,10 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
 
   it(
     'given a payment with cart ' +
-      'then should calculate and lineItems to the makePaymentRequest',
+      'when makePaymentRequest contains some additional fields, ' +
+      'and cart contains fields billingAddress, shippingAddress, lineItems, customLineItems, ' +
+      'then fields from makePaymentRequest should remain unchanged,' +
+      'and other fields from cart should be mapped to makePaymentRequest',
     async () => {
       const payment = await initPaymentWithCart({
         ctpClient,
@@ -68,6 +72,15 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
           receiptNumber: `externalOrderSystem-receipt123`,
         },
         returnUrl: 'https://your-company.com/',
+        shopperEmail: 'test.customer@test.com',
+        shopperName : {
+            firstName: 'Test',
+            lastName: 'Customer'
+        },
+        billingAddress : {
+            houseNumberOrName: '456',
+            street: 'Straße der Pariser Kommune'
+        }
       }
 
       const { statusCode, body: updatedPayment } = await ctpClient.update(
@@ -93,6 +106,9 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
         en: 'Credit Card',
       })
 
+      const ctpCart = await utils.readAndParseJsonFile(
+          'test/integration/fixtures/ctp-cart.json',
+      )
       const interfaceInteraction = updatedPayment.interfaceInteractions.find(
         (interaction) =>
           interaction.fields.type ===
@@ -101,6 +117,30 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
       const makePaymentRequest = JSON.parse(interfaceInteraction.fields.request)
       const makePaymentRequestBody = JSON.parse(makePaymentRequest.body)
       expect(makePaymentRequestBody.lineItems).to.have.lengthOf(3)
+
+      expect(makePaymentRequestBody.shopperName.firstName).to.equal(makePaymentRequestDraft.shopperName.firstName)
+      expect(makePaymentRequestBody.shopperName.lastName).to.equal(makePaymentRequestDraft.shopperName.lastName)
+      expect(makePaymentRequestBody.shopperEmail).to.equal(makePaymentRequestDraft.shopperEmail)
+      expect(makePaymentRequestBody.billingAddress.street).to.equal(makePaymentRequestDraft.billingAddress.street)
+      expect(makePaymentRequestBody.billingAddress.houseNumberOrName).to.equal(
+          makePaymentRequestDraft.billingAddress.houseNumberOrName
+      )
+
+      expect(makePaymentRequestBody.billingAddress.city).to.equal(ctpCart.billingAddress.city)
+      expect(makePaymentRequestBody.billingAddress.postalCode).to.equal(ctpCart.billingAddress.postalCode)
+      expect(makePaymentRequestBody.billingAddress.country).to.equal(ctpCart.billingAddress.country)
+      expect(makePaymentRequestBody.additionalData.enhancedSchemeData.destinationCountryCode).to.equal(
+          ctpCart.shippingAddress.country
+      )
+      expect(makePaymentRequestBody.additionalData.enhancedSchemeData.destinationPostalCode).to.equal(
+          ctpCart.shippingAddress.postalCode
+      )
+      const cartLineItemsLength = ctpCart.lineItems.length + ctpCart.customLineItems.length;
+      for (let i= 0; i< cartLineItemsLength; i++){
+          expect(
+              makePaymentRequestBody.additionalData.enhancedSchemeData.itemDetailLine
+          ).to.have.own.property(`itemDetailLine[${i}]`);
+      }
     },
   )
 
