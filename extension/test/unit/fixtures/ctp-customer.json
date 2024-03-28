@@ -1,0 +1,29 @@
+{
+  "type": "Customer",
+  "id": "ae37eb1f-879b-4440-b4df-99c1f6352e5f",
+  "version": 9,
+  "createdAt": "2020-05-28T14:05:29.111Z",
+  "lastModifiedAt": "2020-05-28T14:05:29.221Z",
+  "lastModifiedBy": {
+    "clientId": "GfjD1YgZgpe0K6wEdUEpwTmx",
+    "isPlatformClient": false
+  },
+  "createdBy": {
+    "clientId": "GfjD1YgZgpe0K6wEdUEpwTmx",
+    "isPlatformClient": false
+  },
+  "email": "customer.test@test.com",
+  "firstName": "Customer",
+  "lastName": "Test",
+  "middleName": "",
+  "title": "",
+  "salutation": "",
+  "dateOfBirth": "2000-08-08",
+  "password": "****uos=",
+  "addresses": [],
+  "shippingAddressIds": [],
+  "billingAddressIds": [],
+  "isEmailVerified": true,
+  "stores": [],
+  "authenticationMode": "Password"
+}

@@ -4,6 +4,7 @@ import c from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
 import sessionRequestHandler from '../../src/paymentHandler/sessions-request.handler.js'
 import utils from "../../src/utils.js";
+import mockCtpEnpoints from "./mock-ctp-enpoints.js";
 
 const { execute } = sessionRequestHandler
 
@@ -85,7 +86,7 @@ describe('create-session-with-splits::execute', () => {
         merchantReference: 'payment-with-planet-fees',
       })
 
-      _mockCtpCartsEndpoint();
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, commercetoolsProjectKey);
       scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const response = await execute(paymentObject)
@@ -132,20 +133,4 @@ describe('create-session-with-splits::execute', () => {
       )
     },
   )
-
-    function _mockCtpCartsEndpoint(mockCart = ctpCart) {
-        const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
-        const ctpApiScope = nock(`${ctpConfig.apiUrl}`)
-        const ctpAuthScope = nock(`${ctpConfig.authUrl}`)
-        ctpAuthScope.post('/oauth/token').reply(200, {
-            access_token: 'xxx',
-            token_type: 'Bearer',
-            expires_in: 172800,
-            scope: 'manage_project:xxx',
-        })
-        ctpApiScope
-            .get(`/${ctpConfig.projectKey}/carts`)
-            .query(true)
-            .reply(200, { results: [mockCart] })
-    }
 })

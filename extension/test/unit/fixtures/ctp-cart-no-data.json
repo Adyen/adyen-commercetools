@@ -1,0 +1,60 @@
+{
+  "type": "Cart",
+  "id": "ae37eb1f-879b-4440-b4df-99c1f6352e5f",
+  "version": 12,
+  "createdAt": "2020-05-28T14:05:29.111Z",
+  "lastModifiedAt": "2020-05-28T14:05:29.221Z",
+  "lastModifiedBy": {
+    "clientId": "GfjD1YgZgpe0K6wEdUEpwTmx",
+    "isPlatformClient": false
+  },
+  "createdBy": {
+    "clientId": "GfjD1YgZgpe0K6wEdUEpwTmx",
+    "isPlatformClient": false
+  },
+  "cartState": "Active",
+  "totalPrice": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 8610,
+    "fractionDigits": 2
+  },
+  "discountCodes": [
+    {
+      "discountCode": {
+        "typeId": "discount-code",
+        "id": "246fd612-cad1-41fb-a696-7c375cc24376"
+      },
+      "state": "MatchesCart"
+    },
+    {
+      "discountCode": {
+        "typeId": "discount-code",
+        "id": "6190aef2-073d-4824-8a9f-c94025456ef0"
+      },
+      "state": "MatchesCart"
+    },
+    {
+      "discountCode": {
+        "typeId": "discount-code",
+        "id": "29064fe8-d8ff-44ec-9022-339b55a4808e"
+      },
+      "state": "MatchesCart"
+    }
+  ],
+  "paymentInfo": {
+    "payments": [
+      {
+        "typeId": "payment",
+        "id": "b0273140-0cd5-4ce8-af13-6d53541565b9"
+      }
+    ]
+  },
+  "inventoryMode": "None",
+  "taxMode": "Platform",
+  "taxRoundingMode": "HalfEven",
+  "taxCalculationMode": "LineItemLevel",
+  "refusedGifts": [],
+  "origin": "Customer",
+  "itemShippingAddresses": []
+}

@@ -5,14 +5,15 @@ import config from '../../src/config/config.js'
 import createSessionRequestPaymentHandler from '../../src/paymentHandler/sessions-request.handler.js'
 import createSessionSuccessResponse from './fixtures/adyen-create-session-success-response.js'
 import utils from '../../src/utils.js'
+import mockCtpEnpoints from "./mock-ctp-enpoints.js";
 
 describe('create-session-request-with-lineitems::execute', () => {
   let ctpPayment
   let ctpCart
   let ctpCartWithCustomShippingMethod
+  let scope
   const ADYEN_PERCENTAGE_MINOR_UNIT = 10000
   const DEFAULT_PAYMENT_LANGUAGE = 'en'
-  let scope
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
 
@@ -42,7 +43,7 @@ describe('create-session-request-with-lineitems::execute', () => {
     'when createSessionRequest does not contain lineItems, ' +
       'then it should add lineItems correctly',
     async () => {
-      _mockCtpCartsEndpoint()
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, commercetoolsProjectKey)
       scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const createSessionRequest = {
@@ -57,7 +58,7 @@ describe('create-session-request-with-lineitems::execute', () => {
         commercetoolsProjectKey
 
       const response =
-        await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
+      await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
@@ -129,7 +130,7 @@ describe('create-session-request-with-lineitems::execute', () => {
     'when createSessionRequest does contain lineItems, ' +
       'then it should not add lineItems',
     async () => {
-      _mockCtpCartsEndpoint()
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, commercetoolsProjectKey)
 
       scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
@@ -165,7 +166,7 @@ describe('create-session-request-with-lineitems::execute', () => {
     'when locale is not existing, ' +
       'it should take the first locale in line item name',
     async () => {
-      _mockCtpCartsEndpoint()
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, commercetoolsProjectKey)
       scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentToTest = {
@@ -207,7 +208,7 @@ describe('create-session-request-with-lineitems::execute', () => {
     async () => {
       const clonedCtpCart = _.cloneDeep(ctpCart)
       delete clonedCtpCart.shippingInfo.shippingMethod.obj
-      _mockCtpCartsEndpoint(clonedCtpCart)
+      mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
       scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentToTest = {
@@ -242,7 +243,7 @@ describe('create-session-request-with-lineitems::execute', () => {
       'it should return correct shipping name',
     async () => {
       const clonedCtpCart = _.cloneDeep(ctpCartWithCustomShippingMethod)
-      _mockCtpCartsEndpoint(clonedCtpCart)
+      mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
       scope.post('/payments').reply(200, createSessionSuccessResponse)
 
       const klarnacreateSessionRequest = {
@@ -286,7 +287,7 @@ describe('create-session-request-with-lineitems::execute', () => {
       'it should return correct shipping name',
     async () => {
       const clonedCtpCart = _.cloneDeep(ctpCartWithCustomShippingMethod)
-      _mockCtpCartsEndpoint(clonedCtpCart)
+      mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
       scope.post('/payments').reply(200, createSessionSuccessResponse)
 
       const affirmcreateSessionRequest = {
@@ -333,7 +334,7 @@ describe('create-session-request-with-lineitems::execute', () => {
       at: 'test-at',
       en: 'test-en',
     }
-    _mockCtpCartsEndpoint(clonedCtpCart)
+    mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
     scope.post('/payments').reply(200, createSessionSuccessResponse)
 
     const ctpPaymentToTest = {
@@ -369,7 +370,7 @@ describe('create-session-request-with-lineitems::execute', () => {
         at: 'test-at',
         en: 'test-en',
       }
-      _mockCtpCartsEndpoint(clonedCtpCart)
+      mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
       scope.post('/payments').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentToTest = {
@@ -406,7 +407,7 @@ describe('create-session-request-with-lineitems::execute', () => {
         at: 'test-at',
         en: 'test-en',
       }
-      _mockCtpCartsEndpoint(clonedCtpCart)
+      mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
       scope.post('/payments').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentToTest = {
@@ -431,20 +432,4 @@ describe('create-session-request-with-lineitems::execute', () => {
       expect(lineItems[0].description).to.equal('test-de')
     },
   )
-
-  function _mockCtpCartsEndpoint(mockCart = ctpCart) {
-    const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
-    const ctpApiScope = nock(`${ctpConfig.apiUrl}`)
-    const ctpAuthScope = nock(`${ctpConfig.authUrl}`)
-    ctpAuthScope.post('/oauth/token').reply(200, {
-      access_token: 'xxx',
-      token_type: 'Bearer',
-      expires_in: 172800,
-      scope: 'manage_project:xxx',
-    })
-    ctpApiScope
-      .get(`/${ctpConfig.projectKey}/carts`)
-      .query(true)
-      .reply(200, { results: [mockCart] })
-  }
 })
