@@ -50,7 +50,7 @@ function _mapCartData(requestObj, paymentObject, ctpCart) {
         ctpCart,
     );
 
-    if (requestObj.paymentMethod && requestObj.paymentMethod.type === 'scheme') {
+    if (requestObj.paymentMethod?.type === 'scheme') {
         requestObj = _mapAdditionalData(requestObj, ctpCart);
     }
 
@@ -59,12 +59,13 @@ function _mapCartData(requestObj, paymentObject, ctpCart) {
 
 function _mapBillingAddress(requestObj, ctpCart) {
     const billingAddress = requestObj.billingAddress ?? {};
-    billingAddress.street = billingAddress.street ?? ctpCart.billingAddress.streetName;
+
+    billingAddress.street = billingAddress.street ?? ctpCart.billingAddress?.streetName;
     billingAddress.houseNumberOrName =
-        billingAddress.houseNumberOrName ?? ctpCart.billingAddress.streetNumber;
-    billingAddress.city = billingAddress.city ?? ctpCart.billingAddress.city;
-    billingAddress.postalCode = billingAddress.postalCode ?? ctpCart.billingAddress.postalCode;
-    billingAddress.country = billingAddress.country ?? ctpCart.billingAddress.country;
+        billingAddress.houseNumberOrName ?? ctpCart.billingAddress?.streetNumber;
+    billingAddress.city = billingAddress.city ?? ctpCart.billingAddress?.city;
+    billingAddress.postalCode = billingAddress.postalCode ?? ctpCart.billingAddress?.postalCode;
+    billingAddress.country = billingAddress.country ?? ctpCart.billingAddress?.country;
 
     requestObj.billingAddress = billingAddress;
 
@@ -77,12 +78,12 @@ function _mapAdditionalData(requestObj, ctpCart) {
 
     enhancedSchemeData.customerReference = enhancedSchemeData.customerReference ?? ctpCart.customerId;
     enhancedSchemeData.destinationCountryCode =
-        enhancedSchemeData.destinationCountryCode ?? ctpCart.shippingAddress.country;
+        enhancedSchemeData.destinationCountryCode ?? ctpCart.shippingAddress?.country;
     enhancedSchemeData.destinationPostalCode =
-        enhancedSchemeData.destinationPostalCode ?? ctpCart.shippingAddress.postalCode;
+        enhancedSchemeData.destinationPostalCode ?? ctpCart.shippingAddress?.postalCode;
     enhancedSchemeData.orderDate = _formatDate();
     enhancedSchemeData.totalTaxAmount =
-        enhancedSchemeData.totalTaxAmount ?? ctpCart.taxedPrice.totalTax.centAmount;
+        enhancedSchemeData.totalTaxAmount ?? ctpCart.taxedPrice?.totalTax.centAmount;
 
     if (!enhancedSchemeData.freightAmount && ctpCart.shippingInfo) {
         enhancedSchemeData.freightAmount = ctpCart.shippingInfo.taxRate ?
@@ -111,10 +112,10 @@ function _mapItemDetailLines(enhancedSchemeData, ctpCart) {
     enhancedSchemeData.itemDetailLine = {};
     let i = 0;
 
-    ctpCart.lineItems.forEach((item) => {
+    ctpCart.lineItems?.forEach((item) => {
         const lineItemDetails = {};
         lineItemDetails.quantity = item.quantity;
-        lineItemDetails.totalAmount = item.totalPrice.centAmount;
+        lineItemDetails.totalAmount = item.totalPrice?.centAmount;
         lineItemDetails.unitPrice = item.taxRate ?
             parseFloat(
                 (item.taxedPrice.totalGross.centAmount / lineItemDetails.quantity).toFixed(0)
@@ -123,10 +124,10 @@ function _mapItemDetailLines(enhancedSchemeData, ctpCart) {
         enhancedSchemeData.itemDetailLine[`itemDetailLine[${i++}]`] = lineItemDetails;
     })
 
-    ctpCart.customLineItems.forEach((item) => {
+    ctpCart.customLineItems?.forEach((item) => {
         const lineItemDetails = {};
         lineItemDetails.quantity = item.quantity;
-        lineItemDetails.totalAmount = item.totalPrice.centAmount;
+        lineItemDetails.totalAmount = item.totalPrice?.centAmount;
         lineItemDetails.unitPrice = item.taxRate ?
             parseFloat(
                 (item.taxedPrice.totalGross.centAmount / lineItemDetails.quantity).toFixed(0)

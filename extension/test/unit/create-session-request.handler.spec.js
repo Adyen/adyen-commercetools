@@ -295,7 +295,13 @@ describe('create-session-request::execute::', () => {
             createSessionRequestInteraction.body,
         )
 
-        expect(createSessionRequestJson).to.deep.equal(getSessionRequest)
+        expect(createSessionRequestJson.lineItems).to.have.lengthOf(0)
+        expect(createSessionRequestJson.billingAddress).to.be.empty;
+        expect(createSessionRequestJson).to.not.have.own.property('dateOfBirth')
+        expect(createSessionRequestJson).to.not.have.own.property('shopperEmail')
+        expect(createSessionRequestJson).to.not.have.own.property('accountInfo')
+        expect(createSessionRequestJson).to.not.have.own.property('shopperName')
+        expect(createSessionRequestJson).to.not.have.own.property('shopperLocale')
     },
   )
 })
