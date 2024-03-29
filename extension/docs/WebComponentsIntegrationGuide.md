@@ -396,7 +396,7 @@ In this case you have to handle it on the return URL front-end page.
 
 Extension module sends the `lineItems` field in the Adyen request, taking the data from the `lineItems` field in `createSessionRequest`.
 
-If the field does not exist in `createSessionRequest`, then module automatically populates `lineItems` from the CommerceTools cart. 
+If the field does not exist in `createSessionRequest`, then module automatically populates `lineItems` from the CommerceTools cart.
 
 Extension module does not rely on the deprecated `addCommercetoolsLineItems` flag from the `createSessionRequest`.
 
