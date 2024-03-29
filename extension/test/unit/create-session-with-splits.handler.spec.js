@@ -3,8 +3,8 @@ import { expect } from 'chai'
 import c from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
 import sessionRequestHandler from '../../src/paymentHandler/sessions-request.handler.js'
-import utils from "../../src/utils.js";
-import mockCtpEnpoints from "./mock-ctp-enpoints.js";
+import utils from '../../src/utils.js'
+import mockCtpEnpoints from './mock-ctp-enpoints.js'
 
 const { execute } = sessionRequestHandler
 
@@ -12,8 +12,8 @@ describe('create-session-with-splits::execute', () => {
   let scope
   let ctpCart
 
-  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0];
-  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0];
+  const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
+  const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
   const createSessiontWithSplitsRequest = {
     amount: {
       currency: 'EUR',
@@ -64,7 +64,7 @@ describe('create-session-with-splits::execute', () => {
 
   before(async () => {
     ctpCart = await utils.readAndParseJsonFile(
-    'test/unit/fixtures/ctp-cart.json',
+      'test/unit/fixtures/ctp-cart.json',
     )
   })
 
@@ -86,7 +86,7 @@ describe('create-session-with-splits::execute', () => {
         merchantReference: 'payment-with-planet-fees',
       })
 
-      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, commercetoolsProjectKey);
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, commercetoolsProjectKey)
       scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const response = await execute(paymentObject)

@@ -7,7 +7,7 @@ import paymentHandler from '../../src/paymentHandler/payment-handler.js'
 import errorMessage from '../../src/validator/error-messages.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils.js'
-import mockCtpEnpoints from "./mock-ctp-enpoints.js";
+import mockCtpEnpoints from './mock-ctp-enpoints.js'
 
 const { handlePayment } = paymentHandler
 
@@ -76,7 +76,7 @@ describe('payment-handler-authorization::execute', () => {
     'when endpoint authorization is enabled and request is authorized' +
       'then it should call /sessions on Adyen',
     async () => {
-      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, ctpProjectKey);
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, ctpProjectKey)
       scope.post('/sessions').reply(200, adyenGetSessionResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
@@ -101,7 +101,7 @@ describe('payment-handler-authorization::execute', () => {
     'when endpoint authorization is enabled and request contains no authorization header value' +
       'then it should fail to call /sessions on Adyen',
     async () => {
-      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, ctpProjectKey);
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, ctpProjectKey)
       scope.post('/sessions').reply(200, adyenGetSessionResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
@@ -127,7 +127,7 @@ describe('payment-handler-authorization::execute', () => {
     'when endpoint authorization is enabled and request is not authorized' +
       'then it should fail to call /sessions on Adyen',
     async () => {
-      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, ctpProjectKey);
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, ctpProjectKey)
       scope.post('/sessions').reply(200, adyenGetSessionResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
@@ -153,7 +153,7 @@ describe('payment-handler-authorization::execute', () => {
     'when endpoint authorization is enabled, credential is given in request but not found in server config' +
       'then it should fail to call /sessions on Adyen',
     async () => {
-      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, ctpProjectKey);
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, ctpProjectKey)
       scope.post('/sessions').reply(200, adyenGetSessionResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
@@ -174,7 +174,7 @@ describe('payment-handler-authorization::execute', () => {
     'when endpoint authorization is disabled and unauthorized request is sent' +
       'then it should call /sessions on Adyen',
     async () => {
-      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, ctpProjectKey);
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, ctpProjectKey)
       scope.post('/sessions').reply(200, adyenGetSessionResponse)
 
       const ctpPaymentClone = _.cloneDeep(ctpPayment)

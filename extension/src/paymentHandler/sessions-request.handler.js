@@ -4,7 +4,7 @@ import {
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import { createSessionRequest } from '../service/web-component-service.js'
-import mappingCartDataUtils from "./mapping-cart-data-utils.js";
+import mappingCartDataUtils from './mapping-cart-data-utils.js'
 
 async function execute(paymentObject) {
   let createSessionRequestObj = JSON.parse(
@@ -16,8 +16,8 @@ async function execute(paymentObject) {
   createSessionRequestObj = await mappingCartDataUtils.getDataFromCart(
     createSessionRequestObj,
     paymentObject,
-    commercetoolsProjectKey
-  );
+    commercetoolsProjectKey,
+  )
   paymentObject.custom.fields.createSessionRequest = JSON.stringify(
     createSessionRequestObj,
   )

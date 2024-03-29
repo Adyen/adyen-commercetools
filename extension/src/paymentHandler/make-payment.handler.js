@@ -8,7 +8,7 @@ import {
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import { makePayment } from '../service/web-component-service.js'
-import mappingCartDataUtils from "./mapping-cart-data-utils.js";
+import mappingCartDataUtils from './mapping-cart-data-utils.js'
 
 async function execute(paymentObject) {
   let makePaymentRequestObj = JSON.parse(
@@ -18,12 +18,12 @@ async function execute(paymentObject) {
     paymentObject.custom.fields.commercetoolsProjectKey
 
   makePaymentRequestObj = await mappingCartDataUtils.getDataFromCart(
-     makePaymentRequestObj,
-     paymentObject,
-     commercetoolsProjectKey
-  );
+    makePaymentRequestObj,
+    paymentObject,
+    commercetoolsProjectKey,
+  )
   paymentObject.custom.fields.makePaymentRequest = JSON.stringify(
-     makePaymentRequestObj,
+    makePaymentRequestObj,
   )
 
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount

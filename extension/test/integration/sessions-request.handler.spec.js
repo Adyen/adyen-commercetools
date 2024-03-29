@@ -117,7 +117,7 @@ describe('::create-session-request::', () => {
   )
 
   it(
-      'given a payment with cart ' +
+    'given a payment with cart ' +
       'when createSessionRequest contains some additional fields, ' +
       'and cart contains fields billingAddress, shippingAddress, lineItems, customLineItems, ' +
       'then fields from createSessionRequest should remain unchanged,' +
@@ -139,12 +139,12 @@ describe('::create-session-request::', () => {
         returnUrl: 'https://your-company.com/',
         countryCode: 'NL',
         dateOfBirth: '2000-08-08',
-        additionalData : {
-            enhancedSchemeData: {
-                destinationCountryCode: 'FR',
-                destinationPostalCode: '75001'
-            }
-        }
+        additionalData: {
+          enhancedSchemeData: {
+            destinationCountryCode: 'FR',
+            destinationPostalCode: '75001',
+          },
+        },
       }
 
       const { statusCode, body: updatedPayment } = await ctpClient.update(
@@ -177,22 +177,42 @@ describe('::create-session-request::', () => {
       const createSessionRequestBody = JSON.parse(createSessionRequest.body)
       expect(createSessionRequestBody.lineItems).to.have.lengthOf(3)
 
-      expect(createSessionRequestBody.countryCode).to.equal(createSessionRequestDraft.countryCode)
-      expect(createSessionRequestBody.dateOfBirth).to.equal(createSessionRequestDraft.dateOfBirth)
-      expect(createSessionRequestBody.additionalData.enhancedSchemeData.destinationCountryCode).to.equal(
-          createSessionRequestDraft.additionalData.enhancedSchemeData.destinationCountryCode
+      expect(createSessionRequestBody.countryCode).to.equal(
+        createSessionRequestDraft.countryCode,
       )
-      expect(createSessionRequestBody.additionalData.enhancedSchemeData.destinationPostalCode).to.equal(
-          createSessionRequestDraft.additionalData.enhancedSchemeData.destinationPostalCode
+      expect(createSessionRequestBody.dateOfBirth).to.equal(
+        createSessionRequestDraft.dateOfBirth,
+      )
+      expect(
+        createSessionRequestBody.additionalData.enhancedSchemeData
+          .destinationCountryCode,
+      ).to.equal(
+        createSessionRequestDraft.additionalData.enhancedSchemeData
+          .destinationCountryCode,
+      )
+      expect(
+        createSessionRequestBody.additionalData.enhancedSchemeData
+          .destinationPostalCode,
+      ).to.equal(
+        createSessionRequestDraft.additionalData.enhancedSchemeData
+          .destinationPostalCode,
       )
 
-      expect(createSessionRequestBody.billingAddress.street).to.equal(ctpCart.billingAddress.streetName)
-      expect(createSessionRequestBody.billingAddress.houseNumberOrName).to.equal(
-          ctpCart.billingAddress.streetNumber
+      expect(createSessionRequestBody.billingAddress.street).to.equal(
+        ctpCart.billingAddress.streetName,
       )
-      expect(createSessionRequestBody.billingAddress.city).to.equal(ctpCart.billingAddress.city)
-      expect(createSessionRequestBody.billingAddress.postalCode).to.equal(ctpCart.billingAddress.postalCode)
-      expect(createSessionRequestBody.billingAddress.country).to.equal(ctpCart.billingAddress.country)
+      expect(
+        createSessionRequestBody.billingAddress.houseNumberOrName,
+      ).to.equal(ctpCart.billingAddress.streetNumber)
+      expect(createSessionRequestBody.billingAddress.city).to.equal(
+        ctpCart.billingAddress.city,
+      )
+      expect(createSessionRequestBody.billingAddress.postalCode).to.equal(
+        ctpCart.billingAddress.postalCode,
+      )
+      expect(createSessionRequestBody.billingAddress.country).to.equal(
+        ctpCart.billingAddress.country,
+      )
     },
   )
 })

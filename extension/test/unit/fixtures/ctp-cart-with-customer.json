@@ -12,8 +12,8 @@
     "clientId": "GfjD1YgZgpe0K6wEdUEpwTmx",
     "isPlatformClient": false
   },
-  "customerId" : "f6a762f2-bae9-416e-aa73-c2b9a8fde749",
-  "customerEmail" : "customer.test@test.com",
+  "customerId": "f6a762f2-bae9-416e-aa73-c2b9a8fde749",
+  "customerEmail": "customer.test@test.com",
   "lineItems": [
     {
       "id": "30db3a1d-dcc3-43f1-bc71-e0643082dc90",

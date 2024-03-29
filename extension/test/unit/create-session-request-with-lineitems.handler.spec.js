@@ -5,7 +5,7 @@ import config from '../../src/config/config.js'
 import createSessionRequestPaymentHandler from '../../src/paymentHandler/sessions-request.handler.js'
 import createSessionSuccessResponse from './fixtures/adyen-create-session-success-response.js'
 import utils from '../../src/utils.js'
-import mockCtpEnpoints from "./mock-ctp-enpoints.js";
+import mockCtpEnpoints from './mock-ctp-enpoints.js'
 
 describe('create-session-request-with-lineitems::execute', () => {
   let ctpPayment
@@ -58,7 +58,7 @@ describe('create-session-request-with-lineitems::execute', () => {
         commercetoolsProjectKey
 
       const response =
-      await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
+        await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
 
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
@@ -143,8 +143,8 @@ describe('create-session-request-with-lineitems::execute', () => {
       ctpPaymentClone.custom.fields.createSessionRequest =
         JSON.stringify(createSessionRequest)
       ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
-        ctpPaymentClone.custom.fields.commercetoolsProjectKey =
-            commercetoolsProjectKey
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey =
+        commercetoolsProjectKey
 
       const response =
         await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
@@ -208,7 +208,10 @@ describe('create-session-request-with-lineitems::execute', () => {
     async () => {
       const clonedCtpCart = _.cloneDeep(ctpCart)
       delete clonedCtpCart.shippingInfo.shippingMethod.obj
-      mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
+      mockCtpEnpoints._mockCtpCartsEndpoint(
+        clonedCtpCart,
+        commercetoolsProjectKey,
+      )
       scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentToTest = {
@@ -243,7 +246,10 @@ describe('create-session-request-with-lineitems::execute', () => {
       'it should return correct shipping name',
     async () => {
       const clonedCtpCart = _.cloneDeep(ctpCartWithCustomShippingMethod)
-      mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
+      mockCtpEnpoints._mockCtpCartsEndpoint(
+        clonedCtpCart,
+        commercetoolsProjectKey,
+      )
       scope.post('/payments').reply(200, createSessionSuccessResponse)
 
       const klarnacreateSessionRequest = {
@@ -287,7 +293,10 @@ describe('create-session-request-with-lineitems::execute', () => {
       'it should return correct shipping name',
     async () => {
       const clonedCtpCart = _.cloneDeep(ctpCartWithCustomShippingMethod)
-      mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
+      mockCtpEnpoints._mockCtpCartsEndpoint(
+        clonedCtpCart,
+        commercetoolsProjectKey,
+      )
       scope.post('/payments').reply(200, createSessionSuccessResponse)
 
       const affirmcreateSessionRequest = {
@@ -334,7 +343,10 @@ describe('create-session-request-with-lineitems::execute', () => {
       at: 'test-at',
       en: 'test-en',
     }
-    mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
+    mockCtpEnpoints._mockCtpCartsEndpoint(
+      clonedCtpCart,
+      commercetoolsProjectKey,
+    )
     scope.post('/payments').reply(200, createSessionSuccessResponse)
 
     const ctpPaymentToTest = {
@@ -370,7 +382,10 @@ describe('create-session-request-with-lineitems::execute', () => {
         at: 'test-at',
         en: 'test-en',
       }
-      mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
+      mockCtpEnpoints._mockCtpCartsEndpoint(
+        clonedCtpCart,
+        commercetoolsProjectKey,
+      )
       scope.post('/payments').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentToTest = {
@@ -407,7 +422,10 @@ describe('create-session-request-with-lineitems::execute', () => {
         at: 'test-at',
         en: 'test-en',
       }
-      mockCtpEnpoints._mockCtpCartsEndpoint(clonedCtpCart, commercetoolsProjectKey)
+      mockCtpEnpoints._mockCtpCartsEndpoint(
+        clonedCtpCart,
+        commercetoolsProjectKey,
+      )
       scope.post('/payments').reply(200, createSessionSuccessResponse)
 
       const ctpPaymentToTest = {
