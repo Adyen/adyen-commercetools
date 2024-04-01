@@ -46,7 +46,8 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
       'when makePaymentRequest contains some additional fields, ' +
       'and cart contains fields billingAddress, shippingAddress, lineItems, customLineItems, ' +
       'then fields from makePaymentRequest should remain unchanged,' +
-      'and other fields from cart should be mapped to makePaymentRequest',
+      'and other fields from cart should be mapped to makePaymentRequest' +
+      'and a transaction is successfully authorized',
     async () => {
       const payment = await initPaymentWithCart({
         ctpClient,

@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import nock from 'nock'
+import _ from 'lodash'
 import c from '../../src/config/constants.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils.js'
@@ -15,10 +16,80 @@ describe('create-session-request::execute::', () => {
   let ctpCustomer
   let ctpCartWithNoData
   let scope
-  let getSessionRequest
-  let paymentObject
-  let getSessionRequestWithAdditionalFields
-  let paymentObjectWithAdditionalFields
+
+  const getSessionRequest = {
+    countryCode: 'DE',
+    reference: 'UNIQUE_PAYMENT_REFERENCE',
+    amount: {
+      currency: 'EUR',
+      value: 1000,
+    },
+  }
+  const paymentObject = {
+    amountPlanned: {
+      currencyCode: 'EUR',
+      centAmount: 1000,
+    },
+    paymentMethodInfo: {
+      paymentInterface: c.CTP_ADYEN_INTEGRATION,
+    },
+    interfaceInteractions: [],
+    custom: {
+      type: {
+        typeId: 'type',
+        key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
+      },
+      fields: {
+        commercetoolsProjectKey,
+        createSessionRequest: JSON.stringify(getSessionRequest),
+        adyenMerchantAccount,
+      },
+    },
+  }
+
+  const getSessionRequestWithAdditionalFields = {
+    countryCode: 'DE',
+    reference: 'UNIQUE_PAYMENT_REFERENCE',
+    amount: {
+      currency: 'EUR',
+      value: 1000,
+    },
+    dateOfBirth: '2000-08-08',
+    additionalData: {
+      enhancedSchemeData: {
+        destinationCountryCode: 'FR',
+        destinationPostalCode: '75001',
+      },
+    },
+    shopperName: {
+      firstName: 'Test',
+      lastName: 'Customer',
+    },
+  }
+
+  const paymentObjectWithAdditionalFields = {
+    amountPlanned: {
+      currencyCode: 'EUR',
+      centAmount: 1000,
+    },
+    paymentMethodInfo: {
+      paymentInterface: c.CTP_ADYEN_INTEGRATION,
+    },
+    interfaceInteractions: [],
+    custom: {
+      type: {
+        typeId: 'type',
+        key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
+      },
+      fields: {
+        commercetoolsProjectKey,
+        createSessionRequest: JSON.stringify(
+          getSessionRequestWithAdditionalFields,
+        ),
+        adyenMerchantAccount,
+      },
+    },
+  }
 
   before(async () => {
     ctpCart = await utils.readAndParseJsonFile(
@@ -39,78 +110,6 @@ describe('create-session-request::execute::', () => {
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     scope = nock(`${adyenConfig.apiBaseUrl}`)
-
-    getSessionRequest = {
-      countryCode: 'DE',
-      reference: 'UNIQUE_PAYMENT_REFERENCE',
-      amount: {
-        currency: 'EUR',
-        value: 1000,
-      },
-    }
-    paymentObject = {
-      amountPlanned: {
-        currencyCode: 'EUR',
-        centAmount: 1000,
-      },
-      paymentMethodInfo: {
-        paymentInterface: c.CTP_ADYEN_INTEGRATION,
-      },
-      interfaceInteractions: [],
-      custom: {
-        type: {
-          typeId: 'type',
-          key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
-        },
-        fields: {
-          commercetoolsProjectKey,
-          createSessionRequest: JSON.stringify(getSessionRequest),
-          adyenMerchantAccount,
-        },
-      },
-    }
-    getSessionRequestWithAdditionalFields = {
-      countryCode: 'DE',
-      reference: 'UNIQUE_PAYMENT_REFERENCE',
-      amount: {
-        currency: 'EUR',
-        value: 1000,
-      },
-      dateOfBirth: '2000-08-08',
-      additionalData: {
-        enhancedSchemeData: {
-          destinationCountryCode: 'FR',
-          destinationPostalCode: '75001',
-        },
-      },
-      shopperName: {
-        firstName: 'Test',
-        lastName: 'Customer',
-      },
-    }
-    paymentObjectWithAdditionalFields = {
-      amountPlanned: {
-        currencyCode: 'EUR',
-        centAmount: 1000,
-      },
-      paymentMethodInfo: {
-        paymentInterface: c.CTP_ADYEN_INTEGRATION,
-      },
-      interfaceInteractions: [],
-      custom: {
-        type: {
-          typeId: 'type',
-          key: c.CTP_PAYMENT_CUSTOM_TYPE_KEY,
-        },
-        fields: {
-          commercetoolsProjectKey,
-          createSessionRequest: JSON.stringify(
-            getSessionRequestWithAdditionalFields,
-          ),
-          adyenMerchantAccount,
-        },
-      },
-    }
   })
 
   afterEach(() => {
@@ -133,8 +132,13 @@ describe('create-session-request::execute::', () => {
     mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, commercetoolsProjectKey)
     scope.post('/sessions').query(true).reply(200, adyenGetSessionResponse)
 
+    const getSessionRequestClone = _.cloneDeep(getSessionRequest)
+    const paymentObjectClone = _.cloneDeep(paymentObject)
+    paymentObjectClone.custom.fields.makePaymentRequest = JSON.stringify(
+      getSessionRequestClone,
+    )
     const result =
-      await createSessionRequestPaymentHandler.execute(paymentObject)
+      await createSessionRequestPaymentHandler.execute(paymentObjectClone)
 
     expect(result.actions.length).to.equal(3)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
@@ -164,8 +168,13 @@ describe('create-session-request::execute::', () => {
       mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, commercetoolsProjectKey)
       scope.post('/sessions').query(true).replyWithError(errorMsg)
 
+      const getSessionRequestClone = _.cloneDeep(getSessionRequest)
+      const paymentObjectClone = _.cloneDeep(paymentObject)
+      paymentObjectClone.custom.fields.makePaymentRequest = JSON.stringify(
+        getSessionRequestClone,
+      )
       const result =
-        await createSessionRequestPaymentHandler.execute(paymentObject)
+        await createSessionRequestPaymentHandler.execute(paymentObjectClone)
 
       expect(result.actions.length).to.equal(3)
       expect(result.actions[0].action).to.equal('addInterfaceInteraction')
@@ -198,8 +207,16 @@ describe('create-session-request::execute::', () => {
       )
       scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
-      const response = await createSessionRequestPaymentHandler.execute(
+      const getSessionRequestWithAdditionalFieldsClone = _.cloneDeep(
+        getSessionRequestWithAdditionalFields,
+      )
+      const paymentObjectWithAdditionalFieldsClone = _.cloneDeep(
         paymentObjectWithAdditionalFields,
+      )
+      paymentObjectWithAdditionalFieldsClone.custom.fields.makePaymentRequest =
+        JSON.stringify(getSessionRequestWithAdditionalFieldsClone)
+      const response = await createSessionRequestPaymentHandler.execute(
+        paymentObjectWithAdditionalFieldsClone,
       )
 
       expect(response.actions).to.have.lengthOf(3)
@@ -287,8 +304,13 @@ describe('create-session-request::execute::', () => {
       )
       scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
+      const getSessionRequestClone = _.cloneDeep(getSessionRequest)
+      const paymentObjectClone = _.cloneDeep(paymentObject)
+      paymentObjectClone.custom.fields.makePaymentRequest = JSON.stringify(
+        getSessionRequestClone,
+      )
       const response =
-        await createSessionRequestPaymentHandler.execute(paymentObject)
+        await createSessionRequestPaymentHandler.execute(paymentObjectClone)
 
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
@@ -353,8 +375,13 @@ describe('create-session-request::execute::', () => {
       )
       scope.post('/sessions').reply(200, createSessionSuccessResponse)
 
+      const getSessionRequestClone = _.cloneDeep(getSessionRequest)
+      const paymentObjectClone = _.cloneDeep(paymentObject)
+      paymentObjectClone.custom.fields.makePaymentRequest = JSON.stringify(
+        getSessionRequestClone,
+      )
       const response =
-        await createSessionRequestPaymentHandler.execute(paymentObject)
+        await createSessionRequestPaymentHandler.execute(paymentObjectClone)
 
       expect(response.actions).to.have.lengthOf(3)
       const createSessionRequestInteraction = JSON.parse(
