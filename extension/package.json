@@ -56,7 +56,7 @@
     "husky": "8.0.3",
     "lint-staged": "15.2.2",
     "localtunnel": "2.0.2",
-    "mocha": "10.3.0",
+    "mocha": "10.4.0",
     "nock": "13.5.4",
     "prettier": "3.2.5",
     "proxyquire": "2.1.3",
