@@ -57,7 +57,7 @@ describe('::creditCardPayment::amount-update::', () => {
     let updatedAmountStatusCode
     let amountUpdatesResponse
     let amountUpdatesInterfaceInteractions
-    const creditCardNumber = '5101 1800 0000 0007'
+    const creditCardNumber = '4111 1111 4555 1142'
     const creditCardDate = '03/30'
     const creditCardCvc = '737'
 

@@ -29,7 +29,9 @@ export default class KlarnaAuthenticationPage {
       .frames()
       .find((f) => f.name() === 'klarna-hpp-instance-main')
     await klarnaMainFrame.waitForSelector('#scheme-payment-selector')
-    await this.page.waitForTimeout(2_000)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 2000)
+    })
     await this.page.click('#buy-button')
   }
 
@@ -51,14 +53,18 @@ export default class KlarnaAuthenticationPage {
 
     // Sleep before final searching for iban field because klarna uses some effects for rendering.
     // We just need to wait for effect to finish.
-    await this.page.waitForTimeout(1_000)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000)
+    })
     await klarnaIframe.waitForSelector('[data-testid="pick-plan"]')
     await klarnaIframe.click('#directdebit\\.0-ui button[role="option"]')
     await klarnaIframe.click('[data-testid="pick-plan"]')
 
     // Sleep before final searching for iban field because klarna uses some effects for rendering.
     // We just need to wait for effect to finish.
-    await this.page.waitForTimeout(1_000)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000)
+    })
 
     const ibanField = await klarnaIframe.$('#iban')
 
@@ -97,7 +103,9 @@ export default class KlarnaAuthenticationPage {
 
       // Sleep before final click because klarna uses some internal state to disable button directly with its style.
       // We just need to wait for effect to finish.
-      await this.page.waitForTimeout(1_000)
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1000)
+      })
       await finalSubmitButton.click()
     }
 

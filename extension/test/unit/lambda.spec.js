@@ -1,11 +1,7 @@
 import sinon from 'sinon'
-import chai from 'chai'
-import chaiAsPromised from 'chai-as-promised'
+import { expect } from 'chai'
 import { handler } from '../../index.lambda.js'
 import paymentHandler from '../../src/paymentHandler/payment-handler.js'
-
-const { expect } = chai
-chai.use(chaiAsPromised)
 
 describe('Lambda handler', () => {
   afterEach(() => {

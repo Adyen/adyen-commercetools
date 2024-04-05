@@ -148,7 +148,9 @@ describe.skip('::creditCardPayment3dsNative::', () => {
   }
 
   async function performChallengeFlow({ browserTab, baseUrl }) {
-    await browserTab.waitForTimeout(5_000)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 5000)
+    })
 
     const creditCardAuthenticationPage = new CreditCardNativeAuthenticationPage(
       browserTab,

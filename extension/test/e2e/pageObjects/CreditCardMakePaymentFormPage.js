@@ -10,7 +10,9 @@ export default class CreditCardMakePaymentFormPage extends MakePaymentFormPage {
   }) {
     await this.generateAdyenMakePaymentForm(clientKey)
 
-    await this.page.waitForTimeout(2_000) // wait for web component rendering
+    await new Promise((resolve) => {
+      setTimeout(resolve, 2000)
+    }) // wait for web component rendering
 
     await executeInAdyenIframe(
       this.page,
