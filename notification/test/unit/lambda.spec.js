@@ -1,5 +1,5 @@
 import sinon from 'sinon'
-import {expect, assert} from "chai"
+import { expect, assert } from 'chai'
 import VError from 'verror'
 import { handler } from '../../index.lambda.js'
 import notificationHandler from '../../src/handler/notification/notification.handler.js'
@@ -80,7 +80,7 @@ describe('Lambda handler', () => {
       try {
         await handler(event)
       } catch (e) {
-        expect(e).to.be.equal(errorWrapper);
+        expect(e).to.be.equal(errorWrapper)
       }
 
       const notificationItem = event.notificationItems.pop()
@@ -91,8 +91,7 @@ describe('Lambda handler', () => {
         },
         'Unexpected error when processing event',
       )
-    }
-    finally {
+    } finally {
       logger.child = originalChildFn
     }
   })

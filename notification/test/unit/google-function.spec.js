@@ -1,5 +1,5 @@
 import sinon from 'sinon'
-import {expect} from "chai"
+import { expect } from 'chai'
 import VError from 'verror'
 import { notificationTrigger } from '../../index.googleFunction.js'
 import notificationHandler from '../../src/handler/notification/notification.handler.js'

@@ -1,4 +1,4 @@
-import {expect} from "chai"
+import { expect } from 'chai'
 import utils from '../../src/utils/commons.js'
 
 describe('notification module common utility', () => {
