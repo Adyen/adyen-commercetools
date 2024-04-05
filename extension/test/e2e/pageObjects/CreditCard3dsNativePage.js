@@ -18,7 +18,7 @@ export default class CreditCard3dsNativePage {
 
     await new Promise((resolve) => {
       setTimeout(resolve, 1000)
-    });
+    })
 
     const additionalPaymentDetailsInput2 = await this.page.$(
       '#adyen-additional-payment-details',

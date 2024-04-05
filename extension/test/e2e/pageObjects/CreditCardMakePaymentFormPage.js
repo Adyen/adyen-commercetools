@@ -12,7 +12,7 @@ export default class CreditCardMakePaymentFormPage extends MakePaymentFormPage {
 
     await new Promise((resolve) => {
       setTimeout(resolve, 2000)
-    }); // wait for web component rendering
+    }) // wait for web component rendering
 
     await executeInAdyenIframe(
       this.page,

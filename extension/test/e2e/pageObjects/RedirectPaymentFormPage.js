@@ -19,7 +19,7 @@ export default class RedirectPaymentFormPage {
     await this.page.click('#redirect-payment-button')
     await new Promise((resolve) => {
       setTimeout(resolve, 3000)
-    });
+    })
     const redirectResultCodeEle = await this.page.$(
       '#adyen-payment-auth-result',
     )

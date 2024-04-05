@@ -31,7 +31,7 @@ export default class KlarnaAuthenticationPage {
     await klarnaMainFrame.waitForSelector('#scheme-payment-selector')
     await new Promise((resolve) => {
       setTimeout(resolve, 2000)
-    });
+    })
     await this.page.click('#buy-button')
   }
 
@@ -55,7 +55,7 @@ export default class KlarnaAuthenticationPage {
     // We just need to wait for effect to finish.
     await new Promise((resolve) => {
       setTimeout(resolve, 1000)
-    });
+    })
     await klarnaIframe.waitForSelector('[data-testid="pick-plan"]')
     await klarnaIframe.click('#directdebit\\.0-ui button[role="option"]')
     await klarnaIframe.click('[data-testid="pick-plan"]')
@@ -64,7 +64,7 @@ export default class KlarnaAuthenticationPage {
     // We just need to wait for effect to finish.
     await new Promise((resolve) => {
       setTimeout(resolve, 1000)
-    });
+    })
 
     const ibanField = await klarnaIframe.$('#iban')
 
@@ -105,7 +105,7 @@ export default class KlarnaAuthenticationPage {
       // We just need to wait for effect to finish.
       await new Promise((resolve) => {
         setTimeout(resolve, 1000)
-      });
+      })
       await finalSubmitButton.click()
     }
 

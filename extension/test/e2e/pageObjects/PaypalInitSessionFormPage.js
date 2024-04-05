@@ -12,7 +12,7 @@ export default class PaypalInitSessionFormPage extends InitSessionFormPage {
     await super.initPaymentSession(clientKey, paymentAfterCreateSession)
     await new Promise((resolve) => {
       setTimeout(resolve, 4000)
-    });
+    })
     await this.clickOnPaypalButton()
   }
 
@@ -20,13 +20,13 @@ export default class PaypalInitSessionFormPage extends InitSessionFormPage {
     await executeInAdyenIframe(this.page, '.paypal-button', (el) => el.click())
     await new Promise((resolve) => {
       setTimeout(resolve, 1000)
-    });
+    })
   }
 
   async getPaymentAuthResult() {
     await new Promise((resolve) => {
       setTimeout(resolve, 5000)
-    }); // wait for the main page refreshing
+    }) // wait for the main page refreshing
     await this.page.waitForSelector('#adyen-payment-auth-result') // make sure result has been redenered in main page
     const authResultEle = await this.page.$('#adyen-payment-auth-result')
 

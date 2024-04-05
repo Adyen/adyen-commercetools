@@ -150,7 +150,7 @@ describe.skip('::creditCardPayment3dsNative::', () => {
   async function performChallengeFlow({ browserTab, baseUrl }) {
     await new Promise((resolve) => {
       setTimeout(resolve, 5000)
-    });
+    })
 
     const creditCardAuthenticationPage = new CreditCardNativeAuthenticationPage(
       browserTab,

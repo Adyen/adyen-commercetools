@@ -1,8 +1,7 @@
 import sinon from 'sinon'
-import {expect} from "chai"
+import { expect } from 'chai'
 import { handler } from '../../index.lambda.js'
 import paymentHandler from '../../src/paymentHandler/payment-handler.js'
-
 
 describe('Lambda handler', () => {
   afterEach(() => {

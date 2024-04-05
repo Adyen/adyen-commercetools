@@ -22,7 +22,7 @@ export default class AffirmRedirectAuthenticationPage {
     await this.page.type('[aria-label="PIN"]', '1234')
     await new Promise((resolve) => {
       setTimeout(resolve, 5000)
-    }); // wait for overlay loading
+    }) // wait for overlay loading
   }
 
   async choosePlan() {
@@ -43,7 +43,7 @@ export default class AffirmRedirectAuthenticationPage {
     await this.page.evaluate((cb) => cb.click(), autoPayToggle)
     await new Promise((resolve) => {
       setTimeout(resolve, 1000)
-    }); // Wait for the page refreshes after toggling the autopay
+    }) // Wait for the page refreshes after toggling the autopay
     const confirmCheckbox = await this.page.$(
       '[data-testid="disclosure-checkbox-indicator"]',
     )

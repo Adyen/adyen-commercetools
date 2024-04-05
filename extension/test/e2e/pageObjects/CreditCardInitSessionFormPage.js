@@ -27,12 +27,14 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
       '[data-cse="encryptedCardNumber"] iframe',
     )
     const encryptedCardNumberFrame = await elementHandle.contentFrame()
-    await encryptedCardNumberFrame.waitForNavigation({waitUntil: "domcontentloaded"});
+    await encryptedCardNumberFrame.waitForNavigation({
+      waitUntil: 'domcontentloaded',
+    })
 
     // For some reason following selector won't work unless we wait
     await encryptedCardNumberFrame.waitForSelector(
       '[data-fieldtype="encryptedCardNumber"]',
-        {timeout: 10000}
+      { timeout: 10000 },
     )
 
     await executeInAdyenIframe(
@@ -55,7 +57,9 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
   }
 
   async confirmCreditCardWebComopnent() {
-    await this.page.waitForSelector('.adyen-checkout__button--pay', {timeout: 3000})
+    await this.page.waitForSelector('.adyen-checkout__button--pay', {
+      timeout: 3000,
+    })
     const checkoutButton = await this.page.$('.adyen-checkout__button--pay')
 
     await this.page.evaluate((cb) => cb.click(), checkoutButton)
@@ -65,7 +69,7 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
     const authResultEle = await this.page.$('#adyen-payment-auth-result')
     await new Promise((resolve) => {
       setTimeout(resolve, 2000)
-    });
+    })
     const authResultJson = await (
       await authResultEle.getProperty('innerHTML')
     ).jsonValue()
