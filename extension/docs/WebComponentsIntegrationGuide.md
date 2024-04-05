@@ -16,9 +16,9 @@
   - [Step 4: Create a payment session](#step-4-create-a-payment-session)
     - [Response](#response)
       - [Handle Redirect](#handle-redirect)
-    - [Adding cart and product informations (lineItems) to the request](#adding-cart-and-product-informations-lineitems-to-the-request)
   - [Step 5: Set up Web Component](#step-5-set-up-web-component)
   - [Step 6: Get payment result](#step-6-get-payment-result)
+  - [Adding cart information to the createSessionRequest and makePaymentRequest](#adding-cart-information-to-the-createSessionRequest-and-makePaymentRequest)
   - [Error handling](#error-handling)
     - [Extension module errors](#extension-module-errors)
     - [Shopper successfully paid but `redirectUrl` was not reached](#shopper-successfully-paid-but-redirecturl-was-not-reached)
@@ -392,17 +392,39 @@ In this case you have to handle it on the return URL front-end page.
 
 > See [Adyen documentation](https://docs.adyen.com/online-payments/web-components#handle-redirect-result) for more information how to perform additional front end actions.
 
-### Adding cart and product informations (lineItems) to the request
+## Step 5: Set up Web Component
 
-Extension module sends the `lineItems` field in the Adyen request, taking the data from the `lineItems` field in `createSessionRequest`.
+Next, use the Adyen Web Components to render the payment method, and collect the required payment details from the shopper.
 
-If the field does not exist in `createSessionRequest`, then module automatically populates `lineItems` from the CommerceTools cart.
+If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Component integration guide](https://docs.adyen.com/online-payments/web-components#set-up).
 
-Extension module does not rely on the deprecated `addCommercetoolsLineItems` flag from the `createSessionRequest`.
+## Step 6: Get payment result
 
-By default, the extension module will populate `lineItems` for you but in case you want to define your own values include `lineItems` in your `createSessionRequest`.
+After payment is initialized on front-end, you can get the result from Adyen asynchronously. The notification module would receive the result with eventCode `AUTHORISATION` and
+update it to commercetools payment `interfaceInteraction` custom fields. Also, `pspReference` can be obtained from the notification result in notification module, which is set as commercetools payment key.
 
-Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`.
+For details, please follow [Get payment outcome](https://docs.adyen.com/online-payments/web-components#get-payment-outcome)
+
+## Adding cart information to the createSessionRequest and makePaymentRequest
+
+Extension module sends the `lineItems`, `billingAddress`, `countryCode`, `dateOfBirth`, `shopperEmail`, `shopperLocale`, `shopperName`, `accountInfo`, `additionalData → enhancedSchemeData`fields in the Adyen request,
+taking the data from the `lineItems`, `billingAddress`, `countryCode`, `dateOfBirth`, `shopperEmail`, `shopperLocale`,`shopperName`, `accountInfo`, `additionalData → enhancedSchemeData`fields in `createSessionRequest/makePaymentRequest`.
+
+If any of these fields are missing in the `createSessionRequest/makePaymentRequest`, the module will automatically populate the following:
+
+- `lineItems`, `billingAddress`, `countryCode`, `shopperEmail`, `shopperLocale`, and `additionalData → enhancedSchemeData` fields from the CommerceTools cart
+
+- `dateOfBirth`, `shopperName`, and `accountInfo` fields from the CommerceTools customer, if the cart is created by the customer
+
+The `additionalData → enhancedSchemeData` fields are automatically populated only when the payment is made by credit card.
+
+**For the extension to add data from the cart to the `createSessionRequest`, it is necessary to have the [CommerceTools payment assigned to the cart](#step-2-creating-a-commercetools-payment) before adding custom fields.**
+
+Extension module does not rely on the deprecated `addCommercetoolsLineItems` flag from the `createSessionRequest/makePaymentRequest`.
+
+By default, the extension module populates these fields for you. However, if you wish to define your own values, include these fields in your `createSessionRequest/makePaymentRequest`.
+
+Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **WITH** `shopperLocale`, `countryCode`, `shopperEmail`, `shopperName`, `billingAddress`.
 
 ```json
 {
@@ -502,19 +524,6 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`.
 ```
 
 </details>
-
-## Step 5: Set up Web Component
-
-Next, use the Adyen Web Components to render the payment method, and collect the required payment details from the shopper.
-
-If you haven't created the payment forms already in your frontend, follow the official Adyen [Web Component integration guide](https://docs.adyen.com/online-payments/web-components#set-up).
-
-## Step 6: Get payment result
-
-After payment is initialized on front-end, you can get the result from Adyen asynchronously. The notification module would receive the result with eventCode `AUTHORISATION` and
-update it to commercetools payment `interfaceInteraction` custom fields. Also, `pspReference` can be obtained from the notification result in notification module, which is set as commercetools payment key.
-
-For details, please follow [Get payment outcome](https://docs.adyen.com/online-payments/web-components#get-payment-outcome)
 
 ## Error handling
 
