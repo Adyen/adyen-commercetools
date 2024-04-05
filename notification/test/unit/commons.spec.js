@@ -1,7 +1,5 @@
-import chai from 'chai'
+import { expect } from 'chai'
 import utils from '../../src/utils/commons.js'
-
-const { expect } = chai
 
 describe('notification module common utility', () => {
   it(`should get a list of shorten notification object for tracking when notification contains an array of 

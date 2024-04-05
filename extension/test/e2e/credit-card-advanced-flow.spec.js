@@ -153,7 +153,9 @@ describe('::creditCardAdvancedFlow::', () => {
       clientKey,
     )
 
-    await browserTab.waitForTimeout(5_000)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 5000)
+    })
 
     // Submit additional details
     const creditCardNativePage = new CreditCardNativePage(browserTab, baseUrl)
