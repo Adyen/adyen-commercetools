@@ -123,10 +123,11 @@ function _mapItemDetailLines(enhancedSchemeData, ctpCart) {
     lineItemDetails.quantity = item.quantity
     lineItemDetails.totalAmount = item.totalPrice?.centAmount
     lineItemDetails.unitPrice = item.taxRate
-      ? parseFloat(
+      ? parseInt(
           (
             item.taxedPrice.totalGross.centAmount / lineItemDetails.quantity
           ).toFixed(0),
+          10,
         )
       : item.price.value.centAmount
 
@@ -139,10 +140,11 @@ function _mapItemDetailLines(enhancedSchemeData, ctpCart) {
     lineItemDetails.quantity = item.quantity
     lineItemDetails.totalAmount = item.totalPrice?.centAmount
     lineItemDetails.unitPrice = item.taxRate
-      ? parseFloat(
+      ? parseInt(
           (
             item.taxedPrice.totalGross.centAmount / lineItemDetails.quantity
           ).toFixed(0),
+          10,
         )
       : item.money.centAmount
 
