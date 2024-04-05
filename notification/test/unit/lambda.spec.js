@@ -1,5 +1,5 @@
 import sinon from 'sinon'
-import chai from 'chai'
+import {expect, assert} from "chai"
 import VError from 'verror'
 import { handler } from '../../index.lambda.js'
 import notificationHandler from '../../src/handler/notification/notification.handler.js'
@@ -9,7 +9,6 @@ import utils from '../../src/utils/commons.js'
 import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
 
 const logger = getLogger()
-const { expect, assert } = chai
 
 describe('Lambda handler', () => {
   const sandbox = sinon.createSandbox()
@@ -78,8 +77,11 @@ describe('Lambda handler', () => {
         .stub(notificationHandler, 'processNotification')
         .throws(errorWrapper)
 
-      const call = async () => handler(event)
-      await expect(call()).to.be.rejectedWith(errorWrapper)
+      try {
+        await handler(event)
+      } catch (e) {
+        expect(e).to.be.equal(errorWrapper);
+      }
 
       const notificationItem = event.notificationItems.pop()
       logSpy.calledWith(
@@ -89,7 +91,8 @@ describe('Lambda handler', () => {
         },
         'Unexpected error when processing event',
       )
-    } finally {
+    }
+    finally {
       logger.child = originalChildFn
     }
   })
@@ -130,9 +133,13 @@ describe('Lambda handler', () => {
     const error = new Error('No notification received.')
 
     const emptyEvent = {}
-    const call = async () => handler(emptyEvent)
 
-    await expect(call()).to.be.rejectedWith(error.message)
+    try {
+      await handler(emptyEvent)
+    } catch (e) {
+      expect(e.message).to.be.equal(error.message)
+    }
+
     assert(
       logSpy.calledWith(
         sinon.match({

@@ -1,5 +1,5 @@
 import sinon from 'sinon'
-import chai from 'chai'
+import {expect} from "chai"
 import VError from 'verror'
 import { notificationTrigger } from '../../index.googleFunction.js'
 import notificationHandler from '../../src/handler/notification/notification.handler.js'
@@ -7,8 +7,6 @@ import { getLogger } from '../../src/utils/logger.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils/commons.js'
 import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
-
-const { expect } = chai
 
 describe('Google Function handler', () => {
   const sandbox = sinon.createSandbox()
