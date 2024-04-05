@@ -82,7 +82,9 @@ export default class AffirmInitSessionFormPage extends InitSessionFormPage {
   }
 
   async confirmAffirmWebComponent() {
-    await this.page.waitForTimeout(2_000) // wait for the form has been filled before checkout
+    await new Promise((resolve) => {
+      setTimeout(resolve, 2000)
+    }); // wait for the form has been filled before checkout
     const checkoutButton = await this.page.$('.adyen-checkout__button--pay')
     await this.page.evaluate((cb) => cb.click(), checkoutButton)
   }

@@ -1,7 +1,6 @@
 import sinon from 'sinon'
 import chai from 'chai'
 import VError from 'verror'
-import chaiAsPromised from 'chai-as-promised'
 import { handler } from '../../index.lambda.js'
 import notificationHandler from '../../src/handler/notification/notification.handler.js'
 import { getLogger } from '../../src/utils/logger.js'
@@ -11,7 +10,6 @@ import { buildMockErrorFromConcurrentModificationException } from '../test-utils
 
 const logger = getLogger()
 const { expect, assert } = chai
-chai.use(chaiAsPromised)
 
 describe('Lambda handler', () => {
   const sandbox = sinon.createSandbox()
