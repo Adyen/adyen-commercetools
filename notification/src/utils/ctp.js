@@ -130,6 +130,13 @@ async function setUpClient(config) {
       )
     },
 
+    fetchMatchingCartOrOrder(uri, paymentID) {
+      const paymentIDCondition =  `paymentInfo(payments(id="${paymentID}"))`
+      return ctpClient.execute(
+        this.buildRequestOptions(uri.where(paymentIDCondition).build())
+      )
+    },
+
     buildRequestOptions(uri, method = 'GET', body = undefined) {
       return {
         uri,
