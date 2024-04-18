@@ -328,6 +328,20 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
         key: newPspReference,
       })
     }
+
+    if (transactionType === 'Authorization' && transactionState === 'Success'
+        && !('CAPTURE' in notificationRequestItem.operations)) {
+      updateActions.push(
+        getAddTransactionUpdateAction({
+          timestamp: convertDateToUTCFormat(eventDate, logger),
+          type: 'Charge',
+          state: 'Success',
+          amount: notificationRequestItem.amount.value,
+          currency: notificationRequestItem.amount.currency,
+          interactionId: pspReference,
+        }),
+      )
+    }
   }
 
   const paymentMethodFromPayment = payment.paymentMethodInfo.method
