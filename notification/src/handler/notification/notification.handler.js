@@ -329,7 +329,8 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
       })
     }
 
-    if (transactionType == 'Authorization' && transactionState == 'Success' && !('CAPTURE' in notificationRequestItem.operations)) {
+    if (transactionType === 'Authorization' && transactionState === 'Success'
+        && !('CAPTURE' in notificationRequestItem.operations)) {
       updateActions.push(
         getAddTransactionUpdateAction({
           timestamp: convertDateToUTCFormat(eventDate, logger),
