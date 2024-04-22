@@ -68,24 +68,28 @@ async function processNotification(
   if (payment) {
     if (isReceivedAmountLowerThanPlanned(payment, notification.NotificationRequestItem)) {
       logger.debug(
-          `===== Received amount (${notification.NotificationRequestItem.amount.value})
-          is lower than planned amount (${payment.amountPlanned.centAmount}) =====`,
+          `Notification (PSP ref: ${notification.NotificationRequestItem.pspReference}) ` +
+          `has received amount (${notification.NotificationRequestItem.amount.value}) ` +
+          `lower than planned amount (${payment.amountPlanned.centAmount}) ` +
+          `on payment id: ${payment.id} (key: ${payment.key})`,
       )
-      let receivedAmount = _.cloneDeep(payment.amountPlanned)
+      const receivedAmount = _.cloneDeep(payment.amountPlanned)
       receivedAmount.centAmount = notification.NotificationRequestItem.amount.value
       receivedAmount.currencyCode = notification.NotificationRequestItem.amount.currency
 
-      // create new payment in Commercetools
-      let newPayment = await copyPayment(payment, pspReference, receivedAmount, ctpClient, logger)
+      const newPayment = await copyPayment(payment, pspReference, receivedAmount, ctpClient, logger)
 
-      // update original payment to reduce planned amount
       const remainingAmount = _.cloneDeep(payment.amountPlanned)
       remainingAmount.centAmount = payment.amountPlanned.centAmount - receivedAmount.centAmount
-      logger.debug(`===== Decreasing planned amount on original payment to ${remainingAmount.centAmount}...`)
-      await updatePaymentWithRepeater(payment, notification, ctpClient, logger, [getChangeAmountPlannedAction(remainingAmount)])
-      logger.debug(`===== Decreased =====`)
-
-      //replace ref payment with new one
+      logger.debug(`Decreasing planned amount on original payment (id: ${payment.id}, key: ${payment.key}) ` +
+          `to ${remainingAmount.centAmount}...`)
+      await updatePaymentWithRepeater(
+          payment,
+          notification,
+          ctpClient,
+          logger,
+          [getChangeAmountPlannedAction(remainingAmount)]
+      )
       payment = newPayment
     }
     await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
@@ -110,11 +114,9 @@ async function updatePaymentWithRepeater(
   let retryMessage
   let updateActions
   while (true) {
-    updateActions = requestedUpdateActions && requestedUpdateActions.length > 0 ? requestedUpdateActions : await calculateUpdateActionsForPayment(
-      currentPayment,
-      notification,
-      logger,
-    )
+    updateActions = requestedUpdateActions && requestedUpdateActions.length > 0
+      ? requestedUpdateActions
+      : await calculateUpdateActionsForPayment(currentPayment, notification, logger)
     if (updateActions.length === 0) {
       break
     }
@@ -197,8 +199,8 @@ function isReceivedAmountLowerThanPlanned(payment, notification) {
   return false
 }
 async function copyPayment(payment, newPspRef, amount, ctpClient, logger) {
-  logger.debug('===== Starting to copy payment object....')
-  let paymentDraft = {}
+  logger.debug('Creating new payment object....')
+  const paymentDraft = {}
   paymentDraft.key = newPspRef
   paymentDraft.customer = payment.customer
   paymentDraft.interfaceId = payment.interfaceId
@@ -211,58 +213,42 @@ async function copyPayment(payment, newPspRef, amount, ctpClient, logger) {
       ctpClient.builder.payments,
       JSON.stringify(paymentDraft),
   )
-  logger.debug('===== NEW Payment Object created, id: ' + newPayment.id)
-
-  await linkPaymentToCartAndOrOrder(payment, newPayment, ctpClient, logger)
+  logger.debug(`Payment object created, id: ${newPayment.id}. Linking to the same cart/order....`)
+  await linkPaymentToCartOrOrder(payment, newPayment, ctpClient, logger)
   return newPayment
 }
 
-async function linkPaymentToCartAndOrOrder(originalPayment, newPayment, ctpClient, logger) {
-  logger.debug('===== Linking new payment to the same cart/order....')
-  let cart, order
-  let orderRes = await ctpClient.fetchMatchingCartOrOrder(
+async function linkPaymentToCartOrOrder(originalPayment, newPayment, ctpClient, logger) {
+  const {body} = await ctpClient.fetchMatchingCartOrOrder(
       ctpClient.builder.orders,
       originalPayment.id
   )
-  if (orderRes.statusCode === 200 && orderRes.body.count > 0) {
-    order = orderRes.body.results[0]
-    logger.debug("===== Order found, Id: " + order.id)
-  } else {
-    logger.debug("===== Order NOT found by payment Id: " + originalPayment.id)
-  }
-
+  const order = body.results[0]
   if (!!order && !!order.id) {
-    logger.debug(`===== Linking payment Id: ${newPayment.id} to order Id: ${order.id}...`)
-    // link new payment to the same order
     await ctpClient.update(
-        ctpClient.builder.orders,
-        order.id,
-        order.version,
-        [getAddPaymentUpdateAction(newPayment.id)]
+      ctpClient.builder.orders,
+      order.id,
+      order.version,
+      [getAddPaymentUpdateAction(newPayment.id)]
     )
-    logger.debug('===== linking to order done. =====')
+    logger.debug(`Payment id: ${newPayment.id} added to order id: ${order.id}`)
   } else {
-    let cartRes = await ctpClient.fetchMatchingCartOrOrder(
+    logger.debug(`Order not found by payment id: ${originalPayment.id}`)
+    const {body} = await ctpClient.fetchMatchingCartOrOrder(
         ctpClient.builder.carts,
         originalPayment.id
     )
-    if (cartRes.statusCode === 200 && cartRes.body.count > 0) {
-      cart = cartRes.body.results[0]
-      logger.debug("===== Cart found, Id: " + cart.id)
-    } else {
-      logger.debug("===== Cart NOT found by payment Id: " + originalPayment.id)
-    }
-
+    const cart = body.results[0]
     if (!!cart && !!cart.id) {
-      logger.debug(`===== Linking payment Id: ${newPayment.id} to cart Id: ${cart.id}...`)
-      // link new payment to the same cart
       await ctpClient.update(
         ctpClient.builder.carts,
         cart.id,
         cart.version,
         [getAddPaymentUpdateAction(newPayment.id)]
       )
-      logger.debug('===== linking to cart done. =====')
+      logger.debug(`Payment id: ${newPayment.id} added to cart id: ${cart.id}`)
+    } else {
+      logger.debug(`Cart not found by payment id: ${originalPayment.id}`)
     }
   }
 }
