@@ -219,11 +219,11 @@ async function copyPayment(payment, newPspRef, amount, ctpClient, logger) {
 }
 
 async function linkPaymentToCartOrOrder(originalPayment, newPayment, ctpClient, logger) {
-  const {body} = await ctpClient.fetchMatchingCartOrOrder(
+  const orderResp = await ctpClient.fetchMatchingCartOrOrder(
       ctpClient.builder.orders,
       originalPayment.id
   )
-  const order = body.results[0]
+  const order = orderResp.body.results[0]
   if (!!order && !!order.id) {
     await ctpClient.update(
       ctpClient.builder.orders,
@@ -234,11 +234,11 @@ async function linkPaymentToCartOrOrder(originalPayment, newPayment, ctpClient, 
     logger.debug(`Payment id: ${newPayment.id} added to order id: ${order.id}`)
   } else {
     logger.debug(`Order not found by payment id: ${originalPayment.id}`)
-    const {body} = await ctpClient.fetchMatchingCartOrOrder(
+    const cartResp = await ctpClient.fetchMatchingCartOrOrder(
         ctpClient.builder.carts,
         originalPayment.id
     )
-    const cart = body.results[0]
+    const cart = cartResp.body.results[0]
     if (!!cart && !!cart.id) {
       await ctpClient.update(
         ctpClient.builder.carts,
@@ -563,7 +563,7 @@ function getSetMethodInfoNameAction(paymentMethod) {
 function getChangeAmountPlannedAction(amount) {
   return {
     action: 'changeAmountPlanned',
-    amount: amount
+    amount
   }
 }
 
