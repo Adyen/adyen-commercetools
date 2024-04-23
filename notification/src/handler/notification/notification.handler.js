@@ -66,29 +66,45 @@ async function processNotification(
   }
 
   if (payment) {
-    if (isReceivedAmountLowerThanPlanned(payment, notification.NotificationRequestItem)) {
+    if (
+      isReceivedAmountLowerThanPlanned(
+        payment,
+        notification.NotificationRequestItem,
+      )
+    ) {
       logger.debug(
-          `Notification (PSP ref: ${notification.NotificationRequestItem.pspReference}) ` +
+        `Notification (PSP ref: ${notification.NotificationRequestItem.pspReference}) ` +
           `has received amount (${notification.NotificationRequestItem.amount.value}) ` +
           `lower than planned amount (${payment.amountPlanned.centAmount}) ` +
           `on payment id: ${payment.id} (key: ${payment.key})`,
       )
       const receivedAmount = _.cloneDeep(payment.amountPlanned)
-      receivedAmount.centAmount = notification.NotificationRequestItem.amount.value
-      receivedAmount.currencyCode = notification.NotificationRequestItem.amount.currency
+      receivedAmount.centAmount =
+        notification.NotificationRequestItem.amount.value
+      receivedAmount.currencyCode =
+        notification.NotificationRequestItem.amount.currency
 
-      const newPayment = await copyPayment(payment, pspReference, receivedAmount, ctpClient, logger)
+      const newPayment = await copyPayment(
+        payment,
+        pspReference,
+        receivedAmount,
+        ctpClient,
+        logger,
+      )
 
       const remainingAmount = _.cloneDeep(payment.amountPlanned)
-      remainingAmount.centAmount = payment.amountPlanned.centAmount - receivedAmount.centAmount
-      logger.debug(`Decreasing planned amount on original payment (id: ${payment.id}, key: ${payment.key}) ` +
-          `to ${remainingAmount.centAmount}...`)
+      remainingAmount.centAmount =
+        payment.amountPlanned.centAmount - receivedAmount.centAmount
+      logger.debug(
+        `Decreasing planned amount on original payment (id: ${payment.id}, key: ${payment.key}) ` +
+          `to ${remainingAmount.centAmount}...`,
+      )
       await updatePaymentWithRepeater(
-          payment,
-          notification,
-          ctpClient,
-          logger,
-          [getChangeAmountPlannedAction(remainingAmount)]
+        payment,
+        notification,
+        ctpClient,
+        logger,
+        [getChangeAmountPlannedAction(remainingAmount)],
       )
       payment = newPayment
     }
@@ -114,9 +130,14 @@ async function updatePaymentWithRepeater(
   let retryMessage
   let updateActions
   while (true) {
-    updateActions = requestedUpdateActions && requestedUpdateActions.length > 0
-      ? requestedUpdateActions
-      : await calculateUpdateActionsForPayment(currentPayment, notification, logger)
+    updateActions =
+      requestedUpdateActions && requestedUpdateActions.length > 0
+        ? requestedUpdateActions
+        : await calculateUpdateActionsForPayment(
+            currentPayment,
+            notification,
+            logger,
+          )
     if (updateActions.length === 0) {
       break
     }
@@ -192,9 +213,14 @@ function _obfuscateNotificationInfoFromActionFields(updateActions) {
 }
 
 function isReceivedAmountLowerThanPlanned(payment, notification) {
-  if (notification.eventCode === 'AUTHORISATION' && notification.success === "true") {
-    return notification.amount.currency === payment.amountPlanned.currencyCode &&
-        notification.amount.value < payment.amountPlanned.centAmount;
+  if (
+    notification.eventCode === 'AUTHORISATION' &&
+    notification.success === 'true'
+  ) {
+    return (
+      notification.amount.currency === payment.amountPlanned.currencyCode &&
+      notification.amount.value < payment.amountPlanned.centAmount
+    )
   }
   return false
 }
@@ -209,43 +235,44 @@ async function copyPayment(payment, newPspRef, amount, ctpClient, logger) {
   paymentDraft.interfaceInteractions = payment.interfaceInteractions
   paymentDraft.custom = payment.custom
 
-  const { body: newPayment }  = await ctpClient.create(
-      ctpClient.builder.payments,
-      JSON.stringify(paymentDraft),
+  const { body: newPayment } = await ctpClient.create(
+    ctpClient.builder.payments,
+    JSON.stringify(paymentDraft),
   )
-  logger.debug(`Payment object created, id: ${newPayment.id}. Linking to the same cart/order....`)
+  logger.debug(
+    `Payment object created, id: ${newPayment.id}. Linking to the same cart/order....`,
+  )
   await linkPaymentToCartOrOrder(payment, newPayment, ctpClient, logger)
   return newPayment
 }
 
-async function linkPaymentToCartOrOrder(originalPayment, newPayment, ctpClient, logger) {
+async function linkPaymentToCartOrOrder(
+  originalPayment,
+  newPayment,
+  ctpClient,
+  logger,
+) {
   const orderResp = await ctpClient.fetchMatchingCartOrOrder(
-      ctpClient.builder.orders,
-      originalPayment.id
+    ctpClient.builder.orders,
+    originalPayment.id,
   )
   const order = orderResp.body.results[0]
   if (!!order && !!order.id) {
-    await ctpClient.update(
-      ctpClient.builder.orders,
-      order.id,
-      order.version,
-      [getAddPaymentUpdateAction(newPayment.id)]
-    )
+    await ctpClient.update(ctpClient.builder.orders, order.id, order.version, [
+      getAddPaymentUpdateAction(newPayment.id),
+    ])
     logger.debug(`Payment id: ${newPayment.id} added to order id: ${order.id}`)
   } else {
     logger.debug(`Order not found by payment id: ${originalPayment.id}`)
     const cartResp = await ctpClient.fetchMatchingCartOrOrder(
-        ctpClient.builder.carts,
-        originalPayment.id
+      ctpClient.builder.carts,
+      originalPayment.id,
     )
     const cart = cartResp.body.results[0]
     if (!!cart && !!cart.id) {
-      await ctpClient.update(
-        ctpClient.builder.carts,
-        cart.id,
-        cart.version,
-        [getAddPaymentUpdateAction(newPayment.id)]
-      )
+      await ctpClient.update(ctpClient.builder.carts, cart.id, cart.version, [
+        getAddPaymentUpdateAction(newPayment.id),
+      ])
       logger.debug(`Payment id: ${newPayment.id} added to cart id: ${cart.id}`)
     } else {
       logger.debug(`Cart not found by payment id: ${originalPayment.id}`)
@@ -536,8 +563,8 @@ function getAddPaymentUpdateAction(paymentId) {
     action: 'addPayment',
     payment: {
       id: paymentId,
-      typeId: 'payment'
-    }
+      typeId: 'payment',
+    },
   }
 }
 
@@ -563,7 +590,7 @@ function getSetMethodInfoNameAction(paymentMethod) {
 function getChangeAmountPlannedAction(amount) {
   return {
     action: 'changeAmountPlanned',
-    amount
+    amount,
   }
 }
 
