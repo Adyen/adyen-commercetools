@@ -85,14 +85,14 @@ async function updatePaymentWithRepeater(
   let retryCount = 0
   let retryMessage
   let updateActions
-  while (true) {
+  const repeater = async () => {
     updateActions = await calculateUpdateActionsForPayment(
       currentPayment,
       notification,
       logger,
     )
     if (updateActions.length === 0) {
-      break
+      return;
     }
     logger.debug(
       `Update payment with key ${
@@ -110,7 +110,6 @@ async function updatePaymentWithRepeater(
       logger.debug(
         `Payment with key ${currentPayment.key} was successfully updated`,
       )
-      break
     } catch (err) {
       const moduleConfig = config.getModuleConfig()
       let updateActionsToLog = updateActions
@@ -141,6 +140,9 @@ async function updatePaymentWithRepeater(
             )}`,
         )
       }
+
+      repeater();
+
       /* eslint-disable-next-line no-await-in-loop */
       const response = await ctpClient.fetchById(
         ctpClient.builder.payments,
@@ -150,6 +152,8 @@ async function updatePaymentWithRepeater(
       currentVersion = currentPayment.version
     }
   }
+
+  return repeater()
 }
 
 function _obfuscateNotificationInfoFromActionFields(updateActions) {
