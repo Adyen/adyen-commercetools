@@ -141,7 +141,7 @@ async function updatePaymentWithRepeater(
         )
       }
 
-      repeater();
+      await repeater();
 
       /* eslint-disable-next-line no-await-in-loop */
       const response = await ctpClient.fetchById(
