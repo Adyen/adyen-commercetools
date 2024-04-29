@@ -92,7 +92,7 @@ async function updatePaymentWithRepeater(
       logger,
     )
     if (updateActions.length === 0) {
-      return;
+      return
     }
     logger.debug(
       `Update payment with key ${
@@ -141,7 +141,7 @@ async function updatePaymentWithRepeater(
         )
       }
 
-      await repeater();
+      await repeater()
 
       /* eslint-disable-next-line no-await-in-loop */
       const response = await ctpClient.fetchById(
