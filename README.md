@@ -93,7 +93,7 @@ Please follow the detailed guides below in order to integrate your front end wit
 The extension module is a publicly exposed service that acts as a middleware between the commercetools platform and Adyen. 
 Once [commercetools HTTP API Extensions](https://docs.commercetools.com/api/projects/api-extensions) is configured to call Adyen extension module, for every payment create or update request an Adyen extension will be remotely called by the commercetools platform.
 
-- Follow [Integration Guide](./extension/docs/WebComponentsIntegrationGuide.md) for information how to integrate your shop with this module.
+- Follow [Integration Guide](./extension/docs/WebComponentsIntegrationGuide.md) for information how to integrate your shop with this module. For advanced integration flow follow the [advanced integration guide](./extension/docs/AdvancedCheckoutFlowIntegrationGuide.md). 
 - Follow [How to run](extension/docs/HowToRun.md) the extension module.
 
 ### Notification module 
