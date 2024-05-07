@@ -18,7 +18,7 @@
     - [Response](#response)
       - [Authorised Response](#authorised-response)
       - [Action Response](#action-response)
-    - [Adding cart and product informations (lineItems) to the request](#adding-cart-and-product-informations-lineitems-to-the-request)
+    - [Adding cart and product informations (lineItems) to the request](#adding-cart-and-product-information-lineitems-to-the-request)
   - [Step 6: Submit additional payment details](#step-6-submit-additional-payment-details)
     - [Response](#response-1)
       - [Authorised Response](#authorised-response-1)
