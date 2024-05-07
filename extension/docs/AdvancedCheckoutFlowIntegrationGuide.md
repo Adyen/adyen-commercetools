@@ -4,31 +4,31 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Web Components integration guide](#web-components-integration-guide)
-    - [How it works](#how-it-works)
-    - [Before you begin](#before-you-begin)
-    - [Step 1: commercetools checkout validations](#step-1-commercetools-checkout-validations)
-        - [Validate cart state](#validate-cart-state)
-        - [Recalculate cart](#recalculate-cart)
-        - [Validate payment](#validate-payment)
-        - [Validate payment transaction](#validate-payment-transaction)
-    - [Step 2: Creating a commercetools payment](#step-2-creating-a-commercetools-payment)
-    - [Step 3: Get available payment methods (Optional)](#step-3-get-available-payment-methods-optional)
-    - [Step 4: Add Components to your payments form](#step-4-add-components-to-your-payments-form)
-    - [Step 5: Make a payment](#step-5-make-a-payment)
-        - [Response](#response)
-            - [Authorised Response](#authorised-response)
-            - [Action Response](#action-response)
-        - [Adding cart and product informations (lineItems) to the request](#adding-cart-and-product-informations-lineitems-to-the-request)
-    - [Step 6: Submit additional payment details](#step-6-submit-additional-payment-details)
-        - [Response](#response-1)
-            - [Authorised Response](#authorised-response-1)
-            - [Action Response](#action-response-1)
-    - [Error handling](#error-handling)
-        - [Extension module errors](#extension-module-errors)
-        - [Adyen payment refusals](#adyen-payment-refusals)
-        - [Shopper successfully paid but `redirectUrl` was not reached](#shopper-successfully-paid-but-redirecturl-was-not-reached)
-        - [Shopper tries to pay a different amount than the actual order amount](#shopper-tries-to-pay-a-different-amount-than-the-actual-order-amount)
-    - [Test and go live](#test-and-go-live)
+  - [How it works](#how-it-works)
+  - [Before you begin](#before-you-begin)
+  - [Step 1: commercetools checkout validations](#step-1-commercetools-checkout-validations)
+    - [Validate cart state](#validate-cart-state)
+    - [Recalculate cart](#recalculate-cart)
+    - [Validate payment](#validate-payment)
+    - [Validate payment transaction](#validate-payment-transaction)
+  - [Step 2: Creating a commercetools payment](#step-2-creating-a-commercetools-payment)
+  - [Step 3: Get available payment methods (Optional)](#step-3-get-available-payment-methods-optional)
+  - [Step 4: Add Components to your payments form](#step-4-add-components-to-your-payments-form)
+  - [Step 5: Make a payment](#step-5-make-a-payment)
+    - [Response](#response)
+      - [Authorised Response](#authorised-response)
+      - [Action Response](#action-response)
+    - [Adding cart and product informations (lineItems) to the request](#adding-cart-and-product-informations-lineitems-to-the-request)
+  - [Step 6: Submit additional payment details](#step-6-submit-additional-payment-details)
+    - [Response](#response-1)
+      - [Authorised Response](#authorised-response-1)
+      - [Action Response](#action-response-1)
+  - [Error handling](#error-handling)
+    - [Extension module errors](#extension-module-errors)
+    - [Adyen payment refusals](#adyen-payment-refusals)
+    - [Shopper successfully paid but `redirectUrl` was not reached](#shopper-successfully-paid-but-redirecturl-was-not-reached)
+    - [Shopper tries to pay a different amount than the actual order amount](#shopper-tries-to-pay-a-different-amount-than-the-actual-order-amount)
+  - [Test and go live](#test-and-go-live)
 - [Manual Capture](#manual-capture)
 - [Cancel or refund](#cancel-or-refund)
 - [Restore](#restore)
@@ -71,9 +71,9 @@ The merchant server should execute the following validations:
 
 1. On each checkout step [validate cart state](#validate-cart-state)
 1. Before starting a new payment process make sure there are no paid payments on the cart already:
-    - [Recalculate cart](#recalculate-cart)
-    - [Validate payment](#validate-payment)
-    - [Validate payment transaction](#validate-payment-transaction)
+   - [Recalculate cart](#recalculate-cart)
+   - [Validate payment](#validate-payment)
+   - [Validate payment transaction](#validate-payment-transaction)
 
 If all the above validations passed then the order can be created right away and the order confirmation page shown.
 Otherwise, the shopper might continue with further payment steps.
@@ -414,7 +414,7 @@ For some payment methods (e.g. Visa, Mastercard, and SEPA Direct Debits) you'll 
 
 Notice that on an `Authorised` (successful) result, the integration will automatically add a transaction to the commercetools payment. The transaction will be of type `Authorization`, its' `amount` will match the `amountPlanned` and `interactionId` will be matching the unique Adyen's `pspReference` from `makePaymentResponse`.
 
-> See [Adyen documentation](https://docs.adyen.com/online-payments/build-your-integration/advanced-flow/?platform=Web&integration=Components&version=5.39.1) for more information how to present the results.
+> See [Adyen documentation](https://docs.adyen.com/online-payments/build-your-integration/advanced-flow/?platform=Web&integration=Components&version=5.39.1#get-the-payment-outcome) for more information how to present the results.
 
 #### Action Response
 
@@ -469,118 +469,7 @@ Pass the action object to your front end. The Adyen web component uses this to h
 
 For some payment methods, it is necessary to provide [line item details](https://docs.adyen.com/api-explorer/Checkout/71/post/payments#request-lineItems) within the `makePaymentRequest`.
 
-Extension module can generate the line item automatically, but you need to do following steps:
-
-- The commercetools payment [referenced in the commercetools cart](https://docs.commercetools.com/http-api-projects-carts#add-payment).
-- Either `addCommercetoolsLineItems` property set to`true` within the `makePaymentRequest` or `addCommercetoolsLineItems` flag set to `true` within your extension [configuration](./HowToRun.md#other-configurations).
-  > In case you would like to override the generation of the lineItems please provide within the `makePaymentRequest` own `lineItems` data.
-
-Here's an example of the `makePaymentRequest` **WITHOUT** `lineItems` and `addCommercetoolsLineItems` property set to true.
-
-```json
-{
-  "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
-  "reference": "YOUR_REFERENCE",
-  "paymentMethod": {
-    "type": "YOUR_PAYMENT_METHOD"
-  },
-  "amount": {
-    "currency": "EUR",
-    "value": "1000"
-  },
-  "shopperLocale": "en_US",
-  "countryCode": "SE",
-  "shopperEmail": "youremail@email.com",
-  "shopperName": {
-    "firstName": "Testperson-se",
-    "gender": "UNKNOWN",
-    "lastName": "Approved"
-  },
-  "shopperReference": "YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j",
-  "billingAddress": {
-    "city": "Ankeborg",
-    "country": "SE",
-    "houseNumberOrName": "1",
-    "postalCode": "12345",
-    "street": "Stargatan"
-  },
-  "returnUrl": "https://www.your-company.com/...",
-  "addCommercetoolsLineItems": true
-}
-```
-
-[Update commercetools payment](https://docs.commercetools.com/http-api-projects-payments#update-payment) with the request above.
-
-```json
-{
-  "version": "PAYMENT_VERSION",
-  "actions": [
-    {
-      "action": "setCustomField",
-      "name": "makePaymentRequest",
-      "value": "{\"merchantAccount\":\"YOUR_MERCHANT_ACCOUNT\",\"reference\":\"YOUR_REFERENCE\",\"paymentMethod\":{\"type\":\"klarna\"},\"amount\":{\"currency\":\"SEK\",\"value\":\"1000\"},\"shopperLocale\":\"en_US\",\"countryCode\":\"SE\",\"shopperEmail\":\"youremail@email.com\",\"shopperName\":{\"firstName\":\"Testperson-se\",\"gender\":\"UNKNOWN\",\"lastName\":\"Approved\"},\"shopperReference\":\"YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j\",\"billingAddress\":{\"city\":\"Ankeborg\",\"country\":\"SE\",\"houseNumberOrName\":\"1\",\"postalCode\":\"12345\",\"street\":\"Stargatan\"},\"returnUrl\":\"https://www.your-company.com/...\"}"
-    }
-  ]
-}
-```
-
-<details>
-<summary>Extension module will add line items to your makePaymentRequest. Click to expand.</summary>
-
-```json
-{
-  "merchantAccount": "YOUR_MERCHANT_ACCOUNT",
-  "reference": "YOUR_REFERENCE",
-  "paymentMethod": {
-    "type": "YOUR_PAYMENT_METHOD"
-  },
-  "amount": {
-    "currency": "EUR",
-    "value": "1000"
-  },
-  "shopperLocale": "en_US",
-  "countryCode": "SE",
-  "shopperEmail": "youremail@email.com",
-  "shopperName": {
-    "firstName": "Testperson-se",
-    "gender": "UNKNOWN",
-    "lastName": "Approved"
-  },
-  "shopperReference": "YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j",
-  "billingAddress": {
-    "city": "Ankeborg",
-    "country": "SE",
-    "houseNumberOrName": "1",
-    "postalCode": "12345",
-    "street": "Stargatan"
-  },
-  "returnUrl": "https://www.your-company.com/...",
-  "lineItems": [
-    {
-      "quantity": "1",
-      "amountExcludingTax": "331",
-      "taxPercentage": "2100",
-      "description": "Shoes",
-      "id": "Item #1",
-      "taxAmount": "69",
-      "amountIncludingTax": "400"
-    },
-    {
-      "quantity": "2",
-      "amountExcludingTax": "248",
-      "taxPercentage": "2100",
-      "description": "Socks",
-      "id": "Item #2",
-      "taxAmount": "52",
-      "amountIncludingTax": "300"
-    }
-  ]
-}
-```
-
-</details>
-
-By default, the extension module will populate `lineItems` for you but in case you want to define your own values include `lineItems` in your `makePaymentRequest`.
+Extension module can generate the line item automatically, see details [here](./WebComponentsIntegrationGuide.md#adding-cart-information-to-the-createSessionRequest-and-makePaymentRequest)
 
 ## Step 6: Submit additional payment details
 
