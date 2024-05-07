@@ -201,6 +201,7 @@ Here's an example of the `getPaymentMethodsRequest` custom field value for a Ger
   }
 }
 ```
+
 </details>
 
 The response includes the list of available payment methods:
@@ -248,6 +249,7 @@ Pass the `getPaymentMethodsResponse` custom field value to your front end. You m
   }
 }
 ```
+
 </details>
 
 ## Step 4: Add Components to your payments form
@@ -342,6 +344,7 @@ An example of payment [setCustomField](https://docs.commercetools.com/api/projec
   }
 }
 ```
+
 </details>
 
 > For the sake of readability, the field [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is omitted from all the examples in this document. In real requests, [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is always added.
