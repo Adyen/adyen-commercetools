@@ -55,17 +55,17 @@ async function processNotification(
     ctpClient,
   )
 
-  if (
-    !payment?.custom.fields.makePaymentResponse &&
-    !payment?.custom.fields.createSessionResponse
-  ) {
-    const error = new Error(`Payment ${merchantReference} is not created yet.`)
-    error.statusCode = 503
-
-    throw new VError(error, `Payment ${merchantReference} is not created yet.`)
-  }
-
   if (payment) {
+    if (
+      !payment.custom.fields.makePaymentResponse &&
+      !payment.custom.fields.createSessionResponse
+    ) {
+      const error = new Error(`Payment ${merchantReference} is not ready yet.`)
+      error.statusCode = 409
+    
+      throw new VError(error, `Payment conflict.`)
+    }
+
     if (
       isReceivedAmountLowerThanPlanned(
         payment,
@@ -110,9 +110,10 @@ async function processNotification(
     }
     await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
   } else {
-    logger.error(
-      `Payment with merchantReference: ${merchantReference} was not found`,
-    )
+    const error = new Error(`Payment with merchantReference: ${merchantReference} was not found.`)
+    error.statusCode = 404
+
+    throw new VError(error, `Payment not found.`)
   }
 }
 
