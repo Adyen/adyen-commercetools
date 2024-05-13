@@ -41,7 +41,7 @@ async function handleNotification(request, response) {
       },
       'Unexpected exception occurred.',
     )
-    const statusCode = cause?.statusCode | 500
+    const statusCode = cause ? cause.statusCode : 500
     return utils.sendResponse(response, statusCode)
   }
 }
