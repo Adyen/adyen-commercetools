@@ -111,7 +111,7 @@ async function processNotification(
     await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
   } else {
     const error = new Error(`Payment with merchantReference: ${merchantReference} was not found.`)
-    error.statusCode = 409
+    error.statusCode = 404
 
     throw new VError(error, `Payment not found.`)
   }
