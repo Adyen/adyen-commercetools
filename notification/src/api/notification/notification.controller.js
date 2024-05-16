@@ -42,7 +42,7 @@ async function handleNotification(request, response) {
       'Unexpected exception occurred.',
     )
     if (isRecoverableError(err)) {
-      return utils.sendResponse(response, 500)
+      return utils.sendResponse(response, cause ? cause.statusCode : 500)
     }
     return sendAcceptedResponse(response)
   }
