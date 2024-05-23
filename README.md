@@ -1,4 +1,5 @@
 # commercetools-adyen-integration
+
 [![Build Status](https://github.com/commercetools/commercetools-adyen-integration/workflows/CI/badge.svg?branch=master)](https://github.com/commercetools/commercetools-adyen-integration/actions)
 
 `commercetools-adyen-integration` provides an [Adyen Web Components](https://docs.adyen.com/checkout/components-web) based integration between the commercetools and Adyen PSP.
@@ -6,13 +7,20 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
-- [Supported features](#supported-features)
-- [Supported payment methods](#supported-payment-methods)
-- [Overview](#overview)
-  - [Extension module](#extension-module)
-  - [Notification module](#notification-module)
-- [Other guides](#other-guides)
+- [commercetools-adyen-integration](#commercetools-adyen-integration)
+  - [Supported features](#supported-features)
+  - [Supported payment methods](#supported-payment-methods)
+    - [Credit and debit cards](#credit-and-debit-cards)
+    - [Buy Now Pay Later](#buy-now-pay-later)
+    - [Cash and ATM payment methods](#cash-and-atm-payment-methods)
+    - [Online payments](#online-payments)
+    - [Wallets](#wallets)
+    - [Prepaid and gift cards](#prepaid-and-gift-cards)
+    - [Mobile](#mobile)
+  - [Overview](#overview)
+    - [Extension module](#extension-module)
+    - [Notification module](#notification-module)
+  - [Other guides](#other-guides)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -75,10 +83,12 @@ If you need assistance configuring your payment methods please contact Adyen Sup
 - [TWINT](https://docs.adyen.com/payment-methods/twint/)
 
 ## Overview
+
 This repository contains two standalone modules that interact with commercetools and Adyen.
 Complete integration requires running both of the modules.
 
 ![Payment flow](./docs/images/payment-flow.svg)
+
 1. Front end uses [Adyen Web Components](https://docs.adyen.com/checkout/supported-payment-methods) to present required payment methods. The list of available payment methods can be also obtained through the integration with the help of [get available payment methods request](./extension/docs/WebComponentsIntegrationGuide.md#step-3-get-available-payment-methods-optional). On user interaction, frontend web-component generates JSON payloads for [create payment sessions](https://docs.adyen.com/online-payments/web-components#create-payment-session) which has to be provided to commercetools payment as described [here](./extension/docs/WebComponentsIntegrationGuide.md#web-components-integration-guide).  
 2. With help of the [commercetools HTTP API Extensions](https://docs.commercetools.com/api/projects/api-extensions) provided data is sent to the Extension Module.
 3. The Extension Module processes provided web component payload passed by the front end, exchanges it with Adyen API, and provides **synchronous** response back to the front end / commercetools caller. Based on result, the front end either creates an order or continues with further payment steps as described in the [integration guide](./extension/docs/WebComponentsIntegrationGuide.md#web-components-integration-guide). Note that order/cart creations/modifications should be part of the front end business logic. `commercetools-adyen-integration` will neither change the cart nor the order.
@@ -86,17 +96,17 @@ Complete integration requires running both of the modules.
 In addition with help of Adyen notifications any payment status changes are **asynchronously** exchanged between Adyen and commercetools.
 Please follow the detailed guides below in order to integrate your front end with the Extension and Notification modules.
 
-### Extension module 
+### Extension module
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-extension)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-extension)
 
-The extension module is a publicly exposed service that acts as a middleware between the commercetools platform and Adyen. 
+The extension module is a publicly exposed service that acts as a middleware between the commercetools platform and Adyen.
 Once [commercetools HTTP API Extensions](https://docs.commercetools.com/api/projects/api-extensions) is configured to call Adyen extension module, for every payment create or update request an Adyen extension will be remotely called by the commercetools platform.
 
-- Follow [Integration Guide](./extension/docs/WebComponentsIntegrationGuide.md) for information how to integrate your shop with this module. For advanced integration flow follow the [advanced integration guide](./extension/docs/AdvancedCheckoutFlowIntegrationGuide.md). 
+- Follow [Integration Guide](./extension/docs/WebComponentsIntegrationGuide.md) for information how to integrate your shop with this module. For advanced integration flow follow the [advanced integration guide](./extension/docs/AdvancedCheckoutFlowIntegrationGuide.md).
 - Follow [How to run](extension/docs/HowToRun.md) the extension module.
 
-### Notification module 
+### Notification module
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-adyen-integration-notification)](https://hub.docker.com/r/commercetools/commercetools-adyen-integration-notification)
 
@@ -108,6 +118,6 @@ The notification module will process the notification sent by Adyen and matches 
 - Follow [How to run](notification/docs/HowToRun.md) the notification module.
 
 ## Other guides
- 
-- Follow the [FAQ](docs/FAQ.md) for the answers to frequently asked questions, such as order creation, deployment etc. 
+
+- Follow the [FAQ](docs/FAQ.md) for the answers to frequently asked questions, such as order creation, deployment etc.
 - Follow the [Contribution Guide](docs/ContributionGuide.md) if you would like to run modules locally.

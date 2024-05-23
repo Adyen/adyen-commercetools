@@ -3,17 +3,18 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Environment variable](#environment-variable)
-  - [Preparing the credentials](#preparing-the-credentials)
-  - [Required attributes](#required-attributes)
-  - [Optional attributes](#optional-attributes)
-  - [Other Configurations](#other-configurations)
-  - [External file configuration](#external-file-configuration)
-- [Commercetools project requirements](#commercetools-project-requirements)
-- [Running](#running)
-  - [Docker](#docker)
-    - [Running the Docker image](#running-the-docker-image)
-- [Deployment](#deployment)
+- [Deployment Guide](#deployment-guide)
+  - [Environment variable](#environment-variable)
+    - [Preparing the credentials](#preparing-the-credentials)
+    - [Required attributes](#required-attributes)
+    - [Optional attributes](#optional-attributes)
+    - [Root Attributes](#root-attributes)
+    - [External file configuration](#external-file-configuration)
+  - [Commercetools project requirements](#commercetools-project-requirements)
+  - [Running](#running)
+    - [Docker](#docker)
+      - [Running the Docker image](#running-the-docker-image)
+  - [Deployment](#deployment)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -22,7 +23,7 @@
 Notification module requires 1 environment variable to start. This environment variable name
 is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JSON structure.
 
-```
+```json
 {
   "commercetools": {
     "commercetoolsProjectKey1": {
@@ -51,9 +52,9 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
 
 - `adyen` attribute group: Multiple child attributes can be provided in the `adyen` attribute. Each direct child attribute must represent an adyen merchant account.
 - `commercetools` attribute group: Multiple child attributes can be provided in the `commercetools` attribute. Each direct child attribute must represent a commercetools project.
-- `other` attribute group: Attributes in this group can be set as direct child attributes in `the root of the JSON`.
+- `<root_attributes>`: Attributes in this group can be set as direct child attributes in `the root of the JSON`.
 
-#### Preparing the credentials
+### Preparing the credentials
 
 - commercetools project credentials:
   - If you don't have the commercetools OAuth credentials,[create a commercetools API Client](https://docs.commercetools.com/getting-started.html#create-an-api-client).
@@ -74,17 +75,17 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
 | `adyen`         | `secretHmacKey`              | The generated secret HMAC key that is linked to a Adyen **Standard Notification** endpoint                                                                                                                                |                                                                                                       |
 | `commercetools` | `apiUrl`                     | The commercetools HTTP API is hosted at that URL.                                                                                                                                                                         | `https://api.europe-west1.gcp.commercetools.com`                                                      |
 | `commercetools` | `authUrl`                    | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                                                                                                                               | `https://auth.europe-west1.gcp.commercetools.com`                                                     |
-| `other`         | `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod` returned in the notification and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.method`.                                           | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}}` |
-| `other`         | `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.                                                   | true                                                                                                  |
-| `other`         | `port`                       | The port number on which the application will run. (⚠️ If deploying in Connect, it is required to set the field to 8080)                                                                                                  | 443                                                                                                   |
-| `other`         | `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                                                       | `info`                                                                                                |
-| `other`         | `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                                                             | Node.js default (5 seconds)                                                                           |
+|                 | `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod` returned in the notification and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.method`.                                           | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}}` |
+|                 | `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.                                                   | true                                                                                                  |
+|                 | `port`                       | The port number on which the application will run. (⚠️ If deploying in Connect, it is required to set the field to 8080)                                                                                                  | 443                                                                                                   |
+|                 | `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                                                       | `info`                                                                                                |
+|                 | `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                                                             | Node.js default (5 seconds)                                                                           |
 
-### Other Configurations
+### Root Attributes
 
-Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION_CONFIG`.
+Root attributes are set as direct child attributes in `ADYEN_INTEGRATION_CONFIG`.
 
-```
+```json
 {
   "commercetools": {...},
   "adyen": {...},
