@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "dependencies": {
-    "@adyen/api-library": "16.3.0",
+    "@adyen/api-library": "17.0.0",
     "@commercetools/api-request-builder": "6.0.0",
     "@commercetools/sdk-client": "3.0.0",
     "@commercetools/sdk-middleware-auth": "7.0.1",
@@ -76,7 +76,7 @@
     "nock": "13.5.4",
     "p-map": "7.0.2",
     "prettier": "3.2.5",
-    "sinon": "17.0.1",
+    "sinon": "18.0.0",
     "c8": "9.1.0"
   },
   "husky": {
