@@ -7,6 +7,7 @@
   - [Preparing the credentials](#preparing-the-credentials)
   - [Required attributes](#required-attributes)
   - [Optional attributes](#optional-attributes)
+  - [Other Configurations](#other-configurations)
   - [External file configuration](#external-file-configuration)
 - [Commercetools project requirements](#commercetools-project-requirements)
 - [Other requirements](#other-requirements)
@@ -66,7 +67,7 @@ Extension module requires 1 environment variable to start. This environment vari
 
 - `adyen` attribute group: Multiple child attributes can be provided in the `adyen` attribute. Each direct child attribute must represent an adyen merchant account.
 - `commercetools` attribute group: Multiple child attributes can be provided in the `commercetools` attribute. Each direct child attribute must represent a commercetools project.
-- `other` attribute group: Attributes in this group can be set as direct child attributes in `the root of the JSON`.
+- `other` attribute group: Attributes in this group should be set as direct child attributes in `the root of the JSON`.
 
 ### Preparing the credentials
 
@@ -101,6 +102,21 @@ Extension module requires 1 environment variable to start. This environment vari
 | `other`         | `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                                                                                                                                                                                                                                                | Node.js default (5 seconds)                                                                                                    |
 | `other`         | `generateIdempotencyKey`     | If set to true, adyen-integration will generate the idempotency key for capture and refund requests.                                                                                                                                                                                                                                                                                                         | false                                                                                                                          |
 | `other`         | `apiExtensionBaseUrl`        | Publicly available URL of the Extension module. In case of any payment changes, [commercetools API extension](https://docs.commercetools.com/api/projects/api-extensions) will call this URL and pass the payment object in body. This attribute is used when calling `npm run setup-resources`                                                                                                              |                                                                                                                                |
+
+### Other Configurations
+
+`other` configurations should be set as direct child attributes in `ADYEN_INTEGRATION_CONFIG`.
+
+```
+{
+  "commercetools": {...},
+  "adyen": {...},
+  "logLevel": "DEBUG",
+  "port": 8080,
+  "keepAliveTimeout": 10000,
+  "removeSensitiveData": false
+}
+```
 
 ### External file configuration
 
