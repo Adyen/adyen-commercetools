@@ -100,7 +100,6 @@ async function updatePaymentWithRepeater(
       } with update actions [${JSON.stringify(updateActions)}]`,
     )
     try {
-      /* eslint-disable-next-line no-await-in-loop */
       await ctpClient.update(
         ctpClient.builder.payments,
         currentPayment.id,
@@ -141,12 +140,11 @@ async function updatePaymentWithRepeater(
         )
       }
 
-      /* eslint-disable-next-line no-await-in-loop */
       const response = await ctpClient.fetchById(
         ctpClient.builder.payments,
         currentPayment.id,
       )
-      currentPayment = response.body // eslint-disable-line prefer-destructuring
+      currentPayment = response.body
       currentVersion = currentPayment.version
 
       await repeater()
@@ -393,7 +391,6 @@ async function getTransactionTypeAndStateOrNull(notificationRequestItem) {
   const adyenEventCode = notificationRequestItem.eventCode
   const adyenEventSuccess = notificationRequestItem.success
 
-  // eslint-disable-next-line max-len
   const adyenEvent = _.find(
     adyenEvents,
     (e) => e.eventCode === adyenEventCode && e.success === adyenEventSuccess,

@@ -120,7 +120,6 @@ function createAddTransactionAction({
 }
 
 function createAddTransactionActionByResponse(amount, currencyCode, response) {
-  // eslint-disable-next-line default-case
   switch (response.resultCode) {
     case 'Authorised':
       return createAddTransactionAction({
@@ -179,6 +178,7 @@ function isValidJSON(jsonString) {
   try {
     const o = JSON.parse(jsonString)
     if (o && typeof o === 'object') return true
+    // eslint-disable-next-line no-unused-vars
   } catch (e) {
     // continue regardless of error
   }

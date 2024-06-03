@@ -54,6 +54,7 @@
     "@commercetools/sdk-middleware-user-agent": "3.0.0",
     "@commercetools/sync-actions": "5.16.0",
     "bunyan": "1.8.15",
+    "globals": "^15.3.0",
     "lockfile-lint": "4.13.2",
     "lodash": "4.17.21",
     "node-fetch": "3.3.2",
@@ -63,11 +64,12 @@
     "verror": "1.10.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.4.0",
+    "@stylistic/eslint-plugin-js": "^2.1.0",
+    "c8": "9.1.0",
     "chai": "5.1.1",
-    "eslint": "8.57.0",
-    "eslint-config-airbnb-base": "15.0.0",
+    "eslint": "9.4.0",
     "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-import": "2.29.1",
     "husky": "9.0.11",
     "ip": "2.0.1",
     "lint-staged": "15.2.5",
@@ -76,8 +78,7 @@
     "nock": "13.5.4",
     "p-map": "7.0.2",
     "prettier": "3.3.0",
-    "sinon": "18.0.0",
-    "c8": "9.1.0"
+    "sinon": "18.0.0"
   },
   "husky": {
     "hooks": {

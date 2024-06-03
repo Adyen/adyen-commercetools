@@ -13,7 +13,6 @@ import utils from '../src/utils/commons.js'
 const { address } = ip
 
 process.on('unhandledRejection', (reason) => {
-  /* eslint-disable no-console */
   console.error('Unhandled Rejection:', reason)
   process.exit(1)
 })
@@ -81,7 +80,6 @@ async function stopIT() {
   }
 }
 
-/* eslint-disable new-cap */
 const validator = new hmacValidator()
 
 function createNotificationPayload(
