@@ -11,6 +11,7 @@ function loadConfig() {
 function loadFromAdyenIntegrationEnvVar() {
   try {
     return JSON.parse(process.env.ADYEN_INTEGRATION_CONFIG)
+    // eslint-disable-next-line no-unused-vars
   } catch (e) {
     throw new Error(
       'Adyen integration configuration is not provided in the JSON format',

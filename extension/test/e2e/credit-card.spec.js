@@ -54,7 +54,6 @@ describe('::creditCardPayment::', () => {
       creditCardDate = '03/30',
       creditCardCvc = '737',
     }) => {
-      // eslint-disable-next-line no-template-curly-in-string
       it(
         `when credit card issuer is ${name} and credit card number is ${creditCardNumber}, ` +
           'then it should successfully finish the payment',

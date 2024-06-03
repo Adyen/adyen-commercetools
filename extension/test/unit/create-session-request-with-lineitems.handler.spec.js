@@ -29,7 +29,6 @@ describe('create-session-request-with-lineitems::execute', () => {
     )
   })
 
-  /* eslint-enable max-len */
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     scope = nock(`${adyenConfig.apiBaseUrl}`)

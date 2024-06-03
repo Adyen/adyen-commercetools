@@ -106,7 +106,6 @@ describe('create-session-request::execute::', () => {
     )
   })
 
-  /* eslint-enable max-len */
   beforeEach(() => {
     const adyenConfig = config.getAdyenConfig(adyenMerchantAccount)
     scope = nock(`${adyenConfig.apiBaseUrl}`)

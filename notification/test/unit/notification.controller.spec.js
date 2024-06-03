@@ -133,7 +133,7 @@ describe('notification controller', () => {
       JSON.stringify({ notificationResponse: '[accepted]' }),
     )
     expect(cause.message).to.equal(
-      // eslint-disable-next-line max-len
+        // eslint-disable-next-line @stylistic/js/max-len
       'Configuration for adyenMerchantAccount is not provided. Please update the configuration: "nonExistingMerchantAccount"',
     )
   })
