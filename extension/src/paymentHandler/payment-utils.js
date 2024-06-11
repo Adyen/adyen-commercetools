@@ -3,6 +3,7 @@ import c from '../config/constants.js'
 import config from '../config/config.js'
 
 const { getAdyenPaymentMethodsToNames } = config
+const unsuccessfulResponseCodes = [400, 401, 403, 422, 500];
 
 function getAuthorizationTransactionSuccess(paymentObject) {
   return getTransactionWithTypesAndStates(
@@ -200,8 +201,12 @@ function getIdempotencyKey(transaction) {
 function getPaymentKeyUpdateAction(paymentKey, request, response) {
   const requestBodyJson = JSON.parse(request.body)
   const reference = requestBodyJson.reference?.toString()
-  const pspReference = response.pspReference?.toString()
-  const newReference = pspReference || reference
+  let newReference = reference;
+  if (!unsuccessfulResponseCodes.includes(response.status)){
+    const pspReference = response.pspReference?.toString()
+    newReference = pspReference || reference
+  }
+
   let paymentKeyUpdateAction
   // ensure the key and new reference is different, otherwise the error with
   // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
