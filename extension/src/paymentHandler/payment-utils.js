@@ -3,7 +3,7 @@ import c from '../config/constants.js'
 import config from '../config/config.js'
 
 const { getAdyenPaymentMethodsToNames } = config
-const unsuccessfulResponseCodes = [400, 401, 403, 422, 500];
+const unsuccessfulResponseCodes = [400, 401, 403, 422, 500]
 
 function getAuthorizationTransactionSuccess(paymentObject) {
   return getTransactionWithTypesAndStates(
@@ -201,8 +201,8 @@ function getIdempotencyKey(transaction) {
 function getPaymentKeyUpdateAction(paymentKey, request, response) {
   const requestBodyJson = JSON.parse(request.body)
   const reference = requestBodyJson.reference?.toString()
-  let newReference = reference;
-  if (!unsuccessfulResponseCodes.includes(response.status)){
+  let newReference = reference
+  if (!unsuccessfulResponseCodes.includes(response.status)) {
     const pspReference = response.pspReference?.toString()
     newReference = pspReference || reference
   }
