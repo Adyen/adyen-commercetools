@@ -47,7 +47,7 @@
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "devDependencies": {
     "@stylistic/eslint-plugin-js": "^2.1.0",
-    "c8": "9.1.0",
+    "c8": "10.1.2",
     "chai": "5.1.1",
     "doctoc": "2.2.1",
     "eslint": "9.5.0",
