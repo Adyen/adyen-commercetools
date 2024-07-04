@@ -219,14 +219,17 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
         ),
       )
     }
-    const paymentKey = payment.key
-    const newPspReference =
-      notificationRequestItem.originalReference || pspReference
-    if (newPspReference && newPspReference !== paymentKey) {
-      updateActions.push({
-        action: 'setKey',
-        key: newPspReference,
-      })
+
+    if (notificationRequestItem.success) {
+      const paymentKey = payment.key
+      const newPspReference =
+        notificationRequestItem.originalReference || pspReference
+      if (newPspReference && newPspReference !== paymentKey) {
+        updateActions.push({
+          action: 'setKey',
+          key: newPspReference,
+        })
+      }
     }
   }
 
