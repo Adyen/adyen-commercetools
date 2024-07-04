@@ -58,7 +58,7 @@ describe('submit-additional-payment-details::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(3)
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction',
       )
@@ -113,10 +113,6 @@ describe('submit-additional-payment-details::execute', () => {
       expect(addTransaction.transaction.type).to.equal('Authorization')
       expect(addTransaction.transaction.state).to.equal('Success')
       expect(addTransaction.transaction.interactionId).to.equal(
-        JSON.parse(submitPaymentDetailsSuccessResponse).pspReference,
-      )
-      const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(
         JSON.parse(submitPaymentDetailsSuccessResponse).pspReference,
       )
     },
@@ -278,7 +274,7 @@ describe('submit-additional-payment-details::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(3)
       const addInterfaceInteractionAction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction',
       )
@@ -289,10 +285,6 @@ describe('submit-additional-payment-details::execute', () => {
         (a) => a.action === 'setCustomField',
       )
       expect(setCustomFieldAction.value).to.include('additionalData')
-      const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(
-        JSON.parse(submitPaymentDetailsSuccessResponse).pspReference,
-      )
       sandbox.restore()
     },
   )
@@ -327,7 +319,7 @@ describe('submit-additional-payment-details::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(4)
+      expect(response.actions).to.have.lengthOf(3)
       const addInterfaceInteractionAction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction',
       )
@@ -338,10 +330,6 @@ describe('submit-additional-payment-details::execute', () => {
         (a) => a.action === 'setCustomField',
       )
       expect(setCustomFieldAction.value).to.not.include('additionalData')
-      const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(
-        JSON.parse(submitPaymentDetailsSuccessResponse).pspReference,
-      )
       sandbox.restore()
     },
   )
@@ -376,15 +364,11 @@ describe('submit-additional-payment-details::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(2)
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction',
       )
       expect(addTransaction).to.be.undefined
-      const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(
-        JSON.parse(submitPaymentDetailsSuccessResponse).pspReference,
-      )
     },
   )
 })

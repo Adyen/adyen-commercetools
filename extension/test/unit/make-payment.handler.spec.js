@@ -199,9 +199,7 @@ describe('make-payment::execute', () => {
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(
-        JSON.parse(paymentSuccessResponse).pspReference,
-      )
+      expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
 
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction',
@@ -372,9 +370,7 @@ describe('make-payment::execute', () => {
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(
-        JSON.parse(paymentRefusedResponse).pspReference,
-      )
+      expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
 
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction',
@@ -438,9 +434,7 @@ describe('make-payment::execute', () => {
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(
-        JSON.parse(paymentErrorResponse).pspReference,
-      )
+      expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
 
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction',
