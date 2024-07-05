@@ -6,15 +6,11 @@ import { getLogger } from './utils/logger.js'
 
 const logger = getLogger()
 
-function getHandlerNameFromUrl(parts) {
-  return parts.path?.split('/')?.slice(-2)?.[0] ?? ''
-}
-
 function setupServer() {
   return http.createServer(async (request, response) => {
     const parts = url.parse(request.url)
-    const path = getHandlerNameFromUrl(parts)
-    const route = routes[`/${path}`]
+    const route = routes[parts.pathname]
+
     if (route)
       try {
         await route(request, response)
