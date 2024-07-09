@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "dependencies": {
-    "@adyen/api-library": "17.2.0",
+    "@adyen/api-library": "17.3.0",
     "@commercetools/api-request-builder": "6.0.0",
     "@commercetools/sdk-client": "3.0.0",
     "@commercetools/sdk-middleware-auth": "7.0.1",
@@ -74,7 +74,7 @@
     "ip": "2.0.1",
     "lint-staged": "15.2.7",
     "localtunnel": "2.0.2",
-    "mocha": "10.5.2",
+    "mocha": "10.6.0",
     "nock": "13.5.4",
     "p-map": "7.0.2",
     "prettier": "3.3.2",
