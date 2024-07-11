@@ -15,8 +15,6 @@ describe('Payment controller', () => {
   })
 
   describe('Validation', () => {
-    const mockRequest = { method: 'POST' }
-
     it('on missing required custom fields should throw error', async () => {
       const ctpPaymentClone = _.cloneDeep(ctpPayment)
 
@@ -41,8 +39,17 @@ describe('Payment controller', () => {
 
       sinon.stub(utils, 'collectRequestData').callsFake(collectRequestData)
       sinon.stub(utils, 'sendResponse').callsFake(sendResponse)
+      const mockRequest = { method: 'POST' }
+      const responseMock = {
+        writeHead: () => {},
+        end: () => {},
+      }
 
-      await paymentController.processRequest(mockRequest)
+      await paymentController.processRequest(
+        mockRequest,
+        responseMock,
+        utils.getLogger()
+      )
 
       utils.collectRequestData.restore()
       utils.sendResponse.restore()
@@ -69,7 +76,16 @@ describe('Payment controller', () => {
       sinon.stub(utils, 'sendResponse').callsFake(utilsSendResponse)
 
       const mockGetRequest = { method: 'GET' }
-      await paymentController.processRequest(mockGetRequest)
+      const responseMock = {
+        writeHead: () => {},
+        end: () => {},
+      }
+
+      await paymentController.processRequest(
+        mockGetRequest,
+        responseMock,
+        utils.getLogger()
+      )
 
       utils.sendResponse.restore()
       utils.collectRequestData.restore()
@@ -91,7 +107,17 @@ describe('Payment controller', () => {
     sinon.stub(utils, 'sendResponse').callsFake(sendResponse)
 
     const mockPostRequest = { method: 'POST' }
-    await paymentController.processRequest(mockPostRequest)
+    const responseMock = {
+      writeHead: () => {},
+      end: () => {},
+    }
+
+    await paymentController.processRequest(
+      mockPostRequest,
+      responseMock,
+      utils.getLogger()
+    )
+
     utils.sendResponse.restore()
   })
 })
