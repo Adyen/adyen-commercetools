@@ -4,20 +4,19 @@ import utils from '../../utils/commons.js'
 import { isRecoverableError, getErrorCause } from '../../utils/error-utils.js'
 import notificationHandler from '../../handler/notification/notification.handler.js'
 import { getCtpProjectConfig, getAdyenConfig } from '../../utils/parser.js'
-import { getLogger } from '../../utils/logger.js'
 
-const logger = getLogger()
-
-async function handleNotification(request, response) {
+async function handleNotification(request, response, logger) {
   if (request.method !== 'POST') {
     logger.debug(
       `Received non-POST request: ${request.method}. The request will not be processed...`,
     )
     return utils.sendResponse(response)
   }
+
   const body = await utils.collectRequestData(request)
   try {
     const notifications = _.get(JSON.parse(body), 'notificationItems', [])
+
     for (const notification of notifications) {
       logger.debug('Received notification', JSON.stringify(notification))
       const parts = url.parse(request.url)
