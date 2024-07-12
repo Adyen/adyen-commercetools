@@ -13,6 +13,8 @@ import {
   buildMockErrorFromConcurrentModificationException,
 } from '../test-utils.js'
 import utils from '../../src/utils/commons.js'
+import { getLogger } from '../../src/utils/logger.js'
+
 const { expect } = chai
 const { cloneDeep } = lodash
 const sandbox = sinon.createSandbox()
@@ -201,11 +203,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -304,11 +307,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -507,11 +511,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger()
+    })
     // assert
     expect(ctpClientUpdateSpy.callCount).to.equal(1)
 
@@ -568,11 +573,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger()
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -668,11 +674,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger()
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -768,11 +775,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger()
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -878,11 +886,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger()
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -954,11 +963,12 @@ describe('notification module', () => {
     let err
     // process
     try {
-      await notificationHandler.processNotification(
-        notificationsMock[0],
-        false,
-        config,
-      )
+      await notificationHandler.processNotification({
+        notification: notificationsMock[0],
+        enableHmacSignature: false,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
     } catch (e) {
       // we check retry logic here and it should throw after certain amount
       // of retries. So the error is expected
@@ -1022,11 +1032,12 @@ describe('notification module', () => {
       ctp.get = () => ctpClient
 
       // process
-      await notificationHandler.processNotification(
-        notifications[0],
-        false,
-        config,
-      )
+      await notificationHandler.processNotification({
+        notification: notifications[0],
+        enableHmacSignature: false,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
 
       expect(ctpClientUpdateSpy.args[0][3][0].fields.notification).to.include(
         'additionalData',
@@ -1090,11 +1101,12 @@ describe('notification module', () => {
       ctp.get = () => ctpClient
 
       // process
-      await notificationHandler.processNotification(
-        notifications[0],
-        false,
-        config,
-      )
+      await notificationHandler.processNotification({
+        notification: notifications[0],
+        enableHmacSignature: false,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
 
       expect(
         ctpClientUpdateSpy.args[0][3][0].fields.notification,
@@ -1151,11 +1163,12 @@ describe('notification module', () => {
     let error
     // process
     try {
-      await notificationHandler.processNotification(
-        notifications[0],
-        false,
-        config,
-      )
+      await notificationHandler.processNotification({
+        notification: notifications[0],
+        enableHmacSignature: false,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
     } catch (e) {
       error = e
     }
