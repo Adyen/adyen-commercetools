@@ -219,6 +219,7 @@ describe('notification controller', () => {
       const loggerMock = {
         error: sinon.spy(),
         debug: logger.debug,
+        child: logger.child,
       }
 
       notificationJson.notificationItems[0].NotificationRequestItem.additionalData =

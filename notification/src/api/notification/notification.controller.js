@@ -23,11 +23,12 @@ async function handleNotification(request, response, logger) {
       const ctpProjectConfig = getCtpProjectConfig(notification, parts.path)
       const adyenConfig = getAdyenConfig(notification)
 
-      await notificationHandler.processNotification(
+      await notificationHandler.processNotification({
         notification,
-        adyenConfig.enableHmacSignature,
+        enableHmacSignature: adyenConfig.enableHmacSignature,
         ctpProjectConfig,
-      )
+        logger,
+      })
     }
     return sendAcceptedResponse(response)
   } catch (err) {
