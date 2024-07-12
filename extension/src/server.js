@@ -24,9 +24,9 @@ function setupServer() {
           { responseTime: calculateRequestDuration(startRequestMs) },
           'request completed'
         );
-      } catch (e) {
+      } catch (err) {
         reqLogger.error(
-          e,
+          { err, responseTime: calculateRequestDuration(startRequestMs) },
           `Unexpected error when processing URL ${JSON.stringify(parts)}`,
         )
         utils.sendResponse({ response, statusCode: 500 })
