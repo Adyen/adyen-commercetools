@@ -28,15 +28,16 @@ async function processRequest(request, response, logger) {
   try {
     const authToken = getAuthorizationRequestHeader(request)
     paymentObject = await _getPaymentObject(request, logger)
-    logger.debug('Received payment object', JSON.stringify(paymentObject))
+    const paymentLogger = logger.child({ paymentId: paymentObject.id })
+    paymentLogger.debug('Received payment object', JSON.stringify(paymentObject))
     
-    logger.info('Handling payment...')
+    paymentLogger.info({ paymentId: paymentObject.id }, 'Handling payment...')
     const paymentResult = await paymentHandler.handlePayment(
       paymentObject,
       authToken,
     )
     const statusCode = paymentResult.actions ? 200 : 400
-    logger.info({ statusCode, errors: paymentResult.errors }, 'Payment handled')
+    paymentLogger.info({ statusCode, errors: paymentResult.errors }, 'Payment handled')
 
     const result = {
       response,
@@ -46,7 +47,7 @@ async function processRequest(request, response, logger) {
       : { errors: paymentResult.errors },
     }
 
-    logger.debug('Data to be returned', JSON.stringify(result.data))
+    paymentLogger.debug('Data to be returned', JSON.stringify(result.data))
 
     return httpUtils.sendResponse(result)
   } catch (err) {
