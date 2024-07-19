@@ -57,45 +57,47 @@ async function processNotification(
   // if payment doesn't exist => log error and return
   if (!payment) {
     logger.error(
-        `Payment with merchantReference: ${merchantReference} was not found`,
-    );
+      `Payment with merchantReference: ${merchantReference} was not found`,
+    )
 
-    return;
+    return
   }
   // if payment has payment response or session response => updatePayment
-  if (payment.custom.fields.makePaymentResponse ||
-    payment.custom.fields.createSessionResponse) {
+  if (
+    payment.custom.fields.makePaymentResponse ||
+    payment.custom.fields.createSessionResponse
+  ) {
     await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
 
-    return;
+    return
   }
   // if payment doesn't have payment response or session response => sleep for 2 seconds and retrieve payment again
-  await sleep(2000);
+  await sleep(2000)
   payment = await getPaymentByMerchantReference(
-      merchantReference,
-      originalReference || pspReference,
-      ctpClient,
-  );
+    merchantReference,
+    originalReference || pspReference,
+    ctpClient,
+  )
 
   if (!payment) {
     logger.error(
-        `Payment with merchantReference: ${merchantReference} was not found`,
-    );
+      `Payment with merchantReference: ${merchantReference} was not found`,
+    )
 
-    return;
+    return
   }
 
   // if payment exists it should be updated
   // if pspReference or originalReference from webhook are the same as the payment key => standard update
   // if not => add a transaction with the message to the payment
   // so the merchant could see that the webhook wasn't correct
-  await updatePaymentWithRepeater(payment, notification, ctpClient, logger);
+  await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
 }
 
 function sleep(ms) {
   return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
+    setTimeout(resolve, ms)
+  })
 }
 
 async function updatePaymentWithRepeater(
@@ -197,7 +199,8 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
   const notificationRequestItem = notification.NotificationRequestItem
   const stringifiedNotification = JSON.stringify(notification)
   const { pspReference, originalReference } = notificationRequestItem
-  const paymentReferenceMatch = payment.key === pspReference || payment.key === originalReference;
+  const paymentReferenceMatch =
+    payment.key === pspReference || payment.key === originalReference
   // check if the interfaceInteraction is already on payment or not
   const isNotificationInInterfaceInteraction =
     payment.interfaceInteractions.some(
@@ -205,7 +208,12 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
         interaction.fields.notification === stringifiedNotification,
     )
   if (isNotificationInInterfaceInteraction === false)
-    updateActions.push(getAddInterfaceInteractionUpdateAction(notification, paymentReferenceMatch))
+    updateActions.push(
+      getAddInterfaceInteractionUpdateAction(
+        notification,
+        paymentReferenceMatch,
+      ),
+    )
   const { transactionType, transactionState } =
     await getTransactionTypeAndStateOrNull(notificationRequestItem)
   if (transactionType !== null && paymentReferenceMatch) {
@@ -301,12 +309,15 @@ function compareTransactionStates(currentState, newState) {
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
 }
 
-function getAddInterfaceInteractionUpdateAction(notification, paymentReferenceMatch) {
+function getAddInterfaceInteractionUpdateAction(
+  notification,
+  paymentReferenceMatch,
+) {
   const moduleConfig = config.getModuleConfig()
   const notificationToUse = _.cloneDeep(notification)
   const eventCode = _.isNil(notificationToUse.NotificationRequestItem.eventCode)
-      ? ''
-      : notificationToUse.NotificationRequestItem.eventCode.toLowerCase()
+    ? ''
+    : notificationToUse.NotificationRequestItem.eventCode.toLowerCase()
 
   if (!paymentReferenceMatch) {
     return {
