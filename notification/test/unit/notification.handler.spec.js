@@ -50,6 +50,108 @@ describe('notification module', () => {
     sandbox.restore()
   })
 
+  it(`given that ADYEN sends an "AUTHORISATION is unsuccessful"`, async () => {
+    // prepare data
+    const notifications = [
+      {
+        NotificationRequestItem: {
+          amount: {
+            currency: 'EUR',
+            value: 10100,
+          },
+          additionalData: {
+            'metadata.ctProjectKey': commercetoolsProjectKey,
+          },
+          eventCode: 'AUTHORISATION',
+          eventDate: '2019-01-30T18:16:22+01:00',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
+          merchantReference: '8313842560770001',
+          operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+          paymentMethod: 'visa',
+          pspReference: 'test_AUTHORISATION_1',
+          success: 'false',
+        },
+      },
+    ]
+    const payment = cloneDeep(paymentMock)
+    payment.paymentMethodInfo.method = 'scheme'
+    payment.custom.fields.createSessionResponse = null;
+    payment.transactions.push({
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Authorization',
+      amount: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 495,
+        fractionDigits: 2,
+      },
+      interactionId: 'test_AUTHORISATION_1',
+      state: 'Initial',
+    })
+    const ctpClient = ctpClientMock.get(ctpConfig)
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
+    }))
+    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+
+    // process
+    await notificationHandler.processNotification(
+        notifications[0],
+        false,
+        config,
+    )
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notifications[0].NotificationRequestItem.additionalData
+    }
+    const expectedUpdateActions = [
+      {
+        action: 'addInterfaceInteraction',
+        type: {
+          key: 'ctp-adyen-integration-interaction-notification',
+          typeId: 'type',
+        },
+        fields: {
+          status: 'authorisation',
+          type: 'notification',
+          notification: JSON.stringify(notifications[0]),
+        },
+      },
+      {
+        action: 'changeTransactionState',
+        state: 'Pending',
+        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      },
+      {
+        action: 'changeTransactionTimestamp',
+        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+        timestamp: '2021-01-01T10:00:00.000Z',
+      },
+      {
+        action: 'setKey',
+        key: 'test_AUTHORISATION_1',
+      },
+      {
+        action: 'setMethodInfoMethod',
+        method: 'visa',
+      },
+    ]
+
+    // assert update actions
+    // createdAt is set to the current date during the update action calculation
+    // We can't know what is set there
+    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    const actualTransactionTimestamp =
+        actualUpdateActionsWithoutCreatedAt[2]?.timestamp
+    expect(actualTransactionTimestamp).to.not.equal(undefined)
+    expectedUpdateActions[2].timestamp = actualTransactionTimestamp
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
+        expectedUpdateActions,
+    )
+  })
+
   it(`given that ADYEN sends an "AUTHORISATION is successful" notification
       when payment has a pending authorization transaction 
       then notification module should add notification to the interface interaction 
