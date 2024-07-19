@@ -49,28 +49,52 @@ async function processNotification(
 
   const ctpClient = await ctp.get(ctpProjectConfig)
 
-  const payment = await getPaymentByMerchantReference(
+  let payment = await getPaymentByMerchantReference(
     merchantReference,
     originalReference || pspReference,
     ctpClient,
   )
+  // if payment doesn't exist => log error and return
+  if (!payment) {
+    logger.error(
+        `Payment with merchantReference: ${merchantReference} was not found`,
+    );
 
-  if (
-    !payment?.custom.fields.makePaymentResponse &&
-    !payment?.custom.fields.createSessionResponse
-  ) {
-    const error = new Error(`Payment ${merchantReference} is not created yet.`)
-    error.statusCode = 503
+    return;
+  }
+  // if payment has payment response or session response => updatePayment
+  if (payment.custom.fields.makePaymentResponse ||
+    payment.custom.fields.createSessionResponse) {
+    await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
 
-    throw new VError(error, `Payment ${merchantReference} is not created yet.`)
+    return;
+  }
+  // if payment doesn't have payment response or session response => sleep for 2 seconds and retrieve payment again
+  await sleep(2000);
+  payment = await getPaymentByMerchantReference(
+      merchantReference,
+      originalReference || pspReference,
+      ctpClient,
+  );
+
+  if (!payment) {
+    logger.error(
+        `Payment with merchantReference: ${merchantReference} was not found`,
+    );
+
+    return;
   }
 
-  if (payment)
-    await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
-  else
-    logger.error(
-      `Payment with merchantReference: ${merchantReference} was not found`,
-    )
+  // if payment exists it should be updated
+  // if pspReference or originalReference from webhook are the same as the payment key => standard update
+  // if not => add a transaction with the message to the payment so the merchant could see that the webhook wasn't correct
+  await updatePaymentWithRepeater(payment, notification, ctpClient, logger);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 async function updatePaymentWithRepeater(
@@ -171,6 +195,8 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
   const updateActions = []
   const notificationRequestItem = notification.NotificationRequestItem
   const stringifiedNotification = JSON.stringify(notification)
+  const { pspReference, originalReference } = notificationRequestItem
+  const paymentReferenceMatch = payment.key === pspReference || payment.key === originalReference;
   // check if the interfaceInteraction is already on payment or not
   const isNotificationInInterfaceInteraction =
     payment.interfaceInteractions.some(
@@ -178,11 +204,10 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
         interaction.fields.notification === stringifiedNotification,
     )
   if (isNotificationInInterfaceInteraction === false)
-    updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
-  const { pspReference } = notificationRequestItem
+    updateActions.push(getAddInterfaceInteractionUpdateAction(notification, paymentReferenceMatch))
   const { transactionType, transactionState } =
     await getTransactionTypeAndStateOrNull(notificationRequestItem)
-  if (transactionType !== null) {
+  if (transactionType !== null && paymentReferenceMatch) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
 
@@ -275,9 +300,28 @@ function compareTransactionStates(currentState, newState) {
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
 }
 
-function getAddInterfaceInteractionUpdateAction(notification) {
+function getAddInterfaceInteractionUpdateAction(notification, paymentReferenceMatch) {
   const moduleConfig = config.getModuleConfig()
   const notificationToUse = _.cloneDeep(notification)
+  const eventCode = _.isNil(notificationToUse.NotificationRequestItem.eventCode)
+      ? ''
+      : notificationToUse.NotificationRequestItem.eventCode.toLowerCase()
+
+  if (!paymentReferenceMatch) {
+    return {
+      action: 'addInterfaceInteraction',
+      type: {
+        key: 'ctp-adyen-integration-interaction-notification',
+        typeId: 'type',
+      },
+      fields: {
+        createdAt: new Date(),
+        status: eventCode + '_failed',
+        type: 'notification',
+        notification: JSON.stringify(notificationToUse),
+      },
+    }
+  }
 
   // Put the recurringDetailReference out of additionalData to avoid removal
   if (
@@ -328,10 +372,6 @@ function getAddInterfaceInteractionUpdateAction(notification) {
     delete notificationToUse.NotificationRequestItem.additionalData
     delete notificationToUse.NotificationRequestItem.reason
   }
-
-  const eventCode = _.isNil(notificationToUse.NotificationRequestItem.eventCode)
-    ? ''
-    : notificationToUse.NotificationRequestItem.eventCode.toLowerCase()
 
   return {
     action: 'addInterfaceInteraction',
