@@ -198,9 +198,7 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
   const updateActions = []
   const notificationRequestItem = notification.NotificationRequestItem
   const stringifiedNotification = JSON.stringify(notification)
-  const { pspReference, originalReference } = notificationRequestItem
-  const paymentReferenceMatch =
-    payment.key === pspReference || payment.key === originalReference
+  const { pspReference} = notificationRequestItem
   // check if the interfaceInteraction is already on payment or not
   const isNotificationInInterfaceInteraction =
     payment.interfaceInteractions.some(
@@ -210,13 +208,12 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
   if (isNotificationInInterfaceInteraction === false)
     updateActions.push(
       getAddInterfaceInteractionUpdateAction(
-        notification,
-        paymentReferenceMatch,
+        notification
       ),
     )
   const { transactionType, transactionState } =
     await getTransactionTypeAndStateOrNull(notificationRequestItem)
-  if (transactionType !== null && paymentReferenceMatch) {
+  if (transactionType !== null) {
     // if there is already a transaction with type `transactionType` then update its `transactionState` if necessary,
     // otherwise create a transaction with type `transactionType` and state `transactionState`
 
@@ -310,8 +307,7 @@ function compareTransactionStates(currentState, newState) {
 }
 
 function getAddInterfaceInteractionUpdateAction(
-  notification,
-  paymentReferenceMatch,
+  notification
 ) {
   const moduleConfig = config.getModuleConfig()
   const notificationToUse = _.cloneDeep(notification)
@@ -319,7 +315,7 @@ function getAddInterfaceInteractionUpdateAction(
     ? ''
     : notificationToUse.NotificationRequestItem.eventCode.toLowerCase()
 
-  if (!paymentReferenceMatch) {
+  if (!notificationToUse.NotificationRequestItem.success) {
     return {
       action: 'addInterfaceInteraction',
       type: {
