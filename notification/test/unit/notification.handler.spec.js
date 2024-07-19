@@ -75,7 +75,7 @@ describe('notification module', () => {
     ]
     const payment = cloneDeep(paymentMock)
     payment.paymentMethodInfo.method = 'scheme'
-    payment.custom.fields.createSessionResponse = null;
+    payment.custom.fields.createSessionResponse = null
     payment.transactions.push({
       id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
       type: 'Authorization',
@@ -97,9 +97,9 @@ describe('notification module', () => {
 
     // process
     await notificationHandler.processNotification(
-        notifications[0],
-        false,
-        config,
+      notifications[0],
+      false,
+      config,
     )
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
@@ -144,11 +144,11 @@ describe('notification module', () => {
     const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
     delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
     const actualTransactionTimestamp =
-        actualUpdateActionsWithoutCreatedAt[2]?.timestamp
+      actualUpdateActionsWithoutCreatedAt[2]?.timestamp
     expect(actualTransactionTimestamp).to.not.equal(undefined)
     expectedUpdateActions[2].timestamp = actualTransactionTimestamp
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
-        expectedUpdateActions,
+      expectedUpdateActions,
     )
   })
 
