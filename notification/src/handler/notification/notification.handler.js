@@ -87,7 +87,8 @@ async function processNotification(
 
   // if payment exists it should be updated
   // if pspReference or originalReference from webhook are the same as the payment key => standard update
-  // if not => add a transaction with the message to the payment so the merchant could see that the webhook wasn't correct
+  // if not => add a transaction with the message to the payment
+  // so the merchant could see that the webhook wasn't correct
   await updatePaymentWithRepeater(payment, notification, ctpClient, logger);
 }
 
