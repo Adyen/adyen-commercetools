@@ -198,7 +198,7 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
   const updateActions = []
   const notificationRequestItem = notification.NotificationRequestItem
   const stringifiedNotification = JSON.stringify(notification)
-  const { pspReference} = notificationRequestItem
+  const { pspReference } = notificationRequestItem
   // check if the interfaceInteraction is already on payment or not
   const isNotificationInInterfaceInteraction =
     payment.interfaceInteractions.some(
@@ -206,11 +206,7 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
         interaction.fields.notification === stringifiedNotification,
     )
   if (isNotificationInInterfaceInteraction === false)
-    updateActions.push(
-      getAddInterfaceInteractionUpdateAction(
-        notification
-      ),
-    )
+    updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
   const { transactionType, transactionState } =
     await getTransactionTypeAndStateOrNull(notificationRequestItem)
   if (transactionType !== null) {
@@ -306,9 +302,7 @@ function compareTransactionStates(currentState, newState) {
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
 }
 
-function getAddInterfaceInteractionUpdateAction(
-  notification
-) {
+function getAddInterfaceInteractionUpdateAction(notification) {
   const moduleConfig = config.getModuleConfig()
   const notificationToUse = _.cloneDeep(notification)
   const eventCode = _.isNil(notificationToUse.NotificationRequestItem.eventCode)
