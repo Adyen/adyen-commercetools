@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "dependencies": {
-    "@adyen/api-library": "18.0.0",
+    "@adyen/api-library": "18.1.0",
     "@commercetools/api-request-builder": "6.0.0",
     "@commercetools/sdk-client": "3.0.0",
     "@commercetools/sdk-middleware-auth": "7.0.1",
@@ -70,7 +70,7 @@
     "chai": "5.1.1",
     "eslint": "9.8.0",
     "eslint-config-prettier": "9.1.0",
-    "husky": "9.1.1",
+    "husky": "9.1.4",
     "ip": "2.0.1",
     "lint-staged": "15.2.7",
     "localtunnel": "2.0.2",
