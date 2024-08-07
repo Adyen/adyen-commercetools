@@ -54,7 +54,7 @@ async function processNotification({
   )
   // if payment doesn't exist => log error and return
   if (!payment) {
-    logger.error(
+    ctpLogger.error(
       `Payment with merchantReference: ${merchantReference} was not found`,
     )
 
@@ -65,7 +65,7 @@ async function processNotification({
     payment.custom.fields.makePaymentResponse ||
     payment.custom.fields.createSessionResponse
   ) {
-    await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
+    await updatePaymentWithRepeater(payment, notification, ctpClient, ctpLogger)
 
     return
   }
@@ -78,7 +78,7 @@ async function processNotification({
   )
 
   if (!payment) {
-    logger.error(
+    ctpLogger.error(
       `Payment with merchantReference: ${merchantReference} was not found`,
     )
 
@@ -89,7 +89,7 @@ async function processNotification({
   // if pspReference or originalReference from webhook are the same as the payment key => standard update
   // if not => add a transaction with the message to the payment
   // so the merchant could see that the webhook wasn't correct
-  await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
+  await updatePaymentWithRepeater(payment, notification, ctpClient, ctpLogger)
 }
 
 function sleep(ms) {
