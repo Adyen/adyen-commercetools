@@ -12,6 +12,7 @@ import { buildMockErrorFromConcurrentModificationException } from '../test-utils
 const { cloneDeep } = lodash
 const logger = getLogger()
 const sandbox = sinon.createSandbox()
+
 describe('notification controller', () => {
   const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
   const ctpConfig = config.getCtpConfig(commercetoolsProjectKey)
@@ -43,7 +44,6 @@ describe('notification controller', () => {
 
   let originalCollectRequestDataFn
   let originalLogErrorFn
-  let logSpy
 
   before(() => {
     originalCollectRequestDataFn = utils.collectRequestData
@@ -74,15 +74,17 @@ describe('notification controller', () => {
       const notificationJson = cloneDeep(mockNotificationJson)
       utils.collectRequestData = () => JSON.stringify(notificationJson)
 
-      logSpy = sinon.spy()
-      logger.error = logSpy
+      const loggerMock = {
+        error: sinon.spy(),
+        debug: logger.debug,
+      }
 
       // test:
-      await handleNotification(requestMock, responseMock)
-      const { cause } = logSpy.firstCall.args[0]
+      await handleNotification(requestMock, responseMock, loggerMock)
+      const { cause } = loggerMock.error.firstCall.args[0]
       // expect:
       expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
-      expect(logSpy.calledOnce).to.be.true
+      expect(loggerMock.error.calledOnce).to.be.true
       expect(responseEndSpy.firstCall.firstArg).to.equal(
         JSON.stringify({ notificationResponse: '[accepted]' }),
       )
@@ -120,15 +122,17 @@ describe('notification controller', () => {
       .callsFake(() => ({}))
     config.getCtpConfig = configGetCtpConfigSpy
 
-    logSpy = sinon.spy()
-    logger.error = logSpy
+    const loggerMock = {
+      error: sinon.spy(),
+      debug: logger.debug,
+    }
 
     // test:
-    await handleNotification(requestMock, responseMock)
-    const { cause } = logSpy.firstCall.args[0]
+    await handleNotification(requestMock, responseMock, loggerMock)
+    const { cause } = loggerMock.error.firstCall.args[0]
     // expect:
     expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
-    expect(logSpy.calledOnce).to.be.true
+    expect(loggerMock.error.calledOnce).to.be.true
     expect(responseEndSpy.firstCall.firstArg).to.equal(
       JSON.stringify({ notificationResponse: '[accepted]' }),
     )
@@ -157,16 +161,18 @@ describe('notification controller', () => {
       }
     utils.collectRequestData = () => JSON.stringify(notificationJson)
 
-    logSpy = sinon.spy()
-    logger.error = logSpy
+    const loggerMock = {
+      error: sinon.spy(),
+      debug: logger.debug,
+    }
 
     // test:
-    await handleNotification(requestMock, responseMock)
+    await handleNotification(requestMock, responseMock, loggerMock)
 
-    const { cause } = logSpy.firstCall.args[0]
+    const { cause } = loggerMock.error.firstCall.args[0]
     // expect:
     expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
-    expect(logSpy.calledOnce).to.be.true
+    expect(loggerMock.error.calledOnce).to.be.true
     expect(responseEndSpy.firstCall.firstArg).to.equal(
       JSON.stringify({ notificationResponse: '[accepted]' }),
     )
@@ -210,8 +216,11 @@ describe('notification controller', () => {
       const notificationJson = mockNotificationJson
       utils.collectRequestData = () => JSON.stringify(notificationJson)
 
-      logSpy = sinon.spy()
-      logger.error = logSpy
+      const loggerMock = {
+        error: sinon.spy(),
+        debug: logger.debug,
+        child: logger.child,
+      }
 
       notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
         {
@@ -229,10 +238,10 @@ describe('notification controller', () => {
       config.getAdyenConfig = configGetAdyenConfigSpy
 
       // test:
-      await handleNotification(requestMock, responseMock)
-      const { cause } = logSpy.firstCall.args[0]
+      await handleNotification(requestMock, responseMock, loggerMock)
+      const { cause } = loggerMock.error.firstCall.args[0]
 
-      expect(logSpy.calledOnce).to.be.true
+      expect(loggerMock.error.calledOnce).to.be.true
       expect(cause.body.message).to.equal(
         'Object 62f05181-4789-47ce-84f8-d27c895ee23c has a different version than expected. Expected: 1 - Actual: 2.',
       )
