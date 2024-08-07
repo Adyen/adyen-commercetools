@@ -1,6 +1,7 @@
 import sinon from 'sinon'
 import VError from 'verror'
-import { expect } from 'chai'
+import * as chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 import lodash from 'lodash'
 import config from '../../src/config/config.js'
 import notificationHandler from '../../src/handler/notification/notification.handler.js'
@@ -12,9 +13,10 @@ import {
   buildMockErrorFromConcurrentModificationException,
 } from '../test-utils.js'
 import utils from '../../src/utils/commons.js'
-
+const { expect } = chai
 const { cloneDeep } = lodash
 const sandbox = sinon.createSandbox()
+chai.use(chaiAsPromised)
 
 describe('notification module', () => {
   let paymentMock
@@ -75,7 +77,6 @@ describe('notification module', () => {
     ]
     const payment = cloneDeep(paymentMock)
     payment.paymentMethodInfo.method = 'scheme'
-    payment.custom.fields.createSessionResponse = null
     payment.transactions.push({
       id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
       type: 'Authorization',
@@ -339,6 +340,97 @@ describe('notification module', () => {
     expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
       expectedUpdateActions,
     )
+  })
+
+  it(`given that ADYEN sends an "AUTHORISATION is successful" notification
+      when payment has not been created yet 
+      then notification module should return 503 exception`, async () => {
+    // prepare data
+    const notifications = [
+      {
+        NotificationRequestItem: {
+          amount: {
+            currency: 'EUR',
+            value: 10100,
+          },
+          additionalData: {
+            'metadata.ctProjectKey': commercetoolsProjectKey,
+          },
+          eventCode: 'AUTHORISATION',
+          eventDate: '2019-01-30T18:16:22+01:00',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
+          merchantReference: '8313842560770001',
+          operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+          paymentMethod: 'visa',
+          pspReference: 'test_AUTHORISATION_1',
+          success: 'true',
+        },
+      },
+    ]
+    const payment = null
+    const ctpClient = ctpClientMock.get(ctpConfig)
+    const stub = sandbox.stub(ctpClient, 'fetchByKeys')
+    stub.onCall(0).returns({ body: { results: [payment] } })
+    stub.onCall(1).returns({ body: { results: [payment] } })
+    stub.onCall(2).returns({ body: { results: [payment] } })
+    stub.onCall(3).returns({ body: { results: [payment] } })
+    stub.onCall(4).returns({ body: { results: [payment] } })
+    stub.onCall(5).returns({ body: { results: [payment] } })
+    stub.onCall(6).returns({ body: { results: [payment] } })
+    stub.onCall(7).returns({ body: { results: [payment] } })
+    stub.onCall(8).returns({ body: { results: [payment] } })
+    ctp.get = () => ctpClient
+
+    // process
+    await expect(
+      notificationHandler.processNotification(notifications[0], false, config),
+    ).to.be.rejectedWith('Payment 8313842560770001 is not created yet.')
+  })
+
+  it(`given that ADYEN sends an "AUTHORISATION is successful" notification
+      when payment has been created but missing create session response 
+      then notification module should return 503 exception`, async () => {
+    // prepare data
+    const notifications = [
+      {
+        NotificationRequestItem: {
+          amount: {
+            currency: 'EUR',
+            value: 10100,
+          },
+          additionalData: {
+            'metadata.ctProjectKey': commercetoolsProjectKey,
+          },
+          eventCode: 'AUTHORISATION',
+          eventDate: '2019-01-30T18:16:22+01:00',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
+          merchantReference: '8313842560770001',
+          operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+          paymentMethod: 'visa',
+          pspReference: 'test_AUTHORISATION_1',
+          success: 'true',
+        },
+      },
+    ]
+    const payment = cloneDeep(paymentMock)
+    payment.custom.fields.createSessionResponse = null
+    const ctpClient = ctpClientMock.get(ctpConfig)
+    const stub = sandbox.stub(ctpClient, 'fetchByKeys')
+    stub.onCall(0).returns({ body: { results: [payment] } })
+    stub.onCall(1).returns({ body: { results: [payment] } })
+    stub.onCall(2).returns({ body: { results: [payment] } })
+    stub.onCall(3).returns({ body: { results: [payment] } })
+    stub.onCall(4).returns({ body: { results: [payment] } })
+    stub.onCall(5).returns({ body: { results: [payment] } })
+    stub.onCall(6).returns({ body: { results: [payment] } })
+    stub.onCall(7).returns({ body: { results: [payment] } })
+    stub.onCall(8).returns({ body: { results: [payment] } })
+    ctp.get = () => ctpClient
+
+    // process
+    await expect(
+      notificationHandler.processNotification(notifications[0], false, config),
+    ).to.be.rejectedWith('Payment 8313842560770001 is not created yet.')
   })
 
   it(`given that ADYEN sends an "AUTHORISATION is successful" notification
@@ -864,7 +956,7 @@ describe('notification module', () => {
     }
     expect(err instanceof VError).to.equal(true)
     expect(err.cause().name).to.equal('ConcurrentModification')
-    expect(ctpClientUpdateSpy.callCount).to.equal(21)
+    expect(ctpClientUpdateSpy.callCount).to.equal(168)
   })
 
   it(
