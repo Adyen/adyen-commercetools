@@ -95,7 +95,7 @@ async function processNotification(
         error,
         `Payment ${merchantReference} is not created yet.`,
       )
-    } catch (error) {
+    } catch (err) {
       retryCount += 1
       if (retryCount >= maxRetry) {
         if (payment) {
@@ -111,13 +111,10 @@ async function processNotification(
           )
         }
 
-        const error = new Error(
-          `Payment ${merchantReference} is not created yet.`,
-        )
-        error.statusCode = 503
+        err.statusCode = 503
 
         throw new VError(
-          error,
+          err,
           `Payment ${merchantReference} is not created yet.`,
         )
       }
