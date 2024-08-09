@@ -344,7 +344,7 @@ describe('notification module', () => {
 
   it(`given that ADYEN sends an "AUTHORISATION is successful" notification
       when payment has not been created yet 
-      then notification module should return 503 exception`, async () => {
+      then notification module should return 200`, async () => {
     // prepare data
     const notifications = [
       {
@@ -382,14 +382,19 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await expect(
-      notificationHandler.processNotification(notifications[0], false, config),
-    ).to.be.rejectedWith('Payment 8313842560770001 is not created yet.')
+    await notificationHandler.processNotification(
+      notifications[0],
+      false,
+      config,
+    )
+
+    // assert
+    expect(stub.callCount).to.equal(7)
   })
 
   it(`given that ADYEN sends an "AUTHORISATION is successful" notification
       when payment has been created but missing create session response 
-      then notification module should return 503 exception`, async () => {
+      then notification module should return 200`, async () => {
     // prepare data
     const notifications = [
       {
@@ -428,9 +433,14 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await expect(
-      notificationHandler.processNotification(notifications[0], false, config),
-    ).to.be.rejectedWith('Payment 8313842560770001 is not created yet.')
+    await notificationHandler.processNotification(
+      notifications[0],
+      false,
+      config,
+    )
+
+    // assert
+    expect(stub.callCount).to.equal(7)
   })
 
   it(`given that ADYEN sends an "AUTHORISATION is successful" notification

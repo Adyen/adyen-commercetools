@@ -58,17 +58,15 @@ async function processNotification(
       ctpClient,
     )
     try {
-      // if payment doesn't exist => log error and return
-      if (!payment) {
-        const error = new Error(
-          `Payment ${merchantReference} is not created yet.`,
+      // if payment doesn't exist throw an error in order to retry fetching
+      if (
+        !payment ||
+        !(
+          payment.custom.fields.makePaymentResponse ||
+          payment.custom.fields.createSessionResponse
         )
-        error.statusCode = 404
-
-        throw new VError(
-          error,
-          `Payment ${merchantReference} is not created yet.`,
-        )
+      ) {
+        throwError(merchantReference)
       }
 
       // if payment has payment response or session response => updatePayment
@@ -82,49 +80,46 @@ async function processNotification(
           ctpClient,
           logger,
         )
+      }
+    } catch (err) {
+      retryCount += 1
+      // only if notification event code is authorization and notification is successful
+      if (
+        retryCount < maxRetry &&
+        notification.NotificationRequestItem.eventCode === 'AUTHORISATION' &&
+        notification.NotificationRequestItem.success === 'true'
+      ) {
+        await sleep(1000)
+        await handleWebhook()
 
         return
       }
 
-      const error = new Error(
-        `Payment ${merchantReference} is not created yet.`,
-      )
-      error.statusCode = 404
-
-      throw new VError(
-        error,
-        `Payment ${merchantReference} is not created yet.`,
-      )
-    } catch (err) {
-      retryCount += 1
-      if (retryCount >= maxRetry) {
-        if (payment) {
-          // if payment exists it should be updated
-          // if pspReference or originalReference from webhook are the same as the payment key => standard update
-          // if not => add a transaction with the message to the payment
-          // so the merchant could see that the webhook wasn't correct
-          await updatePaymentWithRepeater(
-            payment,
-            notification,
-            ctpClient,
-            logger,
-          )
-        }
-
-        err.statusCode = 503
-
-        throw new VError(
-          err,
-          `Payment ${merchantReference} is not created yet.`,
+      if (payment) {
+        // if payment exists it should be updated
+        // if pspReference or originalReference from webhook are the same as the payment key => standard update
+        // if not => add a transaction with the message to the payment
+        // so the merchant could see that the webhook wasn't correct
+        await updatePaymentWithRepeater(
+          payment,
+          notification,
+          ctpClient,
+          logger,
         )
       }
 
-      await sleep(1000)
-      await handleWebhook()
+      logger.error(err)
     }
   }
 
   return handleWebhook()
+}
+
+function throwError(merchantReference) {
+  const error = new Error(`Payment ${merchantReference} is not created yet.`)
+  error.statusCode = 404
+
+  throw new VError(error, `Payment ${merchantReference} is not created yet.`)
 }
 
 function sleep(ms) {
