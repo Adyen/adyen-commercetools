@@ -198,8 +198,11 @@ async function updatePaymentWithRepeater(
         ctpClient.builder.payments,
         currentPayment.id,
       )
-      currentPayment = response.body
-      currentVersion = currentPayment.version
+
+      if(response?.body){
+        currentPayment = response.body
+        currentVersion = currentPayment.version
+      }
 
       await repeater()
     }
