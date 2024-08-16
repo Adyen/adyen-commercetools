@@ -199,7 +199,7 @@ async function updatePaymentWithRepeater(
         currentPayment.id,
       )
 
-      if(response?.body){
+      if (response?.body) {
         currentPayment = response.body
         currentVersion = currentPayment.version
       }
