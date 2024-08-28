@@ -120,7 +120,6 @@ function createAddTransactionAction({
 }
 
 function createAddTransactionActionByResponse(amount, currencyCode, response) {
-  // eslint-disable-next-line default-case
   switch (response.resultCode) {
     case 'Authorised':
       return createAddTransactionAction({
@@ -179,6 +178,7 @@ function isValidJSON(jsonString) {
   try {
     const o = JSON.parse(jsonString)
     if (o && typeof o === 'object') return true
+    // eslint-disable-next-line no-unused-vars
   } catch (e) {
     // continue regardless of error
   }
@@ -197,15 +197,14 @@ function getIdempotencyKey(transaction) {
   return idempotencyKey
 }
 
-function getPaymentKeyUpdateAction(paymentKey, request, response) {
+function getPaymentKeyUpdateAction(paymentKey, request) {
   const requestBodyJson = JSON.parse(request.body)
-  const reference = requestBodyJson.reference?.toString()
-  const pspReference = response.pspReference?.toString()
-  const newReference = pspReference || reference
+  let newReference = requestBodyJson.reference?.toString()
+
   let paymentKeyUpdateAction
   // ensure the key and new reference is different, otherwise the error with
   // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
-  if (newReference !== paymentKey) {
+  if (newReference && newReference !== paymentKey) {
     paymentKeyUpdateAction = {
       action: 'setKey',
       key: newReference,

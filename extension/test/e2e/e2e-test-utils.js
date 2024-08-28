@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import puppeteer from 'puppeteer'
 import path from 'path'
 import fs from 'fs'
@@ -209,6 +207,7 @@ function getRequestParams(url) {
     queries[1].split('&').forEach((item) => {
       try {
         result[item.split('=')[0]] = item.split('=')[1]
+        // eslint-disable-next-line no-unused-vars
       } catch (e) {
         result[item.split('=')[0]] = ''
       }

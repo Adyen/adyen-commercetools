@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable @stylistic/js/max-len */
 export default JSON.stringify({
   resultCode: 'ChallengeShopper',
   action: {

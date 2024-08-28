@@ -7,7 +7,7 @@
   - [Preparing the credentials](#preparing-the-credentials)
   - [Required attributes](#required-attributes)
   - [Optional attributes](#optional-attributes)
-  - [Other Configurations](#other-configurations)
+  - [Standalone Optional Attributes](#standalone-optional-attributes)
   - [External file configuration](#external-file-configuration)
 - [Commercetools project requirements](#commercetools-project-requirements)
 - [Running](#running)
@@ -47,11 +47,11 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
 }
 ```
 
-`ADYEN_INTEGRATION_CONFIG` JSON structure contains different `attribute groups` as described below:
+`ADYEN_INTEGRATION_CONFIG` JSON structure contains different `attribute groups and optional attributes` as described below:
 
 - `adyen` attribute group: Multiple child attributes can be provided in the `adyen` attribute. Each direct child attribute must represent an adyen merchant account.
 - `commercetools` attribute group: Multiple child attributes can be provided in the `commercetools` attribute. Each direct child attribute must represent a commercetools project.
-- `other` attribute group: Attributes in this group can be set as direct child attributes in `the root of the JSON`.
+- `standalone optional attributes` : Standalone attributes can be set as direct child attributes in `the root of the JSON`.
 
 #### Preparing the credentials
 
@@ -72,17 +72,19 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
 | --------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `adyen`         | `enableHmacSignature`        | Verify the integrity of notifications using [Adyen HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures). (⚠️ If deploying in Connect, it is required to set the field to false) | true                                                                                                  |
 | `adyen`         | `secretHmacKey`              | The generated secret HMAC key that is linked to a Adyen **Standard Notification** endpoint                                                                                                                                |                                                                                                       |
+| `adyen`         | `notificationBaseUrl`        | Publicly available URL of the Notification module. In case of any payment changes, Adyen will call this URL and pass the notification in body. This attribute is used when calling `npm run setup-resources`              |                                                                                                       |
+| `adyen`         | `apiKey`                     | This key will be used to make authenticated API requests to Adyen. This attribute is used when calling `npm run setup-resources`                                                                                          |                                                                                                       |
 | `commercetools` | `apiUrl`                     | The commercetools HTTP API is hosted at that URL.                                                                                                                                                                         | `https://api.europe-west1.gcp.commercetools.com`                                                      |
 | `commercetools` | `authUrl`                    | The commercetools’ OAuth 2.0 service is hosted at that URL.                                                                                                                                                               | `https://auth.europe-west1.gcp.commercetools.com`                                                     |
-| `other`         | `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod` returned in the notification and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.method`.                                           | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}}` |
-| `other`         | `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.                                                   | true                                                                                                  |
-| `other`         | `port`                       | The port number on which the application will run. (⚠️ If deploying in Connect, it is required to set the field to 8080)                                                                                                  | 443                                                                                                   |
-| `other`         | `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                                                       | `info`                                                                                                |
-| `other`         | `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                                                             | Node.js default (5 seconds)                                                                           |
+| /               | `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod` returned in the notification and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.method`.                                           | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}}` |
+| /               | `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.                                                   | true                                                                                                  |
+| /               | `port`                       | The port number on which the application will run. (⚠️ If deploying in Connect, it is required to set the field to 8080)                                                                                                  | 443                                                                                                   |
+| /               | `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                                                       | `info`                                                                                                |
+| /               | `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                                                             | Node.js default (5 seconds)                                                                           |
 
-### Other Configurations
+### Standalone Optional Attributes
 
-Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION_CONFIG`.
+`Standalone optional attributes` should be set as direct child attributes in `ADYEN_INTEGRATION_CONFIG`, as displayed below:
 
 ```
 {
@@ -98,16 +100,6 @@ Other configurations can be set as direct child attributes in `ADYEN_INTEGRATION
   "removeSensitiveData": false
 }
 ```
-
-| Name                         | Content                                                                                                                                                                                                      | Default value                                                                                         |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| `adyenPaymentMethodsToNames` | Key-value object where key is `paymentMethod` returned in the notification and value is the custom localized name that will be saved in CTP `payment.paymentMethodInfo.method`.                              | `{scheme: {en: 'Credit Card'}, pp: {en: 'PayPal'}, klarna: {en: 'Klarna'}, gpay: {en: 'Google Pay'}}` |
-| `port`                       | The port number on which the application will run. (⚠️ If deploying in Connect, it is required to set the field to 8080)                                                                                     | 443                                                                                                   |
-| `logLevel`                   | The log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`).                                                                                                                                          | `info`                                                                                                |
-| `keepAliveTimeout`           | Milliseconds to keep a socket alive after the last response ([Node.js docs](https://nodejs.org/dist/latest/docs/api/http.html#http_server_keepalivetimeout)).                                                | Node.js default (5 seconds)                                                                           |
-| `removeSensitiveData`        | Boolean attribute. When set to "false", Adyen fields with additional information about the payment will be saved in the interface interaction and in the custom fields.                                      | true                                                                                                  |
-| `notificationBaseUrl`        | Publicly available URL of the Notification module. In case of any payment changes, Adyen will call this URL and pass the notification in body. This attribute is used when calling `npm run setup-resources` |                                                                                                       |
-| `apiKey`                     | This key will be used to make authenticated API requests to Adyen. This attribute is used when calling `npm run setup-resources`                                                                             |                                                                                                       |
 
 ### External file configuration
 
