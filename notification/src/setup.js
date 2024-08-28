@@ -1,6 +1,6 @@
 import config from './config/config.js'
 import { getLogger } from './utils/logger.js'
-// eslint-disable-next-line max-len
+// eslint-disable-next-line @stylistic/js/max-len
 import { ensureInterfaceInteractionCustomTypeForAllProjects } from './config/init/ensure-interface-interaction-custom-type.js'
 import { ensureAdyenWebhooksForAllProjects } from './config/init/ensure-adyen-webhook.js'
 

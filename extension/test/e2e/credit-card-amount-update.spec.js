@@ -48,7 +48,6 @@ describe('::creditCardPayment::amount-update::', () => {
     await browser.close()
   })
 
-  // eslint-disable-next-line no-template-curly-in-string
   it(`when payment session for credit card is created, initialized and authorized, the amount can be updated by 
      looking up corresponding payment with pspReference`, async () => {
     let paymentAfterCreateSession
