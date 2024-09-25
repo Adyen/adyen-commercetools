@@ -108,9 +108,9 @@ async function processNotification(
         ) {
           logger.debug(
             `Notification (PSP ref: ${notification.NotificationRequestItem.pspReference}) ` +
-              `has received amount (${notification.NotificationRequestItem.amount.value}) ` +
-              `lower than planned amount (${payment.amountPlanned.centAmount}) ` +
-              `on payment id: ${payment.id} (key: ${payment.key})`,
+            `has received amount (${notification.NotificationRequestItem.amount.value}) ` +
+            `lower than planned amount (${payment.amountPlanned.centAmount}) ` +
+            `on payment id: ${payment.id} (key: ${payment.key})`,
           )
           const receivedAmount = _.cloneDeep(payment.amountPlanned)
           receivedAmount.centAmount =
@@ -131,7 +131,7 @@ async function processNotification(
             payment.amountPlanned.centAmount - receivedAmount.centAmount
           logger.debug(
             `Decreasing planned amount on original payment (id: ${payment.id}, key: ${payment.key}) ` +
-              `to ${remainingAmount.centAmount}...`,
+            `to ${remainingAmount.centAmount}...`,
           )
           await updatePaymentWithRepeater(
             payment,
@@ -188,16 +188,15 @@ async function updatePaymentWithRepeater(
       requestedUpdateActions && requestedUpdateActions.length > 0
         ? requestedUpdateActions
         : await calculateUpdateActionsForPayment(
-            currentPayment,
-            notification,
-            logger,
-          )
+          currentPayment,
+          notification,
+          logger,
+        )
     if (updateActions.length === 0) {
       return
     }
     logger.debug(
-      `Update payment with key ${
-        currentPayment.key
+      `Update payment with key ${currentPayment.key
       } with update actions [${JSON.stringify(updateActions)}]`,
     )
     try {
@@ -234,10 +233,10 @@ async function updatePaymentWithRepeater(
         throw new VError(
           err,
           `${retryMessage} Won't retry again` +
-            ` because of a reached limit ${maxRetry}` +
-            ` max retries. Failed actions: ${JSON.stringify(
-              updateActionsToLog,
-            )}`,
+          ` because of a reached limit ${maxRetry}` +
+          ` max retries. Failed actions: ${JSON.stringify(
+            updateActionsToLog,
+          )}`,
         )
       }
 
@@ -420,23 +419,6 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
         }),
       )
     }
-
-    if (
-      transactionType === 'Authorization' &&
-      transactionState === 'Success' &&
-      !notificationRequestItem.operations.includes('CAPTURE')
-    ) {
-      updateActions.push(
-        getAddTransactionUpdateAction({
-          timestamp: convertDateToUTCFormat(eventDate, logger),
-          type: 'Charge',
-          state: 'Success',
-          amount: notificationRequestItem.amount.value,
-          currency: notificationRequestItem.amount.currency,
-          interactionId: pspReference,
-        }),
-      )
-    }
   }
 
   const paymentMethodFromPayment = payment.paymentMethodInfo.method
@@ -508,12 +490,12 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-      'recurring.recurringDetailReference'
+    'recurring.recurringDetailReference'
     ]
   ) {
     const recurringDetailReference =
       notificationToUse.NotificationRequestItem.additionalData[
-        'recurring.recurringDetailReference'
+      'recurring.recurringDetailReference'
       ]
 
     notificationToUse.NotificationRequestItem.recurringDetailReference =
@@ -523,7 +505,7 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-      'recurringProcessingModel'
+    'recurringProcessingModel'
     ]
   ) {
     const { recurringProcessingModel } =
@@ -536,12 +518,12 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-      'recurring.shopperReference'
+    'recurring.shopperReference'
     ]
   ) {
     const recurringShopperReference =
       notificationToUse.NotificationRequestItem.additionalData[
-        'recurring.shopperReference'
+      'recurring.shopperReference'
       ]
 
     notificationToUse.NotificationRequestItem.recurringShopperReference =
