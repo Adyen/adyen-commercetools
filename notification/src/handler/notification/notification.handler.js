@@ -48,73 +48,126 @@ async function processNotification(
   )
 
   const ctpClient = await ctp.get(ctpProjectConfig)
+  const maxRetry = 7
+  let retryCount = 0
 
-  let payment = await getPaymentByMerchantReference(
-    merchantReference,
-    originalReference || pspReference,
-    ctpClient,
-  )
+  const handleWebhook = async () => {
+    let payment = await getPaymentByMerchantReference(
+      merchantReference,
+      originalReference || pspReference,
+      ctpClient,
+    )
+    try {
+      // if payment doesn't exist throw an error in order to retry fetching
+      if (
+        !payment ||
+        !(
+          payment.custom.fields.makePaymentResponse ||
+          payment.custom.fields.createSessionResponse
+        )
+      ) {
+        throwError(merchantReference)
+      }
 
-  if (payment) {
-    if (
-      !payment.custom.fields.makePaymentResponse &&
-      !payment.custom.fields.createSessionResponse
-    ) {
-      const error = new Error(`Payment ${merchantReference} is not ready yet.`)
-      error.statusCode = 409
-    
-      throw new VError(error, `Payment conflict.`)
+      // if payment has payment response or session response => updatePayment
+      if (
+        payment.custom.fields.makePaymentResponse ||
+        payment.custom.fields.createSessionResponse
+      ) {
+        await updatePaymentWithRepeater(
+          payment,
+          notification,
+          ctpClient,
+          logger,
+        )
+      }
+    } catch (err) {
+      retryCount += 1
+      // only if notification event code is authorization and max retry is not reached
+      if (
+        retryCount < maxRetry &&
+        notification.NotificationRequestItem.eventCode === 'AUTHORISATION'
+      ) {
+        await sleep(1000)
+        await handleWebhook()
+
+        return
+      }
+
+      if (payment) {
+        // if payment exists it should be updated
+        // if pspReference or originalReference from webhook are the same as the payment key => standard update
+        // if not => add a transaction with the message to the payment
+        // so the merchant could see that the webhook wasn't correct
+
+        if (
+          isReceivedAmountLowerThanPlanned(
+            payment,
+            notification.NotificationRequestItem,
+          )
+        ) {
+          logger.debug(
+            `Notification (PSP ref: ${notification.NotificationRequestItem.pspReference}) ` +
+            `has received amount (${notification.NotificationRequestItem.amount.value}) ` +
+            `lower than planned amount (${payment.amountPlanned.centAmount}) ` +
+            `on payment id: ${payment.id} (key: ${payment.key})`,
+          )
+          const receivedAmount = _.cloneDeep(payment.amountPlanned)
+          receivedAmount.centAmount =
+            notification.NotificationRequestItem.amount.value
+          receivedAmount.currencyCode =
+            notification.NotificationRequestItem.amount.currency
+
+          const newPayment = await copyPayment(
+            payment,
+            pspReference,
+            receivedAmount,
+            ctpClient,
+            logger,
+          )
+
+          const remainingAmount = _.cloneDeep(payment.amountPlanned)
+          remainingAmount.centAmount =
+            payment.amountPlanned.centAmount - receivedAmount.centAmount
+          logger.debug(
+            `Decreasing planned amount on original payment (id: ${payment.id}, key: ${payment.key}) ` +
+            `to ${remainingAmount.centAmount}...`,
+          )
+          await updatePaymentWithRepeater(
+            payment,
+            notification,
+            ctpClient,
+            logger,
+            [getChangeAmountPlannedAction(remainingAmount)],
+          )
+          payment = newPayment
+        }
+        await updatePaymentWithRepeater(
+          payment,
+          notification,
+          ctpClient,
+          logger,
+        )
+      }
+
+      logger.error(err)
     }
-
-    if (
-      isReceivedAmountLowerThanPlanned(
-        payment,
-        notification.NotificationRequestItem,
-      )
-    ) {
-      logger.debug(
-        `Notification (PSP ref: ${notification.NotificationRequestItem.pspReference}) ` +
-          `has received amount (${notification.NotificationRequestItem.amount.value}) ` +
-          `lower than planned amount (${payment.amountPlanned.centAmount}) ` +
-          `on payment id: ${payment.id} (key: ${payment.key})`,
-      )
-      const receivedAmount = _.cloneDeep(payment.amountPlanned)
-      receivedAmount.centAmount =
-        notification.NotificationRequestItem.amount.value
-      receivedAmount.currencyCode =
-        notification.NotificationRequestItem.amount.currency
-
-      const newPayment = await copyPayment(
-        payment,
-        pspReference,
-        receivedAmount,
-        ctpClient,
-        logger,
-      )
-
-      const remainingAmount = _.cloneDeep(payment.amountPlanned)
-      remainingAmount.centAmount =
-        payment.amountPlanned.centAmount - receivedAmount.centAmount
-      logger.debug(
-        `Decreasing planned amount on original payment (id: ${payment.id}, key: ${payment.key}) ` +
-          `to ${remainingAmount.centAmount}...`,
-      )
-      await updatePaymentWithRepeater(
-        payment,
-        notification,
-        ctpClient,
-        logger,
-        [getChangeAmountPlannedAction(remainingAmount)],
-      )
-      payment = newPayment
-    }
-    await updatePaymentWithRepeater(payment, notification, ctpClient, logger)
-  } else {
-    const error = new Error(`Payment with merchantReference: ${merchantReference} was not found.`)
-    error.statusCode = 404
-
-    throw new VError(error, `Payment not found.`)
   }
+
+  return handleWebhook()
+}
+
+function throwError(merchantReference) {
+  const error = new Error(`Payment ${merchantReference} is not created yet.`)
+  error.statusCode = 404
+
+  throw new VError(error, `Payment ${merchantReference} is not created yet.`)
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
 }
 
 async function updatePaymentWithRepeater(
@@ -131,23 +184,22 @@ async function updatePaymentWithRepeater(
   let retryMessage
   let updateActions
   const repeater = async () => {
-    updateActions = requestedUpdateActions && requestedUpdateActions.length > 0
+    updateActions =
+      requestedUpdateActions && requestedUpdateActions.length > 0
         ? requestedUpdateActions
         : await calculateUpdateActionsForPayment(
-            currentPayment,
-            notification,
-            logger,
-          )
+          currentPayment,
+          notification,
+          logger,
+        )
     if (updateActions.length === 0) {
       return
     }
     logger.debug(
-      `Update payment with key ${
-        currentPayment.key
+      `Update payment with key ${currentPayment.key
       } with update actions [${JSON.stringify(updateActions)}]`,
     )
     try {
-      /* eslint-disable-next-line no-await-in-loop */
       await ctpClient.update(
         ctpClient.builder.payments,
         currentPayment.id,
@@ -181,20 +233,22 @@ async function updatePaymentWithRepeater(
         throw new VError(
           err,
           `${retryMessage} Won't retry again` +
-            ` because of a reached limit ${maxRetry}` +
-            ` max retries. Failed actions: ${JSON.stringify(
-              updateActionsToLog,
-            )}`,
+          ` because of a reached limit ${maxRetry}` +
+          ` max retries. Failed actions: ${JSON.stringify(
+            updateActionsToLog,
+          )}`,
         )
       }
 
-      /* eslint-disable-next-line no-await-in-loop */
       const response = await ctpClient.fetchById(
         ctpClient.builder.payments,
         currentPayment.id,
       )
-      currentPayment = response.body // eslint-disable-line prefer-destructuring
-      currentVersion = currentPayment.version
+
+      if (response?.body) {
+        currentPayment = response.body
+        currentVersion = currentPayment.version
+      }
 
       await repeater()
     }
@@ -288,6 +342,7 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
   const updateActions = []
   const notificationRequestItem = notification.NotificationRequestItem
   const stringifiedNotification = JSON.stringify(notification)
+  const { pspReference } = notificationRequestItem
   // check if the interfaceInteraction is already on payment or not
   const isNotificationInInterfaceInteraction =
     payment.interfaceInteractions.some(
@@ -296,7 +351,6 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
     )
   if (isNotificationInInterfaceInteraction === false)
     updateActions.push(getAddInterfaceInteractionUpdateAction(notification))
-  const { pspReference } = notificationRequestItem
   const { transactionType, transactionState } =
     await getTransactionTypeAndStateOrNull(notificationRequestItem)
   if (transactionType !== null) {
@@ -336,18 +390,24 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
         ),
       )
     }
-    const paymentKey = payment.key
-    const newPspReference =
-      notificationRequestItem.originalReference || pspReference
-    if (newPspReference && newPspReference !== paymentKey) {
-      updateActions.push({
-        action: 'setKey',
-        key: newPspReference,
-      })
+
+    if (notificationRequestItem.success) {
+      const paymentKey = payment.key
+      const newPspReference =
+        notificationRequestItem.originalReference || pspReference
+      if (newPspReference && newPspReference !== paymentKey) {
+        updateActions.push({
+          action: 'setKey',
+          key: newPspReference,
+        })
+      }
     }
 
-    if (transactionType === 'Authorization' && transactionState === 'Success'
-        && !notificationRequestItem.operations.includes('CAPTURE')) {
+    if (
+      transactionType === 'Authorization' &&
+      transactionState === 'Success' &&
+      !notificationRequestItem.operations.includes('CAPTURE')
+    ) {
       updateActions.push(
         getAddTransactionUpdateAction({
           timestamp: convertDateToUTCFormat(eventDate, logger),
@@ -406,17 +466,36 @@ function compareTransactionStates(currentState, newState) {
 function getAddInterfaceInteractionUpdateAction(notification) {
   const moduleConfig = config.getModuleConfig()
   const notificationToUse = _.cloneDeep(notification)
+  const eventCode = _.isNil(notificationToUse.NotificationRequestItem.eventCode)
+    ? ''
+    : notificationToUse.NotificationRequestItem.eventCode.toLowerCase()
+
+  if (!notificationToUse.NotificationRequestItem.success) {
+    return {
+      action: 'addInterfaceInteraction',
+      type: {
+        key: 'ctp-adyen-integration-interaction-notification',
+        typeId: 'type',
+      },
+      fields: {
+        createdAt: new Date(),
+        status: eventCode + '_failed',
+        type: 'notification',
+        notification: JSON.stringify(notificationToUse),
+      },
+    }
+  }
 
   // Put the recurringDetailReference out of additionalData to avoid removal
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-      'recurring.recurringDetailReference'
+    'recurring.recurringDetailReference'
     ]
   ) {
     const recurringDetailReference =
       notificationToUse.NotificationRequestItem.additionalData[
-        'recurring.recurringDetailReference'
+      'recurring.recurringDetailReference'
       ]
 
     notificationToUse.NotificationRequestItem.recurringDetailReference =
@@ -426,7 +505,7 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-      'recurringProcessingModel'
+    'recurringProcessingModel'
     ]
   ) {
     const { recurringProcessingModel } =
@@ -439,12 +518,12 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-      'recurring.shopperReference'
+    'recurring.shopperReference'
     ]
   ) {
     const recurringShopperReference =
       notificationToUse.NotificationRequestItem.additionalData[
-        'recurring.shopperReference'
+      'recurring.shopperReference'
       ]
 
     notificationToUse.NotificationRequestItem.recurringShopperReference =
@@ -456,10 +535,6 @@ function getAddInterfaceInteractionUpdateAction(notification) {
     delete notificationToUse.NotificationRequestItem.additionalData
     delete notificationToUse.NotificationRequestItem.reason
   }
-
-  const eventCode = _.isNil(notificationToUse.NotificationRequestItem.eventCode)
-    ? ''
-    : notificationToUse.NotificationRequestItem.eventCode.toLowerCase()
 
   return {
     action: 'addInterfaceInteraction',
@@ -522,7 +597,6 @@ async function getTransactionTypeAndStateOrNull(notificationRequestItem) {
   const adyenEventCode = notificationRequestItem.eventCode
   const adyenEventSuccess = notificationRequestItem.success
 
-  // eslint-disable-next-line max-len
   const adyenEvent = _.find(
     adyenEvents,
     (e) => e.eventCode === adyenEventCode && e.success === adyenEventSuccess,
@@ -620,7 +694,7 @@ async function getPaymentByMerchantReference(
   try {
     const keys = [merchantReference, pspReference]
     const result = await ctpClient.fetchByKeys(ctpClient.builder.payments, keys)
-    return result.body.results[0]
+    return result.body?.results[0]
   } catch (err) {
     if (err.statusCode === 404) return null
     const errMsg =

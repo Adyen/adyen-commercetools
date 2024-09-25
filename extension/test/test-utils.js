@@ -10,7 +10,6 @@ global.window = {}
 global.navigator = {}
 
 process.on('unhandledRejection', (reason) => {
-  /* eslint-disable no-console */
   console.error('Unhandled Rejection:', reason)
   process.exit(1)
 })
@@ -99,9 +98,7 @@ async function setupLocalTunnel() {
 
 async function initTunnel(subdomain, port) {
   let repeaterCounter = 0
-  // eslint-disable-next-line no-shadow
   let tunnel
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
       tunnel = await localtunnel({
@@ -169,7 +166,6 @@ async function setUpWebhooksAndNotificationModule() {
   const notificationTunnelDomain = 'ctp-adyen-integration-tests-notifications'
   // Starting up server is needed only locally, on CI we deploy to GCP
   const { setupServer: setupNotificationModuleServer } = await import(
-    // eslint-disable-next-line import/no-relative-packages
     '../../notification/src/server.js'
   )
   notificationServer = await setupNotificationModuleServer()
