@@ -52,7 +52,7 @@ async function processNotification(
   let retryCount = 0
 
   const handleWebhook = async () => {
-    const payment = await getPaymentByMerchantReference(
+    let payment = await getPaymentByMerchantReference(
       merchantReference,
       originalReference || pspReference,
       ctpClient,
@@ -99,7 +99,6 @@ async function processNotification(
         // if pspReference or originalReference from webhook are the same as the payment key => standard update
         // if not => add a transaction with the message to the payment
         // so the merchant could see that the webhook wasn't correct
-
         await updatePaymentWithRepeater(
           payment,
           notification,
@@ -142,15 +141,16 @@ async function updatePaymentWithRepeater(
   let updateActions
   const repeater = async () => {
     updateActions = await calculateUpdateActionsForPayment(
-          currentPayment,
-          notification,
-          logger,
-        )
+      currentPayment,
+      notification,
+      logger,
+    )
     if (updateActions.length === 0) {
       return
     }
     logger.debug(
-      `Update payment with key ${currentPayment.key
+      `Update payment with key ${
+        currentPayment.key
       } with update actions [${JSON.stringify(updateActions)}]`,
     )
     try {
@@ -187,10 +187,10 @@ async function updatePaymentWithRepeater(
         throw new VError(
           err,
           `${retryMessage} Won't retry again` +
-          ` because of a reached limit ${maxRetry}` +
-          ` max retries. Failed actions: ${JSON.stringify(
-            updateActionsToLog,
-          )}`,
+            ` because of a reached limit ${maxRetry}` +
+            ` max retries. Failed actions: ${JSON.stringify(
+              updateActionsToLog,
+            )}`,
         )
       }
 
@@ -376,12 +376,12 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-    'recurring.recurringDetailReference'
+      'recurring.recurringDetailReference'
     ]
   ) {
     const recurringDetailReference =
       notificationToUse.NotificationRequestItem.additionalData[
-      'recurring.recurringDetailReference'
+        'recurring.recurringDetailReference'
       ]
 
     notificationToUse.NotificationRequestItem.recurringDetailReference =
@@ -391,7 +391,7 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-    'recurringProcessingModel'
+      'recurringProcessingModel'
     ]
   ) {
     const { recurringProcessingModel } =
@@ -404,12 +404,12 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-    'recurring.shopperReference'
+      'recurring.shopperReference'
     ]
   ) {
     const recurringShopperReference =
       notificationToUse.NotificationRequestItem.additionalData[
-      'recurring.shopperReference'
+        'recurring.shopperReference'
       ]
 
     notificationToUse.NotificationRequestItem.recurringShopperReference =
