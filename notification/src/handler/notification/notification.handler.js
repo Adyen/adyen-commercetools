@@ -5,23 +5,21 @@ import { validateHmacSignature } from '../../utils/hmacValidator.js'
 import utils from '../../utils/commons.js'
 import ctp from '../../utils/ctp.js'
 import config from '../../config/config.js'
-import { getLogger } from '../../utils/logger.js'
 
-const mainLogger = getLogger()
-
-async function processNotification(
+async function processNotification({
   notification,
   enableHmacSignature,
   ctpProjectConfig,
-) {
-  const logger = mainLogger.child({
+  logger
+}) {
+  const ctpLogger = logger.child({
     commercetools_project_key: ctpProjectConfig.projectKey,
   })
 
   if (enableHmacSignature) {
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
-      logger.error(
+      ctpLogger.error(
         { notification: utils.getNotificationForTracking(notification) },
         `HMAC validation failed. Reason: "${errorMessage}"`,
       )
@@ -107,7 +105,7 @@ async function processNotification(
         )
       }
 
-      logger.error(err)
+      ctpLogger.error(err, 'Error while updating payment')
     }
   }
 
