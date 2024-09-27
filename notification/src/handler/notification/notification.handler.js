@@ -10,7 +10,7 @@ async function processNotification({
   notification,
   enableHmacSignature,
   ctpProjectConfig,
-  logger
+  logger,
 }) {
   const ctpLogger = logger.child({
     commercetools_project_key: ctpProjectConfig.projectKey,

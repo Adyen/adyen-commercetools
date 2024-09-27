@@ -99,11 +99,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -386,11 +387,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
 
     // assert
     expect(stub.callCount).to.equal(7)
@@ -437,11 +439,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
 
     // assert
     expect(stub.callCount).to.equal(7)
@@ -515,7 +518,7 @@ describe('notification module', () => {
       notification: notifications[0],
       enableHmacSignature: false,
       ctpProjectConfig: config,
-      logger: getLogger()
+      logger: getLogger(),
     })
     // assert
     expect(ctpClientUpdateSpy.callCount).to.equal(1)
@@ -577,7 +580,7 @@ describe('notification module', () => {
       notification: notifications[0],
       enableHmacSignature: false,
       ctpProjectConfig: config,
-      logger: getLogger()
+      logger: getLogger(),
     })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
@@ -678,7 +681,7 @@ describe('notification module', () => {
       notification: notifications[0],
       enableHmacSignature: false,
       ctpProjectConfig: config,
-      logger: getLogger()
+      logger: getLogger(),
     })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
@@ -779,7 +782,7 @@ describe('notification module', () => {
       notification: notifications[0],
       enableHmacSignature: false,
       ctpProjectConfig: config,
-      logger: getLogger()
+      logger: getLogger(),
     })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
@@ -890,7 +893,7 @@ describe('notification module', () => {
       notification: notifications[0],
       enableHmacSignature: false,
       ctpProjectConfig: config,
-      logger: getLogger()
+      logger: getLogger(),
     })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData

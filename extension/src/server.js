@@ -14,7 +14,11 @@ function setupServer() {
     const route = routes[parts.pathname]
     const startRequestMs = new Date().getTime()
     const reqId = randomUUID()
-    const reqLogger = logger.child({ reqId, path: route, method: request.method })
+    const reqLogger = logger.child({
+      reqId,
+      path: route,
+      method: request.method,
+    })
 
     if (route) {
       try {
@@ -22,8 +26,8 @@ function setupServer() {
         await route(request, response, reqLogger)
         reqLogger.info(
           { responseTime: calculateRequestDuration(startRequestMs) },
-          'request completed'
-        );
+          'request completed',
+        )
       } catch (err) {
         reqLogger.error(
           { err, responseTime: calculateRequestDuration(startRequestMs) },

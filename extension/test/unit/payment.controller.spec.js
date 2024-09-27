@@ -48,7 +48,7 @@ describe('Payment controller', () => {
       await paymentController.processRequest(
         mockRequest,
         responseMock,
-        utils.getLogger()
+        utils.getLogger(),
       )
 
       utils.collectRequestData.restore()
@@ -84,7 +84,7 @@ describe('Payment controller', () => {
       await paymentController.processRequest(
         mockGetRequest,
         responseMock,
-        utils.getLogger()
+        utils.getLogger(),
       )
 
       utils.sendResponse.restore()
@@ -115,7 +115,7 @@ describe('Payment controller', () => {
     await paymentController.processRequest(
       mockPostRequest,
       responseMock,
-      utils.getLogger()
+      utils.getLogger(),
     )
 
     utils.sendResponse.restore()
