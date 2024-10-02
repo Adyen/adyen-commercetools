@@ -18,11 +18,11 @@ export const notificationTrigger = async (request, response) => {
       const ctpProjectConfig = getCtpProjectConfig(notification, parts.path)
       const adyenConfig = getAdyenConfig(notification)
 
-      await handler.processNotification(
+      await handler.processNotification({
         notification,
-        adyenConfig.enableHmacSignature,
+        enableHmacSignature: adyenConfig.enableHmacSignature,
         ctpProjectConfig,
-      )
+      })
     }
   } catch (err) {
     const cause = getErrorCause(err)

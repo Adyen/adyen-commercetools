@@ -36,11 +36,11 @@ export const azureNotificationTrigger = async function (context, req) {
       const ctpProjectConfig = getCtpProjectConfig(notification, req.url)
       const adyenConfig = getAdyenConfig(notification)
 
-      await notificationHandler.processNotification(
+      await notificationHandler.processNotification({
         notification,
-        adyenConfig.enableHmacSignature,
+        enableHmacSignature: adyenConfig.enableHmacSignature,
         ctpProjectConfig,
-      )
+      })
     }
   } catch (err) {
     const cause = getErrorCause(err)
