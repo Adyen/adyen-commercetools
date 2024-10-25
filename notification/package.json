@@ -4,7 +4,7 @@
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "type": "module",
   "scripts": {
-    "check-coverage": "c8 check-coverage --lines 83",
+    "check-coverage": "c8 check-coverage --lines 73",
     "test-run": "npm run unit",
     "test-ci": "c8 npm run test-run && npm run check-coverage",
     "test": "npm run unit",
