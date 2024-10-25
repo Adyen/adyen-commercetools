@@ -50,7 +50,7 @@
     "c8": "10.1.2",
     "chai": "5.1.2",
     "doctoc": "2.2.1",
-    "eslint": "9.11.1",
+    "eslint": "9.13.0",
     "eslint-config-prettier": "9.1.0",
     "husky": "9.1.6",
     "lint-staged": "15.2.10",
