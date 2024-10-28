@@ -99,49 +99,6 @@ async function processNotification(
         // if pspReference or originalReference from webhook are the same as the payment key => standard update
         // if not => add a transaction with the message to the payment
         // so the merchant could see that the webhook wasn't correct
-
-        if (
-          isReceivedAmountLowerThanPlanned(
-            payment,
-            notification.NotificationRequestItem,
-          )
-        ) {
-          logger.debug(
-            `Notification (PSP ref: ${notification.NotificationRequestItem.pspReference}) ` +
-            `has received amount (${notification.NotificationRequestItem.amount.value}) ` +
-            `lower than planned amount (${payment.amountPlanned.centAmount}) ` +
-            `on payment id: ${payment.id} (key: ${payment.key})`,
-          )
-          const receivedAmount = _.cloneDeep(payment.amountPlanned)
-          receivedAmount.centAmount =
-            notification.NotificationRequestItem.amount.value
-          receivedAmount.currencyCode =
-            notification.NotificationRequestItem.amount.currency
-
-          const newPayment = await copyPayment(
-            payment,
-            pspReference,
-            receivedAmount,
-            ctpClient,
-            logger,
-          )
-
-          const remainingAmount = _.cloneDeep(payment.amountPlanned)
-          remainingAmount.centAmount =
-            payment.amountPlanned.centAmount - receivedAmount.centAmount
-          logger.debug(
-            `Decreasing planned amount on original payment (id: ${payment.id}, key: ${payment.key}) ` +
-            `to ${remainingAmount.centAmount}...`,
-          )
-          await updatePaymentWithRepeater(
-            payment,
-            notification,
-            ctpClient,
-            logger,
-            [getChangeAmountPlannedAction(remainingAmount)],
-          )
-          payment = newPayment
-        }
         await updatePaymentWithRepeater(
           payment,
           notification,
@@ -175,7 +132,6 @@ async function updatePaymentWithRepeater(
   notification,
   ctpClient,
   logger,
-  requestedUpdateActions,
 ) {
   const maxRetry = 20
   let currentPayment = payment
@@ -184,19 +140,17 @@ async function updatePaymentWithRepeater(
   let retryMessage
   let updateActions
   const repeater = async () => {
-    updateActions =
-      requestedUpdateActions && requestedUpdateActions.length > 0
-        ? requestedUpdateActions
-        : await calculateUpdateActionsForPayment(
-          currentPayment,
-          notification,
-          logger,
-        )
+    updateActions = await calculateUpdateActionsForPayment(
+      currentPayment,
+      notification,
+      logger,
+    )
     if (updateActions.length === 0) {
       return
     }
     logger.debug(
-      `Update payment with key ${currentPayment.key
+      `Update payment with key ${
+        currentPayment.key
       } with update actions [${JSON.stringify(updateActions)}]`,
     )
     try {
@@ -233,10 +187,10 @@ async function updatePaymentWithRepeater(
         throw new VError(
           err,
           `${retryMessage} Won't retry again` +
-          ` because of a reached limit ${maxRetry}` +
-          ` max retries. Failed actions: ${JSON.stringify(
-            updateActionsToLog,
-          )}`,
+            ` because of a reached limit ${maxRetry}` +
+            ` max retries. Failed actions: ${JSON.stringify(
+              updateActionsToLog,
+            )}`,
         )
       }
 
@@ -268,74 +222,6 @@ function _obfuscateNotificationInfoFromActionFields(updateActions) {
       )
     })
   return copyOfUpdateActions
-}
-
-function isReceivedAmountLowerThanPlanned(payment, notification) {
-  if (
-    notification.eventCode === 'AUTHORISATION' &&
-    notification.success === 'true'
-  ) {
-    return (
-      notification.amount.currency === payment.amountPlanned.currencyCode &&
-      notification.amount.value < payment.amountPlanned.centAmount
-    )
-  }
-  return false
-}
-async function copyPayment(payment, newPspRef, amount, ctpClient, logger) {
-  logger.debug('Creating new payment object....')
-  const paymentDraft = {}
-  paymentDraft.key = newPspRef
-  paymentDraft.customer = payment.customer
-  paymentDraft.interfaceId = payment.interfaceId
-  paymentDraft.amountPlanned = amount
-  paymentDraft.paymentMethodInfo = payment.paymentMethodInfo
-  paymentDraft.interfaceInteractions = payment.interfaceInteractions
-  paymentDraft.custom = payment.custom
-
-  const { body: newPayment } = await ctpClient.create(
-    ctpClient.builder.payments,
-    JSON.stringify(paymentDraft),
-  )
-  logger.debug(
-    `Payment object created, id: ${newPayment.id}. Linking to the same cart/order....`,
-  )
-  await linkPaymentToCartOrOrder(payment, newPayment, ctpClient, logger)
-  return newPayment
-}
-
-async function linkPaymentToCartOrOrder(
-  originalPayment,
-  newPayment,
-  ctpClient,
-  logger,
-) {
-  const orderResp = await ctpClient.fetchMatchingCartOrOrder(
-    ctpClient.builder.orders,
-    originalPayment.id,
-  )
-  const order = orderResp.body.results[0]
-  if (!!order && !!order.id) {
-    await ctpClient.update(ctpClient.builder.orders, order.id, order.version, [
-      getAddPaymentUpdateAction(newPayment.id),
-    ])
-    logger.debug(`Payment id: ${newPayment.id} added to order id: ${order.id}`)
-  } else {
-    logger.debug(`Order not found by payment id: ${originalPayment.id}`)
-    const cartResp = await ctpClient.fetchMatchingCartOrOrder(
-      ctpClient.builder.carts,
-      originalPayment.id,
-    )
-    const cart = cartResp.body.results[0]
-    if (!!cart && !!cart.id) {
-      await ctpClient.update(ctpClient.builder.carts, cart.id, cart.version, [
-        getAddPaymentUpdateAction(newPayment.id),
-      ])
-      logger.debug(`Payment id: ${newPayment.id} added to cart id: ${cart.id}`)
-    } else {
-      logger.debug(`Cart not found by payment id: ${originalPayment.id}`)
-    }
-  }
 }
 
 async function calculateUpdateActionsForPayment(payment, notification, logger) {
@@ -490,12 +376,12 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-    'recurring.recurringDetailReference'
+      'recurring.recurringDetailReference'
     ]
   ) {
     const recurringDetailReference =
       notificationToUse.NotificationRequestItem.additionalData[
-      'recurring.recurringDetailReference'
+        'recurring.recurringDetailReference'
       ]
 
     notificationToUse.NotificationRequestItem.recurringDetailReference =
@@ -505,7 +391,7 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-    'recurringProcessingModel'
+      'recurringProcessingModel'
     ]
   ) {
     const { recurringProcessingModel } =
@@ -518,12 +404,12 @@ function getAddInterfaceInteractionUpdateAction(notification) {
   if (
     notificationToUse.NotificationRequestItem?.additionalData &&
     notificationToUse.NotificationRequestItem?.additionalData[
-    'recurring.shopperReference'
+      'recurring.shopperReference'
     ]
   ) {
     const recurringShopperReference =
       notificationToUse.NotificationRequestItem.additionalData[
-      'recurring.shopperReference'
+        'recurring.shopperReference'
       ]
 
     notificationToUse.NotificationRequestItem.recurringShopperReference =
@@ -650,16 +536,6 @@ function getAddTransactionUpdateAction({
   }
 }
 
-function getAddPaymentUpdateAction(paymentId) {
-  return {
-    action: 'addPayment',
-    payment: {
-      id: paymentId,
-      typeId: 'payment',
-    },
-  }
-}
-
 function getSetMethodInfoMethodAction(paymentMethod) {
   return {
     action: 'setMethodInfoMethod',
@@ -677,13 +553,6 @@ function getSetMethodInfoNameAction(paymentMethod) {
       name: paymentMethodLocalizedNames,
     }
   return null
-}
-
-function getChangeAmountPlannedAction(amount) {
-  return {
-    action: 'changeAmountPlanned',
-    amount,
-  }
 }
 
 async function getPaymentByMerchantReference(
