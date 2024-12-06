@@ -107,6 +107,7 @@ function createAddTransactionAction({
   return {
     action: 'addTransaction',
     transaction: {
+      timestamp: new Date().toISOString(),
       type,
       amount: {
         currencyCode: currency,
