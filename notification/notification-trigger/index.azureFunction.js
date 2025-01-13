@@ -40,6 +40,7 @@ export const azureNotificationTrigger = async function (context, req) {
         notification,
         enableHmacSignature: adyenConfig.enableHmacSignature,
         ctpProjectConfig,
+        logger
       })
     }
   } catch (err) {

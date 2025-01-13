@@ -22,6 +22,7 @@ export const notificationTrigger = async (request, response) => {
         notification,
         enableHmacSignature: adyenConfig.enableHmacSignature,
         ctpProjectConfig,
+        logger
       })
     }
   } catch (err) {
