@@ -33,7 +33,7 @@ export const handler = async (event) => {
         notification,
         enableHmacSignature: adyenConfig.enableHmacSignature,
         ctpProjectConfig,
-        logger
+        logger,
       })
     }
   } catch (err) {
