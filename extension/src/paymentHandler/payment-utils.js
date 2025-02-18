@@ -3,6 +3,7 @@ import c from '../config/constants.js'
 import config from '../config/config.js'
 
 const { getAdyenPaymentMethodsToNames } = config
+const unsuccessfulResponseCodes = [400, 401, 403, 422, 500]
 
 function getAuthorizationTransactionSuccess(paymentObject) {
   return getTransactionWithTypesAndStates(
@@ -198,20 +199,38 @@ function getIdempotencyKey(transaction) {
   return idempotencyKey
 }
 
-function getPaymentKeyUpdateAction(paymentKey, request) {
-  const requestBodyJson = JSON.parse(request.body)
-  let newReference = requestBodyJson.reference?.toString()
-
+function getPaymentKeyUpdateAction(paymentKey, request, response) {
   let paymentKeyUpdateAction
+  const pspReference = response.pspReference?.toString()
   // ensure the key and new reference is different, otherwise the error with
   // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
-  if (newReference && newReference !== paymentKey) {
+  if (
+    !unsuccessfulResponseCodes.includes(response.status) &&
+    pspReference &&
+    pspReference !== paymentKey
+  ) {
     paymentKeyUpdateAction = {
       action: 'setKey',
-      key: newReference,
+      key: pspReference,
     }
   }
+
   return paymentKeyUpdateAction
+}
+
+function getMerchantReferenceCustomFieldUpdateAction(request, name) {
+  let customFieldAction
+  const requestBodyJson = JSON.parse(request.body)
+  const reference = requestBodyJson.reference?.toString()
+  if (reference) {
+    customFieldAction = {
+      action: 'setCustomField',
+      name,
+      value: reference,
+    }
+  }
+
+  return customFieldAction
 }
 
 export {
@@ -234,4 +253,5 @@ export {
   isValidMetadata,
   getIdempotencyKey,
   getPaymentKeyUpdateAction,
+  getMerchantReferenceCustomFieldUpdateAction,
 }

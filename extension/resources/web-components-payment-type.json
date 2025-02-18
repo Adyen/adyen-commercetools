@@ -191,6 +191,18 @@
       },
       "inputHint": "MultiLine",
       "required": false
+    },
+    {
+      "name": "merchantReference",
+      "label": {
+        "en": "merchantReference"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine",
+      "required": false,
+      "searchable": true
     }
   ]
 }

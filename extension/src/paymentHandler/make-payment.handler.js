@@ -5,6 +5,7 @@ import {
   createSetMethodInfoNameAction,
   createAddTransactionActionByResponse,
   getPaymentKeyUpdateAction,
+  getMerchantReferenceCustomFieldUpdateAction,
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import { makePayment } from '../service/web-component-service.js'
@@ -55,8 +56,17 @@ async function execute(paymentObject) {
   const updatePaymentAction = getPaymentKeyUpdateAction(
     paymentObject.key,
     request,
+    response,
   )
   if (updatePaymentAction) actions.push(updatePaymentAction)
+
+  const updateMerchantReferenceCustomFieldAction =
+    getMerchantReferenceCustomFieldUpdateAction(
+      request,
+      c.CTP_CUSTOM_FIELD_MERCHANT_REFERENCE,
+    )
+  if (updateMerchantReferenceCustomFieldAction)
+    actions.push(updateMerchantReferenceCustomFieldAction)
 
   const addTransactionAction = createAddTransactionActionByResponse(
     paymentObject.amountPlanned.centAmount,

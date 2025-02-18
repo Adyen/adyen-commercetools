@@ -15,6 +15,7 @@ export default {
     'submitAdditionalPaymentDetailsResponse',
   CTP_INTERACTION_TYPE_MANUAL_CAPTURE: 'manualCapture',
   CTP_INTERACTION_TYPE_REFUND: 'refund',
+  CTP_CUSTOM_FIELD_MERCHANT_REFERENCE: 'merchantReference',
 
   PAYMENT_METHOD_TYPE_KLARNA_METHODS: [
     'klarna',
