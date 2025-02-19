@@ -130,10 +130,10 @@ async function setUpClient(config) {
       return ctpClient.execute(this.buildRequestOptions(uri.byKey(key).build()))
     },
 
-    fetchByCustomField(uri, key) {
+    fetchByCustomField(uri, field, value) {
       return ctpClient.execute(
         this.buildRequestOptions(
-          uri.where(`custom(fields(merchantReference="${key}"))`).build(),
+          uri.where(`custom(fields("${field}"="${value}"))`).build(),
         ),
       )
     },

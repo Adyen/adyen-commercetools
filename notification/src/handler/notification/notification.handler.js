@@ -555,6 +555,7 @@ async function getPaymentByMerchantOrPSPReference(
 
     const resultByCustomField = await ctpClient.fetchByCustomField(
       ctpClient.builder.payments,
+      'merchantReference',
       merchantReference,
     )
 
