@@ -50,7 +50,7 @@ async function processNotification({
   let retryCount = 0
 
   const handleWebhook = async () => {
-    let payment = await getPaymentByMerchantReference(
+    let payment = await getPaymentByMerchantOrPSPReference(
       merchantReference,
       originalReference || pspReference,
       ctpClient,
@@ -537,15 +537,28 @@ function getSetMethodInfoNameAction(paymentMethod) {
   return null
 }
 
-async function getPaymentByMerchantReference(
+async function getPaymentByMerchantOrPSPReference(
   merchantReference,
   pspReference,
   ctpClient,
 ) {
   try {
     const keys = [merchantReference, pspReference]
-    const result = await ctpClient.fetchByKeys(ctpClient.builder.payments, keys)
-    return result.body?.results[0]
+    const resultByKey = await ctpClient.fetchByKeys(
+      ctpClient.builder.payments,
+      keys,
+    )
+    const payment = resultByKey.body?.results[0]
+    if (payment) {
+      return payment
+    }
+
+    const resultByCustomField = await ctpClient.fetchByCustomField(
+      ctpClient.builder.payments,
+      merchantReference,
+    )
+
+    return resultByCustomField.body?.results[0]
   } catch (err) {
     if (err.statusCode === 404) return null
     const errMsg =

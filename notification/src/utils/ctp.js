@@ -113,6 +113,14 @@ async function setUpClient(config) {
       return ctpClient.execute(this.buildRequestOptions(uri.byKey(key).build()))
     },
 
+    fetchByCustomField(uri, key) {
+      return ctpClient.execute(
+        this.buildRequestOptions(
+          uri.where(`custom(fields(merchantReference="${key}"))`).build(),
+        ),
+      )
+    },
+
     fetchByKeys(uri, keys) {
       const keyList = keys.map((key) => `"${key}"`)
       const keyConditions = `key in (${keyList.join(',')})`
