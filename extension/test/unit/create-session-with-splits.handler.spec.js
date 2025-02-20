@@ -127,8 +127,10 @@ describe('create-session-with-splits::execute', () => {
         addInterfaceInteraction.fields.response,
       )
 
-      const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(
+      const setMerchantReferenceCustomField = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'merchantReference',
+      )
+      expect(setMerchantReferenceCustomField.value).to.equal(
         createSessiontWithSplitsRequest.reference,
       )
     },

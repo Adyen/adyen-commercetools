@@ -199,7 +199,7 @@ function getIdempotencyKey(transaction) {
   return idempotencyKey
 }
 
-function getPaymentKeyUpdateAction(paymentKey, request, response) {
+function getPaymentKeyUpdateAction(paymentKey, response) {
   let paymentKeyUpdateAction
   const pspReference = response.pspReference?.toString()
   // ensure the key and new reference is different, otherwise the error with

@@ -1,6 +1,8 @@
 import {
   createAddInterfaceInteractionAction,
   createSetCustomFieldAction,
+  getMerchantReferenceCustomFieldUpdateAction,
+  getPaymentKeyUpdateAction,
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import { createSessionRequest } from '../service/web-component-service.js'
@@ -42,17 +44,19 @@ async function execute(paymentObject) {
     ),
   ]
 
-  const requestBodyJson = JSON.parse(request.body)
-  const paymentKey = paymentObject.key
-  // ensure the key is a string, otherwise the error with "code": "InvalidJsonInput" will return by commercetools API.
-  const reference = requestBodyJson.reference?.toString()
-  // ensure the key and new reference is different, otherwise the error with
-  // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
-  if (reference !== paymentKey)
-    actions.push({
-      action: 'setKey',
-      key: reference,
-    })
+  const updatePaymentAction = getPaymentKeyUpdateAction(
+    paymentObject.key,
+    response,
+  )
+  if (updatePaymentAction) actions.push(updatePaymentAction)
+
+  const updateMerchantReferenceCustomFieldAction =
+    getMerchantReferenceCustomFieldUpdateAction(
+      request,
+      c.CTP_CUSTOM_FIELD_MERCHANT_REFERENCE,
+    )
+  if (updateMerchantReferenceCustomFieldAction)
+    actions.push(updateMerchantReferenceCustomFieldAction)
 
   return {
     actions,

@@ -79,7 +79,7 @@ describe('::create-session-request::', () => {
       }
       expect(statusCode).to.equal(201)
 
-      expect(payment.key).to.equal(reference)
+      expect(payment.custom.fields.merchantReference).to.equal(reference)
       const { createSessionRequest, createSessionResponse } =
         payment.custom.fields
       expect(createSessionRequest).to.be.deep.equal(

@@ -57,7 +57,6 @@ async function execute(paymentObject) {
     }
     const updatePaymentAction = getPaymentKeyUpdateAction(
       paymentObject.key,
-      request,
       response,
     )
     if (updatePaymentAction) actions.push(updatePaymentAction)
