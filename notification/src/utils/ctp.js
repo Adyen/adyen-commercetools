@@ -116,7 +116,7 @@ async function setUpClient(config) {
     fetchByCustomField(uri, field, value) {
       return ctpClient.execute(
         this.buildRequestOptions(
-          uri.where(`custom(fields("${field}"="${value}"))`).build(),
+          uri.where(`custom(fields(${field}="${value}"))`).build(),
         ),
       )
     },
