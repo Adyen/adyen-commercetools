@@ -58,7 +58,7 @@ describe('submit-additional-payment-details::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(4)
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction',
       )
@@ -274,7 +274,7 @@ describe('submit-additional-payment-details::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(4)
       const addInterfaceInteractionAction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction',
       )
@@ -319,7 +319,7 @@ describe('submit-additional-payment-details::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(4)
       const addInterfaceInteractionAction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction',
       )
@@ -364,7 +364,7 @@ describe('submit-additional-payment-details::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(2)
+      expect(response.actions).to.have.lengthOf(3)
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction',
       )

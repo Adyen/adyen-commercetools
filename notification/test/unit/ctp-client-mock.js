@@ -49,6 +49,10 @@ function setUpClient(config) {
       return this
     },
 
+    fetchByCustomField() {
+      return this
+    },
+
     fetchBatches() {
       return this
     },
