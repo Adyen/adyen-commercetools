@@ -98,7 +98,9 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
       )
 
       expect(statusCode).to.equal(200)
-      expect(updatedPayment.key).to.equal(makePaymentRequestDraft.reference)
+      expect(updatedPayment.custom.fields.merchantReference).to.equal(
+        makePaymentRequestDraft.reference,
+      )
       expect(updatedPayment.paymentMethodInfo.method).to.equal('scheme')
       expect(updatedPayment.paymentMethodInfo.name).to.eql({
         en: 'Credit Card',

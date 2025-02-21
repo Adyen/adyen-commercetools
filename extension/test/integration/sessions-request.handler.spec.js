@@ -161,7 +161,9 @@ describe('::create-session-request::', () => {
         ],
       )
       expect(statusCode).to.equal(200)
-      expect(updatedPayment.key).to.equal(createSessionRequestDraft.reference)
+      expect(updatedPayment.custom.fields.merchantReference).to.equal(
+        createSessionRequestDraft.reference,
+      )
 
       const ctpCart = await utils.readAndParseJsonFile(
         'test/integration/fixtures/ctp-cart.json',
