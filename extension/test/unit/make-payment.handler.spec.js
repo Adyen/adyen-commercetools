@@ -203,6 +203,13 @@ describe('make-payment::execute', () => {
         JSON.parse(paymentSuccessResponse).pspReference,
       )
 
+      const setMerchantReferenceCustomFieldAction = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'merchantReference',
+      )
+      expect(setMerchantReferenceCustomFieldAction.value).to.equal(
+        makePaymentRequest.reference,
+      )
+
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction',
       )
@@ -263,11 +270,10 @@ describe('make-payment::execute', () => {
         addInterfaceInteraction.fields.response,
       )
 
-      const setMerchantReferenceCustomField = response.actions.find(
+      const setMerchantReferenceCustomFieldAction = response.actions.find(
         (a) => a.action === 'setCustomField' && a.name === 'merchantReference',
       )
-      // eslint-disable-next-line @stylistic/js/max-len
-      expect(setMerchantReferenceCustomField.value).to.equal(
+      expect(setMerchantReferenceCustomFieldAction.value).to.equal(
         makePaymentRequest.reference,
       ) // no pspReference until submitting additional details in redirect flow
     },
@@ -324,7 +330,6 @@ describe('make-payment::execute', () => {
       const setMerchantReferenceCustomField = response.actions.find(
         (a) => a.action === 'setCustomField' && a.name === 'merchantReference',
       )
-      // eslint-disable-next-line @stylistic/js/max-len
       expect(setMerchantReferenceCustomField.value).to.equal(
         makePaymentRequest.reference,
       ) // no pspReference until submitting additional details in redirect flow
@@ -383,6 +388,13 @@ describe('make-payment::execute', () => {
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
       expect(setKeyAction.key).to.equal(
         JSON.parse(paymentRefusedResponse).pspReference,
+      )
+
+      const setMerchantReferenceCustomFieldAction = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'merchantReference',
+      )
+      expect(setMerchantReferenceCustomFieldAction.value).to.equal(
+        makePaymentRequest.reference,
       )
 
       const addTransaction = response.actions.find(

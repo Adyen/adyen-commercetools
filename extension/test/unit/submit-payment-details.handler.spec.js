@@ -88,11 +88,16 @@ describe('submit-additional-payment-details::execute', () => {
       )
       expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
-      const setCustomFieldAction = response.actions.find(
-        (a) => a.action === 'setCustomField',
+      const setKeyAction = response.actions.find((a) => a.action === 'setKey')
+      expect(setKeyAction.key).to.equal(
+        JSON.parse(submitPaymentDetailsSuccessResponse).pspReference,
       )
-      expect(setCustomFieldAction.name).to.equal(
-        c.CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE,
+
+      const setCustomFieldAction = response.actions.find(
+        (a) =>
+          a.action === 'setCustomField' &&
+          a.name ===
+            c.CTP_CUSTOM_FIELD_SUBMIT_ADDITIONAL_PAYMENT_DETAILS_RESPONSE,
       )
       expect(setCustomFieldAction.value).to.be.a('string')
       const expectedCustomFieldValue = JSON.parse(

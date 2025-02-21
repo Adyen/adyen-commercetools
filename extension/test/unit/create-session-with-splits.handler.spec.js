@@ -119,9 +119,9 @@ describe('create-session-with-splits::execute', () => {
       expect(requestBody.merchantAccount).to.equal(adyenMerchantAccount)
 
       const setCustomFieldAction = response.actions.find(
-        (a) => a.action === 'setCustomField',
+        (a) =>
+          a.action === 'setCustomField' && a.name === 'createSessionResponse',
       )
-      expect(setCustomFieldAction.name).to.equal('createSessionResponse')
       expect(setCustomFieldAction.value).to.be.a('string')
       expect(setCustomFieldAction.value).to.equal(
         addInterfaceInteraction.fields.response,
