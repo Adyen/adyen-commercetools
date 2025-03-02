@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "dependencies": {
-    "@adyen/api-library": "24.0.0",
+    "@adyen/api-library": "25.0.0",
     "@commercetools/api-request-builder": "6.0.0",
     "@commercetools/sdk-client": "3.0.0",
     "@commercetools/sdk-middleware-auth": "7.0.1",
@@ -54,7 +54,7 @@
     "@commercetools/sdk-middleware-user-agent": "3.0.0",
     "@commercetools/sync-actions": "6.1.0",
     "bunyan": "1.8.15",
-    "globals": "^15.3.0",
+    "globals": "^16.0.0",
     "lockfile-lint": "4.14.0",
     "lodash": "4.17.21",
     "node-fetch": "3.3.2",
