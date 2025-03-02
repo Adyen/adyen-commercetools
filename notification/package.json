@@ -52,7 +52,7 @@
     "@commercetools/sdk-middleware-http": "7.0.4",
     "@commercetools/sdk-middleware-queue": "3.0.0",
     "@commercetools/sdk-middleware-user-agent": "3.0.0",
-    "@commercetools/sync-actions": "6.0.0",
+    "@commercetools/sync-actions": "6.1.0",
     "bunyan": "1.8.15",
     "globals": "^15.3.0",
     "lockfile-lint": "4.14.0",
