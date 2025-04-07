@@ -123,7 +123,7 @@ describe('notification module', () => {
       },
       {
         action: 'changeTransactionState',
-        state: 'Pending',
+        state: 'Failure',
         transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
       },
       {
@@ -262,9 +262,9 @@ describe('notification module', () => {
   })
 
   it(`given that ADYEN sends an "AUTHORISATION is not successful" notification
-      when payment has a pending authorization transaction 
+      when payment has a failure authorization transaction 
       then notification module should add notification to the interface interaction 
-      and should not update the pending transaction `, async () => {
+      and should not update the failure transaction `, async () => {
     // prepare data
     const notifications = [
       {
@@ -298,7 +298,7 @@ describe('notification module', () => {
         fractionDigits: 2,
       },
       interactionId: 'test_AUTHORISATION_1',
-      state: 'Pending',
+      state: 'Failure',
     })
     const ctpClient = ctpClientMock.get(ctpConfig)
     sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
