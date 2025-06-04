@@ -27,7 +27,6 @@ For full list of payment methods that have been tested for CommerceTools integra
 - [Refunding](./extension/docs/Refund.md) a payment back to the shopper.
 - Authorisation [cancellation](./extension/docs/CancelPayment.md) on a payment that has not yet been captured.
 - [Manual capture](./extension/docs/ManualCapture.md) of a payment.
-- [Restore](./extension/docs/Restore.md), which gives your shoppers an opportunity to offset their carbon emissions from the delivery or lifecycle of their purchase at checkout. 
 - [Store payment](./extension/docs/StorePayment.md) and [disable stored payment](./extension/docs/DisableStoredPayments.md) gives your shoppers the ability to store payments for later use and removing these stored payments.
 
 ## Supported payment methods
