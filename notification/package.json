@@ -75,7 +75,7 @@
     "ip": "2.0.1",
     "lint-staged": "15.5.2",
     "localtunnel": "2.0.2",
-    "mocha": "11.5.0",
+    "mocha": "11.7.0",
     "nock": "14.0.5",
     "p-map": "7.0.3",
     "prettier": "3.5.3",
