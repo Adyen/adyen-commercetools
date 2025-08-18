@@ -44,6 +44,15 @@ async function execute(paymentObject) {
       ),
     )
 
+    if (response.donationToken) {
+      actions.push(
+          createSetCustomFieldAction(
+              c.CTP_CUSTOM_FIELD_DONATION_TOKEN,
+              response.donationToken,
+          ),
+      )
+    }
+
     if (
       !_hasTransactionWithPspReference(response.pspReference, paymentObject)
     ) {
