@@ -9,10 +9,10 @@ import {
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import {
-  makePayment,
-  donationCampaigns,
+  makePayment
 } from '../service/web-component-service.js'
 import mappingCartDataUtils from './mapping-cart-data-utils.js'
+import { handleDonations } from './donation.handler.js'
 
 async function execute(paymentObject) {
   let makePaymentRequestObj = JSON.parse(
@@ -78,41 +78,20 @@ async function execute(paymentObject) {
 
   if (addTransactionAction) actions.push(addTransactionAction)
 
-  if (response.donationToken) {
+  let donationToken = response.donationToken;
+
+  if (donationToken) {
     let donationCampaignRequest = {
       merchantAccount: adyenMerchantAccount,
       currency: paymentObject.amountPlanned.currencyCode,
       locale: makePaymentRequestObj.shopperLocale,
     }
-    const { response: donationsResponse } = await donationCampaigns(
-        adyenMerchantAccount,
-        donationCampaignRequest,
-    );
-    let campaign = null;
-
-    if (
-        donationsResponse &&
-        Array.isArray(donationsResponse.donationCampaigns) &&
-        donationsResponse.donationCampaigns.length > 0
-    ) {
-      campaign = donationsResponse.donationCampaigns[0];
-    }
-
-    if (campaign !== null) {
-      actions.push(
-          createSetCustomFieldAction(
-              c.CTP_CUSTOM_FIELD_DONATION_TOKEN,
-              response.donationToken
-          ),
-      );
-
-      actions.push(
-          createSetCustomFieldAction(
-              c.CTP_CUSTOM_FIELD_DONATION_CAMPAIGN,
-              campaign
-          ),
-      );
-    }
+    await handleDonations({
+      actions,
+      adyenMerchantAccount,
+      donationCampaignRequest,
+      donationToken
+    })
   }
 
   return {

@@ -8,6 +8,7 @@ import {
   getMerchantReferenceCustomFieldUpdateAction,
 } from './payment-utils.js'
 import c from '../config/constants.js'
+import { handleDonations } from './donation.handler.js'
 
 const { CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = c
 
@@ -44,13 +45,24 @@ async function execute(paymentObject) {
       ),
     )
 
-    if (response.donationToken) {
-      actions.push(
-          createSetCustomFieldAction(
-              c.CTP_CUSTOM_FIELD_DONATION_TOKEN,
-              response.donationToken,
-          ),
+    let donationToken = response.donationToken;
+
+    if (donationToken) {
+      let getPaymentMethodsRequest = JSON.parse(
+        paymentObject?.custom?.fields?.getPaymentMethodsRequest || '{}',
       )
+      const shopperLocale = getPaymentMethodsRequest?.shopperLocale || null
+      let donationCampaignRequest = {
+        merchantAccount: adyenMerchantAccount,
+        currency: paymentObject.amountPlanned.currencyCode,
+        ...(shopperLocale ? { locale: shopperLocale } : {}),
+      }
+      await handleDonations({
+        actions,
+        adyenMerchantAccount,
+        donationCampaignRequest,
+        donationToken
+      })
     }
 
     if (
