@@ -59,6 +59,17 @@ async function donationCampaigns(merchantAccount, donationCampaignsRequest) {
   )
 }
 
+async function donation(merchantAccount, donationRequest) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+
+  return callAdyen(
+    `${adyenCredentials.apiBaseUrl}/donations`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    donationRequest
+  )
+}
+
 function removeAddCommercetoolsLineItemsField(createSessionRequestObj) {
   // This flag is considered deprecated
   // If createSessionRequestObj contains this flag, it should be deleted
@@ -344,5 +355,6 @@ export {
   updateAmount,
   disableStoredPayment,
   createSessionRequest,
-  donationCampaigns
+  donationCampaigns,
+  donation
 }

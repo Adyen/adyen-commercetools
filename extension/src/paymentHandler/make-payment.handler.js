@@ -12,7 +12,7 @@ import {
   makePayment
 } from '../service/web-component-service.js'
 import mappingCartDataUtils from './mapping-cart-data-utils.js'
-import { handleDonations } from './donation.handler.js'
+import { handleDonationCampaign } from './donation.handler.js'
 
 async function execute(paymentObject) {
   let makePaymentRequestObj = JSON.parse(
@@ -86,7 +86,7 @@ async function execute(paymentObject) {
       currency: paymentObject.amountPlanned.currencyCode,
       locale: makePaymentRequestObj.shopperLocale,
     }
-    await handleDonations({
+    await handleDonationCampaign({
       actions,
       adyenMerchantAccount,
       donationCampaignRequest,

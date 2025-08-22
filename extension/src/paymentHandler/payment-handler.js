@@ -4,6 +4,7 @@ import submitPaymentDetailsHandler from './submit-payment-details.handler.js'
 import manualCaptureHandler from './manual-capture.handler.js'
 import cancelHandler from './cancel-payment.handler.js'
 import refundHandler from './refund-payment.handler.js'
+import donationHandler from './donation.handler.js'
 import getPaymentMethodsHandler from './get-payment-methods.handler.js'
 import getCarbonOffsetCostsHandler from './get-carbon-offset-costs.handler.js'
 import amountUpdatesHandler from './amount-updates.handler.js'
@@ -60,6 +61,9 @@ function _getPaymentHandlers(paymentObject) {
   if (_isRefund(paymentObject)) return [refundHandler]
 
   if (_isCancelPayment(paymentObject)) return [cancelHandler]
+
+  if(_isDonationPayment(paymentObject)) return [donationHandler]
+
 
   // custom field on payment is not a mandatory field.
   if (!paymentObject.custom) return []
@@ -155,6 +159,13 @@ function _isCancelPayment(paymentObject) {
     getAuthorizationTransactionSuccess(paymentObject) &&
     getCancelAuthorizationTransactionInit(paymentObject)
   )
+}
+
+function _isDonationPayment(paymentObject) {
+    return (
+        getAuthorizationTransactionSuccess(paymentObject) &&
+        paymentObject?.custom?.fields?.donationRequest
+    )
 }
 
 export default { handlePayment }

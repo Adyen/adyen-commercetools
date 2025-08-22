@@ -8,7 +8,7 @@ import {
   getMerchantReferenceCustomFieldUpdateAction,
 } from './payment-utils.js'
 import c from '../config/constants.js'
-import { handleDonations } from './donation.handler.js'
+import { handleDonationCampaign } from './donation.handler.js'
 
 const { CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = c
 
@@ -57,7 +57,7 @@ async function execute(paymentObject) {
         currency: paymentObject.amountPlanned.currencyCode,
         ...(shopperLocale ? { locale: shopperLocale } : {}),
       }
-      await handleDonations({
+      await handleDonationCampaign({
         actions,
         adyenMerchantAccount,
         donationCampaignRequest,
