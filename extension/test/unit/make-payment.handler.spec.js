@@ -10,6 +10,7 @@ import paymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-
 import paymentValidationFailedResponse from './fixtures/adyen-make-payment-validation-failed-response.js'
 import utils from '../../src/utils.js'
 import mockCtpEnpoints from './mock-ctp-enpoints.js'
+import mockAdyenEndpoints from './mock-adyen-endpoints.js'
 
 const { execute } = makePaymentHandler
 
@@ -762,6 +763,39 @@ describe('make-payment::execute', () => {
       expect(
         makePaymentRequestJson.additionalData.enhancedSchemeData,
       ).to.not.have.own.property('postalCode')
+    },
+  )
+
+  it(
+    'when resultCode from Adyen is "Authorized" with donationToken in response, ' +
+    'then there should be donationToken and donationCampaign custom field',
+    async () => {
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, commercetoolsProjectKey)
+      mockAdyenEndpoints._mockDonationCampaigns()
+      scope.post('/payments').reply(200, paymentSuccessResponse)
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.makePaymentRequest =
+        JSON.stringify(makePaymentRequest)
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey =
+        commercetoolsProjectKey
+
+      const response = await execute(ctpPaymentClone)
+
+      expect(response.actions).to.have.lengthOf(9)
+
+      const donationToken = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'donationToken',
+      )
+
+      expect(JSON.parse(donationToken.value)).to.equal("testToken");
+
+      const donationCampaign = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'donationCampaign',
+      )
+
+      expect(JSON.parse(donationCampaign.value).id).to.equal('testID');
     },
   )
 })

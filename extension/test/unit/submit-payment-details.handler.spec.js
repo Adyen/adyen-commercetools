@@ -9,6 +9,7 @@ import paymentDetailsHandler from '../../src/paymentHandler/submit-payment-detai
 import config from '../../src/config/config.js'
 import c from '../../src/config/constants.js'
 import utils from '../../src/utils.js'
+import mockAdyenEndpoints from './mock-adyen-endpoints.js'
 
 const { execute } = paymentDetailsHandler
 
@@ -374,6 +375,41 @@ describe('submit-additional-payment-details::execute', () => {
         (a) => a.action === 'addTransaction',
       )
       expect(addTransaction).to.be.undefined
+    },
+  )
+
+  it(
+    'when resultCode from Adyen is "Authorized" with donationToken in response, ' +
+    'then there should be donationToken and donationCampaign custom field',
+    async () => {
+      mockAdyenEndpoints._mockDonationCampaigns()
+      scope
+        .post('/payments/details')
+        .reply(200, submitPaymentDetailsSuccessResponse)
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.submitAdditionalPaymentDetailsRequest =
+        JSON.stringify(submitPaymentDetailsRequest)
+      ctpPaymentClone.custom.fields.makePaymentResponse = JSON.stringify(
+        makePaymentRedirectResponse,
+      )
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+
+      const response = await execute(ctpPaymentClone)
+
+      expect(response.actions).to.have.lengthOf(6)
+
+      const donationToken = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'donationToken',
+      )
+
+      expect(JSON.parse(donationToken.value)).to.equal("testToken");
+
+      const donationCampaign = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'donationCampaign',
+      )
+
+      expect(JSON.parse(donationCampaign.value).id).to.equal('testID');
     },
   )
 })
