@@ -28,6 +28,7 @@ For full list of payment methods that have been tested for CommerceTools integra
 - Authorisation [cancellation](./extension/docs/CancelPayment.md) on a payment that has not yet been captured.
 - [Manual capture](./extension/docs/ManualCapture.md) of a payment.
 - [Store payment](./extension/docs/StorePayment.md) and [disable stored payment](./extension/docs/DisableStoredPayments.md) gives your shoppers the ability to store payments for later use and removing these stored payments.
+- [Adyen Giving](./extension/docs/AdyenGiving.md) gives your shoppers the ability to donate to a nonprofit as part of your payment flow.
 
 ## Supported payment methods
 
