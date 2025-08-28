@@ -13,7 +13,7 @@ export default JSON.stringify({
       causeName: 'UNICEF',
       // eslint-disable-next-line @stylistic/js/max-len
       nonprofitDescription:
-      // eslint-disable-next-line @stylistic/js/max-len
+        // eslint-disable-next-line @stylistic/js/max-len
         "Your donation will help UNICEF provide a fair chance to every child to survive and thrive. 100% of your donation will go towards UNICEF's programmes where it is most needed. *UNICEF does not endorse any company, brand, product or service.",
       nonprofitUrl: 'https://www.adyen.com',
       logoUrl:
