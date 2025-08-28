@@ -1,23 +1,23 @@
 export default JSON.stringify({
   amount: {
-    currency: "EUR",
-    value: 100
+    currency: 'EUR',
+    value: 100,
   },
-  donationAccount: "testDonationAccount",
-  id: "testId",
-  merchantAccount: "testAcc",
+  donationAccount: 'testDonationAccount',
+  id: 'testId',
+  merchantAccount: 'testAcc',
   payment: {
-    pspReference: "testPSP",
-    resultCode: "Authorised",
+    pspReference: 'testPSP',
+    resultCode: 'Authorised',
     amount: {
-      currency: "EUR",
-      value: 100
+      currency: 'EUR',
+      value: 100,
     },
-    merchantReference: "testMerchantReference",
+    merchantReference: 'testMerchantReference',
     paymentMethod: {
-      type: "test"
-    }
+      type: 'test',
+    },
   },
-  reference: "test",
-  status: "completed"
-});
+  reference: 'test',
+  status: 'completed',
+})

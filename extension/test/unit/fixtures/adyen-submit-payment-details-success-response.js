@@ -15,5 +15,5 @@ export default JSON.stringify({
     authorisationMid: '1000',
     acquirerAccountCode: 'TestPmmAcquirerAccount',
   },
-  donationToken: 'testToken'
+  donationToken: 'testToken',
 })

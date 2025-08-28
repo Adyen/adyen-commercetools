@@ -15,5 +15,5 @@ export default JSON.stringify({
     value: 1000,
   },
   merchantReference: 'YOUR_REFERENCE',
-  donationToken: 'testToken'
+  donationToken: 'testToken',
 })

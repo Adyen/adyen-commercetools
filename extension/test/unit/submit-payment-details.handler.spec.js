@@ -380,7 +380,7 @@ describe('submit-additional-payment-details::execute', () => {
 
   it(
     'when resultCode from Adyen is "Authorized" with donationToken in response, ' +
-    'then there should be donationToken and donationCampaign custom field',
+      'then there should be donationToken and donationCampaign custom field',
     async () => {
       mockAdyenEndpoints._mockDonationCampaigns()
       scope
@@ -403,13 +403,13 @@ describe('submit-additional-payment-details::execute', () => {
         (a) => a.action === 'setCustomField' && a.name === 'donationToken',
       )
 
-      expect(JSON.parse(donationToken.value)).to.equal("testToken");
+      expect(JSON.parse(donationToken.value)).to.equal('testToken')
 
       const donationCampaign = response.actions.find(
         (a) => a.action === 'setCustomField' && a.name === 'donationCampaign',
       )
 
-      expect(JSON.parse(donationCampaign.value).id).to.equal('testID');
+      expect(JSON.parse(donationCampaign.value).id).to.equal('testID')
     },
   )
 })

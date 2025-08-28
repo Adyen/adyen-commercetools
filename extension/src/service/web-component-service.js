@@ -55,7 +55,7 @@ async function donationCampaigns(merchantAccount, donationCampaignsRequest) {
     `${adyenCredentials.apiBaseUrl}/donationCampaigns`,
     merchantAccount,
     adyenCredentials.apiKey,
-    donationCampaignsRequest
+    donationCampaignsRequest,
   )
 }
 
@@ -66,7 +66,7 @@ async function donation(merchantAccount, donationRequest) {
     `${adyenCredentials.apiBaseUrl}/donations`,
     merchantAccount,
     adyenCredentials.apiKey,
-    donationRequest
+    donationRequest,
   )
 }
 
@@ -356,5 +356,5 @@ export {
   disableStoredPayment,
   createSessionRequest,
   donationCampaigns,
-  donation
+  donation,
 }

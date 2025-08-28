@@ -126,8 +126,8 @@ describe('::make-donation use case::', () => {
           throw new VError(
             err,
             `${retryMessage} Won't retry again` +
-            ` because of a reached limit ${maxRetry}` +
-            ` max retries.)}`,
+              ` because of a reached limit ${maxRetry}` +
+              ` max retries.)}`,
           )
         }
 
@@ -196,7 +196,7 @@ describe('::make-donation use case::', () => {
         ],
       )
 
-    const result =  await updatePaymentDonationsWithRepeater(
+      const result = await updatePaymentDonationsWithRepeater(
         updatedPayment1,
         ctpClient,
         console,
@@ -204,13 +204,13 @@ describe('::make-donation use case::', () => {
 
       expect(result.statusCode).to.equal(200)
 
-      const donationResponseRaw = result.body.custom.fields.donationResponse;
-      expect(donationResponseRaw).to.be.a('string').and.not.empty;
+      const donationResponseRaw = result.body.custom.fields.donationResponse
+      expect(donationResponseRaw).to.be.a('string').and.not.empty
       // eslint-disable-next-line no-unused-vars
-      let donationResponse;
+      let donationResponse
       expect(() => {
-        donationResponse = JSON.parse(donationResponseRaw);
-      }).to.not.throw();
+        donationResponse = JSON.parse(donationResponseRaw)
+      }).to.not.throw()
     },
   )
 })

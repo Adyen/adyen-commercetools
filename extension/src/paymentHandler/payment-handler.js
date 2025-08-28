@@ -62,8 +62,7 @@ function _getPaymentHandlers(paymentObject) {
 
   if (_isCancelPayment(paymentObject)) return [cancelHandler]
 
-  if(_isDonationPayment(paymentObject)) return [donationHandler]
-
+  if (_isDonationPayment(paymentObject)) return [donationHandler]
 
   // custom field on payment is not a mandatory field.
   if (!paymentObject.custom) return []
@@ -162,10 +161,10 @@ function _isCancelPayment(paymentObject) {
 }
 
 function _isDonationPayment(paymentObject) {
-    return (
-        getAuthorizationTransactionSuccess(paymentObject) &&
-        paymentObject?.custom?.fields?.donationRequest
-    )
+  return (
+    getAuthorizationTransactionSuccess(paymentObject) &&
+    paymentObject?.custom?.fields?.donationRequest
+  )
 }
 
 export default { handlePayment }

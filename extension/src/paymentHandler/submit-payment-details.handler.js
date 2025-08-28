@@ -45,7 +45,7 @@ async function execute(paymentObject) {
       ),
     )
 
-    let donationToken = response.donationToken;
+    let donationToken = response.donationToken
 
     if (donationToken) {
       let getPaymentMethodsRequest = JSON.parse(
@@ -61,7 +61,7 @@ async function execute(paymentObject) {
         actions,
         adyenMerchantAccount,
         donationCampaignRequest,
-        donationToken
+        donationToken,
       })
     }
 

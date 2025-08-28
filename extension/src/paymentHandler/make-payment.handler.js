@@ -8,9 +8,7 @@ import {
   getMerchantReferenceCustomFieldUpdateAction,
 } from './payment-utils.js'
 import c from '../config/constants.js'
-import {
-  makePayment
-} from '../service/web-component-service.js'
+import { makePayment } from '../service/web-component-service.js'
 import mappingCartDataUtils from './mapping-cart-data-utils.js'
 import { handleDonationCampaign } from './donation.handler.js'
 
@@ -78,7 +76,7 @@ async function execute(paymentObject) {
 
   if (addTransactionAction) actions.push(addTransactionAction)
 
-  let donationToken = response.donationToken;
+  let donationToken = response.donationToken
 
   if (donationToken) {
     let donationCampaignRequest = {
@@ -90,7 +88,7 @@ async function execute(paymentObject) {
       actions,
       adyenMerchantAccount,
       donationCampaignRequest,
-      donationToken
+      donationToken,
     })
   }
 
