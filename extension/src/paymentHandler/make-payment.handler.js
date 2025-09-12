@@ -24,6 +24,8 @@ async function execute(paymentObject) {
     paymentObject,
     commercetoolsProjectKey,
   )
+
+  makePaymentRequestObj.shopperIP = paymentObject.shopperIP
   paymentObject.custom.fields.makePaymentRequest = JSON.stringify(
     makePaymentRequestObj,
   )

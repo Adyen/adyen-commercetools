@@ -40,6 +40,7 @@ async function fetchMatchingCustomer(ctpClient, ctpCart) {
 
 function _mapCartData(requestObj, paymentObject, ctpCart) {
   requestObj = _mapBillingAddress(requestObj, ctpCart)
+  requestObj = _mapShippingAddress(requestObj, ctpCart)
 
   requestObj.countryCode = requestObj.countryCode ?? ctpCart.country
   requestObj.shopperEmail = requestObj.shopperEmail ?? ctpCart.customerEmail
@@ -70,6 +71,28 @@ function _mapBillingAddress(requestObj, ctpCart) {
     billingAddress.country ?? ctpCart.billingAddress?.country
 
   requestObj.billingAddress = billingAddress
+
+  return requestObj
+}
+
+function _mapShippingAddress(requestObj, ctpCart) {
+  const deliveryAddress = requestObj.deliveryAddress ?? {}
+
+  deliveryAddress.street =
+    deliveryAddress.street ?? ctpCart.shippingAddress?.streetName
+  deliveryAddress.houseNumberOrName =
+    deliveryAddress.houseNumberOrName ??
+    ctpCart.shippingAddress?.streetNumber ??
+    ''
+  deliveryAddress.city = deliveryAddress.city ?? ctpCart.shippingAddress?.city
+  deliveryAddress.postalCode =
+    deliveryAddress.postalCode ?? ctpCart.shippingAddress?.postalCode
+  deliveryAddress.country =
+    deliveryAddress.country ?? ctpCart.shippingAddress?.country
+
+  requestObj.deliveryAddress = deliveryAddress
+  requestObj.telephoneNumber =
+    deliveryAddress.telephoneNumber ?? ctpCart.shippingAddress?.phone ?? ''
 
   return requestObj
 }

@@ -28,6 +28,7 @@ async function processRequest(request, response, logger) {
   try {
     const authToken = getAuthorizationRequestHeader(request)
     paymentObject = await _getPaymentObject(request, logger)
+    paymentObject.shopperIP = getIPAddressRequestHeader(request)
     const paymentLogger = logger.child({ paymentId: paymentObject.id })
     paymentLogger.debug(
       'Received payment object',
@@ -79,6 +80,10 @@ async function _getPaymentObject(request, logger) {
     logger.error(errorStackTrace)
     throw err
   }
+}
+
+function getIPAddressRequestHeader(request) {
+  return request?.headers?.['x-forwarded-for']
 }
 
 export default { processRequest }

@@ -20,6 +20,8 @@ async function execute(paymentObject) {
     paymentObject,
     commercetoolsProjectKey,
   )
+
+  createSessionRequestObj.shopperIP = paymentObject.shopperIP
   paymentObject.custom.fields.createSessionRequest = JSON.stringify(
     createSessionRequestObj,
   )
