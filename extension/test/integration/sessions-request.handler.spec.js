@@ -103,7 +103,7 @@ describe('::create-session-request::', () => {
         createSessionRequestInteraction.body,
       )
 
-      let shopperIP = createSessionRequestBody.shopperIP;
+      let shopperIP = createSessionRequestBody.shopperIP
 
       expect(createSessionRequestBody).to.be.deep.equal({
         merchantAccount: adyenMerchantAccount,
