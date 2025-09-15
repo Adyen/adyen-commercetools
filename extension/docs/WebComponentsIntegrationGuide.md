@@ -407,12 +407,14 @@ For details, please follow [Get payment outcome](https://docs.adyen.com/online-p
 
 ## Adding cart information to the createSessionRequest and makePaymentRequest
 
-Extension module sends the `lineItems`, `billingAddress`, `countryCode`, `dateOfBirth`, `shopperEmail`, `shopperLocale`, `shopperName`, `accountInfo`, `additionalData → enhancedSchemeData`fields in the Adyen request,
-taking the data from the `lineItems`, `billingAddress`, `countryCode`, `dateOfBirth`, `shopperEmail`, `shopperLocale`,`shopperName`, `accountInfo`, `additionalData → enhancedSchemeData`fields in `createSessionRequest/makePaymentRequest`.
+Extension module sends the `lineItems`, `billingAddress`, `deliveryAddress`, `telephoneNumber`, `countryCode`, `dateOfBirth`, `shopperEmail`, `shopperLocale`, `shopperName`, `accountInfo`, `additionalData → enhancedSchemeData`fields in the Adyen request,
+taking the data from the `lineItems`, `billingAddress`, `deliveryAddress`, `telephoneNumber`, `countryCode`, `dateOfBirth`, `shopperEmail`, `shopperLocale`,`shopperName`, `accountInfo`, `additionalData → enhancedSchemeData`fields in `createSessionRequest/makePaymentRequest`.
 
 If any of these fields are missing in the `createSessionRequest/makePaymentRequest`, the module will automatically populate the following:
 
-- `lineItems`, `billingAddress`, `countryCode`, `shopperEmail`, `shopperLocale`, and `additionalData → enhancedSchemeData` fields from the CommerceTools cart
+- `lineItems`, `billingAddress`, `deliveryAddress`, `countryCode`, `shopperEmail`, `shopperLocale`, and `additionalData → enhancedSchemeData` fields from the CommerceTools cart
+
+- `telephoneNumber` field first from the CommerceTools cart billing address, and if not available, from the CommerceTools cart shipping address
 
 - `dateOfBirth`, `shopperName`, and `accountInfo` fields from the CommerceTools customer, if the cart is created by the customer
 
@@ -424,7 +426,7 @@ Extension module does not rely on the deprecated `addCommercetoolsLineItems` fla
 
 By default, the extension module populates these fields for you. However, if you wish to define your own values, include these fields in your `createSessionRequest/makePaymentRequest`.
 
-Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **WITH** `shopperLocale`, `countryCode`, `shopperEmail`, `shopperName`, `billingAddress`.
+Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **WITH** `shopperLocale`, `countryCode`, `shopperEmail`, `shopperName`, `billingAddress`, `deliveryAddress`, `telephoneNumber`.
 
 ```json
 {
@@ -450,6 +452,14 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **W
     "postalCode": "12345",
     "street": "Stargatan"
   },
+  "deliveryAddress": {
+    "city": "Ankeborg",
+    "country": "SE",
+    "houseNumberOrName": "1",
+    "postalCode": "12345",
+    "street": "Stargatan"
+  },
+  "telephoneNumber" : "+496285696",
   "returnUrl": "https://www.your-company.com/..."
 }
 ```
@@ -463,7 +473,7 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **W
     {
       "action": "setCustomField",
       "name": "createSessionRequest",
-      "value": "{ \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\", \"reference\": \"YOUR_REFERENCE\", \"amount\": { \"currency\": \"EUR\", \"value\": \"1000\" }, \"shopperLocale\": \"en_US\", \"countryCode\": \"SE\", \"shopperEmail\": \"youremail@email.com\", \"shopperName\": { \"firstName\": \"Testperson-se\", \"gender\": \"UNKNOWN\", \"lastName\": \"Approved\" }, \"shopperReference\": \"YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j\", \"billingAddress\": { \"city\": \"Ankeborg\", \"country\": \"SE\", \"houseNumberOrName\": \"1\", \"postalCode\": \"12345\", \"street\": \"Stargatan\" }, \"returnUrl\": \"https://www.your-company.com/...\" }"
+      "value": "{ \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\", \"reference\": \"YOUR_REFERENCE\", \"amount\": { \"currency\": \"EUR\", \"value\": \"1000\" }, \"shopperLocale\": \"en_US\", \"countryCode\": \"SE\", \"shopperEmail\": \"youremail@email.com\", \"shopperName\": { \"firstName\": \"Testperson-se\", \"gender\": \"UNKNOWN\", \"lastName\": \"Approved\" }, \"shopperReference\": \"YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j\", \"billingAddress\": { \"city\": \"Ankeborg\", \"country\": \"SE\", \"houseNumberOrName\": \"1\", \"postalCode\": \"12345\", \"street\": \"Stargatan\" }, \"deliveryAddress\": { \"city\": \"Ankeborg\", \"country\": \"SE\", \"houseNumberOrName\": \"1\", \"postalCode\": \"12345\", \"street\": \"Stargatan\" }, \"telephoneNumber\": \"+496285696\", \"returnUrl\": \"https://www.your-company.com/...\" }"
     }
   ]
 }
@@ -499,6 +509,14 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **W
     "postalCode": "12345",
     "street": "Stargatan"
   },
+  "deliveryAddress": {
+    "city": "Ankeborg",
+    "country": "SE",
+    "houseNumberOrName": "1",
+    "postalCode": "12345",
+    "street": "Stargatan"
+  },
+  "telephoneNumber" : "+496285696",
   "returnUrl": "https://www.your-company.com/...",
   "lineItems": [
     {

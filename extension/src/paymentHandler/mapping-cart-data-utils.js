@@ -71,6 +71,8 @@ function _mapBillingAddress(requestObj, ctpCart) {
     billingAddress.country ?? ctpCart.billingAddress?.country
 
   requestObj.billingAddress = billingAddress
+  requestObj.telephoneNumber =
+    requestObj.telephoneNumber ?? ctpCart.billingAddress?.phone
 
   return requestObj
 }
@@ -92,7 +94,7 @@ function _mapShippingAddress(requestObj, ctpCart) {
 
   requestObj.deliveryAddress = deliveryAddress
   requestObj.telephoneNumber =
-    deliveryAddress.telephoneNumber ?? ctpCart.shippingAddress?.phone ?? ''
+    requestObj.telephoneNumber ?? ctpCart.shippingAddress?.phone ?? ''
 
   return requestObj
 }
