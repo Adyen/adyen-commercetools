@@ -459,7 +459,7 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **W
     "postalCode": "12345",
     "street": "Stargatan"
   },
-  "telephoneNumber" : "+496285696",
+  "telephoneNumber": "+496285696",
   "returnUrl": "https://www.your-company.com/..."
 }
 ```
@@ -516,7 +516,7 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **W
     "postalCode": "12345",
     "street": "Stargatan"
   },
-  "telephoneNumber" : "+496285696",
+  "telephoneNumber": "+496285696",
   "returnUrl": "https://www.your-company.com/...",
   "lineItems": [
     {
