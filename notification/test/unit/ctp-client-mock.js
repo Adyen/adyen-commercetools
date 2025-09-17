@@ -1,5 +1,5 @@
 import lodash from 'lodash'
-import { createClient } from '@commercetools/sdk-client'
+import { ClientBuilder } from '@commercetools/sdk-client-v2'
 import { createRequestBuilder } from '@commercetools/api-request-builder'
 
 const { merge } = lodash
@@ -9,9 +9,7 @@ function createCtpClient() {
     next(request, { ...response, body: { foo: 'bar' } })
   }
 
-  return createClient({
-    middlewares: [httpMockSuccessMiddleware],
-  })
+  return new ClientBuilder().withMiddleware(httpMockSuccessMiddleware).build()
 }
 
 function setUpClient(config) {

@@ -1,10 +1,6 @@
 import fetch from 'node-fetch'
 import lodash from 'lodash'
-import { createClient } from '@commercetools/sdk-client'
-import { createAuthMiddlewareForClientCredentialsFlow } from '@commercetools/sdk-middleware-auth'
-import { createUserAgentMiddleware } from '@commercetools/sdk-middleware-user-agent'
-import { createHttpMiddleware } from '@commercetools/sdk-middleware-http'
-import { createQueueMiddleware } from '@commercetools/sdk-middleware-queue'
+import { ClientBuilder } from '@commercetools/sdk-client-v2'
 import { createRequestBuilder } from '@commercetools/api-request-builder'
 import utils from './commons.js'
 
@@ -28,7 +24,7 @@ async function createCtpClient({
   apiUrl,
   concurrency = 10,
 }) {
-  const authMiddleware = createAuthMiddlewareForClientCredentialsFlow({
+  const authMiddlewareOptions = {
     host: authUrl,
     projectKey,
     credentials: {
@@ -37,36 +33,35 @@ async function createCtpClient({
     },
     fetch,
     tokenCache,
-  })
+  }
 
-  const packageJson = await utils.readAndParseJsonFile('package.json')
-
-  const userAgentMiddleware = createUserAgentMiddleware({
-    libraryName: packageJson.name,
-    libraryVersion: `${packageJson.version}`,
-    contactUrl: packageJson.homepage,
-    contactEmail: packageJson.author.email,
-  })
-
-  const httpMiddleware = createHttpMiddleware({
+  const httpMiddlewareOptions = {
     maskSensitiveHeaderData: true,
     host: apiUrl,
     enableRetry: true,
     fetch,
-  })
+  }
 
-  const queueMiddleware = createQueueMiddleware({
+  const queueMiddlewareOptions = {
     concurrency,
-  })
+  }
 
-  return createClient({
-    middlewares: [
-      authMiddleware,
-      userAgentMiddleware,
-      httpMiddleware,
-      queueMiddleware,
-    ],
-  })
+  const packageJson = await utils.readAndParseJsonFile('package.json')
+
+  const userAgentMiddlewareOptions = {
+    libraryName: packageJson.name,
+    libraryVersion: `${packageJson.version}`,
+    contactUrl: packageJson.homepage,
+    contactEmail: packageJson.author.email,
+  }
+
+  return new ClientBuilder()
+    .withProjectKey(projectKey)
+    .withClientCredentialsFlow(authMiddlewareOptions)
+    .withHttpMiddleware(httpMiddlewareOptions)
+    .withQueueMiddleware(queueMiddlewareOptions)
+    .withUserAgentMiddleware(userAgentMiddlewareOptions)
+    .build()
 }
 
 async function setUpClient(config) {
