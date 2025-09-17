@@ -52,8 +52,6 @@
     "doctoc": "2.2.1",
     "eslint": "9.35.0",
     "eslint-config-prettier": "10.1.5",
-    "husky": "9.1.7",
-    "lint-staged": "15.5.2",
     "localtunnel": "2.0.2",
     "mocha": "11.7.0",
     "nock": "14.0.5",
