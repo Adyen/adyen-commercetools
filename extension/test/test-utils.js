@@ -10,14 +10,13 @@ Object.defineProperty(global, 'window', {
   value: {},
   writable: true,
   configurable: true,
-});
+})
 
 Object.defineProperty(global, 'navigator', {
   value: {},
   writable: true,
   configurable: true,
-});
-
+})
 
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled Rejection:', reason)
