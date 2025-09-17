@@ -6,8 +6,18 @@ import { routes } from '../src/routes.js'
 import { setupExtensionResources } from '../src/setup.js'
 import config from '../src/config/config.js'
 
-global.window = {}
-global.navigator = {}
+Object.defineProperty(global, 'window', {
+  value: {},
+  writable: true,
+  configurable: true,
+});
+
+Object.defineProperty(global, 'navigator', {
+  value: {},
+  writable: true,
+  configurable: true,
+});
+
 
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled Rejection:', reason)
