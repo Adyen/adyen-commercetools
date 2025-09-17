@@ -40,15 +40,6 @@ jobs:
       - name: gcloud sdk
         uses: google-github-actions/setup-gcloud@v2.1.4
       - run: npm run unit
-      - name: gcloud functions deploy
-        run: |
-         gcloud functions deploy notification-ci \
-           --region europe-west3 \
-           --source sources \
-           --entry-point notificationTrigger \
-           --runtime nodejs22 \
-           --trigger-http \
-           --allow-unauthenticated
 
 
   extension_build:
@@ -85,15 +76,6 @@ jobs:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - name: gcloud sdk
         uses: google-github-actions/setup-gcloud@v2.1.4
-      - name: gcloud functions deploy
-        run: |
-          gcloud functions deploy extension-ci \
-            --region europe-west3 \
-            --source sources \
-            --entry-point extensionTrigger \
-            --runtime nodejs22 \
-            --trigger-http \
-            --allow-unauthenticated
       - run: npm run test-ci
 
   notification_test:
