@@ -63,13 +63,9 @@
     "sinon": "19.0.5"
   },
   "dependencies": {
-    "@commercetools/api-request-builder": "6.0.0",
-    "@commercetools/sdk-client": "3.0.0",
-    "@commercetools/sdk-middleware-auth": "7.0.1",
-    "@commercetools/sdk-middleware-http": "7.0.4",
-    "@commercetools/sdk-middleware-queue": "3.0.0",
-    "@commercetools/sdk-middleware-user-agent": "3.0.0",
-    "@commercetools/sync-actions": "6.1.1",
+    "@commercetools/api-request-builder": "^7.0.1",
+    "@commercetools/sdk-client-v2": "^3.0.0",
+    "@commercetools/sync-actions": "^7.3.1",
     "@eslint/js": "^9.4.0",
     "bunyan": "1.8.15",
     "globals": "^16.0.0",
