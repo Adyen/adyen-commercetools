@@ -1,11 +1,13 @@
-import localtunnel from 'localtunnel'
 import { serializeError } from 'serialize-error'
 import fetch from 'node-fetch'
 import { setupServer } from '../src/server.js'
 import { routes } from '../src/routes.js'
 import { setupExtensionResources } from '../src/setup.js'
 import config from '../src/config/config.js'
+import ngrok from '@ngrok/ngrok'
+import dotenv from 'dotenv';
 
+dotenv.config();
 Object.defineProperty(global, 'window', {
   value: {},
   writable: true,
@@ -40,7 +42,7 @@ async function startIT() {
     // e2e requires this for static forms
     overrideApiExtensionBaseUrlConfig(`http://localhost:${extensionPort}`)
   } else {
-    await setupLocalTunnel()
+    await setupNgrokTunnel()
     await setupExtensionResources()
     await setUpWebhooksAndNotificationModule()
   }
@@ -98,29 +100,36 @@ function overrideEnableHmacSignatureConfig(enableHmacSignature) {
   }
 }
 
-async function setupLocalTunnel() {
-  const extensionTunnelDomain = 'ctp-adyen-integration-tests'
-  extensionTunnel = await initTunnel(extensionTunnelDomain, extensionPort)
-  const apiExtensionBaseUrl = extensionTunnel.url.replace('http:', 'https:')
+async function setupNgrokTunnel() {
+  extensionTunnel = await initNgrokTunnel(extensionPort, process.env.EXTENSION_TUNNEL_DOMAIN)
+  const apiExtensionBaseUrl = extensionTunnel.url().replace('http:', 'https:')
   overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
 }
 
-async function initTunnel(subdomain, port) {
+async function initNgrokTunnel(port, subdomain) {
   let repeaterCounter = 0
-  let tunnel
+  let setDomain = true;
+  let listener
   while (true) {
     try {
-      tunnel = await localtunnel({
-        port,
-        subdomain,
-      })
+      const forwardOpts = {
+        addr: port,
+        authtoken: process.env.NGROK_AUTHTOKEN,
+      };
+      if (setDomain) {
+        forwardOpts.domain = subdomain;
+      }
+
+      listener = await ngrok.forward(forwardOpts);
       break
     } catch (e) {
+      setDomain = false;
       if (repeaterCounter === 10) throw e
       repeaterCounter++
     }
   }
-  return tunnel
+
+  return listener;
 }
 
 async function updatePaymentWithRetry(ctpClient, actions, payment) {
@@ -172,7 +181,7 @@ async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
 }
 
 async function setUpWebhooksAndNotificationModule() {
-  const notificationTunnelDomain = 'ctp-adyen-integration-tests-notifications'
+  const notificationTunnelDomain = process.env.NOTIFICATION_TUNNEL_DOMAIN
   // Starting up server is needed only locally, on CI we deploy to GCP
   const { setupServer: setupNotificationModuleServer } = await import(
     '../../notification/src/server.js'
@@ -184,12 +193,12 @@ async function setUpWebhooksAndNotificationModule() {
     })
   })
 
-  const webhookUrl = `https://${notificationTunnelDomain}.loca.lt`
-  await ensureAdyenWebhookForAllAdyenAccounts(webhookUrl)
-  notificationTunnel = await initTunnel(
-    notificationTunnelDomain,
+  notificationTunnel = await initNgrokTunnel(
     notificationPort,
+    notificationTunnelDomain,
   )
+  const webhookUrl = notificationTunnel.url().replace('http:', 'https:')
+  await ensureAdyenWebhookForAllAdyenAccounts(webhookUrl)
 }
 
 async function deleteWebhooks() {

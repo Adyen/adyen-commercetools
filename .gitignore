@@ -13,7 +13,7 @@ node_modules/
 .eslintcache
 
 # dotenv environment variables file
-.env
+extension/.env
 
 # IntelliJ
 .idea
