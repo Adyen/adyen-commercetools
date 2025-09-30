@@ -63,7 +63,11 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
 
       // Step #1 - Create a payment session
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
-      paymentAfterCreateSession = await createSession(baseUrl, clientKey, 'CardOnFile')
+      paymentAfterCreateSession = await createSession(
+        baseUrl,
+        clientKey,
+        'CardOnFile',
+      )
       logger.debug(
         'credit-card-disable-stored-payment::paymentAfterCreateSession:',
         JSON.stringify(paymentAfterCreateSession),
@@ -130,7 +134,11 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
 
       // Step #1 - Create a payment session
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
-      paymentAfterCreateSession = await createSession(baseUrl, clientKey, 'Subscription')
+      paymentAfterCreateSession = await createSession(
+        baseUrl,
+        clientKey,
+        'Subscription',
+      )
       logger.debug(
         'credit-card-disable-stored-payment::paymentAfterCreateSession:',
         JSON.stringify(paymentAfterCreateSession),
@@ -197,7 +205,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
       // Step #1 - Create a payment session
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
       paymentAfterCreateSession = await createSession(
-          baseUrl,
+        baseUrl,
         clientKey,
         'UnscheduledCardOnFile',
       )

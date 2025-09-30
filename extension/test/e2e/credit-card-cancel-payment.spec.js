@@ -174,7 +174,10 @@ describe('::creditCardPayment::cancel-payment::', () => {
   })
 
   async function createSession(baseUrl, clientKey) {
-    const createSessionRequest = await getCreateSessionRequest(baseUrl, clientKey)
+    const createSessionRequest = await getCreateSessionRequest(
+      baseUrl,
+      clientKey,
+    )
     let payment = null
     const startTime = new Date().getTime()
     try {

@@ -57,16 +57,21 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
   }
 
   async confirmCreditCardWebComponent() {
-    await this.page.waitForSelector('.adyen-checkout__button.adyen-checkout__button--pay', {
-      timeout: 3000,
-    });
+    await this.page.waitForSelector(
+      '.adyen-checkout__button.adyen-checkout__button--pay',
+      {
+        timeout: 3000,
+      },
+    )
 
-    const checkoutButton = await this.page.$('.adyen-checkout__button.adyen-checkout__button--pay');
+    const checkoutButton = await this.page.$(
+      '.adyen-checkout__button.adyen-checkout__button--pay',
+    )
     if (!checkoutButton) {
-      throw new Error('Checkout button not found');
+      throw new Error('Checkout button not found')
     }
 
-    await checkoutButton.click();
+    await checkoutButton.click()
   }
 
   async getPaymentAuthResult() {

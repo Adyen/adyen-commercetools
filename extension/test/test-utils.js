@@ -5,9 +5,9 @@ import { routes } from '../src/routes.js'
 import { setupExtensionResources } from '../src/setup.js'
 import config from '../src/config/config.js'
 import ngrok from '@ngrok/ngrok'
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 Object.defineProperty(global, 'window', {
   value: {},
   writable: true,
@@ -101,35 +101,38 @@ function overrideEnableHmacSignatureConfig(enableHmacSignature) {
 }
 
 async function setupExtensionNgrokTunnel() {
-  extensionTunnel = await initNgrokTunnel(extensionPort, process.env.EXTENSION_TUNNEL_DOMAIN)
+  extensionTunnel = await initNgrokTunnel(
+    extensionPort,
+    process.env.EXTENSION_TUNNEL_DOMAIN,
+  )
   const apiExtensionBaseUrl = extensionTunnel.url().replace('http:', 'https:')
   overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
 }
 
 async function initNgrokTunnel(port, subdomain) {
   let repeaterCounter = 0
-  let setDomain = true;
+  let setDomain = true
   let listener
   while (true) {
     try {
       const forwardOpts = {
         addr: port,
         authtoken: process.env.NGROK_AUTHTOKEN,
-      };
+      }
       if (setDomain) {
-        forwardOpts.domain = subdomain;
+        forwardOpts.domain = subdomain
       }
 
-      listener = await ngrok.forward(forwardOpts);
+      listener = await ngrok.forward(forwardOpts)
       break
     } catch (e) {
-      setDomain = false;
+      setDomain = false
       if (repeaterCounter === 10) throw e
       repeaterCounter++
     }
   }
 
-  return listener;
+  return listener
 }
 
 async function updatePaymentWithRetry(ctpClient, actions, payment) {

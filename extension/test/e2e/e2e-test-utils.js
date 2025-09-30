@@ -49,7 +49,7 @@ async function getCreateSessionRequest(baseUrl, clientKey, currency = 'EUR') {
     additionalData: {
       authorisationType: 'PreAuth',
     },
-    captureDelayHours: 8
+    captureDelayHours: 8,
   })
 }
 

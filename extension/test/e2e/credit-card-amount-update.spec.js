@@ -95,22 +95,20 @@ describe('::creditCardPayment::amount-update::', () => {
       )
 
       // Step #3 - Update Amount
-      const { statusCode, updatedPayment } = await waitUntil(
-        async () => {
-          try {
-            return await updateAmount(
-              notificationInteraction,
-              paymentAfterCreateSession,
-            )
-          } catch (err) {
-            logger.error(
-              'credit-card-amount-update::errors:',
-              JSON.stringify(err),
-            )
-            return Promise.resolve()
-          }
-        },
-      )
+      const { statusCode, updatedPayment } = await waitUntil(async () => {
+        try {
+          return await updateAmount(
+            notificationInteraction,
+            paymentAfterCreateSession,
+          )
+        } catch (err) {
+          logger.error(
+            'credit-card-amount-update::errors:',
+            JSON.stringify(err),
+          )
+          return Promise.resolve()
+        }
+      })
 
       amountUpdatesResponse = JSON.parse(
         updatedPayment.custom.fields.amountUpdatesResponse,
@@ -193,7 +191,10 @@ describe('::creditCardPayment::amount-update::', () => {
     return { statusCode, updatedPayment }
   }
   async function createSession(baseUrl, clientKey) {
-    const createSessionRequest = await getCreateSessionRequest(baseUrl, clientKey)
+    const createSessionRequest = await getCreateSessionRequest(
+      baseUrl,
+      clientKey,
+    )
     let payment = null
     const startTime = new Date().getTime()
     try {
