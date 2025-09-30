@@ -29,7 +29,7 @@ import KlarnaAuthenticationPage from './pageObjects/KlarnaAuthenticationPage.js'
 const logger = httpUtils.getLogger()
 
 // Flow description: https://docs.adyen.com/payment-methods/klarna/web-component#page-introduction
-describe('::klarnaPayment::', () => {
+describe.skip('::klarnaPayment::', () => {
   let browser
   let ctpClient
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]

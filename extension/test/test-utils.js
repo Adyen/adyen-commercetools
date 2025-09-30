@@ -42,7 +42,7 @@ async function startIT() {
     // e2e requires this for static forms
     overrideApiExtensionBaseUrlConfig(`http://localhost:${extensionPort}`)
   } else {
-    await setupNgrokTunnel()
+    await setupExtensionNgrokTunnel()
     await setupExtensionResources()
     await setUpWebhooksAndNotificationModule()
   }
@@ -100,7 +100,7 @@ function overrideEnableHmacSignatureConfig(enableHmacSignature) {
   }
 }
 
-async function setupNgrokTunnel() {
+async function setupExtensionNgrokTunnel() {
   extensionTunnel = await initNgrokTunnel(extensionPort, process.env.EXTENSION_TUNNEL_DOMAIN)
   const apiExtensionBaseUrl = extensionTunnel.url().replace('http:', 'https:')
   overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
