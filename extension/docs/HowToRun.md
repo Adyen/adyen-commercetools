@@ -77,7 +77,7 @@ Extension module requires 1 environment variable to start. This environment vari
 - commercetools project credentials:
   - If you don't have the commercetools OAuth credentials,[create a commercetools API Client](https://docs.commercetools.com/getting-started.html#create-an-api-client).
     - Note that extension module requires `manage_payments, view_orders, view_customers` [scopes](https://docs.commercetools.com/http-api-scopes) for the integration and `manage_types, manage_extensions` [scopes](https://docs.commercetools.com/http-api-scopes) for setting up required resources.
-    - Note: The extension requires the `view_customers:{projectKey}` scope to read customer data; if you change scopes you must recreate the API client to apply the new scopes.
+    - Note: The extension requires the `view_customers` scope to read customer data; if you change scopes you must recreate the API client to apply the new scopes.
 
 ### Required attributes
 
