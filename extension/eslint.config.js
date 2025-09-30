@@ -1,7 +1,7 @@
 import globals from 'globals'
 import js from '@eslint/js'
 import prettier from 'eslint-config-prettier'
-import stylisticJs from '@stylistic/eslint-plugin-js'
+import stylisticJs from '@stylistic/eslint-plugin'
 
 export default [
   js.configs.recommended,
