@@ -4,10 +4,6 @@ import { hmacValidator } from '@adyen/api-library'
 import config from '../src/config/config.js'
 import { setupServer } from '../src/server.js'
 import { setupNotificationResources } from '../src/setup.js'
-import {
-  startFakeExtension,
-  stopFakeExtension,
-} from './fake-extension-service.js'
 import utils from '../src/utils/commons.js'
 
 const { address } = ip
@@ -52,7 +48,6 @@ async function startIT() {
   await setupNotificationResources()
   if (!process.env.CI) {
     await setupLocalServer(8000)
-    await startFakeExtension()
   }
 }
 
@@ -76,7 +71,6 @@ async function setupLocalServer(testServerPort = 8000) {
 async function stopIT() {
   if (!process.env.CI) {
     server.close()
-    await stopFakeExtension()
   }
 }
 
