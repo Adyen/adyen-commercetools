@@ -63,7 +63,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
 
       // Step #1 - Create a payment session
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
-      paymentAfterCreateSession = await creatSession(clientKey, 'CardOnFile')
+      paymentAfterCreateSession = await createSession(baseUrl, clientKey, 'CardOnFile')
       logger.debug(
         'credit-card-disable-stored-payment::paymentAfterCreateSession:',
         JSON.stringify(paymentAfterCreateSession),
@@ -130,7 +130,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
 
       // Step #1 - Create a payment session
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
-      paymentAfterCreateSession = await creatSession(clientKey, 'Subscription')
+      paymentAfterCreateSession = await createSession(baseUrl, clientKey, 'Subscription')
       logger.debug(
         'credit-card-disable-stored-payment::paymentAfterCreateSession:',
         JSON.stringify(paymentAfterCreateSession),
@@ -196,7 +196,8 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
 
       // Step #1 - Create a payment session
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
-      paymentAfterCreateSession = await creatSession(
+      paymentAfterCreateSession = await createSession(
+          baseUrl,
         clientKey,
         'UnscheduledCardOnFile',
       )
@@ -250,8 +251,8 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
     ).to.be.equal('{"response":"[detail-successfully-disabled]"}')
   })
 
-  async function creatSession(clientKey, recurringProcessingModel) {
-    let createSessionRequest = await getCreateSessionRequest(clientKey)
+  async function createSession(baseUrl, clientKey, recurringProcessingModel) {
+    let createSessionRequest = await getCreateSessionRequest(baseUrl, clientKey)
     const createSessionRequestJson = JSON.parse(createSessionRequest)
     createSessionRequestJson.storePaymentMethod = true
     createSessionRequestJson.shopperReference = 'shopperReference'

@@ -15,7 +15,7 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
       creditCardDate,
       creditCardCvc,
     )
-    await this.confirmCreditCardWebComopnent()
+    await this.confirmCreditCardWebComponent()
   }
 
   async pasteValuesInCreditCardWebComponent(
@@ -56,13 +56,17 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
     )
   }
 
-  async confirmCreditCardWebComopnent() {
-    await this.page.waitForSelector('.adyen-checkout__button--pay', {
+  async confirmCreditCardWebComponent() {
+    await this.page.waitForSelector('.adyen-checkout__button.adyen-checkout__button--pay', {
       timeout: 3000,
-    })
-    const checkoutButton = await this.page.$('.adyen-checkout__button--pay')
+    });
 
-    await this.page.evaluate((cb) => cb.click(), checkoutButton)
+    const checkoutButton = await this.page.$('.adyen-checkout__button.adyen-checkout__button--pay');
+    if (!checkoutButton) {
+      throw new Error('Checkout button not found');
+    }
+
+    await checkoutButton.click();
   }
 
   async getPaymentAuthResult() {

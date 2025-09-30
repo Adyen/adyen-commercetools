@@ -69,7 +69,7 @@ describe('::creditCardPayment::cancel-payment::', () => {
 
       // Step #1 - Create a payment session
       // https://docs.adyen.com/online-payments/web-components#create-payment-session
-      paymentAfterCreateSession = await createSession(clientKey)
+      paymentAfterCreateSession = await createSession(baseUrl, clientKey)
       logger.debug(
         'credit-card-cancel-payment::paymentAfterCreateSession:',
         JSON.stringify(paymentAfterCreateSession),
@@ -127,8 +127,6 @@ describe('::creditCardPayment::cancel-payment::', () => {
             return Promise.resolve()
           }
         },
-        10,
-        1_000,
       )
 
       cancelledPaymentStatusCode = statusCode
@@ -175,8 +173,8 @@ describe('::creditCardPayment::cancel-payment::', () => {
     expect(notificationJson.NotificationRequestItem.success).to.equal('true')
   })
 
-  async function createSession(clientKey) {
-    const createSessionRequest = await getCreateSessionRequest(clientKey)
+  async function createSession(baseUrl, clientKey) {
+    const createSessionRequest = await getCreateSessionRequest(baseUrl, clientKey)
     let payment = null
     const startTime = new Date().getTime()
     try {
