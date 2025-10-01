@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import ip from 'ip'
 import { hmacValidator } from '@adyen/api-library'
 import config from '../src/config/config.js'
 import { setupServer } from '../src/server.js'
@@ -10,7 +9,6 @@ import ngrok from '@ngrok/ngrok'
 import dotenv from 'dotenv'
 
 dotenv.config()
-const { address } = ip
 
 const extensionPort = 3000
 let extensionTunnel
@@ -48,10 +46,6 @@ async function buildMockErrorFromConcurrentModificationException() {
   return error
 }
 
-// node-fetch package doesn't support requests to localhost, therefore
-// we need to provide the IP behind localhost
-const localhostIp = address()
-
 async function startIT() {
   await setupNotificationResources()
   if (!process.env.CI) {
@@ -63,8 +57,9 @@ async function startIT() {
 
 function getNotificationURL() {
   if (!process.env.CI) {
-    return `http://${localhostIp}:8000`
+    return `http://localhost:${process.env.NOTIFICATION_PORT}`
   }
+
   return process.env.CI_NOTIFICATION_URL
 }
 
@@ -81,7 +76,7 @@ async function setupLocalServer(testServerPort = 8000) {
 async function setupExtensionNgrokTunnel() {
   const { setupServer: setupExtensionModuleServer } = await import(
     '../../extension/src/server.js'
-    )
+  )
   extensionServer = await setupExtensionModuleServer()
   await new Promise((resolve) => {
     extensionServer.listen(extensionPort, async () => {
@@ -134,7 +129,7 @@ function overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
 
 async function stopIT() {
   if (!process.env.CI) {
-  server.close()
+    server.close()
     extensionServer.close()
     await extensionTunnel.close()
   }

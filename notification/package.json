@@ -69,7 +69,6 @@
     "dotenv": "^17.2.2",
     "eslint": "9.35.0",
     "eslint-config-prettier": "10.1.5",
-    "ip": "2.0.1",
     "mocha": "11.7.0",
     "nock": "14.0.5",
     "p-map": "7.0.3",
