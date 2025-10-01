@@ -25,11 +25,9 @@ process.on('unhandledRejection', (reason) => {
   process.exit(1)
 })
 
-const extensionPort = 3000
 let extensionTunnel
 let extensionServer
 
-const notificationPort = 3001
 let notificationTunnel
 let notificationServer
 const merchantIdToWebhookIdMap = new Map()
@@ -40,7 +38,9 @@ async function startIT() {
     // this part used only on github actions (CI)
     await setupExtensionResources(process.env.CI_EXTENSION_BASE_URL)
     // e2e requires this for static forms
-    overrideApiExtensionBaseUrlConfig(`http://localhost:${extensionPort}`)
+    overrideApiExtensionBaseUrlConfig(
+      `http://localhost:${process.env.EXTENSION_PORT}`,
+    )
   } else {
     await setupExtensionNgrokTunnel()
     await setupExtensionResources()
@@ -65,7 +65,7 @@ async function stopIT() {
 function setupLocalServer() {
   extensionServer = setupServer(routes)
   return new Promise((resolve) => {
-    extensionServer.listen(extensionPort, async () => {
+    extensionServer.listen(process.env.EXTENSION_PORT, async () => {
       resolve()
     })
   })
@@ -102,7 +102,7 @@ function overrideEnableHmacSignatureConfig(enableHmacSignature) {
 
 async function setupExtensionNgrokTunnel() {
   extensionTunnel = await initNgrokTunnel(
-    extensionPort,
+    process.env.EXTENSION_PORT,
     process.env.EXTENSION_TUNNEL_DOMAIN,
   )
   const apiExtensionBaseUrl = extensionTunnel.url().replace('http:', 'https:')
@@ -191,13 +191,13 @@ async function setUpWebhooksAndNotificationModule() {
   )
   notificationServer = await setupNotificationModuleServer()
   await new Promise((resolve) => {
-    notificationServer.listen(notificationPort, async () => {
+    notificationServer.listen(process.env.NOTIFICATION_PORT, async () => {
       resolve()
     })
   })
 
   notificationTunnel = await initNgrokTunnel(
-    notificationPort,
+    process.env.NOTIFICATION_PORT,
     notificationTunnelDomain,
   )
   const webhookUrl = notificationTunnel.url().replace('http:', 'https:')

@@ -10,7 +10,6 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const extensionPort = 3000
 let extensionTunnel
 let extensionServer
 
@@ -49,10 +48,10 @@ async function buildMockErrorFromConcurrentModificationException() {
 async function startIT() {
   await setupNotificationResources()
   if (!process.env.CI) {
-    await setupLocalServer(8000)
+    await setupLocalServer(process.env.NOTIFICATION_PORT)
+    let apiExtensionUrl = await setupExtensionNgrokTunnel()
+    await setupExtensionResources(apiExtensionUrl)
   }
-  let apiExtensionUrl = await setupExtensionNgrokTunnel()
-  await setupExtensionResources(apiExtensionUrl)
 }
 
 function getNotificationURL() {
@@ -64,7 +63,7 @@ function getNotificationURL() {
 }
 
 let server
-async function setupLocalServer(testServerPort = 8000) {
+async function setupLocalServer(testServerPort = '8000') {
   server = setupServer()
   return new Promise((resolve) => {
     server.listen(testServerPort, async () => {
@@ -79,12 +78,12 @@ async function setupExtensionNgrokTunnel() {
   )
   extensionServer = await setupExtensionModuleServer()
   await new Promise((resolve) => {
-    extensionServer.listen(extensionPort, async () => {
+    extensionServer.listen(process.env.EXTENSION_PORT, async () => {
       resolve()
     })
   })
   extensionTunnel = await initNgrokTunnel(
-    extensionPort,
+    process.env.EXTENSION_PORT,
     process.env.EXTENSION_TUNNEL_DOMAIN,
   )
   const apiExtensionBaseUrl = extensionTunnel.url().replace('http:', 'https:')
