@@ -4,9 +4,17 @@ import { hmacValidator } from '@adyen/api-library'
 import config from '../src/config/config.js'
 import { setupServer } from '../src/server.js'
 import { setupNotificationResources } from '../src/setup.js'
+import { setupExtensionResources } from '../../extension/src/setup.js'
 import utils from '../src/utils/commons.js'
+import ngrok from '@ngrok/ngrok'
+import dotenv from 'dotenv'
 
+dotenv.config()
 const { address } = ip
+
+const extensionPort = 3000
+let extensionTunnel
+let extensionServer
 
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled Rejection:', reason)
@@ -49,6 +57,8 @@ async function startIT() {
   if (!process.env.CI) {
     await setupLocalServer(8000)
   }
+  let apiExtensionUrl = await setupExtensionNgrokTunnel()
+  await setupExtensionResources(apiExtensionUrl)
 }
 
 function getNotificationURL() {
@@ -68,9 +78,65 @@ async function setupLocalServer(testServerPort = 8000) {
   })
 }
 
+async function setupExtensionNgrokTunnel() {
+  const { setupServer: setupExtensionModuleServer } = await import(
+    '../../extension/src/server.js'
+    )
+  extensionServer = await setupExtensionModuleServer()
+  await new Promise((resolve) => {
+    extensionServer.listen(extensionPort, async () => {
+      resolve()
+    })
+  })
+  extensionTunnel = await initNgrokTunnel(
+    extensionPort,
+    process.env.EXTENSION_TUNNEL_DOMAIN,
+  )
+  const apiExtensionBaseUrl = extensionTunnel.url().replace('http:', 'https:')
+  overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
+
+  return apiExtensionBaseUrl
+}
+
+async function initNgrokTunnel(port, subdomain) {
+  let repeaterCounter = 0
+  let setDomain = true
+  let listener
+  while (true) {
+    try {
+      const forwardOpts = {
+        addr: port,
+        authtoken: process.env.NGROK_AUTHTOKEN,
+      }
+      if (setDomain) {
+        forwardOpts.domain = subdomain
+      }
+
+      listener = await ngrok.forward(forwardOpts)
+      break
+    } catch (e) {
+      setDomain = false
+      if (repeaterCounter === 10) throw e
+      repeaterCounter++
+    }
+  }
+
+  return listener
+}
+
+function overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
+  const moduleConfig = config.getModuleConfig()
+  moduleConfig.apiExtensionBaseUrl = apiExtensionBaseUrl
+  config.getModuleConfig = function getModuleConfig() {
+    return moduleConfig
+  }
+}
+
 async function stopIT() {
   if (!process.env.CI) {
-    server.close()
+  server.close()
+    extensionServer.close()
+    await extensionTunnel.close()
   }
 }
 
