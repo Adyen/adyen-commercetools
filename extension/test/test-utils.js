@@ -107,7 +107,7 @@ async function initNgrokTunnel(port, subdomain) {
         addr: port,
         authtoken: process.env.NGROK_AUTHTOKEN,
       }
-      if (setDomain) {
+      if (setDomain && subdomain) {
         forwardOpts.domain = subdomain
       }
 
