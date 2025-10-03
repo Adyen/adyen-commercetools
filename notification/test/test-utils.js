@@ -47,19 +47,13 @@ async function buildMockErrorFromConcurrentModificationException() {
 
 async function startIT() {
   await setupNotificationResources()
-  if (!process.env.CI) {
-    await setupLocalServer(process.env.NOTIFICATION_PORT)
-    let apiExtensionUrl = await setupExtensionNgrokTunnel()
-    await setupExtensionResources(apiExtensionUrl)
-  }
+  await setupLocalServer(process.env.NOTIFICATION_PORT)
+  let apiExtensionUrl = await setupExtensionNgrokTunnel()
+  await setupExtensionResources(apiExtensionUrl)
 }
 
 function getNotificationURL() {
-  if (!process.env.CI) {
-    return `http://localhost:${process.env.NOTIFICATION_PORT}`
-  }
-
-  return process.env.CI_NOTIFICATION_URL
+  return `http://localhost:${process.env.NOTIFICATION_PORT}`
 }
 
 let server
@@ -127,11 +121,9 @@ function overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
 }
 
 async function stopIT() {
-  if (!process.env.CI) {
-    server.close()
-    extensionServer.close()
-    await extensionTunnel.close()
-  }
+  server.close()
+  extensionServer.close()
+  await extensionTunnel.close()
 }
 
 const validator = new hmacValidator()

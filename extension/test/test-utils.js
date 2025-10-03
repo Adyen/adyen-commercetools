@@ -34,28 +34,16 @@ const merchantIdToWebhookIdMap = new Map()
 
 async function startIT() {
   await setupLocalServer()
-  if (process.env.CI) {
-    // this part used only on github actions (CI)
-    await setupExtensionResources(process.env.CI_EXTENSION_BASE_URL)
-    // e2e requires this for static forms
-    overrideApiExtensionBaseUrlConfig(
-      `http://localhost:${process.env.EXTENSION_PORT}`,
-    )
-  } else {
-    await setupExtensionNgrokTunnel()
-    await setupExtensionResources()
-    await setUpWebhooksAndNotificationModule()
-  }
+  await setupExtensionNgrokTunnel()
+  await setupExtensionResources()
+  await setUpWebhooksAndNotificationModule()
 }
 
 async function stopIT() {
   extensionServer.close()
-  if (!process.env.CI) {
-    // this part is not used on github actions (CI)
-    notificationServer.close()
-    await extensionTunnel.close()
-    await notificationTunnel.close()
-  }
+  notificationServer.close()
+  await extensionTunnel.close()
+  await notificationTunnel.close()
 
   // If you don't delete the webhooks, other tests will pollute this webhook with many notifications
   // the webhook will get stuck and your test might not get the notifications next time.

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "check-coverage": "c8 check-coverage --lines 73",
-    "test-run": "npm run unit",
+    "test-run": "npm run unit && npm run integration",
     "test-ci": "c8 npm run test-run && npm run check-coverage",
     "test": "npm run unit",
     "unit": "mocha --check-leaks --no-clean --timeout 30000 --full-trace --recursive --file ./test/unit/mock-default-confg.js \"./test/unit/**/*.spec.js\"",
@@ -83,5 +83,10 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
+  },
+  "prettier": {
+    "endOfLine": "auto",
+    "singleQuote": true,
+    "semi": false
   }
 }

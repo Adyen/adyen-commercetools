@@ -3,112 +3,49 @@
 
 name: CI
 
-on: [push]
+on: [ push ]
 
 jobs:
 
-  notification_build:
-    name: Notification Module Build and Deployment
-    concurrency: notification_build
+  extension_test:
+    name: Test for Extension Module
+    concurrency: extension_test
     runs-on: ubuntu-latest
     env:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
-      CI_NOTIFICATION_URL: ${{ secrets.CI_NOTIFICATION_URL }}
+      EXTENSION_TUNNEL_DOMAIN: ${{ secrets.EXTENSION_TUNNEL_DOMAIN }}
+      NOTIFICATION_TUNNEL_DOMAIN: ${{ secrets.NOTIFICATION_TUNNEL_DOMAIN }}
+      NGROK_AUTHTOKEN: ${{secrets.NGROK_AUTHTOKEN }}
     defaults:
       run:
-        working-directory: notification
+        working-directory: extension
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js 22.x
         uses: actions/setup-node@v4
         with:
           node-version: '22.x'
-      - run: npm ci
-      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
-      - run: npm run check
-      - name: prepare notifications folder
-        run: |
-          echo $ADYEN_INTEGRATION_CONFIG >> .notificationrc
-          mkdir -p sources && cp index.googleFunction.js index.js
-          cp -R {index.js,.notificationrc,src,resources,package.json} sources
-          rm .notificationrc
-        shell: bash
-      - name: gcloud auth
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-      - name: gcloud sdk
-        uses: google-github-actions/setup-gcloud@v2.1.4
-      - name: Install extension dependencies
+      - name: Install dependencies
         run: npm ci
-        working-directory: extension
-      - run: npm run unit
-      - name: gcloud functions deploy
-        run: |
-          gcloud functions deploy notification-ci \
-            --region europe-west3 \
-            --source sources \
-            --entry-point notificationTrigger \
-            --runtime nodejs22 \
-            --trigger-http \
-            --allow-unauthenticated
-
-  extension_build:
-    name: Extension Module
-    concurrency: extension_build
-    needs: notification_build
-    runs-on: ubuntu-latest
-    env:
-      ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
-      CI_EXTENSION_BASE_URL: ${{ secrets.CI_EXTENSION_BASE_URL }}
-      CI_NOTIFICATION_URL: ${{ secrets.CI_NOTIFICATION_URL }}
-    defaults:
-      run:
-        working-directory: extension
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js 22.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22.x'
-      - run: npm ci
-      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
-      - run: npm run check
-      - name: prepare extensions folder
-        run: |
-          echo $ADYEN_INTEGRATION_CONFIG >> .extensionrc
-          mkdir -p sources && cp index.googleFunction.js index.js
-          cp -R {index.js,.extensionrc,src,resources,package.json} sources
-          rm .extensionrc
-        shell: bash
-      - name: gcloud auth
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-      - name: gcloud sdk
-        uses: google-github-actions/setup-gcloud@v2.1.4
-      - name: gcloud functions deploy
-        run: |
-          gcloud functions deploy extension-ci \
-            --region europe-west3 \
-            --source sources \
-            --entry-point extensionTrigger \
-            --runtime nodejs22 \
-            --trigger-http \
-            --allow-unauthenticated
+      - name: Lockfile Lint Check
+        run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - name: Run Code Checks
+        run: npm run check
       - name: Install notification dependencies
         run: npm ci
         working-directory: notification
-      - run: npm run test-ci
+      - name: Run unit and integration tests
+        run: npm run test-ci
 
   notification_test:
     name: Test for Notification Module
     concurrency: notification_test
-    needs: extension_build
+    needs: extension_test
     runs-on: ubuntu-latest
     env:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
-      CI_NOTIFICATION_URL: ${{ secrets.CI_NOTIFICATION_URL }}
+      EXTENSION_TUNNEL_DOMAIN: ${{ secrets.EXTENSION_TUNNEL_DOMAIN }}
+      NGROK_AUTHTOKEN: ${{secrets.NGROK_AUTHTOKEN }}
     defaults:
       run:
         working-directory: notification
@@ -118,9 +55,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22.x'
-      - run: npm ci
-      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - name: Install dependencies
+        run: npm ci
+      - name: Lockfile Lint Check
+        run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - name: Run Code Checks
+        run: npm run check
       - name: Install extension dependencies
         run: npm ci
         working-directory: extension
-      - run: npm run test-ci
+      - name: Run unit and integration tests
+        run: npm run test-ci
