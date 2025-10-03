@@ -16,6 +16,8 @@ jobs:
       EXTENSION_TUNNEL_DOMAIN: ${{ secrets.EXTENSION_TUNNEL_DOMAIN }}
       NOTIFICATION_TUNNEL_DOMAIN: ${{ secrets.NOTIFICATION_TUNNEL_DOMAIN }}
       NGROK_AUTHTOKEN: ${{secrets.NGROK_AUTHTOKEN }}
+      EXTENSION_PORT: 8080
+      NOTIFICATION_PORT: 8081
     defaults:
       run:
         working-directory: extension
@@ -46,6 +48,8 @@ jobs:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
       EXTENSION_TUNNEL_DOMAIN: ${{ secrets.EXTENSION_TUNNEL_DOMAIN }}
       NGROK_AUTHTOKEN: ${{secrets.NGROK_AUTHTOKEN }}
+      EXTENSION_PORT: 8080
+      NOTIFICATION_PORT: 8081
     defaults:
       run:
         working-directory: notification
