@@ -27,9 +27,6 @@ export default class CreditCardInitSessionFormPage extends InitSessionFormPage {
       '[data-cse="encryptedCardNumber"] iframe',
     )
     const encryptedCardNumberFrame = await elementHandle.contentFrame()
-    await encryptedCardNumberFrame.waitForNavigation({
-      waitUntil: 'domcontentloaded',
-    })
 
     // For some reason following selector won't work unless we wait
     await encryptedCardNumberFrame.waitForSelector(
