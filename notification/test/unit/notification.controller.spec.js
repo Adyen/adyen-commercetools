@@ -76,7 +76,7 @@ describe('notification controller', () => {
 
       const loggerMock = {
         error: sinon.spy(),
-        debug: logger.debug,
+        debug: sinon.spy(),
       }
 
       // test:
@@ -124,7 +124,7 @@ describe('notification controller', () => {
 
     const loggerMock = {
       error: sinon.spy(),
-      debug: logger.debug,
+      debug: sinon.spy(),
     }
 
     // test:
@@ -163,7 +163,7 @@ describe('notification controller', () => {
 
     const loggerMock = {
       error: sinon.spy(),
-      debug: logger.debug,
+      debug: sinon.spy(),
     }
 
     // test:
@@ -218,8 +218,8 @@ describe('notification controller', () => {
 
       const loggerMock = {
         error: sinon.spy(),
-        debug: logger.debug,
-        child: logger.child,
+        debug: sinon.spy(),
+        child: logger.child.bind(logger),
       }
 
       notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
