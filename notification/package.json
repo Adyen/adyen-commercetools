@@ -67,7 +67,7 @@
     "chai": "5.2.0",
     "chai-as-promised": "8.0.1",
     "dotenv": "^17.2.2",
-    "eslint": "9.37.0",
+    "eslint": "9.38.0",
     "eslint-config-prettier": "10.1.5",
     "mocha": "11.7.0",
     "nock": "14.0.5",
