@@ -1,0 +1,256 @@
+{
+  "type": "Cart",
+  "id": "us-cart-123",
+  "version": 1,
+  "createdAt": "2024-01-15T10:00:00.000Z",
+  "lastModifiedAt": "2024-01-15T10:00:00.000Z",
+  "customerEmail": "us.customer@test.com",
+  "locale": "en-US",
+  "country": "US",
+  "lineItems": [
+    {
+      "id": "line-item-us-1",
+      "productId": "product-us-123",
+      "productKey": "product-key-us",
+      "name": {
+        "en": "US Test Product",
+        "de": "US Test Produkt"
+      },
+      "variant": {
+        "id": 1,
+        "key": "variant-key-us-123",
+        "sku": "us-sku-001"
+      },
+      "price": {
+        "value": {
+          "type": "centPrecision",
+          "currencyCode": "USD",
+          "centAmount": 5000,
+          "fractionDigits": 2
+        }
+      },
+      "quantity": 2,
+      "totalPrice": {
+        "type": "centPrecision",
+        "currencyCode": "USD",
+        "centAmount": 10000,
+        "fractionDigits": 2
+      },
+      "taxRate": {
+        "name": "US Tax",
+        "amount": 0.1,
+        "includedInPrice": false,
+        "country": "US",
+        "state": "CA"
+      },
+      "taxedPrice": {
+        "totalNet": {
+          "type": "centPrecision",
+          "currencyCode": "USD",
+          "centAmount": 10000,
+          "fractionDigits": 2
+        },
+        "totalGross": {
+          "type": "centPrecision",
+          "currencyCode": "USD",
+          "centAmount": 11000,
+          "fractionDigits": 2
+        },
+        "totalTax": {
+          "type": "centPrecision",
+          "currencyCode": "USD",
+          "centAmount": 1000,
+          "fractionDigits": 2
+        }
+      },
+      "discountedPricePerQuantity": [
+        {
+          "quantity": 2,
+          "discountedPrice": {
+            "value": {
+              "type": "centPrecision",
+              "currencyCode": "USD",
+              "centAmount": 4500,
+              "fractionDigits": 2
+            },
+            "includedDiscounts": [
+              {
+                "discount": {
+                  "typeId": "cart-discount",
+                  "id": "us-discount-1"
+                },
+                "discountedAmount": {
+                  "type": "centPrecision",
+                  "currencyCode": "USD",
+                  "centAmount": 500,
+                  "fractionDigits": 2
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "supplyChannel": {
+        "typeId": "channel",
+        "id": "us-channel-1",
+        "obj": {
+          "id": "us-channel-1",
+          "version": 1,
+          "address": {
+            "country": "US",
+            "postalCode": "90001"
+          }
+        }
+      }
+    }
+  ],
+  "customLineItems": [
+    {
+      "id": "custom-line-us-1",
+      "key": "gift-wrap-us",
+      "name": {
+        "en": "US Gift Wrapping"
+      },
+      "quantity": 1,
+      "money": {
+        "type": "centPrecision",
+        "currencyCode": "USD",
+        "centAmount": 500,
+        "fractionDigits": 2
+      },
+      "totalPrice": {
+        "type": "centPrecision",
+        "currencyCode": "USD",
+        "centAmount": 500,
+        "fractionDigits": 2
+      },
+      "taxRate": {
+        "name": "US Tax",
+        "amount": 0.1,
+        "includedInPrice": false,
+        "country": "US"
+      },
+      "taxedPrice": {
+        "totalNet": {
+          "type": "centPrecision",
+          "currencyCode": "USD",
+          "centAmount": 500,
+          "fractionDigits": 2
+        },
+        "totalGross": {
+          "type": "centPrecision",
+          "currencyCode": "USD",
+          "centAmount": 550,
+          "fractionDigits": 2
+        },
+        "totalTax": {
+          "type": "centPrecision",
+          "currencyCode": "USD",
+          "centAmount": 50,
+          "fractionDigits": 2
+        }
+      },
+      "discountedPricePerQuantity": []
+    }
+  ],
+  "totalPrice": {
+    "type": "centPrecision",
+    "currencyCode": "USD",
+    "centAmount": 12500,
+    "fractionDigits": 2
+  },
+  "taxedPrice": {
+    "totalNet": {
+      "type": "centPrecision",
+      "currencyCode": "USD",
+      "centAmount": 11500,
+      "fractionDigits": 2
+    },
+    "totalGross": {
+      "type": "centPrecision",
+      "currencyCode": "USD",
+      "centAmount": 12650,
+      "fractionDigits": 2
+    },
+    "totalTax": {
+      "type": "centPrecision",
+      "currencyCode": "USD",
+      "centAmount": 1150,
+      "fractionDigits": 2
+    }
+  },
+  "shippingInfo": {
+    "shippingMethodName": "US Standard Shipping",
+    "price": {
+      "type": "centPrecision",
+      "currencyCode": "USD",
+      "centAmount": 1000,
+      "fractionDigits": 2
+    },
+    "taxRate": {
+      "name": "US Tax",
+      "amount": 0.1,
+      "includedInPrice": false,
+      "country": "US"
+    },
+    "taxedPrice": {
+      "totalNet": {
+        "type": "centPrecision",
+        "currencyCode": "USD",
+        "centAmount": 1000,
+        "fractionDigits": 2
+      },
+      "totalGross": {
+        "type": "centPrecision",
+        "currencyCode": "USD",
+        "centAmount": 1100,
+        "fractionDigits": 2
+      },
+      "totalTax": {
+        "type": "centPrecision",
+        "currencyCode": "USD",
+        "centAmount": 100,
+        "fractionDigits": 2
+      }
+    }
+  },
+  "billingAddress": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "streetName": "Main Street",
+    "streetNumber": "123",
+    "postalCode": "10001",
+    "city": "New York",
+    "state": "NY",
+    "region": "NY",
+    "country": "US",
+    "phone": "+1234567890",
+    "email": "john.doe@test.com"
+  },
+  "shippingAddress": {
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "streetName": "Broadway",
+    "streetNumber": "456",
+    "postalCode": "90001",
+    "city": "Los Angeles",
+    "state": "CA",
+    "region": "CA",
+    "country": "US",
+    "phone": "+9876543210"
+  },
+  "paymentInfo": {
+    "payments": [
+      {
+        "typeId": "payment",
+        "id": "payment-us-123"
+      }
+    ]
+  },
+  "cartState": "Active",
+  "inventoryMode": "None",
+  "taxMode": "Platform",
+  "taxRoundingMode": "HalfEven",
+  "taxCalculationMode": "LineItemLevel",
+  "origin": "Customer"
+}

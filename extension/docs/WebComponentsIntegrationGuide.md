@@ -543,6 +543,70 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **W
 
 </details>
 
+### Enhanced Scheme Data (L2/L3) for Card Payments
+
+For card payments (payment method type `scheme`), the extension module automatically populates **Enhanced Scheme Data** (also known as Level 2/Level 3 data).
+
+#### Automatically Mapped Fields
+
+When `paymentMethod.type === 'scheme'`, the following fields are automatically added to `additionalData.enhancedSchemeData`:
+
+| Field                    | Source                                                                                       | Description                                              |
+|--------------------------|----------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| `customerReference`      | `cart.customerId`                                                                            | Customer identifier                                      |
+| `destinationCountryCode` | `cart.shippingAddress.country`                                                               | Shipping destination country                             |
+| `destinationPostalCode`  | `cart.shippingAddress.postalCode`                                                            | Shipping destination postal code                         |
+| `orderDate`              | Current date                                                                                 | Order date in DDMMYY format                              |
+| `totalTaxAmount`         | `cart.taxedPrice.totalTax.centAmount`                                                        | Total tax amount in minor units                          |
+| `freightAmount`          | `cart.shippingInfo.taxedPrice.totalGross.centAmount` or `cart.shippingInfo.price.centAmount` | Shipping cost (with tax if available, otherwise without) |
+| `itemDetailLine[i]`      | `cart.lineItems` + `cart.customLineItems`                                                    | Line by line item details (see below)                    |
+
+#### Item Detail Lines
+
+For each line item and custom line item in the cart, the following fields are included:
+
+**Standard fields (all card payments):**
+- `quantity` - Item quantity
+- `totalAmount` - Total amount for the line item in minor units
+- `unitPrice` - Unit price (calculated from taxed price if available, otherwise from base price)
+
+**Additional fields for US domestic payments** (when `billingAddress.country === 'US'`):
+- `productCode` - Product ID or custom line item key
+- `description` - Product name (localized, preferring English for US)
+- `unitOfMeasure` - Always set to `"EA"` (each)
+- `commodityCode` - Variant key, product key, or custom line item key
+- `discountAmount` - Total discount amount for the line item
+- `shipFromPostalCode` - Ship-from postal code (from supply channel address if available)
+
+#### Overriding Auto-Mapped Values
+
+If you need to provide custom values for specific items, you can include `additionalData.enhancedSchemeData.itemDetailLines` array in your request:
+
+```json
+{
+  "amount": { "currency": "USD", "value": 10000 },
+  "reference": "YOUR_REFERENCE",
+  "paymentMethod": { "type": "scheme" },
+  "additionalData": {
+    "enhancedSchemeData": {
+      "itemDetailLines": [
+        {
+          "productId": "product-123",
+          "quantity": 5,
+          "unitPrice": 2000,
+          "productCode": "CUSTOM-CODE",
+          "commodityCode": "CUSTOM-COMMODITY"
+        }
+      ]
+    }
+  }
+}
+```
+
+The extension will match items by `line item id` (for line items) or `key` (for custom line items) and merge your provided values, falling back to cart data for any missing fields.
+
+**Note:** If you provide the entire `enhancedSchemeData` object in your request, the extension will not override it.
+
 ## Error handling
 
 In case you encounter errors in your integration, refer to the following:
