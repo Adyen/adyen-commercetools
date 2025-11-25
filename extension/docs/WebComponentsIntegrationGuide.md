@@ -573,7 +573,7 @@ For each line item and custom line item in the cart, the following fields are in
 **Additional fields for US domestic payments** (when `billingAddress.country === 'US'`):
 - `productCode` - Product ID or custom line item key
 - `description` - Product name (localized, preferring English for US)
-- `unitOfMeasure` - Always set to `"EA"` (each)
+- `unitOfMeasure` - Fallback value: `"EA"` (each)
 - `commodityCode` - Variant key, product key, or custom line item key
 - `discountAmount` - Total discount amount for the line item
 - `shipFromPostalCode` - Ship-from postal code (from supply channel address if available)
