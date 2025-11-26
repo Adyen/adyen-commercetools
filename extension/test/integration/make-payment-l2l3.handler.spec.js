@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import ctpClientBuilder from '../../src/ctp.js'
 import config from '../../src/config/config.js'
 import constants from '../../src/config/constants.js'
-import { initPaymentWithCart, initCurrency } from './integration-test-set-up.js'
+import { initPaymentWithCart } from './integration-test-set-up.js'
 import utils from '../../src/utils.js'
 
 describe('::make-payment L2/L3 data validation::', () => {

@@ -177,9 +177,13 @@ function _mapItemDetailLines(enhancedSchemeData, ctpCart, requestObj, isUsDomest
 
         if (isUsDomesticPayment) {
             lineItemDetails.productCode = providedItem.productCode ?? item.productId
-            lineItemDetails.description = (_isValidDescription(providedItem.description) ? providedItem.description : null) ?? _getLocalizedString(item.name)
+            lineItemDetails.description = 
+                (_isValidDescription(providedItem.description) ? providedItem.description : null) 
+                ?? _getLocalizedString(item.name)
             lineItemDetails.unitOfMeasure = providedItem.unitOfMeasure ?? "EA";
-            lineItemDetails.commodityCode = (_isValidCommodityCode(providedItem.commodityCode) ? providedItem.commodityCode : null) ?? item.variant?.key ?? item.productKey ?? 'N/A'
+            lineItemDetails.commodityCode = 
+                (_isValidCommodityCode(providedItem.commodityCode) ? providedItem.commodityCode : null) 
+                ?? item.variant?.key ?? item.productKey ?? 'N/A'
             lineItemDetails.discountAmount = providedItem.discountAmount ?? _getDiscountAmount(item)
         }
 
@@ -208,9 +212,12 @@ function _mapItemDetailLines(enhancedSchemeData, ctpCart, requestObj, isUsDomest
 
         if (isUsDomesticPayment) {
             lineItemDetails.productCode = providedItem.productCode ?? item.key
-            lineItemDetails.description = (_isValidDescription(providedItem.description) ? providedItem.description : null) ?? _getLocalizedString(item.name, isUsDomesticPayment)
+            lineItemDetails.description = (_isValidDescription(providedItem.description) ? 
+                providedItem.description : null) ?? _getLocalizedString(item.name, isUsDomesticPayment)
             lineItemDetails.unitOfMeasure = providedItem.unitOfMeasure ?? "EA";
-            lineItemDetails.commodityCode = (_isValidCommodityCode(providedItem.commodityCode) ? providedItem.commodityCode : null) ?? item.key ?? 'N/A'
+            lineItemDetails.commodityCode = 
+                (_isValidCommodityCode(providedItem.commodityCode) ? providedItem.commodityCode : null) 
+                ?? item.key ?? 'N/A'
             lineItemDetails.discountAmount = providedItem.discountAmount ?? _getDiscountAmount(item)
         }
 
@@ -319,7 +326,7 @@ function _isValidCommodityCode(commodityCode) {
         return false
     }
 
-    if (!/^[\x00-\x7F]*$/.test(commodityCode)) {
+    if ([...commodityCode].some(char => char.charCodeAt(0) > 127)) {
         return false
     }
 
