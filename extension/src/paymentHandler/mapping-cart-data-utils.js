@@ -107,42 +107,39 @@ function _mapShippingAddress(requestObj, ctpCart) {
 function _mapAdditionalData(requestObj, ctpCart, isUsDomesticPayment) {
     requestObj.additionalData = requestObj.additionalData ?? {}
     const additionalData = requestObj.additionalData
-    const providedAdditionalData = structuredClone(requestObj.additionalData)
+    const providedAdditionalData = structuredClone(requestObj.additionalData) ?? {};
     delete requestObj.additionalData.enhancedSchemeData
 
     additionalData['enhancedSchemeData.customerReference'] =
-        additionalData['enhancedSchemeData.customerReference'] ?? ctpCart.customerId
+      providedAdditionalData.enhancedSchemeData?.customerReference ?? ctpCart.customerId;
     additionalData['enhancedSchemeData.destinationCountryCode'] =
-        additionalData['enhancedSchemeData.destinationCountryCode'] ?? ctpCart.shippingAddress?.country
+      providedAdditionalData.enhancedSchemeData?.destinationCountryCode ?? ctpCart.shippingAddress?.country;
     additionalData['enhancedSchemeData.destinationPostalCode'] =
-        additionalData['enhancedSchemeData.destinationPostalCode'] ?? ctpCart.shippingAddress?.postalCode
-    additionalData['enhancedSchemeData.orderDate'] = _formatDate()
+      providedAdditionalData.enhancedSchemeData?.destinationPostalCode ?? ctpCart.shippingAddress?.postalCode;
+    additionalData['enhancedSchemeData.orderDate'] = _formatDate();
     additionalData['enhancedSchemeData.totalTaxAmount'] =
-        additionalData['enhancedSchemeData.totalTaxAmount'] ?? ctpCart.taxedPrice?.totalTax.centAmount
+      providedAdditionalData.enhancedSchemeData?.totalTaxAmount ?? ctpCart.taxedPrice?.totalTax?.centAmount;
 
-    if (isUsDomesticPayment && ctpCart.lineItems?.[0]?.supplyChannel?.obj?.address?.postalCode) {
+    if (isUsDomesticPayment) {
         additionalData['enhancedSchemeData.shipFromPostalCode'] =
-            ctpCart.lineItems[0].supplyChannel.obj.address.postalCode
+          providedAdditionalData.enhancedSchemeData?.shipFromPostalCode ??
+          ctpCart.lineItems?.[0]?.supplyChannel?.obj?.address?.postalCode
     }
 
-    if (!additionalData['enhancedSchemeData.freightAmount'] && ctpCart.shippingInfo) {
-        additionalData['enhancedSchemeData.freightAmount'] = ctpCart.shippingInfo.taxRate
-            ? ctpCart.shippingInfo.taxedPrice.totalGross.centAmount
-            : ctpCart.shippingInfo.price.centAmount
-    }
+    additionalData['enhancedSchemeData.freightAmount'] =
+      providedAdditionalData.enhancedSchemeData?.freightAmount ??
+      (
+        ctpCart.shippingInfo?.taxRate ?
+          ctpCart.shippingInfo?.taxedPrice.totalGross.centAmount :
+          ctpCart.shippingInfo?.price.centAmount
+      );
 
-    const hasItemDetails = Object.keys(additionalData).some(key =>
-        key.startsWith('enhancedSchemeData.itemDetailLine')
-    )
-
-    if (!hasItemDetails) {
-        requestObj = _mapItemDetailLines(
-            requestObj,
-            ctpCart,
-            isUsDomesticPayment,
-            providedAdditionalData
-        )
-    }
+      requestObj = _mapItemDetailLines(
+          requestObj,
+          ctpCart,
+          isUsDomesticPayment,
+          providedAdditionalData
+      )
 
     return requestObj
 }
