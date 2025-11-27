@@ -124,12 +124,11 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
       )
 
       expect(result.additionalData).to.exist
-      expect(result.additionalData.enhancedSchemeData).to.exist
-      expect(result.additionalData.enhancedSchemeData.shipFromPostalCode).to.equal(
+      expect(result.additionalData['enhancedSchemeData.shipFromPostalCode']).to.equal(
         ctpCartUS.lineItems[0].supplyChannel.obj.address.postalCode,
       )
     })
-    
+
     it('should map all enhanced scheme data fields', async () => {
       const paymentObject = { id: 'payment-us-123' }
       mockCtpEnpoints._mockCtpCartsEndpoint(ctpCartUS, ctpProjectKey)
@@ -140,12 +139,11 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      const enhancedSchemeData = result.additionalData.enhancedSchemeData
-      expect(enhancedSchemeData.customerReference).to.equal(ctpCartUS.customerId)
-      expect(enhancedSchemeData.destinationCountryCode).to.equal(ctpCartUS.shippingAddress.country)
-      expect(enhancedSchemeData.destinationPostalCode).to.equal(ctpCartUS.shippingAddress.postalCode)
-      expect(enhancedSchemeData.orderDate).to.match(/^\d{6}$/)
-      expect(enhancedSchemeData.totalTaxAmount).to.equal(ctpCartUS.taxedPrice.totalTax.centAmount)
+      expect(result.additionalData['enhancedSchemeData.customerReference']).to.equal(ctpCartUS.customerId)
+      expect(result.additionalData['enhancedSchemeData.destinationCountryCode']).to.equal(ctpCartUS.shippingAddress.country)
+      expect(result.additionalData['enhancedSchemeData.destinationPostalCode']).to.equal(ctpCartUS.shippingAddress.postalCode)
+      expect(result.additionalData['enhancedSchemeData.orderDate']).to.match(/^\d{6}$/)
+      expect(result.additionalData['enhancedSchemeData.totalTaxAmount']).to.equal(ctpCartUS.taxedPrice.totalTax.centAmount)
     })
 
     it('should map freight amount with or without tax rate', async () => {
@@ -159,7 +157,7 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData.enhancedSchemeData.freightAmount).to.equal(
+      expect(result.additionalData['enhancedSchemeData.freightAmount']).to.equal(
         ctpCartUS.shippingInfo.taxedPrice.totalGross.centAmount,
       )
 
@@ -174,7 +172,7 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData.enhancedSchemeData.freightAmount).to.equal(
+      expect(result.additionalData['enhancedSchemeData.freightAmount']).to.equal(
         ctpCartUS.shippingInfo.price.centAmount,
       )
     })
@@ -185,7 +183,7 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
 
       const requestObj = {
         paymentMethod: { type: 'scheme' },
-        additionalData: { enhancedSchemeData: { freightAmount: 9999 } },
+        additionalData: { 'enhancedSchemeData.freightAmount': 9999 },
       }
 
       const result = await mappingCartDataUtils.getDataFromCart(
@@ -194,7 +192,7 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData.enhancedSchemeData.freightAmount).to.equal(9999)
+      expect(result.additionalData['enhancedSchemeData.freightAmount']).to.equal(9999)
     })
   })
 
@@ -209,12 +207,11 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      let firstItem = result.additionalData.enhancedSchemeData.itemDetailLine['itemDetailLine[0]']
       const expectedUnitPrice = parseInt(
         (ctpCartUS.lineItems[0].taxedPrice.totalGross.centAmount / ctpCartUS.lineItems[0].quantity).toFixed(0),
         10,
       )
-      expect(firstItem.unitPrice).to.equal(expectedUnitPrice)
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice']).to.equal(expectedUnitPrice)
 
       const cartWithoutTax = cloneDeep(ctpCartUS)
       delete cartWithoutTax.lineItems[0].taxRate
@@ -226,8 +223,7 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      firstItem = result.additionalData.enhancedSchemeData.itemDetailLine['itemDetailLine[0]']
-      expect(firstItem.unitPrice).to.equal(ctpCartUS.lineItems[0].price.value.centAmount)
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice']).to.equal(ctpCartUS.lineItems[0].price.value.centAmount)
     })
 
     it('should not include extra fields for non-US domestic payment', async () => {
@@ -240,12 +236,11 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      const firstItem = result.additionalData.enhancedSchemeData.itemDetailLine['itemDetailLine[0]']
-      expect(firstItem.productCode).to.be.undefined
-      expect(firstItem.description).to.be.undefined
-      expect(firstItem.unitOfMeasure).to.be.undefined
-      expect(firstItem.commodityCode).to.be.undefined
-      expect(firstItem.discountAmount).to.be.undefined
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.productCode']).to.be.undefined
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.description']).to.be.undefined
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitOfMeasure']).to.be.undefined
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.commodityCode']).to.be.undefined
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.discountAmount']).to.be.undefined
     })
 
     it('should calculate discount amount for US domestic payment', async () => {
@@ -258,8 +253,7 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      const firstItem = result.additionalData.enhancedSchemeData.itemDetailLine['itemDetailLine[0]']
-      expect(firstItem.discountAmount).to.equal(1000)
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.discountAmount']).to.equal(1000)
     })
 
     it('should map custom line items for US domestic payment', async () => {
@@ -272,10 +266,9 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      const customItem = result.additionalData.enhancedSchemeData.itemDetailLine['itemDetailLine[1]']
-      expect(customItem.quantity).to.equal(ctpCartUS.customLineItems[0].quantity)
-      expect(customItem.productCode).to.equal(ctpCartUS.customLineItems[0].key)
-      expect(customItem.description).to.equal(ctpCartUS.customLineItems[0].name.en)
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine2.quantity']).to.equal(ctpCartUS.customLineItems[0].quantity)
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine2.productCode']).to.equal(ctpCartUS.customLineItems[0].key)
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine2.description']).to.equal(ctpCartUS.customLineItems[0].name.en)
     })
 
     it('should handle provided item details', async () => {
@@ -288,7 +281,7 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
           enhancedSchemeData: {
             itemDetailLines: [
               {
-                productId: ctpCartUS.lineItems[0].productId,
+                id: ctpCartUS.lineItems[0].id,
                 quantity: 10,
                 unitPrice: 8888,
                 productCode: 'CUSTOM',
@@ -304,10 +297,9 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      const firstItem = result.additionalData.enhancedSchemeData.itemDetailLine['itemDetailLine[0]']
-      expect(firstItem.quantity).to.equal(10)
-      expect(firstItem.unitPrice).to.equal(8888)
-      expect(firstItem.productCode).to.equal('CUSTOM')
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.quantity']).to.equal(10)
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice']).to.equal(8888)
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.productCode']).to.equal('CUSTOM')
     })
   })
 

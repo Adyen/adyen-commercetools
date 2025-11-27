@@ -106,37 +106,43 @@ function _mapShippingAddress(requestObj, ctpCart) {
 
 function _mapAdditionalData(requestObj, ctpCart, isUsDomesticPayment) {
     requestObj.additionalData = requestObj.additionalData ?? {}
-    let enhancedSchemeData = requestObj.additionalData.enhancedSchemeData ?? {}
+    const additionalData = requestObj.additionalData
+    const providedAdditionalData = structuredClone(requestObj.additionalData)
+    delete requestObj.additionalData.enhancedSchemeData
 
-    enhancedSchemeData.customerReference = enhancedSchemeData.customerReference ?? ctpCart.customerId
-    enhancedSchemeData.destinationCountryCode =
-        enhancedSchemeData.destinationCountryCode ?? ctpCart.shippingAddress?.country
-    enhancedSchemeData.destinationPostalCode = enhancedSchemeData.destinationPostalCode ??
-        ctpCart.shippingAddress?.postalCode
-    enhancedSchemeData.orderDate = _formatDate()
-    enhancedSchemeData.totalTaxAmount = enhancedSchemeData.totalTaxAmount ?? ctpCart.taxedPrice?.totalTax.centAmount
+    additionalData['enhancedSchemeData.customerReference'] =
+        additionalData['enhancedSchemeData.customerReference'] ?? ctpCart.customerId
+    additionalData['enhancedSchemeData.destinationCountryCode'] =
+        additionalData['enhancedSchemeData.destinationCountryCode'] ?? ctpCart.shippingAddress?.country
+    additionalData['enhancedSchemeData.destinationPostalCode'] =
+        additionalData['enhancedSchemeData.destinationPostalCode'] ?? ctpCart.shippingAddress?.postalCode
+    additionalData['enhancedSchemeData.orderDate'] = _formatDate()
+    additionalData['enhancedSchemeData.totalTaxAmount'] =
+        additionalData['enhancedSchemeData.totalTaxAmount'] ?? ctpCart.taxedPrice?.totalTax.centAmount
 
     if (isUsDomesticPayment && ctpCart.lineItems?.[0]?.supplyChannel?.obj?.address?.postalCode) {
-        enhancedSchemeData.shipFromPostalCode = ctpCart.lineItems[0].supplyChannel.obj.address.postalCode
+        additionalData['enhancedSchemeData.shipFromPostalCode'] =
+            ctpCart.lineItems[0].supplyChannel.obj.address.postalCode
     }
 
-
-    if (!enhancedSchemeData.freightAmount && ctpCart.shippingInfo) {
-        enhancedSchemeData.freightAmount = ctpCart.shippingInfo.taxRate
+    if (!additionalData['enhancedSchemeData.freightAmount'] && ctpCart.shippingInfo) {
+        additionalData['enhancedSchemeData.freightAmount'] = ctpCart.shippingInfo.taxRate
             ? ctpCart.shippingInfo.taxedPrice.totalGross.centAmount
             : ctpCart.shippingInfo.price.centAmount
     }
 
-    if (!enhancedSchemeData.itemDetailLine) {
-        enhancedSchemeData = _mapItemDetailLines(
-            enhancedSchemeData,
-            ctpCart,
+    const hasItemDetails = Object.keys(additionalData).some(key =>
+        key.startsWith('enhancedSchemeData.itemDetailLine')
+    )
+
+    if (!hasItemDetails) {
+        requestObj = _mapItemDetailLines(
             requestObj,
-            isUsDomesticPayment
+            ctpCart,
+            isUsDomesticPayment,
+            providedAdditionalData
         )
     }
-
-    requestObj.additionalData.enhancedSchemeData = enhancedSchemeData
 
     return requestObj
 }
@@ -150,23 +156,24 @@ function _formatDate() {
     return day + month + year
 }
 
-function _mapItemDetailLines(enhancedSchemeData, ctpCart, requestObj, isUsDomesticPayment) {
-    enhancedSchemeData.itemDetailLine = {}
+function _mapItemDetailLines(requestObj, ctpCart, isUsDomesticPayment, providedAdditionalData) {
     let i = 0
+    let additionalData = requestObj.additionalData
 
-    const providedItemsArray = requestObj?.additionalData?.enhancedSchemeData?.itemDetailLines || []
+    const providedItemsArray =
+        providedAdditionalData?.enhancedSchemeData?.itemDetailLines || []
 
     ctpCart.lineItems?.forEach((item) => {
-        const itemKey = `itemDetailLine[${i}]`
         const providedItem = providedItemsArray.find(p => p.id === item.id) || {}
+        const lineNumber = i + 1
 
-        const lineItemDetails = {}
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`] =
+            providedItem.quantity ?? item.quantity
 
-        lineItemDetails.quantity = providedItem.quantity ?? item.quantity
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.totalAmount`] =
+            providedItem.totalAmount ?? item.totalPrice?.centAmount
 
-        lineItemDetails.totalAmount = providedItem.totalAmount ?? item.totalPrice?.centAmount
-
-        lineItemDetails.unitPrice =
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.unitPrice`] =
             providedItem.unitPrice ??
             (item.taxRate
                 ? parseInt(
@@ -176,32 +183,34 @@ function _mapItemDetailLines(enhancedSchemeData, ctpCart, requestObj, isUsDomest
                 : item.price.value.centAmount)
 
         if (isUsDomesticPayment) {
-            lineItemDetails.productCode = providedItem.productCode ?? item.productId
-            lineItemDetails.description = 
-                (_isValidDescription(providedItem.description) ? providedItem.description : null) 
+            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.productCode`] =
+                providedItem.productCode ?? item.productId
+            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.description`] =
+                (_isValidDescription(providedItem.description) ? providedItem.description : null)
                 ?? _getLocalizedString(item.name)
-            lineItemDetails.unitOfMeasure = providedItem.unitOfMeasure ?? "EA";
-            lineItemDetails.commodityCode = 
-                (_isValidCommodityCode(providedItem.commodityCode) ? providedItem.commodityCode : null) 
+            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.unitOfMeasure`] =
+                providedItem.unitOfMeasure ?? "EA"
+            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.commodityCode`] =
+                (_isValidCommodityCode(providedItem.commodityCode) ? providedItem.commodityCode : null)
                 ?? item.variant?.key ?? item.productKey ?? 'N/A'
-            lineItemDetails.discountAmount = providedItem.discountAmount ?? _getDiscountAmount(item)
+            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.discountAmount`] =
+                providedItem.discountAmount ?? _getDiscountAmount(item)
         }
 
-        enhancedSchemeData.itemDetailLine[itemKey] = lineItemDetails
         i++
     })
 
     ctpCart.customLineItems?.forEach((item) => {
-        const itemKey = `itemDetailLine[${i}]`
         const providedItem = providedItemsArray.find(p => p.key === item.key) || {}
+        const lineNumber = i + 1
 
-        const lineItemDetails = {}
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`] =
+            providedItem.quantity ?? item.quantity
 
-        lineItemDetails.quantity = providedItem.quantity ?? item.quantity
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.totalAmount`] =
+            providedItem.totalAmount ?? item.totalPrice?.centAmount
 
-        lineItemDetails.totalAmount = providedItem.totalAmount ?? item.totalPrice?.centAmount
-
-        lineItemDetails.unitPrice =
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.unitPrice`] =
             providedItem.unitPrice ??
             (item.taxRate
                 ? parseInt(
@@ -211,21 +220,24 @@ function _mapItemDetailLines(enhancedSchemeData, ctpCart, requestObj, isUsDomest
                 : item.money.centAmount)
 
         if (isUsDomesticPayment) {
-            lineItemDetails.productCode = providedItem.productCode ?? item.key
-            lineItemDetails.description = (_isValidDescription(providedItem.description) ? 
-                providedItem.description : null) ?? _getLocalizedString(item.name, isUsDomesticPayment)
-            lineItemDetails.unitOfMeasure = providedItem.unitOfMeasure ?? "EA";
-            lineItemDetails.commodityCode = 
-                (_isValidCommodityCode(providedItem.commodityCode) ? providedItem.commodityCode : null) 
+            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.productCode`] =
+                providedItem.productCode ?? item.key
+            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.description`] =
+                (_isValidDescription(providedItem.description) ? providedItem.description : null)
+                ?? _getLocalizedString(item.name, isUsDomesticPayment)
+            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.unitOfMeasure`] =
+                providedItem.unitOfMeasure ?? "EA"
+            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.commodityCode`] =
+                (_isValidCommodityCode(providedItem.commodityCode) ? providedItem.commodityCode : null)
                 ?? item.key ?? 'N/A'
-            lineItemDetails.discountAmount = providedItem.discountAmount ?? _getDiscountAmount(item)
+            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.discountAmount`] =
+                providedItem.discountAmount ?? _getDiscountAmount(item)
         }
 
-        enhancedSchemeData.itemDetailLine[itemKey] = lineItemDetails
         i++
     })
 
-    return enhancedSchemeData
+    return requestObj
 }
 
 function _mapCustomerData(requestObj, customer) {
@@ -285,7 +297,7 @@ function _getLocalizedString(localizedObj, isUsDomesticPayment) {
     if (isUsDomesticPayment && localizedObj.en) {
         return localizedObj.en
     }
-    
+
     const values = Object.values(localizedObj)
 
     return values.length > 0 ? values[0] : ''

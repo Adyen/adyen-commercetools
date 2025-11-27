@@ -94,7 +94,7 @@ describe('::make-payment L2/L3 data validation::', () => {
         ctpCart.lineItems.length + ctpCart.customLineItems.length
 
       for (let i = 0; i < cartLineItemsLength; i++) {
-        const itemKey = `itemDetailLine[${i}]`
+        const itemKey = `itemDetailLine${i + 1}`
         expect(enhancedSchemeData.itemDetailLine).to.have.own.property(itemKey)
 
         const itemDetail = enhancedSchemeData.itemDetailLine[itemKey]
