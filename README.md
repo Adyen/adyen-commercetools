@@ -44,6 +44,7 @@ If you need assistance configuring your payment methods please contact Adyen Sup
 - [Klarna Pay Later](https://docs.adyen.com/payment-methods/klarna/)
 - [Afterpay](https://docs.adyen.com/payment-methods/afterpaytouch/)
 - [Billie via Klarna](https://docs.adyen.com/payment-methods/klarna/billie/#-billie-via-klarna-)
+- [Riverty](https://docs.adyen.com/payment-methods/riverty)
 
 ### Cash and ATM payment methods
 
