@@ -199,8 +199,8 @@ function _mapItemDetailLines(
     totalAmount = providedItem.totalAmount ?? totalAmount ?? 0
     discountAmount = providedItem.discountAmount ?? discountAmount ?? 0
 
-    // eslint-disable-next-line no-constant-binary-expression
     let unitPrice =
+      // eslint-disable-next-line no-constant-binary-expression
       providedItem.unitPrice ?? (totalAmount + discountAmount) / quantity ?? 0
 
     additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`] =
@@ -262,8 +262,8 @@ function _mapItemDetailLines(
     totalAmount = providedItem.totalAmount ?? totalAmount ?? 0
     discountAmount = providedItem.discountAmount ?? discountAmount ?? 0
 
-    // eslint-disable-next-line no-constant-binary-expression
     const unitPrice =
+      // eslint-disable-next-line no-constant-binary-expression
       providedItem.unitPrice ?? (totalAmount + discountAmount) / quantity ?? 0
 
     additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`] =
