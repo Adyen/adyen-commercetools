@@ -77,15 +77,19 @@ describe('::make-payment L2/L3 data validation::', () => {
 
       const additionalData = makePaymentRequestBody.additionalData
 
-      expect(additionalData['enhancedSchemeData.destinationCountryCode']).to.equal(
-        ctpCart.shippingAddress.country,
-      )
-      expect(additionalData['enhancedSchemeData.destinationPostalCode']).to.equal(
-        ctpCart.shippingAddress.postalCode,
-      )
+      expect(
+        additionalData['enhancedSchemeData.destinationCountryCode'],
+      ).to.equal(ctpCart.shippingAddress.country)
+      expect(
+        additionalData['enhancedSchemeData.destinationPostalCode'],
+      ).to.equal(ctpCart.shippingAddress.postalCode)
       expect(additionalData['enhancedSchemeData.orderDate']).to.match(/^\d{6}$/)
-      expect(additionalData['enhancedSchemeData.totalTaxAmount']).to.be.a('number')
-      expect(additionalData['enhancedSchemeData.freightAmount']).to.be.a('number')
+      expect(additionalData['enhancedSchemeData.totalTaxAmount']).to.be.a(
+        'number',
+      )
+      expect(additionalData['enhancedSchemeData.freightAmount']).to.be.a(
+        'number',
+      )
 
       const cartLineItemsLength =
         ctpCart.lineItems.length + ctpCart.customLineItems.length
@@ -93,10 +97,26 @@ describe('::make-payment L2/L3 data validation::', () => {
       for (let i = 0; i < cartLineItemsLength; i++) {
         const lineNumber = i + 1
 
-        expect(additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`]).to.be.a('number')
-        expect(additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`]).to.be.greaterThan(0)
-        expect(additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.totalAmount`]).to.be.a('number')
-        expect(additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.unitPrice`]).to.be.a('number')
+        expect(
+          additionalData[
+            `enhancedSchemeData.itemDetailLine${lineNumber}.quantity`
+          ],
+        ).to.be.a('number')
+        expect(
+          additionalData[
+            `enhancedSchemeData.itemDetailLine${lineNumber}.quantity`
+          ],
+        ).to.be.greaterThan(0)
+        expect(
+          additionalData[
+            `enhancedSchemeData.itemDetailLine${lineNumber}.totalAmount`
+          ],
+        ).to.be.a('number')
+        expect(
+          additionalData[
+            `enhancedSchemeData.itemDetailLine${lineNumber}.unitPrice`
+          ],
+        ).to.be.a('number')
       }
 
       const { makePaymentResponse } = updatedPayment.custom.fields
@@ -104,6 +124,6 @@ describe('::make-payment L2/L3 data validation::', () => {
       expect(JSON.parse(makePaymentResponse).resultCode).to.be.equal(
         'Authorised',
       )
-    }
+    },
   )
 })

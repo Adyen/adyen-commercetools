@@ -144,17 +144,23 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
         ctpCart.billingAddress.country,
       )
       expect(
-        makePaymentRequestBody.additionalData['enhancedSchemeData.destinationCountryCode'],
+        makePaymentRequestBody.additionalData[
+          'enhancedSchemeData.destinationCountryCode'
+        ],
       ).to.equal(ctpCart.shippingAddress.country)
       expect(
-        makePaymentRequestBody.additionalData['enhancedSchemeData.destinationPostalCode'],
+        makePaymentRequestBody.additionalData[
+          'enhancedSchemeData.destinationPostalCode'
+        ],
       ).to.equal(ctpCart.shippingAddress.postalCode)
       const cartLineItemsLength =
         ctpCart.lineItems.length + ctpCart.customLineItems.length
       for (let i = 0; i < cartLineItemsLength; i++) {
         const lineNumber = i + 1
         expect(
-          makePaymentRequestBody.additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`],
+          makePaymentRequestBody.additionalData[
+            `enhancedSchemeData.itemDetailLine${lineNumber}.quantity`
+          ],
         ).to.exist
       }
     },

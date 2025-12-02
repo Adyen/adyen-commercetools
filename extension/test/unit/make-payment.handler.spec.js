@@ -579,14 +579,20 @@ describe('make-payment::execute', () => {
         makePaymentRequestClone.dateOfBirth,
       )
       expect(
-        makePaymentRequestJson.additionalData['enhancedSchemeData.destinationCountryCode'],
+        makePaymentRequestJson.additionalData[
+          'enhancedSchemeData.destinationCountryCode'
+        ],
       ).to.equal(
-        makePaymentRequestClone.additionalData.enhancedSchemeData.destinationCountryCode,
+        makePaymentRequestClone.additionalData.enhancedSchemeData
+          .destinationCountryCode,
       )
       expect(
-        makePaymentRequestJson.additionalData['enhancedSchemeData.destinationPostalCode'],
+        makePaymentRequestJson.additionalData[
+          'enhancedSchemeData.destinationPostalCode'
+        ],
       ).to.equal(
-        makePaymentRequestClone.additionalData.enhancedSchemeData.destinationPostalCode,
+        makePaymentRequestClone.additionalData.enhancedSchemeData
+          .destinationPostalCode,
       )
       expect(makePaymentRequestJson.shopperName.firstName).to.equal(
         makePaymentRequestClone.shopperName.firstName,
@@ -683,10 +689,14 @@ describe('make-payment::execute', () => {
         ctpCartWithCustomer.customerEmail,
       )
       expect(
-        makePaymentRequestJson.additionalData['enhancedSchemeData.destinationCountryCode'],
+        makePaymentRequestJson.additionalData[
+          'enhancedSchemeData.destinationCountryCode'
+        ],
       ).to.equal(ctpCartWithCustomer.shippingAddress.country)
       expect(
-        makePaymentRequestJson.additionalData['enhancedSchemeData.destinationPostalCode'],
+        makePaymentRequestJson.additionalData[
+          'enhancedSchemeData.destinationPostalCode'
+        ],
       ).to.equal(ctpCartWithCustomer.shippingAddress.postalCode)
 
       expect(makePaymentRequestJson.dateOfBirth).to.equal(

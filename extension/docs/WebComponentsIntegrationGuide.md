@@ -552,7 +552,7 @@ For card payments (payment method type `scheme`), the extension module automatic
 When `paymentMethod.type === 'scheme'`, the following fields are automatically added to `additionalData.enhancedSchemeData`:
 
 | Field                    | Source                                                                                       | Description                                              |
-|--------------------------|----------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| ------------------------ | -------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `customerReference`      | `cart.customerId`                                                                            | Customer identifier                                      |
 | `destinationCountryCode` | `cart.shippingAddress.country`                                                               | Shipping destination country                             |
 | `destinationPostalCode`  | `cart.shippingAddress.postalCode`                                                            | Shipping destination postal code                         |
@@ -566,11 +566,13 @@ When `paymentMethod.type === 'scheme'`, the following fields are automatically a
 For each line item and custom line item in the cart, the following fields are included:
 
 **Standard fields (all card payments):**
+
 - `quantity` - Item quantity
 - `totalAmount` - Total amount for the line item in minor units
 - `unitPrice` - Unit price (calculated from taxed price if available, otherwise from base price)
 
 **Additional fields for US domestic payments** (when `billingAddress.country === 'US'`):
+
 - `productCode` - Product ID or custom line item key
 - `description` - Product name (localized, preferring English for US)
 - `unitOfMeasure` - Always set to `"EA"` (each)
