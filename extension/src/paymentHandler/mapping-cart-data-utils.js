@@ -111,14 +111,14 @@ function _mapAdditionalData(requestObj, ctpCart, isUsDomesticPayment) {
     delete requestObj.additionalData.enhancedSchemeData
 
     additionalData['enhancedSchemeData.customerReference'] =
-      providedAdditionalData.enhancedSchemeData?.customerReference ?? ctpCart.customerId;
+      providedAdditionalData.enhancedSchemeData?.customerReference ?? ctpCart.customerId ?? ctpCart.customerEmail;
     additionalData['enhancedSchemeData.destinationCountryCode'] =
       providedAdditionalData.enhancedSchemeData?.destinationCountryCode ?? ctpCart.shippingAddress?.country;
     additionalData['enhancedSchemeData.destinationPostalCode'] =
       providedAdditionalData.enhancedSchemeData?.destinationPostalCode ?? ctpCart.shippingAddress?.postalCode;
     additionalData['enhancedSchemeData.orderDate'] = _formatDate();
     additionalData['enhancedSchemeData.totalTaxAmount'] =
-      providedAdditionalData.enhancedSchemeData?.totalTaxAmount ?? ctpCart.taxedPrice?.totalTax?.centAmount;
+      providedAdditionalData.enhancedSchemeData?.totalTaxAmount ?? ctpCart.taxedPrice?.totalTax?.centAmount ?? 0;
 
     if (isUsDomesticPayment) {
         additionalData['enhancedSchemeData.shipFromPostalCode'] =
@@ -130,9 +130,9 @@ function _mapAdditionalData(requestObj, ctpCart, isUsDomesticPayment) {
       providedAdditionalData.enhancedSchemeData?.freightAmount ??
       (
         ctpCart.shippingInfo?.taxRate ?
-          ctpCart.shippingInfo?.taxedPrice.totalGross.centAmount :
+          ctpCart.shippingInfo?.taxedPrice?.totalNet.centAmount :
           ctpCart.shippingInfo?.price.centAmount
-      );
+      ) ?? 0;
 
       requestObj = _mapItemDetailLines(
           requestObj,
@@ -156,6 +156,8 @@ function _formatDate() {
 function _mapItemDetailLines(requestObj, ctpCart, isUsDomesticPayment, providedAdditionalData) {
     let i = 0
     let additionalData = requestObj.additionalData
+    let discountOnTotalCartPrice = ctpCart?.discountOnTotalPrice?.discountedNetAmount?.centAmount ?? 0;
+    let totalSumOfLineItems = _totalSumOfLineItems(ctpCart);
 
     const providedItemsArray =
         providedAdditionalData?.enhancedSchemeData?.itemDetailLines || []
@@ -164,20 +166,28 @@ function _mapItemDetailLines(requestObj, ctpCart, isUsDomesticPayment, providedA
         const providedItem = providedItemsArray.find(p => p.id === item.id) || {}
         const lineNumber = i + 1
 
-        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`] =
-            providedItem.quantity ?? item.quantity
+        let quantity = providedItem.quantity ?? item.quantity ?? 1;
+        let [totalAmount, discountAmount] = _getDiscountAmount(
+            item,
+            item.taxRate ? item.taxedPrice.totalNet.centAmount : item.price.value.centAmount,
+            discountOnTotalCartPrice,
+            totalSumOfLineItems
+        );
 
-        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.totalAmount`] =
-            providedItem.totalAmount ?? item.totalPrice?.centAmount
+        totalAmount = providedItem.totalAmount ?? totalAmount ?? 0
+        discountAmount = providedItem.discountAmount ?? discountAmount ?? 0
 
-        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.unitPrice`] =
-            providedItem.unitPrice ??
-            (item.taxRate
-                ? parseInt(
-                    (item.taxedPrice.totalGross.centAmount / item.quantity).toFixed(0),
-                    10,
-                )
-                : item.price.value.centAmount)
+
+        // eslint-disable-next-line no-constant-binary-expression
+        let unitPrice = providedItem.unitPrice ?? ((totalAmount + discountAmount) / quantity) ?? 0
+
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`] = quantity
+
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.unitPrice`] = unitPrice
+
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.discountAmount`] = discountAmount
+
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.totalAmount`] = totalAmount
 
         if (isUsDomesticPayment) {
             additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.productCode`] =
@@ -190,8 +200,6 @@ function _mapItemDetailLines(requestObj, ctpCart, isUsDomesticPayment, providedA
             additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.commodityCode`] =
                 (_isValidCommodityCode(providedItem.commodityCode) ? providedItem.commodityCode : null)
                 ?? item.variant?.key ?? item.productKey ?? 'N/A'
-            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.discountAmount`] =
-                providedItem.discountAmount ?? _getDiscountAmount(item)
         }
 
         i++
@@ -201,21 +209,27 @@ function _mapItemDetailLines(requestObj, ctpCart, isUsDomesticPayment, providedA
         const providedItem = providedItemsArray.find(p => p.key === item.key) || {}
         const lineNumber = i + 1
 
-        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`] =
-            providedItem.quantity ?? item.quantity
+        const quantity = providedItem.quantity ?? item.quantity ?? 1
+        let [totalAmount, discountAmount] = _getDiscountAmount(
+            item,
+            item.taxRate ? item.taxedPrice.totalNet.centAmount : item.money.centAmount,
+            discountOnTotalCartPrice,
+            totalSumOfLineItems
+        );
 
-        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.totalAmount`] =
-            providedItem.totalAmount ?? item.totalPrice?.centAmount
+        totalAmount = providedItem.totalAmount ?? totalAmount ?? 0
+        discountAmount = providedItem.discountAmount ?? discountAmount ?? 0
 
-        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.unitPrice`] =
-            providedItem.unitPrice ??
-            (item.taxRate
-                ? parseInt(
-                    (item.taxedPrice.totalGross.centAmount / item.quantity).toFixed(0),
-                    10,
-                )
-                : item.money.centAmount)
+        // eslint-disable-next-line no-constant-binary-expression
+        const unitPrice = providedItem.unitPrice ?? ((totalAmount + discountAmount) / quantity) ?? 0
 
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`] = quantity
+
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.unitPrice`] = unitPrice
+
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.discountAmount`] = discountAmount
+
+        additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.totalAmount`] = totalAmount
         if (isUsDomesticPayment) {
             additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.productCode`] =
                 providedItem.productCode ?? item.key
@@ -227,14 +241,26 @@ function _mapItemDetailLines(requestObj, ctpCart, isUsDomesticPayment, providedA
             additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.commodityCode`] =
                 (_isValidCommodityCode(providedItem.commodityCode) ? providedItem.commodityCode : null)
                 ?? item.key ?? 'N/A'
-            additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.discountAmount`] =
-                providedItem.discountAmount ?? _getDiscountAmount(item)
         }
 
         i++
     })
 
     return requestObj
+}
+
+function _totalSumOfLineItems(ctpCart) {
+  let totalSum = 0;
+
+  ctpCart.lineItems?.forEach((item) => {
+    totalSum += item.taxRate ? item.taxedPrice.totalNet.centAmount : item.price.value.centAmount;
+  });
+
+  ctpCart.customLineItems?.forEach((item) => {
+    totalSum += item.taxRate ? item.taxedPrice.totalNet.centAmount : item.money.centAmount;
+  });
+
+  return totalSum;
 }
 
 function _mapCustomerData(requestObj, customer) {
@@ -346,12 +372,16 @@ function _isValidCommodityCode(commodityCode) {
     return !/^0+$/.test(commodityCode);
 }
 
-function _getDiscountAmount(lineItem) {
+function _getDiscountAmount(lineItem, lineItemTotalPrice, discountOnTotalPrice, totalCartAmount) {
+    const proportionalDiscount = (lineItemTotalPrice / totalCartAmount) * discountOnTotalPrice;
+    let totalDiscount = Math.round(proportionalDiscount);
+    lineItemTotalPrice = lineItemTotalPrice - totalDiscount;
+    lineItemTotalPrice = lineItemTotalPrice > 0 ? lineItemTotalPrice : 0
+
     if (!lineItem.discountedPricePerQuantity || lineItem.discountedPricePerQuantity.length === 0) {
-        return 0;
+        return [lineItemTotalPrice, totalDiscount];
     }
 
-    let totalDiscount = 0
     lineItem.discountedPricePerQuantity.forEach((dpq) => {
         if (dpq.discountedPrice?.includedDiscounts) {
             dpq.discountedPrice.includedDiscounts.forEach((discount) => {
@@ -360,7 +390,9 @@ function _getDiscountAmount(lineItem) {
         }
     })
 
-    return totalDiscount > 0 ? totalDiscount : 0
+    totalDiscount = totalDiscount > 0 ? totalDiscount : 0
+
+    return [lineItemTotalPrice, totalDiscount];
 }
 
 export default {getDataFromCart}
