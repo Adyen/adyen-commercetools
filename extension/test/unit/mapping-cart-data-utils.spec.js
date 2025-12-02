@@ -78,13 +78,17 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
       expect(result).to.deep.equal(requestObj)
     })
   })
-  
+
   describe('cart basic fields mapping', () => {
     it('should map basic fields from cart', async () => {
       const paymentObject = { id: 'payment-us-123' }
       mockCtpEnpoints._mockCtpCartsEndpoint(ctpCartUS, ctpProjectKey)
 
-      const result = await mappingCartDataUtils.getDataFromCart({}, paymentObject, ctpProjectKey)
+      const result = await mappingCartDataUtils.getDataFromCart(
+        {},
+        paymentObject,
+        ctpProjectKey,
+      )
 
       expect(result.countryCode).to.equal(ctpCartUS.country)
       expect(result.shopperLocale).to.equal(ctpCartUS.locale)
@@ -124,9 +128,9 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
       )
 
       expect(result.additionalData).to.exist
-      expect(result.additionalData['enhancedSchemeData.shipFromPostalCode']).to.equal(
-        ctpCartUS.lineItems[0].supplyChannel.obj.address.postalCode,
-      )
+      expect(
+        result.additionalData['enhancedSchemeData.shipFromPostalCode'],
+      ).to.equal(ctpCartUS.lineItems[0].supplyChannel.obj.address.postalCode)
     })
 
     it('should map all enhanced scheme data fields', async () => {
@@ -139,11 +143,21 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData['enhancedSchemeData.customerReference']).to.equal(ctpCartUS.customerId ?? ctpCartUS.customerEmail)
-      expect(result.additionalData['enhancedSchemeData.destinationCountryCode']).to.equal(ctpCartUS.shippingAddress.country)
-      expect(result.additionalData['enhancedSchemeData.destinationPostalCode']).to.equal(ctpCartUS.shippingAddress.postalCode)
-      expect(result.additionalData['enhancedSchemeData.orderDate']).to.match(/^\d{6}$/)
-      expect(result.additionalData['enhancedSchemeData.totalTaxAmount']).to.equal(ctpCartUS.taxedPrice.totalTax.centAmount)
+      expect(
+        result.additionalData['enhancedSchemeData.customerReference'],
+      ).to.equal(ctpCartUS.customerId ?? ctpCartUS.customerEmail)
+      expect(
+        result.additionalData['enhancedSchemeData.destinationCountryCode'],
+      ).to.equal(ctpCartUS.shippingAddress.country)
+      expect(
+        result.additionalData['enhancedSchemeData.destinationPostalCode'],
+      ).to.equal(ctpCartUS.shippingAddress.postalCode)
+      expect(result.additionalData['enhancedSchemeData.orderDate']).to.match(
+        /^\d{6}$/,
+      )
+      expect(
+        result.additionalData['enhancedSchemeData.totalTaxAmount'],
+      ).to.equal(ctpCartUS.taxedPrice.totalTax.centAmount)
     })
 
     it('should map freight amount with or without tax rate', async () => {
@@ -157,9 +171,9 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData['enhancedSchemeData.freightAmount']).to.equal(
-        ctpCartUS.shippingInfo.taxedPrice.totalNet.centAmount,
-      )
+      expect(
+        result.additionalData['enhancedSchemeData.freightAmount'],
+      ).to.equal(ctpCartUS.shippingInfo.taxedPrice.totalNet.centAmount)
 
       // Without tax rate
       const cartWithoutTax = cloneDeep(ctpCartUS)
@@ -172,9 +186,9 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData['enhancedSchemeData.freightAmount']).to.equal(
-        ctpCartUS.shippingInfo.price.centAmount,
-      )
+      expect(
+        result.additionalData['enhancedSchemeData.freightAmount'],
+      ).to.equal(ctpCartUS.shippingInfo.price.centAmount)
     })
 
     it('should not override existing freight amount', async () => {
@@ -196,7 +210,9 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData['enhancedSchemeData.freightAmount']).to.equal(9999)
+      expect(
+        result.additionalData['enhancedSchemeData.freightAmount'],
+      ).to.equal(9999)
     })
   })
 
@@ -226,8 +242,13 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         }
       })
 
-      const expectedUnitPrice = parseInt(((totalAmount + totalDiscount) / lineItem.quantity).toFixed(0), 10)
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice']).to.equal(expectedUnitPrice)
+      const expectedUnitPrice = parseInt(
+        ((totalAmount + totalDiscount) / lineItem.quantity).toFixed(0),
+        10,
+      )
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice'],
+      ).to.equal(expectedUnitPrice)
 
       const cartWithoutTax = cloneDeep(ctpCartUS)
       delete cartWithoutTax.lineItems[0].taxRate
@@ -248,13 +269,22 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
       lineItemNoTax.discountedPricePerQuantity?.forEach((dpq) => {
         if (dpq.discountedPrice?.includedDiscounts) {
           dpq.discountedPrice.includedDiscounts.forEach((discount) => {
-            totalDiscountNoTax += discount.discountedAmount.centAmount * dpq.quantity
+            totalDiscountNoTax +=
+              discount.discountedAmount.centAmount * dpq.quantity
           })
         }
       })
 
-      const expectedUnitPriceNoTax = parseInt(((totalAmountNoTax + totalDiscountNoTax) / lineItemNoTax.quantity).toFixed(0), 10)
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice']).to.equal(expectedUnitPriceNoTax)
+      const expectedUnitPriceNoTax = parseInt(
+        (
+          (totalAmountNoTax + totalDiscountNoTax) /
+          lineItemNoTax.quantity
+        ).toFixed(0),
+        10,
+      )
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice'],
+      ).to.equal(expectedUnitPriceNoTax)
     })
 
     it('should not include extra fields for non-US domestic payment', async () => {
@@ -268,16 +298,38 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
       )
 
       // Only US-specific extra fields should be undefined for non-US payments
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.productCode']).to.be.undefined
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.description']).to.be.undefined
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitOfMeasure']).to.be.undefined
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.commodityCode']).to.be.undefined
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine1.productCode'],
+      ).to.be.undefined
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine1.description'],
+      ).to.be.undefined
+      expect(
+        result.additionalData[
+          'enhancedSchemeData.itemDetailLine1.unitOfMeasure'
+        ],
+      ).to.be.undefined
+      expect(
+        result.additionalData[
+          'enhancedSchemeData.itemDetailLine1.commodityCode'
+        ],
+      ).to.be.undefined
 
       // Basic item detail fields (quantity, unitPrice, discountAmount, totalAmount) are now set for all payments
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.quantity']).to.exist
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice']).to.exist
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.discountAmount']).to.exist
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.totalAmount']).to.exist
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine1.quantity'],
+      ).to.exist
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice'],
+      ).to.exist
+      expect(
+        result.additionalData[
+          'enhancedSchemeData.itemDetailLine1.discountAmount'
+        ],
+      ).to.exist
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine1.totalAmount'],
+      ).to.exist
     })
 
     it('should calculate discount amount for US domestic payment', async () => {
@@ -290,7 +342,11 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.discountAmount']).to.equal(1000)
+      expect(
+        result.additionalData[
+          'enhancedSchemeData.itemDetailLine1.discountAmount'
+        ],
+      ).to.equal(1000)
     })
 
     it('should map custom line items for US domestic payment', async () => {
@@ -303,9 +359,15 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine2.quantity']).to.equal(ctpCartUS.customLineItems[0].quantity)
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine2.productCode']).to.equal(ctpCartUS.customLineItems[0].key)
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine2.description']).to.equal(ctpCartUS.customLineItems[0].name.en)
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine2.quantity'],
+      ).to.equal(ctpCartUS.customLineItems[0].quantity)
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine2.productCode'],
+      ).to.equal(ctpCartUS.customLineItems[0].key)
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine2.description'],
+      ).to.equal(ctpCartUS.customLineItems[0].name.en)
     })
 
     it('should handle provided item details', async () => {
@@ -334,9 +396,15 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.quantity']).to.equal(10)
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice']).to.equal(8888)
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.productCode']).to.equal('CUSTOM')
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine1.quantity'],
+      ).to.equal(10)
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice'],
+      ).to.equal(8888)
+      expect(
+        result.additionalData['enhancedSchemeData.itemDetailLine1.productCode'],
+      ).to.equal('CUSTOM')
     })
   })
 
@@ -378,5 +446,4 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
       expect(result.shopperName.lastName).to.equal('Name')
     })
   })
-  
 })
