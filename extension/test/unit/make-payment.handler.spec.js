@@ -101,8 +101,10 @@ describe('make-payment::execute', () => {
     countryCode: 'DE',
     dateOfBirth: '2000-08-08',
     additionalData: {
-      'enhancedSchemeData.destinationCountryCode': 'FR',
-      'enhancedSchemeData.destinationPostalCode': '75001',
+      enhancedSchemeData: {
+        destinationCountryCode: 'FR',
+        destinationPostalCode: '75001',
+      },
     },
     shopperName: {
       firstName: 'Test',
@@ -579,12 +581,12 @@ describe('make-payment::execute', () => {
       expect(
         makePaymentRequestJson.additionalData['enhancedSchemeData.destinationCountryCode'],
       ).to.equal(
-        makePaymentRequestClone.additionalData['enhancedSchemeData.destinationCountryCode'],
+        makePaymentRequestClone.additionalData.enhancedSchemeData.destinationCountryCode,
       )
       expect(
         makePaymentRequestJson.additionalData['enhancedSchemeData.destinationPostalCode'],
       ).to.equal(
-        makePaymentRequestClone.additionalData['enhancedSchemeData.destinationPostalCode'],
+        makePaymentRequestClone.additionalData.enhancedSchemeData.destinationPostalCode,
       )
       expect(makePaymentRequestJson.shopperName.firstName).to.equal(
         makePaymentRequestClone.shopperName.firstName,

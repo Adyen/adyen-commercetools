@@ -139,7 +139,7 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData['enhancedSchemeData.customerReference']).to.equal(ctpCartUS.customerId)
+      expect(result.additionalData['enhancedSchemeData.customerReference']).to.equal(ctpCartUS.customerId ?? ctpCartUS.customerEmail)
       expect(result.additionalData['enhancedSchemeData.destinationCountryCode']).to.equal(ctpCartUS.shippingAddress.country)
       expect(result.additionalData['enhancedSchemeData.destinationPostalCode']).to.equal(ctpCartUS.shippingAddress.postalCode)
       expect(result.additionalData['enhancedSchemeData.orderDate']).to.match(/^\d{6}$/)
@@ -158,7 +158,7 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
       )
 
       expect(result.additionalData['enhancedSchemeData.freightAmount']).to.equal(
-        ctpCartUS.shippingInfo.taxedPrice.totalGross.centAmount,
+        ctpCartUS.shippingInfo.taxedPrice.totalNet.centAmount,
       )
 
       // Without tax rate
@@ -183,7 +183,11 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
 
       const requestObj = {
         paymentMethod: { type: 'scheme' },
-        additionalData: { 'enhancedSchemeData.freightAmount': 9999 },
+        additionalData: {
+          enhancedSchemeData: {
+            freightAmount: 9999,
+          },
+        },
       }
 
       const result = await mappingCartDataUtils.getDataFromCart(
@@ -207,10 +211,22 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      const expectedUnitPrice = parseInt(
-        (ctpCartUS.lineItems[0].taxedPrice.totalGross.centAmount / ctpCartUS.lineItems[0].quantity).toFixed(0),
-        10,
-      )
+      // New logic: unitPrice = (totalAmount + discountAmount) / quantity
+      // where totalAmount is calculated from totalNet with discounts
+      const lineItem = ctpCartUS.lineItems[0]
+      let totalAmount = lineItem.taxedPrice.totalNet.centAmount // 10000
+      let totalDiscount = 0
+
+      // Calculate discounts from discountedPricePerQuantity
+      lineItem.discountedPricePerQuantity.forEach((dpq) => {
+        if (dpq.discountedPrice?.includedDiscounts) {
+          dpq.discountedPrice.includedDiscounts.forEach((discount) => {
+            totalDiscount += discount.discountedAmount.centAmount * dpq.quantity
+          })
+        }
+      })
+
+      const expectedUnitPrice = parseInt(((totalAmount + totalDiscount) / lineItem.quantity).toFixed(0), 10)
       expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice']).to.equal(expectedUnitPrice)
 
       const cartWithoutTax = cloneDeep(ctpCartUS)
@@ -223,7 +239,22 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice']).to.equal(ctpCartUS.lineItems[0].price.value.centAmount)
+      // Without taxRate: uses price.value.centAmount but still goes through discount calculation
+      const lineItemNoTax = cartWithoutTax.lineItems[0]
+      let totalAmountNoTax = lineItemNoTax.price.value.centAmount
+      let totalDiscountNoTax = 0
+
+      // Calculate discounts from discountedPricePerQuantity
+      lineItemNoTax.discountedPricePerQuantity?.forEach((dpq) => {
+        if (dpq.discountedPrice?.includedDiscounts) {
+          dpq.discountedPrice.includedDiscounts.forEach((discount) => {
+            totalDiscountNoTax += discount.discountedAmount.centAmount * dpq.quantity
+          })
+        }
+      })
+
+      const expectedUnitPriceNoTax = parseInt(((totalAmountNoTax + totalDiscountNoTax) / lineItemNoTax.quantity).toFixed(0), 10)
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice']).to.equal(expectedUnitPriceNoTax)
     })
 
     it('should not include extra fields for non-US domestic payment', async () => {
@@ -236,11 +267,17 @@ describe('mapping-cart-data-utils::getDataFromCart', () => {
         ctpProjectKey,
       )
 
+      // Only US-specific extra fields should be undefined for non-US payments
       expect(result.additionalData['enhancedSchemeData.itemDetailLine1.productCode']).to.be.undefined
       expect(result.additionalData['enhancedSchemeData.itemDetailLine1.description']).to.be.undefined
       expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitOfMeasure']).to.be.undefined
       expect(result.additionalData['enhancedSchemeData.itemDetailLine1.commodityCode']).to.be.undefined
-      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.discountAmount']).to.be.undefined
+
+      // Basic item detail fields (quantity, unitPrice, discountAmount, totalAmount) are now set for all payments
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.quantity']).to.exist
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.unitPrice']).to.exist
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.discountAmount']).to.exist
+      expect(result.additionalData['enhancedSchemeData.itemDetailLine1.totalAmount']).to.exist
     })
 
     it('should calculate discount amount for US domestic payment', async () => {

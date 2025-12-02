@@ -74,35 +74,29 @@ describe('::make-payment L2/L3 data validation::', () => {
       const makePaymentRequestBody = JSON.parse(makePaymentRequest.body)
 
       expect(makePaymentRequestBody.additionalData).to.exist
-      expect(makePaymentRequestBody.additionalData.enhancedSchemeData).to.exist
 
-      const enhancedSchemeData =
-        makePaymentRequestBody.additionalData.enhancedSchemeData
+      const additionalData = makePaymentRequestBody.additionalData
 
-      expect(enhancedSchemeData.destinationCountryCode).to.equal(
+      expect(additionalData['enhancedSchemeData.destinationCountryCode']).to.equal(
         ctpCart.shippingAddress.country,
       )
-      expect(enhancedSchemeData.destinationPostalCode).to.equal(
+      expect(additionalData['enhancedSchemeData.destinationPostalCode']).to.equal(
         ctpCart.shippingAddress.postalCode,
       )
-      expect(enhancedSchemeData.orderDate).to.match(/^\d{6}$/)
-      expect(enhancedSchemeData.totalTaxAmount).to.be.a('number')
-      expect(enhancedSchemeData.freightAmount).to.be.a('number')
+      expect(additionalData['enhancedSchemeData.orderDate']).to.match(/^\d{6}$/)
+      expect(additionalData['enhancedSchemeData.totalTaxAmount']).to.be.a('number')
+      expect(additionalData['enhancedSchemeData.freightAmount']).to.be.a('number')
 
-      expect(enhancedSchemeData.itemDetailLine).to.exist
       const cartLineItemsLength =
         ctpCart.lineItems.length + ctpCart.customLineItems.length
 
       for (let i = 0; i < cartLineItemsLength; i++) {
-        const itemKey = `itemDetailLine${i + 1}`
-        expect(enhancedSchemeData.itemDetailLine).to.have.own.property(itemKey)
+        const lineNumber = i + 1
 
-        const itemDetail = enhancedSchemeData.itemDetailLine[itemKey]
-
-        expect(itemDetail.quantity).to.be.a('number')
-        expect(itemDetail.quantity).to.be.greaterThan(0)
-        expect(itemDetail.totalAmount).to.be.a('number')
-        expect(itemDetail.unitPrice).to.be.a('number')
+        expect(additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`]).to.be.a('number')
+        expect(additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.quantity`]).to.be.greaterThan(0)
+        expect(additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.totalAmount`]).to.be.a('number')
+        expect(additionalData[`enhancedSchemeData.itemDetailLine${lineNumber}.unitPrice`]).to.be.a('number')
       }
 
       const { makePaymentResponse } = updatedPayment.custom.fields
