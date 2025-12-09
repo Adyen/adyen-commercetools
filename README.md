@@ -1,6 +1,9 @@
 # commercetools-adyen-integration
 [![Build Status](https://github.com/commercetools/commercetools-adyen-integration/workflows/CI/badge.svg?branch=master)](https://github.com/commercetools/commercetools-adyen-integration/actions)
 
+## Read before deploying!
+Please be notified that this integration is going to be **deprecated**. Commercetools is currently maintaining their inhouse built Adyen integration which can be found [here](https://github.com/commercetools/connect-payment-integration-adyen/) or on the Commercetools marketplace. You can find documentation on supported features and payment methods [here](https://docs.commercetools.com/checkout/connectors-and-applications#supported-psps-payment-integration-types-and-payment-methods).
+
 `commercetools-adyen-integration` provides an [Adyen Web Components](https://docs.adyen.com/checkout/components-web) based integration between the commercetools and Adyen PSP.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
