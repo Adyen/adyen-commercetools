@@ -1,0 +1,39 @@
+﻿diff --git a/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.cjs.dev.js b/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.cjs.dev.js
+index 1c6d2b6..81a7368 100644
+--- a/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.cjs.dev.js
++++ b/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.cjs.dev.js
+@@ -5,7 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
+ var flatten = require('lodash.flatten');
+ var isEqual = require('lodash.isequal');
+ var isNil = require('lodash.isnil');
+-var jsondiffpatch_cjs = require('jsondiffpatch/dist/jsondiffpatch.cjs');
++var jsondiffpatch_cjs = require('jsondiffpatch');
+ var forEach = require('lodash.foreach');
+ var uniqWith = require('lodash.uniqwith');
+ var intersection = require('lodash.intersection');
+diff --git a/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.cjs.prod.js b/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.cjs.prod.js
+index 1c6d2b6..81a7368 100644
+--- a/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.cjs.prod.js
++++ b/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.cjs.prod.js
+@@ -5,7 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
+ var flatten = require('lodash.flatten');
+ var isEqual = require('lodash.isequal');
+ var isNil = require('lodash.isnil');
+-var jsondiffpatch_cjs = require('jsondiffpatch/dist/jsondiffpatch.cjs');
++var jsondiffpatch_cjs = require('jsondiffpatch');
+ var forEach = require('lodash.foreach');
+ var uniqWith = require('lodash.uniqwith');
+ var intersection = require('lodash.intersection');
+diff --git a/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.esm.js b/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.esm.js
+index 5dfbfab..08abeb1 100644
+--- a/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.esm.js
++++ b/node_modules/@commercetools/sync-actions/dist/commercetools-sync-actions.esm.js
+@@ -1,7 +1,7 @@
+ import flatten from 'lodash.flatten';
+ import isEqual from 'lodash.isequal';
+ import isNil from 'lodash.isnil';
+-import { DiffPatcher } from 'jsondiffpatch/dist/jsondiffpatch.cjs';
++import { DiffPatcher } from 'jsondiffpatch';
+ import forEach from 'lodash.foreach';
+ import uniqWith from 'lodash.uniqwith';
+ import intersection from 'lodash.intersection';
