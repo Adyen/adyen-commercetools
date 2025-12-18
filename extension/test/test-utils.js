@@ -174,9 +174,8 @@ async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
 async function setUpWebhooksAndNotificationModule() {
   const notificationTunnelDomain = process.env.NOTIFICATION_TUNNEL_DOMAIN
   // Starting up server is needed only locally, on CI we deploy to GCP
-  const { setupServer: setupNotificationModuleServer } = await import(
-    '../../notification/src/server.js'
-  )
+  const { setupServer: setupNotificationModuleServer } =
+    await import('../../notification/src/server.js')
   notificationServer = await setupNotificationModuleServer()
   await new Promise((resolve) => {
     notificationServer.listen(process.env.NOTIFICATION_PORT, async () => {
