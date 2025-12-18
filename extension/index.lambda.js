@@ -9,8 +9,8 @@ let handler = async (event) => {
   try {
     const body = event.body ? JSON.parse(event.body) : event
     paymentObj = body?.resource?.obj
-    if (!paymentObj)
-      return {
+    if (!paymentObj) {
+      const responseBody = {
         responseType: 'FailedValidation',
         errors: [
           {
@@ -20,6 +20,16 @@ let handler = async (event) => {
         ],
       }
 
+      return {
+        statusCode: 200,
+        isBase64Encoded: false,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(responseBody),
+      }
+    }
+
     const authToken = getAuthorizationRequestHeader(event)
 
     logger.debug('Received payment object', JSON.stringify(paymentObj))
@@ -28,7 +38,7 @@ let handler = async (event) => {
       paymentObj,
       authToken,
     )
-    const result = {
+    const responseBody = {
       responseType: paymentResult.actions
         ? 'UpdateRequest'
         : 'FailedValidation',
@@ -36,13 +46,28 @@ let handler = async (event) => {
       actions: paymentResult.actions || [],
     }
 
-    logger.debug('Data to be returned', JSON.stringify(result))
+    logger.debug('Data to be returned', JSON.stringify(responseBody))
 
-    return result
+    return {
+      statusCode: 200,
+      isBase64Encoded: false,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(responseBody),
+    }
   } catch (e) {
     const errorObj = utils.handleUnexpectedPaymentError(paymentObj, e)
     errorObj.responseType = 'FailedValidation'
-    return errorObj
+
+    return {
+      statusCode: 200,
+      isBase64Encoded: false,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(errorObj),
+    }
   }
 }
 
