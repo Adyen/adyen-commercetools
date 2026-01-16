@@ -211,8 +211,12 @@ function generateIdempotencyKey({ paymentObject, operation, requestPayload }) {
     operation,
     payload: requestPayload,
   })
-    
-    return crypto.createHash('sha256').update(dataToHash).digest('hex').substring(0, 32)
+
+  return crypto
+    .createHash('sha256')
+    .update(dataToHash)
+    .digest('hex')
+    .substring(0, 32)
 }
 
 function getPaymentKeyUpdateAction(paymentKey, response) {

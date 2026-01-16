@@ -3,7 +3,11 @@ import { serializeError } from 'serialize-error'
 import config from '../config/config.js'
 import utils from '../utils.js'
 
-async function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj, idempotencyKey) {
+async function getPaymentMethods(
+  merchantAccount,
+  getPaymentMethodsRequestObj,
+  idempotencyKey,
+) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/paymentMethods`,
@@ -53,7 +57,11 @@ function submitAdditionalPaymentDetails(
   )
 }
 
-async function donationCampaigns(merchantAccount, donationCampaignsRequest, idempotencyKey) {
+async function donationCampaigns(
+  merchantAccount,
+  donationCampaignsRequest,
+  idempotencyKey,
+) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
 
   return callAdyen(
