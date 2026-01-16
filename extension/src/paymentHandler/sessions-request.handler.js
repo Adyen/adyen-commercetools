@@ -3,6 +3,7 @@ import {
   createSetCustomFieldAction,
   getMerchantReferenceCustomFieldUpdateAction,
   getPaymentKeyUpdateAction,
+  generateIdempotencyKey,
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import { createSessionRequest } from '../service/web-component-service.js'
@@ -27,11 +28,17 @@ async function execute(paymentObject) {
   )
 
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
+  const idempotencyKey = generateIdempotencyKey({
+    paymentObject,
+    operation: 'createSession',
+    requestPayload: createSessionRequestObj,
+  })
 
   const { request, response } = await createSessionRequest(
     adyenMerchantAccount,
     commercetoolsProjectKey,
     createSessionRequestObj,
+    idempotencyKey,
   )
 
   const actions = [

@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import crypto from 'crypto'
 import c from '../config/constants.js'
 import config from '../config/config.js'
 
@@ -199,6 +200,25 @@ function getIdempotencyKey(transaction) {
   return idempotencyKey
 }
 
+function generateIdempotencyKey({ paymentObject, operation, requestPayload }) {
+  const merchantProvidedKey = paymentObject?.custom?.fields?.idempotencyKey
+  if (merchantProvidedKey) {
+    return merchantProvidedKey
+  }
+
+  const dataToHash = JSON.stringify({
+    paymentId: paymentObject?.id,
+    operation,
+    payload: requestPayload,
+  })
+
+  return crypto
+    .createHash('sha256')
+    .update(dataToHash)
+    .digest('hex')
+    .substring(0, 32)
+}
+
 function getPaymentKeyUpdateAction(paymentKey, response) {
   let paymentKeyUpdateAction
   const pspReference = response.pspReference?.toString()
@@ -252,6 +272,7 @@ export {
   isValidJSON,
   isValidMetadata,
   getIdempotencyKey,
+  generateIdempotencyKey,
   getPaymentKeyUpdateAction,
   getMerchantReferenceCustomFieldUpdateAction,
 }

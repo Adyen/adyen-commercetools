@@ -3,15 +3,27 @@ import {
   donation,
   donationCampaigns,
 } from '../service/web-component-service.js'
-import { createSetCustomFieldAction } from './payment-utils.js'
+import {
+  createSetCustomFieldAction,
+  generateIdempotencyKey,
+} from './payment-utils.js'
 
 async function execute(paymentObject) {
   const actions = []
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
+  const donationRequest = JSON.parse(
+    paymentObject.custom.fields.donationRequest,
+  )
+  const idempotencyKey = generateIdempotencyKey({
+    paymentObject,
+    operation: 'donation',
+    requestPayload: donationRequest,
+  })
 
   const { response } = await donation(
     adyenMerchantAccount,
-    JSON.parse(paymentObject.custom.fields.donationRequest),
+    donationRequest,
+    idempotencyKey,
   )
 
   actions.push(
@@ -26,10 +38,17 @@ export async function handleDonationCampaign({
   adyenMerchantAccount,
   donationCampaignRequest,
   donationToken,
+  paymentObject,
 }) {
+  const idempotencyKey = generateIdempotencyKey({
+    paymentObject,
+    operation: 'donationCampaigns',
+    requestPayload: donationCampaignRequest,
+  })
   const { response: donationsResponse } = await donationCampaigns(
     adyenMerchantAccount,
     donationCampaignRequest,
+    idempotencyKey,
   )
   let campaign = null
   if (
