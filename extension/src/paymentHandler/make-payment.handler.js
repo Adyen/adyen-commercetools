@@ -6,6 +6,7 @@ import {
   createAddTransactionActionByResponse,
   getPaymentKeyUpdateAction,
   getMerchantReferenceCustomFieldUpdateAction,
+  generateIdempotencyKey,
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import { makePayment } from '../service/web-component-service.js'
@@ -31,10 +32,16 @@ async function execute(paymentObject) {
   )
 
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
+  const idempotencyKey = generateIdempotencyKey({
+    paymentObject,
+    operation: 'makePayment',
+    requestPayload: makePaymentRequestObj,
+  })
   const { request, response } = await makePayment(
     adyenMerchantAccount,
     commercetoolsProjectKey,
     makePaymentRequestObj,
+    idempotencyKey,
   )
   const actions = [
     createAddInterfaceInteractionAction({
@@ -91,6 +98,7 @@ async function execute(paymentObject) {
       adyenMerchantAccount,
       donationCampaignRequest,
       donationToken,
+      paymentObject,
     })
   }
 

@@ -1,6 +1,7 @@
 import {
   createAddInterfaceInteractionAction,
   createSetCustomFieldAction,
+  generateIdempotencyKey,
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import { getPaymentMethods } from '../service/web-component-service.js'
@@ -10,9 +11,15 @@ async function execute(paymentObject) {
     paymentObject.custom.fields.getPaymentMethodsRequest,
   )
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
+  const idempotencyKey = generateIdempotencyKey({
+    paymentObject,
+    operation: 'paymentMethods',
+    requestPayload: getPaymentMethodsRequestObj,
+  })
   const { request, response } = await getPaymentMethods(
     adyenMerchantAccount,
     getPaymentMethodsRequestObj,
+    idempotencyKey,
   )
   return {
     actions: [

@@ -4,6 +4,7 @@ import {
   getCancelAuthorizationTransactionInit,
   createChangeTransactionStateAction,
   createChangeTransactionInteractionId,
+  getIdempotencyKey,
 } from './payment-utils.js'
 import { cancelPayment } from '../service/web-component-service.js'
 import constants from '../config/constants.js'
@@ -13,6 +14,7 @@ const { CTP_INTERACTION_TYPE_CANCEL_PAYMENT } = constants
 async function execute(paymentObject) {
   const authorizationTransaction =
     getAuthorizationTransactionSuccess(paymentObject)
+  const cancelTransaction = getCancelAuthorizationTransactionInit(paymentObject)
   // "originalReference: The original pspReference of the payment that you want to cancel.
   // This reference is returned in the response to your payment request, and in the AUTHORISATION notification."
   const cancelRequestObj = {
@@ -22,10 +24,12 @@ async function execute(paymentObject) {
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
+  const idempotencyKey = getIdempotencyKey(cancelTransaction)
 
   const { request, response } = await cancelPayment(
     adyenMerchantAccount,
     commercetoolsProjectKey,
+    idempotencyKey,
     cancelRequestObj,
   )
 
