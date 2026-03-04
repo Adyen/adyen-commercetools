@@ -302,6 +302,21 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
     if (action) updateActions.push(action)
   }
 
+  if (notificationRequestItem.eventCode === 'AUTHORISATION') {
+    const paymentMethodVariantFromNotification =
+      notificationRequestItem.additionalData?.paymentMethodVariant
+    const paymentMethodVariantFromPayment =
+      payment.custom?.fields?.paymentMethodVariant
+    if (
+      paymentMethodVariantFromNotification &&
+      paymentMethodVariantFromPayment !== paymentMethodVariantFromNotification
+    ) {
+      updateActions.push(
+        getSetPaymentMethodVariantAction(paymentMethodVariantFromNotification),
+      )
+    }
+  }
+
   return updateActions
 }
 
@@ -522,6 +537,14 @@ function getSetMethodInfoMethodAction(paymentMethod) {
   return {
     action: 'setMethodInfoMethod',
     method: paymentMethod,
+  }
+}
+
+function getSetPaymentMethodVariantAction(paymentMethodVariant) {
+  return {
+    action: 'setCustomField',
+    name: 'paymentMethodVariant',
+    value: paymentMethodVariant,
   }
 }
 
