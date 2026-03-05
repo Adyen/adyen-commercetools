@@ -247,6 +247,17 @@
       "inputHint": "SingleLine",
       "required": false,
       "searchable": true
+    },
+    {
+      "name": "paymentMethodVariant",
+      "label": {
+        "en": "paymentMethodVariant"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine",
+      "required": false
     }
   ]
 }
