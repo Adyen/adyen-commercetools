@@ -14,7 +14,6 @@ async function execute(paymentObject) {
   const idempotencyKey = generateIdempotencyKey({
     paymentObject,
     operation: 'paymentMethods',
-    requestPayload: getPaymentMethodsRequestObj,
   })
   const { request, response } = await getPaymentMethods(
     adyenMerchantAccount,

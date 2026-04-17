@@ -200,7 +200,7 @@ function getIdempotencyKey(transaction) {
   return idempotencyKey
 }
 
-function generateIdempotencyKey({ paymentObject, operation, requestPayload }) {
+function generateIdempotencyKey({ paymentObject, operation }) {
   const merchantProvidedKey = paymentObject?.custom?.fields?.idempotencyKey
   if (merchantProvidedKey) {
     return merchantProvidedKey
@@ -209,7 +209,6 @@ function generateIdempotencyKey({ paymentObject, operation, requestPayload }) {
   const dataToHash = JSON.stringify({
     paymentId: paymentObject?.id,
     operation,
-    payload: requestPayload,
   })
 
   return crypto

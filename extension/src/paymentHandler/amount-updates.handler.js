@@ -34,7 +34,6 @@ async function execute(paymentObject) {
   const idempotencyKey = generateIdempotencyKey({
     paymentObject,
     operation: 'amountUpdate',
-    requestPayload: amountUpdatesRequestObj,
   })
   const { request, response } = await updateAmount(
     adyenMerchantAccount,

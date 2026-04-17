@@ -17,7 +17,6 @@ async function execute(paymentObject) {
   const idempotencyKey = generateIdempotencyKey({
     paymentObject,
     operation: 'donation',
-    requestPayload: donationRequest,
   })
 
   const { response } = await donation(
@@ -43,7 +42,6 @@ export async function handleDonationCampaign({
   const idempotencyKey = generateIdempotencyKey({
     paymentObject,
     operation: 'donationCampaigns',
-    requestPayload: donationCampaignRequest,
   })
   const { response: donationsResponse } = await donationCampaigns(
     adyenMerchantAccount,

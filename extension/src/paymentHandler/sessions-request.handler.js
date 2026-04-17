@@ -31,7 +31,6 @@ async function execute(paymentObject) {
   const idempotencyKey = generateIdempotencyKey({
     paymentObject,
     operation: 'createSession',
-    requestPayload: createSessionRequestObj,
   })
 
   const { request, response } = await createSessionRequest(
