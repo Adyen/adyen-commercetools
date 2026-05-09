@@ -110,6 +110,7 @@ describe('make-payment::execute', () => {
       firstName: 'Test',
       lastName: 'Customer',
     },
+    shopperIP: '127.0.0.1',
   }
   const adyenMerchantAccount = config.getAllAdyenMerchantAccounts()[0]
   const commercetoolsProjectKey = config.getAllCtpProjectKeys()[0]
@@ -600,6 +601,9 @@ describe('make-payment::execute', () => {
       expect(makePaymentRequestJson.shopperName.lastName).to.equal(
         makePaymentRequestClone.shopperName.lastName,
       )
+      expect(makePaymentRequestJson.shopperIP).to.equal(
+        makePaymentRequestClone.shopperIP,
+      )
 
       expect(makePaymentRequestJson.billingAddress.street).to.equal(
         ctpCartWithCustomer.billingAddress.streetName,
@@ -720,6 +724,7 @@ describe('make-payment::execute', () => {
       expect(makePaymentRequestJson.shopperName.lastName).to.equal(
         ctpCustomer.lastName,
       )
+      expect(makePaymentRequestJson.shopperIP).to.be.undefined
     },
   )
 
@@ -760,6 +765,7 @@ describe('make-payment::execute', () => {
       expect(makePaymentRequestJson).to.not.have.own.property('shopperEmail')
       expect(makePaymentRequestJson).to.not.have.own.property('accountInfo')
       expect(makePaymentRequestJson).to.not.have.own.property('shopperName')
+      expect(makePaymentRequestJson).to.not.have.own.property('shopperIP')
       expect(makePaymentRequestJson).to.not.have.own.property('shopperLocale')
       expect(makePaymentRequestJson.additionalData).to.not.have.own.property(
         'enhancedSchemeData.destinationCountryCode',

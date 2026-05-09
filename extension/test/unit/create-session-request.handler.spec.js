@@ -65,6 +65,7 @@ describe('create-session-request::execute::', () => {
       firstName: 'Test',
       lastName: 'Customer',
     },
+    shopperIP: '127.0.0.1',
   }
 
   const paymentObjectWithAdditionalFields = {
@@ -253,6 +254,9 @@ describe('create-session-request::execute::', () => {
       expect(createSessionRequestJson.shopperName.lastName).to.equal(
         getSessionRequestWithAdditionalFields.shopperName.lastName,
       )
+      expect(createSessionRequestJson.shopperIP).to.equal(
+        getSessionRequestWithAdditionalFields.shopperIP,
+      )
 
       expect(createSessionRequestJson.billingAddress.street).to.equal(
         ctpCartWithCustomer.billingAddress.streetName,
@@ -360,6 +364,7 @@ describe('create-session-request::execute::', () => {
       expect(createSessionRequestJson.shopperName.lastName).to.equal(
         ctpCustomer.lastName,
       )
+      expect(createSessionRequestJson.shopperIP).to.be.undefined
     },
   )
 
@@ -397,6 +402,7 @@ describe('create-session-request::execute::', () => {
       expect(createSessionRequestJson).to.not.have.own.property('shopperEmail')
       expect(createSessionRequestJson).to.not.have.own.property('accountInfo')
       expect(createSessionRequestJson).to.not.have.own.property('shopperName')
+      expect(createSessionRequestJson).to.not.have.own.property('shopperIP')
       expect(createSessionRequestJson).to.not.have.own.property('shopperLocale')
     },
   )
