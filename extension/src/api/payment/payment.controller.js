@@ -28,7 +28,9 @@ async function processRequest(request, response, logger) {
   try {
     const authToken = getAuthorizationRequestHeader(request)
     paymentObject = await _getPaymentObject(request, logger)
-    paymentObject.shopperIP = getIPAddressRequestHeader(request)
+    if (!paymentObject.shopperIP) {
+      paymentObject.shopperIP = getIPAddressRequestHeader(request)
+    }
     const paymentLogger = logger.child({ paymentId: paymentObject.id })
     paymentLogger.debug(
       'Received payment object',
