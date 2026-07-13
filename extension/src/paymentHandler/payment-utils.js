@@ -228,13 +228,30 @@ function getPaymentKeyUpdateAction(paymentKey, response) {
     pspReference &&
     pspReference !== paymentKey
   ) {
-    paymentKeyUpdateAction = {
+    return {
       action: 'setKey',
       key: pspReference,
     }
   }
 
-  return paymentKeyUpdateAction
+  return undefined
+}
+
+function getPaymentKeyUpdateActionForSessionFlow(paymentKey, response) {
+  const pspReference = response.pspReference?.toString()
+  const isSuccessful = !unsuccessfulResponseCodes.includes(response.status)
+  // ensure the key and new reference is different, otherwise the error with
+  // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
+  if (isSuccessful && pspReference && pspReference !== paymentKey) {
+    return { action: 'setKey', key: pspReference }
+  }
+
+  const merchantReference = response.reference
+  if (isSuccessful && merchantReference && merchantReference !== paymentKey) {
+    return { action: 'setKey', key: merchantReference }
+  }
+
+  return undefined
 }
 
 function getMerchantReferenceCustomFieldUpdateAction(request, name) {
@@ -273,5 +290,6 @@ export {
   getIdempotencyKey,
   generateIdempotencyKey,
   getPaymentKeyUpdateAction,
+  getPaymentKeyUpdateActionForSessionFlow,
   getMerchantReferenceCustomFieldUpdateAction,
 }

@@ -2,7 +2,7 @@ import {
   createAddInterfaceInteractionAction,
   createSetCustomFieldAction,
   getMerchantReferenceCustomFieldUpdateAction,
-  getPaymentKeyUpdateAction,
+  getPaymentKeyUpdateActionForSessionFlow,
   generateIdempotencyKey,
 } from './payment-utils.js'
 import c from '../config/constants.js'
@@ -53,7 +53,7 @@ async function execute(paymentObject) {
     ),
   ]
 
-  const updatePaymentAction = getPaymentKeyUpdateAction(
+  const updatePaymentAction = getPaymentKeyUpdateActionForSessionFlow(
     paymentObject.key,
     response,
   )
