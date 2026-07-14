@@ -24,6 +24,8 @@
     - [Shopper successfully paid but `redirectUrl` was not reached](#shopper-successfully-paid-but-redirecturl-was-not-reached)
     - [Shopper tries to pay a different amount than the actual order amount](#shopper-tries-to-pay-a-different-amount-than-the-actual-order-amount)
   - [Test and go live](#test-and-go-live)
+  - [Payment key and notification matching](#payment-key-and-notification-matching)
+    - [Fallback search by the merchantReference custom field](#fallback-search-by-the-merchantreference-custom-field)
 - [Manual Capture](#manual-capture)
 - [Cancel or refund](#cancel-or-refund)
 - [Restore](#restore)
@@ -647,6 +649,27 @@ Before you go live please follow [steps](https://docs.adyen.com/online-payments/
 - [Please check FAQ guide](../../docs/FAQ.md).
 
 Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist).
+
+# Payment key and notification matching
+
+On payment session creation, the commercetools payment `key` is initially set to the `reference` of the `createSessionRequest` (see [Step 4](#step-4-create-a-payment-session)). When the notification module receives the payment result from Adyen, it sets the commercetools payment `key` to the Adyen `pspReference`. If the `pspReference` is not available in the notification, the `merchantReference` is used as the `payment.key` instead, so that the key is never `undefined`.
+
+This is important because the notification module looks up the corresponding commercetools payment by its `key`, with a condition matching the key against either the `pspReference` or the `merchantReference` (the latter for backwards compatibility with older payments). If `payment.key` was never set, the lookup by key would never match and **every** notification would end up in the [fallback custom field search](#fallback-search-by-the-merchantreference-custom-field) with O(N) complexity, potentially leading to timeouts and congestion of the notification queues. By always setting the key (to the `pspReference`, or to the `merchantReference` when the `pspReference` is missing), the O(1) key lookup succeeds in the regular case and the custom field fallback remains reserved for the rare situations described below.
+
+## Fallback search by the merchantReference custom field
+
+In rare cases, Adyen may send a webhook notification that does not contain a `pspReference`, but only a `merchantReference`. 
+Since `payment.key` is set to the `pspReference` for new payments, such notifications could not be matched by the payment `key`, even though the payment actually exists. 
+Although this happened rarely, it led to congestion of the notification queues.
+
+To prevent this, a custom field `merchantReference` was introduced on the commercetools payment. If the notification module cannot find the payment by `key`, it falls back to searching by the `merchantReference` custom field.
+This way, the payment lookup is guaranteed even in these rare situations.
+
+> [!NOTE]
+> **Performance note:** A lookup by `payment.key` has O(1) complexity, while a query by a custom field can be considerably more complex (up to O(N)), especially on production systems with a large number of orders and payments.
+> Indexes in commercetools are managed automatically by the platform and cannot be created manually. 
+> However, if a custom field is queried frequently enough, commercetools will automatically add an index for it to improve performance (this can take up to two weeks). See the commercetools [query predicate performance considerations](https://docs.commercetools.com/api/predicates/query) for details. 
+> Since the fallback search is only executed in the rare cases described above, it does not affect the performance of regular notification processing.
 
 # Manual Capture
 
