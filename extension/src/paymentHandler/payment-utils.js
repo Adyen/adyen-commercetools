@@ -219,7 +219,6 @@ function generateIdempotencyKey({ paymentObject, operation }) {
 }
 
 function getPaymentKeyUpdateAction(paymentKey, response) {
-  let paymentKeyUpdateAction
   const pspReference = response.pspReference?.toString()
   // ensure the key and new reference is different, otherwise the error with
   // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
