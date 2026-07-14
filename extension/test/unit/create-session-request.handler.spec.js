@@ -139,7 +139,7 @@ describe('create-session-request::execute::', () => {
     const result =
       await createSessionRequestPaymentHandler.execute(paymentObjectClone)
 
-    expect(result.actions.length).to.equal(3)
+    expect(result.actions.length).to.equal(4)
     expect(result.actions[0].action).to.equal('addInterfaceInteraction')
     expect(result.actions[1].action).to.equal('setCustomField')
     const request = JSON.parse(result.actions[0].fields.request)
@@ -218,7 +218,7 @@ describe('create-session-request::execute::', () => {
         paymentObjectWithAdditionalFieldsClone,
       )
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(4)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,
@@ -311,7 +311,7 @@ describe('create-session-request::execute::', () => {
       const response =
         await createSessionRequestPaymentHandler.execute(paymentObjectClone)
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(4)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,
@@ -382,7 +382,7 @@ describe('create-session-request::execute::', () => {
       const response =
         await createSessionRequestPaymentHandler.execute(paymentObjectClone)
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(4)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,
