@@ -175,7 +175,7 @@ Here's an example of the `getPaymentMethodsRequest` custom field value for a Ger
 
 <details>
   <summary>The commercetools payment representation example with getPaymentMethodsRequest. Click to expand.</summary>
-    
+
 ```json
 {
   "amountPlanned": {
@@ -198,6 +198,7 @@ Here's an example of the `getPaymentMethodsRequest` custom field value for a Ger
   }
 }
 ```
+
 </details>
 
 The response includes the list of available payment methods:
@@ -221,7 +222,7 @@ Pass the `getPaymentMethodsResponse` custom field value to your front end. You m
 
 <details>
   <summary>The commercetools payment representation example with response. Click to expand.</summary>
-    
+
 ```json
 {
   "amountPlanned": {
@@ -245,6 +246,7 @@ Pass the `getPaymentMethodsResponse` custom field value to your front end. You m
   }
 }
 ```
+
 </details>
 
 ## Step 4: Create a payment session
@@ -301,7 +303,7 @@ An example of payment [setCustomField](https://docs.commercetools.com/api/projec
 
 <details>
   <summary>The commercetools payment representation example with createSessionRequest request. Click to expand.</summary>
-    
+
 ```json
 {
   "amountPlanned": {
@@ -324,6 +326,7 @@ An example of payment [setCustomField](https://docs.commercetools.com/api/projec
   }
 }
 ```
+
 </details>
 
 > For the sake of readability, the field [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is omitted from all the examples in this document. In real requests, [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is always added.
@@ -658,8 +661,8 @@ This is important because the notification module looks up the corresponding com
 
 ## Fallback search by the merchantReference custom field
 
-In rare cases, Adyen may send a webhook notification that does not contain a `pspReference`, but only a `merchantReference`. 
-Since `payment.key` is set to the `pspReference` for new payments, such notifications could not be matched by the payment `key`, even though the payment actually exists. 
+In rare cases, Adyen may send a webhook notification that does not contain a `pspReference`, but only a `merchantReference`.
+Since `payment.key` is set to the `pspReference` for new payments, such notifications could not be matched by the payment `key`, even though the payment actually exists.
 Although this happened rarely, it led to congestion of the notification queues.
 
 To prevent this, a custom field `merchantReference` was introduced on the commercetools payment. If the notification module cannot find the payment by `key`, it falls back to searching by the `merchantReference` custom field.
@@ -667,8 +670,8 @@ This way, the payment lookup is guaranteed even in these rare situations.
 
 > [!NOTE]
 > **Performance note:** A lookup by `payment.key` has O(1) complexity, while a query by a custom field can be considerably more complex (up to O(N)), especially on production systems with a large number of orders and payments.
-> Indexes in commercetools are managed automatically by the platform and cannot be created manually. 
-> However, if a custom field is queried frequently enough, commercetools will automatically add an index for it to improve performance (this can take up to two weeks). See the commercetools [query predicate performance considerations](https://docs.commercetools.com/api/predicates/query) for details. 
+> Indexes in commercetools are managed automatically by the platform and cannot be created manually.
+> However, if a custom field is queried frequently enough, commercetools will automatically add an index for it to improve performance (this can take up to two weeks). See the commercetools [query predicate performance considerations](https://docs.commercetools.com/api/predicates/query) for details.
 > Since the fallback search is only executed in the rare cases described above, it does not affect the performance of regular notification processing.
 
 # Manual Capture

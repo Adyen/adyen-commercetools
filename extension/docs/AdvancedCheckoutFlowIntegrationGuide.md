@@ -627,11 +627,12 @@ If you receive an `HTTP 200 response` with an `Error` or `Refused` resultCode fr
 Use the commercetools payment [interfaceInteractions](https://docs.commercetools.com/api/projects/payments#payment) field to troubleshoot the response.
 
 Check the following table to see the mapping of Adyen [result codes](https://docs.adyen.com/development-resources/response-handling#error-codes-types) to commercetools [transaction state](https://docs.commercetools.com/http-api-projects-payments#transactionstate)
-|Adyen result code| The commercetools transaction (transaction state)
-| --- | --- |
-| Authorised| Authorization (Success)|
-| Refused| Authorization (Failure)|
-| Error| Authorization (Failure)|
+
+| Adyen result code | The commercetools transaction (transaction state) |
+| ----------------- | ------------------------------------------------- |
+| Authorised        | Authorization (Success)                           |
+| Refused           | Authorization (Failure)                           |
+| Error             | Authorization (Failure)                           |
 
 ### Shopper successfully paid but `redirectUrl` was not reached
 
@@ -672,6 +673,7 @@ To prevent this, a custom field `merchantReference` was introduced on the commer
 
 > [!NOTE]
 > **Performance note:** A lookup by `payment.key` has O(1) complexity, while a query by a custom field can be considerably more complex (up to O(N)), especially on production systems with a large number of orders and payments. Indexes in commercetools are managed automatically by the platform and cannot be created manually. However, if a custom field is queried frequently enough, commercetools will automatically add an index for it to improve performance (this can take up to two weeks). See the commercetools [query predicate performance considerations](https://docs.commercetools.com/api/predicates/query) for details. Since the fallback search is only executed in the rare cases described above, it does not affect the performance of regular notification processing.
+
 # Manual Capture
 
 By default, payments are captured immediately (or with [delay](https://docs.adyen.com/online-payments/capture#capture-delay)) after authorisation. For payment methods that support separate authorization and capture, you also have the option to capture the payment later, for example only after the goods have been shipped. This also allows you to cancel the payment/authorization.
