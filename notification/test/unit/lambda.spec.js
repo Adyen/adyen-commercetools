@@ -54,12 +54,36 @@ describe('Lambda handler', () => {
     sandbox.restore()
   })
 
+  function parseResponse(result) {
+    expect(result.statusCode).to.equal(200)
+    expect(result.isBase64Encoded).to.equal(false)
+    expect(result.headers).to.eql({ 'Content-Type': 'application/json' })
+    return JSON.parse(result.body)
+  }
+
   it('returns correct success response', async () => {
     sinon.stub(notificationHandler, 'processNotification').returns(undefined)
 
     const result = await handler(event)
 
-    expect(result).to.eql({ notificationResponse: '[accepted]' })
+    expect(parseResponse(result)).to.eql({
+      notificationResponse: '[accepted]',
+    })
+  })
+
+  it('handles an ALB/API Gateway event with a stringified body', async () => {
+    const processNotificationStub = sinon
+      .stub(notificationHandler, 'processNotification')
+      .returns(undefined)
+
+    const result = await handler({ body: JSON.stringify(event) })
+
+    expect(parseResponse(result)).to.eql({
+      notificationResponse: '[accepted]',
+    })
+    expect(processNotificationStub.callCount).to.equal(
+      event.notificationItems.length,
+    )
   })
 
   it('throws and logs for concurrent modification exceptions', async () => {
@@ -109,7 +133,9 @@ describe('Lambda handler', () => {
       sinon.stub(notificationHandler, 'processNotification').throws(error)
 
       const result = await handler(event)
-      expect(result).to.eql({ notificationResponse: '[accepted]' })
+      expect(parseResponse(result)).to.eql({
+        notificationResponse: '[accepted]',
+      })
 
       const notificationItem = event.notificationItems.pop()
       logSpy.calledWith(
