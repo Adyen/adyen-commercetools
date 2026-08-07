@@ -58,7 +58,7 @@ export const handler = async (event) => {
     statusCode: 200,
     isBase64Encoded: false,
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(responseBody),
   }
