@@ -5,7 +5,6 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "postinstall": "npx patch-package",
     "test": "npm run unit",
     "test-ci": "c8 npm run test-run && npm run check-coverage",
     "test-run": "npm run unit && npm run integration",
