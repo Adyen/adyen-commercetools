@@ -58,6 +58,7 @@ async function syncCustomType(ctpClient, logger, typeDraft) {
     throw Error(
       `Failed to sync payment type (key=${typeDraft.key}). ` +
         `Error: ${JSON.stringify(serializeError(err))}`,
+      { cause: err },
     )
   }
 }

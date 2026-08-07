@@ -267,8 +267,7 @@ describe('::creditCardPayment::disable-stored-payment::', () => {
     createSessionRequestJson.shopperInteraction = 'Ecommerce'
     createSessionRequestJson.recurringProcessingModel = recurringProcessingModel
     createSessionRequest = JSON.stringify(createSessionRequestJson)
-    let payment = null
-    payment = await createPaymentSession(
+    const payment = await createPaymentSession(
       ctpClient,
       adyenMerchantAccount,
       commercetoolsProjectKey,

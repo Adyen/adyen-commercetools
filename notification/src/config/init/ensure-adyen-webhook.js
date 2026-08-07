@@ -81,6 +81,7 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
     throw Error(
       `Failed to ensure adyen webhook for project ${merchantId}.` +
         `Error: ${JSON.stringify(serializeError(err))}`,
+      { cause: err },
     )
   }
 }

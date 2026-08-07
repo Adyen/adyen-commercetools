@@ -59,6 +59,7 @@ async function ensureApiExtensions(
     throw Error(
       `Failed to sync API extension (key=${apiExtensionTemplate.key}). ` +
         `Error: ${JSON.stringify(serializeError(err))}`,
+      { cause: err },
     )
   }
 }
