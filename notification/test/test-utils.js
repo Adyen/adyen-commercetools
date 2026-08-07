@@ -67,9 +67,8 @@ async function setupLocalServer(testServerPort = '8000') {
 }
 
 async function setupExtensionNgrokTunnel() {
-  const { setupServer: setupExtensionModuleServer } = await import(
-    '../../extension/src/server.js'
-  )
+  const { setupServer: setupExtensionModuleServer } =
+    await import('../../extension/src/server.js')
   extensionServer = await setupExtensionModuleServer()
   await new Promise((resolve) => {
     extensionServer.listen(process.env.EXTENSION_PORT, async () => {
