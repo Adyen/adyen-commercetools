@@ -52,7 +52,7 @@
     "chai": "6.2.2",
     "doctoc": "2.5.0",
     "dotenv": "^17.2.2",
-    "eslint": "10.8.0",
+    "eslint": "10.9.0",
     "eslint-config-prettier": "10.1.8",
     "mocha": "11.8.0",
     "nock": "14.0.17",
