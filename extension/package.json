@@ -81,7 +81,7 @@
     "js-yaml": "5.4.1",
     "glob": "13.0.6",
     "flatted": "3.4.4",
-    "serialize-javascript": "7.1.0",
+    "serialize-javascript": "7.1.1",
     "diff": "9.0.0",
     "brace-expansion@^1.0.0": "1.1.18",
     "picomatch@^2.0.0": "2.3.2"
