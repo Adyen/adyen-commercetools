@@ -53,7 +53,7 @@
     "chai": "6.2.2",
     "doctoc": "2.5.0",
     "dotenv": "^17.2.2",
-    "eslint": "10.9.1",
+    "eslint": "10.10.0",
     "eslint-config-prettier": "10.1.8",
     "globals": "^17.0.0",
     "lockfile-lint": "5.0.1",
