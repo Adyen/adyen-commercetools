@@ -36,11 +36,12 @@ export const handler = async (event) => {
       )
       const adyenConfig = getAdyenConfig(notification)
 
-      await notificationHandler.processNotification(
+      await notificationHandler.processNotification({
         notification,
-        adyenConfig.enableHmacSignature,
+        enableHmacSignature: adyenConfig.enableHmacSignature,
         ctpProjectConfig,
-      )
+        logger,
+      })
     }
   } catch (err) {
     const cause = getErrorCause(err)
@@ -56,7 +57,16 @@ export const handler = async (event) => {
     }
   }
 
-  return {
+  const responseBody = {
     notificationResponse: '[accepted]',
+  }
+
+  return {
+    statusCode: 200,
+    isBase64Encoded: false,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(responseBody),
   }
 }

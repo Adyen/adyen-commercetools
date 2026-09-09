@@ -1,6 +1,9 @@
 import {
   createAddInterfaceInteractionAction,
   createSetCustomFieldAction,
+  getMerchantReferenceCustomFieldUpdateAction,
+  getPaymentKeyUpdateActionForSessionFlow,
+  generateIdempotencyKey,
 } from './payment-utils.js'
 import c from '../config/constants.js'
 import { createSessionRequest } from '../service/web-component-service.js'
@@ -18,16 +21,24 @@ async function execute(paymentObject) {
     paymentObject,
     commercetoolsProjectKey,
   )
+
+  createSessionRequestObj.shopperIP =
+    createSessionRequestObj.shopperIP ?? paymentObject.shopperIP
   paymentObject.custom.fields.createSessionRequest = JSON.stringify(
     createSessionRequestObj,
   )
 
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
+  const idempotencyKey = generateIdempotencyKey({
+    paymentObject,
+    operation: 'createSession',
+  })
 
   const { request, response } = await createSessionRequest(
     adyenMerchantAccount,
     commercetoolsProjectKey,
     createSessionRequestObj,
+    idempotencyKey,
   )
 
   const actions = [
@@ -42,17 +53,19 @@ async function execute(paymentObject) {
     ),
   ]
 
-  const requestBodyJson = JSON.parse(request.body)
-  const paymentKey = paymentObject.key
-  // ensure the key is a string, otherwise the error with "code": "InvalidJsonInput" will return by commercetools API.
-  const reference = requestBodyJson.reference?.toString()
-  // ensure the key and new reference is different, otherwise the error with
-  // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
-  if (reference !== paymentKey)
-    actions.push({
-      action: 'setKey',
-      key: reference,
-    })
+  const updatePaymentAction = getPaymentKeyUpdateActionForSessionFlow(
+    paymentObject.key,
+    response,
+  )
+  if (updatePaymentAction) actions.push(updatePaymentAction)
+
+  const updateMerchantReferenceCustomFieldAction =
+    getMerchantReferenceCustomFieldUpdateAction(
+      request,
+      c.CTP_CUSTOM_FIELD_MERCHANT_REFERENCE,
+    )
+  if (updateMerchantReferenceCustomFieldAction)
+    actions.push(updateMerchantReferenceCustomFieldAction)
 
   return {
     actions,

@@ -59,7 +59,7 @@ describe('create-session-request-with-lineitems::execute', () => {
       const response =
         await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(4)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,
@@ -147,7 +147,7 @@ describe('create-session-request-with-lineitems::execute', () => {
 
       const response =
         await createSessionRequestPaymentHandler.execute(ctpPaymentClone)
-      expect(response.actions).to.have.lengthOf(3)
+      expect(response.actions).to.have.lengthOf(4)
       const createSessionRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,

@@ -27,8 +27,8 @@ For full list of payment methods that have been tested for CommerceTools integra
 - [Refunding](./extension/docs/Refund.md) a payment back to the shopper.
 - Authorisation [cancellation](./extension/docs/CancelPayment.md) on a payment that has not yet been captured.
 - [Manual capture](./extension/docs/ManualCapture.md) of a payment.
-- [Restore](./extension/docs/Restore.md), which gives your shoppers an opportunity to offset their carbon emissions from the delivery or lifecycle of their purchase at checkout. 
 - [Store payment](./extension/docs/StorePayment.md) and [disable stored payment](./extension/docs/DisableStoredPayments.md) gives your shoppers the ability to store payments for later use and removing these stored payments.
+- [Adyen Giving](./extension/docs/AdyenGiving.md) gives your shoppers the ability to donate to a nonprofit as part of your payment flow.
 
 ## Supported payment methods
 
@@ -43,6 +43,8 @@ If you need assistance configuring your payment methods please contact Adyen Sup
 
 - [Klarna Pay Later](https://docs.adyen.com/payment-methods/klarna/)
 - [Afterpay](https://docs.adyen.com/payment-methods/afterpaytouch/)
+- [Billie via Klarna](https://docs.adyen.com/payment-methods/klarna/billie/#-billie-via-klarna-)
+- [Riverty](https://docs.adyen.com/payment-methods/riverty)
 
 ### Cash and ATM payment methods
 
@@ -78,7 +80,7 @@ If you need assistance configuring your payment methods please contact Adyen Sup
 This repository contains two standalone modules that interact with commercetools and Adyen.
 Complete integration requires running both of the modules.
 
-![Payment flow](./docs/images/payment-flow.svg)
+![Payment flow](./docs/payment-flow.svg)
 1. Front end uses [Adyen Web Components](https://docs.adyen.com/checkout/supported-payment-methods) to present required payment methods. The list of available payment methods can be also obtained through the integration with the help of [get available payment methods request](./extension/docs/WebComponentsIntegrationGuide.md#step-3-get-available-payment-methods-optional). On user interaction, frontend web-component generates JSON payloads for [create payment sessions](https://docs.adyen.com/online-payments/web-components#create-payment-session) which has to be provided to commercetools payment as described [here](./extension/docs/WebComponentsIntegrationGuide.md#web-components-integration-guide).  
 2. With help of the [commercetools HTTP API Extensions](https://docs.commercetools.com/api/projects/api-extensions) provided data is sent to the Extension Module.
 3. The Extension Module processes provided web component payload passed by the front end, exchanges it with Adyen API, and provides **synchronous** response back to the front end / commercetools caller. Based on result, the front end either creates an order or continues with further payment steps as described in the [integration guide](./extension/docs/WebComponentsIntegrationGuide.md#web-components-integration-guide). Note that order/cart creations/modifications should be part of the front end business logic. `commercetools-adyen-integration` will neither change the cart nor the order.

@@ -1,8 +1,10 @@
 import _ from 'lodash'
+import crypto from 'crypto'
 import c from '../config/constants.js'
 import config from '../config/config.js'
 
 const { getAdyenPaymentMethodsToNames } = config
+const unsuccessfulResponseCodes = [400, 401, 403, 422, 500]
 
 function getAuthorizationTransactionSuccess(paymentObject) {
   return getTransactionWithTypesAndStates(
@@ -107,6 +109,7 @@ function createAddTransactionAction({
   return {
     action: 'addTransaction',
     transaction: {
+      timestamp: new Date().toISOString(),
       type,
       amount: {
         currencyCode: currency,
@@ -197,20 +200,72 @@ function getIdempotencyKey(transaction) {
   return idempotencyKey
 }
 
-function getPaymentKeyUpdateAction(paymentKey, request) {
-  const requestBodyJson = JSON.parse(request.body)
-  let newReference = requestBodyJson.reference?.toString()
+function generateIdempotencyKey({ paymentObject, operation }) {
+  const merchantProvidedKey = paymentObject?.custom?.fields?.idempotencyKey
+  if (merchantProvidedKey) {
+    return merchantProvidedKey
+  }
 
-  let paymentKeyUpdateAction
+  const dataToHash = JSON.stringify({
+    paymentId: paymentObject?.id,
+    operation,
+  })
+
+  return crypto
+    .createHash('sha256')
+    .update(dataToHash)
+    .digest('hex')
+    .substring(0, 32)
+}
+
+function getPaymentKeyUpdateAction(paymentKey, response) {
+  const pspReference = response.pspReference?.toString()
   // ensure the key and new reference is different, otherwise the error with
   // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
-  if (newReference && newReference !== paymentKey) {
-    paymentKeyUpdateAction = {
+  if (
+    !unsuccessfulResponseCodes.includes(response.status) &&
+    pspReference &&
+    pspReference !== paymentKey
+  ) {
+    return {
       action: 'setKey',
-      key: newReference,
+      key: pspReference,
     }
   }
-  return paymentKeyUpdateAction
+
+  return undefined
+}
+
+function getPaymentKeyUpdateActionForSessionFlow(paymentKey, response) {
+  const pspReference = response.pspReference?.toString()
+  const isSuccessful = !unsuccessfulResponseCodes.includes(response.status)
+  // ensure the key and new reference is different, otherwise the error with
+  // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
+  if (isSuccessful && pspReference && pspReference !== paymentKey) {
+    return { action: 'setKey', key: pspReference }
+  }
+
+  const merchantReference = response.reference
+  if (isSuccessful && merchantReference && merchantReference !== paymentKey) {
+    return { action: 'setKey', key: merchantReference }
+  }
+
+  return undefined
+}
+
+function getMerchantReferenceCustomFieldUpdateAction(request, name) {
+  let customFieldAction
+  const requestBodyJson = JSON.parse(request.body)
+  const reference = requestBodyJson.reference?.toString()
+  if (reference) {
+    customFieldAction = {
+      action: 'setCustomField',
+      name,
+      value: reference,
+    }
+  }
+
+  return customFieldAction
 }
 
 export {
@@ -232,5 +287,8 @@ export {
   isValidJSON,
   isValidMetadata,
   getIdempotencyKey,
+  generateIdempotencyKey,
   getPaymentKeyUpdateAction,
+  getPaymentKeyUpdateActionForSessionFlow,
+  getMerchantReferenceCustomFieldUpdateAction,
 }

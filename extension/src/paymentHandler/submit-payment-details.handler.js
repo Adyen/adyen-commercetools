@@ -5,8 +5,11 @@ import {
   createSetCustomFieldAction,
   createAddTransactionActionByResponse,
   getPaymentKeyUpdateAction,
+  getMerchantReferenceCustomFieldUpdateAction,
+  generateIdempotencyKey,
 } from './payment-utils.js'
 import c from '../config/constants.js'
+import { handleDonationCampaign } from './donation.handler.js'
 
 const { CTP_INTERACTION_TYPE_SUBMIT_ADDITIONAL_PAYMENT_DETAILS } = c
 
@@ -26,10 +29,15 @@ async function execute(paymentObject) {
       makePaymentResponseObj.paymentData
   }
   if (_isNewRequest(submitAdditionalDetailsRequestObj, paymentObject)) {
+    const idempotencyKey = generateIdempotencyKey({
+      paymentObject,
+      operation: 'submitDetails',
+    })
     const { request, response } = await submitAdditionalPaymentDetails(
       adyenMerchantAccount,
       commercetoolsProjectKey,
       submitAdditionalDetailsRequestObj,
+      idempotencyKey,
     )
     actions.push(
       createAddInterfaceInteractionAction({
@@ -42,6 +50,27 @@ async function execute(paymentObject) {
         response,
       ),
     )
+
+    let donationToken = response.donationToken
+
+    if (donationToken) {
+      let getPaymentMethodsRequest = JSON.parse(
+        paymentObject?.custom?.fields?.getPaymentMethodsRequest || '{}',
+      )
+      const shopperLocale = getPaymentMethodsRequest?.shopperLocale || null
+      let donationCampaignRequest = {
+        merchantAccount: adyenMerchantAccount,
+        currency: paymentObject.amountPlanned.currencyCode,
+        ...(shopperLocale ? { locale: shopperLocale } : {}),
+      }
+      await handleDonationCampaign({
+        actions,
+        adyenMerchantAccount,
+        donationCampaignRequest,
+        donationToken,
+        paymentObject,
+      })
+    }
 
     if (
       !_hasTransactionWithPspReference(response.pspReference, paymentObject)
@@ -56,9 +85,16 @@ async function execute(paymentObject) {
     }
     const updatePaymentAction = getPaymentKeyUpdateAction(
       paymentObject.key,
-      request,
+      response,
     )
     if (updatePaymentAction) actions.push(updatePaymentAction)
+    const updateMerchantReferenceCustomFieldAction =
+      getMerchantReferenceCustomFieldUpdateAction(
+        request,
+        c.CTP_CUSTOM_FIELD_MERCHANT_REFERENCE,
+      )
+    if (updateMerchantReferenceCustomFieldAction)
+      actions.push(updateMerchantReferenceCustomFieldAction)
   }
   return {
     actions,

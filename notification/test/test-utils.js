@@ -1,16 +1,17 @@
 import _ from 'lodash'
-import ip from 'ip'
 import { hmacValidator } from '@adyen/api-library'
 import config from '../src/config/config.js'
 import { setupServer } from '../src/server.js'
 import { setupNotificationResources } from '../src/setup.js'
-import {
-  startFakeExtension,
-  stopFakeExtension,
-} from './fake-extension-service.js'
+import { setupExtensionResources } from '../../extension/src/setup.js'
 import utils from '../src/utils/commons.js'
+import ngrok from '@ngrok/ngrok'
+import dotenv from 'dotenv'
 
-const { address } = ip
+dotenv.config()
+
+let extensionTunnel
+let extensionServer
 
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled Rejection:', reason)
@@ -44,27 +45,19 @@ async function buildMockErrorFromConcurrentModificationException() {
   return error
 }
 
-// node-fetch package doesn't support requests to localhost, therefore
-// we need to provide the IP behind localhost
-const localhostIp = address()
-
 async function startIT() {
   await setupNotificationResources()
-  if (!process.env.CI) {
-    await setupLocalServer(8000)
-    await startFakeExtension()
-  }
+  await setupLocalServer(process.env.NOTIFICATION_PORT)
+  let apiExtensionUrl = await setupExtensionNgrokTunnel()
+  await setupExtensionResources(apiExtensionUrl)
 }
 
 function getNotificationURL() {
-  if (!process.env.CI) {
-    return `http://${localhostIp}:8000`
-  }
-  return process.env.CI_NOTIFICATION_URL
+  return `http://localhost:${process.env.NOTIFICATION_PORT}`
 }
 
 let server
-async function setupLocalServer(testServerPort = 8000) {
+async function setupLocalServer(testServerPort = '8000') {
   server = setupServer()
   return new Promise((resolve) => {
     server.listen(testServerPort, async () => {
@@ -73,11 +66,63 @@ async function setupLocalServer(testServerPort = 8000) {
   })
 }
 
-async function stopIT() {
-  if (!process.env.CI) {
-    server.close()
-    await stopFakeExtension()
+async function setupExtensionNgrokTunnel() {
+  const { setupServer: setupExtensionModuleServer } =
+    await import('../../extension/src/server.js')
+  extensionServer = await setupExtensionModuleServer()
+  await new Promise((resolve) => {
+    extensionServer.listen(process.env.EXTENSION_PORT, async () => {
+      resolve()
+    })
+  })
+  extensionTunnel = await initNgrokTunnel(
+    process.env.EXTENSION_PORT,
+    process.env.EXTENSION_TUNNEL_DOMAIN,
+  )
+  const apiExtensionBaseUrl = extensionTunnel.url().replace('http:', 'https:')
+  overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
+
+  return apiExtensionBaseUrl
+}
+
+async function initNgrokTunnel(port, subdomain) {
+  let repeaterCounter = 0
+  let setDomain = true
+  let listener
+  while (true) {
+    try {
+      const forwardOpts = {
+        addr: port,
+        authtoken: process.env.NGROK_AUTHTOKEN,
+      }
+      if (setDomain && subdomain) {
+        forwardOpts.domain = subdomain
+      }
+
+      listener = await ngrok.forward(forwardOpts)
+      break
+    } catch (e) {
+      setDomain = false
+      if (repeaterCounter === 10) throw e
+      repeaterCounter++
+    }
   }
+
+  return listener
+}
+
+function overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl) {
+  const moduleConfig = config.getModuleConfig()
+  moduleConfig.apiExtensionBaseUrl = apiExtensionBaseUrl
+  config.getModuleConfig = function getModuleConfig() {
+    return moduleConfig
+  }
+}
+
+async function stopIT() {
+  server.close()
+  extensionServer.close()
+  await extensionTunnel.close()
 }
 
 const validator = new hmacValidator()

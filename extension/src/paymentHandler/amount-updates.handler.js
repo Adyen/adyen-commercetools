@@ -2,6 +2,7 @@ import { updateAmount } from '../service/web-component-service.js'
 import {
   createAddInterfaceInteractionAction,
   createSetCustomFieldAction,
+  generateIdempotencyKey,
 } from './payment-utils.js'
 import c from '../config/constants.js'
 
@@ -30,9 +31,14 @@ async function execute(paymentObject) {
   const adyenMerchantAccount = paymentObject.custom.fields.adyenMerchantAccount
   const commercetoolsProjectKey =
     paymentObject.custom.fields.commercetoolsProjectKey
+  const idempotencyKey = generateIdempotencyKey({
+    paymentObject,
+    operation: 'amountUpdate',
+  })
   const { request, response } = await updateAmount(
     adyenMerchantAccount,
     commercetoolsProjectKey,
+    idempotencyKey,
     amountUpdatesRequestObj,
   )
   return {

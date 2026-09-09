@@ -13,6 +13,8 @@ import {
   buildMockErrorFromConcurrentModificationException,
 } from '../test-utils.js'
 import utils from '../../src/utils/commons.js'
+import { getLogger } from '../../src/utils/logger.js'
+
 const { expect } = chai
 const { cloneDeep } = lodash
 const sandbox = sinon.createSandbox()
@@ -97,11 +99,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -120,7 +123,7 @@ describe('notification module', () => {
       },
       {
         action: 'changeTransactionState',
-        state: 'Pending',
+        state: 'Failure',
         transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
       },
       {
@@ -201,11 +204,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -258,9 +262,9 @@ describe('notification module', () => {
   })
 
   it(`given that ADYEN sends an "AUTHORISATION is not successful" notification
-      when payment has a pending authorization transaction 
+      when payment has a failure authorization transaction 
       then notification module should add notification to the interface interaction 
-      and should not update the pending transaction `, async () => {
+      and should not update the failure transaction `, async () => {
     // prepare data
     const notifications = [
       {
@@ -294,7 +298,7 @@ describe('notification module', () => {
         fractionDigits: 2,
       },
       interactionId: 'test_AUTHORISATION_1',
-      state: 'Pending',
+      state: 'Failure',
     })
     const ctpClient = ctpClientMock.get(ctpConfig)
     sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
@@ -304,11 +308,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -382,11 +387,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
 
     // assert
     expect(stub.callCount).to.equal(7)
@@ -433,11 +439,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
 
     // assert
     expect(stub.callCount).to.equal(7)
@@ -507,11 +514,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
     // assert
     expect(ctpClientUpdateSpy.callCount).to.equal(1)
 
@@ -568,11 +576,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -668,11 +677,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -768,11 +778,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -878,11 +889,12 @@ describe('notification module', () => {
     ctp.get = () => ctpClient
 
     // process
-    await notificationHandler.processNotification(
-      notifications[0],
-      false,
-      config,
-    )
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
     if (config.getModuleConfig().removeSensitiveData) {
       delete notifications[0].NotificationRequestItem.additionalData
     }
@@ -954,11 +966,12 @@ describe('notification module', () => {
     let err
     // process
     try {
-      await notificationHandler.processNotification(
-        notificationsMock[0],
-        false,
-        config,
-      )
+      await notificationHandler.processNotification({
+        notification: notificationsMock[0],
+        enableHmacSignature: false,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
     } catch (e) {
       // we check retry logic here and it should throw after certain amount
       // of retries. So the error is expected
@@ -1022,11 +1035,12 @@ describe('notification module', () => {
       ctp.get = () => ctpClient
 
       // process
-      await notificationHandler.processNotification(
-        notifications[0],
-        false,
-        config,
-      )
+      await notificationHandler.processNotification({
+        notification: notifications[0],
+        enableHmacSignature: false,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
 
       expect(ctpClientUpdateSpy.args[0][3][0].fields.notification).to.include(
         'additionalData',
@@ -1090,11 +1104,12 @@ describe('notification module', () => {
       ctp.get = () => ctpClient
 
       // process
-      await notificationHandler.processNotification(
-        notifications[0],
-        false,
-        config,
-      )
+      await notificationHandler.processNotification({
+        notification: notifications[0],
+        enableHmacSignature: false,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
 
       expect(
         ctpClientUpdateSpy.args[0][3][0].fields.notification,
@@ -1151,11 +1166,12 @@ describe('notification module', () => {
     let error
     // process
     try {
-      await notificationHandler.processNotification(
-        notifications[0],
-        false,
-        config,
-      )
+      await notificationHandler.processNotification({
+        notification: notifications[0],
+        enableHmacSignature: false,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
     } catch (e) {
       error = e
     }

@@ -6,24 +6,22 @@ import { validateHmacSignature } from '../../utils/hmacValidator.js'
 import utils from '../../utils/commons.js'
 import ctp from '../../utils/ctp.js'
 import config from '../../config/config.js'
-import { getLogger } from '../../utils/logger.js'
 
-const mainLogger = getLogger()
-
-async function processNotification(
+async function processNotification({
   notification,
   enableHmacSignature,
   ctpProjectConfig,
-) {
+  logger,
+}) {
   const span = trace.getActiveSpan()
-  const logger = mainLogger.child({
+  const ctpLogger = logger.child({
     commercetools_project_key: ctpProjectConfig.projectKey,
   })
 
   if (enableHmacSignature) {
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
-      logger.error(
+      ctpLogger.error(
         { notification: utils.getNotificationForTracking(notification) },
         `HMAC validation failed. Reason: "${errorMessage}"`,
       )
@@ -54,7 +52,7 @@ async function processNotification(
   let retryCount = 0
 
   const handleWebhook = async () => {
-    let payment = await getPaymentByMerchantReference(
+    let payment = await getPaymentByMerchantOrPSPReference(
       merchantReference,
       originalReference || pspReference,
       ctpClient,
@@ -88,7 +86,8 @@ async function processNotification(
       // only if notification event code is authorization and max retry is not reached
       if (
         retryCount < maxRetry &&
-        notification.NotificationRequestItem.eventCode === 'AUTHORISATION'
+        (notification.NotificationRequestItem.eventCode === 'AUTHORISATION' ||
+          notification.NotificationRequestItem.eventCode === 'CAPTURE')
       ) {
         await sleep(1000)
         await handleWebhook()
@@ -110,7 +109,7 @@ async function processNotification(
       }
 
       span?.recordException(err)
-      logger.error(err)
+      ctpLogger.error(err, 'Error while updating payment')
     }
   }
 
@@ -313,6 +312,21 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
     )
     const action = getSetMethodInfoNameAction(paymentMethodFromNotification)
     if (action) updateActions.push(action)
+  }
+
+  if (notificationRequestItem.eventCode === 'AUTHORISATION') {
+    const paymentMethodVariantFromNotification =
+      notificationRequestItem.additionalData?.paymentMethodVariant
+    const paymentMethodVariantFromPayment =
+      payment.custom?.fields?.paymentMethodVariant
+    if (
+      paymentMethodVariantFromNotification &&
+      paymentMethodVariantFromPayment !== paymentMethodVariantFromNotification
+    ) {
+      updateActions.push(
+        getSetPaymentMethodVariantAction(paymentMethodVariantFromNotification),
+      )
+    }
   }
 
   return updateActions
@@ -538,6 +552,14 @@ function getSetMethodInfoMethodAction(paymentMethod) {
   }
 }
 
+function getSetPaymentMethodVariantAction(paymentMethodVariant) {
+  return {
+    action: 'setCustomField',
+    name: 'paymentMethodVariant',
+    value: paymentMethodVariant,
+  }
+}
+
 function getSetMethodInfoNameAction(paymentMethod) {
   const paymentMethodsToLocalizedNames = config.getAdyenPaymentMethodsToNames()
   const paymentMethodLocalizedNames =
@@ -550,15 +572,29 @@ function getSetMethodInfoNameAction(paymentMethod) {
   return null
 }
 
-async function getPaymentByMerchantReference(
+async function getPaymentByMerchantOrPSPReference(
   merchantReference,
   pspReference,
   ctpClient,
 ) {
   try {
     const keys = [merchantReference, pspReference]
-    const result = await ctpClient.fetchByKeys(ctpClient.builder.payments, keys)
-    return result.body?.results[0]
+    const resultByKey = await ctpClient.fetchByKeys(
+      ctpClient.builder.payments,
+      keys,
+    )
+    const payment = resultByKey.body?.results[0]
+    if (payment) {
+      return payment
+    }
+
+    const resultByCustomField = await ctpClient.fetchByCustomField(
+      ctpClient.builder.payments,
+      'merchantReference',
+      merchantReference,
+    )
+
+    return resultByCustomField.body?.results[0]
   } catch (err) {
     if (err.statusCode === 404) return null
     const errMsg =

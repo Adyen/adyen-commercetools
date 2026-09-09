@@ -24,6 +24,8 @@
     - [Shopper successfully paid but `redirectUrl` was not reached](#shopper-successfully-paid-but-redirecturl-was-not-reached)
     - [Shopper tries to pay a different amount than the actual order amount](#shopper-tries-to-pay-a-different-amount-than-the-actual-order-amount)
   - [Test and go live](#test-and-go-live)
+  - [Payment key and notification matching](#payment-key-and-notification-matching)
+    - [Fallback search by the merchantReference custom field](#fallback-search-by-the-merchantreference-custom-field)
 - [Manual Capture](#manual-capture)
 - [Cancel or refund](#cancel-or-refund)
 - [Restore](#restore)
@@ -173,7 +175,7 @@ Here's an example of the `getPaymentMethodsRequest` custom field value for a Ger
 
 <details>
   <summary>The commercetools payment representation example with getPaymentMethodsRequest. Click to expand.</summary>
-    
+
 ```json
 {
   "amountPlanned": {
@@ -196,6 +198,7 @@ Here's an example of the `getPaymentMethodsRequest` custom field value for a Ger
   }
 }
 ```
+
 </details>
 
 The response includes the list of available payment methods:
@@ -219,7 +222,7 @@ Pass the `getPaymentMethodsResponse` custom field value to your front end. You m
 
 <details>
   <summary>The commercetools payment representation example with response. Click to expand.</summary>
-    
+
 ```json
 {
   "amountPlanned": {
@@ -243,6 +246,7 @@ Pass the `getPaymentMethodsResponse` custom field value to your front end. You m
   }
 }
 ```
+
 </details>
 
 ## Step 4: Create a payment session
@@ -299,7 +303,7 @@ An example of payment [setCustomField](https://docs.commercetools.com/api/projec
 
 <details>
   <summary>The commercetools payment representation example with createSessionRequest request. Click to expand.</summary>
-    
+
 ```json
 {
   "amountPlanned": {
@@ -322,6 +326,7 @@ An example of payment [setCustomField](https://docs.commercetools.com/api/projec
   }
 }
 ```
+
 </details>
 
 > For the sake of readability, the field [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is omitted from all the examples in this document. In real requests, [`applicationInfo`](https://docs.adyen.com/development-resources/building-adyen-solutions#building-a-plugin) is always added.
@@ -407,12 +412,14 @@ For details, please follow [Get payment outcome](https://docs.adyen.com/online-p
 
 ## Adding cart information to the createSessionRequest and makePaymentRequest
 
-Extension module sends the `lineItems`, `billingAddress`, `countryCode`, `dateOfBirth`, `shopperEmail`, `shopperLocale`, `shopperName`, `accountInfo`, `additionalData → enhancedSchemeData`fields in the Adyen request,
-taking the data from the `lineItems`, `billingAddress`, `countryCode`, `dateOfBirth`, `shopperEmail`, `shopperLocale`,`shopperName`, `accountInfo`, `additionalData → enhancedSchemeData`fields in `createSessionRequest/makePaymentRequest`.
+Extension module sends the `lineItems`, `billingAddress`, `deliveryAddress`, `telephoneNumber`, `countryCode`, `dateOfBirth`, `shopperEmail`, `shopperLocale`, `shopperName`, `accountInfo`, `additionalData → enhancedSchemeData`fields in the Adyen request,
+taking the data from the `lineItems`, `billingAddress`, `deliveryAddress`, `telephoneNumber`, `countryCode`, `dateOfBirth`, `shopperEmail`, `shopperLocale`,`shopperName`, `accountInfo`, `additionalData → enhancedSchemeData`fields in `createSessionRequest/makePaymentRequest`.
 
 If any of these fields are missing in the `createSessionRequest/makePaymentRequest`, the module will automatically populate the following:
 
-- `lineItems`, `billingAddress`, `countryCode`, `shopperEmail`, `shopperLocale`, and `additionalData → enhancedSchemeData` fields from the CommerceTools cart
+- `lineItems`, `billingAddress`, `deliveryAddress`, `countryCode`, `shopperEmail`, `shopperLocale`, and `additionalData → enhancedSchemeData` fields from the CommerceTools cart
+
+- `telephoneNumber` field first from the CommerceTools cart billing address, and if not available, from the CommerceTools cart shipping address
 
 - `dateOfBirth`, `shopperName`, and `accountInfo` fields from the CommerceTools customer, if the cart is created by the customer
 
@@ -424,7 +431,7 @@ Extension module does not rely on the deprecated `addCommercetoolsLineItems` fla
 
 By default, the extension module populates these fields for you. However, if you wish to define your own values, include these fields in your `createSessionRequest/makePaymentRequest`.
 
-Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **WITH** `shopperLocale`, `countryCode`, `shopperEmail`, `shopperName`, `billingAddress`.
+Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **WITH** `shopperLocale`, `countryCode`, `shopperEmail`, `shopperName`, `billingAddress`, `deliveryAddress`, `telephoneNumber`.
 
 ```json
 {
@@ -450,6 +457,14 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **W
     "postalCode": "12345",
     "street": "Stargatan"
   },
+  "deliveryAddress": {
+    "city": "Ankeborg",
+    "country": "SE",
+    "houseNumberOrName": "1",
+    "postalCode": "12345",
+    "street": "Stargatan"
+  },
+  "telephoneNumber": "+496285696",
   "returnUrl": "https://www.your-company.com/..."
 }
 ```
@@ -463,7 +478,7 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **W
     {
       "action": "setCustomField",
       "name": "createSessionRequest",
-      "value": "{ \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\", \"reference\": \"YOUR_REFERENCE\", \"amount\": { \"currency\": \"EUR\", \"value\": \"1000\" }, \"shopperLocale\": \"en_US\", \"countryCode\": \"SE\", \"shopperEmail\": \"youremail@email.com\", \"shopperName\": { \"firstName\": \"Testperson-se\", \"gender\": \"UNKNOWN\", \"lastName\": \"Approved\" }, \"shopperReference\": \"YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j\", \"billingAddress\": { \"city\": \"Ankeborg\", \"country\": \"SE\", \"houseNumberOrName\": \"1\", \"postalCode\": \"12345\", \"street\": \"Stargatan\" }, \"returnUrl\": \"https://www.your-company.com/...\" }"
+      "value": "{ \"merchantAccount\": \"YOUR_MERCHANT_ACCOUNT\", \"reference\": \"YOUR_REFERENCE\", \"amount\": { \"currency\": \"EUR\", \"value\": \"1000\" }, \"shopperLocale\": \"en_US\", \"countryCode\": \"SE\", \"shopperEmail\": \"youremail@email.com\", \"shopperName\": { \"firstName\": \"Testperson-se\", \"gender\": \"UNKNOWN\", \"lastName\": \"Approved\" }, \"shopperReference\": \"YOUR_UNIQUE_SHOPPER_ID_IOfW3k9G2PvXFu2j\", \"billingAddress\": { \"city\": \"Ankeborg\", \"country\": \"SE\", \"houseNumberOrName\": \"1\", \"postalCode\": \"12345\", \"street\": \"Stargatan\" }, \"deliveryAddress\": { \"city\": \"Ankeborg\", \"country\": \"SE\", \"houseNumberOrName\": \"1\", \"postalCode\": \"12345\", \"street\": \"Stargatan\" }, \"telephoneNumber\": \"+496285696\", \"returnUrl\": \"https://www.your-company.com/...\" }"
     }
   ]
 }
@@ -499,6 +514,14 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **W
     "postalCode": "12345",
     "street": "Stargatan"
   },
+  "deliveryAddress": {
+    "city": "Ankeborg",
+    "country": "SE",
+    "houseNumberOrName": "1",
+    "postalCode": "12345",
+    "street": "Stargatan"
+  },
+  "telephoneNumber": "+496285696",
   "returnUrl": "https://www.your-company.com/...",
   "lineItems": [
     {
@@ -524,6 +547,72 @@ Here's an example of the `createSessionRequest` **WITHOUT** `lineItems`, but **W
 ```
 
 </details>
+
+### Enhanced Scheme Data (L2/L3) for Card Payments
+
+For card payments (payment method type `scheme`), the extension module automatically populates **Enhanced Scheme Data** (also known as Level 2/Level 3 data).
+
+#### Automatically Mapped Fields
+
+When `paymentMethod.type === 'scheme'`, the following fields are automatically added to `additionalData.enhancedSchemeData`:
+
+| Field                    | Source                                                                                       | Description                                              |
+| ------------------------ | -------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `customerReference`      | `cart.customerId`                                                                            | Customer identifier                                      |
+| `destinationCountryCode` | `cart.shippingAddress.country`                                                               | Shipping destination country                             |
+| `destinationPostalCode`  | `cart.shippingAddress.postalCode`                                                            | Shipping destination postal code                         |
+| `orderDate`              | Current date                                                                                 | Order date in DDMMYY format                              |
+| `totalTaxAmount`         | `cart.taxedPrice.totalTax.centAmount`                                                        | Total tax amount in minor units                          |
+| `freightAmount`          | `cart.shippingInfo.taxedPrice.totalGross.centAmount` or `cart.shippingInfo.price.centAmount` | Shipping cost (with tax if available, otherwise without) |
+| `itemDetailLine[i]`      | `cart.lineItems` + `cart.customLineItems`                                                    | Line by line item details (see below)                    |
+
+#### Item Detail Lines
+
+For each line item and custom line item in the cart, the following fields are included:
+
+**Standard fields (all card payments):**
+
+- `quantity` - Item quantity
+- `totalAmount` - Total amount for the line item in minor units
+- `unitPrice` - Unit price (calculated from taxed price if available, otherwise from base price)
+
+**Additional fields for US domestic payments** (when `billingAddress.country === 'US'`):
+
+- `productCode` - Product ID or custom line item key
+- `description` - Product name (localized, preferring English for US)
+- `unitOfMeasure` - Always set to `"EA"` (each)
+- `commodityCode` - Variant key, product key, or custom line item key
+- `discountAmount` - Total discount amount for the line item
+- `shipFromPostalCode` - Ship-from postal code (from supply channel address if available)
+
+#### Overriding Auto-Mapped Values
+
+If you need to provide custom values for specific items, you can include `additionalData.enhancedSchemeData.itemDetailLines` array in your request:
+
+```json
+{
+  "amount": { "currency": "USD", "value": 10000 },
+  "reference": "YOUR_REFERENCE",
+  "paymentMethod": { "type": "scheme" },
+  "additionalData": {
+    "enhancedSchemeData": {
+      "itemDetailLines": [
+        {
+          "productId": "product-123",
+          "quantity": 5,
+          "unitPrice": 2000,
+          "productCode": "CUSTOM-CODE",
+          "commodityCode": "CUSTOM-COMMODITY"
+        }
+      ]
+    }
+  }
+}
+```
+
+The extension will match items by `line item id` (for line items) or `key` (for custom line items) and merge your provided values, falling back to cart data for any missing fields.
+
+**Note:** If you provide the entire `enhancedSchemeData` object in your request, the extension will not override it.
 
 ## Error handling
 
@@ -563,6 +652,27 @@ Before you go live please follow [steps](https://docs.adyen.com/online-payments/
 - [Please check FAQ guide](../../docs/FAQ.md).
 
 Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist).
+
+# Payment key and notification matching
+
+On payment session creation, the commercetools payment `key` is initially set to the `reference` of the `createSessionRequest` (see [Step 4](#step-4-create-a-payment-session)). When the notification module receives the payment result from Adyen, it sets the commercetools payment `key` to the Adyen `pspReference`. If the `pspReference` is not available in the notification, the `merchantReference` is used as the `payment.key` instead, so that the key is never `undefined`.
+
+This is important because the notification module looks up the corresponding commercetools payment by its `key`, with a condition matching the key against either the `pspReference` or the `merchantReference` (the latter for backwards compatibility with older payments). If `payment.key` was never set, the lookup by key would never match and **every** notification would end up in the [fallback custom field search](#fallback-search-by-the-merchantreference-custom-field) with O(N) complexity, potentially leading to timeouts and congestion of the notification queues. By always setting the key (to the `pspReference`, or to the `merchantReference` when the `pspReference` is missing), the O(1) key lookup succeeds in the regular case and the custom field fallback remains reserved for the rare situations described below.
+
+## Fallback search by the merchantReference custom field
+
+In rare cases, Adyen may send a webhook notification that does not contain a `pspReference`, but only a `merchantReference`.
+Since `payment.key` is set to the `pspReference` for new payments, such notifications could not be matched by the payment `key`, even though the payment actually exists.
+Although this happened rarely, it led to congestion of the notification queues.
+
+To prevent this, a custom field `merchantReference` was introduced on the commercetools payment. If the notification module cannot find the payment by `key`, it falls back to searching by the `merchantReference` custom field.
+This way, the payment lookup is guaranteed even in these rare situations.
+
+> [!NOTE]
+> **Performance note:** A lookup by `payment.key` has O(1) complexity, while a query by a custom field can be considerably more complex (up to O(N)), especially on production systems with a large number of orders and payments.
+> Indexes in commercetools are managed automatically by the platform and cannot be created manually.
+> However, if a custom field is queried frequently enough, commercetools will automatically add an index for it to improve performance (this can take up to two weeks). See the commercetools [query predicate performance considerations](https://docs.commercetools.com/api/predicates/query) for details.
+> Since the fallback search is only executed in the rare cases described above, it does not affect the performance of regular notification processing.
 
 # Manual Capture
 

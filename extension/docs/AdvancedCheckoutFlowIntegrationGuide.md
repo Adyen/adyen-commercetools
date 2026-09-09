@@ -29,6 +29,8 @@
     - [Shopper successfully paid but `redirectUrl` was not reached](#shopper-successfully-paid-but-redirecturl-was-not-reached)
     - [Shopper tries to pay a different amount than the actual order amount](#shopper-tries-to-pay-a-different-amount-than-the-actual-order-amount)
   - [Test and go live](#test-and-go-live)
+  - [Payment key and notification matching](#payment-key-and-notification-matching)
+    - [Fallback search by the merchantReference custom field](#fallback-search-by-the-merchantreference-custom-field)
 - [Manual Capture](#manual-capture)
 - [Cancel or refund](#cancel-or-refund)
 - [Restore](#restore)
@@ -625,11 +627,12 @@ If you receive an `HTTP 200 response` with an `Error` or `Refused` resultCode fr
 Use the commercetools payment [interfaceInteractions](https://docs.commercetools.com/api/projects/payments#payment) field to troubleshoot the response.
 
 Check the following table to see the mapping of Adyen [result codes](https://docs.adyen.com/development-resources/response-handling#error-codes-types) to commercetools [transaction state](https://docs.commercetools.com/http-api-projects-payments#transactionstate)
-|Adyen result code| The commercetools transaction (transaction state)
-| --- | --- |
-| Authorised| Authorization (Success)|
-| Refused| Authorization (Failure)|
-| Error| Authorization (Failure)|
+
+| Adyen result code | The commercetools transaction (transaction state) |
+| ----------------- | ------------------------------------------------- |
+| Authorised        | Authorization (Success)                           |
+| Refused           | Authorization (Failure)                           |
+| Error             | Authorization (Failure)                           |
 
 ### Shopper successfully paid but `redirectUrl` was not reached
 
@@ -653,6 +656,23 @@ Before you go live please follow [steps](https://docs.adyen.com/online-payments/
 - [Please check FAQ guide](../../docs/FAQ.md).
 
 Additionally, follow the official Adyen [integration checklist](https://docs.adyen.com/development-resources/integration-checklist).
+
+# Payment key and notification matching
+
+In the advanced checkout flow, the extension module updates the commercetools payment `key` to the Adyen `pspReference`, if the payment response from Adyen is successful and a `pspReference` is provided in the response. This behaviour applies both to the [`/payments`](#step-5-make-a-payment) request (`makePaymentRequest`) and to the [`/payments/details`](#step-6-submit-additional-payment-details) request (`submitAdditionalPaymentDetailsRequest`).
+
+When a webhook notification arrives from Adyen, the notification module finds the corresponding commercetools payment by its `pspReference`.
+
+In addition, there is support for older payments (created before this change), where `payment.key` was set to the `merchantReference`. For this reason, the notification module searches with a condition matching the payment `key` against either the `pspReference` or the `merchantReference`.
+
+## Fallback search by the merchantReference custom field
+
+In rare cases, Adyen may send a webhook notification that does not contain a `pspReference`, but only a `merchantReference`. Since `payment.key` is set to the `pspReference` for new payments, such notifications could not be matched by the payment `key`, even though the payment actually exists. Although this happened rarely, it led to congestion of the notification queues.
+
+To prevent this, a custom field `merchantReference` was introduced on the commercetools payment. If the notification module cannot find the payment by `key`, it falls back to searching by the `merchantReference` custom field. This way, the payment lookup is guaranteed even in these rare situations.
+
+> [!NOTE]
+> **Performance note:** A lookup by `payment.key` has O(1) complexity, while a query by a custom field can be considerably more complex (up to O(N)), especially on production systems with a large number of orders and payments. Indexes in commercetools are managed automatically by the platform and cannot be created manually. However, if a custom field is queried frequently enough, commercetools will automatically add an index for it to improve performance (this can take up to two weeks). See the commercetools [query predicate performance considerations](https://docs.commercetools.com/api/predicates/query) for details. Since the fallback search is only executed in the rare cases described above, it does not affect the performance of regular notification processing.
 
 # Manual Capture
 

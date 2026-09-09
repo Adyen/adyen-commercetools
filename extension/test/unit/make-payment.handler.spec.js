@@ -10,6 +10,7 @@ import paymentRedirectResponse from './fixtures/adyen-make-payment-3ds-redirect-
 import paymentValidationFailedResponse from './fixtures/adyen-make-payment-validation-failed-response.js'
 import utils from '../../src/utils.js'
 import mockCtpEnpoints from './mock-ctp-enpoints.js'
+import mockAdyenEndpoints from './mock-adyen-endpoints.js'
 
 const { execute } = makePaymentHandler
 
@@ -156,7 +157,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(6)
+      expect(response.actions).to.have.lengthOf(7)
 
       const setMethodInfoMethod = response.actions.find(
         (a) => a.action === 'setMethodInfoMethod',
@@ -199,7 +200,16 @@ describe('make-payment::execute', () => {
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
+      expect(setKeyAction.key).to.equal(
+        JSON.parse(paymentSuccessResponse).pspReference,
+      )
+
+      const setMerchantReferenceCustomFieldAction = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'merchantReference',
+      )
+      expect(setMerchantReferenceCustomFieldAction.value).to.equal(
+        makePaymentRequest.reference,
+      )
 
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction',
@@ -261,9 +271,12 @@ describe('make-payment::execute', () => {
         addInterfaceInteraction.fields.response,
       )
 
-      const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      // eslint-disable-next-line @stylistic/js/max-len
-      expect(setKeyAction.key).to.equal(makePaymentRequest.reference) // no pspReference until submitting additional details in redirect flow
+      const setMerchantReferenceCustomFieldAction = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'merchantReference',
+      )
+      expect(setMerchantReferenceCustomFieldAction.value).to.equal(
+        makePaymentRequest.reference,
+      ) // no pspReference until submitting additional details in redirect flow
     },
   )
 
@@ -315,8 +328,12 @@ describe('make-payment::execute', () => {
         addInterfaceInteraction.fields.response,
       )
 
-      const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
+      const setMerchantReferenceCustomField = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'merchantReference',
+      )
+      expect(setMerchantReferenceCustomField.value).to.equal(
+        makePaymentRequest.reference,
+      ) // no pspReference until submitting additional details in redirect flow
     },
   )
 
@@ -337,7 +354,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(6)
+      expect(response.actions).to.have.lengthOf(7)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction',
@@ -370,7 +387,16 @@ describe('make-payment::execute', () => {
       )
 
       const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
+      expect(setKeyAction.key).to.equal(
+        JSON.parse(paymentRefusedResponse).pspReference,
+      )
+
+      const setMerchantReferenceCustomFieldAction = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'merchantReference',
+      )
+      expect(setMerchantReferenceCustomFieldAction.value).to.equal(
+        makePaymentRequest.reference,
+      )
 
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction',
@@ -401,7 +427,7 @@ describe('make-payment::execute', () => {
 
       const response = await execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(6)
+      expect(response.actions).to.have.lengthOf(7)
 
       const addInterfaceInteraction = response.actions.find(
         (a) => a.action === 'addInterfaceInteraction',
@@ -433,9 +459,12 @@ describe('make-payment::execute', () => {
         addInterfaceInteraction.fields.response,
       )
 
-      const setKeyAction = response.actions.find((a) => a.action === 'setKey')
-      expect(setKeyAction.key).to.equal(makePaymentRequest.reference)
-
+      const setMerchantReferenceCustomField = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'merchantReference',
+      )
+      expect(setMerchantReferenceCustomField.value).to.equal(
+        makePaymentRequest.reference,
+      )
       const addTransaction = response.actions.find(
         (a) => a.action === 'addTransaction',
       )
@@ -534,7 +563,7 @@ describe('make-payment::execute', () => {
 
       const response = await makePaymentHandler.execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(6)
+      expect(response.actions).to.have.lengthOf(7)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,
@@ -550,15 +579,17 @@ describe('make-payment::execute', () => {
         makePaymentRequestClone.dateOfBirth,
       )
       expect(
-        makePaymentRequestJson.additionalData.enhancedSchemeData
-          .destinationCountryCode,
+        makePaymentRequestJson.additionalData[
+          'enhancedSchemeData.destinationCountryCode'
+        ],
       ).to.equal(
         makePaymentRequestClone.additionalData.enhancedSchemeData
           .destinationCountryCode,
       )
       expect(
-        makePaymentRequestJson.additionalData.enhancedSchemeData
-          .destinationPostalCode,
+        makePaymentRequestJson.additionalData[
+          'enhancedSchemeData.destinationPostalCode'
+        ],
       ).to.equal(
         makePaymentRequestClone.additionalData.enhancedSchemeData
           .destinationPostalCode,
@@ -630,7 +661,7 @@ describe('make-payment::execute', () => {
 
       const response = await makePaymentHandler.execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(6)
+      expect(response.actions).to.have.lengthOf(7)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,
@@ -658,12 +689,14 @@ describe('make-payment::execute', () => {
         ctpCartWithCustomer.customerEmail,
       )
       expect(
-        makePaymentRequestJson.additionalData.enhancedSchemeData
-          .destinationCountryCode,
+        makePaymentRequestJson.additionalData[
+          'enhancedSchemeData.destinationCountryCode'
+        ],
       ).to.equal(ctpCartWithCustomer.shippingAddress.country)
       expect(
-        makePaymentRequestJson.additionalData.enhancedSchemeData
-          .destinationPostalCode,
+        makePaymentRequestJson.additionalData[
+          'enhancedSchemeData.destinationPostalCode'
+        ],
       ).to.equal(ctpCartWithCustomer.shippingAddress.postalCode)
 
       expect(makePaymentRequestJson.dateOfBirth).to.equal(
@@ -712,7 +745,7 @@ describe('make-payment::execute', () => {
 
       const response = await makePaymentHandler.execute(ctpPaymentClone)
 
-      expect(response.actions).to.have.lengthOf(6)
+      expect(response.actions).to.have.lengthOf(7)
       const makePaymentRequestInteraction = JSON.parse(
         response.actions.find((a) => a.action === 'addInterfaceInteraction')
           .fields.request,
@@ -728,12 +761,45 @@ describe('make-payment::execute', () => {
       expect(makePaymentRequestJson).to.not.have.own.property('accountInfo')
       expect(makePaymentRequestJson).to.not.have.own.property('shopperName')
       expect(makePaymentRequestJson).to.not.have.own.property('shopperLocale')
-      expect(
-        makePaymentRequestJson.additionalData.enhancedSchemeData,
-      ).to.not.have.own.property('destinationCountryCode')
-      expect(
-        makePaymentRequestJson.additionalData.enhancedSchemeData,
-      ).to.not.have.own.property('postalCode')
+      expect(makePaymentRequestJson.additionalData).to.not.have.own.property(
+        'enhancedSchemeData.destinationCountryCode',
+      )
+      expect(makePaymentRequestJson.additionalData).to.not.have.own.property(
+        'enhancedSchemeData.postalCode',
+      )
+    },
+  )
+
+  it(
+    'when resultCode from Adyen is "Authorized" with donationToken in response, ' +
+      'then there should be donationToken and donationCampaign custom field',
+    async () => {
+      mockCtpEnpoints._mockCtpCartsEndpoint(ctpCart, commercetoolsProjectKey)
+      mockAdyenEndpoints._mockDonationCampaigns()
+      scope.post('/payments').reply(200, paymentSuccessResponse)
+
+      const ctpPaymentClone = _.cloneDeep(ctpPayment)
+      ctpPaymentClone.custom.fields.makePaymentRequest =
+        JSON.stringify(makePaymentRequest)
+      ctpPaymentClone.custom.fields.adyenMerchantAccount = adyenMerchantAccount
+      ctpPaymentClone.custom.fields.commercetoolsProjectKey =
+        commercetoolsProjectKey
+
+      const response = await execute(ctpPaymentClone)
+
+      expect(response.actions).to.have.lengthOf(9)
+
+      const donationToken = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'donationToken',
+      )
+
+      expect(JSON.parse(donationToken.value)).to.equal('testToken')
+
+      const donationCampaign = response.actions.find(
+        (a) => a.action === 'setCustomField' && a.name === 'donationCampaign',
+      )
+
+      expect(JSON.parse(donationCampaign.value).id).to.equal('testID')
     },
   )
 })

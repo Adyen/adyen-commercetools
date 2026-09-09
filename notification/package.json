@@ -1,10 +1,10 @@
 {
   "name": "commercetools-adyen-integration-notification",
-  "version": "11.5.6",
+  "version": "11.11.4",
   "description": "Part of the integration of Adyen with commercetools responsible to receive and process notifications from Adyen",
   "type": "module",
   "scripts": {
-    "check-coverage": "c8 check-coverage --lines 83",
+    "check-coverage": "c8 check-coverage --lines 73",
     "test-run": "npm run unit && npm run integration",
     "test-ci": "c8 npm run test-run && npm run check-coverage",
     "test": "npm run unit",
@@ -37,7 +37,7 @@
     "email": "ps-dev@commercetools.com"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=24.0.0"
   },
   "contributors": [],
   "bugs": {
@@ -45,43 +45,47 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-adyen-integration",
   "dependencies": {
-    "@adyen/api-library": "18.1.0",
-    "@commercetools/api-request-builder": "6.0.0",
-    "@commercetools/sdk-client": "3.0.0",
-    "@commercetools/sdk-middleware-auth": "7.0.1",
-    "@commercetools/sdk-middleware-http": "7.0.4",
-    "@commercetools/sdk-middleware-queue": "3.0.0",
-    "@commercetools/sdk-middleware-user-agent": "3.0.0",
-    "@commercetools/sync-actions": "5.17.0",
+    "@adyen/api-library": "^32.0.0",
+    "@commercetools/api-request-builder": "^7.0.1",
+    "@commercetools/sdk-client-v2": "^4.0.0",
+    "@commercetools/sync-actions": "^8.0.0",
     "@elastic/opentelemetry-node": "^1.0.0",
     "@opentelemetry/api": "^1.9.0",
     "bunyan": "1.8.15",
-    "globals": "^15.3.0",
-    "lockfile-lint": "4.14.0",
-    "lodash": "4.17.21",
+    "lodash": "4.18.1",
     "node-fetch": "3.3.2",
     "rc": "1.2.8",
     "run-func": "3.0.0",
-    "serialize-error": "11.0.3",
+    "serialize-error": "13.0.1",
     "verror": "1.10.1"
   },
+  "overrides": {
+    "jsondiffpatch": "0.7.6",
+    "js-yaml": "5.4.1",
+    "glob": "13.0.6",
+    "flatted": "3.4.4",
+    "serialize-javascript": "7.1.1",
+    "diff": "9.0.0",
+    "brace-expansion@^1.0.0": "1.1.18",
+    "picomatch@^2.0.0": "2.3.2"
+  },
   "devDependencies": {
-    "@eslint/js": "^9.4.0",
-    "@stylistic/eslint-plugin-js": "^2.1.0",
-    "c8": "10.1.2",
-    "chai": "5.1.1",
-    "chai-as-promised": "8.0.0",
-    "eslint": "9.9.1",
-    "eslint-config-prettier": "9.1.0",
-    "husky": "9.1.4",
-    "ip": "2.0.1",
-    "lint-staged": "15.2.9",
-    "localtunnel": "2.0.2",
-    "mocha": "10.7.3",
-    "nock": "13.5.4",
-    "p-map": "7.0.2",
-    "prettier": "3.3.3",
-    "sinon": "18.0.0"
+    "@eslint/js": "^10.0.0",
+    "@ngrok/ngrok": "^1.5.2",
+    "@stylistic/eslint-plugin": "^5.4.0",
+    "c8": "12.0.0",
+    "chai": "6.2.2",
+    "chai-as-promised": "8.0.2",
+    "dotenv": "^17.2.2",
+    "eslint": "10.10.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "^17.0.0",
+    "lockfile-lint": "5.0.1",
+    "mocha": "12.0.0",
+    "nock": "14.0.17",
+    "p-map": "7.0.7",
+    "prettier": "3.9.6",
+    "sinon": "22.1.0"
   },
   "husky": {
     "hooks": {

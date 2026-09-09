@@ -27,7 +27,7 @@ function handleErrorResponse(context, errors) {
 
 export const azureExtensionTrigger = async function (context, req) {
   const span = trace.getActiveSpan()
-  const correlationId = req.headers['x-correlation-id']
+  const correlationId = req?.headers?.['x-correlation-id']
   if (correlationId) {
     span?.setAttribute('correlationId', correlationId)
   }

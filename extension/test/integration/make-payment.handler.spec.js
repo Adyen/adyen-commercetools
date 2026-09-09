@@ -98,7 +98,9 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
       )
 
       expect(statusCode).to.equal(200)
-      expect(updatedPayment.key).to.equal(makePaymentRequestDraft.reference)
+      expect(updatedPayment.custom.fields.merchantReference).to.equal(
+        makePaymentRequestDraft.reference,
+      )
       expect(updatedPayment.paymentMethodInfo.method).to.equal('scheme')
       expect(updatedPayment.paymentMethodInfo.name).to.eql({
         en: 'Credit Card',
@@ -142,20 +144,24 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
         ctpCart.billingAddress.country,
       )
       expect(
-        makePaymentRequestBody.additionalData.enhancedSchemeData
-          .destinationCountryCode,
+        makePaymentRequestBody.additionalData[
+          'enhancedSchemeData.destinationCountryCode'
+        ],
       ).to.equal(ctpCart.shippingAddress.country)
       expect(
-        makePaymentRequestBody.additionalData.enhancedSchemeData
-          .destinationPostalCode,
+        makePaymentRequestBody.additionalData[
+          'enhancedSchemeData.destinationPostalCode'
+        ],
       ).to.equal(ctpCart.shippingAddress.postalCode)
       const cartLineItemsLength =
         ctpCart.lineItems.length + ctpCart.customLineItems.length
       for (let i = 0; i < cartLineItemsLength; i++) {
+        const lineNumber = i + 1
         expect(
-          makePaymentRequestBody.additionalData.enhancedSchemeData
-            .itemDetailLine,
-        ).to.have.own.property(`itemDetailLine[${i}]`)
+          makePaymentRequestBody.additionalData[
+            `enhancedSchemeData.itemDetailLine${lineNumber}.quantity`
+          ],
+        ).to.exist
       }
     },
   )
@@ -205,7 +211,7 @@ describe('::make-payment with multiple adyen accounts use case::', () => {
 
     expect(statusCode).to.equal(201)
     const { makePaymentResponse } = payment.custom.fields
-    expect(payment.key).to.equal(makePaymentRequestDraft.reference)
+    expect(payment.key).to.equal(JSON.parse(makePaymentResponse).pspReference)
     expect(payment.paymentMethodInfo.method).to.equal('scheme')
     expect(payment.paymentMethodInfo.name).to.eql({ en: 'Credit Card' })
 

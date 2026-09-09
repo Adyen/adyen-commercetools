@@ -79,7 +79,7 @@ describe('::create-session-request::', () => {
       }
       expect(statusCode).to.equal(201)
 
-      expect(payment.key).to.equal(reference)
+      expect(payment.custom.fields.merchantReference).to.equal(reference)
       const { createSessionRequest, createSessionResponse } =
         payment.custom.fields
       expect(createSessionRequest).to.be.deep.equal(
@@ -103,8 +103,11 @@ describe('::create-session-request::', () => {
         createSessionRequestInteraction.body,
       )
 
+      let shopperIP = createSessionRequestBody.shopperIP
+
       expect(createSessionRequestBody).to.be.deep.equal({
         merchantAccount: adyenMerchantAccount,
+        shopperIP: shopperIP,
         ...createSessionRequestExtended,
       })
 
@@ -161,7 +164,9 @@ describe('::create-session-request::', () => {
         ],
       )
       expect(statusCode).to.equal(200)
-      expect(updatedPayment.key).to.equal(createSessionRequestDraft.reference)
+      expect(updatedPayment.custom.fields.merchantReference).to.equal(
+        createSessionRequestDraft.reference,
+      )
 
       const ctpCart = await utils.readAndParseJsonFile(
         'test/integration/fixtures/ctp-cart.json',

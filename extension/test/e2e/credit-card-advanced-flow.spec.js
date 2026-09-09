@@ -117,7 +117,7 @@ describe('::creditCardAdvancedFlow::', () => {
       creditCardCvc,
       clientKey,
     })
-    let payment = null
+    let payment
     const startTime = new Date().getTime()
     try {
       payment = await createPayment(
@@ -166,7 +166,7 @@ describe('::creditCardAdvancedFlow::', () => {
       'additionalPaymentDetailsString',
       additionalPaymentDetailsString,
     )
-    let result = null
+    let result
     const startTime = new Date().getTime()
     try {
       result = await ctpClient.update(

@@ -5,6 +5,9 @@ import path from 'path'
 import fs from 'node:fs/promises'
 import config from './config/config.js'
 
+/**
+ * @type {ReturnType<typeof bunyan.createLogger>}
+ */
 let logger
 
 function collectRequestData(request) {
@@ -28,12 +31,14 @@ function sendResponse({ response, statusCode = 200, headers, data }) {
 }
 
 function getLogger() {
-  if (!logger)
+  if (!logger) {
     logger = bunyan.createLogger({
       name: 'ctp-adyen-integration-extension',
       stream: process.stderr,
       level: config.getModuleConfig().logLevel || bunyan.INFO,
     })
+  }
+
   return logger
 }
 

@@ -60,6 +60,7 @@ describe('::config::', () => {
       apiKey: 'apiKey',
       clientKey: 'clientKey',
       paypalMerchantId: '',
+      donationAccount: '',
     })
   })
 
@@ -97,6 +98,7 @@ describe('::config::', () => {
       apiKey: 'apiKey',
       clientKey: 'clientKey',
       paypalMerchantId: '',
+      donationAccount: '',
     })
   })
 
@@ -656,6 +658,7 @@ describe('::config::', () => {
           apiKey: 'apiKey',
           clientKey: 'clientKey',
           paypalMerchantId: '',
+          donationAccount: '',
         })
       } finally {
         fs.unlinkSync(filePath)

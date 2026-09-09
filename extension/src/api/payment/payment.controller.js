@@ -4,9 +4,7 @@ import httpUtils from '../../utils.js'
 import { getAuthorizationRequestHeader } from '../../validator/authentication.js'
 import paymentHandler from '../../paymentHandler/payment-handler.js'
 
-const logger = httpUtils.getLogger()
-
-async function processRequest(request, response) {
+async function processRequest(request, response, logger) {
   const span = trace.getActiveSpan()
   const correlationId = request?.headers?.['x-correlation-id']
   if (correlationId) {
@@ -36,25 +34,41 @@ async function processRequest(request, response) {
   let paymentObject = {}
   try {
     const authToken = getAuthorizationRequestHeader(request)
-    paymentObject = await _getPaymentObject(request)
-    logger.debug('Received payment object', JSON.stringify(paymentObject))
+    paymentObject = await _getPaymentObject(request, logger)
+    if (!paymentObject.shopperIP) {
+      paymentObject.shopperIP = getIPAddressRequestHeader(request)
+    }
+    const paymentLogger = logger.child({ paymentId: paymentObject.id })
+    paymentLogger.debug(
+      'Received payment object',
+      JSON.stringify(paymentObject),
+    )
+
+    paymentLogger.info({ paymentId: paymentObject.id }, 'Handling payment...')
     const paymentResult = await paymentHandler.handlePayment(
       paymentObject,
       authToken,
     )
+    const statusCode = paymentResult.actions ? 200 : 400
+    paymentLogger.info(
+      { statusCode, errors: paymentResult.errors },
+      'Payment handled',
+    )
+
     const result = {
       response,
-      statusCode: paymentResult.actions ? 200 : 400,
+      statusCode,
       data: paymentResult.actions
         ? { actions: paymentResult.actions }
         : { errors: paymentResult.errors },
     }
 
-    logger.debug('Data to be returned', JSON.stringify(result.data))
+    paymentLogger.debug('Data to be returned', JSON.stringify(result.data))
 
     return httpUtils.sendResponse(result)
   } catch (err) {
     span?.recordException(err)
+    logger.error(err, 'Error while handling payment')
     return httpUtils.sendResponse({
       response,
       statusCode: 400,
@@ -63,7 +77,7 @@ async function processRequest(request, response) {
   }
 }
 
-async function _getPaymentObject(request) {
+async function _getPaymentObject(request, logger) {
   let body = {}
   try {
     body = await httpUtils.collectRequestData(request)
@@ -76,6 +90,10 @@ async function _getPaymentObject(request) {
     logger.error(errorStackTrace)
     throw err
   }
+}
+
+function getIPAddressRequestHeader(request) {
+  return request?.headers?.['x-forwarded-for']
 }
 
 export default { processRequest }

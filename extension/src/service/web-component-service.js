@@ -3,13 +3,18 @@ import { serializeError } from 'serialize-error'
 import config from '../config/config.js'
 import utils from '../utils.js'
 
-async function getPaymentMethods(merchantAccount, getPaymentMethodsRequestObj) {
+async function getPaymentMethods(
+  merchantAccount,
+  getPaymentMethodsRequestObj,
+  idempotencyKey,
+) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   return callAdyen(
     `${adyenCredentials.apiBaseUrl}/paymentMethods`,
     merchantAccount,
     adyenCredentials.apiKey,
     await extendRequestObjWithApplicationInfo(getPaymentMethodsRequestObj),
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey },
   )
 }
 
@@ -17,6 +22,7 @@ async function makePayment(
   merchantAccount,
   commercetoolsProjectKey,
   makePaymentRequestObj,
+  idempotencyKey,
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(makePaymentRequestObj, commercetoolsProjectKey)
@@ -27,6 +33,7 @@ async function makePayment(
     merchantAccount,
     adyenCredentials.apiKey,
     makePaymentRequestObj,
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey },
   )
 }
 
@@ -34,6 +41,7 @@ function submitAdditionalPaymentDetails(
   merchantAccount,
   commercetoolsProjectKey,
   submitAdditionalPaymentDetailsRequestObj,
+  idempotencyKey,
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
   extendRequestObjWithMetadata(
@@ -45,6 +53,35 @@ function submitAdditionalPaymentDetails(
     merchantAccount,
     adyenCredentials.apiKey,
     submitAdditionalPaymentDetailsRequestObj,
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey },
+  )
+}
+
+async function donationCampaigns(
+  merchantAccount,
+  donationCampaignsRequest,
+  idempotencyKey,
+) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+
+  return callAdyen(
+    `${adyenCredentials.apiBaseUrl}/donationCampaigns`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    donationCampaignsRequest,
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey },
+  )
+}
+
+async function donation(merchantAccount, donationRequest, idempotencyKey) {
+  const adyenCredentials = config.getAdyenConfig(merchantAccount)
+
+  return callAdyen(
+    `${adyenCredentials.apiBaseUrl}/donations`,
+    merchantAccount,
+    adyenCredentials.apiKey,
+    donationRequest,
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey },
   )
 }
 
@@ -78,6 +115,7 @@ function manualCapture(
 function cancelPayment(
   merchantAccount,
   commercetoolsProjectKey,
+  idempotencyKey,
   cancelPaymentRequestObj,
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
@@ -88,6 +126,7 @@ function cancelPayment(
     {
       reference: cancelPaymentRequestObj?.reference,
     },
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey },
   )
 }
 
@@ -123,6 +162,7 @@ function getCarbonOffsetCosts(merchantAccount, getCarbonOffsetCostsRequestObj) {
 function updateAmount(
   merchantAccount,
   commercetoolsProjectKey,
+  idempotencyKey,
   amountUpdatesRequestObj,
 ) {
   const adyenCredentials = config.getAdyenConfig(merchantAccount)
@@ -132,6 +172,7 @@ function updateAmount(
     merchantAccount,
     adyenCredentials.apiKey,
     amountUpdatesRequestObj,
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey },
   )
 }
 
@@ -139,6 +180,7 @@ async function createSessionRequest(
   merchantAccount,
   commercetoolsProjectKey,
   requestObject,
+  idempotencyKey,
 ) {
   extendRequestObjWithMetadata(requestObject, commercetoolsProjectKey)
   await extendRequestObjWithApplicationInfo(requestObject)
@@ -149,6 +191,7 @@ async function createSessionRequest(
     merchantAccount,
     adyenCredentials.apiKey,
     requestObject,
+    idempotencyKey && { 'Idempotency-Key': idempotencyKey },
   )
 }
 
@@ -276,6 +319,7 @@ async function fetchAsync(
       // Handle non-JSON format response
       throw new Error(
         `Unable to receive non-JSON format resposne from Adyen API : ${responseBodyInText}`,
+        { cause: err },
       )
     // Error in fetching URL
     else throw err
@@ -333,4 +377,6 @@ export {
   updateAmount,
   disableStoredPayment,
   createSessionRequest,
+  donationCampaigns,
+  donation,
 }

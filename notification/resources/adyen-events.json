@@ -3,7 +3,7 @@
     "eventCode": "AUTHORISATION",
     "success": "false",
     "transactionType": "Authorization",
-    "transactionState": "Pending"
+    "transactionState": "Failure"
   },
   {
     "eventCode": "AUTHORISATION",

@@ -15,6 +15,11 @@ export default {
     'submitAdditionalPaymentDetailsResponse',
   CTP_INTERACTION_TYPE_MANUAL_CAPTURE: 'manualCapture',
   CTP_INTERACTION_TYPE_REFUND: 'refund',
+  CTP_CUSTOM_FIELD_MERCHANT_REFERENCE: 'merchantReference',
+  CTP_CUSTOM_FIELD_DONATION_TOKEN: 'donationToken',
+  CTP_CUSTOM_FIELD_DONATION_CAMPAIGN: 'donationCampaign',
+  CTP_CUSTOM_FIELD_DONATION_REQUEST: 'donationRequest',
+  CTP_CUSTOM_FIELD_DONATION_RESPONSE: 'donationResponse',
 
   PAYMENT_METHOD_TYPE_KLARNA_METHODS: [
     'klarna',

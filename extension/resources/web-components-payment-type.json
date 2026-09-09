@@ -94,6 +94,50 @@
       "required": false
     },
     {
+      "name": "donationToken",
+      "label": {
+        "en": "donationToken"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "donationCampaign",
+      "label": {
+        "en": "donationCampaign"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "donationRequest",
+      "label": {
+        "en": "donationRequest"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "donationResponse",
+      "label": {
+        "en": "donationResponse"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "MultiLine",
+      "required": false
+    },
+    {
       "name": "languageCode",
       "label": {
         "en": "Language code is used to determine the default locale for line item names in the matching cart."
@@ -190,6 +234,29 @@
         "name": "String"
       },
       "inputHint": "MultiLine",
+      "required": false
+    },
+    {
+      "name": "merchantReference",
+      "label": {
+        "en": "merchantReference"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine",
+      "required": false,
+      "searchable": true
+    },
+    {
+      "name": "paymentMethodVariant",
+      "label": {
+        "en": "paymentMethodVariant"
+      },
+      "type": {
+        "name": "String"
+      },
+      "inputHint": "SingleLine",
       "required": false
     }
   ]

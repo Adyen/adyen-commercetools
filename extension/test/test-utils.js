@@ -1,50 +1,49 @@
-import localtunnel from 'localtunnel'
 import { serializeError } from 'serialize-error'
 import fetch from 'node-fetch'
 import { setupServer } from '../src/server.js'
 import { routes } from '../src/routes.js'
 import { setupExtensionResources } from '../src/setup.js'
 import config from '../src/config/config.js'
+import ngrok from '@ngrok/ngrok'
+import dotenv from 'dotenv'
 
-global.window = {}
-global.navigator = {}
+dotenv.config()
+Object.defineProperty(global, 'window', {
+  value: {},
+  writable: true,
+  configurable: true,
+})
+
+Object.defineProperty(global, 'navigator', {
+  value: {},
+  writable: true,
+  configurable: true,
+})
 
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled Rejection:', reason)
   process.exit(1)
 })
 
-const extensionPort = 3000
 let extensionTunnel
 let extensionServer
 
-const notificationPort = 3001
 let notificationTunnel
 let notificationServer
 const merchantIdToWebhookIdMap = new Map()
 
 async function startIT() {
   await setupLocalServer()
-  if (process.env.CI) {
-    // this part used only on github actions (CI)
-    await setupExtensionResources(process.env.CI_EXTENSION_BASE_URL)
-    // e2e requires this for static forms
-    overrideApiExtensionBaseUrlConfig(`http://localhost:${extensionPort}`)
-  } else {
-    await setupLocalTunnel()
-    await setupExtensionResources()
-    await setUpWebhooksAndNotificationModule()
-  }
+  await setupExtensionNgrokTunnel()
+  await setupExtensionResources()
+  await setUpWebhooksAndNotificationModule()
 }
 
 async function stopIT() {
   extensionServer.close()
-  if (!process.env.CI) {
-    // this part is not used on github actions (CI)
-    notificationServer.close()
-    await extensionTunnel.close()
-    await notificationTunnel.close()
-  }
+  notificationServer.close()
+  await extensionTunnel.close()
+  await notificationTunnel.close()
 
   // If you don't delete the webhooks, other tests will pollute this webhook with many notifications
   // the webhook will get stuck and your test might not get the notifications next time.
@@ -54,7 +53,7 @@ async function stopIT() {
 function setupLocalServer() {
   extensionServer = setupServer(routes)
   return new Promise((resolve) => {
-    extensionServer.listen(extensionPort, async () => {
+    extensionServer.listen(process.env.EXTENSION_PORT, async () => {
       resolve()
     })
   })
@@ -89,29 +88,39 @@ function overrideEnableHmacSignatureConfig(enableHmacSignature) {
   }
 }
 
-async function setupLocalTunnel() {
-  const extensionTunnelDomain = 'ctp-adyen-integration-tests'
-  extensionTunnel = await initTunnel(extensionTunnelDomain, extensionPort)
-  const apiExtensionBaseUrl = extensionTunnel.url.replace('http:', 'https:')
+async function setupExtensionNgrokTunnel() {
+  extensionTunnel = await initNgrokTunnel(
+    process.env.EXTENSION_PORT,
+    process.env.EXTENSION_TUNNEL_DOMAIN,
+  )
+  const apiExtensionBaseUrl = extensionTunnel.url().replace('http:', 'https:')
   overrideApiExtensionBaseUrlConfig(apiExtensionBaseUrl)
 }
 
-async function initTunnel(subdomain, port) {
+async function initNgrokTunnel(port, subdomain) {
   let repeaterCounter = 0
-  let tunnel
+  let setDomain = true
+  let listener
   while (true) {
     try {
-      tunnel = await localtunnel({
-        port,
-        subdomain,
-      })
+      const forwardOpts = {
+        addr: port,
+        authtoken: process.env.NGROK_AUTHTOKEN,
+      }
+      if (setDomain && subdomain) {
+        forwardOpts.domain = subdomain
+      }
+
+      listener = await ngrok.forward(forwardOpts)
       break
     } catch (e) {
+      setDomain = false
       if (repeaterCounter === 10) throw e
       repeaterCounter++
     }
   }
-  return tunnel
+
+  return listener
 }
 
 async function updatePaymentWithRetry(ctpClient, actions, payment) {
@@ -163,24 +172,23 @@ async function ensureAdyenWebhookForAllAdyenAccounts(webhookUrl) {
 }
 
 async function setUpWebhooksAndNotificationModule() {
-  const notificationTunnelDomain = 'ctp-adyen-integration-tests-notifications'
+  const notificationTunnelDomain = process.env.NOTIFICATION_TUNNEL_DOMAIN
   // Starting up server is needed only locally, on CI we deploy to GCP
-  const { setupServer: setupNotificationModuleServer } = await import(
-    '../../notification/src/server.js'
-  )
+  const { setupServer: setupNotificationModuleServer } =
+    await import('../../notification/src/server.js')
   notificationServer = await setupNotificationModuleServer()
   await new Promise((resolve) => {
-    notificationServer.listen(notificationPort, async () => {
+    notificationServer.listen(process.env.NOTIFICATION_PORT, async () => {
       resolve()
     })
   })
 
-  const webhookUrl = `https://${notificationTunnelDomain}.loca.lt`
-  await ensureAdyenWebhookForAllAdyenAccounts(webhookUrl)
-  notificationTunnel = await initTunnel(
+  notificationTunnel = await initNgrokTunnel(
+    process.env.NOTIFICATION_PORT,
     notificationTunnelDomain,
-    notificationPort,
   )
+  const webhookUrl = notificationTunnel.url().replace('http:', 'https:')
+  await ensureAdyenWebhookForAllAdyenAccounts(webhookUrl)
 }
 
 async function deleteWebhooks() {
@@ -292,6 +300,7 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
     throw Error(
       `Failed to ensure adyen webhook for project ${merchantId}.` +
         `Error: ${JSON.stringify(serializeError(err))}`,
+      { cause: err },
     )
   }
 }
