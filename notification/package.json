@@ -59,7 +59,7 @@
   },
   "overrides": {
     "jsondiffpatch": "0.7.6",
-    "js-yaml": "5.4.1",
+    "js-yaml": "5.4.2",
     "glob": "13.0.6",
     "flatted": "3.4.4",
     "serialize-javascript": "7.1.1",
@@ -79,9 +79,9 @@
     "eslint-config-prettier": "10.1.8",
     "globals": "^17.0.0",
     "lockfile-lint": "5.0.1",
-    "mocha": "12.0.0",
+    "mocha": "12.0.1",
     "nock": "14.0.17",
-    "p-map": "7.0.7",
+    "p-map": "7.0.8",
     "prettier": "3.9.6",
     "sinon": "22.1.0"
   },
