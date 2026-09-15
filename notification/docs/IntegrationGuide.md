@@ -4,6 +4,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Step 1: Set up notification webhook and generate HMAC signature](#step-1-set-up-notification-webhook-and-generate-hmac-signature)
+  - [Fallback in case `metadata` is not available](#fallback-in-case-metadata-is-not-available)
+  - [Generic Pending webhook (basic authentication)](#generic-pending-webhook-basic-authentication)
 - [Step 2: Deploy the notification module](#step-2-deploy-the-notification-module)
 - [Step 3: Processing notifications](#step-3-processing-notifications)
 - [Test and go live](#test-and-go-live)
@@ -54,6 +56,40 @@ https://your-notification-url.com/notifications/${ctp-project-key}/ - invalid (n
 ```
 
 > Note: if you do not provide `public URL` like above, notification module will still work except for the rare cases.
+
+### Generic Pending webhook (basic authentication)
+
+Besides the standard webhook, the notification module can receive the [Adyen Generic Pending webhook](https://docs.adyen.com/development-resources/webhooks/webhook-types/#other-webhooks).
+Adyen sends this webhook with `eventCode: PENDING` whenever a payment ends in a pending state for any redirect payment method.
+
+Generic Pending webhooks **do not support HMAC signatures**. Instead, Adyen protects them with [basic authentication over HTTPS](https://docs.adyen.com/development-resources/webhooks/secure-webhooks/).
+To enable them, add the following attributes to the Adyen merchant account in `ADYEN_INTEGRATION_CONFIG` (see [How to run](./HowToRun.md#optional-attributes)):
+
+```json
+{
+  "adyen": {
+    "YOUR_MERCHANT_ACCOUNT": {
+      "notificationBaseUrl": "https://your-notification-url.com",
+      "enableBasicAuth": "true",
+      "authentication": {
+        "scheme": "basic",
+        "username": "xxx",
+        "password": "xxx"
+      }
+    }
+  }
+}
+```
+
+The same credentials serve two purposes:
+
+1. **Webhook registration**: `npm run setup-resources` creates (or updates) a webhook of type `pending-notification` in Adyen pointing to the same `notificationBaseUrl` as the standard webhook, configured with the given username and password. Re-running the command is idempotent and re-syncs the credentials to Adyen.
+2. **Webhook validation**: the notification module validates the `Authorization` header of every incoming `PENDING` notification against the configured username and password. When the credentials are missing or wrong, the module responds with HTTP `401` and none of the notification items of the request is processed.
+
+Processing of `PENDING` notifications skips HMAC validation even when `enableHmacSignature` is enabled, as Adyen does not sign this webhook type.
+A `PENDING` notification is stored as an [interfaceInteraction](https://docs.commercetools.com/api/projects/payments#add-interfaceinteraction) with status `pending` on the matching payment; no transaction is added or changed (see [adyen-events.json](./../resources/adyen-events.json)).
+
+> Note: `enableBasicAuth` is disabled by default. Similar to `enableHmacSignature`, it can be set to "false" for testing purposes, in which case `PENDING` notifications are processed without authentication and the Generic Pending webhook is not registered by `npm run setup-resources`.
 
 ## Step 2: Deploy the notification module
 

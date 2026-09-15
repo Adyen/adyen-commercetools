@@ -206,6 +206,7 @@ describe('::config::', () => {
           secretHmacKey: undefined,
           notificationBaseUrl: undefined,
           apiKey: undefined,
+          enableBasicAuth: false,
         })
       } finally {
         fs.unlinkSync(filePath)
@@ -214,6 +215,105 @@ describe('::config::', () => {
       }
     },
   )
+
+  describe('basic authentication (generic pending webhook)', () => {
+    function buildConfig(adyenMerchantConfig) {
+      return JSON.stringify({
+        commercetools: {
+          ctpProjectKey1: {
+            clientId: 'clientId',
+            clientSecret: 'clientSecret',
+          },
+        },
+        adyen: {
+          adyenMerchantAccount1: {
+            enableHmacSignature: 'false',
+            ...adyenMerchantConfig,
+          },
+        },
+        logLevel: 'DEBUG',
+      })
+    }
+
+    async function expectConfigToThrow(adyenMerchantConfig, expectedMessage) {
+      process.env.ADYEN_INTEGRATION_CONFIG = buildConfig(adyenMerchantConfig)
+      try {
+        await reloadModule('../../src/config/config.js')
+        expect.fail('This test should throw an error, but it did not')
+      } catch (e) {
+        expect(e.message).to.contain('[adyenMerchantAccount1]')
+        expect(e.message).to.contain(expectedMessage)
+      }
+    }
+
+    it('when enableBasicAuth is true but authentication is missing, it should throw an error', async () => {
+      await expectConfigToThrow(
+        { enableBasicAuth: true },
+        'Basic authentication is enabled but the "authentication" setting is missing',
+      )
+    })
+
+    it('when enableBasicAuth is true but authentication is incomplete, it should throw an error', async () => {
+      await expectConfigToThrow(
+        {
+          enableBasicAuth: 'true',
+          authentication: { scheme: 'basic', username: 'user' },
+        },
+        'Attributes (scheme, username or password) is missing in "authentication" setting',
+      )
+    })
+
+    it('when authentication scheme is not basic, it should throw an error', async () => {
+      await expectConfigToThrow(
+        {
+          enableBasicAuth: true,
+          authentication: {
+            scheme: 'bearer',
+            username: 'user',
+            password: 'pass',
+          },
+        },
+        'Attributes (scheme, username or password) is missing in "authentication" setting',
+      )
+    })
+
+    it('when enableBasicAuth is false but authentication object is incomplete, it should throw an error', async () => {
+      await expectConfigToThrow(
+        {
+          enableBasicAuth: false,
+          authentication: { scheme: 'basic', username: 'user' },
+        },
+        'Attributes (scheme, username or password) is missing in "authentication" setting',
+      )
+    })
+
+    it('when basic auth is properly configured, it should expose enableBasicAuth and authentication', async () => {
+      process.env.ADYEN_INTEGRATION_CONFIG = buildConfig({
+        enableBasicAuth: 'true',
+        authentication: {
+          scheme: 'Basic',
+          username: 'user',
+          password: 'pass',
+        },
+      })
+      const config = await reloadModule('../../src/config/config.js')
+      const adyenConfig = config.default.getAdyenConfig('adyenMerchantAccount1')
+      expect(adyenConfig.enableBasicAuth).to.equal(true)
+      expect(adyenConfig.authentication).to.deep.equal({
+        scheme: 'Basic',
+        username: 'user',
+        password: 'pass',
+      })
+    })
+
+    it('when enableBasicAuth is not set, it should default to false without authentication', async () => {
+      process.env.ADYEN_INTEGRATION_CONFIG = buildConfig({})
+      const config = await reloadModule('../../src/config/config.js')
+      const adyenConfig = config.default.getAdyenConfig('adyenMerchantAccount1')
+      expect(adyenConfig.enableBasicAuth).to.equal(false)
+      expect(adyenConfig).to.not.have.property('authentication')
+    })
+  })
 
   function renameNotificationrcFile(fileName, fileNameToRename) {
     const currentFilePath = fileURLToPath(import.meta.url)

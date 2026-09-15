@@ -3,6 +3,7 @@ import lodash from 'lodash'
 import { expect } from 'chai'
 import config from '../../src/config/config.js'
 import { handleNotification } from '../../src/api/notification/notification.controller.js'
+import notificationHandler from '../../src/handler/notification/notification.handler.js'
 import utils from '../../src/utils/commons.js'
 import { getLogger } from '../../src/utils/logger.js'
 import ctpClientMock from './ctp-client-mock.js'
@@ -249,4 +250,55 @@ describe('notification controller', () => {
       expect(responseEndSpy.firstCall.firstArg).to.equal(undefined)
     },
   )
+  it('when basic auth of a generic pending webhook fails, it should return 401 and not "accepted"', async () => {
+    // prepare:
+    const requestMock = {
+      method: 'POST',
+      url: '/',
+      headers: { authorization: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=' },
+    }
+    const responseMock = {
+      writeHead: () => {},
+      end: () => {},
+    }
+    const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+    const responseEndSpy = sandbox.spy(responseMock, 'end')
+    const notificationJson = cloneDeep(mockNotificationJson)
+    notificationJson.notificationItems[0].NotificationRequestItem.eventCode =
+      'PENDING'
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
+      { 'metadata.ctProjectKey': 'testKey' }
+    utils.collectRequestData = () => JSON.stringify(notificationJson)
+
+    sandbox.stub(config, 'getCtpConfig').callsFake(() => ({}))
+    sandbox
+      .stub(config, 'getAdyenConfig')
+      .callsFake(() => ({ enableHmacSignature: false, enableBasicAuth: true }))
+
+    const unauthorizedError = new Error('Basic authentication failed')
+    unauthorizedError.statusCode = 401
+    const processNotificationStub = sandbox
+      .stub(notificationHandler, 'processNotification')
+      .rejects(unauthorizedError)
+
+    const loggerMock = {
+      error: sinon.spy(),
+      debug: sinon.spy(),
+    }
+
+    // test:
+    await handleNotification(requestMock, responseMock, loggerMock)
+
+    // expect:
+    sinon.assert.calledWithMatch(processNotificationStub, {
+      enableBasicAuth: true,
+      authorizationHeader: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=',
+    })
+    expect(responseWriteHeadSpy.firstCall.args[0]).to.equal(401)
+    expect(responseWriteHeadSpy.firstCall.args[1]).to.deep.equal({
+      'WWW-Authenticate': 'Basic realm="adyen-notification"',
+    })
+    expect(responseEndSpy.firstCall.firstArg).to.equal(undefined)
+    expect(loggerMock.error.calledOnce).to.be.true
+  })
 })

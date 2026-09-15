@@ -115,4 +115,47 @@ describe('Google Function handler', () => {
       getLogger().child = originalChildFn
     }
   })
+  it('returns 401 and does not accept the notification when basic authentication fails', async () => {
+    const unauthorizedError = new Error('Basic authentication failed')
+    unauthorizedError.statusCode = 401
+    const processNotificationStub = sinon
+      .stub(notificationHandler, 'processNotification')
+      .rejects(unauthorizedError)
+    const originalErrorFn = getLogger().error
+    getLogger().error = sinon.spy()
+
+    // earlier tests drain mockRequest.body.notificationItems with pop(), so build a fresh request
+    const request = {
+      url: '',
+      body: {
+        notificationItems: [
+          {
+            NotificationRequestItem: {
+              additionalData: {
+                'metadata.ctProjectKey': 'dummyCtProjectKey',
+              },
+              eventCode: 'PENDING',
+              merchantAccountCode: 'dummyAydenMerchantCode',
+            },
+          },
+        ],
+      },
+      headers: { authorization: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=' },
+    }
+
+    try {
+      const unauthorizedContext = {}
+      await azureNotificationTrigger(unauthorizedContext, request)
+
+      sinon.assert.calledWithMatch(processNotificationStub, {
+        authorizationHeader: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=',
+      })
+      expect(unauthorizedContext.res.status).to.equal(401)
+      expect(unauthorizedContext.res.body.error).to.equal(
+        'Basic authentication failed',
+      )
+    } finally {
+      getLogger().error = originalErrorFn
+    }
+  })
 })

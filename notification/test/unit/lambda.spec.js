@@ -177,4 +177,48 @@ describe('Lambda handler', () => {
       ),
     )
   })
+  it('forwards the Authorization header case-insensitively and returns 401 when basic auth fails', async () => {
+    const unauthorizedError = new Error('Basic authentication failed')
+    unauthorizedError.statusCode = 401
+    const processNotificationStub = sinon
+      .stub(notificationHandler, 'processNotification')
+      .rejects(unauthorizedError)
+    const originalErrorFn = logger.error
+    logger.error = sinon.spy()
+
+    try {
+      // earlier tests drain event.notificationItems with pop(), so build a fresh event
+      const pendingEvent = {
+        live: 'false',
+        notificationItems: [
+          {
+            NotificationRequestItem: {
+              additionalData: {
+                'metadata.ctProjectKey': 'dummyCtProjectKey',
+              },
+              eventCode: 'PENDING',
+              merchantAccountCode: 'dummyAydenMerchantCode',
+            },
+          },
+        ],
+      }
+      const result = await handler({
+        headers: { Authorization: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=' },
+        body: JSON.stringify(pendingEvent),
+      })
+
+      sinon.assert.calledWithMatch(processNotificationStub, {
+        authorizationHeader: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=',
+      })
+      expect(result.statusCode).to.equal(401)
+      expect(result.headers['WWW-Authenticate']).to.equal(
+        'Basic realm="adyen-notification"',
+      )
+      expect(JSON.parse(result.body)).to.eql({
+        error: 'Basic authentication failed',
+      })
+    } finally {
+      logger.error = originalErrorFn
+    }
+  })
 })

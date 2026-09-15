@@ -20,10 +20,18 @@ function isRecoverableError(err) {
   )
 }
 
+/*
+ * Basic authentication of a generic pending webhook failed (HTTP 401).
+ * Such notifications must not be acknowledged with "[accepted]".
+ */
+function isUnauthorizedError(err) {
+  return getErrorCause(err)?.statusCode === 401
+}
+
 function getErrorCause(err) {
   if (err instanceof VError) return err.cause()
 
   return err
 }
 
-export { isRecoverableError, getErrorCause }
+export { isRecoverableError, isUnauthorizedError, getErrorCause }

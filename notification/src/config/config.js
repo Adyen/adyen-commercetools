@@ -53,7 +53,63 @@ function getAdyenConfig(adyenMerchantAccount) {
       process.env.CONNECT_SERVICE_URL ?? adyenConfig.notificationBaseUrl,
     enableHmacSignature,
     apiKey: adyenConfig.apiKey,
+    enableBasicAuth: _getValueOfBooleanFlag(adyenConfig.enableBasicAuth, false),
+    ...(adyenConfig.authentication
+      ? {
+          authentication: {
+            scheme: adyenConfig.authentication.scheme,
+            username: adyenConfig.authentication.username,
+            password: adyenConfig.authentication.password,
+          },
+        }
+      : {}),
   }
+}
+
+function _getValueOfBooleanFlag(value, defaultValue) {
+  if (value === undefined) {
+    return defaultValue
+  }
+
+  if (value === true || value === 'true') {
+    return true
+  }
+
+  if (value === false || value === 'false') {
+    return false
+  }
+
+  return defaultValue
+}
+
+/**
+ * Validates the basic authentication settings of an Adyen merchant account.
+ * The credentials protect the Adyen generic pending webhook, which does not support HMAC signatures.
+ * @returns {string|null} error message when the configuration is invalid, otherwise null
+ */
+function _validateAuthenticationConfig(adyenConfig) {
+  const enableBasicAuth = _getValueOfBooleanFlag(
+    adyenConfig.enableBasicAuth,
+    false,
+  )
+  if (enableBasicAuth && !adyenConfig.authentication) {
+    return (
+      'Basic authentication is enabled but the "authentication" setting is missing. ' +
+      'It is required to protect the Adyen generic pending webhook.'
+    )
+  }
+
+  if (adyenConfig.authentication) {
+    if (
+      adyenConfig.authentication.scheme?.toLowerCase() !== 'basic' ||
+      !adyenConfig.authentication.username ||
+      !adyenConfig.authentication.password
+    ) {
+      // scheme must be basic type, and username and password must be all provided if authentication object exists
+      return 'Attributes (scheme, username or password) is missing in "authentication" setting.'
+    }
+  }
+  return null
 }
 
 function getAllCtpProjectKeys() {
@@ -96,6 +152,17 @@ function loadAndValidateConfig() {
       throw new Error(
         `[${ctpProjectKey}]: CTP project credentials are missing. ` +
           'Please verify that all projects have projectKey, clientId and clientSecret',
+      )
+  }
+
+  for (const [adyenMerchantAccount, adyenConfig] of Object.entries(
+    config.adyen,
+  )) {
+    const errorMessage = _validateAuthenticationConfig(adyenConfig)
+    if (errorMessage)
+      throw new Error(
+        `[${adyenMerchantAccount}]: Authentication is not properly configured. ` +
+          `Please update the configuration. Error: [${errorMessage}]`,
       )
   }
 

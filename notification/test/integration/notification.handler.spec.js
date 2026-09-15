@@ -5,8 +5,10 @@ import config from '../../src/config/config.js'
 import {
   getNotificationURL,
   overrideAdyenConfig,
+  restoreAdyenConfig,
   ensurePayment,
   createNotificationPayload,
+  createBasicAuthHeader,
 } from '../test-utils.js'
 
 describe('notification module', () => {
@@ -723,4 +725,141 @@ describe('notification module', () => {
       new Date().getTime() + Math.floor(Math.random() * 100 + 1)
     ).toString()
   }
+  describe('generic pending webhook (eventCode PENDING)', () => {
+    const BASIC_AUTH = {
+      scheme: 'basic',
+      username: 'webhook-user',
+      password: 'webhook-pass',
+    }
+
+    beforeEach(() => {
+      overrideAdyenConfig({
+        enableHmacSignature: false,
+        enableBasicAuth: true,
+        authentication: BASIC_AUTH,
+      })
+    })
+
+    afterEach(() => {
+      restoreAdyenConfig()
+    })
+
+    async function createPendingPayment() {
+      const merchantReference = `notificationPayment-${new Date().getTime()}`
+      const pspReference = `pspReference-${new Date().getTime()}`
+      const { body: paymentBefore } = await ensurePayment(
+        ctpClient,
+        merchantReference,
+        pspReference,
+        commercetoolsProjectKey,
+        adyenMerchantAccount,
+      )
+      expect(paymentBefore.transactions).to.have.lengthOf(1)
+      expect(paymentBefore.interfaceInteractions).to.have.lengthOf(0)
+      return { merchantReference, pspReference }
+    }
+
+    it('should add a pending interface interaction and no transaction when basic auth is valid', async () => {
+      const { merchantReference, pspReference } = await createPendingPayment()
+      const notificationPayload = createNotificationPayload(
+        commercetoolsProjectKey,
+        adyenMerchantAccount,
+        merchantReference,
+        pspReference,
+        'PENDING',
+      )
+
+      const response = await fetch(notificationURL, {
+        method: 'post',
+        body: JSON.stringify(notificationPayload),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: createBasicAuthHeader(
+            BASIC_AUTH.username,
+            BASIC_AUTH.password,
+          ),
+        },
+      })
+      const { status } = response
+      const responseBody = await response.json()
+
+      expect(responseBody).to.deep.equal({ notificationResponse: '[accepted]' })
+      expect(status).to.equal(200)
+
+      const { body: paymentAfter } = await ctpClient.fetchByKey(
+        ctpClient.builder.payments,
+        merchantReference,
+      )
+      // no transaction is created for PENDING events
+      expect(paymentAfter.transactions).to.have.lengthOf(1)
+      expect(paymentAfter.transactions[0].state).to.equal('Pending')
+      expect(paymentAfter.interfaceInteractions).to.have.lengthOf(1)
+      expect(paymentAfter.interfaceInteractions[0].fields.status).to.equal(
+        'pending',
+      )
+      expect(paymentAfter.interfaceInteractions[0].fields.type).to.equal(
+        'notification',
+      )
+    })
+
+    it('should respond with 401 and not update the payment when basic auth credentials are missing', async () => {
+      const { merchantReference, pspReference } = await createPendingPayment()
+      const notificationPayload = createNotificationPayload(
+        commercetoolsProjectKey,
+        adyenMerchantAccount,
+        merchantReference,
+        pspReference,
+        'PENDING',
+      )
+
+      const response = await fetch(notificationURL, {
+        method: 'post',
+        body: JSON.stringify(notificationPayload),
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      expect(response.status).to.equal(401)
+      expect(response.headers.get('www-authenticate')).to.equal(
+        'Basic realm="adyen-notification"',
+      )
+
+      const { body: paymentAfter } = await ctpClient.fetchByKey(
+        ctpClient.builder.payments,
+        merchantReference,
+      )
+      expect(paymentAfter.transactions).to.have.lengthOf(1)
+      expect(paymentAfter.interfaceInteractions).to.have.lengthOf(0)
+    })
+
+    it('should respond with 401 and not update the payment when basic auth credentials are wrong', async () => {
+      const { merchantReference, pspReference } = await createPendingPayment()
+      const notificationPayload = createNotificationPayload(
+        commercetoolsProjectKey,
+        adyenMerchantAccount,
+        merchantReference,
+        pspReference,
+        'PENDING',
+      )
+
+      const response = await fetch(notificationURL, {
+        method: 'post',
+        body: JSON.stringify(notificationPayload),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: createBasicAuthHeader(
+            BASIC_AUTH.username,
+            'wrong-password',
+          ),
+        },
+      })
+
+      expect(response.status).to.equal(401)
+
+      const { body: paymentAfter } = await ctpClient.fetchByKey(
+        ctpClient.builder.payments,
+        merchantReference,
+      )
+      expect(paymentAfter.interfaceInteractions).to.have.lengthOf(0)
+    })
+  })
 })

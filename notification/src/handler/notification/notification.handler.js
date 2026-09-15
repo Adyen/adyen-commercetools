@@ -2,6 +2,10 @@ import _ from 'lodash'
 import { serializeError } from 'serialize-error'
 import VError from 'verror'
 import { validateHmacSignature } from '../../utils/hmacValidator.js'
+import {
+  isGenericPendingNotification,
+  validateBasicAuthentication,
+} from '../../utils/basicAuthValidator.js'
 import utils from '../../utils/commons.js'
 import ctp from '../../utils/ctp.js'
 import config from '../../config/config.js'
@@ -9,6 +13,8 @@ import config from '../../config/config.js'
 async function processNotification({
   notification,
   enableHmacSignature,
+  enableBasicAuth,
+  authorizationHeader,
   ctpProjectConfig,
   logger,
 }) {
@@ -16,7 +22,26 @@ async function processNotification({
     commercetools_project_key: ctpProjectConfig.projectKey,
   })
 
-  if (enableHmacSignature) {
+  if (isGenericPendingNotification(notification)) {
+    // Generic pending webhooks are not HMAC-signed by Adyen; they are protected with basic auth over HTTPS.
+    if (enableBasicAuth) {
+      const errorMessage = validateBasicAuthentication(
+        notification,
+        authorizationHeader,
+      )
+      if (errorMessage) {
+        ctpLogger.error(
+          { notification: utils.getNotificationForTracking(notification) },
+          `Basic authentication failed. Reason: "${errorMessage}"`,
+        )
+        // Throwing (instead of returning) aborts processing of the whole request,
+        // the caller responds with HTTP 401 so that none of the notification items is accepted.
+        const error = new Error(errorMessage)
+        error.statusCode = 401
+        throw error
+      }
+    }
+  } else if (enableHmacSignature) {
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
       ctpLogger.error(

@@ -1180,4 +1180,168 @@ describe('notification module', () => {
       'Failed to fetch a payment with merchantReference',
     )
   })
+  describe('generic pending webhook (eventCode PENDING)', () => {
+    const BASIC_AUTH = {
+      scheme: 'basic',
+      username: 'webhook-user',
+      password: 'webhook-pass',
+    }
+    const validAuthorizationHeader = `Basic ${Buffer.from(
+      `${BASIC_AUTH.username}:${BASIC_AUTH.password}`,
+    ).toString('base64')}`
+
+    function createPendingNotification() {
+      return {
+        NotificationRequestItem: {
+          amount: {
+            currency: 'EUR',
+            value: 10100,
+          },
+          additionalData: {
+            'metadata.ctProjectKey': commercetoolsProjectKey,
+          },
+          eventCode: 'PENDING',
+          eventDate: '2019-01-30T18:16:22+01:00',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
+          merchantReference: '8313842560770001',
+          paymentMethod: 'ideal',
+          pspReference: 'test_PENDING_1',
+          success: 'true',
+        },
+      }
+    }
+
+    function mockCtpClientWithPayment() {
+      const payment = cloneDeep(paymentMock)
+      const ctpClient = ctpClientMock.get(ctpConfig)
+      sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+        body: { results: [payment] },
+      }))
+      const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+      ctp.get = () => ctpClient
+      return ctpClientUpdateSpy
+    }
+
+    // stub directly instead of nesting overrideAdyenConfig/restoreAdyenConfig calls,
+    // otherwise the outer restore would leak this stub into other spec files
+    let getAdyenConfigBeforePendingTests
+    beforeEach(() => {
+      getAdyenConfigBeforePendingTests = config.getAdyenConfig
+      config.getAdyenConfig = () => ({
+        enableHmacSignature: false,
+        enableBasicAuth: true,
+        authentication: BASIC_AUTH,
+      })
+    })
+
+    afterEach(() => {
+      config.getAdyenConfig = getAdyenConfigBeforePendingTests
+    })
+
+    it('given valid basic auth credentials, it should only add a pending interface interaction', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+      const pendingNotification = createPendingNotification()
+
+      await notificationHandler.processNotification({
+        notification: pendingNotification,
+        enableHmacSignature: false,
+        enableBasicAuth: true,
+        authorizationHeader: validAuthorizationHeader,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
+
+      expect(ctpClientUpdateSpy.calledOnce).to.be.true
+      const updateActions = ctpClientUpdateSpy.args[0][3]
+      const interfaceInteractions = updateActions.filter(
+        (action) => action.action === 'addInterfaceInteraction',
+      )
+      expect(interfaceInteractions).to.have.lengthOf(1)
+      expect(interfaceInteractions[0].fields.status).to.equal('pending')
+      expect(interfaceInteractions[0].fields.type).to.equal('notification')
+      expect(updateActions.some((action) => action.action === 'addTransaction'))
+        .to.be.false
+      expect(
+        updateActions.some(
+          (action) => action.action === 'changeTransactionState',
+        ),
+      ).to.be.false
+    })
+
+    it('given invalid basic auth credentials, it should throw a 401 error and not update the payment', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+      const wrongHeader = `Basic ${Buffer.from('wrong:credentials').toString(
+        'base64',
+      )}`
+
+      await expect(
+        notificationHandler.processNotification({
+          notification: createPendingNotification(),
+          enableHmacSignature: false,
+          enableBasicAuth: true,
+          authorizationHeader: wrongHeader,
+          ctpProjectConfig: config,
+          logger: getLogger(),
+        }),
+      ).to.be.rejectedWith(Error, 'valid basic authentication credentials')
+      await expect(
+        notificationHandler.processNotification({
+          notification: createPendingNotification(),
+          enableHmacSignature: false,
+          enableBasicAuth: true,
+          authorizationHeader: wrongHeader,
+          ctpProjectConfig: config,
+          logger: getLogger(),
+        }),
+      ).to.eventually.be.rejected.and.have.property('statusCode', 401)
+      expect(ctpClientUpdateSpy.called).to.be.false
+    })
+
+    it('given a missing Authorization header, it should throw a 401 error and not update the payment', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+
+      await expect(
+        notificationHandler.processNotification({
+          notification: createPendingNotification(),
+          enableHmacSignature: false,
+          enableBasicAuth: true,
+          authorizationHeader: undefined,
+          ctpProjectConfig: config,
+          logger: getLogger(),
+        }),
+      ).to.eventually.be.rejected.and.have.property('statusCode', 401)
+      expect(ctpClientUpdateSpy.called).to.be.false
+    })
+
+    it('given HMAC verification is enabled, it should skip HMAC validation for PENDING events', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+
+      // no hmacSignature in additionalData, would fail HMAC validation
+      await notificationHandler.processNotification({
+        notification: createPendingNotification(),
+        enableHmacSignature: true,
+        enableBasicAuth: true,
+        authorizationHeader: validAuthorizationHeader,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
+
+      expect(ctpClientUpdateSpy.calledOnce).to.be.true
+    })
+
+    it('given basic auth is disabled, it should process PENDING events without Authorization header', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+
+      await notificationHandler.processNotification({
+        notification: createPendingNotification(),
+        enableHmacSignature: false,
+        enableBasicAuth: false,
+        authorizationHeader: undefined,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
+
+      expect(ctpClientUpdateSpy.calledOnce).to.be.true
+    })
+  })
 })
