@@ -74,7 +74,7 @@
     "c8": "12.0.0",
     "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
-    "dotenv": "^17.2.2",
+    "dotenv": "^18.0.0",
     "eslint": "10.10.0",
     "eslint-config-prettier": "10.1.8",
     "globals": "^17.0.0",
