@@ -737,6 +737,7 @@ describe('notification module', () => {
         enableHmacSignature: false,
         enableBasicAuth: true,
         authentication: BASIC_AUTH,
+        ctpProjectKey: commercetoolsProjectKey,
       })
     })
 

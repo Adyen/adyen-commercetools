@@ -90,8 +90,65 @@ describe('notification controller', () => {
         JSON.stringify({ notificationResponse: '[accepted]' }),
       )
       expect(cause.message).to.equal(
-        'Notification can not be processed as "metadata.ctProjectKey" was not found on the notification ' +
-          'nor the path is containing the commercetools project key.',
+        'Notification can not be processed as "metadata.ctProjectKey" was not found on the notification, ' +
+          'nor the path is containing the commercetools project key, ' +
+          'nor "ctpProjectKey" is configured for the Adyen merchant account.',
+      )
+    },
+  )
+
+  it(
+    'when a generic pending notification has no additionalData and the path has no project key, ' +
+      'it should resolve the project from the "ctpProjectKey" of the Adyen merchant account',
+    async () => {
+      // prepare:
+      const requestMock = {
+        method: 'POST',
+        url: '/',
+        headers: {},
+      }
+      const responseMock = {
+        writeHead: () => {},
+        end: () => {},
+      }
+      const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+      const responseEndSpy = sandbox.spy(responseMock, 'end')
+      const notificationJson = cloneDeep(mockNotificationJson)
+      const notificationRequestItem =
+        notificationJson.notificationItems[0].NotificationRequestItem
+      notificationRequestItem.eventCode = 'PENDING'
+      delete notificationRequestItem.additionalData
+      utils.collectRequestData = () => JSON.stringify(notificationJson)
+
+      const getCtpConfigStub = sandbox
+        .stub(config, 'getCtpConfig')
+        .callsFake(() => ctpConfig)
+      sandbox.stub(config, 'getAdyenConfig').callsFake(() => ({
+        enableHmacSignature: false,
+        enableBasicAuth: false,
+        ctpProjectKey: commercetoolsProjectKey,
+      }))
+      const processNotificationStub = sandbox
+        .stub(notificationHandler, 'processNotification')
+        .resolves()
+
+      const loggerMock = {
+        error: sinon.spy(),
+        debug: sinon.spy(),
+      }
+
+      // test:
+      await handleNotification(requestMock, responseMock, loggerMock)
+
+      // expect:
+      sinon.assert.calledWith(getCtpConfigStub, commercetoolsProjectKey)
+      sinon.assert.calledWithMatch(processNotificationStub, {
+        ctpProjectConfig: ctpConfig,
+      })
+      expect(loggerMock.error.called).to.be.false
+      expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
+      expect(responseEndSpy.firstCall.firstArg).to.equal(
+        JSON.stringify({ notificationResponse: '[accepted]' }),
       )
     },
   )

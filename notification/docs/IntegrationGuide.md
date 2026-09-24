@@ -71,6 +71,7 @@ To enable them, add the following attributes to the Adyen merchant account in `A
     "YOUR_MERCHANT_ACCOUNT": {
       "notificationBaseUrl": "https://your-notification-url.com",
       "enableBasicAuth": "true",
+      "ctpProjectKey": "YOUR_COMMERCETOOLS_PROJECT_KEY",
       "authentication": {
         "scheme": "basic",
         "username": "xxx",
@@ -83,8 +84,10 @@ To enable them, add the following attributes to the Adyen merchant account in `A
 
 The same credentials serve two purposes:
 
-1. **Webhook registration**: `npm run setup-resources` creates (or updates) a webhook of type `pending-notification` in Adyen pointing to the same `notificationBaseUrl` as the standard webhook, configured with the given username and password. Re-running the command is idempotent and re-syncs the credentials to Adyen.
+1. **Webhook registration**: `npm run setup-resources` creates (or updates) a webhook of type `pending-notification` in Adyen pointing to `<notificationBaseUrl>/notifications/<ctpProjectKey>`, configured with the given username and password. Re-running the command is idempotent and re-syncs the credentials to Adyen.
 2. **Webhook validation**: the notification module validates the `Authorization` header of every incoming `PENDING` notification against the configured username and password. When the credentials are missing or wrong, the module responds with HTTP `401` and none of the notification items of the request is processed.
+
+Unlike standard notifications, Generic Pending notifications carry **no `additionalData`** and therefore no `metadata.ctProjectKey`. This is why the `ctpProjectKey` attribute is mandatory when `enableBasicAuth` is enabled: the commercetools project of a `PENDING` notification is resolved from the last path segment of the webhook URL (see [Fallback in case `metadata` is not available](#fallback-in-case-metadata-is-not-available)) and, if the URL contains no project key, from the `ctpProjectKey` configured for the Adyen merchant account. Consequently, one Adyen merchant account can receive Generic Pending webhooks for exactly one commercetools project.
 
 Processing of `PENDING` notifications skips HMAC validation even when `enableHmacSignature` is enabled, as Adyen does not sign this webhook type.
 A `PENDING` notification is stored as an [interfaceInteraction](https://docs.commercetools.com/api/projects/payments#add-interfaceinteraction) with status `pending` on the matching payment; no transaction is added or changed (see [adyen-events.json](./../resources/adyen-events.json)).

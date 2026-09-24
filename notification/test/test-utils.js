@@ -169,8 +169,11 @@ function createNotificationPayload(
   } else if (eventCode === 'CANCEL_OR_REFUND') {
     notificationRequestItem.additionalData['modification.action'] = 'cancel'
   }
-  // generic pending webhooks (eventCode PENDING) are never HMAC-signed by Adyen
-  if (adyenConfig.enableHmacSignature && eventCode !== 'PENDING') {
+  if (eventCode === 'PENDING') {
+    // generic pending webhooks carry no additionalData (no metadata, no HMAC signature),
+    // the commercetools project is resolved from the "ctpProjectKey" of the Adyen merchant account
+    delete notificationRequestItem.additionalData
+  } else if (adyenConfig.enableHmacSignature) {
     notificationRequestItem.additionalData.hmacSignature =
       validator.calculateHmac(
         notificationRequestItem,

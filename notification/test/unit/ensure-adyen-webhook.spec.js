@@ -1,7 +1,10 @@
 import nock from 'nock'
 import sinon from 'sinon'
 import { expect } from 'chai'
-import { ensureAdyenWebhooksForAllProjects } from '../../src/config/init/ensure-adyen-webhook.js'
+import {
+  ensureAdyenWebhooksForAllProjects,
+  buildGenericPendingWebhookUrl,
+} from '../../src/config/init/ensure-adyen-webhook.js'
 
 import config from '../../src/config/config.js'
 import { getLogger } from '../../src/utils/logger.js'
@@ -12,6 +15,8 @@ const BASIC_AUTH = {
   username: 'webhook-user',
   password: 'webhook-pass',
 }
+const CTP_PROJECT_KEY = 'ctpProjectKey1'
+const PENDING_WEBHOOK_URL = `https://test-notification/notifications/${CTP_PROJECT_KEY}`
 
 describe('verify ensure-adyen-webhook', () => {
   let adyenMerchantAccount0
@@ -89,6 +94,7 @@ describe('verify ensure-adyen-webhook', () => {
   it('when basic auth is enabled and no generic pending webhook exists, it is created with credentials', async () => {
     adyenConfig0.enableBasicAuth = true
     adyenConfig0.authentication = BASIC_AUTH
+    adyenConfig0.ctpProjectKey = CTP_PROJECT_KEY
     // the webhook list is fetched once per webhook type
     mockListWebhooks([existingStandardWebhook])
     mockListWebhooks([existingStandardWebhook])
@@ -105,7 +111,7 @@ describe('verify ensure-adyen-webhook', () => {
 
     expect(createRequestBody).to.deep.equal({
       type: 'pending-notification',
-      url: 'https://test-notification',
+      url: PENDING_WEBHOOK_URL,
       active: 'true',
       communicationFormat: 'json',
       description: 'commercetools-adyen-integration generic pending webhook',
@@ -122,10 +128,11 @@ describe('verify ensure-adyen-webhook', () => {
   it('when the generic pending webhook already exists, its basic auth credentials are re-synced', async () => {
     adyenConfig0.enableBasicAuth = true
     adyenConfig0.authentication = BASIC_AUTH
+    adyenConfig0.ctpProjectKey = CTP_PROJECT_KEY
     const existingPendingWebhook = {
       id: 'pending-webhook-1',
       type: 'pending-notification',
-      url: 'https://test-notification',
+      url: PENDING_WEBHOOK_URL,
       active: false,
       hasPassword: true,
     }
@@ -161,5 +168,46 @@ describe('verify ensure-adyen-webhook', () => {
       'Webhook of type "pending-notification" already existed with ID pending-webhook-1. ' +
         'Skipping webhook creation and ensuring the webhook is active',
     )
+  })
+
+  describe('buildGenericPendingWebhookUrl', () => {
+    it('appends "/notifications/<ctpProjectKey>" to the notification base URL', () => {
+      expect(
+        buildGenericPendingWebhookUrl('https://test-notification', 'key1'),
+      ).to.equal('https://test-notification/notifications/key1')
+      expect(
+        buildGenericPendingWebhookUrl('https://test-notification/', 'key1'),
+      ).to.equal('https://test-notification/notifications/key1')
+      expect(
+        buildGenericPendingWebhookUrl(
+          'https://test-notification/some/path',
+          'key1',
+        ),
+      ).to.equal('https://test-notification/some/path/notifications/key1')
+    })
+
+    it('only appends the project key when the base URL already ends with "/notifications"', () => {
+      expect(
+        buildGenericPendingWebhookUrl(
+          'https://test-notification/notifications',
+          'key1',
+        ),
+      ).to.equal('https://test-notification/notifications/key1')
+    })
+
+    it('keeps the base URL when it already ends with the project key', () => {
+      expect(
+        buildGenericPendingWebhookUrl(
+          'https://test-notification/notifications/key1',
+          'key1',
+        ),
+      ).to.equal('https://test-notification/notifications/key1')
+      expect(
+        buildGenericPendingWebhookUrl(
+          'https://test-notification/notifications/key1/',
+          'key1',
+        ),
+      ).to.equal('https://test-notification/notifications/key1')
+    })
   })
 })

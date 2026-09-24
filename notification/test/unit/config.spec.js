@@ -287,9 +287,31 @@ describe('::config::', () => {
       )
     })
 
-    it('when basic auth is properly configured, it should expose enableBasicAuth and authentication', async () => {
+    it('when enableBasicAuth is true but ctpProjectKey is missing, it should throw an error', async () => {
+      await expectConfigToThrow(
+        {
+          enableBasicAuth: true,
+          authentication: {
+            scheme: 'basic',
+            username: 'user',
+            password: 'pass',
+          },
+        },
+        'Basic authentication is enabled but the "ctpProjectKey" setting is missing',
+      )
+    })
+
+    it('when ctpProjectKey does not match a configured commercetools project, it should throw an error', async () => {
+      await expectConfigToThrow(
+        { ctpProjectKey: 'unknownProjectKey' },
+        'The "ctpProjectKey" setting [unknownProjectKey] does not match any commercetools project',
+      )
+    })
+
+    it('when basic auth is properly configured, it should expose authentication and ctpProjectKey', async () => {
       process.env.ADYEN_INTEGRATION_CONFIG = buildConfig({
         enableBasicAuth: 'true',
+        ctpProjectKey: 'ctpProjectKey1',
         authentication: {
           scheme: 'Basic',
           username: 'user',
@@ -299,6 +321,7 @@ describe('::config::', () => {
       const config = await reloadModule('../../src/config/config.js')
       const adyenConfig = config.default.getAdyenConfig('adyenMerchantAccount1')
       expect(adyenConfig.enableBasicAuth).to.equal(true)
+      expect(adyenConfig.ctpProjectKey).to.equal('ctpProjectKey1')
       expect(adyenConfig.authentication).to.deep.equal({
         scheme: 'Basic',
         username: 'user',
@@ -306,12 +329,13 @@ describe('::config::', () => {
       })
     })
 
-    it('when enableBasicAuth is not set, it should default to false without authentication', async () => {
+    it('when enableBasicAuth is not set, it should default to false without optional attributes', async () => {
       process.env.ADYEN_INTEGRATION_CONFIG = buildConfig({})
       const config = await reloadModule('../../src/config/config.js')
       const adyenConfig = config.default.getAdyenConfig('adyenMerchantAccount1')
       expect(adyenConfig.enableBasicAuth).to.equal(false)
       expect(adyenConfig).to.not.have.property('authentication')
+      expect(adyenConfig).to.not.have.property('ctpProjectKey')
     })
   })
 

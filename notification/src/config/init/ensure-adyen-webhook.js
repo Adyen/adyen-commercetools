@@ -20,6 +20,21 @@ const GENERIC_PENDING_WEBHOOK = {
   description: 'commercetools-adyen-integration generic pending webhook',
 }
 
+/**
+ * Adyen generic pending webhooks carry no `additionalData`, hence no `metadata.ctProjectKey`.
+ * The commercetools project is therefore resolved from the last path segment of the webhook URL
+ * (see `utils/parser.js`), so the webhook must point to `<notificationBaseUrl>/notifications/<ctpProjectKey>`.
+ * @param notificationBaseUrl publicly available URL of the notification module
+ * @param ctpProjectKey commercetools project key that the merchant account belongs to
+ * @returns {string} the generic pending webhook URL
+ */
+function buildGenericPendingWebhookUrl(notificationBaseUrl, ctpProjectKey) {
+  const baseUrl = notificationBaseUrl.replace(/\/+$/, '')
+  if (baseUrl.endsWith(`/${ctpProjectKey}`)) return baseUrl
+  if (baseUrl.endsWith('/notifications')) return `${baseUrl}/${ctpProjectKey}`
+  return `${baseUrl}/notifications/${ctpProjectKey}`
+}
+
 function _buildRequestHeaders(adyenApiKey) {
   return {
     'Content-Type': 'application/json',
@@ -188,7 +203,10 @@ async function ensureAdyenWebhooksForAllProjects() {
         // as Adyen requires the endpoint to be protected and HMAC is not supported for it.
         await ensureAdyenWebhook(
           adyenConfig.apiKey,
-          adyenConfig.notificationBaseUrl,
+          buildGenericPendingWebhookUrl(
+            adyenConfig.notificationBaseUrl,
+            adyenConfig.ctpProjectKey,
+          ),
           adyenMerchantId,
           {
             ...GENERIC_PENDING_WEBHOOK,
@@ -201,4 +219,4 @@ async function ensureAdyenWebhooksForAllProjects() {
   }
 }
 
-export { ensureAdyenWebhooksForAllProjects }
+export { ensureAdyenWebhooksForAllProjects, buildGenericPendingWebhookUrl }

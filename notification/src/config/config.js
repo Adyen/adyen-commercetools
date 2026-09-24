@@ -54,6 +54,9 @@ function getAdyenConfig(adyenMerchantAccount) {
     enableHmacSignature,
     apiKey: adyenConfig.apiKey,
     enableBasicAuth: _getValueOfBooleanFlag(adyenConfig.enableBasicAuth, false),
+    ...(adyenConfig.ctpProjectKey
+      ? { ctpProjectKey: adyenConfig.ctpProjectKey }
+      : {}),
     ...(adyenConfig.authentication
       ? {
           authentication: {
@@ -112,6 +115,37 @@ function _validateAuthenticationConfig(adyenConfig) {
   return null
 }
 
+/**
+ * Validates the `ctpProjectKey` attribute of an Adyen merchant account.
+ * Adyen generic pending webhooks carry no `metadata.ctProjectKey`, so the commercetools project of a `PENDING`
+ * notification can only be resolved from the webhook URL. The attribute is therefore mandatory when basic
+ * authentication (and with it the generic pending webhook) is enabled.
+ * @returns {string|null} error message when the configuration is invalid, otherwise null
+ */
+function _validateCtpProjectKeyConfig(adyenConfig, ctpProjectKeys) {
+  const enableBasicAuth = _getValueOfBooleanFlag(
+    adyenConfig.enableBasicAuth,
+    false,
+  )
+  if (enableBasicAuth && isEmpty(adyenConfig.ctpProjectKey)) {
+    return (
+      'Basic authentication is enabled but the "ctpProjectKey" setting is missing. ' +
+      'It is required to resolve the commercetools project of Adyen generic pending webhooks.'
+    )
+  }
+
+  if (
+    !isEmpty(adyenConfig.ctpProjectKey) &&
+    !ctpProjectKeys.includes(adyenConfig.ctpProjectKey)
+  ) {
+    return (
+      `The "ctpProjectKey" setting [${adyenConfig.ctpProjectKey}] does not match any ` +
+      'commercetools project of the configuration.'
+    )
+  }
+  return null
+}
+
 function getAllCtpProjectKeys() {
   return Object.keys(config.commercetools)
 }
@@ -163,6 +197,16 @@ function loadAndValidateConfig() {
       throw new Error(
         `[${adyenMerchantAccount}]: Authentication is not properly configured. ` +
           `Please update the configuration. Error: [${errorMessage}]`,
+      )
+
+    const ctpProjectKeyErrorMessage = _validateCtpProjectKeyConfig(
+      adyenConfig,
+      Object.keys(config.commercetools),
+    )
+    if (ctpProjectKeyErrorMessage)
+      throw new Error(
+        `[${adyenMerchantAccount}]: Commercetools project is not properly configured. ` +
+          `Please update the configuration. Error: [${ctpProjectKeyErrorMessage}]`,
       )
   }
 
