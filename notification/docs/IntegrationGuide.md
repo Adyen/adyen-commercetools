@@ -92,7 +92,7 @@ Unlike standard notifications, Generic Pending notifications carry **no `additio
 Processing of `PENDING` notifications skips HMAC validation even when `enableHmacSignature` is enabled, as Adyen does not sign this webhook type.
 A `PENDING` notification is stored as an [interfaceInteraction](https://docs.commercetools.com/api/projects/payments#add-interfaceinteraction) with status `pending` on the matching payment; no transaction is added or changed (see [adyen-events.json](./../resources/adyen-events.json)).
 
-> Note: `enableBasicAuth` is disabled by default. Similar to `enableHmacSignature`, it can be set to "false" for testing purposes, in which case `PENDING` notifications are processed without authentication and the Generic Pending webhook is not registered by `npm run setup-resources`.
+> Note: `enableBasicAuth` is disabled by default, unlike `enableHmacSignature` which is enabled by default. While it is disabled, the Generic Pending webhook is not registered by `npm run setup-resources` and any incoming `PENDING` notification is **not processed**: since Adyen can not sign it, there is no way to verify its sender, so the notification is logged, acknowledged with `[accepted]` and dropped, the same way a notification with an invalid HMAC signature is handled. `PENDING` notifications are therefore never processed without authentication. If you previously received `PENDING` notifications with `enableHmacSignature` set to "false" (e.g. on commercetools Connect), enable basic authentication to keep receiving them.
 
 ## Step 2: Deploy the notification module
 

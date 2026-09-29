@@ -104,7 +104,7 @@ async function ensureAdyenWebhook(
       if (hasBasicAuthCredentials) {
         // Adyen never returns the configured password, so the credentials are always re-synced
         // to make sure that rotated credentials in the configuration are propagated to Adyen.
-        await fetch(
+        const updateWebhookResponse = await fetch(
           `${ADYEN_MANAGEMENT_API_BASE_URL}/merchants/${merchantId}/webhooks/${existingWebhook.id}`,
           {
             body: JSON.stringify({
@@ -115,6 +115,14 @@ async function ensureAdyenWebhook(
             headers: _buildRequestHeaders(adyenApiKey),
           },
         )
+        // A silently failed update would leave stale credentials in Adyen while setup reports success.
+        if (!updateWebhookResponse.ok) {
+          const responseBody = await updateWebhookResponse.text()
+          throw new Error(
+            `Failed to update basic auth credentials of webhook ${existingWebhook.id} ` +
+              `(HTTP ${updateWebhookResponse.status}): ${responseBody}`,
+          )
+        }
       } else if (!existingWebhook.active)
         await fetch(
           `${ADYEN_MANAGEMENT_API_BASE_URL}/merchants/${merchantId}/webhooks/${existingWebhook.id}`,
@@ -138,6 +146,13 @@ async function ensureAdyenWebhook(
       },
     )
 
+    if (!createWebhookResponse.ok) {
+      const responseBody = await createWebhookResponse.text()
+      throw new Error(
+        `Failed to create webhook of type "${type}" ` +
+          `(HTTP ${createWebhookResponse.status}): ${responseBody}`,
+      )
+    }
     const createWebhookResponseJson = await createWebhookResponse.json()
     const webhookId = createWebhookResponseJson.id
 

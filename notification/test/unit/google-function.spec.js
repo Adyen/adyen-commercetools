@@ -7,6 +7,7 @@ import { getLogger } from '../../src/utils/logger.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils/commons.js'
 import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
+import { UnauthorizedError } from '../../src/utils/error-utils.js'
 
 describe('Google Function handler', () => {
   const sandbox = sinon.createSandbox()
@@ -127,8 +128,9 @@ describe('Google Function handler', () => {
     }
   })
   it('returns 401 and does not accept the notification when basic authentication fails', async () => {
-    const unauthorizedError = new Error('Basic authentication failed')
-    unauthorizedError.statusCode = 401
+    const unauthorizedError = new UnauthorizedError(
+      'Basic authentication failed',
+    )
     const processNotificationStub = sinon
       .stub(notificationHandler, 'processNotification')
       .rejects(unauthorizedError)

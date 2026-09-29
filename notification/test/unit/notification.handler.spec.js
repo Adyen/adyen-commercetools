@@ -1313,6 +1313,21 @@ describe('notification module', () => {
       expect(ctpClientUpdateSpy.called).to.be.false
     })
 
+    it('given basic auth is disabled, it should drop the PENDING event without updating the payment', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+
+      await notificationHandler.processNotification({
+        notification: createPendingNotification(),
+        enableHmacSignature: true,
+        enableBasicAuth: false,
+        authorizationHeader: undefined,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
+
+      expect(ctpClientUpdateSpy.called).to.be.false
+    })
+
     it('given HMAC verification is enabled, it should skip HMAC validation for PENDING events', async () => {
       const ctpClientUpdateSpy = mockCtpClientWithPayment()
 
@@ -1329,19 +1344,19 @@ describe('notification module', () => {
       expect(ctpClientUpdateSpy.calledOnce).to.be.true
     })
 
-    it('given basic auth is disabled, it should process PENDING events without Authorization header', async () => {
+    it('given basic auth is disabled, it should drop PENDING events even with valid credentials', async () => {
       const ctpClientUpdateSpy = mockCtpClientWithPayment()
 
       await notificationHandler.processNotification({
         notification: createPendingNotification(),
         enableHmacSignature: false,
         enableBasicAuth: false,
-        authorizationHeader: undefined,
+        authorizationHeader: validAuthorizationHeader,
         ctpProjectConfig: config,
         logger: getLogger(),
       })
 
-      expect(ctpClientUpdateSpy.calledOnce).to.be.true
+      expect(ctpClientUpdateSpy.called).to.be.false
     })
   })
 })

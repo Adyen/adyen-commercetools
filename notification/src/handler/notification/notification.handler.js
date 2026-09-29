@@ -8,6 +8,7 @@ import {
 } from '../../utils/basicAuthValidator.js'
 import utils from '../../utils/commons.js'
 import ctp from '../../utils/ctp.js'
+import { UnauthorizedError } from '../../utils/error-utils.js'
 import config from '../../config/config.js'
 
 async function processNotification({
@@ -24,22 +25,29 @@ async function processNotification({
 
   if (isGenericPendingNotification(notification)) {
     // Generic pending webhooks are not HMAC-signed by Adyen; they are protected with basic auth over HTTPS.
-    if (enableBasicAuth) {
-      const errorMessage = validateBasicAuthentication(
-        notification,
-        authorizationHeader,
+    if (!enableBasicAuth) {
+      // Without basic auth there is no way to verify the sender of a PENDING notification,
+      // so it is dropped (logged and acknowledged) like a notification with an invalid HMAC signature.
+      ctpLogger.error(
+        { notification: utils.getNotificationForTracking(notification) },
+        'Generic pending (PENDING) notification is not processed because "enableBasicAuth" ' +
+          'is disabled for the Adyen merchant account. ' +
+          'Enable basic authentication to receive generic pending webhooks.',
       )
-      if (errorMessage) {
-        ctpLogger.error(
-          { notification: utils.getNotificationForTracking(notification) },
-          `Basic authentication failed. Reason: "${errorMessage}"`,
-        )
-        // Throwing (instead of returning) aborts processing of the whole request,
-        // the caller responds with HTTP 401 so that none of the notification items is accepted.
-        const error = new Error(errorMessage)
-        error.statusCode = 401
-        throw error
-      }
+      return
+    }
+    const errorMessage = validateBasicAuthentication(
+      notification,
+      authorizationHeader,
+    )
+    if (errorMessage) {
+      ctpLogger.error(
+        { notification: utils.getNotificationForTracking(notification) },
+        `Basic authentication failed. Reason: "${errorMessage}"`,
+      )
+      // Throwing (instead of returning) aborts processing of the whole request,
+      // the caller responds with HTTP 401 so that none of the notification items is accepted.
+      throw new UnauthorizedError(errorMessage)
     }
   } else if (enableHmacSignature) {
     const errorMessage = validateHmacSignature(notification)

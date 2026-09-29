@@ -23,9 +23,24 @@ function isRecoverableError(err) {
 /*
  * Basic authentication of a generic pending webhook failed (HTTP 401).
  * Such notifications must not be acknowledged with "[accepted]".
+ *
+ * A dedicated class is used (instead of matching on `statusCode === 401`) so that
+ * a 401 returned by commercetools (e.g. rotated client secret) is not mistaken
+ * for a webhook authentication failure and keeps its existing "[accepted]" handling.
  */
+class UnauthorizedError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'UnauthorizedError'
+    this.statusCode = 401
+  }
+}
+
 function isUnauthorizedError(err) {
-  return getErrorCause(err)?.statusCode === 401
+  return (
+    err instanceof UnauthorizedError ||
+    getErrorCause(err) instanceof UnauthorizedError
+  )
 }
 
 function getErrorCause(err) {
@@ -34,4 +49,9 @@ function getErrorCause(err) {
   return err
 }
 
-export { isRecoverableError, isUnauthorizedError, getErrorCause }
+export {
+  isRecoverableError,
+  isUnauthorizedError,
+  getErrorCause,
+  UnauthorizedError,
+}

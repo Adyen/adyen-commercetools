@@ -1,5 +1,6 @@
 import sinon from 'sinon'
 import lodash from 'lodash'
+import VError from 'verror'
 import { expect } from 'chai'
 import config from '../../src/config/config.js'
 import { handleNotification } from '../../src/api/notification/notification.controller.js'
@@ -9,6 +10,7 @@ import { getLogger } from '../../src/utils/logger.js'
 import ctpClientMock from './ctp-client-mock.js'
 import ctp from '../../src/utils/ctp.js'
 import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
+import { UnauthorizedError } from '../../src/utils/error-utils.js'
 
 const { cloneDeep } = lodash
 const logger = getLogger()
@@ -332,8 +334,9 @@ describe('notification controller', () => {
       .stub(config, 'getAdyenConfig')
       .callsFake(() => ({ enableHmacSignature: false, enableBasicAuth: true }))
 
-    const unauthorizedError = new Error('Basic authentication failed')
-    unauthorizedError.statusCode = 401
+    const unauthorizedError = new UnauthorizedError(
+      'Basic authentication failed',
+    )
     const processNotificationStub = sandbox
       .stub(notificationHandler, 'processNotification')
       .rejects(unauthorizedError)
@@ -356,6 +359,51 @@ describe('notification controller', () => {
       'WWW-Authenticate': 'Basic realm="adyen-notification"',
     })
     expect(responseEndSpy.firstCall.firstArg).to.equal(undefined)
+    expect(loggerMock.error.calledOnce).to.be.true
+  })
+
+  it('when commercetools responds with 401 (e.g. rotated client secret), it should answer "accepted"', async () => {
+    // prepare:
+    const requestMock = {
+      method: 'POST',
+      url: '/',
+    }
+    const responseMock = {
+      writeHead: () => {},
+      end: () => {},
+    }
+    const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+    const responseEndSpy = sandbox.spy(responseMock, 'end')
+    const notificationJson = cloneDeep(mockNotificationJson)
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
+      { 'metadata.ctProjectKey': 'testKey' }
+    utils.collectRequestData = () => JSON.stringify(notificationJson)
+
+    sandbox.stub(config, 'getCtpConfig').callsFake(() => ({}))
+    sandbox
+      .stub(config, 'getAdyenConfig')
+      .callsFake(() => ({ enableHmacSignature: false }))
+
+    // shape of a commercetools SDK error on an invalid client secret, wrapped like the handler does
+    const ctpUnauthorizedError = new Error('invalid_client')
+    ctpUnauthorizedError.statusCode = 401
+    sandbox
+      .stub(notificationHandler, 'processNotification')
+      .rejects(new VError(ctpUnauthorizedError, 'Failed to fetch a payment'))
+
+    const loggerMock = {
+      error: sinon.spy(),
+      debug: sinon.spy(),
+    }
+
+    // test:
+    await handleNotification(requestMock, responseMock, loggerMock)
+
+    // expect:
+    expect(responseWriteHeadSpy.firstCall.args[0]).to.equal(200)
+    expect(responseEndSpy.firstCall.firstArg).to.equal(
+      JSON.stringify({ notificationResponse: '[accepted]' }),
+    )
     expect(loggerMock.error.calledOnce).to.be.true
   })
 })

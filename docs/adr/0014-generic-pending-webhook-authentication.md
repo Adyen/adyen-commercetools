@@ -34,7 +34,15 @@ cannot be HMAC-signed; Adyen only offers basic authentication over HTTPS for it.
   so that the existing URL-path fallback of the parser resolves the project; as a last resort the parser falls back to
   the merchant account's `ctpProjectKey`. This limits Generic Pending webhooks to one commercetools project per Adyen
   merchant account, which is acceptable since standard webhooks (which carry metadata) are unaffected.
-- A new per-merchant boolean `enableBasicAuth` (default `false`) controls the feature, analogous to `enableHmacSignature`.
+- A new per-merchant boolean `enableBasicAuth` (default `false`) controls the feature. It is opt-in, unlike
+  `enableHmacSignature` which is opt-out, because it requires new credentials and a new webhook. To keep existing
+  deployments closed while it is disabled, a `PENDING` notification received for a merchant account with
+  `enableBasicAuth` disabled is logged, acknowledged and dropped (the same handling as an invalid HMAC signature):
+  the sender of an unsigned notification can not be verified, so it is never processed unauthenticated. With
+  `enableHmacSignature` enabled this matches the pre-existing behaviour, where such a notification was rejected for its
+  missing HMAC signature. With `enableHmacSignature` disabled (required on commercetools Connect) this is a behaviour
+  change: a `PENDING` notification delivered to a URL ending with the project key was previously stored as an
+  interface interaction and is now dropped until `enableBasicAuth` is configured.
   Startup validation fails when it is enabled but the credentials are missing or incomplete, and also when an
   `authentication` object exists but is incomplete, so that a typo can not silently disable protection. This validation
   runs before the `setupNotificationResources` escape hatch because the setup command needs the credentials.
@@ -47,6 +55,11 @@ cannot be HMAC-signed; Adyen only offers basic authentication over HTTPS for it.
 - A failed basic authentication is answered with HTTP `401` and aborts processing of the whole request, i.e. none of
   the notification items is processed or acknowledged with `[accepted]`. This deliberately differs from a failed HMAC
   validation, which is logged and acknowledged, because a 401 is the response Adyen expects for rejected credentials.
+  The failure is signalled with a dedicated `UnauthorizedError` class rather than by matching `statusCode === 401`,
+  so that a 401 returned by commercetools itself (e.g. a rotated client secret) keeps its existing `[accepted]`
+  handling and is not reported to Adyen as invalid webhook credentials.
+- The parser's fallback to the merchant account's `ctpProjectKey` applies to any notification without
+  `metadata.ctProjectKey` and without a project key in the URL path, not only to `PENDING` ones.
 - Credential comparison is timing-safe and the decoded credential is split on the first colon only, so passwords may
   contain colons. Neither received nor configured credentials are ever logged.
 - The `PENDING` event keeps its existing mapping in `adyen-events.json` (`transactionType: null`): the notification is

@@ -170,6 +170,73 @@ describe('verify ensure-adyen-webhook', () => {
     )
   })
 
+  it('when re-syncing basic auth credentials fails, setup-resources fails instead of reporting success', async () => {
+    adyenConfig0.enableBasicAuth = true
+    adyenConfig0.authentication = BASIC_AUTH
+    adyenConfig0.ctpProjectKey = CTP_PROJECT_KEY
+    const existingPendingWebhook = {
+      id: 'pending-webhook-1',
+      type: 'pending-notification',
+      url: PENDING_WEBHOOK_URL,
+      active: true,
+      hasPassword: true,
+    }
+    mockListWebhooks([existingStandardWebhook, existingPendingWebhook])
+    mockListWebhooks([existingStandardWebhook, existingPendingWebhook])
+    nock(`${MANAGEMENT_API_URL}/merchants/${adyenMerchantAccount0}`)
+      .patch('/webhooks/pending-webhook-1')
+      .reply(422, {
+        status: 422,
+        errorCode: '30_102',
+        title: 'Password does not meet the requirements',
+      })
+
+    let thrownError
+    try {
+      await ensureAdyenWebhooksForAllProjects()
+    } catch (err) {
+      thrownError = err
+    }
+
+    expect(thrownError).to.be.an('error')
+    expect(thrownError.message).to.contain(
+      `Failed to ensure adyen webhook for project ${adyenMerchantAccount0}`,
+    )
+    expect(thrownError.message).to.contain('HTTP 422')
+    expect(thrownError.message).to.contain(
+      'Password does not meet the requirements',
+    )
+  })
+
+  it('when creating the generic pending webhook fails, setup-resources fails instead of succeeding', async () => {
+    adyenConfig0.enableBasicAuth = true
+    adyenConfig0.authentication = BASIC_AUTH
+    adyenConfig0.ctpProjectKey = CTP_PROJECT_KEY
+    mockListWebhooks([existingStandardWebhook])
+    mockListWebhooks([existingStandardWebhook])
+    nock(`${MANAGEMENT_API_URL}/merchants/${adyenMerchantAccount0}`)
+      .post('/webhooks')
+      .reply(422, {
+        status: 422,
+        errorCode: '30_102',
+        title: 'Password does not meet the requirements',
+      })
+
+    let thrownError
+    try {
+      await ensureAdyenWebhooksForAllProjects()
+    } catch (err) {
+      thrownError = err
+    }
+
+    expect(thrownError).to.be.an('error')
+    expect(thrownError.message).to.contain(
+      'Failed to create webhook of type \\"pending-notification\\"',
+    )
+    expect(thrownError.message).to.contain('HTTP 422')
+    sinon.assert.neverCalledWithMatch(logSpy, /created with ID/)
+  })
+
   describe('buildGenericPendingWebhookUrl', () => {
     it('appends "/notifications/<ctpProjectKey>" to the notification base URL', () => {
       expect(

@@ -7,6 +7,7 @@ import { getLogger } from '../../src/utils/logger.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils/commons.js'
 import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
+import { UnauthorizedError } from '../../src/utils/error-utils.js'
 
 const logger = getLogger()
 
@@ -178,8 +179,9 @@ describe('Lambda handler', () => {
     )
   })
   it('forwards the Authorization header case-insensitively and returns 401 when basic auth fails', async () => {
-    const unauthorizedError = new Error('Basic authentication failed')
-    unauthorizedError.statusCode = 401
+    const unauthorizedError = new UnauthorizedError(
+      'Basic authentication failed',
+    )
     const processNotificationStub = sinon
       .stub(notificationHandler, 'processNotification')
       .rejects(unauthorizedError)
