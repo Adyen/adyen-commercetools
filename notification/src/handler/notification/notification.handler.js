@@ -292,7 +292,12 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
         }),
       )
     else if (
-      compareTransactionStates(oldTransaction.state, transactionState) > 0
+      compareTransactionStates(oldTransaction.state, transactionState) > 0 ||
+      isAuthorisationRecoveredFromFailure(
+        notificationRequestItem,
+        oldTransaction,
+        transactionState,
+      )
     ) {
       updateActions.push(
         getChangeTransactionStateUpdateAction(
@@ -377,6 +382,30 @@ function compareTransactionStates(currentState, newState) {
     throw new Error(errorMessage)
   }
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
+}
+
+/**
+ * Adyen can send a failed AUTHORISATION notification (e.g. a temporary acquirer error)
+ * followed by a successful AUTHORISATION notification for the same pspReference.
+ * This is observed for redirect payment methods such as PayPal. In this case the
+ * Authorization transaction has to be corrected from Failure to Success even though
+ * the generic transaction state flow does not allow Failure -> Success.
+ * @param notificationRequestItem the Adyen notification request item
+ * @param oldTransaction the existing transaction from the CT platform matched by pspReference
+ * @param newState state of the transaction from the Adyen notification
+ * @return boolean true if the failed Authorization transaction should be set to Success
+ * */
+function isAuthorisationRecoveredFromFailure(
+  notificationRequestItem,
+  oldTransaction,
+  newState,
+) {
+  return (
+    notificationRequestItem.eventCode === 'AUTHORISATION' &&
+    oldTransaction.type === 'Authorization' &&
+    oldTransaction.state === 'Failure' &&
+    newState === 'Success'
+  )
 }
 
 function getAddInterfaceInteractionUpdateAction(notification) {

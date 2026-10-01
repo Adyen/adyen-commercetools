@@ -261,6 +261,186 @@ describe('notification module', () => {
     )
   })
 
+  it(`given that ADYEN sends an "AUTHORISATION is successful" notification
+      when payment has a failure authorization transaction with the same pspReference
+      then notification module should add notification to the interface interaction
+      and should update failure authorization state to the success`, async () => {
+    // prepare data
+    const notifications = [
+      {
+        NotificationRequestItem: {
+          amount: {
+            currency: 'EUR',
+            value: 10100,
+          },
+          additionalData: {
+            'metadata.ctProjectKey': commercetoolsProjectKey,
+          },
+          eventCode: 'AUTHORISATION',
+          eventDate: '2019-01-30T18:16:28+01:00',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
+          merchantReference: '8313842560770001',
+          operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+          paymentMethod: 'paypal',
+          pspReference: 'test_AUTHORISATION_1',
+          success: 'true',
+        },
+      },
+    ]
+    const payment = cloneDeep(paymentMock)
+    payment.paymentMethodInfo.method = 'paypal'
+    payment.transactions.push({
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Authorization',
+      amount: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 10100,
+        fractionDigits: 2,
+      },
+      interactionId: 'test_AUTHORISATION_1',
+      state: 'Failure',
+    })
+    const ctpClient = ctpClientMock.get(ctpConfig)
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
+    }))
+    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+
+    // process
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notifications[0].NotificationRequestItem.additionalData
+    }
+    const expectedUpdateActions = [
+      {
+        action: 'addInterfaceInteraction',
+        type: {
+          key: 'ctp-adyen-integration-interaction-notification',
+          typeId: 'type',
+        },
+        fields: {
+          status: 'authorisation',
+          type: 'notification',
+          notification: JSON.stringify(notifications[0]),
+        },
+      },
+      {
+        action: 'changeTransactionState',
+        state: 'Success',
+        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      },
+      {
+        action: 'changeTransactionTimestamp',
+        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+        timestamp: '2019-01-30T17:16:28.000Z',
+      },
+      {
+        action: 'setKey',
+        key: 'test_AUTHORISATION_1',
+      },
+    ]
+
+    // assert update actions
+    // createdAt is set to the current date during the update action calculation
+    // We can't know what is set there
+    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
+      expectedUpdateActions,
+    )
+  })
+
+  it(`given that ADYEN sends a "CAPTURE is successful" notification
+      when payment has a failure charge transaction with the same pspReference
+      then notification module should add notification to the interface interaction
+      and should not update the failure charge transaction`, async () => {
+    // prepare data
+    const notifications = [
+      {
+        NotificationRequestItem: {
+          amount: {
+            currency: 'EUR',
+            value: 10100,
+          },
+          additionalData: {
+            'metadata.ctProjectKey': commercetoolsProjectKey,
+          },
+          eventCode: 'CAPTURE',
+          eventDate: '2019-01-30T18:16:22+01:00',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
+          merchantReference: '8313842560770001',
+          originalReference: 'test_AUTHORISATION_1',
+          paymentMethod: 'visa',
+          pspReference: 'test_CAPTURE_1',
+          success: 'true',
+        },
+      },
+    ]
+    const payment = cloneDeep(paymentMock)
+    payment.key = 'test_AUTHORISATION_1'
+    payment.transactions.push({
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Charge',
+      amount: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 10100,
+        fractionDigits: 2,
+      },
+      interactionId: 'test_CAPTURE_1',
+      state: 'Failure',
+    })
+    const ctpClient = ctpClientMock.get(ctpConfig)
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
+    }))
+    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+
+    // process
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notifications[0].NotificationRequestItem.additionalData
+    }
+    const expectedUpdateActions = [
+      {
+        action: 'addInterfaceInteraction',
+        type: {
+          key: 'ctp-adyen-integration-interaction-notification',
+          typeId: 'type',
+        },
+        fields: {
+          status: 'capture',
+          type: 'notification',
+          notification: JSON.stringify(notifications[0]),
+        },
+      },
+    ]
+
+    // assert update actions
+    // createdAt is set to the current date during the update action calculation
+    // We can't know what is set there
+    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
+      expectedUpdateActions,
+    )
+  })
+
   it(`given that ADYEN sends an "AUTHORISATION is not successful" notification
       when payment has a failure authorization transaction 
       then notification module should add notification to the interface interaction 

@@ -147,6 +147,11 @@ If there is no transaction on the payment found,
 the notification module will create a new transaction with the received `transactionType` and
 `transactionState`. Otherwise, it will update the existing transaction with a new `transactionState`.
 
+An existing transaction is only moved forward in the order `Initial` → `Pending` → `Success` → `Failure`.
+The one exception is the `Authorization` transaction: Adyen can send a failed `AUTHORISATION` notification
+(for example because of a temporary acquirer error, observed with PayPal) followed by a successful `AUTHORISATION`
+notification for the same `pspReference`. In that case the `Authorization` transaction is corrected from `Failure` to `Success`.
+
 Received notification will be stored on the [interfaceInteraction](https://docs.commercetools.com/api/projects/payments#add-interfaceinteraction) of the payment.
 If the mapping for the received notification is not found then payment will be updated only with a new `interfaceInteraction`.
 If payment is not found then the notification will be skipped from processing.
