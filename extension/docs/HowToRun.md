@@ -186,6 +186,18 @@ Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-a
     commercetools/commercetools-adyen-integration-extension:vX.X.X
 ```
 
+Release images are published with a BuildKit provenance attestation and an SBOM attached to the image index, and a GitHub build-provenance attestation per digest. For production deployments pin the image by its immutable digest instead of the mutable version tag. The digests are printed in the job summary of the `CD` workflow run for the release, or can be resolved with:
+
+```bash
+    docker buildx imagetools inspect commercetools/commercetools-adyen-integration-extension:vX.X.X --format '{{json .Manifest.Digest}}'
+```
+
+and used as `commercetools/commercetools-adyen-integration-extension@sha256:...`. The provenance can be verified with the GitHub CLI:
+
+```bash
+    gh attestation verify oci://index.docker.io/commercetools/commercetools-adyen-integration-extension@sha256:... --repo Adyen/adyen-commercetools
+```
+
 ## Deployment
 
 Extension module supports different deployment [options](/deployment-examples).

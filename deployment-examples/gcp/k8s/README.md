@@ -35,5 +35,12 @@ After configured all the required environment variables, execute the [`deploy-to
 ./deploy-to-gcp.sh
 ```
 
+### Pin images by digest
 
+`deploy-to-gcp.sh` tags the images it pushes to GCR with `TAG`. Tags are mutable, so for production deployments resolve the pushed digest and reference the image as `<repository>@sha256:...` in the `image` section of the `values.yaml` files (or make sure the registry disallows tag overwrites):
 
+```
+docker buildx imagetools inspect "$EXTENSION_IMAGE_FULL:$TAG" --format '{{json .Manifest.Digest}}'
+```
+
+When deploying the official Docker Hub images instead, use the digests from the job summary of the release's `CD` workflow run; they ship with provenance and SBOM attestations (see `extension/docs/HowToRun.md`).
