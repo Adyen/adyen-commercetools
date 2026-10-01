@@ -1,10 +1,33 @@
 {
-  "extends": ["config:base", ":disableDependencyDashboard"],
-  "automerge": true,
-  "schedule": ["every weekend"],
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":disableDependencyDashboard",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "automerge": false,
+  "minimumReleaseAge": "30 days",
+  "schedule": [
+    "every weekend"
+  ],
   "groupName": "all",
-  "docker": {
-    "enabled":  false
-  },
-  "prConcurrentLimit": 10
+  "prConcurrentLimit": 10,
+  "packageRules": [
+    {
+      "description": "Dev tooling (test runners, linters, formatters) may automerge once a release has been public for 30 days; everything else needs a human review.",
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "groupName": "dev-dependencies",
+      "automerge": true,
+      "minimumReleaseAge": "30 days"
+    },
+    {
+      "description": "Keep container base images pinned to an immutable digest (the tag alone is mutable).",
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "pinDigests": true
+    }
+  ]
 }
