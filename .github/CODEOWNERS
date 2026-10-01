@@ -1,0 +1,21 @@
+# Code owners are automatically requested for review on pull requests that touch these paths.
+# With "Require review from Code Owners" enabled in branch protection for master, their approval
+# becomes mandatory. Owners mirror .github/CODEOWNERS in Adyen/adyen-shopware6.
+#
+# Scope: everything that controls what code and which dependencies run in CI and in production.
+
+# CI / CD workflows, Renovate and Connect deployment config
+/.github/                       @brankologeecom @MarijaIv @tamaralogeecom @AleksandarBoljanovic @goran-stamenkovski-logeecom @teodoratimoti @DamjanLogeecom
+/renovate.json                  @brankologeecom @MarijaIv @tamaralogeecom @AleksandarBoljanovic @goran-stamenkovski-logeecom @teodoratimoti @DamjanLogeecom
+/connect.yaml                   @brankologeecom @MarijaIv @tamaralogeecom @AleksandarBoljanovic @goran-stamenkovski-logeecom @teodoratimoti @DamjanLogeecom
+
+# Container images and dependency manifests / lock files
+/extension/Dockerfile           @brankologeecom @MarijaIv @tamaralogeecom @AleksandarBoljanovic @goran-stamenkovski-logeecom @teodoratimoti @DamjanLogeecom
+/notification/Dockerfile        @brankologeecom @MarijaIv @tamaralogeecom @AleksandarBoljanovic @goran-stamenkovski-logeecom @teodoratimoti @DamjanLogeecom
+/extension/package.json         @brankologeecom @MarijaIv @tamaralogeecom @AleksandarBoljanovic @goran-stamenkovski-logeecom @teodoratimoti @DamjanLogeecom
+/extension/package-lock.json    @brankologeecom @MarijaIv @tamaralogeecom @AleksandarBoljanovic @goran-stamenkovski-logeecom @teodoratimoti @DamjanLogeecom
+/notification/package.json      @brankologeecom @MarijaIv @tamaralogeecom @AleksandarBoljanovic @goran-stamenkovski-logeecom @teodoratimoti @DamjanLogeecom
+/notification/package-lock.json @brankologeecom @MarijaIv @tamaralogeecom @AleksandarBoljanovic @goran-stamenkovski-logeecom @teodoratimoti @DamjanLogeecom
+
+# Security policy itself
+/SECURITY.md                    @brankologeecom @MarijaIv @tamaralogeecom @AleksandarBoljanovic @goran-stamenkovski-logeecom @teodoratimoti @DamjanLogeecom
