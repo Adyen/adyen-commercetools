@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 import fs from 'fs'
 import { randomUUID } from 'crypto'
 import os from 'os'
@@ -114,6 +115,59 @@ describe('::config::', () => {
       renameExtensionrcFile(tempFileName, extensionConfigFileName)
     }
   })
+
+  it(
+    'when ADYEN_INTEGRATION_CONFIG is not set but external file is configured, ' +
+      'then it should load configuration and log a warning',
+    async () => {
+      const originalAdyenConfig = process.env.ADYEN_INTEGRATION_CONFIG
+      renameExtensionrcFile(extensionConfigFileName, tempFileName)
+      const filePath = `${homedir}/.extensionrc`
+      const consoleWarnStub = sinon.stub(console, 'warn')
+      try {
+        delete process.env.ADYEN_INTEGRATION_CONFIG
+        const config = {
+          commercetools: {
+            ctpProjectKey1: {
+              clientId: 'clientId',
+              clientSecret: 'clientSecret',
+              apiUrl: 'host',
+              authUrl: 'authUrl',
+            },
+          },
+          adyen: {
+            adyenMerchantAccount1: {
+              apiKey: 'apiKey',
+              clientKey: 'clientKey',
+            },
+          },
+          logLevel: 'DEBUG',
+        }
+        fs.writeFileSync(filePath, JSON.stringify(config), 'utf-8')
+
+        const loadedConfig = await reloadModule('../../../src/config/config.js')
+        expect(
+          loadedConfig.default.getCtpConfig('ctpProjectKey1').clientId,
+        ).to.equal('clientId')
+        expect(
+          loadedConfig.default.getAdyenConfig('adyenMerchantAccount1').apiKey,
+        ).to.equal('apiKey')
+
+        // loading from a file must be visible in the logs (bunyan-compatible WARN line)
+        expect(consoleWarnStub.calledOnce).to.equal(true)
+        const warning = JSON.parse(consoleWarnStub.firstCall.args[0])
+        expect(warning.level).to.equal(40)
+        expect(warning.name).to.equal('ctp-adyen-integration-extension')
+        expect(warning.msg).to.contain('ADYEN_INTEGRATION_CONFIG is not set')
+        expect(warning.msg).to.contain(filePath)
+      } finally {
+        consoleWarnStub.restore()
+        fs.unlinkSync(filePath)
+        renameExtensionrcFile(tempFileName, extensionConfigFileName)
+        process.env.ADYEN_INTEGRATION_CONFIG = originalAdyenConfig
+      }
+    },
+  )
 
   it('when no commercetools project is provided, it should throw error', async () => {
     process.env.ADYEN_INTEGRATION_CONFIG = JSON.stringify({

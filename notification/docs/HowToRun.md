@@ -105,6 +105,8 @@ is `ADYEN_INTEGRATION_CONFIG` and it must contain settings as attributes in a JS
 
 In case you have a huge configuration that reaches above the environment limits (e.g the total size of all environment variables on AWS Lambda can't exceed 4 KB.), you could use the external file configuration instead of setting `ADYEN_INTEGRATION_CONFIG` environment variable. The notification module will look for the `.notificationrc` file in the `notification` folder. The file should contain the same JSON content as it's defined with environment variable.
 
+> **Security note.** The file lookup is done with the [`rc`](https://github.com/dominictarr/rc#standards) module, which is a wider trust boundary than the environment variable: it merges every `.notificationrc` found in the working directory and its parent directories, in `$HOME` (`~/.notificationrc`, `~/.notification/config`, `~/.config/notification`) and in `/etc`, plus any `notification_*` environment variables and `--` command line flags. Anyone who can place such a file or variable where the process runs can change credentials, URLs and feature flags. Prefer `ADYEN_INTEGRATION_CONFIG`; if you must use the file, restrict its permissions, run the process in a dedicated working directory, and do not pass untrusted command line arguments. When configuration is loaded from a file the module logs a `WARN` line at startup listing the files it used.
+
 ## Commercetools project requirements
 
 Resources below are required for the notification module to operate correctly.

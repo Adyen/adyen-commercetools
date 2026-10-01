@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 import fs from 'fs'
 import os from 'os'
 import { randomUUID } from 'crypto'
@@ -168,6 +169,7 @@ describe('::config::', () => {
 
       renameNotificationrcFile(notificationConfigFileName, tempFileName)
       const filePath = `${homedir}/.notificationrc`
+      const consoleWarnStub = sinon.stub(console, 'warn')
       try {
         delete process.env.ADYEN_INTEGRATION_CONFIG
         const config = {
@@ -207,7 +209,16 @@ describe('::config::', () => {
           notificationBaseUrl: undefined,
           apiKey: undefined,
         })
+
+        // loading from a file must be visible in the logs (bunyan-compatible WARN line)
+        expect(consoleWarnStub.calledOnce).to.equal(true)
+        const warning = JSON.parse(consoleWarnStub.firstCall.args[0])
+        expect(warning.level).to.equal(40)
+        expect(warning.name).to.equal('ctp-adyen-integration-notification')
+        expect(warning.msg).to.contain('ADYEN_INTEGRATION_CONFIG is not set')
+        expect(warning.msg).to.contain(filePath)
       } finally {
+        consoleWarnStub.restore()
         fs.unlinkSync(filePath)
         renameNotificationrcFile(tempFileName, notificationConfigFileName)
         process.env.ADYEN_INTEGRATION_CONFIG = originalAdyenConfig
