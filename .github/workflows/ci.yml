@@ -1,72 +1,123 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests with node
+# CI is split in two layers per module:
+#   *_checks       - runs on every push, has NO access to secrets: install, lockfile lint,
+#                    eslint/prettier, production dependency audit, unit tests.
+#   *_integration  - runs only after the checks pass and only inside the protected
+#                    `integration` GitHub Environment (required reviewers, restricted to
+#                    master and release tags). It is the only place the Adyen / commercetools
+#                    credentials and the ngrok token are exposed.
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 name: CI
 
 on: [ push ]
 
+permissions:
+  contents: read
+
 jobs:
 
-  extension_test:
-    name: Test for Extension Module
+  extension_checks:
+    name: Checks for Extension Module
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: extension
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.x'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lockfile Lint Check
+        run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - name: Run Code Checks
+        run: npm run check
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - name: Run unit tests
+        run: npm run unit
+
+  notification_checks:
+    name: Checks for Notification Module
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: notification
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.x'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lockfile Lint Check
+        run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - name: Run Code Checks
+        run: npm run check
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - name: Run unit tests
+        run: npm run unit
+
+  extension_integration:
+    name: Integration Tests for Extension Module
+    needs: [ extension_checks, notification_checks ]
+    environment: integration
     concurrency: extension_test
     runs-on: ubuntu-latest
     env:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
       EXTENSION_TUNNEL_DOMAIN: ${{ secrets.EXTENSION_TUNNEL_DOMAIN }}
       NOTIFICATION_TUNNEL_DOMAIN: ${{ secrets.NOTIFICATION_TUNNEL_DOMAIN }}
-      NGROK_AUTHTOKEN: ${{secrets.NGROK_AUTHTOKEN }}
+      NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
       EXTENSION_PORT: 8080
       NOTIFICATION_PORT: 8081
     defaults:
       run:
         working-directory: extension
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Use Node.js 24.x
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '24.x'
       - name: Install dependencies
         run: npm ci
-      - name: Lockfile Lint Check
-        run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
-      - name: Run Code Checks
-        run: npm run check
       - name: Install notification dependencies
         run: npm ci
         working-directory: notification
-      - name: Run unit and integration tests
+      - name: Run unit and integration tests with coverage gate
         run: npm run test-ci
 
-  notification_test:
-    name: Test for Notification Module
+  notification_integration:
+    name: Integration Tests for Notification Module
+    # Serialised after the extension run: both register the same Adyen webhooks / ngrok domains.
+    needs: extension_integration
+    environment: integration
     concurrency: notification_test
-    needs: extension_test
     runs-on: ubuntu-latest
     env:
       ADYEN_INTEGRATION_CONFIG: ${{ secrets.ADYEN_INTEGRATION_CONFIG }}
       EXTENSION_TUNNEL_DOMAIN: ${{ secrets.EXTENSION_TUNNEL_DOMAIN }}
-      NGROK_AUTHTOKEN: ${{secrets.NGROK_AUTHTOKEN }}
+      NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
       EXTENSION_PORT: 8080
       NOTIFICATION_PORT: 8081
     defaults:
       run:
         working-directory: notification
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Use Node.js 24.x
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '24.x'
       - name: Install dependencies
         run: npm ci
-      - name: Lockfile Lint Check
-        run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
-      - name: Run Code Checks
-        run: npm run check
       - name: Install extension dependencies
         run: npm ci
         working-directory: extension
-      - name: Run unit and integration tests
+      - name: Run unit and integration tests with coverage gate
         run: npm run test-ci
