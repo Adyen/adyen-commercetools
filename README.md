@@ -22,7 +22,7 @@
 For full list of payment methods that have been tested for CommerceTools integration please refer to
 [supported payment methods section](#supported-payment-methods) of this document.
   - Note: since the integration relies on the usage of Adyen's web components it does not need to process sensitive credit card data and thus is fully PCI DSS **compliant**.
-- Asynchronous notifications handling via [notification module](#notification-module).
+- Asynchronous notifications handling via [notification module](#notification-module), including [Adyen Generic Pending webhooks](./notification/docs/IntegrationGuide.md#generic-pending-webhook-basic-authentication) protected with basic authentication.
 - [Multi-tenancy](./extension/docs/WebComponentsIntegrationGuide.md#multi-tenancy) to serve multiple Adyen merchant accounts/commercetools projects with one application instance.
 - [Refunding](./extension/docs/Refund.md) a payment back to the shopper.
 - Authorisation [cancellation](./extension/docs/CancelPayment.md) on a payment that has not yet been captured.

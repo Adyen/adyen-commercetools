@@ -6,28 +6,86 @@ import { loadConfig } from '../config-loader.js'
 
 const mainLogger = getLogger()
 
-async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
+const ADYEN_MANAGEMENT_API_BASE_URL = 'https://management-test.adyen.com/v1'
+
+const STANDARD_WEBHOOK = {
+  type: 'standard',
+  description: 'commercetools-adyen-integration notification webhook',
+}
+
+// Adyen generic pending webhooks (eventCode PENDING) can not be HMAC-signed,
+// they are protected with basic authentication over HTTPS instead.
+const GENERIC_PENDING_WEBHOOK = {
+  type: 'pending-notification',
+  description: 'commercetools-adyen-integration generic pending webhook',
+}
+
+/**
+ * Adyen generic pending webhooks carry no `additionalData`, hence no `metadata.ctProjectKey`.
+ * The commercetools project is therefore resolved from the last path segment of the webhook URL
+ * (see `utils/parser.js`), so the webhook must point to `<notificationBaseUrl>/notifications/<ctpProjectKey>`.
+ * @param notificationBaseUrl publicly available URL of the notification module
+ * @param ctpProjectKey commercetools project key that the merchant account belongs to
+ * @returns {string} the generic pending webhook URL
+ */
+function buildGenericPendingWebhookUrl(notificationBaseUrl, ctpProjectKey) {
+  const baseUrl = notificationBaseUrl.replace(/\/+$/, '')
+  if (baseUrl.endsWith(`/${ctpProjectKey}`)) return baseUrl
+  if (baseUrl.endsWith('/notifications')) return `${baseUrl}/${ctpProjectKey}`
+  return `${baseUrl}/notifications/${ctpProjectKey}`
+}
+
+function _buildRequestHeaders(adyenApiKey) {
+  return {
+    'Content-Type': 'application/json',
+    'X-Api-Key': adyenApiKey,
+  }
+}
+
+/**
+ * Ensures that a webhook of the given type pointing to `webhookUrl` exists and is active
+ * in the Adyen merchant account.
+ * @param adyenApiKey Adyen API key with Management API permissions
+ * @param webhookUrl publicly available URL of the notification module
+ * @param merchantId Adyen merchant account
+ * @param webhook shape of the webhook: `type`, `description` and optional basic auth `username` / `password`
+ * @returns {Promise<string>} the webhook ID
+ */
+async function ensureAdyenWebhook(
+  adyenApiKey,
+  webhookUrl,
+  merchantId,
+  {
+    type = STANDARD_WEBHOOK.type,
+    description = STANDARD_WEBHOOK.description,
+    username,
+    password,
+  } = {},
+) {
   try {
     const logger = mainLogger.child({
       adyen_merchant_id: merchantId,
     })
 
+    const hasBasicAuthCredentials = Boolean(username && password)
+    const basicAuthConfig = hasBasicAuthCredentials
+      ? { username, password }
+      : {}
+
     const webhookConfig = {
-      type: 'standard',
+      type,
       url: webhookUrl,
       active: 'true',
       communicationFormat: 'json',
-      description: 'commercetools-adyen-integration notification webhook',
+      description,
+      ...basicAuthConfig,
     }
 
     const getWebhookResponse = await fetch(
-      `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks`,
+      `${ADYEN_MANAGEMENT_API_BASE_URL}/merchants/${merchantId}/webhooks`,
       {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Api-Key': adyenApiKey,
-        },
+        headers: _buildRequestHeaders(adyenApiKey),
       },
     )
     const getWebhookResponseJson = await getWebhookResponse.json()
@@ -40,42 +98,67 @@ async function ensureAdyenWebhook(adyenApiKey, webhookUrl, merchantId) {
 
     if (existingWebhook) {
       logger.info(
-        `Webhook already existed with ID ${existingWebhook.id}. ` +
+        `Webhook of type "${type}" already existed with ID ${existingWebhook.id}. ` +
           'Skipping webhook creation and ensuring the webhook is active',
       )
-      if (!existingWebhook.active)
+      if (hasBasicAuthCredentials) {
+        // Adyen never returns the configured password, so the credentials are always re-synced
+        // to make sure that rotated credentials in the configuration are propagated to Adyen.
+        const updateWebhookResponse = await fetch(
+          `${ADYEN_MANAGEMENT_API_BASE_URL}/merchants/${merchantId}/webhooks/${existingWebhook.id}`,
+          {
+            body: JSON.stringify({
+              active: true,
+              ...basicAuthConfig,
+            }),
+            method: 'PATCH',
+            headers: _buildRequestHeaders(adyenApiKey),
+          },
+        )
+        // A silently failed update would leave stale credentials in Adyen while setup reports success.
+        if (!updateWebhookResponse.ok) {
+          const responseBody = await updateWebhookResponse.text()
+          throw new Error(
+            `Failed to update basic auth credentials of webhook ${existingWebhook.id} ` +
+              `(HTTP ${updateWebhookResponse.status}): ${responseBody}`,
+          )
+        }
+      } else if (!existingWebhook.active)
         await fetch(
-          `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${existingWebhook.id}`,
+          `${ADYEN_MANAGEMENT_API_BASE_URL}/merchants/${merchantId}/webhooks/${existingWebhook.id}`,
           {
             body: JSON.stringify({
               active: true,
             }),
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Api-Key': adyenApiKey,
-            },
+            headers: _buildRequestHeaders(adyenApiKey),
           },
         )
       return existingWebhook.id
     }
 
     const createWebhookResponse = await fetch(
-      `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks`,
+      `${ADYEN_MANAGEMENT_API_BASE_URL}/merchants/${merchantId}/webhooks`,
       {
         body: JSON.stringify(webhookConfig),
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Api-Key': adyenApiKey,
-        },
+        headers: _buildRequestHeaders(adyenApiKey),
       },
     )
 
+    if (!createWebhookResponse.ok) {
+      const responseBody = await createWebhookResponse.text()
+      throw new Error(
+        `Failed to create webhook of type "${type}" ` +
+          `(HTTP ${createWebhookResponse.status}): ${responseBody}`,
+      )
+    }
     const createWebhookResponseJson = await createWebhookResponse.json()
     const webhookId = createWebhookResponseJson.id
 
-    logger.info(`New webhook was created with ID ${webhookId}`)
+    logger.info(
+      `New webhook of type "${type}" was created with ID ${webhookId}`,
+    )
     return webhookId
   } catch (err) {
     throw Error(
@@ -92,13 +175,10 @@ async function ensureAdyenHmac(adyenApiKey, merchantId, webhookId) {
   })
 
   const generateHmacResponse = await fetch(
-    `https://management-test.adyen.com/v1/merchants/${merchantId}/webhooks/${webhookId}/generateHmac`,
+    `${ADYEN_MANAGEMENT_API_BASE_URL}/merchants/${merchantId}/webhooks/${webhookId}/generateHmac`,
     {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Api-Key': adyenApiKey,
-      },
+      headers: _buildRequestHeaders(adyenApiKey),
     },
   )
 
@@ -122,6 +202,7 @@ async function ensureAdyenWebhooksForAllProjects() {
         adyenConfig.apiKey,
         adyenConfig.notificationBaseUrl,
         adyenMerchantId,
+        STANDARD_WEBHOOK,
       )
       if (adyenConfig.enableHmacSignature && !adyenConfig.secretHmacKey) {
         const hmacKey = await ensureAdyenHmac(
@@ -131,8 +212,26 @@ async function ensureAdyenWebhooksForAllProjects() {
         )
         jsonConfig.adyen[adyenMerchantId].secretHmacKey = hmacKey
       }
+
+      if (adyenConfig.enableBasicAuth) {
+        // The generic pending webhook is only registered when basic auth is enabled,
+        // as Adyen requires the endpoint to be protected and HMAC is not supported for it.
+        await ensureAdyenWebhook(
+          adyenConfig.apiKey,
+          buildGenericPendingWebhookUrl(
+            adyenConfig.notificationBaseUrl,
+            adyenConfig.ctpProjectKey,
+          ),
+          adyenMerchantId,
+          {
+            ...GENERIC_PENDING_WEBHOOK,
+            username: adyenConfig.authentication.username,
+            password: adyenConfig.authentication.password,
+          },
+        )
+      }
     }
   }
 }
 
-export { ensureAdyenWebhooksForAllProjects }
+export { ensureAdyenWebhooksForAllProjects, buildGenericPendingWebhookUrl }

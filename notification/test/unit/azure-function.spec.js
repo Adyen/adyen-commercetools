@@ -6,6 +6,7 @@ import { getLogger } from '../../src/utils/logger.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils/commons.js'
 import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
+import { UnauthorizedError } from '../../src/utils/error-utils.js'
 import { azureNotificationTrigger } from '../../notification-trigger/index.azureFunction.js'
 
 describe('Google Function handler', () => {
@@ -113,6 +114,50 @@ describe('Google Function handler', () => {
       )
     } finally {
       getLogger().child = originalChildFn
+    }
+  })
+  it('returns 401 and does not accept the notification when basic authentication fails', async () => {
+    const unauthorizedError = new UnauthorizedError(
+      'Basic authentication failed',
+    )
+    const processNotificationStub = sinon
+      .stub(notificationHandler, 'processNotification')
+      .rejects(unauthorizedError)
+    const originalErrorFn = getLogger().error
+    getLogger().error = sinon.spy()
+
+    // earlier tests drain mockRequest.body.notificationItems with pop(), so build a fresh request
+    const request = {
+      url: '',
+      body: {
+        notificationItems: [
+          {
+            NotificationRequestItem: {
+              additionalData: {
+                'metadata.ctProjectKey': 'dummyCtProjectKey',
+              },
+              eventCode: 'PENDING',
+              merchantAccountCode: 'dummyAydenMerchantCode',
+            },
+          },
+        ],
+      },
+      headers: { authorization: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=' },
+    }
+
+    try {
+      const unauthorizedContext = {}
+      await azureNotificationTrigger(unauthorizedContext, request)
+
+      sinon.assert.calledWithMatch(processNotificationStub, {
+        authorizationHeader: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=',
+      })
+      expect(unauthorizedContext.res.status).to.equal(401)
+      expect(unauthorizedContext.res.body.error).to.equal(
+        'Basic authentication failed',
+      )
+    } finally {
+      getLogger().error = originalErrorFn
     }
   })
 })

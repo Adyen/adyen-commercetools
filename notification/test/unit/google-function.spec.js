@@ -7,6 +7,7 @@ import { getLogger } from '../../src/utils/logger.js'
 import config from '../../src/config/config.js'
 import utils from '../../src/utils/commons.js'
 import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
+import { UnauthorizedError } from '../../src/utils/error-utils.js'
 
 describe('Google Function handler', () => {
   const sandbox = sinon.createSandbox()
@@ -124,6 +125,58 @@ describe('Google Function handler', () => {
       )
     } finally {
       getLogger().child = originalChildFn
+    }
+  })
+  it('returns 401 and does not accept the notification when basic authentication fails', async () => {
+    const unauthorizedError = new UnauthorizedError(
+      'Basic authentication failed',
+    )
+    const processNotificationStub = sinon
+      .stub(notificationHandler, 'processNotification')
+      .rejects(unauthorizedError)
+    const originalErrorFn = getLogger().error
+    getLogger().error = sinon.spy()
+
+    const headersToSet = {}
+    // earlier tests drain mockRequest.body.notificationItems with pop(), so build a fresh request
+    const request = {
+      url: '',
+      body: {
+        notificationItems: [
+          {
+            NotificationRequestItem: {
+              additionalData: {
+                'metadata.ctProjectKey': 'dummyCtProjectKey',
+              },
+              eventCode: 'PENDING',
+              merchantAccountCode: 'dummyAydenMerchantCode',
+            },
+          },
+        ],
+      },
+      headers: { authorization: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=' },
+    }
+    const response = {
+      ...mockResponse,
+      set(name, value) {
+        headersToSet[name] = value
+        return this
+      },
+    }
+
+    try {
+      const result = await notificationTrigger(request, response)
+
+      sinon.assert.calledWithMatch(processNotificationStub, {
+        authorizationHeader: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=',
+      })
+      expect(result.responseStatus).to.equal(401)
+      expect(result.responseBody).to.equal('Basic authentication failed')
+      expect(headersToSet['WWW-Authenticate']).to.equal(
+        'Basic realm="adyen-notification"',
+      )
+    } finally {
+      getLogger().error = originalErrorFn
     }
   })
 })

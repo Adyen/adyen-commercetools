@@ -2,13 +2,20 @@ import _ from 'lodash'
 import { serializeError } from 'serialize-error'
 import VError from 'verror'
 import { validateHmacSignature } from '../../utils/hmacValidator.js'
+import {
+  isGenericPendingNotification,
+  validateBasicAuthentication,
+} from '../../utils/basicAuthValidator.js'
 import utils from '../../utils/commons.js'
 import ctp from '../../utils/ctp.js'
+import { UnauthorizedError } from '../../utils/error-utils.js'
 import config from '../../config/config.js'
 
 async function processNotification({
   notification,
   enableHmacSignature,
+  enableBasicAuth,
+  authorizationHeader,
   ctpProjectConfig,
   logger,
 }) {
@@ -16,7 +23,33 @@ async function processNotification({
     commercetools_project_key: ctpProjectConfig.projectKey,
   })
 
-  if (enableHmacSignature) {
+  if (isGenericPendingNotification(notification)) {
+    // Generic pending webhooks are not HMAC-signed by Adyen; they are protected with basic auth over HTTPS.
+    if (!enableBasicAuth) {
+      // Without basic auth there is no way to verify the sender of a PENDING notification,
+      // so it is dropped (logged and acknowledged) like a notification with an invalid HMAC signature.
+      ctpLogger.error(
+        { notification: utils.getNotificationForTracking(notification) },
+        'Generic pending (PENDING) notification is not processed because "enableBasicAuth" ' +
+          'is disabled for the Adyen merchant account. ' +
+          'Enable basic authentication to receive generic pending webhooks.',
+      )
+      return
+    }
+    const errorMessage = validateBasicAuthentication(
+      notification,
+      authorizationHeader,
+    )
+    if (errorMessage) {
+      ctpLogger.error(
+        { notification: utils.getNotificationForTracking(notification) },
+        `Basic authentication failed. Reason: "${errorMessage}"`,
+      )
+      // Throwing (instead of returning) aborts processing of the whole request,
+      // the caller responds with HTTP 401 so that none of the notification items is accepted.
+      throw new UnauthorizedError(errorMessage)
+    }
+  } else if (enableHmacSignature) {
     const errorMessage = validateHmacSignature(notification)
     if (errorMessage) {
       ctpLogger.error(
@@ -259,7 +292,12 @@ async function calculateUpdateActionsForPayment(payment, notification, logger) {
         }),
       )
     else if (
-      compareTransactionStates(oldTransaction.state, transactionState) > 0
+      compareTransactionStates(oldTransaction.state, transactionState) > 0 ||
+      isAuthorisationRecoveredFromFailure(
+        notificationRequestItem,
+        oldTransaction,
+        transactionState,
+      )
     ) {
       updateActions.push(
         getChangeTransactionStateUpdateAction(
@@ -344,6 +382,30 @@ function compareTransactionStates(currentState, newState) {
     throw new Error(errorMessage)
   }
   return transactionStateFlow[newState] - transactionStateFlow[currentState]
+}
+
+/**
+ * Adyen can send a failed AUTHORISATION notification (e.g. a temporary acquirer error)
+ * followed by a successful AUTHORISATION notification for the same pspReference.
+ * This is observed for redirect payment methods such as PayPal. In this case the
+ * Authorization transaction has to be corrected from Failure to Success even though
+ * the generic transaction state flow does not allow Failure -> Success.
+ * @param notificationRequestItem the Adyen notification request item
+ * @param oldTransaction the existing transaction from the CT platform matched by pspReference
+ * @param newState state of the transaction from the Adyen notification
+ * @return boolean true if the failed Authorization transaction should be set to Success
+ * */
+function isAuthorisationRecoveredFromFailure(
+  notificationRequestItem,
+  oldTransaction,
+  newState,
+) {
+  return (
+    notificationRequestItem.eventCode === 'AUTHORISATION' &&
+    oldTransaction.type === 'Authorization' &&
+    oldTransaction.state === 'Failure' &&
+    newState === 'Success'
+  )
 }
 
 function getAddInterfaceInteractionUpdateAction(notification) {

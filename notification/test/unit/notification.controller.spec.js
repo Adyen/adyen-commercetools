@@ -1,13 +1,16 @@
 import sinon from 'sinon'
 import lodash from 'lodash'
+import VError from 'verror'
 import { expect } from 'chai'
 import config from '../../src/config/config.js'
 import { handleNotification } from '../../src/api/notification/notification.controller.js'
+import notificationHandler from '../../src/handler/notification/notification.handler.js'
 import utils from '../../src/utils/commons.js'
 import { getLogger } from '../../src/utils/logger.js'
 import ctpClientMock from './ctp-client-mock.js'
 import ctp from '../../src/utils/ctp.js'
 import { buildMockErrorFromConcurrentModificationException } from '../test-utils.js'
+import { UnauthorizedError } from '../../src/utils/error-utils.js'
 
 const { cloneDeep } = lodash
 const logger = getLogger()
@@ -89,8 +92,65 @@ describe('notification controller', () => {
         JSON.stringify({ notificationResponse: '[accepted]' }),
       )
       expect(cause.message).to.equal(
-        'Notification can not be processed as "metadata.ctProjectKey" was not found on the notification ' +
-          'nor the path is containing the commercetools project key.',
+        'Notification can not be processed as "metadata.ctProjectKey" was not found on the notification, ' +
+          'nor the path is containing the commercetools project key, ' +
+          'nor "ctpProjectKey" is configured for the Adyen merchant account.',
+      )
+    },
+  )
+
+  it(
+    'when a generic pending notification has no additionalData and the path has no project key, ' +
+      'it should resolve the project from the "ctpProjectKey" of the Adyen merchant account',
+    async () => {
+      // prepare:
+      const requestMock = {
+        method: 'POST',
+        url: '/',
+        headers: {},
+      }
+      const responseMock = {
+        writeHead: () => {},
+        end: () => {},
+      }
+      const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+      const responseEndSpy = sandbox.spy(responseMock, 'end')
+      const notificationJson = cloneDeep(mockNotificationJson)
+      const notificationRequestItem =
+        notificationJson.notificationItems[0].NotificationRequestItem
+      notificationRequestItem.eventCode = 'PENDING'
+      delete notificationRequestItem.additionalData
+      utils.collectRequestData = () => JSON.stringify(notificationJson)
+
+      const getCtpConfigStub = sandbox
+        .stub(config, 'getCtpConfig')
+        .callsFake(() => ctpConfig)
+      sandbox.stub(config, 'getAdyenConfig').callsFake(() => ({
+        enableHmacSignature: false,
+        enableBasicAuth: false,
+        ctpProjectKey: commercetoolsProjectKey,
+      }))
+      const processNotificationStub = sandbox
+        .stub(notificationHandler, 'processNotification')
+        .resolves()
+
+      const loggerMock = {
+        error: sinon.spy(),
+        debug: sinon.spy(),
+      }
+
+      // test:
+      await handleNotification(requestMock, responseMock, loggerMock)
+
+      // expect:
+      sinon.assert.calledWith(getCtpConfigStub, commercetoolsProjectKey)
+      sinon.assert.calledWithMatch(processNotificationStub, {
+        ctpProjectConfig: ctpConfig,
+      })
+      expect(loggerMock.error.called).to.be.false
+      expect(responseWriteHeadSpy.firstCall.firstArg).to.equal(200)
+      expect(responseEndSpy.firstCall.firstArg).to.equal(
+        JSON.stringify({ notificationResponse: '[accepted]' }),
       )
     },
   )
@@ -249,4 +309,101 @@ describe('notification controller', () => {
       expect(responseEndSpy.firstCall.firstArg).to.equal(undefined)
     },
   )
+  it('when basic auth of a generic pending webhook fails, it should return 401 and not "accepted"', async () => {
+    // prepare:
+    const requestMock = {
+      method: 'POST',
+      url: '/',
+      headers: { authorization: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=' },
+    }
+    const responseMock = {
+      writeHead: () => {},
+      end: () => {},
+    }
+    const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+    const responseEndSpy = sandbox.spy(responseMock, 'end')
+    const notificationJson = cloneDeep(mockNotificationJson)
+    notificationJson.notificationItems[0].NotificationRequestItem.eventCode =
+      'PENDING'
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
+      { 'metadata.ctProjectKey': 'testKey' }
+    utils.collectRequestData = () => JSON.stringify(notificationJson)
+
+    sandbox.stub(config, 'getCtpConfig').callsFake(() => ({}))
+    sandbox
+      .stub(config, 'getAdyenConfig')
+      .callsFake(() => ({ enableHmacSignature: false, enableBasicAuth: true }))
+
+    const unauthorizedError = new UnauthorizedError(
+      'Basic authentication failed',
+    )
+    const processNotificationStub = sandbox
+      .stub(notificationHandler, 'processNotification')
+      .rejects(unauthorizedError)
+
+    const loggerMock = {
+      error: sinon.spy(),
+      debug: sinon.spy(),
+    }
+
+    // test:
+    await handleNotification(requestMock, responseMock, loggerMock)
+
+    // expect:
+    sinon.assert.calledWithMatch(processNotificationStub, {
+      enableBasicAuth: true,
+      authorizationHeader: 'Basic d3Jvbmc6Y3JlZGVudGlhbHM=',
+    })
+    expect(responseWriteHeadSpy.firstCall.args[0]).to.equal(401)
+    expect(responseWriteHeadSpy.firstCall.args[1]).to.deep.equal({
+      'WWW-Authenticate': 'Basic realm="adyen-notification"',
+    })
+    expect(responseEndSpy.firstCall.firstArg).to.equal(undefined)
+    expect(loggerMock.error.calledOnce).to.be.true
+  })
+
+  it('when commercetools responds with 401 (e.g. rotated client secret), it should answer "accepted"', async () => {
+    // prepare:
+    const requestMock = {
+      method: 'POST',
+      url: '/',
+    }
+    const responseMock = {
+      writeHead: () => {},
+      end: () => {},
+    }
+    const responseWriteHeadSpy = sandbox.spy(responseMock, 'writeHead')
+    const responseEndSpy = sandbox.spy(responseMock, 'end')
+    const notificationJson = cloneDeep(mockNotificationJson)
+    notificationJson.notificationItems[0].NotificationRequestItem.additionalData =
+      { 'metadata.ctProjectKey': 'testKey' }
+    utils.collectRequestData = () => JSON.stringify(notificationJson)
+
+    sandbox.stub(config, 'getCtpConfig').callsFake(() => ({}))
+    sandbox
+      .stub(config, 'getAdyenConfig')
+      .callsFake(() => ({ enableHmacSignature: false }))
+
+    // shape of a commercetools SDK error on an invalid client secret, wrapped like the handler does
+    const ctpUnauthorizedError = new Error('invalid_client')
+    ctpUnauthorizedError.statusCode = 401
+    sandbox
+      .stub(notificationHandler, 'processNotification')
+      .rejects(new VError(ctpUnauthorizedError, 'Failed to fetch a payment'))
+
+    const loggerMock = {
+      error: sinon.spy(),
+      debug: sinon.spy(),
+    }
+
+    // test:
+    await handleNotification(requestMock, responseMock, loggerMock)
+
+    // expect:
+    expect(responseWriteHeadSpy.firstCall.args[0]).to.equal(200)
+    expect(responseEndSpy.firstCall.firstArg).to.equal(
+      JSON.stringify({ notificationResponse: '[accepted]' }),
+    )
+    expect(loggerMock.error.calledOnce).to.be.true
+  })
 })

@@ -1,7 +1,11 @@
 import _ from 'lodash'
 import url from 'url'
 import utils from '../../utils/commons.js'
-import { isRecoverableError, getErrorCause } from '../../utils/error-utils.js'
+import {
+  isRecoverableError,
+  isUnauthorizedError,
+  getErrorCause,
+} from '../../utils/error-utils.js'
 import notificationHandler from '../../handler/notification/notification.handler.js'
 import { getCtpProjectConfig, getAdyenConfig } from '../../utils/parser.js'
 
@@ -26,6 +30,8 @@ async function handleNotification(request, response, logger) {
       await notificationHandler.processNotification({
         notification,
         enableHmacSignature: adyenConfig.enableHmacSignature,
+        enableBasicAuth: adyenConfig.enableBasicAuth,
+        authorizationHeader: getAuthorizationHeader(request),
         ctpProjectConfig,
         logger,
       })
@@ -41,11 +47,26 @@ async function handleNotification(request, response, logger) {
       },
       'Unexpected exception occurred.',
     )
+    if (isUnauthorizedError(err)) {
+      return sendUnauthorizedResponse(response)
+    }
     if (isRecoverableError(err)) {
       return utils.sendResponse(response, 500)
     }
     return sendAcceptedResponse(response)
   }
+}
+
+function getAuthorizationHeader(request) {
+  return request?.headers?.authorization
+}
+
+function sendUnauthorizedResponse(response) {
+  // Basic authentication of a generic pending webhook failed:
+  // the notification must NOT be acknowledged with [accepted].
+  return utils.sendResponse(response, 401, {
+    'WWW-Authenticate': 'Basic realm="adyen-notification"',
+  })
 }
 
 function sendAcceptedResponse(response) {

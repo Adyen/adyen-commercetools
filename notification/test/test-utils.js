@@ -169,7 +169,11 @@ function createNotificationPayload(
   } else if (eventCode === 'CANCEL_OR_REFUND') {
     notificationRequestItem.additionalData['modification.action'] = 'cancel'
   }
-  if (adyenConfig.enableHmacSignature) {
+  if (eventCode === 'PENDING') {
+    // generic pending webhooks carry no additionalData (no metadata, no HMAC signature),
+    // the commercetools project is resolved from the "ctpProjectKey" of the Adyen merchant account
+    delete notificationRequestItem.additionalData
+  } else if (adyenConfig.enableHmacSignature) {
     notificationRequestItem.additionalData.hmacSignature =
       validator.calculateHmac(
         notificationRequestItem,
@@ -178,6 +182,10 @@ function createNotificationPayload(
   }
 
   return notification
+}
+
+function createBasicAuthHeader(username, password) {
+  return `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`
 }
 
 async function ensurePayment(
@@ -208,5 +216,6 @@ export {
   getNotificationURL,
   stopIT,
   createNotificationPayload,
+  createBasicAuthHeader,
   ensurePayment,
 }

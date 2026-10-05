@@ -261,6 +261,186 @@ describe('notification module', () => {
     )
   })
 
+  it(`given that ADYEN sends an "AUTHORISATION is successful" notification
+      when payment has a failure authorization transaction with the same pspReference
+      then notification module should add notification to the interface interaction
+      and should update failure authorization state to the success`, async () => {
+    // prepare data
+    const notifications = [
+      {
+        NotificationRequestItem: {
+          amount: {
+            currency: 'EUR',
+            value: 10100,
+          },
+          additionalData: {
+            'metadata.ctProjectKey': commercetoolsProjectKey,
+          },
+          eventCode: 'AUTHORISATION',
+          eventDate: '2019-01-30T18:16:28+01:00',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
+          merchantReference: '8313842560770001',
+          operations: ['CANCEL', 'CAPTURE', 'REFUND'],
+          paymentMethod: 'paypal',
+          pspReference: 'test_AUTHORISATION_1',
+          success: 'true',
+        },
+      },
+    ]
+    const payment = cloneDeep(paymentMock)
+    payment.paymentMethodInfo.method = 'paypal'
+    payment.transactions.push({
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Authorization',
+      amount: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 10100,
+        fractionDigits: 2,
+      },
+      interactionId: 'test_AUTHORISATION_1',
+      state: 'Failure',
+    })
+    const ctpClient = ctpClientMock.get(ctpConfig)
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
+    }))
+    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+
+    // process
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notifications[0].NotificationRequestItem.additionalData
+    }
+    const expectedUpdateActions = [
+      {
+        action: 'addInterfaceInteraction',
+        type: {
+          key: 'ctp-adyen-integration-interaction-notification',
+          typeId: 'type',
+        },
+        fields: {
+          status: 'authorisation',
+          type: 'notification',
+          notification: JSON.stringify(notifications[0]),
+        },
+      },
+      {
+        action: 'changeTransactionState',
+        state: 'Success',
+        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      },
+      {
+        action: 'changeTransactionTimestamp',
+        transactionId: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+        timestamp: '2019-01-30T17:16:28.000Z',
+      },
+      {
+        action: 'setKey',
+        key: 'test_AUTHORISATION_1',
+      },
+    ]
+
+    // assert update actions
+    // createdAt is set to the current date during the update action calculation
+    // We can't know what is set there
+    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
+      expectedUpdateActions,
+    )
+  })
+
+  it(`given that ADYEN sends a "CAPTURE is successful" notification
+      when payment has a failure charge transaction with the same pspReference
+      then notification module should add notification to the interface interaction
+      and should not update the failure charge transaction`, async () => {
+    // prepare data
+    const notifications = [
+      {
+        NotificationRequestItem: {
+          amount: {
+            currency: 'EUR',
+            value: 10100,
+          },
+          additionalData: {
+            'metadata.ctProjectKey': commercetoolsProjectKey,
+          },
+          eventCode: 'CAPTURE',
+          eventDate: '2019-01-30T18:16:22+01:00',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
+          merchantReference: '8313842560770001',
+          originalReference: 'test_AUTHORISATION_1',
+          paymentMethod: 'visa',
+          pspReference: 'test_CAPTURE_1',
+          success: 'true',
+        },
+      },
+    ]
+    const payment = cloneDeep(paymentMock)
+    payment.key = 'test_AUTHORISATION_1'
+    payment.transactions.push({
+      id: '9ca92d05-ba63-47dc-8f83-95b08d539646',
+      type: 'Charge',
+      amount: {
+        type: 'centPrecision',
+        currencyCode: 'EUR',
+        centAmount: 10100,
+        fractionDigits: 2,
+      },
+      interactionId: 'test_CAPTURE_1',
+      state: 'Failure',
+    })
+    const ctpClient = ctpClientMock.get(ctpConfig)
+    sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+      body: { results: [payment] },
+    }))
+    const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+    ctp.get = () => ctpClient
+
+    // process
+    await notificationHandler.processNotification({
+      notification: notifications[0],
+      enableHmacSignature: false,
+      ctpProjectConfig: config,
+      logger: getLogger(),
+    })
+    if (config.getModuleConfig().removeSensitiveData) {
+      delete notifications[0].NotificationRequestItem.additionalData
+    }
+    const expectedUpdateActions = [
+      {
+        action: 'addInterfaceInteraction',
+        type: {
+          key: 'ctp-adyen-integration-interaction-notification',
+          typeId: 'type',
+        },
+        fields: {
+          status: 'capture',
+          type: 'notification',
+          notification: JSON.stringify(notifications[0]),
+        },
+      },
+    ]
+
+    // assert update actions
+    // createdAt is set to the current date during the update action calculation
+    // We can't know what is set there
+    expect(ctpClientUpdateSpy.args[0][3][0].fields.createdAt).to.exist
+    const actualUpdateActionsWithoutCreatedAt = ctpClientUpdateSpy.args[0][3]
+    delete actualUpdateActionsWithoutCreatedAt[0].fields.createdAt
+    expect(actualUpdateActionsWithoutCreatedAt).to.deep.equal(
+      expectedUpdateActions,
+    )
+  })
+
   it(`given that ADYEN sends an "AUTHORISATION is not successful" notification
       when payment has a failure authorization transaction 
       then notification module should add notification to the interface interaction 
@@ -1179,5 +1359,184 @@ describe('notification module', () => {
     expect(error.message).to.contains(
       'Failed to fetch a payment with merchantReference',
     )
+  })
+  describe('generic pending webhook (eventCode PENDING)', () => {
+    const BASIC_AUTH = {
+      scheme: 'basic',
+      username: 'webhook-user',
+      password: 'webhook-pass',
+    }
+    const validAuthorizationHeader = `Basic ${Buffer.from(
+      `${BASIC_AUTH.username}:${BASIC_AUTH.password}`,
+    ).toString('base64')}`
+
+    function createPendingNotification() {
+      return {
+        NotificationRequestItem: {
+          amount: {
+            currency: 'EUR',
+            value: 10100,
+          },
+          additionalData: {
+            'metadata.ctProjectKey': commercetoolsProjectKey,
+          },
+          eventCode: 'PENDING',
+          eventDate: '2019-01-30T18:16:22+01:00',
+          merchantAccountCode: 'YOUR_MERCHANT_ACCOUNT',
+          merchantReference: '8313842560770001',
+          paymentMethod: 'ideal',
+          pspReference: 'test_PENDING_1',
+          success: 'true',
+        },
+      }
+    }
+
+    function mockCtpClientWithPayment() {
+      const payment = cloneDeep(paymentMock)
+      const ctpClient = ctpClientMock.get(ctpConfig)
+      sandbox.stub(ctpClient, 'fetchByKeys').callsFake(() => ({
+        body: { results: [payment] },
+      }))
+      const ctpClientUpdateSpy = sandbox.spy(ctpClient, 'update')
+      ctp.get = () => ctpClient
+      return ctpClientUpdateSpy
+    }
+
+    // stub directly instead of nesting overrideAdyenConfig/restoreAdyenConfig calls,
+    // otherwise the outer restore would leak this stub into other spec files
+    let getAdyenConfigBeforePendingTests
+    beforeEach(() => {
+      getAdyenConfigBeforePendingTests = config.getAdyenConfig
+      config.getAdyenConfig = () => ({
+        enableHmacSignature: false,
+        enableBasicAuth: true,
+        authentication: BASIC_AUTH,
+      })
+    })
+
+    afterEach(() => {
+      config.getAdyenConfig = getAdyenConfigBeforePendingTests
+    })
+
+    it('given valid basic auth credentials, it should only add a pending interface interaction', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+      const pendingNotification = createPendingNotification()
+
+      await notificationHandler.processNotification({
+        notification: pendingNotification,
+        enableHmacSignature: false,
+        enableBasicAuth: true,
+        authorizationHeader: validAuthorizationHeader,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
+
+      expect(ctpClientUpdateSpy.calledOnce).to.be.true
+      const updateActions = ctpClientUpdateSpy.args[0][3]
+      const interfaceInteractions = updateActions.filter(
+        (action) => action.action === 'addInterfaceInteraction',
+      )
+      expect(interfaceInteractions).to.have.lengthOf(1)
+      expect(interfaceInteractions[0].fields.status).to.equal('pending')
+      expect(interfaceInteractions[0].fields.type).to.equal('notification')
+      expect(updateActions.some((action) => action.action === 'addTransaction'))
+        .to.be.false
+      expect(
+        updateActions.some(
+          (action) => action.action === 'changeTransactionState',
+        ),
+      ).to.be.false
+    })
+
+    it('given invalid basic auth credentials, it should throw a 401 error and not update the payment', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+      const wrongHeader = `Basic ${Buffer.from('wrong:credentials').toString(
+        'base64',
+      )}`
+
+      await expect(
+        notificationHandler.processNotification({
+          notification: createPendingNotification(),
+          enableHmacSignature: false,
+          enableBasicAuth: true,
+          authorizationHeader: wrongHeader,
+          ctpProjectConfig: config,
+          logger: getLogger(),
+        }),
+      ).to.be.rejectedWith(Error, 'valid basic authentication credentials')
+      await expect(
+        notificationHandler.processNotification({
+          notification: createPendingNotification(),
+          enableHmacSignature: false,
+          enableBasicAuth: true,
+          authorizationHeader: wrongHeader,
+          ctpProjectConfig: config,
+          logger: getLogger(),
+        }),
+      ).to.eventually.be.rejected.and.have.property('statusCode', 401)
+      expect(ctpClientUpdateSpy.called).to.be.false
+    })
+
+    it('given a missing Authorization header, it should throw a 401 error and not update the payment', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+
+      await expect(
+        notificationHandler.processNotification({
+          notification: createPendingNotification(),
+          enableHmacSignature: false,
+          enableBasicAuth: true,
+          authorizationHeader: undefined,
+          ctpProjectConfig: config,
+          logger: getLogger(),
+        }),
+      ).to.eventually.be.rejected.and.have.property('statusCode', 401)
+      expect(ctpClientUpdateSpy.called).to.be.false
+    })
+
+    it('given basic auth is disabled, it should drop the PENDING event without updating the payment', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+
+      await notificationHandler.processNotification({
+        notification: createPendingNotification(),
+        enableHmacSignature: true,
+        enableBasicAuth: false,
+        authorizationHeader: undefined,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
+
+      expect(ctpClientUpdateSpy.called).to.be.false
+    })
+
+    it('given HMAC verification is enabled, it should skip HMAC validation for PENDING events', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+
+      // no hmacSignature in additionalData, would fail HMAC validation
+      await notificationHandler.processNotification({
+        notification: createPendingNotification(),
+        enableHmacSignature: true,
+        enableBasicAuth: true,
+        authorizationHeader: validAuthorizationHeader,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
+
+      expect(ctpClientUpdateSpy.calledOnce).to.be.true
+    })
+
+    it('given basic auth is disabled, it should drop PENDING events even with valid credentials', async () => {
+      const ctpClientUpdateSpy = mockCtpClientWithPayment()
+
+      await notificationHandler.processNotification({
+        notification: createPendingNotification(),
+        enableHmacSignature: false,
+        enableBasicAuth: false,
+        authorizationHeader: validAuthorizationHeader,
+        ctpProjectConfig: config,
+        logger: getLogger(),
+      })
+
+      expect(ctpClientUpdateSpy.called).to.be.false
+    })
   })
 })
