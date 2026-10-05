@@ -59,6 +59,11 @@ jobs:
         run: npm run check
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
+      - name: Install extension dependencies
+        # The notification unit specs import test/test-utils.js, which loads
+        # ../extension/src/setup.js and therefore needs the extension's node_modules.
+        run: npm ci
+        working-directory: extension
       - name: Run unit tests
         run: npm run unit
 
