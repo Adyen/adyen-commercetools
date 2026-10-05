@@ -1,4 +1,4 @@
-# 14. Correct a failed Authorization transaction on a later successful AUTHORISATION notification
+# 15. Correct a failed Authorization transaction on a later successful AUTHORISATION notification
 
 Date: 2026-09-29
 
