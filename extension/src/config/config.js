@@ -10,7 +10,7 @@ function getModuleConfig() {
     ),
     port: config.port,
     logLevel: config.logLevel,
-    // If used for development purpose and for setup-resources command
+    // If used for development purposes and for setup-resources command
     apiExtensionBaseUrl:
       process.env.CONNECT_SERVICE_URL ?? config.apiExtensionBaseUrl,
     basicAuth: config.basicAuth || false,
@@ -52,7 +52,7 @@ function _validateAuthenticationConfig(ctpConfig) {
       !ctpConfig.authentication.password
     ) {
       // scheme must be basic type, and username and password must be all provided if authentication object exists
-      return 'Attributes (scheme, username or password) is missing in authentication setting.'
+      return 'Attributes (scheme, username or password) are missing in authentication setting.'
     }
     return null
   }
@@ -95,7 +95,7 @@ function getAdyenConfig(adyenMerchantAccount) {
   return {
     apiKey: adyenConfig.apiKey,
     apiBaseUrl: adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v71',
-    clientKey: adyenConfig.clientKey || '', // used only for development purpose,
+    clientKey: adyenConfig.clientKey || '', // used only for development purposes,
     paypalMerchantId: adyenConfig.paypalMerchantId || '',
     donationAccount: adyenConfig.donationAccount || '',
   }
