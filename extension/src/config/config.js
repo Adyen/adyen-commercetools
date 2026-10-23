@@ -10,7 +10,7 @@ function getModuleConfig() {
     ),
     port: config.port,
     logLevel: config.logLevel,
-    // If used for development purpose and for setup-resources command
+    // If used for development purposes and for setup-resources command
     apiExtensionBaseUrl:
       process.env.CONNECT_SERVICE_URL ?? config.apiExtensionBaseUrl,
     basicAuth: config.basicAuth || false,
@@ -95,7 +95,7 @@ function getAdyenConfig(adyenMerchantAccount) {
   return {
     apiKey: adyenConfig.apiKey,
     apiBaseUrl: adyenConfig.apiBaseUrl || 'https://checkout-test.adyen.com/v71',
-    clientKey: adyenConfig.clientKey || '', // used only for development purpose,
+    clientKey: adyenConfig.clientKey || '', // used only for development purposes,
     paypalMerchantId: adyenConfig.paypalMerchantId || '',
     donationAccount: adyenConfig.donationAccount || '',
   }

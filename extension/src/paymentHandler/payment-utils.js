@@ -220,8 +220,8 @@ function generateIdempotencyKey({ paymentObject, operation }) {
 
 function getPaymentKeyUpdateAction(paymentKey, response) {
   const pspReference = response.pspReference?.toString()
-  // ensure the key and new reference is different, otherwise the error with
-  // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
+  // ensure the key and new reference are different, otherwise the error with
+  // "code": "InvalidOperation", "message": "'key' has no changes." will be returned by commercetools API.
   if (
     !unsuccessfulResponseCodes.includes(response.status) &&
     pspReference &&
@@ -239,8 +239,8 @@ function getPaymentKeyUpdateAction(paymentKey, response) {
 function getPaymentKeyUpdateActionForSessionFlow(paymentKey, response) {
   const pspReference = response.pspReference?.toString()
   const isSuccessful = !unsuccessfulResponseCodes.includes(response.status)
-  // ensure the key and new reference is different, otherwise the error with
-  // "code": "InvalidOperation", "message": "'key' has no changes." will return by commercetools API.
+  // ensure the key and new reference are different, otherwise the error with
+  // "code": "InvalidOperation", "message": "'key' has no changes." will be returned by commercetools API.
   if (isSuccessful && pspReference && pspReference !== paymentKey) {
     return { action: 'setKey', key: pspReference }
   }
