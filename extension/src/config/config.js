@@ -52,7 +52,7 @@ function _validateAuthenticationConfig(ctpConfig) {
       !ctpConfig.authentication.password
     ) {
       // scheme must be basic type, and username and password must be all provided if authentication object exists
-      return 'Attributes (scheme, username or password) is missing in authentication setting.'
+      return 'Attributes (scheme, username or password) are missing in authentication setting.'
     }
     return null
   }
