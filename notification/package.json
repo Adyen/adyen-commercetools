@@ -60,7 +60,7 @@
   "overrides": {
     "jsondiffpatch": "0.7.7",
     "js-yaml": "5.5.0",
-    "glob": "13.0.6",
+    "glob": "14.0.3",
     "flatted": "3.4.4",
     "serialize-javascript": "7.1.4",
     "diff": "9.0.0",
@@ -80,7 +80,7 @@
     "globals": "^17.0.0",
     "lockfile-lint": "5.1.0",
     "mocha": "12.0.3",
-    "nock": "14.0.17",
+    "nock": "15.0.5",
     "p-map": "7.1.1",
     "prettier": "3.9.10",
     "sinon": "22.1.0"
