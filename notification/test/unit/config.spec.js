@@ -259,7 +259,7 @@ describe('::config::', () => {
           enableBasicAuth: 'true',
           authentication: { scheme: 'basic', username: 'user' },
         },
-        'Attributes (scheme, username or password) is missing in "authentication" setting',
+        'Attributes (scheme, username or password) are missing in "authentication" setting',
       )
     })
 
@@ -273,7 +273,7 @@ describe('::config::', () => {
             password: 'pass',
           },
         },
-        'Attributes (scheme, username or password) is missing in "authentication" setting',
+        'Attributes (scheme, username or password) are missing in "authentication" setting',
       )
     })
 
@@ -283,7 +283,7 @@ describe('::config::', () => {
           enableBasicAuth: false,
           authentication: { scheme: 'basic', username: 'user' },
         },
-        'Attributes (scheme, username or password) is missing in "authentication" setting',
+        'Attributes (scheme, username or password) are missing in "authentication" setting',
       )
     })
 
