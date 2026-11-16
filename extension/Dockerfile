@@ -1,4 +1,4 @@
-# Pinned by digest (multi-arch index of node:24-alpine); Renovate keeps the digest current.
+# Pinned by digest (multi-arch index of node:26-alpine); Renovate keeps the digest current.
 FROM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5
 LABEL org.opencontainers.image.authors="Professional Services <ps-dev@commercetools.com>"
 
